@@ -195,7 +195,7 @@ btnupgrade.inputstyle = "reload"
 btnstop.forcewrite = true
 btnduplicate=action_section:option(Button, "_duplicate")
 btnduplicate.template = "dockerman/cbi/inlinebutton"
-btnduplicate.inputtitle=translate("Duplicate")
+btnduplicate.inputtitle=translate("Duplicate/Edit")
 btnduplicate.inputstyle = "add"
 btnstop.forcewrite = true
 btnremove=action_section:option(Button, "_remove")
@@ -355,6 +355,7 @@ if action == "info" then
     if table_info[section]._button and table_info[section]._value ~= nil then
       btn_update.inputtitle=table_info[section]._button
       self.template = "cbi/button"
+      self.inputstyle = "edit"
       Button.render(self, section, scope)
     else 
       self.template = "cbi/dvalue"
@@ -516,6 +517,5 @@ end
 m.submit = false
 m.reset  = false
 end
-
 
 return m
