@@ -1,0 +1,30 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-arpbind/luasrc/model/cbi/arpbind.lua:7
+msgid ""
+"ARP is used to convert a network address (e.g. an IPv4 address) to a "
+"physical address such as a MAC address.Here you can add some static ARP "
+"binding rules."
+msgstr ""
+
+#: applications/luci-app-arpbind/luasrc/model/cbi/arpbind.lua:14
+msgid "IP Address"
+msgstr ""
+
+#: applications/luci-app-arpbind/luasrc/controller/arpbind.lua:12
+#: applications/luci-app-arpbind/luasrc/model/cbi/arpbind.lua:6
+msgid "IP/MAC Binding"
+msgstr ""
+
+#: applications/luci-app-arpbind/luasrc/model/cbi/arpbind.lua:32
+msgid "Interface"
+msgstr ""
+
+#: applications/luci-app-arpbind/luasrc/model/cbi/arpbind.lua:23
+msgid "MAC Address"
+msgstr ""
+
+#: applications/luci-app-arpbind/luasrc/model/cbi/arpbind.lua:9
+msgid "Rules"
+msgstr ""

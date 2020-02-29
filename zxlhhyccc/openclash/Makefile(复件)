@@ -1,0 +1,68 @@
+#
+# Copyright (C) 2015-2016 OpenWrt.org
+#
+# This is free software, licensed under the GNU General Public License v3.
+#
+
+include $(TOPDIR)/rules.mk
+
+PKG_NAME:=openclash
+PKG_VERSION:=v0.17.1
+PKG_RELEASE:=21-gf69f635
+
+ifeq ($(ARCH),x86_64)
+	PKG_ARCH_OPENCLASH:=amd64
+endif
+ifeq ($(ARCH),mipsel)
+	PKG_ARCH_OPENCLASH:=mipsle-softfloat
+endif
+ifeq ($(ARCH),mips)
+	PKG_ARCH_OPENCLASH:=mips64
+endif
+ifeq ($(ARCH),i386)
+	PKG_ARCH_OPENCLASH:=386
+endif
+ifeq ($(ARCH),arm)
+	PKG_ARCH_OPENCLASH:=arm7
+endif
+ifeq ($(BOARD),bcm53xx)
+	PKG_ARCH_OPENCLASH:=arm5
+endif
+ifeq ($(BOARD),kirkwood)
+	PKG_ARCH_OPENCLASH:=arm5
+endif
+ifeq ($(ARCH),aarch64)
+	PKG_ARCH_OPENCLASH:=arm64
+endif
+
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
+PKG_SOURCE:=clash-linux-$(PKG_ARCH_OPENCLASH).tar.gz
+PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/Clash
+PKG_HASH:=skip
+
+include $(INCLUDE_DIR)/package.mk
+
+define Package/$(PKG_NAME)
+	SECTION:=net
+	CATEGORY:=Network
+	TITLE:=openclash is a cross-platform proxy software
+	DEPENDS:=
+	URL:=https://github.com/frainzy1477/clash_dev/releases
+endef
+
+define Build/Prepare
+	tar -xzvf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_BUILD_DIR)
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+endef
+
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/etc/openclash
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash $(1)/etc/openclash/
+endef
+
+$(eval $(call BuildPackage,$(PKG_NAME)))

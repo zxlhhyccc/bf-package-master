@@ -1,0 +1,86 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:2
+msgid "Access Schedule Control Settins"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:15
+msgid "Client Rules"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/view/mia/mia_status.htm:20
+msgid "Collecting data..."
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:8
+msgid "Enabled"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:34
+msgid "End time"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:54
+msgid "Fri"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/controller/mia.lua:8
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:2
+#: applications/luci-app-accesscontrol/luasrc/view/mia/mia_status.htm:7
+#: applications/luci-app-accesscontrol/luasrc/view/mia/mia_status.htm:10
+msgid "Internet Access Schedule Control"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:24
+msgid "MAC address (Computer Name)"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:38
+msgid "Mon"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/view/mia/mia_status.htm:10
+msgid "NOT RUNNING"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/view/mia/mia_status.htm:7
+msgid "RUNNING"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:58
+msgid "Sat"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:30
+msgid "Start time"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:11
+msgid "Strict Mode"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:13
+msgid ""
+"Strict Mode will degrade CPU performance, but it can achieve better results"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:62
+msgid "Sun"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:50
+msgid "Thu"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:42
+msgid "Tue"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:46
+msgid "Wed"
+msgstr ""
+
+#: applications/luci-app-accesscontrol/luasrc/model/cbi/mia.lua:20
+msgid "√"
+msgstr ""
