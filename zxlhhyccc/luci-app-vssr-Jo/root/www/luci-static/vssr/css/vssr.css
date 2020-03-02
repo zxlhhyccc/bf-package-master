@@ -263,6 +263,10 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
     max-height: 100%;
     width: auto;
 }
+.pure-imgw{
+    max-width: 100%;
+    height: auto;
+}
 .green {
     font-size: 1.25rem;
     color: #2dce89;
@@ -307,23 +311,24 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 .p-in5{
     padding: 8px;
 }
+.flag-icon:before{
+    position: absolute;
+}
 
-    .cbi-section-table-row {
-        position: relative;
-        background: #CCFFFF;
-        margin: 10px;
-        padding: 18px 18px 18px 88px;
-        box-shadow: 0 0 1rem 0 rgba(136,152,170,.75);
-        border-radius: .5rem;
-        border: 0;
-        color: #003333;
-        text-align: left;
-        line-height: 1.7em;
-        white-space: nowrap;
-　　　　 text-overflow: ellipsis;
-        overflow: hidden;
-        transition: all 0.3s;
-
+.cbi-section-table-row {
+    position: relative;
+    background: #edf3f8;
+    margin: 10px !important;
+    padding: 18px 18px 18px 105px;
+    box-shadow: 0 0 5px 0 rgba(136, 152, 170, .75);
+    border-radius: .5rem;
+    border: 0;
+    color: #525f7f;
+    text-align: left;
+    line-height: 1.7em;
+    overflow: hidden;
+    letter-spacing: normal;
+    transition: all 0.2s;
 }
 .cbi-section-table-row:hover{
     background: #fff;
@@ -347,6 +352,9 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
     box-shadow: none;
 }
 
+.cbi-section-table-row.fast .host_con{
+    color: #fff !important;
+}
 .host_con.fast {
     color: #6f9a37;
 }
@@ -396,6 +404,12 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 .alias{
     margin-bottom:1px;
 }
+.incon{
+    cursor: pointer;
+}
+.incon .pure-imgw{
+    transition: all 0.2s;
+}
 .incon:nth-child(2) {
     position: absolute;
     left: 0;
@@ -439,7 +453,7 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 .ssr-button {
     background: none;
     color: #525f7f;
-    padding: 0 0 0 6px;
+    padding: 0 0 0 0;
     height: auto;
     line-height: 1.5em;
 }
@@ -457,18 +471,16 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
     margin-left: 10px;
     margin-top: 1rem;
 }
-
-
     .cbi-button-check {
         color: #fff !important;
-      background-color: #336633 !important;
-        border-color: #2e6da4 !important;
+      background-color: #008080 !important;
+        border-color: #008080 !important;
         font-size:12px;
         padding:0.6rem 0.8rem;
         float:right;
         margin-right:10px;
         margin-top:-0.3rem;
-
+   
 }
 
 .cbi-section-table-cell {
@@ -478,7 +490,7 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 .host_con {
     position: absolute;
     left: 0;
-    width: 50px;
+    width: 70px;
     text-align: left;
     height: 22px;
     font-weight: bold;
@@ -500,22 +512,21 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 footer.mobile-hide{
     display: block;
 }
-.cbi-button-add{
+    .cbi-button-add{
         position:fixed;
         padding: 0.3rem 0.5rem;
         z-index:1000;
-        width:70px !important;
-        height:70px;
-        bottom:90px;
-        right:55px;
+        width:80px !important;
+        height:80px;
+        bottom:150px;
+        right:60px;
    font-size:20px;
         border-radius:50%;
         display:block;
-	  background-color: #336633!important;
-        border-color: 	#CC6699 !important; 	
+	  background-color: #008080!important;
+        border-color: 	#008080 !important; 	
         box-shadow: 0 0 1rem 0 rgba(136,152,170,.75);
     }
-
 
 .mar-10 {margin-left: 50px; margin-right: 10px;}
 
@@ -540,14 +551,15 @@ footer.mobile-hide{
     float: left;
     margin-right: 1em;
 }
+.status-bar .inner .status-info{
+    font-weight: bold;
+}
 .status-bar .icon-con{
     height: 3em;
     text-align: right;
 }
 
-
-
-@media screen and (max-width: 1900px) {
+@media screen and (max-width: 2000px) {
     .pure-u-1-5 {
         width: 25%;
     }
@@ -598,7 +610,7 @@ footer.mobile-hide{
         font-size: 16px;
         border-radius: 50%;
         display: block;
-        background-color: #fb6340!important;
+        background-color: #fb6340 !important;
         border-color: #fb6340 !important;
         box-shadow: 0 0 1rem 0 rgba(136, 152, 170, .75);
     }
