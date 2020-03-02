@@ -125,10 +125,10 @@ msgstr "个节点"
 msgid "Client"
 msgstr "客户端"
 
-msgid "Visit foreign websites"
+msgid "foreign websites"
 msgstr "国外网站"
 
-msgid "Visit domestic website"
+msgid "domestic website"
 msgstr "国内网站"
 
 msgid "Problem detected"
