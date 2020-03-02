@@ -139,7 +139,7 @@ msgstr "网关"
 msgid "New"
 msgstr "新建"
 
-msgid "Resolv CLI"
+msgid "Resolve CLI"
 msgstr "解析命令行"
 
 msgid "Docker Image"
@@ -390,3 +390,6 @@ msgstr "请输入新镜像标签名称"
 
 msgid "Error"
 msgstr "错误"
+
+msgid "Console"
+msgstr "控制台"
