@@ -849,7 +849,7 @@ msgid "SSR Server"
 msgstr "服务端"
 
 msgid "V2 Servers"
-msgstr "V2服务器"
+msgstr "V2RAY服务器"
 
 msgid "SS/SSR/V2RAY Server"
 msgstr "SS/SSR/V2RAY 服务端"

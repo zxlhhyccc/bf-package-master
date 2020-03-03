@@ -247,6 +247,7 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
     line-height: 1;
     font-family: inherit;
     min-width: inherit;
+    padding: 6px 10px 7px 8px;
     overflow-x: auto;
     overflow-y: hidden;
     border: 1px solid rgba(0, 0, 0, .05);
@@ -317,13 +318,13 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 
 .cbi-section-table-row {
     position: relative;
-    background: #edf3f8;
+    background: #f3f9f1;
     margin: 10px !important;
-    padding: 18px 18px 18px 105px;
+    padding: 18px 18px 18px 108px;
     box-shadow: 0 0 5px 0 rgba(136, 152, 170, .75);
     border-radius: .5rem;
     border: 0;
-    color: #525f7f;
+    color: #180614;
     text-align: left;
     line-height: 1.7em;
     overflow: hidden;
@@ -338,6 +339,7 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 .cbi-section-table-row.fast{
     background: #5e72e4;
     color: #fff;
+
 }
 
 .cbi-section-table-row.fast .ssr-button{
@@ -428,10 +430,10 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
     height: 25%;
     width: 100%;
     text-align: center;
-    font-size: 12px;
-    line-height: 15px;
+    font-size: 13px;
+    line-height: 21px;
     color: #fff;
-    background: #525f7f;
+    background: #4c8dae;
 }
 
 .incon:nth-child(3) {
