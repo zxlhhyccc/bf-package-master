@@ -14,7 +14,7 @@ end
 
 local uci = luci.model.uci.cursor()
 local server_count = 0
-uci:foreach("vssr", "servers", function(s)
+uci:foreach("shadowsocksr", "servers", function(s)
   server_count = server_count + 1
 end)
 
@@ -58,6 +58,12 @@ o = s:option(DummyValue, "", "")
 o.rawhtml = true
 o.template = "shadowsocksr/update_subscribe"
 
+o = s:option(Button,"update",translate("Update All Subscribe Severs"),translate("No special needs, please click here to subscribe to update"))
+o.inputstyle = "reload"
+o.write = function()
+  luci.sys.call("bash /usr/share/shadowsocksr/subscribe.sh >>/tmp/vssr.log 2>&1")
+  luci.http.redirect(luci.dispatcher.build_url("admin", "vpn", "shadowsocksr", "servers"))
+end
 
 
 o = s:option(Button,"delete",translate("Delete All Subscribe Severs"))
