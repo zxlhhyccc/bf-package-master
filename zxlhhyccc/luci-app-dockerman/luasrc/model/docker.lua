@@ -17,16 +17,10 @@ local update_image = function(self, image_name)
   _docker:append_status("Images: " .. "pulling" .. " " .. image_name .. "...\n")
   local x_auth = nixio.bin.b64encode(json_stringify({serveraddress= server}))
   local res = self.images:create({query = {fromImage=image_name}, header={["X-Registry-Auth"]=x_auth}}, _docker.pull_image_show_status_cb)
-  if res and res.code == 200 then
-    buf = docker:read_status()
-    if buf:match("Status: Downloaded newer image for ".. image) then
-      docker:append_status("done\n")
-    else
-      res.code = 599
-      res.body.message = buf
-    end
-  else
-    _docker:append_status("fail code:" .. res.code.." ".. (res.body.message and res.body.message or res.message).. "\n")
+  if res and res.code == 200 and res.body[#res.body].status:match("Status: Downloaded newer image for ".. image_name) then
+    _docker:append_status("done\n")
+  -- else
+  --   _docker:append_status("fail code:" .. res.code.." ".. (res.body.message and res.body.message or res.message).. "\n")
   end
   new_image_id = self.images:inspect({name = image_name}).body.Id
   return new_image_id, res
@@ -102,8 +96,10 @@ local function clear_empty_tables( t )
 end
 
 -- return create_body, extra_network
-local get_config = function(old_config, old_host_config, old_network_setting, image_config)
-  local config = old_config
+local get_config = function(container_config, image_config)
+  local config = container_config.Config
+  local old_host_config = container_config.HostConfig
+  local old_network_setting = container_config.NetworkSettings.Networks or {}
   if config.WorkingDir == image_config.WorkingDir then config.WorkingDir = "" end
   if config.User == image_config.User then config.User = "" end
   if table_equal(config.Cmd, image_config.Cmd) then config.Cmd = nil end
@@ -137,6 +133,20 @@ local get_config = function(old_config, old_host_config, old_network_setting, im
   local host_config = old_host_config
   if host_config.PortBindings and next(host_config.PortBindings) == nil then host_config.PortBindings = nil end
   host_config.LogConfig = nil
+  host_config.Mounts = {}
+  -- for volumes
+  for i, v in ipairs(container_config.Mounts) do
+    if v.Type == "volume" then
+      table.insert(host_config.Mounts, {
+        Type = v.Type,
+        Target = v.Destination,
+        Source = v.Source:match("([^/]+)\/_data"),
+        BindOptions = v.Type == "bind" and {Propagation = v.Propagation} or nil,
+        ReadOnly = not v.RW
+      })
+    end
+  end
+  
 
   -- merge configs
   local create_body = config
@@ -158,9 +168,6 @@ local upgrade = function(self, request)
   if not image_name:match(".-:.+") then image_name = image_name .. ":latest" end
   local old_image_id = container_info.body.Image
   local container_name = container_info.body.Name:sub(2)
-  local old_config = container_info.body.Config
-  local old_host_config = container_info.body.HostConfig
-  local old_network_setting = container_info.body.NetworkSettings.Networks or {}
 
   local image_id, res = update_image(self, image_name)
   if res and res.code ~= 200 then return res end
@@ -186,7 +193,7 @@ local upgrade = function(self, request)
 
   -- handle config
   local image_config = self.images:inspect({id = old_image_id}).body.Config
-  local create_body, extra_network = get_config(old_config, old_host_config, old_network_setting, image_config)
+  local create_body, extra_network = get_config(container_info.body, image_config)
 
   -- create new container
   _docker:append_status("Container: Create" .. " " .. container_name .. "...")
@@ -213,11 +220,11 @@ local duplicate_config = function (self, request)
   local container_info = self.containers:inspect({id = request.id})
   if container_info.code > 300 and type(container_info.body) == "table" then return nil end
   local old_image_id = container_info.body.Image
-  local old_config = container_info.body.Config
-  local old_host_config = container_info.body.HostConfig
-  local old_network_setting = container_info.body.NetworkSettings.Networks or {}
+  -- local old_config = container_info.body.Config
+  -- local old_host_config = container_info.body.HostConfig
+  -- local old_network_setting = container_info.body.NetworkSettings.Networks or {}
   local image_config = self.images:inspect({id = old_image_id}).body.Config
-  return get_config(old_config, old_host_config, old_network_setting, image_config)
+  return get_config(container_info.body, image_config)
 end
 
 _docker.new = function(option)
@@ -240,12 +247,14 @@ _docker.options={}
 _docker.options.status_path = uci:get("dockerman", "local", "status_path")
 
 _docker.append_status=function(self,val)
+  if not val then return end
   local file_docker_action_status=io.open(self.options.status_path, "a+")
   file_docker_action_status:write(val)
   file_docker_action_status:close()
 end
 
 _docker.write_status=function(self,val)
+  if not val then return end
   local file_docker_action_status=io.open(self.options.status_path, "w+")
   file_docker_action_status:write(val)
   file_docker_action_status:close()
@@ -260,46 +269,70 @@ _docker.clear_status=function(self)
 end
 
 local status_cb = function(res, source, handler)
-  local json_parse = luci.jsonc.parse
-  if res.code ~= 200 then return end
+  res.body = res.body or {}
   while true do
-    local source_step = source()
-    if source_step then
-      local step = json_parse(source_step)
-      if type(step) == "table" then
-        handler(step)
-      end
+    local chunk = source()
+    if chunk then
+      --standard output to res.body
+      table.insert(res.body, chunk)
+      handler(chunk)
     else
       return
     end
   end
 end
 
+--{"status":"Pulling from library\/debian","id":"latest"}
+--{"status":"Pulling fs layer","progressDetail":[],"id":"50e431f79093"}
+--{"status":"Downloading","progressDetail":{"total":50381971,"current":2029978},"id":"50e431f79093","progress":"[==>                                                ]   2.03MB\/50.38MB"}
+--{"status":"Download complete","progressDetail":[],"id":"50e431f79093"}
+--{"status":"Extracting","progressDetail":{"total":50381971,"current":17301504},"id":"50e431f79093","progress":"[=================>                                 ]   17.3MB\/50.38MB"}
+--{"status":"Pull complete","progressDetail":[],"id":"50e431f79093"}
+--{"status":"Digest: sha256:a63d0b2ecbd723da612abf0a8bdb594ee78f18f691d7dc652ac305a490c9b71a"}
+--{"status":"Status: Downloaded newer image for debian:latest"}
 _docker.pull_image_show_status_cb = function(res, source)
-  return status_cb(res, source, function(step)
-    local buf = _docker:read_status()
-    local num = 0
-    local str = '\t' .. (step.id and (step.id .. ": ") or "") .. (step.status and step.status or "")  .. (step.progress and (" " .. step.progress) or "").."\n"
-    if step.id then buf, num = buf:gsub("\t"..step.id .. ": .-\n", str) end
-    if num == 0 then
-      buf = buf .. str
+  return status_cb(res, source, function(chunk)
+    local json_parse = luci.jsonc.parse
+    local step = json_parse(chunk)
+    if type(step) == "table" then
+      local buf = _docker:read_status()
+      local num = 0
+      local str = '\t' .. (step.id and (step.id .. ": ") or "") .. (step.status and step.status or "")  .. (step.progress and (" " .. step.progress) or "").."\n"
+      if step.id then buf, num = buf:gsub("\t"..step.id .. ": .-\n", str) end
+      if num == 0 then
+        buf = buf .. str
+      end
+      _docker:write_status(buf)
     end
-    _docker:write_status(buf)
   end)
 end
 
+--{"status":"Downloading from https://downloads.openwrt.org/releases/19.07.0/targets/x86/64/openwrt-19.07.0-x86-64-generic-rootfs.tar.gz"}
+--{"status":"Importing","progressDetail":{"current":1572391,"total":3821714},"progress":"[====================\u003e                              ]  1.572MB/3.822MB"}
+--{"status":"sha256:d5304b58e2d8cc0a2fd640c05cec1bd4d1229a604ac0dd2909f13b2b47a29285"}
 _docker.import_image_show_status_cb = function(res, source)
-  return status_cb(res, source, function(step)
-    local buf = _docker:read_status()
-    local num = 0
-    local str = '\t' .. (step.status and step.status or "") .. (step.progress and (" " .. step.progress) or "").."\n"
-    if step.status then buf, num = buf:gsub("\t"..step.status .. " .-\n", str) end
-    if num == 0 then
-      buf = buf .. str
+  return status_cb(res, source, function(chunk)
+    local json_parse = luci.jsonc.parse
+    local step = json_parse(chunk)
+    if type(step) == "table" then
+      local buf = _docker:read_status()
+      local num = 0
+      local str = '\t' .. (step.status and step.status or "") .. (step.progress and (" " .. step.progress) or "").."\n"
+      if step.status then buf, num = buf:gsub("\t"..step.status .. " .-\n", str) end
+      if num == 0 then
+        buf = buf .. str
+      end
+      _docker:write_status(buf)
     end
-    _docker:write_status(buf)
   end
   )
 end
+
+-- _docker.print_status_cb = function(res, source)
+--   return status_cb(res, source, function(step)
+--     luci.util.perror(step)
+--   end
+--   )
+-- end
 
 return _docker
