@@ -24,8 +24,10 @@ function get_images()
     data[index]["_id"] = '<a href="javascript:new_tag(\''..v.Id:sub(8,20)..'\')" class="dockerman-link" title="'..translate("New tag")..'">' .. v.Id:sub(8,20) .. '</a>'
     if v.RepoTags and next(v.RepoTags)~=nil then
       for i, v1 in ipairs(v.RepoTags) do
-        data[index]["_tags"] =(data[index]["_tags"] and ( data[index]["_tags"] .. "<br\>" )or "") .. 
-        '<a href="javascript:un_tag(\''..v1..'\')" class="dockerman_link" title="'..translate("Remove tag")..'" >' .. v1 .. '</a>'
+        data[index]["_tags"] =(data[index]["_tags"] and ( data[index]["_tags"] .. "<br\>" )or "") .. (v1:match("<none>") and v1 or ('<a href="javascript:un_tag(\''..v1..'\')" class="dockerman_link" title="'..translate("Remove tag")..'" >' .. v1 .. '</a>'))
+        if not data[index]["tag"] then
+          data[index]["tag"] = v1:match("<none>") and nil or v1
+        end
       end
     else
       data[index]["_tags"] = v.RepoDigests[1] and v.RepoDigests[1]:match("^(.-)@.+")
@@ -92,11 +94,11 @@ action_pull.write = function(self, section)
     docker:clear_status()
     docker:append_status("Images: " .. "pulling" .. " " .. tag .. "...")
     local x_auth = nixio.bin.b64encode(json_stringify({serveraddress= server}))
-    local res = dk.images:create({query = {fromImage=tag}, header={["X-Registry-Auth"] = x_auth}})
+    local res = dk.images:create({query = {fromImage=tag}, header={["X-Registry-Auth"] = x_auth}}, docker.pull_image_show_status_cb)
     if res and res.code >=300 then
-      docker:append_status("fail code:" .. res.code.." ".. (res.body.message and res.body.message or res.message).. "<br>")
+      docker:append_status("fail code:" .. res.code.." ".. (res.body.message and res.body.message or res.message).. "\n")
     else
-      docker:append_status("done<br>")
+      docker:append_status("done\n")
     end
   else
     docker:append_status("fail code: 400 please input the name of image name!")
@@ -132,7 +134,7 @@ local remove_action = function(force)
   for _, image_table_sid in ipairs(image_table_sids) do
     -- 得到选中项的名字
     if image_list[image_table_sid]._selected == 1 then
-      image_selected[#image_selected+1] = image_list[image_table_sid].id --image_id:cfgvalue(image_table_sid)
+      image_selected[#image_selected+1] = not image_list[image_table_sid]["_tags"]:match("<br\>") and image_list[image_table_sid].tag or image_list[image_table_sid].id
     end
   end
   if next(image_selected) ~= nil then
@@ -144,10 +146,10 @@ local remove_action = function(force)
       if force then query = {force = true} end
       local msg = dk.images:remove({id = img, query = query})
       if msg.code ~= 200 then
-        docker:append_status("fail code:" .. msg.code.." ".. (msg.body.message and msg.body.message or msg.message).. "<br>")
+        docker:append_status("fail code:" .. msg.code.." ".. (msg.body.message and msg.body.message or msg.message).. "\n")
         success = false
       else
-        docker:append_status("done<br>")
+        docker:append_status("done\n")
       end
     end
     if success then docker:clear_status() end
@@ -158,6 +160,7 @@ end
 local docker_status = m:section(SimpleSection)
 docker_status.template = "dockerman/apply_widget"
 docker_status.err=nixio.fs.readfile(dk.options.status_path)
+docker_status.err=docker_status.err and docker_status.err:gsub("\n","<br>"):gsub(" ","&nbsp;")
 if docker_status.err then docker:clear_status() end
 
 local action = m:section(Table,{{}})
@@ -222,7 +225,7 @@ btnsave.write = function (self, section)
     docker:append_status("Images: " .. "save" .. " " .. table.concat(image_selected, "<br/>") .. "...")
     local msg = dk.images:get({query = {names = names}}, cb)
     if msg.code ~= 200 then
-      docker:append_status("fail code:" .. msg.code.." ".. (msg.body.message and msg.body.message or msg.message).. "<br>")
+      docker:append_status("fail code:" .. msg.code.." ".. (msg.body.message and msg.body.message or msg.message).. "\n")
       success = false
     else
       docker:clear_status()
