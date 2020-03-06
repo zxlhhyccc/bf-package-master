@@ -27,14 +27,14 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
-	TITLE:=Revive unavailable songs for Netease Cloud Music
-	DEPENDS:=+node +libopenssl
+	TITLE:=Revive Netease Cloud Music (NodeJS)
+	DEPENDS:=+node +libopenssl 
 	URL:=https://github.com/nondanee/UnblockNeteaseMusic/releases
 	PKGARCH:=all
 endef
 
 define Package/$(PKG_NAME)/description
-Revive unavailable songs for Netease Cloud Music
+Revive Netease Cloud Music (NodeJS)
 endef
 
 define Build/Prepare
