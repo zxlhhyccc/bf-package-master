@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "Unblock Netease Music"
+msgstr "解锁网易云灰色歌曲"
+
+msgid "Base Setting"
+msgstr "基本设置"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "Port"
+msgstr "端口"
+
