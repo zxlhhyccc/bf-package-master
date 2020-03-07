@@ -155,10 +155,11 @@ o:value("3", translate("Use dnsforwarder tcp query and cache"))
 o:value("4", translate("Use dnsforwarder udp query and cache"))
 end
 if nixio.fs.access("/usr/bin/dnscrypt-proxy") then
-o:value("5", translate("Use dnscrypt-proxy query and cache"))
+o:value("5", translate("Use dnscrypt-proxy tcp query and cache"))
+o:value("6", translate("Use dnscrypt-proxy udp query and cache"))
 end
 if nixio.fs.access("/usr/bin/chinadns") then
-o:value("6", translate("Use chinadns query and cache"))
+o:value("7", translate("Use chinadns query and cache"))
 end
 
 o.default = 1
@@ -172,18 +173,19 @@ o:value("3", translate("Use dnsforwarder tcp query and cache"))
 o:value("4", translate("Use dnsforwarder udp query and cache"))
 end
 if nixio.fs.access("/usr/bin/dnscrypt-proxy") then
-o:value("5", translate("Use dnscrypt-proxy query and cache"))
+o:value("5", translate("Use dnscrypt-proxy tcp query and cache"))
+o:value("6", translate("Use dnscrypt-proxy udp query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/smartdns") then
-o:value("6", translate("Use smartdns query and cache"))
+o:value("7", translate("Use smartdns query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/https_dns_proxy") then
-o:value("7", translate("Use https_dns_proxy query and cache"))
+o:value("8", translate("Use https_dns_proxy query and cache"))
 end
 o.default = 1
-o:depends("pdnsd_enable", "6")
+o:depends("pdnsd_enable", "7")
 
 o = s:option(Value, "tunnel_forward", translate("Anti-pollution DNS Server"))
 o:value("0.0.0.0:53", translate("Using System Default DNS"))
@@ -207,6 +209,7 @@ o:depends("pdnsd_enable", "3")
 o:depends("pdnsd_enable", "4")
 o:depends("pdnsd_enable", "5")
 o:depends("pdnsd_enable", "6")
+o:depends("pdnsd_enable", "7")
 o.default = "8.8.4.4:53"
 
 
