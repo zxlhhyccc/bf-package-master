@@ -438,13 +438,23 @@ EOF
 dnscrypt_config_file() {
 	local dnsstr="$(uci_get_by_type global tunnel_forward 8.8.4.4:53)"
 	local dns_port="5335"
-	##if [ "$(uci_get_by_type global pdnsd_enable)" = "7" ] ;then
+--[[	if [ "$(uci_get_by_type global pdnsd_enable)" = "5" ] ;then
+		dnsgroup="TCPGroup"
+	elif [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
+		dnsgroup="UDPGroup"
+	fi
+	if [ "$(uci_get_by_type global pdnsd_enable)" = "7" ] ;then
 		if [ "$(uci_get_by_type global chinadns_enable)" = "0" ] ;then
 			dns_port="5335"
 		else
 			dns_port="5337"
 		fi
-	fi
+		if [ "$(uci_get_by_type global chinadns_enable)" = "5" ] ;then
+			dnsgroup="TCPGroup"
+		elif [ "$(uci_get_by_type global chinadns_enable)" = "6" ] ;then
+			dnsgroup="UDPGroup"
+		fi
+	fi   ]]--
 	kill $(pidof pdnsd) >/dev/null 2>&1 || killall -9 pdnsd >/dev/null 2>&1
 	kill $(pidof dnsparsing) >/dev/null 2>&1 || killall -9 dnsparsing >/dev/null 2>&1
 	/etc/init.d/dnscrypt-proxy disable
