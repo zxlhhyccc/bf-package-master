@@ -39,7 +39,8 @@ CMAKE_OPTIONS += -DDEBUG=1
 
 CONFIGURE_ARGS += \
 		--with-cachedir=/var/pdnsd \
-		--with-target=Linux
+		--with-target=Linux \
+		--enable-ipv6
 
 define Package/pdnsd-alt/install
 	$(INSTALL_DIR) $(1)/usr/sbin
