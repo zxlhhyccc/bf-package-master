@@ -1,4 +1,3 @@
-local fs = require "luci.fs"
 local http = luci.http
 
 mp = Map("unblockneteasemusic", translate("解除网易云音乐播放限制 (Golang)"))
@@ -31,14 +30,14 @@ https_port.rmempty = false
 music_source = s:option(ListValue, "music_source", translate("音源选择"))
 music_source:value("default", translate("默认"))
 music_source:value("customize", translate("自定义"))
-music_source.description = translate("默认为kuwo:kugou")
+music_source.description = translate("默认为kuwo")
 music_source.default = "default"
 music_source.rmempty = false
 
 music_customize_source = s:option(Value, "music_customize_source", translate("自定义音源"))
 music_customize_source.description = translate("自定义音源设置，如kuwo:kugou:migu ,以:隔开,migu在某些运营商下无法使用可能会导致卡顿")
 music_customize_source.default = "kuwo:kugou"
-music_customize_source.rmempty = false
+music_customize_source.rmempty = true
 music_customize_source:depends("music_source", "customize")
 
 hijack = s:option(ListValue, "hijack_ways", translate("劫持方法"))
@@ -73,31 +72,19 @@ download.write = function()
 end
 
 function download_()
-	local sPath, sFile, fd, block
-	sPath = "/usr/share/UnblockNeteaseMusic/ca.crt"
-	sFile = nixio.fs.basename(sPath)
-	if luci.fs.isdirectory(sPath) then
-		fd = io.popen('tar -C "%s" -cz .' % {sPath}, "r")
-		sFile = sFile .. ".tar.gz"
-	else
-		fd = nixio.open(sPath, "r")
-	end
-    if not fd then
-		download.description = string.format('请在客户端信任该证书。该证书由你设备自动生成，安全可靠<br/><span style="color: red">%s</span>', translate("Couldn't open file: ") .. sPath)
-		return
-    end
-    download.description = translate("请在客户端信任该证书。该证书由你设备自动生成，安全可靠")
-	http.header('Content-Disposition', 'attachment; filename="%s"' % {sFile})
+	local sFile, block
+	sFile=nixio.open("/usr/share/UnblockNeteaseMusic/ca.crt","r")
+	http.header('Content-Disposition','attachment; filename="ca.crt"')
 	http.prepare_content("application/octet-stream")
 	while true do
-		block = fd:read(nixio.const.buffersize)
-		if (not block) or (#block ==0) then
+		block=sFile:read(nixio.const.buffersize)
+		if(not block)or(#block==0)then
 			break
 		else
 			http.write(block)
 		end
 	end
-	fd:close()
+	sFile:close()
 	http.close()
 end
 function delete_()
