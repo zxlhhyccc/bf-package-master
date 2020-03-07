@@ -746,7 +746,7 @@ msgid "UDPspeeder Project"
 msgstr "UDPspeeder 项目"
 
 msgid "Appointlist List"
-msgstr "DNS列表"
+msgstr "加速列表"
 
 msgid "udp2raw tunnel"
 msgstr "UDP隧道"
@@ -869,5 +869,3 @@ msgstr "进程详情："
 msgid "File Viewer"
 msgstr "文件查看器"
 
-msgid "Enable Authentication"
-msgstr "启用 用户名/密码 认证"
