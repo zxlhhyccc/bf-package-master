@@ -18,7 +18,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)/config
 menu "Configuration"
-config PACKAGE_$(PKG_NAME)_INCLUDE_docker_ce
+config PACKAGE_$(PKG_NAME)_INCLUDE_docker-ce
 	bool "Include Docker-CE"
 	default y
 config PACKAGE_$(PKG_NAME)_INCLUDE_ttyd
@@ -33,7 +33,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	TITLE:=Docker Manager interface for LuCI
 	PKGARCH:=all
-	DEPENDS:=+luci-lib-docker +PACKAGE_$(PKG_NAME)_INCLUDE_docker_ce:docker-ce +PACKAGE_$(PKG_NAME)_INCLUDE_ttyd:ttyd
+	DEPENDS:=+luci-lib-docker +PACKAGE_$(PKG_NAME)_INCLUDE_docker:docker-ce +PACKAGE_$(PKG_NAME)_INCLUDE_ttyd:ttyd
 endef
 
 define Package/$(PKG_NAME)/description

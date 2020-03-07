@@ -38,8 +38,8 @@ msgstr "停止"
 msgid "Upgrade"
 msgstr "升级容器"
 
-msgid "Duplicate"
-msgstr "复制容器"
+msgid "Duplicate/Edit"
+msgstr "复制/编辑容器"
 
 msgid "Remove"
 msgstr "移除"
@@ -149,7 +149,7 @@ msgstr "网关"
 msgid "New"
 msgstr "新建"
 
-msgid "Resolv CLI"
+msgid "Resolve CLI"
 msgstr "解析命令行"
 
 msgid "Docker Image"
@@ -251,11 +251,11 @@ msgstr "Docker根目录"
 msgid "Index Server Address"
 msgstr "默认服务器地址"
 
-msgid "Socket Path"
-msgstr "Socket路径"
+msgid "Docker Socket Path"
+msgstr "Docker Socket 路径"
 
 msgid "Action Status Tempfile Path"
-msgstr "docker 动作状态的临时文件路径"
+msgstr "Docker 操作状态临时文件路径"
 
 msgid "Where you want to save the docker status file"
 msgstr "保存docker status文件的位置"
@@ -263,8 +263,8 @@ msgstr "保存docker status文件的位置"
 msgid "Enable Debug"
 msgstr "启用调试"
 
-msgid "For debug, It shows all docker API actions of luci-app-dockermab in Debug Tempfile Path"
-msgstr "用于调试，它在调试临时文件路径中显示 luci-app-dockermab 的所有docker API操作"
+msgid "For debug, It shows all docker API actions of luci-app-dockerman in Debug Tempfile Path"
+msgstr "用于调试，在调试临时文件路径中显示 luci-app-dockerman 的所有 Docker API 操作"
 
 msgid "Debug Tempfile Path"
 msgstr "调试临时文件路径"
@@ -338,5 +338,68 @@ msgstr "结束时间"
 msgid "Command line Error"
 msgstr "命令行错误"
 
-msgid "Canceled"
-msgstr "已取消"
+msgid "Host Name"
+msgstr "主机名称"
+
+msgid "The hostname to use for the container"
+msgstr "容器使用的主机名"
+
+msgid "File"
+msgstr "文件"
+
+msgid "Upload"
+msgstr "上传"
+
+msgid "Download"
+msgstr "下载"
+
+msgid "Import"
+msgstr "导入"
+
+msgid "Export"
+msgstr "导出"
+
+msgid "Path"
+msgstr "路径"
+
+msgid "Upload Error"
+msgstr "上传错误"
+
+msgid "Upload Success"
+msgstr "上传成功"
+
+msgid "Remote Endpoint"
+msgstr "远程节点"
+
+msgid "Remote Host"
+msgstr "远程节点域名"
+
+msgid "Remote Port"
+msgstr "远程节点端口"
+
+msgid "Import Images"
+msgstr "导入镜像"
+
+msgid "Load"
+msgstr "载入"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Remove tag"
+msgstr "移除镜像标签"
+
+msgid "New tag"
+msgstr "新镜像标签"
+
+msgid "Container detail"
+msgstr "容器详情"
+
+msgid "Please input new tag"
+msgstr "请输入新镜像标签名称"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Console"
+msgstr "控制台"
