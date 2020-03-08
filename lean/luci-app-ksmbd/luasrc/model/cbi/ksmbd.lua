@@ -1,8 +1,8 @@
 -- Licensed to the public under the Apache License 2.0.
 
-m = Map("ksmbd", translate("Network Shares (CIFSD)"))
+m = Map("ksmbd", translate("Network Shares (KSMBD)"))
 
-s = m:section(TypedSection, "globals", translate("CIFSD is an opensource In-kernel SMB1/2/3 server"))
+s = m:section(TypedSection, "globals", translate("KSMBD is an opensource In-kernel SMB1/2/3 server"))
 s.anonymous = true
 
 s:tab("general",  translate("General Settings"))
@@ -14,8 +14,8 @@ o = s:taboption("general", Value, "workgroup", translate("Workgroup"))
 o.placeholder = 'WORKGROUP'
 
 tmpl = s:taboption("template", Value, "_tmpl",
-	translate("Edit the template that is used for generating the cifsd configuration."), 
-	translate("This is the content of the file '/etc/ksmbd/smb.conf.template' from which your cifsd configuration will be generated. \
+	translate("Edit the template that is used for generating the ksmbd configuration."), 
+	translate("This is the content of the file '/etc/ksmbd/smb.conf.template' from which your ksmbd configuration will be generated. \
 			Values enclosed by pipe symbols ('|') should not be changed. They get their values from the 'General Settings' tab."))
 
 tmpl.template = "cbi/tvalue"

@@ -32,7 +32,7 @@ ifeq ($(ARCH),aarch64)
 endif
 
 PKG_NAME:=verysync
-PKG_VERSION:=v1.3.1
+PKG_VERSION:=v1.3.3
 PKG_RELEASE:=2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -59,10 +59,10 @@ define Build/Prepare
 endef
 
 define Build/Configure
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync
 endef
 
 define Build/Compile
-	upx --lzma $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync
 endef
 
 define Package/$(PKG_NAME)/install
