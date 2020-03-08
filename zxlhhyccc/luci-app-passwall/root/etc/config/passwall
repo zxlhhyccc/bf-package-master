@@ -40,7 +40,6 @@ config global_other
 	option compact_display_nodes '0'
 	option show_group '0'
 	option show_add_mode '0'
-	option wangejibadns '1'
 
 config global_rules
 	option auto_update '0'
