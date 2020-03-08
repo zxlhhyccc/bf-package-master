@@ -11,20 +11,18 @@ PKG_SOURCE_URL:=https://github.com/lisaac/luci-app-dockerman.git
 PKG_SOURCE_VERSION:=$(PKG_VERSION)
 
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)
-PKG_SOURCE:=$(PKG_SOURCE_SUBDIR)-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=$(PKG_SOURCE_SUBDIR)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)/config
-menu "Configuration"
-config PACKAGE_$(PKG_NAME)_INCLUDE_docker-ce
+config PACKAGE_$(PKG_NAME)_INCLUDE_docker_ce
 	bool "Include Docker-CE"
-	default y
+	default n
 config PACKAGE_$(PKG_NAME)_INCLUDE_ttyd
 	bool "Include ttyd"
 	default y
-endmenu
 endef
 
 define Package/$(PKG_NAME)
@@ -33,7 +31,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	TITLE:=Docker Manager interface for LuCI
 	PKGARCH:=all
-	DEPENDS:=+luci-lib-docker +PACKAGE_$(PKG_NAME)_INCLUDE_docker:docker-ce +PACKAGE_$(PKG_NAME)_INCLUDE_ttyd:ttyd
+	DEPENDS:=+luci-lib-docker +PACKAGE_$(PKG_NAME)_INCLUDE_docker_ce:docker-ce +PACKAGE_$(PKG_NAME)_INCLUDE_ttyd:ttyd
 endef
 
 define Package/$(PKG_NAME)/description
@@ -49,10 +47,15 @@ endef
 
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
-uci set uhttpd.main.script_timeout="600"
-uci commit uhttpd
-rm -fr /tmp/luci-indexcache /tmp/luci-modulecache
-/etc/init.d/uhttpd restart
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	uci set uhttpd.main.script_timeout="600" >/dev/null 2>&1
+	uci commit uhttpd >/dev/null 2>&1
+	delete ucitrack.@dockerd[-1]
+	uci add ucitrack dockerd
+	uci set ucitrack.@dockerd[-1].init=dockerd
+	rm -fr /tmp/luci-indexcache /tmp/luci-modulecache >/dev/null 2>&1
+	/etc/init.d/uhttpd restart >/dev/null 2>&1
+fi
 endef
 
 define Package/$(PKG_NAME)/install
