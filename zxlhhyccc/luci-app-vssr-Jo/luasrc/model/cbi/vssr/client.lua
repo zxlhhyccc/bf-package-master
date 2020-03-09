@@ -218,17 +218,6 @@ o:depends("pdnsd_enable", "7")
 o.default = "8.8.4.4:53"
 
 
-o = s:option(Flag, "bt", translate("Kill BT"))
-o.default = 0
-o.rmempty = false
-o.description = translate("Prohibit downloading tool ports through proxy")
-
-o = s:option(Value, "bt_port", translate("BT Port"))
-o.default = "1236:65535"
-o.rmempty = true
-o:depends("bt", "1")
-
-
 o = s:option(Button,"gfw_data",translate("GFW List Data"))
 o.rawhtml  = true
 o.template = "vssr/refresh"

@@ -35,6 +35,8 @@ theme : https://github.com/Leo-Jo-My/luci-theme-opentomcat
 
 theme : https://github.com/Leo-Jo-My/luci-theme-Butterfly
 
+theme : https://github.com/Leo-Jo-My/luci-theme-Butterfly-dark
+
 ### luci-theme-Butterfly已完美适配（兼容所有argon魔改主题）
 
 ### 说明
