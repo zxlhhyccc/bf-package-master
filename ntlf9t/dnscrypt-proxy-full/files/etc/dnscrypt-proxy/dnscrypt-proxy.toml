@@ -1,17 +1,17 @@
 ipv4_servers = true
 #ipv6服务开关
-ipv6_servers = false
+ipv6_servers = true
 require_dnssec = true
 require_nolog = true
 require_nofilter = true
 cache = true
 #是否禁用ipv6
-block_ipv6 = true
+block_ipv6 = false
 force_tcp = true
 server_names = ["cloudflare", "d0wn-us-ns1"]
 #ipv6dns
 #server_names = ["cloudflare-ipv6", "d0wn-tz-ns1-ipv6"]
-listen_addresses = ['127.0.0.1:5433', '[::1]:5433']
+listen_addresses = ['127.0.0.1:5335', '[::1]:5335']
 max_clients = 300
 dnscrypt_servers = true
 doh_servers = true
@@ -29,7 +29,7 @@ cache_min_ttl = 60000
 cache_max_ttl = 864000
 cache_neg_ttl = 60
 
-fallback_resolver = '9.9.9.9:53'
+fallback_resolver = '8.8.4.4:53'
 
 [query_log]
 format = "ltsv"
@@ -49,3 +49,4 @@ minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"
 cache_file = "public-resolvers.md"
 refresh_delay = 72
 prefix = ""
+
