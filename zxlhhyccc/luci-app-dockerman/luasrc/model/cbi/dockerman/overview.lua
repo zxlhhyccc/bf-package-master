@@ -13,12 +13,12 @@ function byte_format(byte)
     if byte > 1024 and i < 5 then
       byte = byte / 1024
     else
-      return string.format("%.2f %s", byte, suff[i]) 
-    end 
+      return string.format("%.2f %s", byte, suff[i])
+    end
   end
 end
 
-local map_dockerman = Map("dockerman", translate("Docker"))
+local map_dockerman = Map("dockerman", translate("Docker"), translate("DockerMan is a Simple Docker manager client for LuCI, If you have any issue please visit:") .. " ".. [[<a href="https://github.com/lisaac/luci-app-dockerman" target="_blank">]] ..translate("Github") .. [[</a>]])
 local docker_info_table = {}
 -- docker_info_table['0OperatingSystem'] = {_key=translate("Operating System"),_value='-'}
 -- docker_info_table['1Architecture'] = {_key=translate("Architecture"),_value='-'}
@@ -84,7 +84,7 @@ s.template = "dockerman/overview"
 --tabs
 tab_section = map_dockerman:section(SimpleSection)
 tab_section.tabs = {
-  dockerman = translate("Dockerman"),
+  dockerman = translate("DockerMan"),
 }
 tab_section.default_tab = "dockerman"
 tab_section.template="dockerman/overview_tab"
@@ -118,7 +118,7 @@ debug.disabled="false"
 local debug_path = section_dockerman:option(Value, "debug_path", translate("Debug Tempfile Path"), translate("Where you want to save the debug tempfile"))
 
 local map_dockerd
-if nixio.fs.access("/etc/config/dockerd") then
+if nixio.fs.access("/etc/config/dockerd") and nixio.fs.access("/usr/bin/dockerd") then
   -- map_dockerman:chain("dockerd")
   tab_section.tabs.docker_daemon = translate("Docker Daemon")
   tab_section.default_tab = "docker_daemon"
@@ -136,9 +136,9 @@ if nixio.fs.access("/etc/config/dockerd") then
   hosts.rmempty = true
   local registry_mirrors = section_dockerd:option(DynamicList, "registry_mirrors", translate("Registry Mirrors"))
   registry_mirrors.placeholder = "https://hub-mirror.c.163.com"
-  local iptables_enable = section_dockerd:option(Flag, "iptables", translate("Enable WAN access"), translate("Enable WAN access container mapped ports, if disable Docker will not allow to add IP masquerading rules"))
-  iptables_enable.enabled = "true"
-  iptables_enable.rmempty = true
+  local wan_enable = section_dockerd:option(Flag, "en_wan", translate("Enable WAN access"), translate("Enable WAN access container mapped ports"))
+  wan_enable.enabled = "true"
+  wan_enable.rmempty = true
   local log_level = section_dockerd:option(ListValue, "log_level", translate("Log Level"), translate('Set the logging level'))
   log_level:value("debug", "debug")
   log_level:value("info", "info")

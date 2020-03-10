@@ -284,8 +284,8 @@ msgstr "设置日志等级"
 msgid "Enable WAN access"
 msgstr "允许 WAN 访问"
 
-msgid "Enable WAN access container mapped ports, if disable Docker will not allow to add IP masquerading rules"
-msgstr "允许 WAN 访问容器映射的端口, 如果禁用，Docker 将不被允许添加 MASQUERADE iptables 规则"
+msgid "Enable WAN access container mapped ports"
+msgstr "允许 WAN 访问容器映射的端口"
 
 msgid "Server Host"
 msgstr "服务端"
@@ -421,3 +421,6 @@ msgstr "错误"
 
 msgid "Console"
 msgstr "控制台"
+
+msgid "DockerMan is a Simple Docker manager client for LuCI, If you have any issue please visit:"
+msgstr "DockerMan 是一个简单的 Docker 管理客户端，如果您在使用过程中有问题，请访问："
