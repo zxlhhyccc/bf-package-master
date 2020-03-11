@@ -668,7 +668,7 @@ msgid "Only Common Ports"
 msgstr "仅常用端口（不走P2P流量到代理）"
 
 
-msgid "Use dnscrypt-proxy tcp query and cache"
+msgid "Use dnscrypt-proxy tcp query and cach"
 msgstr "使用dnscrypt-proxy TCP查询并缓存"
 
 msgid "Use dnsforwarder tcp query and cache"
@@ -710,7 +710,7 @@ msgid "Using acceleration center DNS"
 msgstr "使用加速中心DNS"
 
 msgid "Appoint dns List"
-msgstr "指定DNS解析列表"
+msgstr "DNS解析列表"
 
 msgid "Use https_dns_proxy query and cache"
 msgstr "使用https_dns_proxy TCP查询并缓存"
