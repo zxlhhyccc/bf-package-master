@@ -1,5 +1,12 @@
 msgid ""
-msgstr "Content-Type: text/plain; charset=UTF-8\n"
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "vssr"
 msgstr "Hello World"
@@ -326,9 +333,6 @@ msgstr "自动切换检查周期（秒）"
 msgid "Check timout(second)"
 msgstr "切换检查超时时间（秒）"
 
-msgid "Check Try Count"
-msgstr "切换检查重试次数"
-
 msgid "Enable Process Deamon"
 msgstr "启用进程自动守护"
 
@@ -386,8 +390,8 @@ msgstr "通过代理更新"
 msgid "GFW List"
 msgstr "GFW列表"
 
-msgid "Basic Settings [SS(R)|V2ray|Trojan]"
-msgstr "基本设置 [SS(R)|V2ray|Trojan]"
+msgid "Basic Settings"
+msgstr "基本设置（支持SS/SSR/V2RAY）"
 
 msgid "Main Server"
 msgstr "主服务器"
@@ -542,9 +546,6 @@ msgstr "密码"
 msgid "Enable Servers"
 msgstr "开启服务"
 
-msgid "Enable Auth"
-msgstr "开启验证"
-
 msgid "Subscribing,Please do not refresh!"
 msgstr "请勿刷新本页面，正在订阅中 ..."
 
@@ -635,12 +636,3 @@ msgstr "Diseny+ 代理"
 
 msgid "Prime Video Proxy"
 msgstr "Prime Video 代理"
-
-msgid "adblock settings"
-msgstr "广告屏蔽设置"
-
-msgid "Enable adblock"
-msgstr "开启广告屏蔽"
-
-msgid "Licence"
-msgstr "许可"
