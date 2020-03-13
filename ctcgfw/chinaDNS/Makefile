@@ -9,18 +9,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ChinaDNS
-PKG_VERSION:=2.0.1
-PKG_RELEASE:=1
+PKG_VERSION:=1.3.3
+PKG_RELEASE:=8
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/lrinQVQ/openwrt-chinadns/releases/download/v$(PKG_VERSION)
-PKG_MD5SUM:=5c7aa6a89a969a1dd6469b4808b0759b
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/aa65535/ChinaDNS.git
+PKG_SOURCE_VERSION:=5ed537bd24b7fd53540799f9ab4cf56f749c3245
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
 
 PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Jian Chang <aa65535@live.com>
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
 
 PKG_INSTALL:=1
 PKG_FIXUP:=autoreconf
@@ -41,14 +43,18 @@ Protect yourself against DNS poisoning in China.
 endef
 
 define Package/ChinaDNS/conffiles
+/etc/config/chinadns
 /etc/chinadns_chnroute.txt
 endef
 
 define Package/ChinaDNS/install
-	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/chinadns.init $(1)/etc/init.d/chinadns
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/chnroute.txt $(1)/etc/chinadns_chnroute.txt
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/chinadns $(1)/usr/sbin
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DATA) ./files/chinadns.config $(1)/etc/config/chinadns
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/chinadns $(1)/usr/bin
 endef
 
 $(eval $(call BuildPackage,ChinaDNS))
