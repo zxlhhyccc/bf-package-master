@@ -4,12 +4,10 @@ Copyright 2019 lisaac <https://github.com/lisaac/luci-app-dockerman>
 ]]--
 
 require "luci.util"
-local uci = luci.model.uci.cursor()
 local docker = require "luci.model.docker"
 local dk = docker.new()
 
 m = SimpleForm("docker", translate("Docker"))
-m.template = "dockerman/cbi/xsimpleform"
 m.redirect = luci.dispatcher.build_url("admin", "docker", "networks")
 
 docker_status = m:section(SimpleSection)
@@ -35,7 +33,12 @@ d:value("overlay", "overlay")
 d = s:option(Value, "parent", translate("Parent Interface"))
 d.rmempty = true
 d:depends("dirver", "macvlan")
-d.placeholder="eth0"
+local interfaces = luci.sys and luci.sys.net and luci.sys.net.devices() or {}
+for _, v in ipairs(interfaces) do
+  d:value(v, v)
+end
+d.default="br-lan"
+d.placeholder="br-lan"
 
 d = s:option(Value, "macvlan_mode", translate("Macvlan Mode"))
 d.rmempty = true
@@ -150,13 +153,10 @@ m.handle = function(self, state, data)
           Subnet = subnet,
           Gateway = gateway,
           IPRange = ip_range,
-          -- AuxAddress = aux_address
-          -- AuxiliaryAddresses = aux_address
+          AuxAddress = aux_address,
+          AuxiliaryAddresses = aux_address
         }
       }
-    end
-    if next(aux_address)~=nil then
-      create_body["IPAM"]["Config"]["AuxiliaryAddresses"] = aux_address
     end
     if driver == "macvlan" then
       create_body["Options"] = {
@@ -189,10 +189,14 @@ m.handle = function(self, state, data)
       end
     end
 
+    create_body = docker.clear_empty_tables(create_body)
     docker:write_status("Network: " .. "create" .. " " .. create_body.Name .. "...")
     local res = dk.networks:create({body = create_body})
     if res and res.code == 201 then
       docker:clear_status()
+      if driver == "macvlan" then
+        docker.create_macvlan_interface(data.name, data.parent, data.gateway, data.ip_range)
+      end
       luci.http.redirect(luci.dispatcher.build_url("admin/docker/networks"))
     else
       docker:append_status("code:" .. res.code.." ".. (res.body.message and res.body.message or res.message).. "\n")
