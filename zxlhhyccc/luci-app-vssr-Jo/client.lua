@@ -146,11 +146,6 @@ o:value("oversea", translate("Oversea GFW List Mode"))
 o:value("all", translate("Global Mode"))
 o.default = gfw
 
-o = s:option(ListValue, "dports", translate("Proxy Ports"))
-o:value("1", translate("All Ports"))
-o:value("2", translate("Only Common Ports"))
-o.default = 1
-
 o = s:option(ListValue, "pdnsd_enable", translate("Resolve Dns Mode"))
 o:value("0", translate("Use Local DNS Service listen port 5335"))
 o:value("1", translate("Use Pdnsd tcp query and cache"))
@@ -160,11 +155,10 @@ o:value("3", translate("Use dnsforwarder tcp query and cache"))
 o:value("4", translate("Use dnsforwarder udp query and cache"))
 end
 if nixio.fs.access("/usr/bin/dnscrypt-proxy") then
-o:value("5", translate("Use dnscrypt-proxy tcp query and cache"))
-o:value("6", translate("Use dnscrypt-proxy udp query and cache"))
+o:value("5", translate("Use dnscrypt-proxy query and cache"))
 end
 if nixio.fs.access("/usr/bin/chinadns") then
-o:value("7", translate("Use chinadns query and cache"))
+o:value("6", translate("Use chinadns query and cache"))
 end
 
 o.default = 1
@@ -178,19 +172,18 @@ o:value("3", translate("Use dnsforwarder tcp query and cache"))
 o:value("4", translate("Use dnsforwarder udp query and cache"))
 end
 if nixio.fs.access("/usr/bin/dnscrypt-proxy") then
-o:value("5", translate("Use dnscrypt-proxy tcp query and cache"))
-o:value("6", translate("Use dnscrypt-proxy udp query and cache"))
+o:value("5", translate("Use dnscrypt-proxy query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/smartdns") then
-o:value("7", translate("Use smartdns query and cache"))
+o:value("6", translate("Use smartdns query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/https_dns_proxy") then
-o:value("8", translate("Use https_dns_proxy query and cache"))
+o:value("7", translate("Use https_dns_proxy query and cache"))
 end
 o.default = 1
-o:depends("pdnsd_enable", "7")
+o:depends("pdnsd_enable", "6")
 
 o = s:option(Value, "tunnel_forward", translate("Anti-pollution DNS Server"))
 o:value("0.0.0.0:53", translate("Using System Default DNS"))
@@ -214,7 +207,6 @@ o:depends("pdnsd_enable", "3")
 o:depends("pdnsd_enable", "4")
 o:depends("pdnsd_enable", "5")
 o:depends("pdnsd_enable", "6")
-o:depends("pdnsd_enable", "7")
 o.default = "8.8.4.4:53"
 
 
@@ -234,10 +226,12 @@ o.rawhtml  = true
 o.template = "vssr/refresh"
 o.value =tostring(math.ceil(gfw_count)) .. " " .. translate("Records")
 
+--[[
 o = s:option(Button,"ad_data",translate("Advertising Data")) 
 o .rawhtml  = true
 o .template = "vssr/refresh"
 o .value =tostring(math.ceil(ad_count)) .. " " .. translate("Records")
+]]--
 
 o = s:option(Button,"ip_data",translate("China IP Data"))
 o.rawhtml  = true
