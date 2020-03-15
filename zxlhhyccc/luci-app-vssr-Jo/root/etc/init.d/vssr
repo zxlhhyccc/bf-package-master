@@ -261,7 +261,7 @@ start_pdnsd() {
 		tcp_only="udp_only"
 	fi
 
-	if [ "$(uci_get_by_type global pdnsd_enable)" = "7" ] ;then
+	if [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 		if [ "$(uci_get_by_type global chinadns_enable)" = "0" ] ;then
 			dns_port="5335"
 		else
@@ -324,7 +324,7 @@ server {
 }
 EOF
 
-	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf &
+	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d
 }
 # $1: upstream DNS server
 start_dnsforwarder()
@@ -342,7 +342,7 @@ start_dnsforwarder()
 	elif [ "$(uci_get_by_type global pdnsd_enable)" = "4" ] ;then
 		dnsgroup="UDPGroup"
 	fi
-	if [ "$(uci_get_by_type global pdnsd_enable)" = "7" ] ;then
+	if [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 		if [ "$(uci_get_by_type global chinadns_enable)" = "0" ] ;then
 			dns_port="5335"
 		else
@@ -412,21 +412,11 @@ EOF
 dnscrypt_config_file() {
 	local dnsstr="$(uci_get_by_type global tunnel_forward 8.8.4.4:53)"
 	local dns_port="5335"
-	if [ "$(uci_get_by_type global pdnsd_enable)" = "5" ] ;then
-		dnsgroup="TCPGroup"
-	elif [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
-		dnsgroup="UDPGroup"
-	fi
-	if [ "$(uci_get_by_type global pdnsd_enable)" = "7" ] ;then
+	if [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 		if [ "$(uci_get_by_type global chinadns_enable)" = "0" ] ;then
 			dns_port="5335"
 		else
 			dns_port="5337"
-		fi
-		if [ "$(uci_get_by_type global chinadns_enable)" = "5" ] ;then
-			dnsgroup="TCPGroup"
-		elif [ "$(uci_get_by_type global chinadns_enable)" = "6" ] ;then
-			dnsgroup="UDPGroup"
 		fi
 	fi
 	kill $(pidof pdnsd) >/dev/null 2>&1 || killall -9 pdnsd >/dev/null 2>&1
@@ -740,11 +730,11 @@ fi
 		elif [ "$(uci_get_by_type global pdnsd_enable)" = "3" ] || [ "$(uci_get_by_type global pdnsd_enable)" = "4" ] ;then
 			start_dnsforwarder $dnsserver $dnsport			
 			dnsforwarder_enable_flag=1
-		elif [ "$(uci_get_by_type global pdnsd_enable)" = "5" ] || [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
+		elif [ "$(uci_get_by_type global pdnsd_enable)" = "5" ] ;then
 			dnscrypt_config_file
 			/etc/init.d/dnscrypt-proxy enable && /etc/init.d/dnscrypt-proxy start
                               
-		elif [ "$(uci_get_by_type global pdnsd_enable)" = "7" ] ;then
+		elif [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 			if [ "$(uci_get_by_type global chinadns_enable)" = "1" ] || [ "$(uci_get_by_type global chinadns_enable)" = "2" ] ;then
 				start_pdnsd $dnsserver $dnsport
 				pdnsd_enable_flag=1
@@ -753,7 +743,7 @@ fi
 				start_dnsforwarder $dnsserver $dnsport
 				dnsforwarder_enable_flag=1
 				dnsstrs="0.0.0.0:5337"
-			elif [ "$(uci_get_by_type global chinadns_enable)" = "5" ] || [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
+			elif [ "$(uci_get_by_type global chinadns_enable)" = "5" ] ;then
 				dnscrypt_config_file
 				/etc/init.d/dnscrypt-proxy enable && /etc/init.d/dnscrypt-proxy start
 				dnsstrs="0.0.0.0:5337"

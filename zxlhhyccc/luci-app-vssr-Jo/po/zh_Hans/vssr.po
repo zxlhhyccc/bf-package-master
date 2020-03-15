@@ -668,7 +668,7 @@ msgid "Only Common Ports"
 msgstr "仅常用端口（不走P2P流量到代理）"
 
 
-msgid "Use dnscrypt-proxy tcp query and cache"
+msgid "Use dnscrypt-proxy query and cache"
 msgstr "使用dnscrypt-proxy TCP查询并缓存"
 
 msgid "Use dnsforwarder tcp query and cache"
@@ -677,8 +677,6 @@ msgstr "使用dnsforwarder TCP查询并缓存"
 msgid "Use Pdnsd udp query and cache"
 msgstr "使用Pdnsd UDP查询并缓存"
 
-msgid "Use dnscrypt-proxy udp query and cache"
-msgstr "使用dnscrypt-proxy UDP查询并缓存"
 
 msgid "Use dnsforwarder udp query and cache"
 msgstr "使用dnsforwarder UDP查询并缓存"
@@ -785,9 +783,6 @@ msgstr "启用管理控制台"
 msgid "Service Port"
 msgstr "端口"
 
-msgid "User name"
-msgstr "用户名"
-
 msgid "Socket Connected"
 msgstr "连接测试"
 
@@ -805,7 +800,7 @@ msgid "Plugin Opts"
 msgstr "插件参数"
 
 msgid "Before subscribing please click below to delete all servers in the subscription"
-msgstr "使用此订阅前请删除所有服务器在订阅"
+msgstr "使用此订阅前请先删除所有服务器在订阅"
 
 msgid "Chnroute Setting"
 msgstr "国内IP段数据库更新设置"
@@ -878,3 +873,15 @@ msgstr "文件查看器"
 
 msgid "Enable Authentication"
 msgstr "启用 用户名/密码 认证"
+
+msgid "Subscribe Default Auto-Switch"
+msgstr "订阅新节点自动切换设置"
+
+msgid "Subscribe new add server default Auto-Switch on"
+msgstr "订阅加入的新节点默认开启自动切换"
+
+msgid "Join the white list of domain names will not go agent."
+msgstr "加入的域名不走代理通道，对所有模式有效。且优先于黑名单。"
+
+msgid "These had been joined websites will use proxy.Please input the domain names of websites,every line can input only one website domain.For example,google.com."
+msgstr "加入的域名将走代理，对所有模式有效。输入网站域名，如：google.com，每个地址段一行。"
