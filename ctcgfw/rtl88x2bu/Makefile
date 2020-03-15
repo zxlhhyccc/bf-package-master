@@ -22,8 +22,9 @@ define KernelPackage/rtl88x2bu
   SUBMENU:=Wireless Drivers
   TITLE:=Realtek 8812BU/8822BU support
   DEPENDS:=@USB_SUPPORT +kmod-cfg80211 +kmod-mac80211 +kmod-usb-core +wireless-tools +@DRIVER_11N_SUPPORT +@DRIVER_11AC_SUPPORT
-  FILES:=$(PKG_BUILD_DIR)/88x2bu.ko
-  AUTOLOAD:=$(call AutoProbe,88x2bu)
+  FILES:=$(PKG_BUILD_DIR)/rtl88x2bu.ko
+  AUTOLOAD:=$(call AutoProbe,rtl88x2bu)
+  PROVIDES:=kmod-rtl88x2bu
 endef
 
 EXTRA_CFLAGS=-DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT -DCONFIG_RADIO_WORK -DCONFIG_CONCURRENT_MODE 
@@ -35,11 +36,12 @@ EXTRA_CFLAGS=-DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT -DCONFIG_RADIO
 # CONFIG_CONCURRENT_MODE:Realtek’s Linux Wi-Fi driver can support Station+AP and Station+P2P single channel concurrent mode.
 
 define Build/Compile
-	$(MAKE) $(PKG_JOBS) -C "$(LINUX_DIR)" \
+	+$(MAKE) $(PKG_JOBS) -C "$(LINUX_DIR)" \
 		$(KERNEL_MAKE_FLAGS) \
 		M="$(PKG_BUILD_DIR)" \
 		USER_EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
 		CONFIG_RTL8822BU=m \
+		USER_MODULE_NAME=rtl88x2bu \
 		modules
 endef
 
