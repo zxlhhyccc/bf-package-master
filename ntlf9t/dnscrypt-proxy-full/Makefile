@@ -42,8 +42,8 @@ ifeq ($(ARCH),mips)
 	PKG_BUILD_DNSCRYPT:=linux-mips64
 endif
 ifeq ($(ARCH),arm)
-	PKG_ARCH_DNSCRYPT:=linux-arm
-	PKG_BUILD_DNSCRYPT:=linux_arm
+	PKG_ARCH_DNSCRYPT:=linux_arm
+	PKG_BUILD_DNSCRYPT:=linux-arm
 endif
 ifeq ($(ARCH),aarch64)
 	PKG_ARCH_DNSCRYPT:=linux_arm64
