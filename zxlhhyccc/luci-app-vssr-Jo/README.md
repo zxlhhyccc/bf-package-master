@@ -37,7 +37,7 @@ theme : https://github.com/Leo-Jo-My/luci-theme-Butterfly
 
 theme : https://github.com/Leo-Jo-My/luci-theme-Butterfly-dark
 
-### luci-theme-Butterfly已完美适配（兼容所有argon魔改主题）
+### luci-theme-Butterfly已完美适配（除部分主题显示不正常外适用大部分主题）
 
 ### 说明
 
