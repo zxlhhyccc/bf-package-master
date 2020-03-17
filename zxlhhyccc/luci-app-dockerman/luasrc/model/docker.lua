@@ -334,16 +334,26 @@ end
 -- end
 
 _docker.create_macvlan_interface = function(name, device, gateway, ip_range)
+  if name == "local" then return end
   if not nixio.fs.access("/etc/config/network") or not nixio.fs.access("/etc/config/firewall") then return end
   if uci:get("dockerman", "local", "remote_endpoint") == "true" then return end
   local ip = require "luci.ip"
   local if_name = "docker_"..name
+  local dev_name = "macvlan_"..name
   local net_mask = tostring(ip.new(ip_range):mask())
   local lan_interfaces
+  -- add macvlan device
+  uci:delete("network", dev_name)
+  uci:set("network", dev_name, "device")
+  uci:set("network", dev_name, "name", dev_name)
+  uci:set("network", dev_name, "ifname", device)
+  uci:set("network", dev_name, "type", "macvlan")
+  uci:set("network", dev_name, "mode", "bridge")
+  -- add macvlan interface
   uci:delete("network", if_name)
   uci:set("network", if_name, "interface")
   uci:set("network", if_name, "proto", "static")
-  uci:set("network", if_name, "ifname", if_name)
+  uci:set("network", if_name, "ifname", dev_name)
   uci:set("network", if_name, "ipaddr", gateway)
   uci:set("network", if_name, "netmask", net_mask)
   uci:foreach("firewall", "zone", function(s)
@@ -355,19 +365,21 @@ _docker.create_macvlan_interface = function(name, device, gateway, ip_range)
       else
         interfaces = s.network and s.network or ""
       end
-      uci:set("firewall", s[".name"], "network", interfaces .. " " .. if_name)
+      interfaces = interfaces .. " " .. if_name
+      interfaces = interfaces:gsub("%s+", " ")
+      uci:set("firewall", s[".name"], "network", interfaces)
     end
   end)
   uci:commit("firewall")
   uci:commit("network")
-  device = device:match("br%-(.+)") or device
-  os.execute("ifup " .. device)
 end
 
 _docker.remove_macvlan_interface = function(name)
+  if name == "local" then return end
   if not nixio.fs.access("/etc/config/network") or not nixio.fs.access("/etc/config/firewall") then return end
   if uci:get("dockerman", "local", "remote_endpoint") == "true" then return end
   local if_name = "docker_"..name
+  local dev_name = "macvlan_"..name
   uci:foreach("firewall", "zone", function(s)
     if s.name == "lan" then
       local interfaces
@@ -377,10 +389,12 @@ _docker.remove_macvlan_interface = function(name)
         interfaces = s.network and s.network or ""
       end
       interfaces = interfaces and interfaces:gsub(if_name, "")
+      interfaces = interfaces and interfaces:gsub("%s+", " ")
       uci:set("firewall", s[".name"], "network", interfaces)
     end
   end)
   uci:commit("firewall")
+  uci:delete("network", dev_name)
   uci:delete("network", if_name)
   uci:commit("network")
   os.execute("ip link del " .. if_name)
