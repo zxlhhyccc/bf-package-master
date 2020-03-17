@@ -228,6 +228,7 @@ o.default = "1236:65535"
 o.rmempty = true
 o:depends("bt", "1")
 
+
 o = s:option(Button,"gfw_data",translate("GFW List Data"))
 o.rawhtml  = true
 o.template = "vssr/refresh"

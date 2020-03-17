@@ -753,7 +753,7 @@ fi
 				start_dnsforwarder $dnsserver $dnsport
 				dnsforwarder_enable_flag=1
 				dnsstrs="0.0.0.0:5337"
-			elif [ "$(uci_get_by_type global chinadns_enable)" = "5" ] || [ "$(uci_get_by_type global chinadns_enable)" = "6" ] ;then
+			elif [ "$(uci_get_by_type global chinadns_enable)" = "5" ] || [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 				dnscrypt_config_file
 				/etc/init.d/dnscrypt-proxy enable && /etc/init.d/dnscrypt-proxy start
 				dnsstrs="0.0.0.0:5337"
