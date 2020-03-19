@@ -95,8 +95,6 @@ o:value("16", translate("16 Threads"))
 o:value("32", translate("32 Threads"))
 o:value("64", translate("64 Threads"))
 o:value("128", translate("128 Threads"))
-o:value("256", translate("256 Threads"))
-o:value("512", translate("512 Threads"))
 o.default = "0"
 o.rmempty = false
 
@@ -128,7 +126,9 @@ end
 if nixio.fs.access("/usr/bin/chinadns") then
 o:value("7", translate("Use chinadns query and cache"))
 end
-
+if nixio.fs.access("/usr/bin/dns2socks") then
+o:value("8", translate("Use dns2socks query and cache"))
+end
 o.default = 1
 
 o = s:option(ListValue, "chinadns_enable", translate("Chiadns Resolve Dns Mode"))
@@ -143,16 +143,22 @@ if nixio.fs.access("/usr/bin/dnscrypt-proxy") then
 o:value("5", translate("Use dnscrypt-proxy tcp query and cache"))
 o:value("6", translate("Use dnscrypt-proxy udp query and cache"))
 end
+if nixio.fs.access("/usr/bin/chinadns") then
+o:value("7", translate("Use chinadns query and cache"))
+end
+if nixio.fs.access("/usr/bin/dns2socks") then
+o:value("8", translate("Use dns2socks query and cache"))
+end
 
 if nixio.fs.access("/usr/sbin/smartdns") then
-o:value("7", translate("Use smartdns query and cache"))
+o:value("9", translate("Use smartdns query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/https_dns_proxy") then
-o:value("8", translate("Use https_dns_proxy query and cache"))
+o:value("10", translate("Use https_dns_proxy query and cache"))
 end
 o.default = 1
-o:depends("pdnsd_enable", "7")
+o:depends("pdnsd_enable", "9")
 
 o = s:option(Value, "tunnel_forward", translate("Anti-pollution DNS Server"))
 o:value("0.0.0.0:53", translate("Using System Default DNS"))
@@ -177,6 +183,8 @@ o:depends("pdnsd_enable", "4")
 o:depends("pdnsd_enable", "5")
 o:depends("pdnsd_enable", "6")
 o:depends("pdnsd_enable", "7")
+o:depends("pdnsd_enable", "8")
+o:depends("pdnsd_enable", "9")
 o.default = "8.8.4.4:53"
 
 

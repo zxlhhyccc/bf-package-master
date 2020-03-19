@@ -6,7 +6,7 @@ a new SSR SS V2ray luci app bese luci-app-ssr-plus
 
 1.基于lean ssr+ 全新修改的Vssr（更名为Hello World） 主要做了很多的修改和优化，同时感谢插件原作者所做出的的努力和贡献！
 
-2.节点列表支持国旗显示 TW节点为五星红旗， 节点列表页面 打开自动ping.
+2.节点列表支持国旗显示 ，节点列表页面 打开自动ping.
 
 3.优化了在节点列表页面点击应用后节点切换的速度。同时也优化了自动切换的速度。
 
@@ -20,8 +20,6 @@ a new SSR SS V2ray luci app bese luci-app-ssr-plus
 
 ###  此版本已和魔改版合并
 
-#### Notice
-需要的依赖有python3-maxminddb libmaxminddb 请自行添加
 
 #### 感谢
 https://github.com/coolsnowwolf/lede
@@ -43,10 +41,6 @@ theme : https://github.com/Leo-Jo-My/luci-theme-Butterfly-dark
 
 源码来源：https://github.com/jerrykuku/luci-app-vssr
 
-### 如发现某些网站无法正常加载图片ssh执行已下操作
-    cd ..
-
-    rm -rfv  etc/dnsmasq.ssr/ad.conf
 
 ### 使用方法
 ```Brach
