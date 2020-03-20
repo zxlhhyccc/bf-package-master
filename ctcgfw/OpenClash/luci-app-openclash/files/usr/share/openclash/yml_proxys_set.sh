@@ -183,7 +183,11 @@ yml_servers_set()
       fi
    fi
    
-   if [ ! -z "$udp" ] && [ "$obfs" = "none" ] && [ "$type" != "trojan" ]; then
+   if [ ! -z "$udp" ] && [ "$obfs" = "none" ] && [ "$type" = "ss" ]; then
+      udp=", udp: $udp"
+   fi
+   
+   if [ ! -z "$udp" ] && [ "$type" != "trojan" ] && [ "$type" != "ss" ]; then
       udp=", udp: $udp"
    fi
    
@@ -281,8 +285,12 @@ EOF
       echo "- { name: \"$name\", type: $type, server: $server, port: $port, uuid: $uuid, alterId: $alterId, cipher: $securitys$udp$skip_cert_verify$obfs_vmess$path$custom$tls }" >>$SERVER_FILE
    fi
    
-   if [ "$type" = "socks5" ] || [ "$type" = "http" ]; then
+   if [ "$type" = "socks5" ]; then
       echo "- { name: \"$name\", type: $type, server: $server, port: $port, username: $auth_name, password: $auth_pass$udp$skip_cert_verify$tls }" >>$SERVER_FILE
+   fi
+   
+   if [ "$type" = "http" ]; then
+      echo "- { name: \"$name\", type: $type, server: $server, port: $port, username: $auth_name, password: $auth_pass$skip_cert_verify$tls }" >>$SERVER_FILE
    fi
    
    if [ "$type" = "trojan" ]; then
