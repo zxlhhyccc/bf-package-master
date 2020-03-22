@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=Luci for smartdns server
-LUCI_DEPENDS:=+smartdns-master
+LUCI_DEPENDS:=+smartdns
 LUCI_PKGARCH:=all
 PKG_NAME:=luci-app-smartdns-master
-PKG_VERSION:=1
-PKG_RELEASE:=2
+PKG_VERSION:=2
+PKG_RELEASE:=1
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
