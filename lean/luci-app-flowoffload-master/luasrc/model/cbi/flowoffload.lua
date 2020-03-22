@@ -15,6 +15,17 @@ s = m:section(TypedSection, "flow")
 s.addremove = false
 s.anonymous = true
 
+flow = s:option(Flag, "flow_offloading", translate("Enable"))
+flow.default = 0
+flow.rmempty = false
+flow.description = translate("Enable software flow offloading for connections. (decrease cpu load / increase routing throughput)")
+
+hw = s:option(Flag, "flow_offloading_hw", translate("HWNAT"))
+hw.default = 0
+hw.rmempty = true
+hw.description = translate("Enable Hardware NAT (depends on hw capability like MTK 762x)")
+hw:depends("flow_offloading", 1)
+
 bbr = s:option(Flag, "bbr", translate("Enable BBR"))
 bbr.default = 0
 bbr.rmempty = false
