@@ -26,7 +26,7 @@ ifeq ($(ARCH),aarch64)
 endif
 
 PKG_NAME:=syncthing
-PKG_VERSION:=v1.3.4
+PKG_VERSION:=v1.4.0
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-linux-$(PKG_ARCH_SYNCTHING)-$(PKG_VERSION).tar.gz
@@ -55,7 +55,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	chmod 0755 $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_SYNCTHING)-$(PKG_VERSION)/syncthing && upx --lzma $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_SYNCTHING)-$(PKG_VERSION)/syncthing
+	chmod 0755 $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_SYNCTHING)-$(PKG_VERSION)/syncthing && $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_SYNCTHING)-$(PKG_VERSION)/syncthing
 endef
 
 define Package/$(PKG_NAME)/install
