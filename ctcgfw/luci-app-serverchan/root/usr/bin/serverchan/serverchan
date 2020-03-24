@@ -323,8 +323,8 @@ function blackwhitelist(){
 			fi	
 		# 如果 “仅关注接口选项打开” 
 		elif [ ! -z "$serverchan_interface" ] ; then
-			local ip=`iw dev $serverchan_interface station dump | grep -i -w $1 | grep Station 2>/dev/null`
-			if [ ! -z "$ip" ];then local ip=`getinterface $1 | grep -i -w $serverchan_interface`;fi
+			local ip=`iw dev $serverchan_interface station dump | grep -i -w $1 | grep Station | grep -v "^$" 2>/dev/null`
+			if [ -z "$ip" ];then local ip=`getinterface $1 | grep -i -w $serverchan_interface | grep -v "^$"`;fi
 			if [ ! -z "$ip" ];then
 				echo 1
 			fi
@@ -387,24 +387,23 @@ function geterrdevicealiases(){
 
 # 无人值守任务
 function unattended(){
+if [ ! -z "$debuglevel" ] && [ "$debuglevel" -ne "1" ] ; then echo "`date "+%Y-%m-%d %H:%M:%S"`  【无人值守任务】检测客户端在线情况" >> ${logfile};fi
 if [ `get_config send_enable` -eq 3 ] ; then return;fi
 local err_mac=`geterrdevicealiases`
-
+if [ -z "$err_mac" ] &&  [ ! -z "$debuglevel" ] && [ "$debuglevel" -ne "1" ]; then echo "`date "+%Y-%m-%d %H:%M:%S"` 【无人值守任务】关注设备不在线" >> ${logfile};elif [ ! -z "$err_mac" ] && [ ! -z "$debuglevel" ] && [ "$debuglevel" -ne "1" ]; then echo "`date "+%Y-%m-%d %H:%M:%S"` 【无人值守任务】关注设备在线，跳过" >> ${logfile};fi
 # 关注设备不在线，执行任务
-if [ -z "$err_mac" ] && [ ! -z "$system_time_event" ] && [ ! -z "$autoreboot_time" ]; then
-	if [ `cat /proc/uptime | awk -F. '{run_hour=$1/3600;printf("%d",run_hour)}'` -ge "$autoreboot_time" ] && [ "$system_time_event" -eq "1" ] ; then
+if [ -z "$err_mac" ] && [ ! -z "$system_time_event" ] ; then
+	if [ ! -z "$autoreboot_time" ] && [ `cat /proc/uptime | awk -F. '{run_hour=$1/3600;printf("%d",run_hour)}'` -ge "$autoreboot_time" ] && [ "$system_time_event" -eq "1" ] ; then
 		echo "`date "+%Y-%m-%d %H:%M:%S"` 【无人值守任务】重启路由器咯" >> ${logfile}
 		cat ${logfile} > /usr/bin/serverchan/errlog
 		sleep 2
 		reboot
 		exit
-	elif [ `ubus call network.interface.wan status | grep \"uptime\" | sed $'s/\"uptime": //g'| sed $'s/\,//g' | awk -F. '{run_hour=$1/3600;printf("%d",run_hour)}'` -ge "$network_restart_time" ] && [ "$system_time_event" -eq "2" ] ; then
+	elif [ ! -z "$network_restart_time" ] && [ `ubus call network.interface.wan status | grep \"uptime\" | sed $'s/\"uptime": //g'| sed $'s/\,//g' | awk -F. '{run_hour=$1/3600;printf("%d",run_hour)}'` -ge "$network_restart_time" ] && [ "$system_time_event" -eq "2" ] ; then
 		echo "`date "+%Y-%m-%d %H:%M:%S"` 【无人值守任务】重新拨号咯" >> ${logfile}
 		network_restart 60
 	fi
 fi
-
-
 
 # 重拨尝试获取公网
 if [ -z "$err_mac" ] && [ ! -z "$public_ip_event" ] && [ ! -z "$public_ip_retry_count" ] ; then
@@ -1087,7 +1086,7 @@ deltemp
 serverchan_cron
 
 # 限制并发进程
-thread_num=3
+thread_num=4
 [ -e ${dir}fd1 ] || mkfifo ${dir}fd1
 exec 5<>${dir}fd1
 rm -f ${dir}fd1 >/dev/null 2>&1
@@ -1145,7 +1144,7 @@ do
 	# 新设备接入检测
 	# 从 arp 缓存中读取 0x2 在线列表
 	if [ ! -f "${dir}ipAddress" ] ; then > ${dir}ipAddress;fi
-	IPLIST=$( cat /proc/net/arp | grep "0x2" | awk  '{print $1}' | grep -v "^$" | sort -u ) && IPLISTrow=$(grep -c "" ${dir}ipAddress)
+	IPLIST=$( cat /proc/net/arp | grep "0x2\|0x6" | awk  '{print $1}' | grep -v "^$" | sort -u ) && IPLISTrow=$(grep -c "" ${dir}ipAddress)
 	send_enable=`get_config send_enable`
 	for  ip in $IPLIST; do
 		# 如果 “ip 列表不为空” 
