@@ -159,7 +159,7 @@ if nixio.fs.access("/usr/bin/chinadns") then
 o:value("7", translate("Use chinadns query and cache"))
 end
 if nixio.fs.access("/usr/bin/dns2socks") then
-o:value("8", translate("Use DNS2SOCKS query and cache"))
+o:value("8", translate("Use dns2socks query and cache"))
 end
 o.default = 1
 
@@ -179,7 +179,7 @@ if nixio.fs.access("/usr/bin/chinadns") then
 o:value("7", translate("Use chinadns query and cache"))
 end
 if nixio.fs.access("/usr/bin/dns2socks") then
-o:value("8", translate("Use DNS2SOCKS query and cache"))
+o:value("8", translate("Use dns2socks query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/smartdns") then
