@@ -865,8 +865,8 @@ msgstr "删除所有订阅服务器节点"
 msgid "Update All Subscribe Severs"
 msgstr "更新所有订阅服务器节点"
 
-msgid "Use DNS2SOCKS query and cache"
-msgstr "使用 DNS2SOCKS 查询并缓存"
+msgid "Use dns2socks query and cache"
+msgstr "使用 dns2socks 查询并缓存"
 
 msgid "Running Details:"
 msgstr "进程详情："
