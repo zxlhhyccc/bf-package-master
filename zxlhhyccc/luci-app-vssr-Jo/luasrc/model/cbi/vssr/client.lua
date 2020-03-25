@@ -9,7 +9,7 @@ local ad_count=0
 local ip_count=0
 local gfwmode=0
 
-if nixio.fs.access("/etc/dnsmasq.ssr/gfw_list.conf") then
+if nixio.fs.access("/etc/dnsmasq.vssr/gfw_list.conf") then
 gfwmode=1		
 end
 
@@ -18,9 +18,9 @@ local uci = luci.model.uci.cursor()
 local sys = require "luci.sys"
 
 if gfwmode==1 then 
- gfw_count = tonumber(sys.exec("cat /etc/dnsmasq.ssr/gfw_list.conf | wc -l"))/2
- if nixio.fs.access("/etc/dnsmasq.ssr/ad.conf") then
-  ad_count=tonumber(sys.exec("cat /etc/dnsmasq.ssr/ad.conf | wc -l"))
+ gfw_count = tonumber(sys.exec("cat /etc/dnsmasq.vssr/gfw_list.conf | wc -l"))/2
+ if nixio.fs.access("/etc/dnsmasq.vssr/ad.conf") then
+  ad_count=tonumber(sys.exec("cat /etc/dnsmasq.vssr/ad.conf | wc -l"))
  end
 end
  
@@ -146,51 +146,39 @@ o.default = 1
 o = s:option(ListValue, "pdnsd_enable", translate("Resolve Dns Mode"))
 o:value("0", translate("Use Local DNS Service listen port 5335"))
 o:value("1", translate("Use Pdnsd tcp query and cache"))
-o:value("2", translate("Use Pdnsd udp query and cache"))
 if nixio.fs.access("/usr/bin/dnsforwarder") then
 o:value("3", translate("Use dnsforwarder tcp query and cache"))
-o:value("4", translate("Use dnsforwarder udp query and cache"))
 end
 if nixio.fs.access("/usr/bin/dnscrypt-proxy") then
-o:value("5", translate("Use dnscrypt-proxy tcp query and cache"))
-o:value("6", translate("Use dnscrypt-proxy udp query and cache"))
+o:value("5", translate("Use dnscrypt-proxy query and cache"))
 end
 if nixio.fs.access("/usr/bin/chinadns") then
-o:value("7", translate("Use chinadns query and cache"))
+o:value("6", translate("Use chinadns query and cache"))
 end
 if nixio.fs.access("/usr/bin/dns2socks") then
-o:value("8", translate("Use dns2socks query and cache"))
+o:value("7", translate("Use DNS2SOCKS query and cache"))
 end
 o.default = 1
 
 o = s:option(ListValue, "chinadns_enable", translate("Chiadns Resolve Dns Mode"))
 o:value("0", translate("Use Local DNS Service"))
 o:value("1", translate("Use Pdnsd tcp query and cache"))
-o:value("2", translate("Use Pdnsd udp query and cache"))
 if nixio.fs.access("/usr/bin/dnsforwarder") then
 o:value("3", translate("Use dnsforwarder tcp query and cache"))
-o:value("4", translate("Use dnsforwarder udp query and cache"))
 end
 if nixio.fs.access("/usr/bin/dnscrypt-proxy") then
-o:value("5", translate("Use dnscrypt-proxy tcp query and cache"))
-o:value("6", translate("Use dnscrypt-proxy udp query and cache"))
-end
-if nixio.fs.access("/usr/bin/chinadns") then
-o:value("7", translate("Use chinadns query and cache"))
-end
-if nixio.fs.access("/usr/bin/dns2socks") then
-o:value("8", translate("Use dns2socks query and cache"))
+o:value("5", translate("Use dnscrypt-proxy query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/smartdns") then
-o:value("9", translate("Use smartdns query and cache"))
+o:value("6", translate("Use smartdns query and cache"))
 end
 
 if nixio.fs.access("/usr/sbin/https_dns_proxy") then
-o:value("10", translate("Use https_dns_proxy query and cache"))
+o:value("7", translate("Use https_dns_proxy query and cache"))
 end
 o.default = 1
-o:depends("pdnsd_enable", "9")
+o:depends("pdnsd_enable", "6")
 
 o = s:option(Value, "tunnel_forward", translate("Anti-pollution DNS Server"))
 o:value("0.0.0.0:53", translate("Using System Default DNS"))
@@ -215,87 +203,8 @@ o:depends("pdnsd_enable", "4")
 o:depends("pdnsd_enable", "5")
 o:depends("pdnsd_enable", "6")
 o:depends("pdnsd_enable", "7")
-o:depends("pdnsd_enable", "8")
-o:depends("pdnsd_enable", "9")
 o.default = "8.8.4.4:53"
 
-
-o = s:option(Flag, "bt", translate("Kill BT"))
-o.default = 0
-o.rmempty = false
-o.description = translate("Prohibit downloading tool ports through proxy")
-
-o = s:option(Value, "bt_port", translate("BT Port"))
-o.default = "1236:65535"
-o.rmempty = true
-o:depends("bt", "1")
-
-
--- [[ SOCKS5 Proxy ]]--
-if nixio.fs.access("/usr/bin/ssr-local") then
-
-s = m:section(TypedSection, "socks5_proxy", translate("SOCKS5 Proxy"))
-s.anonymous = true
-o = s:option(ListValue, "server", translate("Server"))
-o:value("nil", translate("Disable"))
-for _,key in pairs(key_table) do o:value(key,server_table[key]) end
-o.default = "nil"
-o.rmempty = false
-
-o = s:option(Value, "local_port", translate("Local Port"))
-o.datatype = "port"
-o.default = 1080
-o.rmempty = false
-
--- [[ HTTP Proxy ]]--
-if nixio.fs.access("/usr/sbin/privoxy") then
-o = s:option(Flag, "http_enable", translate("Enable HTTP Proxy"))
-o.rmempty = false
-
-o = s:option(Value, "http_port", translate("HTTP Port"))
-o.datatype = "port"
-o.default = 1081
-o.rmempty = false
-end  
-end
-o = s:option(Flag, "v2ray_flow",  translate("Open v2ray split-flow") .."</font>")
-o.rmempty = false
-o.description = ("<font color='blue'>" ..translate("When open v2ray split-flow,your main server must be a v2ray server").."</font>")
-
-o = s:option(ListValue, "youtube_server", translate("Youtube Proxy"))
-o:value("nil", translate("Same as Global Server"))
-for _,key in pairs(key_table_v2) do o:value(key,v2ray_table[key]) end
-o:depends("v2ray_flow", "1")
-o.default = "nil"
-
-
-
-o = s:option(ListValue, "tw_video_server", translate("TaiWan Video Proxy"))
-o:value("nil", translate("Same as Global Server"))
-for _,key in pairs(key_table_v2) do o:value(key,v2ray_table[key]) end
-o:depends("v2ray_flow", "1")
-o.default = "nil"
-
-
-o = s:option(ListValue, "netflix_server", translate("Netflix Proxy"))
-o:value("nil", translate("Same as Global Server"))
-for _,key in pairs(key_table_v2) do o:value(key,v2ray_table[key]) end
-o:depends("v2ray_flow", "1")
-o.default = "nil"
-
-
-o = s:option(ListValue, "disney_server", translate("Diseny+ Proxy"))
-o:value("nil", translate("Same as Global Server"))
-for _,key in pairs(key_table_v2) do o:value(key,v2ray_table[key]) end
-o:depends("v2ray_flow", "1")
-o.default = "nil"
-
-
-o = s:option(ListValue, "prime_server", translate("Prime Video Proxy"))
-o:value("nil", translate("Same as Global Server"))
-for _,key in pairs(key_table_v2) do o:value(key,v2ray_table[key]) end
-o:depends("v2ray_flow", "1")
-o.default = "nil"
 
 o = s:option(Button,"gfw_data",translate("GFW List Data"))
 o.rawhtml  = true

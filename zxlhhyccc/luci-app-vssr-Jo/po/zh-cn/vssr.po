@@ -666,7 +666,7 @@ msgid "Only Common Ports"
 msgstr "仅常用端口（不走P2P流量到代理）"
 
 
-msgid "Use dnscrypt-proxy tcp query and cache"
+msgid "Use dnscrypt-proxy query and cache"
 msgstr "使用dnscrypt-proxy TCP查询并缓存"
 
 msgid "Use dnsforwarder tcp query and cache"
@@ -675,8 +675,6 @@ msgstr "使用dnsforwarder TCP查询并缓存"
 msgid "Use Pdnsd udp query and cache"
 msgstr "使用Pdnsd UDP查询并缓存"
 
-msgid "Use dnscrypt-proxy udp query and cache"
-msgstr "使用dnscrypt-proxy UDP查询并缓存"
 
 msgid "Use dnsforwarder udp query and cache"
 msgstr "使用dnsforwarder UDP查询并缓存"
@@ -783,9 +781,6 @@ msgstr "启用管理控制台"
 msgid "Service Port"
 msgstr "端口"
 
-msgid "User name"
-msgstr "用户名"
-
 msgid "Socket Connected"
 msgstr "连接测试"
 
@@ -865,8 +860,8 @@ msgstr "删除所有订阅服务器节点"
 msgid "Update All Subscribe Severs"
 msgstr "更新所有订阅服务器节点"
 
-msgid "Use dns2socks query and cache"
-msgstr "使用 dns2socks 查询并缓存"
+msgid "Use DNS2SOCKS query and cache"
+msgstr "使用 DNS2SOCKS 查询并缓存"
 
 msgid "Running Details:"
 msgstr "进程详情："

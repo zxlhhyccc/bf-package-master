@@ -319,7 +319,7 @@ server {
 }
 EOF
 
-	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf &
+	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d
 }
 # $1: upstream DNS server
 start_dnsforwarder()
@@ -337,7 +337,7 @@ start_dnsforwarder()
 	elif [ "$(uci_get_by_type global pdnsd_enable)" = "4" ] ;then
 		dnsgroup="UDPGroup"
 	fi
-	if [ "$(uci_get_by_type global pdnsd_enable)" = "9" ] ;then
+	if [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 		if [ "$(uci_get_by_type global chinadns_enable)" = "0" ] ;then
 			dns_port="5335"
 		else
@@ -407,21 +407,11 @@ EOF
 dnscrypt_config_file() {
 	local dnsstr="$(uci_get_by_type global tunnel_forward 8.8.4.4:53)"
 	local dns_port="5335"
-	if [ "$(uci_get_by_type global pdnsd_enable)" = "5" ] ;then
-		dnsgroup="TCPGroup"
-	elif [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
-		dnsgroup="UDPGroup"
-	fi
-	if [ "$(uci_get_by_type global pdnsd_enable)" = "9" ] ;then
+	if [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 		if [ "$(uci_get_by_type global chinadns_enable)" = "0" ] ;then
 			dns_port="5335"
 		else
 			dns_port="5337"
-		fi
-		if [ "$(uci_get_by_type global chinadns_enable)" = "5" ] ;then
-			dnsgroup="TCPGroup"
-		elif [ "$(uci_get_by_type global chinadns_enable)" = "6" ] ;then
-			dnsgroup="UDPGroup"
 		fi
 	fi
 	kill $(pidof pdnsd) >/dev/null 2>&1 || killall -9 pdnsd >/dev/null 2>&1
@@ -736,11 +726,11 @@ fi
 		elif [ "$(uci_get_by_type global pdnsd_enable)" = "3" ] || [ "$(uci_get_by_type global pdnsd_enable)" = "4" ] ;then
 			start_dnsforwarder $dnsserver $dnsport			
 			dnsforwarder_enable_flag=1
-		elif [ "$(uci_get_by_type global pdnsd_enable)" = "5" ] || [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
+		elif [ "$(uci_get_by_type global pdnsd_enable)" = "5" ] ;then
 			dnscrypt_config_file
 			/etc/init.d/dnscrypt-proxy enable && /etc/init.d/dnscrypt-proxy start
                               
-		elif [ "$(uci_get_by_type global pdnsd_enable)" = "9" ] ;then
+		elif [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
 			if [ "$(uci_get_by_type global chinadns_enable)" = "1" ] || [ "$(uci_get_by_type global chinadns_enable)" = "2" ] ;then
 				start_pdnsd $dnsserver $dnsport
 				pdnsd_enable_flag=1
@@ -749,7 +739,7 @@ fi
 				start_dnsforwarder $dnsserver $dnsport
 				dnsforwarder_enable_flag=1
 				dnsstrs="0.0.0.0:5337"
-			elif [ "$(uci_get_by_type global chinadns_enable)" = "5" ] || [ "$(uci_get_by_type global pdnsd_enable)" = "6" ] ;then
+			elif [ "$(uci_get_by_type global chinadns_enable)" = "5" ] ;then
 				dnscrypt_config_file
 				/etc/init.d/dnscrypt-proxy enable && /etc/init.d/dnscrypt-proxy start
 				dnsstrs="0.0.0.0:5337"
@@ -1002,19 +992,19 @@ start() {
 	fi
 	if rules; then
 		start_redir
-		mkdir -p /tmp/dnsmasq.d && cp -a /etc/dnsmasq.ssr /tmp/ && cp -a /etc/dnsmasq.oversea /tmp/
+		mkdir -p /tmp/dnsmasq.d && cp -a /etc/dnsmasq.vssr /tmp/ && cp -a /etc/dnsmasq.d/tmp/
 		if ! [ "$run_mode" == "oversea" ]; then
 			cat <<-EOF >/tmp/dnsmasq.d/dnsmasq-ssr.conf
-				conf-dir=/tmp/dnsmasq.ssr
+				conf-dir=/tmp/dnsmasq.vssr
 			EOF
 		else
 			cat <<-EOF >/tmp/dnsmasq.d/dnsmasq-ssr.conf
-				conf-dir=/tmp/dnsmasq.oversea                                                     
+				conf-dir=/tmp/dnsmasq.d                                                   
 
 		else
-			mkdir -p /var/etc/dnsmasq.oversea
-			ln -s /etc/dnsmasq.oversea/* /var/etc/dnsmasq.oversea/
-			ln -s /etc/dnsmasq.ssr/appoint_list.conf /var/etc/dnsmasq.oversea/appoint_list.conf
+			mkdir -p /var/etc/dnsmasq.d
+			ln -s /etc/dnsmasq.d/* /var/etc/dnsmasq.d/
+			ln -s /etc/dnsmasq.vssr/appoint_list.conf /var/etc/dnsmasq.d/appoint_list.conf
 
 			EOF
 		fi
@@ -1022,7 +1012,7 @@ start() {
 			rm -f /tmp/dnsmasq.d/ad.conf
 		fi
 		if [ $(uci_get_by_type global adblock 0) == "0" ]; then
-			rm -f /tmp/dnsmasq.ssr/ad.conf
+			rm -f /tmp/dnsmasq.vssr/ad.conf
 		fi
 		/usr/share/vssr/gfw2ipset.sh
 		/etc/init.d/dnsmasq restart >/dev/null 2>&1
@@ -1072,16 +1062,15 @@ stop() {
 	killall -q -9 haproxy
 	killall -q -9 privoxy
         killall -q -9 ipt2socks
-	killall -q -9 dns2socks
+	killall -q -9  dns2socks
 	killall -q -9 v2ray-plugin
 	killall -q -9 gq-client
+        killall -q -9 dnscrypt-proxy
+	killall -q -9 dnsforwarder
 	killall -q -9 gq-server
 	killall -q -9 obfs-local
 	killall -q -9 obfs-server
 	killall -q -9 chinadns
-	killall -q -9 dnscrypt-proxy
-	killall -q -9 dnsforwarder
-	killall -q -9 pdnsd
         killall -q -9 udp2raw
         killall -q -9 udpspeeder
 	if [ -f /var/run/pdnsd.pid ]; then
@@ -1092,7 +1081,7 @@ stop() {
 	if [ $(uci_get_by_type global adblock 0) == "0" ]; then
 		rm -f /tmp/dnsmasq.d/ad.conf
 	else
-		cp -f /etc/dnsmasq.ssr/ad.conf /tmp/dnsmasq.d/ad.conf
+		cp -f /etc/dnsmasq.vssr/ad.conf /tmp/dnsmasq.d/ad.conf
 	fi
 	if [ -f "/tmp/dnsmasq.d/dnsmasq-ssr.conf" ]; then
 		rm -f /tmp/dnsmasq.d/dnsmasq-ssr.conf

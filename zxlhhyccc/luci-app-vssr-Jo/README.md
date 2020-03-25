@@ -18,7 +18,7 @@ a new SSR SS V2ray luci app bese luci-app-ssr-plus
 
 新修改插件难免有bug 请不要大惊小怪。欢迎提交bug。
 
-###  此版本已和魔改版合并
+###  修正与lean原版冲突文件可以同时编译
 
 
 #### 感谢
