@@ -214,7 +214,7 @@ t:tab("iplist",translate("IP黑名单设置"))
 
 local i = "/etc/adblocklist/adblockip"
 e = t:taboption("iplist", TextValue, "adblock_ip")
-e.description = translate("这些已经加入的ip地址不会使用过滤器。请输入ip地址或ip地址段，每行只能输入一个ip地址。例如，112.123.134.145 / 24或112.123.134.145。")
+e.description = translate("这些已经加入的ip地址不会使用filter.Please输入ip地址或ip地址段，每行只能输入一个ip地址。例如，112.123.134.145 / 24或112.123.134.145。")
 e.rows = 28
 e.wrap = "off"
 e.rmempty = false
@@ -387,10 +387,6 @@ function(o,a,i)
 end
 )
 
-t=o:section(TypedSection,"rss_rule",translate("技术支持"),translate("本软件由KPR提供技术支持"))
 
-t.anonymous = true
-
-t:append(Template("koolproxy/feedback"))
 
 return o
