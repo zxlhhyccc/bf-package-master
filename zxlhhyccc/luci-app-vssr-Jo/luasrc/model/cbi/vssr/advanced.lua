@@ -28,6 +28,16 @@ o.rmempty = false
 o = s:option(Flag, "enable_switch", translate("Enable Auto Switch"))
 o.rmempty = false
 
+-- [[ adblock ]]--
+o = s:option(Flag, "adblock", translate("Enable adblock"))
+o.rmempty = false
+
+o = s:option(Value, "adblock_url", translate("adblock_url"))
+o:value("https://gitee.com/privacy-protection-tools/anti-ad/raw/master/anti-ad-for-dnsmasq.conf", translate("anti-AD"))
+o.default = "https://gitee.com/privacy-protection-tools/anti-ad/raw/master/anti-ad-for-dnsmasq.conf"
+o:depends("adblock", "1")
+o.description = translate("Support AdGuardHome and DNSMASQ format list")
+
 o = s:option(Value, "switch_time", translate("Switch check cycly(second)"))
 o.datatype = "uinteger"
 o:depends("enable_switch", "1")
@@ -42,15 +52,6 @@ o = s:option(Value, "switch_try_count", translate("Check Try Count"))
 o.datatype = "uinteger"
 o:depends("enable_switch", "1")
 o.default = 3
-
-o = s:option(Flag, "adblock", translate("Enable adblock"))
-o.rmempty = false
-
-o = s:option(Value, "adblock_url", translate("adblock_url"))
-o:value("https://gitee.com/privacy-protection-tools/anti-ad/raw/master/anti-ad-for-dnsmasq.conf", translate("anti-AD"))
-o.default = "https://gitee.com/privacy-protection-tools/anti-ad/raw/master/anti-ad-for-dnsmasq.conf"
-o:depends("adblock", "1")
-o.description = translate("Support AdGuardHome and DNSMASQ format list")
 
 -- [[ SOCKS5 Proxy ]]--
 if nixio.fs.access("/usr/bin/ssr-local") then
