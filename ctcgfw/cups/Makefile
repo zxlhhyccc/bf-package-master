@@ -95,17 +95,17 @@ define Package/cups-ppdc/description
 	Common UNIX Printing System - PPDC utils
 endef
 
-define Package/libcups
-$(call Package/cups/Default)
-  SECTION:=libs
-  CATEGORY:=Libraries
-  DEPENDS:=+zlib +libpthread +libpng +libjpeg
-  TITLE:=Common UNIX Printing System - Core library
-endef
+#define Package/libcups
+#$(call Package/cups/Default)
+#  SECTION:=libs
+#  CATEGORY:=Libraries
+#  DEPENDS:=+zlib +libpthread +libpng +libjpeg
+#  TITLE:=Common UNIX Printing System - Core library
+#endef
 
-define Package/libcups/description
-	Common UNIX Printing System - Core library
-endef
+#define Package/libcups/description
+#	Common UNIX Printing System - Core library
+#endef
 
 define Package/libcupscgi
 $(call Package/cups/Default)
@@ -310,7 +310,7 @@ define Build/InstallDev
 endef
 
 $(eval $(call BuildPackage,cups))
-$(eval $(call BuildPackage,libcups))
+#$(eval $(call BuildPackage,libcups))
 $(eval $(call BuildPackage,libcupscgi))
 $(eval $(call BuildPackage,libcupsimage))
 $(eval $(call BuildPackage,libcupsmime))
