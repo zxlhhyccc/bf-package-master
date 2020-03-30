@@ -171,9 +171,18 @@ sdns://AgQAAAAAAAAAAKBLTrSwdCmLgotcADCVoQtFI_uVHAyINIsJxT5bq6QIoyD2Hldod9qWUClMz
 
 DNS-over-HTTPS / DNS over TLS server with PiHole. Filters ads, trackers and malware.
 
-Hosted in Bengaluru, India. (https://dns.brahma.world)
+Hosted in Nuremberg, Germany. (https://dns.brahma.world)
 
-sdns://AgMAAAAAAAAADjEzNC4yMDkuMTQ2LjE2oD4aGg9sU_PpekktVwhLW5gHBZ7gV6sVBYdv2D_aPbg4ID4aGg9sU_PpekktVwhLW5gHBZ7gV6sVBYdv2D_aPbg4EGRucy5icmFobWEud29ybGQKL2Rucy1xdWVyeQ
+sdns://AgMAAAAAAAAADjk0LjEzMC4yMjQuMTE0ID4aGg9sU_PpekktVwhLW5gHBZ7gV6sVBYdv2D_aPbg4EGRucy5icmFobWEud29ybGQKL2Rucy1xdWVyeQ
+
+
+## brahma-world-ipv6
+
+DNS-over-HTTPS / DNS over TLS server with PiHole. Filters ads, trackers and malware.
+
+Hosted in Nuremberg, Germany. (https://dns.brahma.world)
+
+sdns://AgMAAAAAAAAAFlsyYTAxOjRmODpjMGM6OTI1NTo6MV0gPhoaD2xT8-l6SS1XCEtbmAcFnuBXqxUFh2_YP9o9uDgQZG5zLmJyYWhtYS53b3JsZAovZG5zLXF1ZXJ5
 
 
 ## captnemo-in
@@ -195,7 +204,7 @@ address when forwarding them to a selection of companies and organizations.
 
 Currently incompatible with DNS anonymization.
 
-sdns://AQEAAAAAAAAADDIwOC42Ny4yMjAuMiC3NRFAIG8iXT4r2CLX_WkeocM8yNZmjQy-BL-rykP7eRsyLmRuc2NyeXB0LWNlcnQub3BlbmRucy5jb20
+sdns://AQEAAAAAAAAADjIwOC42Ny4yMjAuMjIwILc1EUAgbyJdPivYItf9aR6hwzzI1maNDL4Ev6vKQ_t5GzIuZG5zY3J5cHQtY2VydC5vcGVuZG5zLmNvbQ
 
 
 ## cisco-doh
@@ -217,17 +226,17 @@ address when forwarding them to a selection of companies and organizations.
 
 Currently incompatible with DNS anonymization.
 
-sdns://AQAAAAAAAAAADjIwOC42Ny4yMjAuMTIzILc1EUAgbyJdPivYItf9aR6hwzzI1maNDL4Ev6vKQ_t5GzIuZG5zY3J5cHQtY2VydC5vcGVuZG5zLmNvbQ
+sdns://AQEAAAAAAAAADjIwOC42Ny4yMjAuMTIzILc1EUAgbyJdPivYItf9aR6hwzzI1maNDL4Ev6vKQ_t5GzIuZG5zY3J5cHQtY2VydC5vcGVuZG5zLmNvbQ
 
 
-## cisco-familyshield-doh
+## cisco-familyshield-ipv6
 
-Block websites not suitable for children (DoH protocol)
+Block websites not suitable for children (IPv6)
 
 Warning: modifies your queries to include a copy of your network
 address when forwarding them to a selection of companies and organizations.
 
-sdns://AgAAAAAAAAAADDE0Ni4xMTIuNDEuMyBUDrXp92r0ml9Aq9cu3mXf2w_ugmc61w74ZllxOxR-Vxxkb2guZmFtaWx5c2hpZWxkLm9wZW5kbnMuY29tCi9kbnMtcXVlcnk
+sdns://AQEAAAAAAAAAEVsyNjIwOjExOTozNTo6MzVdILc1EUAgbyJdPivYItf9aR6hwzzI1maNDL4Ev6vKQ_t5GzIuZG5zY3J5cHQtY2VydC5vcGVuZG5zLmNvbQ
 
 
 ## cisco-ipv6
@@ -992,108 +1001,30 @@ Non-logged/Uncensored provided by freetsa.org
 sdns://AQcAAAAAAAAAEzIwNS4xODUuMTE2LjExNjo1NTMg2P-7QuAxvnp5cwtFVo1Jak6Ky1mqg2b9arkeJyp9FuQbMi5kbnNjcnlwdC1jZXJ0LmZyZWV0c2Eub3Jn
 
 
-## geekdns-doh-east
+## geekdns-doh
 
-GeekDNS in eastern China (Shanghai).
-
-GeekDNS is a non-logging public DNS service located in mainland China.
-Queries are cached locally, and, for some domains, resolved by servers located
-in Taiwan.
-
-https://dns.233py.com/
-
-sdns://AgcAAAAAAAAADTQ3LjEwMS4xMzYuMzcgot4zSQxHbTVuLbxzfCd5aSJJUmtlq4-6mjQoBIHIvfwOZWRucy4yMzNweS5jb20KL2Rucy1xdWVyeQ
-
-
-## geekdns-doh-north
-
-GeekDNS in northern China (Beijing).
+GeekDNS for users in China
 
 GeekDNS is a non-logging public DNS service located in mainland China.
 Queries are cached locally, and, for some domains, resolved by servers located
 in Taiwan.
 
-https://dns.233py.com/
+https://www.nextrt.com/s/dns
 
-sdns://AgcAAAAAAAAADzExNC4xMTUuMjQwLjE3NSCi3jNJDEdtNW4tvHN8J3lpIklSa2Wrj7qaNCgEgci9_A5uZG5zLjIzM3B5LmNvbQovZG5zLXF1ZXJ5
-
-
-## geekdns-doh-south
-
-GeekDNS in southern China (Guangzhou).
-
-GeekDNS is a non-logging public DNS service located in mainland China.
-Queries are cached locally, and, for some domains, resolved by servers located
-in Taiwan.
-
-https://dns.233py.com/
-
-sdns://AgcAAAAAAAAADTExOS4yOS4xMDcuODUgot4zSQxHbTVuLbxzfCd5aSJJUmtlq4-6mjQoBIHIvfwOc2Rucy4yMzNweS5jb20KL2Rucy1xdWVyeQ
+sdns://AgcAAAAAAAAAACCi3jNJDEdtNW4tvHN8J3lpIklSa2Wrj7qaNCgEgci9_AtpLjIzM3B5LmNvbQovZG5zLXF1ZXJ5
 
 
-## geekdns-doh-west
+## geekdns-doh-ext
 
-GeekDNS in western China (Chongqing).
+GeekDNS for users outside China, via Cloudflare
 
 GeekDNS is a non-logging public DNS service located in mainland China.
 Queries are cached locally, and, for some domains, resolved by servers located
 in Taiwan.
 
-https://dns.233py.com/
+https://www.nextrt.com/s/dns
 
-sdns://AgMAAAAAAAAADjExOC4yNC4yMDguMTk3ID4aGg9sU_PpekktVwhLW5gHBZ7gV6sVBYdv2D_aPbg4DndkbnMuMjMzcHkuY29tCi9kbnMtcXVlcnk
-
-
-## geekdns-hk
-
-GeekDNS in Hong Kong.
-
-GeekDNS is a non-logging public DNS service located in Hong Kong..
-Queries are cached locally, and, for some domains, resolved by servers located
-in Taiwan.
-
-https://dns.233py.com/
-
-sdns://AQcAAAAAAAAAETE1MC4xMDkuNzQuMTY0OjIyIPcEBXJOU2jQys6br08P8yyn132SuDixQ8Oek3lhoRQoGTIuZG5zY3J5cHQtY2VydC4yMzNweS5jb20
-
-
-## geekdns-north
-
-GeekDNS in northern China (Beijing).
-
-GeekDNS is a non-logging public DNS service located in mainland China.
-Queries are cached locally, and, for some domains, resolved by servers located
-in Taiwan.
-
-https://dns.233py.com/
-
-sdns://AQMAAAAAAAAAEjExNC4xMTUuMjQwLjE3NToyMiCLntDYEK0AwismFtMCM0YMkflJGNZiJnINFtDLcCLLwBkyLmRuc2NyeXB0LWNlcnQuMjMzcHkuY29t
-
-
-## geekdns-south
-
-GeekDNS in southern China (Guangzhou).
-
-GeekDNS is a non-logging public DNS service located in mainland China.
-Queries are cached locally, and, for some domains, resolved by servers located
-in Taiwan.
-
-https://dns.233py.com/
-
-sdns://AQMAAAAAAAAAEDExOS4yOS4xMDcuODU6MjIgCsUpkBu6ujbEDZ8PQI2wa3DCkDzxLlczLOwTyQTQM70ZMi5kbnNjcnlwdC1jZXJ0LjIzM3B5LmNvbQ
-
-
-## geekdns-west
-
-GeekDNS in western China (Chongqing).
-
-GeekDNS is a non-logging public DNS service located in mainland China.
-Queries are cached locally, and, for some domains, resolved by servers located
-in Taiwan.
-
-https://dns.233py.com/
-
-sdns://AQMAAAAAAAAAETExOC4yNC4yMDguMTk3OjIyIL66dzE0aNGlvYsF3RnukLk4AI3lQqSxeEo6PxHme-qZGTIuZG5zY3J5cHQtY2VydC4yMzNweS5jb20
+sdns://AgcAAAAAAAAAAAANZG9oLjIzM3B5LmNvbQovZG5zLXF1ZXJ5
 
 
 ## google
@@ -1245,17 +1176,6 @@ DoH server in Germany. No logging, but no DNS padding and no DNSSEC support.
 no ads version, uses StevenBlack's host list: https://github.com/StevenBlack/hosts
 
 sdns://AgIAAAAAAAAAACA-GhoPbFPz6XpJLVcIS1uYBwWe4FerFQWHb9g_2j24OA9kb2gubGlicmVkbnMuZ3IEL2Fkcw
-
-
-## mrkaran
-
-Public DNSCrypt Server hosted in Bengaluru, India on a tiny Digital
-Ocean droplet. It supports DNSSEC validation, the DNSCrypt protocol
-and has caching enabled for faster responses.
-
-https://mrkaran.dev/dnscrypt/
-
-sdns://AQcAAAAAAAAAETEzOS41OS41NS4xMzo0MzQzIMI_cHfgQzHFYUiS8m2ghR8Ij9nb88EQZXAYDlOhBGhmHzIuZG5zY3J5cHQtY2VydC5kbnMubXJrYXJhbi5kZXY
 
 
 ## nextdns
@@ -1511,6 +1431,15 @@ to US-West.
 https://www.rubyfish.cn/
 
 sdns://AgUAAAAAAAAAACA-GhoPbFPz6XpJLVcIS1uYBwWe4FerFQWHb9g_2j24OBJ1dy1kbnMucnVieWZpc2guY24KL2Rucy1xdWVyeQ
+
+
+## rumpelsepp.org
+
+DNSSEC/Non-logged/Uncensored in Nürnberg.
+Backed by unbound.
+Maintained by [rumpelsepp](https://rumpelsepp.org)
+
+sdns://AgcAAAAAAAAADzExNi4yMDMuMTc5LjI0OCA-GhoPbFPz6XpJLVcIS1uYBwWe4FerFQWHb9g_2j24OA5ydW1wZWxzZXBwLm9yZwovZG5zLXF1ZXJ5
 
 
 ## scaleway-ams
