@@ -319,7 +319,7 @@ server {
 }
 EOF
 
-	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf &
+	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d
 }
 # $1: upstream DNS server
 start_dnsforwarder()
