@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=AdGuardHome-x64
 PKG_VERSION:=v0.101.0
-PKG_RELEASE:=35-gc5a3
+PKG_RELEASE:=45-gc73d
 
 include $(INCLUDE_DIR)/package.mk
 
