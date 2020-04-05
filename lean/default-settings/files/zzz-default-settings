@@ -1,12 +1,5 @@
 #!/bin/sh
 
-uci set luci.main.lang=zh_cn
-uci commit luci
-
-uci set system.@system[0].timezone=CST-8
-uci set system.@system[0].zonename=Asia/Shanghai
-uci commit system
-
 ln -sf /sbin/ip /usr/bin/ip
 
 sed -i 's#http://downloads.openwrt.org#https://mirrors.ustc.edu.cn/lede#g' /etc/opkg/distfeeds.conf
@@ -22,8 +15,5 @@ wifi up
 
 sed -i '/log-facility/d' /etc/dnsmasq.conf
 echo "log-facility=/dev/null" >> /etc/dnsmasq.conf
-
-rm -rf /tmp/luci-modulecache/
-rm -f /tmp/luci-indexcache
 
 exit 0
