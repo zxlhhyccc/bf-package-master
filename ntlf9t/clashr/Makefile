@@ -46,7 +46,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	gzip -dc "$(DL_DIR)/$(PKG_SOURCE)" > $(PKG_BUILD_DIR)/clash-linux-$(PKG_ARCH)
+	gzip -dc "$(DL_DIR)/$(PKG_SOURCE)" > $(PKG_BUILD_DIR)/clashr-linux-$(PKG_ARCH)
 endef
 
 define Build/Compile
@@ -56,7 +56,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/clash
 	$(INSTALL_DIR) $(1)/usr/share/clash
 
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash-linux-$(PKG_ARCH) $(1)/etc/clash/clash
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clashr-linux-$(PKG_ARCH) $(1)/etc/clash/clashr
 	$(INSTALL_BIN) ./file/core_version $(1)/usr/share/clash/
 endef
 
