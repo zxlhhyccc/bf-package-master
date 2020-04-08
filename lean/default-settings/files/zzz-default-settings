@@ -1,5 +1,12 @@
 #!/bin/sh
 
+uci set luci.main.lang=zh_cn
+uci commit luci
+
+uci set system.@system[0].timezone=CST-8
+uci set system.@system[0].zonename=Asia/Shanghai
+uci commit system
+
 uci set fstab.@global[0].anon_mount=1
 uci commit fstab
 
@@ -9,6 +16,9 @@ sed -i 's#http://downloads.openwrt.org#https://mirrors.cloud.tencent.com/lede#g'
 sed -i 's/http:/https:/g' /etc/opkg/distfeeds.conf
 
 sed -i "s/# //g" /etc/opkg/distfeeds.conf
+
+sed -i 's/root::0:0:99999:7:::/root:$1$gSikykrC$1dqepKd6Exe8BOxn9JffZ0:0:0:99999:7:::/g' /etc/shadow
+sed -i 's|root:x:0:0:root:/root:/bin/ash|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
 
 sed -i '/REDIRECT --to-ports 53/d' /etc/firewall.user
 echo "iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53" >> /etc/firewall.user
