@@ -6,7 +6,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=default-settings
+PKG_NAME:=default-settings-19.07
 PKG_VERSION:=1.1
 PKG_RELEASE:=56
 PKG_LICENSE:=GPLv3
@@ -16,7 +16,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/default-settings
+define Package/default-settings-19.07
   SECTION:=luci
   CATEGORY:=LuCI
   TITLE:=LuCI support for Default Settings
@@ -25,7 +25,7 @@ define Package/default-settings
 	   +bash
 endef
 
-define Package/default-settings/description
+define Package/default-settings-19.07/description
 	Language Support Packages.
 endef
 
@@ -35,14 +35,16 @@ endef
 define Build/Compile
 endef
 
-define Package/default-settings/install
+define Package/default-settings-19.07/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(INSTALL_DIR) $(1)/usr/lib/sqm
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/zzz-default-settings $(1)/etc/uci-defaults/99-default-settings
 	$(INSTALL_DATA) ./help/*.help $(1)/usr/lib/sqm
 	po2lmo ./i18n/default.zh_Hans.po $(1)/usr/lib/lua/luci/i18n/default.zh-cn.lmo
 	po2lmo ./i18n/more.zh_Hans.po $(1)/usr/lib/lua/luci/i18n/more.zh-cn.lmo
+	po2lmo ./i18n/sqm.zh_Hans.po $(1)/usr/lib/lua/luci/i18n/sqm.zh-cn.lmo
 endef
 
-$(eval $(call BuildPackage,default-settings))
+$(eval $(call BuildPackage,default-settings-19.07))

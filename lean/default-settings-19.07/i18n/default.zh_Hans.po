@@ -1,0 +1,86 @@
+msgid "Processor"
+msgstr "处理器"
+
+msgid "Architecture"
+msgstr "架构"
+
+msgid "CPU Temperature"
+msgstr "CPU温度"
+
+msgid "CPU Info"
+msgstr "CPU信息"
+
+msgid "CPU Model"
+msgstr "处理器型号"
+
+msgid "CPU frequency"
+msgstr "CPU频率"
+
+msgid "RAM frequency"
+msgstr "RAM频率"
+
+msgid "Flash Size"
+msgstr "闪存大小"
+
+msgid "Free Memory"
+msgstr "释放内存"
+
+msgid "RUNNING"
+msgstr "运行中"
+
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+msgid "ZRam Settings"
+msgstr "ZRam 设置"
+
+msgid "ZRam Compression Algorithm"
+msgstr "ZRAM压缩算法"
+
+msgid "ZRam Compression Streams"
+msgstr "ZRam 压缩数据流线程数"
+
+msgid "ZRam Size"
+msgstr "ZRam 大小"
+
+msgid "Size of the ZRam device in megabytes"
+msgstr "划分给ZRam 分区的内存大小（MB），推荐留空由系统自动管理"
+
+msgid "Number of parallel threads used for compression"
+msgstr "用于压缩内存数据的CPU并发线程数"
+
+msgid "Swap"
+msgstr "虚拟内存"
+
+msgid "Base Setting"
+msgstr "基本设置"
+
+msgid "Log"
+msgstr "日志"
+
+msgid "Ethernet Information"
+msgstr "网口信息"
+
+msgid "Ethernet Name"
+msgstr "网口名"
+
+msgid "Link Status"
+msgstr "连接状态"
+
+msgid "Speed"
+msgstr "速率"
+
+msgid "Duplex"
+msgstr "双工模式"
+
+msgid "Link Up"
+msgstr "已连接"
+
+msgid "Link Down"
+msgstr "已断开"
+
+msgid "Full Duplex"
+msgstr "全双工"
+
+msgid "Half Duplex"
+msgstr "半双工"
