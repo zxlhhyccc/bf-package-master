@@ -7,30 +7,30 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=automount-master
+PKG_NAME:=automount
 PKG_VERSION:=1
 PKG_RELEASE:=30
 PKG_ARCH:=all
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/automount-master
+define Package/automount
   TITLE:=Mount autoconfig hotplug script.
   MAINTAINER:=Lean
   DEPENDS:=+block-mount +kmod-usb-storage +kmod-usb-storage-extras +!TARGET_ramips:kmod-usb-storage-uas +kmod-fs-vfat +kmod-fs-ext4 +@(LINUX_4_14||LINUX_4_19):kmod-fs-exfat0 +@LINUX_5_4:kmod-fs-exfat +ntfs-3g
 endef
 
-define Package/automount-master/description
+define Package/automount/description
 A usb autoconfig hotplug script.
 endef
 
 define Build/Compile
 endef
 
-define Package/automount-master/install
+define Package/automount/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files/15-automount $(1)/etc/15-automount
 	$(INSTALL_BIN) ./files/zzz-move-automount $(1)/etc/uci-defaults/zzz-move-automount
 endef
 
-$(eval $(call BuildPackage,automount-master))
+$(eval $(call BuildPackage,automount))
