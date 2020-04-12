@@ -1,0 +1,11 @@
+{
+	"luci-app-233ddns": {
+		"description": "Grant UCI access for luci-app-233ddns",
+		"read": {
+			"uci": [ "233ddns" ]
+		},
+		"write": {
+			"uci": [ "233ddns" ]
+		}
+	}
+}

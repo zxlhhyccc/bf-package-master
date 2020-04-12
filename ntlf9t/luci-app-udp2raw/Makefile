@@ -55,6 +55,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DATA) ./luasrc/model/cbi/udp2raw/*.lua $(1)/usr/lib/lua/luci/model/cbi/udp2raw/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/udp2raw
 	$(INSTALL_DATA) ./luasrc/view/udp2raw/*.htm $(1)/usr/lib/lua/luci/view/udp2raw/
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-udp2raw.json $(1)/usr/share/rpcd/acl.d/luci-app-udp2raw.json
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./root/etc/config/udp2raw $(1)/etc/config/udp2raw
 	$(INSTALL_DIR) $(1)/etc/init.d

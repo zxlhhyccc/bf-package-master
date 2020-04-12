@@ -1,0 +1,11 @@
+{
+	"luci-app-unblockmusic-go": {
+		"description": "Grant UCI access for luci-app-unblockmusic-go",
+		"read": {
+			"uci": [ "unblockneteasemusic" ]
+		},
+		"write": {
+			"uci": [ "unblockneteasemusic" ]
+		}
+	}
+}

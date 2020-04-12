@@ -64,6 +64,10 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/root/etc/uci-defaults/luci-xlnetacc $(1)/etc/uci-defaults/luci-xlnetacc
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/root/usr/bin/xlnetacc.sh $(1)/usr/bin/xlnetacc.sh
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_DATA) ./files/root/usr/share/rpcd/acl.d/luci-app-xlnetacc.json $(1)/usr/share/rpcd/acl.d/luci-app-xlnetacc.json
+
+
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

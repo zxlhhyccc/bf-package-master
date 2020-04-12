@@ -72,6 +72,8 @@ define Package/luci-app-aliddns/install
 	$(INSTALL_BIN) ./root/etc/uci-defaults/luci-aliddns $(1)/etc/uci-defaults/luci-aliddns
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) ./root/usr/sbin/aliddns $(1)/usr/sbin/aliddns
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-aliddns.json $(1)/usr/share/rpcd/acl.d/luci-app-aliddns.json
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	po2lmo ./po/zh-cn/aliddns.po $(1)/usr/lib/lua/luci/i18n/aliddns.zh-cn.lmo
 endef

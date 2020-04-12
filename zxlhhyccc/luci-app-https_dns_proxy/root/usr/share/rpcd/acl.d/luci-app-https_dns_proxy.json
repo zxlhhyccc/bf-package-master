@@ -1,0 +1,11 @@
+{
+	"luci-app-https_dns_proxy": {
+		"description": "Grant UCI access for luci-app-https_dns_proxy",
+		"read": {
+			"uci": [ "https_dns_proxy" ]
+		},
+		"write": {
+			"uci": [ "https_dns_proxy" ]
+		}
+	}
+}

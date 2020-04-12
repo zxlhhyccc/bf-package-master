@@ -102,6 +102,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./root/usr/bin/brook-gfw $(1)/usr/bin/brook-gfw
 	$(INSTALL_BIN) ./root/usr/bin/brook-ad $(1)/usr/bin/brook-ad
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-brook.json $(1)/usr/share/rpcd/acl.d/luci-app-brook.json
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	po2lmo ./po/zh-cn/brook.po $(1)/usr/lib/lua/luci/i18n/brook.zh-cn.lmo
 endef

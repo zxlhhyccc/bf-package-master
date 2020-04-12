@@ -35,6 +35,8 @@ define Package/luci-app-njitclient/install
 	$(INSTALL_DATA) ./luasrc/controller/njitclient.lua $(1)/usr/lib/lua/luci/controller/njitclient.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
 	$(INSTALL_DATA) ./luasrc/model/cbi/njitclient.lua $(1)/usr/lib/lua/luci/model/cbi/njitclient.lua
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-njitclient.json $(1)/usr/share/rpcd/acl.d/luci-app-njitclient.json
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./root/etc/config/njitclient $(1)/etc/config/njitclient
 	$(INSTALL_DIR) $(1)/etc/init.d

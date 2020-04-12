@@ -54,6 +54,7 @@ define Package/luci-app-koolproxy/install
 	$(INSTALL_DIR) $(1)/usr/share/koolproxy
 	$(INSTALL_DIR) $(1)/usr/share/koolproxy/data
 	$(INSTALL_DIR) $(1)/usr/share/koolproxy/data/rules/
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
 
 	$(INSTALL_BIN) ./files/etc/uci-defaults/luci-koolproxy $(1)/etc/uci-defaults/luci-koolproxy
 	$(INSTALL_BIN) ./files/etc/init.d/* $(1)/etc/init.d/
@@ -75,6 +76,7 @@ define Package/luci-app-koolproxy/install
 	$(INSTALL_BIN) ./files/usr/share/koolproxy/kpupdate $(1)/usr/share/koolproxy/kpupdate
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/koolproxy_ipset.conf $(1)/usr/share/koolproxy/koolproxy_ipset.conf
 	$(INSTALL_DATA) ./files/usr/share/koolproxy/dnsmasq.adblock $(1)/usr/share/koolproxy/dnsmasq.adblock
+	$(INSTALL_BIN) ./files/usr/share/rpcd/acl.d/luci-app-koolproxy.json $(1)/usr/share/rpcd/acl.d/luci-app-koolproxy.json
 ifeq ($(ARCH),mipsel)
 	$(INSTALL_BIN) ./files/bin/mipsel $(1)/usr/share/koolproxy/koolproxy
 endif

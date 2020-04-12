@@ -51,6 +51,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./root/etc/init.d/ngrokc $(1)/etc/init.d/ngrokc
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./root/etc/uci-defaults/luci-ngrokc $(1)/etc/uci-defaults/luci-ngrokc
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-ngrokc.json $(1)/usr/share/rpcd/acl.d/luci-app-ngrokc.json
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	po2lmo ./po/zh-cn/ngrokc.po $(1)/usr/lib/lua/luci/i18n/ngrokc.zh-cn.lmo
 endef

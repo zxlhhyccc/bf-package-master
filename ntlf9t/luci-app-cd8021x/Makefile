@@ -36,6 +36,8 @@ define Package/luci-app-cd8021x/install
 	$(INSTALL_DATA) ./luasrc/controller/cd8021x.lua $(1)/usr/lib/lua/luci/controller/cd8021x.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
 	$(INSTALL_DATA) ./luasrc/model/cbi/cd8021x.lua $(1)/usr/lib/lua/luci/model/cbi/cd8021x.lua
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-cd8021x.json $(1)/usr/share/rpcd/acl.d/luci-app-cd8021x.json
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./root/etc/config/cd8021x $(1)/etc/config/cd8021x
 	$(INSTALL_DIR) $(1)/etc/init.d

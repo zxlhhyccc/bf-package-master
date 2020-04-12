@@ -73,6 +73,8 @@ define Package/luci-app-chinadns/install
 	$(INSTALL_BIN) ./root/etc/init.d/chinadns $(1)/etc/init.d/chinadns
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./root/etc/uci-defaults/luci-chinadns $(1)/etc/uci-defaults/luci-chinadns
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-chinadns.json $(1)/usr/share/rpcd/acl.d/luci-app-chinadns.json
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	po2lmo ./po/zh-cn/chinadns.po $(1)/usr/lib/lua/luci/i18n/chinadns.zh-cn.lmo
 endef
