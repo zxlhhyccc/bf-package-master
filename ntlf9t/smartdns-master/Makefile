@@ -1,18 +1,28 @@
 #
-# Copyright (c) 2018-2020 Nick Peng (pymumu@gmail.com)
-# This is free software, licensed under the GNU General Public License v3.
+# Copyright (C) 2018-2020 Ruilin Peng (Nick) <pymumu@gmail.com>.
 #
-
+# smartdns is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# smartdns is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=smartdns-master
-PKG_VERSION:=1.2020.30
+PKG_VERSION:=4.2020.10
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://www.github.com/pymumu/smartdns.git
+PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
 PKG_SOURCE_VERSION:=c2c418ed8994693e1622bd20af656b8f2bab65df
-PKG_MIRROR_HASH:=8ad57cb14272a03223c9fb97678e51fc8d750b676115d3de8c7a4c46b26a5546
+PKG_MIRROR_HASH:=522555c2147ee1e6570c8156db8436f75414db7cc094555b643f8403e79c979c
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -22,7 +32,7 @@ PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-MAKE_VARS += VER=$(PKG_VERSION) 
+MAKE_VARS += VER=$(PKG_VERSION)
 MAKE_PATH:=src
 
 define Package/smartdns-master
@@ -33,9 +43,9 @@ define Package/smartdns-master
   URL:=https://www.github.com/pymumu/smartdns/
 endef
 
-define Package/smartdns-master/description
+define Package/smartdns/description
 SmartDNS is a local DNS server which accepts DNS query requests from local network clients,
-gets DNS query results from multiple upstream DNS servers concurrently, and returns the fastest IP to clients.
+get DNS query results from multiple upstream DNS servers concurrently, and returns the fastest IP to clients.
 Unlike dnsmasq's all-servers, smartdns returns the fastest IP. 
 endef
 
@@ -49,7 +59,7 @@ endef
 define Package/smartdns-master/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/config $(1)/etc/init.d $(1)/etc/smartdns
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/smartdns $(1)/usr/sbin/smartdns
-	$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/package/openwrt/files/etc/init.d/smartdns $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/address.conf $(1)/etc/smartdns/address.conf
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/blacklist-ip.conf $(1)/etc/smartdns/blacklist-ip.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
