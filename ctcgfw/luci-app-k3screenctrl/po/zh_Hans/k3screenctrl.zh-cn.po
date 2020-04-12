@@ -1,6 +1,22 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
+msgid "check city from ip :"
+msgstr "根据IP定位城市："
+
+msgid "check city from local ip"
+msgstr "通过IP获取当前城市位置，如果不选择请在下面填写正确城市位置"
+
+msgid "city :"
+msgstr "城市："
+
+msgid "weather update_time :"
+msgstr "天气更新间隔："
+
+msgid "please input right city name"
+msgstr "请输入正确的城市或市区名称， 如 南京"
+
+
 msgid "Screen"
 msgstr "屏幕"
 
