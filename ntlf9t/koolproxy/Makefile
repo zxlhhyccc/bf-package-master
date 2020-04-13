@@ -26,10 +26,10 @@ endef
 define Build/Prepare
 endef
 
-define Build/Compile
+define Build/Configure
 endef
 
-define Build/Install
+define Build/Compile
 endef
 
 define Package/koolproxy/install
