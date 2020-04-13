@@ -33,6 +33,7 @@ define Build/Compile
 endef
 
 define Package/koolproxy/install
+	$(INSTALL_DIR) $(1)/usr/share/koolproxy
 ifeq ($(ARCH),mipsel)
 	$(INSTALL_BIN) ${CURDIR}/files/bin/mipsel $(1)/usr/share/koolproxy/koolproxy
 endif
