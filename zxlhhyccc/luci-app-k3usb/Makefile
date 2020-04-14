@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-k3usb-master
+PKG_NAME:=luci-app-k3usb
 PKG_VERSION:=1.1.0
 PKG_RELEASE:=1
 
