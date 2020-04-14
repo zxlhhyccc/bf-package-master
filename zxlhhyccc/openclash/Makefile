@@ -67,8 +67,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/etc/openclash
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash $(1)/etc/openclash/clash
+	$(INSTALL_DIR) $(1)/etc/openclash/core
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash $(1)/etc/openclash/core/clash
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
