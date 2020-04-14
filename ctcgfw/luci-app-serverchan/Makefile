@@ -33,7 +33,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./root/etc/config/serverchan $(1)/etc/config
 	$(INSTALL_BIN) ./root/etc/init.d/serverchan $(1)/etc/init.d
 	$(INSTALL_BIN) ./root/usr/bin/serverchan/serverchan $(1)/usr/bin/serverchan
-	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-serverchan.json $(1)/usr/share/rpcd/acl.d/luci-app-serverchan
+	$(INSTALL_BIN) ./root/usr/share/rpcd/acl.d/luci-app-serverchan.json $(1)/usr/share/rpcd/acl.d/luci-app-serverchan.json
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
