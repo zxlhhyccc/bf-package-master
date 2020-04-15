@@ -47,13 +47,13 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
-	TITLE:=openclash is a cross-platform proxy software
+	TITLE:=openclash-game is a cross-platform proxy software
 	DEPENDS:=+kmod-tun
 	URL:=https://github.com/frainzy1477/clash_dev/releases
 endef
 
 define Package/$(PKG_NAME)/description
-openclash is a cross-platform proxy software
+openclash-game is a cross-platform proxy software
 endef
 
 define Build/Prepare
