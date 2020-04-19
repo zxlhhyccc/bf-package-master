@@ -1,4 +1,4 @@
--- Copyright 2016-2019 Xingwang Liao <kuoruan@gmail.com>
+-- Copyright 2016-2020 Xingwang Liao <kuoruan@gmail.com>
 -- Licensed to the public under the Apache License 2.0.
 
 local uci  = require "luci.model.uci".cursor()
@@ -78,5 +78,10 @@ o.validate = function(self, value, section)
 	end
 	return Value.validate(self, value, section)
 end
+
+o = s:option(Value, "mem_percentage", translate("Memory percentage"),
+	translate("The maximum percentage of memory used by Kcptun."))
+o.datatype = "range(0, 100)"
+o.placeholder = "80"
 
 return m
