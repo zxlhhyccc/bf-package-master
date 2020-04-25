@@ -10,6 +10,9 @@ uci commit system
 uci set fstab.@global[0].anon_mount=1
 uci commit fstab
 
+sed -i 's/\"services\"/\"nas\"/g' /usr/lib/lua/luci/controller/aria2.lua
+sed -i 's#admin/services#admin/nas#g' /usr/lib/lua/luci/view/aria2/settings_header.htm
+
 ln -sf /sbin/ip /usr/bin/ip
 
 sed -i 's/root::0:0:99999:7:::/root:$1$gSikykrC$1dqepKd6Exe8BOxn9JffZ0:0:0:99999:7:::/g' /etc/shadow
