@@ -57,7 +57,8 @@ openclash-game is a cross-platform proxy software
 endef
 
 define Build/Prepare
-	tar -xzvf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_BUILD_DIR)
+	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_GAME_ARCH).tar.gz ] && wget https://github.com/vernesong/OpenClash/releases/download/TUN/clash-linux-$(OPENCLASH_GAME_ARCH).tar.gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_GAME_ARCH).tar.gz
+	tar -xzvf $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_GAME_ARCH).tar.gz -C $(PKG_BUILD_DIR)
 endef
 
 define Build/Configure
