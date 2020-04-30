@@ -25,12 +25,11 @@ PKG_BUILD_PARALLEL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-	SECTION:=net
-	CATEGORY:=Network
+	SECTION:=multimedia
+	CATEGORY:=Multimedia
 	TITLE:=Revive Netease Cloud Music (NodeJS)
-	DEPENDS:=+node 
+	DEPENDS:=+node +libopenssl 
 	URL:=https://github.com/nondanee/UnblockNeteaseMusic/releases
-	SUBMENU:=NeteaseMusic
 	PKGARCH:=all
 endef
 
