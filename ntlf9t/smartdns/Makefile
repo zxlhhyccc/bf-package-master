@@ -16,13 +16,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=smartdns
-PKG_VERSION:=4.2020.10
+PKG_VERSION:=4.2020.30
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=c2c418ed8994693e1622bd20af656b8f2bab65df
-PKG_MIRROR_HASH:=522555c2147ee1e6570c8156db8436f75414db7cc094555b643f8403e79c979c
+PKG_SOURCE_VERSION:=f79ceeac436162d62a7231679f4f8c61ee79958e
+PKG_MIRROR_HASH:=8b5fad1c62391e06e6c234e1575fe7b31df8bcabe9d9594b6c2455d692120c2cc
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -59,7 +59,7 @@ endef
 define Package/smartdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/config $(1)/etc/init.d $(1)/etc/smartdns
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/smartdns $(1)/usr/sbin/smartdns
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/package/openwrt/files/etc/init.d/smartdns $(1)/etc/init.d/smartdns
+	$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/address.conf $(1)/etc/smartdns/address.conf
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/blacklist-ip.conf $(1)/etc/smartdns/blacklist-ip.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
