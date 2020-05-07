@@ -5,9 +5,12 @@
 local m, s, sec, o, kcp_enable
 local shadowsocksr = "shadowsocksr"
 local uci = luci.model.uci.cursor()
+
+local sys = require "luci.sys"
+
 m = Map(shadowsocksr, translate("ShadowSocksR Plus+ Settings"))
 
-m:section(SimpleSection).template = "shadowsocksr/status"
+m:section(SimpleSection).template  = "shadowsocksr/status"
 
 local server_table = {}
 uci:foreach(shadowsocksr, "servers", function(s)
@@ -102,4 +105,5 @@ o:depends("pdnsd_enable", "2")
 o.description = translate("Custom DNS Server format as IP:PORT (default: 8.8.4.4:53)")
 
 return m
+
 
