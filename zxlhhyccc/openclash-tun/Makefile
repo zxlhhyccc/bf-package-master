@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-tun
-PKG_VERSION:=v0.18.0
-PKG_RELEASE:=8-g68b82c9
+PKG_VERSION:=2020
+PKG_RELEASE:=05.08
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_TUN_ARCH:=mipsle-softfloat
@@ -38,8 +38,8 @@ endif
 PKG_LICENSE:=Apache-2.0
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)-$(PKG_RELEASE)
-PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz
-PKG_SOURCE_URL:=https://github.com/Dreamacro/clash/releases/download/TUN
+PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).$(PKG_RELEASE).gz
+PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/
 PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
