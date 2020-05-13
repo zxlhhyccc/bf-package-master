@@ -717,23 +717,23 @@ table td:first-child,
 }
 
 .td.cbi-section-actions>* {
-    display: flex;
+    /* display: flex; */
 }
 
 .td.cbi-section-actions>*>*,
 .td.cbi-section-actions>*>form>* {
-    flex: 1 1 4em;
-    margin: 0 1px;
+    /* flex: 1 1 4em;
+    margin: 0 1px; */
 }
 
 .td.cbi-section-actions>*>.cbi-button-up,
 .cbi-input-up {
-    background: unset;
+    /* background: unset; */
 }
 
 .td.cbi-section-actions>*>.cbi-button-down,
 .cbi-input-down {
-    background: unset;
+    /* background: unset; */
 }
 
 #cbi-network .tr,
@@ -1497,7 +1497,7 @@ body.modal-overlay-active #modal_overlay>.modal {
 
 .cbi-dynlist>.add-item,
 .td.cbi-section-actions>* {
-    display: flex;
+    /* display: flex; */
 }
 
 .cbi-dynlist>.add-item>input,
