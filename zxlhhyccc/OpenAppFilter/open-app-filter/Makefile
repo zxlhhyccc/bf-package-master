@@ -35,13 +35,13 @@ define Package/appfilter/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/etc/appfilter
 	$(INSTALL_DIR) $(1)/etc/config
-	# $(INSTALL_DIR) $(1)/usr/lib/lua/luci/tools
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/tools
 	$(CP) ./files/feature.cfg $(1)/etc/appfilter/ 
 	$(INSTALL_BIN) ./files/appfilter.init $(1)/etc/init.d/appfilter
 	$(INSTALL_BIN) ./files/appfilter.sh $(1)/usr/bin
 	$(INSTALL_BIN) ./files/gen_class.sh $(1)/usr/bin
 	$(INSTALL_BIN) ./files/appfilter.config $(1)/etc/config/appfilter
-	# $(INSTALL_DATA) ./files/status.lua $(1)/usr/lib/lua/luci/tools/
+	$(INSTALL_DATA) ./files/status.lua $(1)/usr/lib/lua/luci/tools/
 endef
 
 
