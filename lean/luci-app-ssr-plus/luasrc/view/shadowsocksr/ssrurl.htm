@@ -49,7 +49,7 @@
 			return false;
 		var v_server = document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.server')[0];
 		var v_port = document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.server_port')[0];
-		var v_protocol = document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.protocol')[0];
+		var v_protocol = document.getElementsByName('cbid.shadowsocksr.' + sid + '.protocol')[0];
 		var v_method = document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.encrypt_method')[0];
 		var v_obfs = document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.obfs')[0];
 		var v_password = document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.password')[0];
@@ -262,6 +262,8 @@
 			document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.transport')[0].value = ssm.net;
 			document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.transport')[0].dispatchEvent(event);
 			if (ssm.net == "tcp") {
+			if (ssm.type && ssm.type != "http") {ssm.type = "none"}
+			document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.tcp_guise')[0].value = ssm.type;
 			document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.http_host')[0].value = ssm.host;
 			document.getElementsByName('widget.cbid.shadowsocksr.' + sid + '.http_path')[0].value = ssm.path;
 			}
