@@ -112,6 +112,4 @@ void af_init_app_status(void);
 int af_get_app_status(int appid);
 int regexp_match(char *reg, char *text);
 
-extern int g_oaf_enable;
-
 #endif
