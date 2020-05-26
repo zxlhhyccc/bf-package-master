@@ -350,7 +350,7 @@ server {
 }
 EOF
 
-	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf &
+	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf >/dev/null 2>&1 &
 }
 
 # $1: upstream DNS server

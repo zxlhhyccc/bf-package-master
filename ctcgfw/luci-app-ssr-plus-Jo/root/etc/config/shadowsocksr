@@ -101,7 +101,7 @@ config udp2raw
 	option seq_mode '3'
 	option auth_mode 'simple'
 	option bt '0'
-	option udp2raw_enable '1'
+	option udp2raw_enable '0'
 	option raw_mode 'udp'
 	option cipher_mode 'aes128cbc'
 	option server_port '600'
@@ -116,5 +116,5 @@ config udpspeeder
 	option mtu '1250'
 	option queue_len '1'
 	option timeout '8'
-	option udpspeeder_enable '1'
+	option udpspeeder_enable '0'
 
