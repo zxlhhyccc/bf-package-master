@@ -46,7 +46,11 @@ ifeq ($(ARCH),mips)
 endif
 
 ifeq ($(ARCH),arm)
-	PKG_ARCH_BAIDUPCS-WEB:=arm
+	PKG_ARCH_BAIDUPCS-WEB:=armv7
+endif
+
+ifeq ($(BOARD),bcm53xx)
+	PKG_ARCH_BAIDUPCS-WEB:=armv5
 endif
 
 ifeq ($(ARCH),aarch64)
