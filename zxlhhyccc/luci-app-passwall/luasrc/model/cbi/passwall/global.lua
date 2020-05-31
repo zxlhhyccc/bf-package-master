@@ -225,9 +225,7 @@ o:value("chnroute", translate("Game Mode") .. "（" .. translate("China WhiteLis
 o:value("global", translate("Global Proxy"))
 o.default = "default"
 o.rmempty = false
-
----- Tips
-s:append(Template("passwall/global/tips"))
+m:section(SimpleSection).template  = "firefly/status2"
 
 --[[
 local apply = luci.http.formvalue("cbi.apply")

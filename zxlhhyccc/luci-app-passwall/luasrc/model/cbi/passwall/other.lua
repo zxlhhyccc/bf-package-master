@@ -18,7 +18,7 @@ o = s:option(Flag, "start_daemon", translate("Open and close Daemon"))
 o.default = 1
 o.rmempty = false
 
---[[
+
 ---- Open and close automatically
 o = s:option(Flag, "auto_on", translate("Open and close automatically"))
 o.default = 0
@@ -44,7 +44,36 @@ o.default = nil
 o:depends("auto_on", "1")
 o:value(nil, translate("Disable"))
 for e = 0, 23 do o:value(e, e .. translate("oclock")) end
---]]
+
+-- [[ Other Settings ]]--
+s = m:section(TypedSection, "global_other")
+s.anonymous = true
+
+---- Auto Ping
+o = s:option(Flag, "auto_ping", translate("Auto Ping"),
+             translate("This will automatically ping the node for latency"))
+o.default = 1
+
+---- Use TCP Detection delay
+o = s:option(Flag, "use_tcping", translate("Use TCP Detection delay"),
+             translate("This will use tcping replace ping detection of node"))
+o.default = 1
+
+---- Concise display nodes
+o = s:option(Flag, "compact_display_nodes", translate("Concise display nodes"))
+o.default = 0
+
+---- Show Add Mode
+o = s:option(Flag, "show_add_mode", translate("Show Add Mode"))
+o.default = 1
+
+---- Show group
+o = s:option(Flag, "show_group", translate("Show Group"))
+o.default = 1
+
+
+
+
 
 -- [[ Forwarding Settings ]]--
 s = m:section(TypedSection, "global_forwarding",
@@ -175,5 +204,6 @@ o.rmempty = false
 o = s:option(Flag, "status_show_ip111", translate("Status Show IP111"))
 o.default = "0"
 o.rmempty = false
-
+---- Tips
+s:append(Template("passwall/global/tips"))
 return m
