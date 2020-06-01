@@ -6,25 +6,53 @@ local api = require "luci.model.cbi.passwall.api.api"
 local appname = "passwall"
 
 m = Map(appname)
-m:append(Template("passwall/global/status1"))
+
+-- [[ Other Settings ]]--
+s = m:section(TypedSection, "global_other")
+s.anonymous = true
+
+---- Auto Ping
+o = s:option(Flag, "auto_ping", translate("Auto Ping"),
+             translate("This will automatically ping the node for latency"))
+o.default = 1
+
+---- Use TCP Detection delay
+o = s:option(Flag, "use_tcping", translate("Use TCP Detection delay"),
+             translate("This will use tcping replace ping detection of node"))
+o.default = 1
+
+---- Concise display nodes
+o = s:option(Flag, "compact_display_nodes", translate("Concise display nodes"))
+o.default = 0
+
+---- Show Add Mode
+o = s:option(Flag, "show_add_mode", translate("Show Add Mode"))
+o.default = 1
+
+---- Show group
+o = s:option(Flag, "show_group", translate("Show Group"))
+o.default = 1
+
+-- [[ Add the node via the link ]]--
+s:append(Template("passwall/node_list/link_add_node"))
 
 -- [[ Node List ]]--
-s = m:section(TypedSection, "nodes",translate("Node List"))
+s = m:section(TypedSection, "nodes")
 -- s.description = translate("Support for more than 10,000 ping nodes and luci does not crash and not slow.")
 s.anonymous = true
 s.addremove = true
 s.template = "cbi/tblsection"
-s.extedit = d.build_url("admin", "Internet", "passwall", "node_config", "%s")
+s.extedit = d.build_url("admin", "vpn", "passwall", "node_config", "%s")
 function s.create(e, t)
     local e = TypedSection.create(e, t)
     luci.http
-        .redirect(d.build_url("admin", "Internet", "passwall", "node_config", e))
+        .redirect(d.build_url("admin", "vpn", "passwall", "node_config", e))
 end
 
 function s.remove(t, a)
     s.map.proceed = true
     s.map:del(a)
-    luci.http.redirect(d.build_url("admin", "Internet", "passwall", "node_list"))
+    luci.http.redirect(d.build_url("admin", "vpn", "passwall", "node_list"))
 end
 
 if api.uci_get_type("global_other", "show_group", "1") == "1" then
