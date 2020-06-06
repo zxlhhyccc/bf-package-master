@@ -1,0 +1,148 @@
+
+config smartdns
+	option server_name 'smartdns'
+	option dualstack_ip_selection '1'
+	option prefetch_domain '1'
+	option serve_expired '1'
+	option seconddns_no_speed_check '0'
+	option seconddns_no_dualstack_selection '0'
+	option seconddns_no_cache '0'
+	option tcp_server '0'
+	option seconddns_tcp_server '0'
+	option coredump '0'
+	option port '6053'
+	option ipv6_server '0'
+	option redirect 'dnsmasq-upstream'
+	option seconddns_port '5335'
+	option seconddns_server_group 'fq_dns'
+	option seconddns_enabled '1'
+	option seconddns_no_rule_addr '0'
+	option seconddns_no_rule_nameserver '0'
+	option seconddns_no_rule_ipset '0'
+	option seconddns_no_rule_soa '0'
+	option cache_size '20000'
+	option rr_ttl '3600'
+	option rr_ttl_min '5'
+	option force_aaaa_soa '0'
+	list old_redirect 'dnsmasq-upstream'
+	list old_port '6053'
+	list old_enabled '0'
+
+config server
+	option type 'udp'
+	option ip '114.114.114.114'
+	option enabled '0'
+	option name '114DNS'
+	option blacklist_ip '0'
+
+config server
+	option type 'udp'
+	option ip '223.5.5.5'
+	option enabled '0'
+	option name 'AliDNS'
+	option blacklist_ip '0'
+
+config server
+	option type 'udp'
+	option ip '119.29.29.29'
+	option enabled '0'
+	option blacklist_ip '0'
+	option name 'DNSpod'
+
+config server
+	option name 'baiduDNS'
+	option ip '180.76.76.76'
+	option type 'udp'
+	option blacklist_ip '0'
+	option enabled '0'
+
+config server
+	option name '360DNS'
+	option ip '101.226.4.6'
+	option type 'udp'
+	option blacklist_ip '0'
+	option enabled '0'
+
+config server
+	option name 'SDNS'
+	option ip '1.2.4.8'
+	option type 'udp'
+	option blacklist_ip '0'
+	option enabled '0'
+
+config server
+	option enabled '0'
+	option name 'CloudflareDNS'
+	option ip '1.1.1.1'
+	option type 'udp'
+	option blacklist_ip '0'
+
+config server
+	option ip '1.1.1.1'
+	option port '853'
+	option type 'tls'
+	option enabled '0'
+	option name 'CloudflareDNS'
+	option blacklist_ip '0'
+	option no_check_certificate '0'
+
+config server
+	option ip '1.1.1.1/dns-query'
+	option port '443'
+	option type 'https'
+	option enabled '0'
+	option name 'CloudflareDNS'
+	option blacklist_ip '0'
+	option no_check_certificate '0'
+
+config server
+	option ip '8.8.8.8'
+	option port '853'
+	option type 'tls'
+	option enabled '0'
+	option name 'GoogleDNS'
+	option blacklist_ip '0'
+	option no_check_certificate '0'
+
+config server
+	option enabled '0'
+	option name 'GoogleDNS'
+	option ip '8.8.8.8'
+	option blacklist_ip '0'
+	option type 'tcp'
+
+config server
+	option enabled '0'
+	option name 'GoogleDNS'
+	option ip 'https://dns.google/dns-query'
+	option port '443'
+	option type 'https'
+	option blacklist_ip '0'
+	option no_check_certificate '0'
+
+config server
+	option enabled '0'
+	option name 'OpenDNS'
+	option ip '208.67.222.222'
+	option type 'tcp'
+	option blacklist_ip '0'
+
+config server
+	option enabled '0'
+	option name 'OpenDNS'
+	option ip '208.67.222.222'
+	option port '853'
+	option type 'tls'
+	option blacklist_ip '0'
+	option no_check_certificate '0'
+
+config server
+	option enabled '0'
+	option name 'OpenDNS'
+	option ip 'https://doh.opendns.com/dns-query'
+	option port '443'
+	option type 'https'
+	option blacklist_ip '0'
+	option no_check_certificate '0'
+
+
