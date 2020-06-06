@@ -1035,3 +1035,8 @@ msgstr "警告：当前系统没有包括两个分区!"
 msgid "Warning: This system does not support powering off!"
 msgstr "警告：本系统不支持软关机!"
 
+msgid "Filter IPv6 Records"
+msgstr "过滤 IPv6 记录"
+
+msgid "Filter IPv6(AAAA) Records during DNS resolution"
+msgstr "在域名解析时，过滤 IPv6(AAAA) 记录"
