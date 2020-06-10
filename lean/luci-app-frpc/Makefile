@@ -1,16 +1,19 @@
 #
-# Copyright (C) 2010-2011 OpenWrt.org
+# Copyright (C) 2008-2014 The LuCI Team <luci@lists.subsignal.org>
 #
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
+# This is free software, licensed under the Apache License, Version 2.0 .
 #
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=frpc web UI
-LUCI_DEPENDS:=+frpc +curl +luci-base
-PKG_VERSION:=1.0
+LUCI_TITLE:=LuCI for FRPC
+LUCI_DEPENDS:=+wget +frpc
+LUCI_PKGARCH:=all
+PKG_VERSION:=1.2
+PKG_RELEASE:=1
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
+
+

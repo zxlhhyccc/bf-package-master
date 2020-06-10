@@ -1,34 +1,23 @@
 local o=require"luci.dispatcher"
 local e=require("luci.model.ipkg")
 local s=require"nixio.fs"
-local SYS  = require "luci.sys"
-
 local e=luci.model.uci.cursor()
 local i="frp"
 local a,t,e
 local n={}
-if SYS.call("pidof frpc >/dev/null") == 0 then
-	Status = translate("<strong><font color=\"green\">frpc is Running</font></strong>")
-else
-	Status = translate("<strong><font color=\"red\">frpc is Not Running</font></strong>")
-end
-
 a=Map(i,translate("Frp Setting"), translate("Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."))
---a:section(SimpleSection).template="frp/frp_status"
+a:section(SimpleSection).template="frp/frp_status"
 t=a:section(NamedSection,"common","frp",translate("Global Setting"))
 t.anonymous=true
 t.addremove=false
-t.description = translate(string.format("%s<br /><br />", Status))
-
 t:tab("base",translate("Basic Settings"))
 t:tab("other",translate("Other Settings"))
 t:tab("log",translate("Client Log"))
 e=t:taboption("base",Flag, "enabled", translate("Enabled"))
 e.rmempty=false
-
 e=t:taboption("base",Value, "server_addr", translate("Server"))
+e.optional=false
 e.rmempty=false
-
 e=t:taboption("base",Value, "server_port", translate("Port"))
 e.datatype = "port"
 e.optional=false
@@ -169,4 +158,3 @@ e=t:option(Flag,"enable",translate("Enable State"))
 e.width="10%"
 e.rmempty=false
 return a
-
