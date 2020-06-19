@@ -28,10 +28,17 @@ ifeq ($(ARCH),powerpc64)
 	PKG_ARCH_VERYSYNC:=ppc64
 endif
 
-PKG_NAME:=verysync
-PKG_VERSION:=v1.4.3
-PKG_RELEASE:=1
+LATEST_VERSION:=$(shell curl http://www.verysync.com/shell/latest)
 
+PKG_NAME:=verysync
+
+ifneq ($(LATEST_VERSION),)
+	PKG_VERSION:=$(LATEST_VERSION)
+else
+	PKG_VERSION:=v1.4.3
+endif
+
+PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://releases-cdn.verysync.com/releases/$(PKG_VERSION)/
@@ -43,6 +50,7 @@ define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=A efficient data transmission tool
+	DEPENDS:=
 	URL:=http://www.verysync.com
 endef
 
@@ -51,7 +59,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	tar -zxf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_BUILD_DIR)
+	tar -xzvf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_BUILD_DIR)
 	chmod 0755 $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync
 endef
 
@@ -64,7 +72,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync $(1)/usr/bin/verysync
+	$(CP) $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync $(1)/usr/bin/verysync
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
