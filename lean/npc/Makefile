@@ -67,6 +67,7 @@ define Build/Prepare
 endef
 
 define Build/Configure
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/npc
 endef
 
 define Build/Compile
