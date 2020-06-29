@@ -20,7 +20,7 @@ msgid "Open Web Interface"
 msgstr "打开 Web 管理界面"
 
 msgid "Music Remote Center is a DAAP (iTunes Remote), MPD (Music Player Daemon) and RSP (Roku) media server."
-msgstr "PCHiFi 数字转盘遥控是一个基于 DAAP (iTunes Remote), MPD (Music Player Daemon) 和 RSP (Roku) media server 的服务器端播放器<br />后端输出支持 路由器本机声卡输出 /Airplay/ Chromecast"
+msgstr "PCHiFi 数字转盘遥控是一个基于 DAAP (iTunes Remote), MPD (Music Player Daemon) 和 RSP (Roku) media server 的服务器端播放器<br />后端输出支持 路由器本机声卡输出 /Airplay/ Chromecast。"
 
 msgid "Database File Path"
 msgstr "数据库文件路径"

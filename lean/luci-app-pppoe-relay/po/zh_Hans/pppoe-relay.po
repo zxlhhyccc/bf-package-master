@@ -12,7 +12,7 @@ msgid "PPPoE Relay"
 msgstr "PPPoE 穿透"
 
 msgid "Opening the PPPoE relay allows devices in the Intranet to create a separate PPPoE connection that can cross NAT."
-msgstr "开启 PPPoE 中继允许内网中的设备创建一个可穿过 NAT 的独立 PPPoE 连接"
+msgstr "开启 PPPoE 中继允许内网中的设备创建一个可穿过 NAT 的独立 PPPoE 连接。"
 
 msgid "Enable or disable the PPPoE Relay"
 msgstr "启用或禁用PPPoE穿透"

@@ -42,10 +42,10 @@ msgid "Modify time"
 msgstr "修改时间"
 
 msgid "No specify upload file."
-msgstr "未指定上传文件"
+msgstr "未指定上传文件。"
 
 msgid "Path on Route:"
-msgstr "路由上目录"
+msgstr "路由根目录："
 
 msgid "Remove"
 msgstr "移除"

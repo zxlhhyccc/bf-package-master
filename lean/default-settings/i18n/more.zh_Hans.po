@@ -551,13 +551,13 @@ msgid "never"
 msgstr "从不"
 
 msgid "restart"
-msgstr ""
+msgstr "重启"
 
 msgid "start"
-msgstr ""
+msgstr "启动"
 
 msgid "stop"
-msgstr ""
+msgstr "关闭"
 
 msgid "unreachable (reject)"
 msgstr "不可达（拒绝）"

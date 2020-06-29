@@ -23,7 +23,7 @@ msgstr "字节总数"
 #: applications/luci-app-nft-qos/luasrc/view/nft-qos/rate.htm:141
 #: applications/luci-app-nft-qos/luasrc/view/nft-qos/rate.htm:160
 msgid "Collecting data..."
-msgstr "正在收集数据…"
+msgstr "正在收集数据..."
 
 #: applications/luci-app-nft-qos/luasrc/model/cbi/nft-qos/nft-qos.lua:224
 msgid "Comment"
