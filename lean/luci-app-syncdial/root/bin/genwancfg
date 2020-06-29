@@ -4,11 +4,14 @@
 . /lib/functions.sh
 
 #检测IP列表
-chk_ip_list="www.baidu.com 114.114.114.114 119.29.29.29"
+chk_ipv4_list="www.baidu.com 114.114.114.114 119.29.29.29"
+chk_ipv6_list="240c::6644 240c::6666 ipv6.baidu.com"
+ipv4=$(uci -q get syncdial.config.ipv4)
+ipv6=$(uci -q get syncdial.config.ipv6)
 origfirewall=$(uci get firewall.@zone[1].network)
 backupdev=$(uci get syncdial.config.devbackup)
 norun=$(echo $origfirewall|grep vwan)
-nomwan=$(uci get syncdial.config.nomwan)
+nomwan=$(cat /etc/config/syncdial | grep "nomwan '1'" | wc -l)
 wanselect=$(uci get syncdial.config.wanselect)
 wannum=$(uci get syncdial.config.wannum)
 oldframe=$(uci get syncdial.config.old_frame)
@@ -33,7 +36,8 @@ dial_type=$(uci get syncdial.config.dial_type)
 #添加MWAN负载均衡相关配置
 #$1:接口名称
 mwan_cfg_add() {
-	#gen mwan3_interface
+	#gen mwan3_interface ipv4
+	if [ "$ipv4" -eq 1 ]; then
 	uci set mwan3.${1}=interface
 	uci set mwan3.${1}.enabled=1
 	uci set mwan3.${1}.count=2
@@ -41,7 +45,7 @@ mwan_cfg_add() {
 	uci set mwan3.${1}.interval=5
 	uci set mwan3.${1}.down=4
 	uci set mwan3.${1}.up=1
-	for i in $chk_ip_list
+	for i in $chk_ipv4_list
 	do
 		uci add_list mwan3.${1}.track_ip="$i"
 	done
@@ -54,20 +58,56 @@ mwan_cfg_add() {
 	uci set mwan3.${1}.recovery_interval=5
 	uci set mwan3.${1}.flush_conntrack=never
 	#gen mwan3_member
-	uci set mwan3.${1}_m1_w1=member
-	uci set mwan3.${1}_m1_w1.interface=${1}
-	uci set mwan3.${1}_m1_w1.metric=1
-	uci set mwan3.${1}_m1_w1.weight=1
-	#gen mwan3_policy
-	uci add_list mwan3.balanced.use_member=${1}_m1_w1
+	uci set mwan3.${1}_m1_ipv4=member
+	uci set mwan3.${1}_m1_ipv4.interface=${1}
+	uci set mwan3.${1}_m1_ipv4.metric=1
+	uci set mwan3.${1}_m1_ipv4.weight=1
+	#gen mwan3_policy ipv4
+	uci add_list mwan3.balanced.use_member=${1}_m1_ipv4
+	fi
+
+	#gen mwan3_interface ipv6
+	if [ "$ipv6" -eq 1 ]; then
+	v6=${1}_6
+	uci set mwan3.${v6}=interface
+	uci set mwan3.${v6}.enabled=1
+	uci set mwan3.${v6}.count=2
+	uci set mwan3.${v6}.timeout=2
+	uci set mwan3.${v6}.interval=5
+	uci set mwan3.${v6}.down=4
+	uci set mwan3.${v6}.up=1
+	for i in $chk_ipv6_list
+	do
+		uci add_list mwan3.${v6}.track_ip="$i"
+	done
+	uci set mwan3.${v6}.reliability=1
+	uci set mwan3.${v6}.initial_state=online
+	uci set mwan3.${v6}.family=ipv6
+	uci set mwan3.${v6}.track_method=ping
+	uci set mwan3.${v6}.size=56
+	uci set mwan3.${v6}.failure_interval=5
+	uci set mwan3.${v6}.recovery_interval=5
+	uci set mwan3.${v6}.flush_conntrack=never
+	#gen mwan3_member ipv6
+	uci set mwan3.${1}_m1_ipv6=member
+	uci set mwan3.${1}_m1_ipv6.interface=${v6}
+	uci set mwan3.${1}_m1_ipv6.metric=1
+	uci set mwan3.${1}_m1_ipv6.weight=1
+	#gen mwan3_policy ipv6
+	uci add_list mwan3.balanced.use_member=${1}_m1_ipv6
+	fi
 }
 
 #删除MWAN负载均衡相关配置
 #$1:接口名称
 mwan_cfg_del() {
 	uci del mwan3.${1}
-	uci del mwan3.${1}_m1_w1
-	uci del_list mwan3.balanced.use_member=${1}_m1_w1
+	uci del mwan3.${1}_m1_ipv4
+	uci del_list mwan3.balanced.use_member=${1}_m1_ipv4
+	v6=${1}_6
+	uci del mwan3.${v6}
+	uci del mwan3.${1}_m1_ipv6
+	uci del_list mwan3.balanced.use_member=${1}_m1_ipv6
 }
 
 #添加macvlan设备
