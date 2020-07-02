@@ -66,10 +66,12 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	$(KERNEL_MAKE) M="$(PKG_BUILD_DIR)" \
-	EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
-	$(PKG_EXTRA_KCONFIG) \
-	modules
+	+$(MAKE) $(PKG_JOBS) -C "$(LINUX_DIR)" \
+        CROSS_COMPILE="$(TARGET_CROSS)" \
+        ARCH="$(LINUX_KARCH)" \
+        M="$(PKG_BUILD_DIR)" \
+        EXTRA_CFLAGS="$(BUILDFLAGS)" \
+        modules
 	$(call Build/Compile/Default)
 endef
 
