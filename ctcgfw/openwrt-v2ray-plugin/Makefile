@@ -10,6 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=v2ray-plugin
 PKG_VERSION:=1.3.3
 PKG_RELEASE:=1
+
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -47,7 +48,6 @@ endif
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
-	SUBMENU:=Project V
 	TITLE:=SIP003 plugin for shadowsocks, based on v2ray
 	URL:=https://github.com/shadowsocks/v2ray-plugin
 	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
