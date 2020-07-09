@@ -14,7 +14,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	TITLE:=LuCI support for clash
 	PKGARCH:=all
-	DEPENDS:=+iptables +dnsmasq-full +coreutils +coreutils-nohup +bash +curl +jsonfilter +ca-certificates +ipset +ip-full +iptables-mod-tproxy
+	DEPENDS:=+iptables +dnsmasq-full +coreutils +coreutils-nohup +bash +curl +jsonfilter +ca-certificates +ipset +ip-full +iptables-mod-tproxy +luci-base
 	MAINTAINER:=vernesong
 endef
 
@@ -99,8 +99,8 @@ if [ -f "/tmp/openclash.bak" ]; then
 	mv "/tmp/openclash_custom_hosts.list.bak" "/etc/openclash/custom/openclash_custom_hosts.list" >/dev/null 2>&1
 	mv "/tmp/openclash_custom_fake_filter.list.bak" "/etc/openclash/custom/openclash_custom_fake_filter.list" >/dev/null 2>&1
 	if [ -d "/tmp/openclash_history/" ]; then
-		rm -rf "/etc/openclash/history" >/dev/null 2>&1
-		mv "/tmp/openclash_history" "/etc/openclash/history" >/dev/null 2>&1
+		cp -a "/tmp/openclash_history/." "/etc/openclash/history" >/dev/null 2>&1
+		rm -rf "/tmp/openclash_history" >/dev/null 2>&1
 	fi
 fi
 if [ -f "/tmp/config.yaml" ]; then
