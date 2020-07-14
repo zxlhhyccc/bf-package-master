@@ -231,7 +231,7 @@ server {
 }
 EOF
 
-	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf &
+	/usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d
 }
 
 start_redir() {
