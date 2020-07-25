@@ -46,16 +46,14 @@ return L.Class.extend({
 		    systeminfo  = data[1],
 		    cpubench    = data[2],
 		    cpuinfo     = data[3],
-		    cpuusage    = data[4]; //,
-//		    luciversion = data[5];
+		    cpuusage    = data[4];
+		    luciversion = data[5];
 
-/*
 		luciversion = luciversion.filter(function(l) {
 			return l.match(/^\s*(luciname|luciversion)\s*=/);
 		}).map(function(l) {
 			return l.replace(/^\s*\w+\s*=\s*['"]([^'"]+)['"].*$/, '$1');
 		}).join(' ');
-*/
 
 		var datestr = null;
 
