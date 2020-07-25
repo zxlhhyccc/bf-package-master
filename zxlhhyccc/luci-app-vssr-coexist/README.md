@@ -22,7 +22,7 @@ a new SSR SS V2ray luci app bese luci-app-ssr-plus
 
 新修改插件难免有bug 请不要大惊小怪。欢迎提交bug。
 
-###  此版本为 jerryk + lean 2位大佬的整合版添加SS/trojan支持 可以和lean原版共存  在此感谢作者开源！
+###  此版本已和魔改版合并 共存版需配合魔改或lean原版使用
 
 #### Notice
 需要的依赖有python3-maxminddb libmaxminddb 请自行添加
@@ -37,4 +37,26 @@ theme : https://github.com/Leo-Jo-My/luci-theme-opentomato
 
 theme : https://github.com/Leo-Jo-My/luci-theme-opentomcat
 
+theme : https://github.com/Leo-Jo-My/luci-theme-Butterfly
+
 openwrt-nanopi-r1s-h5 ： https://github.com/jerrykuku/openwrt-nanopi-r1s-h5
+
+### 说明
+
+源码来源：https://github.com/jerrykuku/luci-app-vssr
+
+### 使用方法
+```Brach
+    #下载源码
+    
+    git clone https://github.com/Leo-Jo-My/luci-app-vssr package/luci-app-vssr
+    
+    git clone https://github.com/Leo-Jo-My/my package/my  #依赖包
+    
+    make menuconfig
+    
+    #编译
+    
+    make package/luci-app-vssr/{clean,compile} V=s
+
+

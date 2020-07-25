@@ -6,6 +6,7 @@ math.randomseed(os.time())
 
 <head>
     <link rel="stylesheet" href="/luci-static/vssr/css/vssr.css??v=<%=math.random(1,100000)%>">
+    <script src="<%=media%>/js/jquery.min.js"></script>
 </head>
 
 <body> 
@@ -67,11 +68,11 @@ math.randomseed(os.time())
         <div class="pure-u-1-6">
             <div class="block pure-g">
                 <div class="pure-u-3-5">
-                    <h4 id="pdnsd_status">PDNSD<br /><span class="red"><%:Not Running%></span></h4>
+                    <h4 id="chinadns_status">𝐂𝐡𝐢𝐧𝐚𝐃𝐍𝐒<br /><span class="red"><%:Not Running%></span></h4>
                 </div>
                 <div class="pure-u-2-5">
                     <div class="img-con">
-                        <img src="/luci-static/vssr/img/pdnsd.svg">
+                        <img src="https://i.imgur.com/3hkGjsK.png" >
                     </div>
                 </div>
             </div>
@@ -79,7 +80,7 @@ math.randomseed(os.time())
         <div class="pure-u-1-6">
             <div class="block pure-g">
                 <div class="pure-u-3-5">
-                    <h4 id="socks5_status">SOCKS5<br /><span class="red"><%:Not Running%></span></h4>
+                    <h4 id="socks5_status">𝙎𝙊𝘾𝙆𝙎5<br /><span class="red"><%:Not Running%></span></h4>
                 </div>
                 <div class="pure-u-2-5">
                     <div class="img-con">
@@ -107,7 +108,7 @@ math.randomseed(os.time())
                 var tb1 = document.getElementById('google_status');
                 var tb2 = document.getElementById('baidu_status');
                 var tb3 = document.getElementById('game_status');
-                var tb4 = document.getElementById('pdnsd_status');
+                var tb4 = document.getElementById('chinadns_status');
                 var tb5 = document.getElementById('socks5_status');
                 if (data && tb) {
                     if (data.global) {
@@ -130,15 +131,15 @@ math.randomseed(os.time())
                     } else {
                         tb3.innerHTML = '<%:Game Mode%><br><span class="red"><%:Not Running%></span>';
                     }
-                    if (data.pdnsd) {
-                        tb4.innerHTML = 'PDNSD<br><span class="green"><%:Running%></span>';
+                    if (data.chinadns) {
+                        tb4.innerHTML = '𝐂𝐡𝐢𝐧𝐚𝐃𝐍𝐒<br><span class="green"><%:Running%></span>';
                     } else {
-                        tb4.innerHTML = 'PDNSD<br><span class="red"><%:Not Running%></span>';
+                        tb4.innerHTML = '𝐂𝐡𝐢𝐧𝐚𝐃𝐍𝐒<br><span class="red"><%:Not Running%></span>';
                     }
                     if (data.socks5) {
-                        tb5.innerHTML = 'SOCKS5<br><span class="green"><%:Running%></span>';
+                        tb5.innerHTML = '𝙎𝙊𝘾𝙆𝙎5<br><span class="green"><%:Running%></span>';
                     } else {
-                        tb5.innerHTML = 'SOCKS5<br><span class="red"><%:Not Running%></span>';
+                        tb5.innerHTML = '𝙎𝙊𝘾𝙆𝙎5<br><span class="red"><%:Not Running%></span>';
                     }
                 }
             }

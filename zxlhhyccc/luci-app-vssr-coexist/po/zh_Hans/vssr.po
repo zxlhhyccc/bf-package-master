@@ -19,6 +19,36 @@ msgid "Enable Servers"
 msgstr "开启服务"
 
 
+msgid "Open v2ray split-flow"
+msgstr "开启V2ray分流"
+
+msgid "When open v2ray split-flow,your main server must be a v2ray server"
+msgstr "当使用v2ray分流功能时 主服务器必须为V2ray"
+
+msgid "Youtube Proxy"
+msgstr "Youtube 代理"
+
+msgid "TaiWan Video Proxy"
+msgstr "台湾视频服务代理"
+
+msgid "Netflix Proxy"
+msgstr "Netflix 代理"
+
+msgid "Diseny+ Proxy"
+msgstr "Diseny+ 代理"
+
+msgid "Prime Video Proxy"
+msgstr "Prime Video 代理"
+
+msgid "adblock settings"
+msgstr "广告屏蔽设置"
+
+msgid "Enable adblock"
+msgstr "开启广告屏蔽"
+
+msgid "adblock_url"
+msgstr "广告屏蔽订阅"
+
 msgid "Socks user"
 msgstr "用户名"
 
@@ -28,6 +58,8 @@ msgstr "密码"
 msgid "Ping All Servers"
 msgstr "PING 所有节点"
 
+msgid "Ping Latency"
+msgstr "Ping 延迟"
 
 msgid "vssr Server"
 msgstr "vssr 服务端"
@@ -38,12 +70,22 @@ msgstr "SSR SOCKS5代理"
 msgid "Subscription"
 msgstr "订阅管理"
 
+
+
 msgid "Subscribing,Please do not refresh!"
 msgstr "订阅，请不要刷新!"
 
 msgid "Check Try Count"
 msgstr "切换检查重试次数"
 
+msgid "Log"
+msgstr "日志"
+
+msgid "Bypass Domain List"
+msgstr "不走代理的域名"
+
+msgid "Black Domain List"
+msgstr "强制走代理的域名"
 
 msgid "Node List"
 msgstr "节点列表"
@@ -91,10 +133,10 @@ msgid "Client"
 msgstr "客户端"
 
 msgid "Visit foreign websites"
-msgstr "访问国外网站"
+msgstr "国外网站"
 
 msgid "Visit domestic website"
-msgstr "访问国内网站"
+msgstr "国内网站"
 
 msgid "Problem detected"
 msgstr "无法访问"
@@ -204,13 +246,13 @@ msgid "Interfaces - LAN"
 msgstr "接口 - LAN"
 
 msgid "LAN Access Control"
-msgstr "内网访问控制"
+msgstr "内网客户端分流代理控制"
 
 msgid "Allow listed only"
-msgstr "仅允许列表内"
+msgstr "仅允许列表内主机"
 
 msgid "Allow all except listed"
-msgstr "仅允许列表外"
+msgstr "除列表外主机皆允许"
 
 msgid "LAN Host List"
 msgstr "内网主机列表"
@@ -218,8 +260,6 @@ msgstr "内网主机列表"
 msgid "SSR Client"
 msgstr "客户端"
 
-msgid "SSR Server"
-msgstr "服务端"
 
 msgid "ShadowSocksR Server"
 msgstr "ShadowSocksR 服务端"
@@ -407,6 +447,9 @@ msgstr "【服务器端口】检查"
 
 msgid "Check Connect"
 msgstr "检查连通性"
+
+msgid "Basic Settings"
+msgstr "服务器设置"
 
 msgid "Check Server"
 msgstr "检查服务器"
@@ -603,6 +646,25 @@ msgstr "4 线程"
 msgid "8 Threads"
 msgstr "8 线程"
 
+msgid "16 Threads"
+msgstr "16 线程"
+
+msgid "32 Threads"
+msgstr "32 线程"
+
+msgid "64 Threads"
+msgstr "64 线程"
+
+msgid "128 Threads"
+msgstr "128 线程"
+
+msgid "256 Threads"
+msgstr "256 线程"
+
+msgid "512 Threads"
+msgstr "512 线程"
+
+
 msgid "Proxy Ports"
 msgstr "需要代理的端口"
 
@@ -611,6 +673,190 @@ msgstr "所有端口（默认）"
 
 msgid "Only Common Ports"
 msgstr "仅常用端口（不走P2P流量到代理）"
+
+
+msgid "Use dnscrypt-proxy query and cache"
+msgstr "使用dnscrypt-proxy TCP查询并缓存"
+
+msgid "Use dnsforwarder tcp query and cache"
+msgstr "使用dnsforwarder TCP查询并缓存"
+
+msgid "Use Pdnsd udp query and cache"
+msgstr "使用Pdnsd UDP查询并缓存"
+
+
+msgid "Use dnsforwarder udp query and cache"
+msgstr "使用dnsforwarder UDP查询并缓存"
+
+msgid "Use chinadns query and cache"
+msgstr "使用ChinaDNS查询并缓存"
+
+msgid "Chiadns Resolve Dns Mode"
+msgstr "ChinaDNS的上游服务器"
+
+
+msgid "Use Local DNS Service"
+msgstr "使用设定DNS解析"
+
+msgid "Oversea GFW List Mode"
+msgstr "海外用户回国域名列表模式"
+
+msgid "Oversea IP Route Mode"
+msgstr "海外用户回国IP路由模式"
+
+msgid "Use Local DNS Service"
+msgstr "使用设定DNS解析"
+
+msgid "Using System Default DNS"
+msgstr "使用系统默认DNS"
+
+msgid "Using acceleration center DNS"
+msgstr "使用加速中心DNS"
+
+msgid "Appoint dns List"
+msgstr "指定DNS解析列表"
+
+msgid "Use https_dns_proxy query and cache"
+msgstr "使用https_dns_proxy TCP查询并缓存"
+
+msgid "Use smartdns query and cache"
+msgstr "使用SmartDNS TCP查询并缓存"
+
+msgid "Use Pcap_DNSProxy query and cache"
+msgstr "使用Pcap DNSProxy TCP查询并缓存"
+
+msgid "Kill BT"
+msgstr "禁止  BT"
+
+msgid "BT Port"
+msgstr "BT 端口"
+
+msgid "Enabling IPv6 server"
+msgstr "启用ipv6服务"
+
+msgid "Prohibit downloading tool ports through proxy"
+msgstr "禁止BT端口走代理"
+
+
+msgid "udp2raw Version"
+msgstr "udp2raw 版本"
+
+msgid "udp2raw tunnel Project"
+msgstr "udp2raw 项目"
+
+
+msgid "UDPspeeder Version"
+msgstr "UDPspeeder 版本"
+
+
+msgid "UDPspeeder Project"
+msgstr "UDPspeeder 项目"
+
+msgid "Appointlist List"
+msgstr "加速列表"
+
+msgid "udp2raw tunnel"
+msgstr "隧道"
+
+msgid "Enable udp2raw"
+msgstr "启用 udp2raw"
+
+msgid "Enable UDPspeeder"
+msgstr "启用 UDPspeeder"
+
+msgid "SOCKS5 Proxy"
+msgstr "SOCKS5代理"
+
+msgid "SSOCKS5 Proxy"
+msgstr "SS SOCKS5代理"
+
+msgid "Global SS Server"
+msgstr "SS服务端"
+
+
+msgid "V2SOCKS5 Proxy"
+msgstr "V2ray SOCKS5代理"
+
+msgid "Global V2RAY Server"
+msgstr "V2RAY服务端"
+
+msgid "haProxy settings"
+msgstr "HaProxy 设置"
+
+
+msgid "Enabling the Management Console"
+msgstr "启用管理控制台"
+
+msgid "Service Port"
+msgstr "端口"
+
+msgid "Socket Connected"
+msgstr "连接测试"
+
+
+msgid "Enable HTTP Proxy"
+msgstr "启用HTTP代理"
+
+msgid "HTTP Port"
+msgstr "HTTP代理端口"
+
+msgid "plugin"
+msgstr "插件"
+
+msgid "Plugin Opts"
+msgstr "插件参数"
+
+msgid "Before subscribing please click below to delete all servers in the subscription"
+msgstr "订阅前请点击下面的删除所有服务器在订阅"
+
+msgid "Chnroute Setting"
+msgstr "国内IP段数据库更新设置"
+
+msgid "Enable custom chnroute"
+msgstr "启用自定义更新地址"
+
+msgid "Update url"
+msgstr "更新链接"
+
+msgid "HTTP Proxy"
+msgstr "HTTP代理"
+
+msgid "Raw Mode"
+msgstr "模式"
+
+msgid "Seq Mode"
+msgstr "Seq模式"
+
+msgid "Cipher Mode"
+msgstr "加密模式"
+
+msgid "Auth Mode"
+msgstr "校验模式"
+
+msgid "Speeder Mode"
+msgstr "Speeder模式"
+
+msgid "Fec"
+msgstr "fec参数"
+
+msgid "Mtu"
+msgstr "mtu参数"
+
+msgid "SS Servers"
+msgstr "SS服务器"
+
+
+msgid "SSR Servers"
+msgstr "SSR服务器"
+
+msgid "SSR Server"
+msgstr "服务端"
+
+msgid "V2 Servers"
+msgstr "V2服务器"
+
+msgid "SS/SSR/V2RAY Server"
+msgstr "SS/SSR/V2RAY 服务端"
 
 
 

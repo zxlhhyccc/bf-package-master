@@ -43,7 +43,7 @@ function gen_outbound(server_node, tags)
                 security = (server.tls == '1') and "tls" or "none",
                 tlsSettings = {
                     allowInsecure = (server.insecure == "1") and true or false,
-                    serverName = server.ws_host
+                    serverName = server.tls_host
                 },
                 kcpSettings = (server.transport == "kcp") and {
                     mtu = tonumber(server.mtu),

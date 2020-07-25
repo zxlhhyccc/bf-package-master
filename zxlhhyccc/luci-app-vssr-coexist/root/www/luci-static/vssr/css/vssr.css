@@ -250,7 +250,7 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
     overflow-x: auto;
     overflow-y: hidden;
     border: 1px solid rgba(0, 0, 0, .05);
-    border-radius: .375rem;
+    border-radius: .500rem;
     background-color: #fff;
     box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .15);
 }
@@ -310,13 +310,13 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
 
     .cbi-section-table-row {
         position: relative;
-        background: #99CCFF;
+        background: #CCFFFF;
         margin: 10px;
-        padding: 8px 15px 10px 65px;
+        padding: 8px 15px 10px 70px;
         box-shadow: 0 0 1rem 0 rgba(136,152,170,.75);
         border-radius: .5rem;
         border: 0;
-        color: #336699;
+        color: #003333;
         text-align: left;
         line-height: 1.7em;
         white-space: nowrap;
@@ -467,7 +467,7 @@ https://github.com/pure-css/pure/blob/master/LICENSE.md
         padding:0.5rem 0.8rem;
         float:right;
         margin-right:10px;
-        margin-top:-0.3rem;
+        margin-top:0rem;
 
 }
 
@@ -507,7 +507,7 @@ footer.mobile-hide{
         width:70px !important;
         height:70px;
         bottom:90px;
-        right:80px;
+        right:55px;
    font-size:20px;
         border-radius:50%;
         display:block;

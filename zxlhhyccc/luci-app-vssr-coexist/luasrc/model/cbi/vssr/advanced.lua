@@ -5,7 +5,6 @@ local server_table = {}
 local gfwmode=0
 local gfw_count=0
 local ip_count=0
-local ad_count = 0
 
 if nixio.fs.access("/etc/dnsmasq.ssr/gfw_list.conf") then
 gfwmode=1		
@@ -84,6 +83,15 @@ o.datatype = "port"
 o.default = 1080
 o.rmempty = false
 
+-- [[ HTTP Proxy ]]--
+if nixio.fs.access("/usr/sbin/privoxy") then
+o = s:option(Flag, "http_enable", translate("Enable HTTP Proxy"))
+o.rmempty = false
+
+o = s:option(Value, "http_port", translate("HTTP Port"))
+o.datatype = "port"
+o.default = 1081
+o.rmempty = false
 end
 -- [[ adblock ]]--
 s = m:section(TypedSection, "global", translate("adblock settings"))
@@ -92,9 +100,39 @@ s.anonymous = true
 o = s:option(Flag, "adblock", translate("Enable adblock"))
 o.rmempty = false
 
+o = s:option(Value, "adblock_url", translate("adblock_url"))
+o.default = "https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt"
 
+-- [[ chnroute ]]
+s = m:section(TypedSection, "global", translate("Chnroute Setting"))
+s.anonymous = true
 
+o = s:option(Flag, "chnroute", translate("Enable custom chnroute"))
+o.rmempty = false
 
+o = s:option(Value, "chnroute_url", translate("Update url"))
+o.default = "https://cdn.jsdelivr.net/gh/17mon/china_ip_list/china_ip_list.txt"
 
+-- [[ haProxy ]]--
+
+s = m:section(TypedSection, "global_haproxy", translate("haProxy settings"))
+s.anonymous = true
+
+o = s:option(Flag, "admin_enable", translate("Enabling the Management Console"))
+o.rmempty = false
+o.default = 1
+
+o = s:option(Value, "admin_port", translate("Service Port"))
+o.datatype = "uinteger"
+o.default = 1111
+
+o = s:option(Value, "admin_user", translate("User name"))
+o.default = "admin"
+
+o = s:option(Value, "admin_password", translate("Password"))
+o.default = "root"
+
+end
 return m
+
 

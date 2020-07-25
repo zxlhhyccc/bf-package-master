@@ -19,13 +19,20 @@ end
         entry({"admin", "vpn", "vssr", "servers"},
               arcombine(cbi("vssr/servers"), cbi("vssr/client-config")),
               _("Node List"), 11).leaf = true -- 编辑节点
-entry({"admin", "vpn", "vssr", "subscription"},cbi("vssr/subscription"), _("Subscription"),12).leaf = true
+      entry({"admin", "vpn", "vssr", "subscription"},cbi("vssr/subscription"),
+             _("Subscription"),12).leaf = true
         entry({"admin", "vpn", "vssr", "control"}, cbi("vssr/control"),
               _("Access Control"), 13).leaf = true -- 访问控制
        entry({"admin", "vpn", "vssr", "servers-list"}, cbi("vssr/servers-list"),
               _("Severs Nodes"), 14).leaf = true
+      entry({"admin", "vpn", "vssr", "appointlist"},form("vssr/appointlist"),
+             _("Appointlist List"), 15).leaf = true
+
+        entry({"admin", "vpn", "vssr", "udp2raw"},cbi("vssr/udp2raw"),
+            _("udp2raw tunnel"),16).leaf = true
+
         entry({"admin", "vpn", "vssr", "advanced"}, cbi("vssr/advanced"),
-              _("Advanced Settings"), 15).leaf = true -- 高级设置
+              _("Advanced Settings"), 17).leaf = true -- 高级设置
     elseif nixio.fs.access("/usr/bin/ssr-server") then
         entry({"admin", "vpn", "vssr"},
               alias("admin", "vpn", "vssr", "server"), _("vssr"), 10).dependent =
@@ -53,6 +60,7 @@ entry({"admin", "vpn", "vssr", "status"},form("vssr/status"),_("Status"), 23).le
     entry({"admin", "vpn", "vssr", "subscribe"}, call("get_subscribe")) -- 执行订阅
     entry({"admin", "vpn", "vssr", "flag"}, call("get_flag")) -- 获取节点国旗 iso code
     entry({"admin", "vpn", "vssr", "ip"}, call("check_ip")) -- 获取ip情况
+
 end
 
 -- 执行订阅
@@ -137,8 +145,72 @@ function act_status()
     local e = {}
     -- 全局服务器
    e.global=luci.sys.call("ps -w | grep ssr-retcp | grep -v grep >/dev/null") == 0 
-    -- 检测PDNSD状态
-    e.pdnsd = luci.sys.call("pidof pdnsd >/dev/null") == 0
+
+--检测负载均衡状态
+    if tonumber(luci.sys.exec("ps -w | grep haproxy |grep -v grep| wc -l"))>0 then
+		e.haproxy= true  
+                   end
+--检测kcptun状态
+    if tonumber(luci.sys.exec("ps -w | grep kcptun-client |grep -v grep| wc -l"))>0 then
+		e.kcptun= true  
+                end
+--检测HTTP代理状态
+                 if luci.sys.call("pidof privoxy >/dev/null") == 0 then
+		e.privoxy= true  
+                  end
+      --检测chinadns状态
+	if tonumber(luci.sys.exec("ps -w | grep chinadns |grep -v grep| wc -l"))>0 then
+		e.chinadns= true
+	elseif tonumber(luci.sys.exec("ps -w | grep dnsparsing |grep -v grep| wc -l"))>0 then
+		e.chinadns= true
+	elseif tonumber(luci.sys.exec("ps -w | grep dnscrypt-proxy |grep -v grep| wc -l"))>0 then
+		e.chinadns= true
+                   elseif tonumber(luci.sys.exec("ps -w | grep pdnsd |grep -v grep| wc -l"))>0 then
+		e.chinadns= true
+           
+               elseif tonumber(luci.sys.exec("ps -w | grep dnsforwarder |grep -v grep| wc -l"))>0 then
+		e.chinadns= true
+             
+          end
+   --检测SOCKS5状态
+	if tonumber(luci.sys.exec("ps -w | grep ssr-local |grep -v grep| wc -l"))>0 then
+		e.SOCKS5= true
+	elseif tonumber(luci.sys.exec("ps -w | grep ss-local |grep -v grep| wc -l"))>0 then
+		e.SOCKS5= true
+	elseif tonumber(luci.sys.exec("ps -w | grep v2-ssr-local |grep -v grep| wc -l"))>0 then
+		e.SOCKS5= true
+                  elseif tonumber(luci.sys.exec("ps -w | grep trojan-ssr-local |grep -v grep| wc -l"))>0 then
+		e.SOCKS5= true
+	end  
+--检测UDP2RAW状态
+                 if tonumber(luci.sys.exec("ps -w | grep udp2raw |grep -v grep| wc -l"))>0 then
+		e.udp2raw= true  
+end
+--检测UDPspeeder状态
+                 if tonumber(luci.sys.exec("ps -w | grep udpspeeder |grep -v grep| wc -l"))>0 then
+		e.udpspeeder= true  
+                  end
+ --检测服务端状态
+	if tonumber(luci.sys.exec("ps -w | grep ssr-server |grep -v grep| wc -l"))>0 then
+		e.server= true
+                    end 
+                  if luci.sys.call("pidof ssr-server >/dev/null") == 0 then
+                   e.ssr_server= true
+                   end 
+	if luci.sys.call("pidof ss-server >/dev/null") == 0 then
+		e.ss_server= true
+
+                     end 
+if luci.sys.call("ps -w | grep trojan-server | grep -v grep >/dev/null") == 0 then
+		e.trojan_server= true
+
+
+	end  
+	if luci.sys.call("ps -w | grep v2ray-server | grep -v grep >/dev/null") == 0 then
+		e.v2_server= true
+
+
+	end    
     -- 检测游戏模式状态
        e.game = false
     if tonumber(luci.sys.exec("ps -w | grep ssr-reudp |grep -v grep| wc -l"))>0 then
@@ -199,9 +271,20 @@ function act_status()
 end
 
 function act_ping()
-	local e={}
-	e.index=luci.http.formvalue("index")
-	e.ping=luci.sys.exec("ping -c 1 -W 1 %q 2>&1 | grep -o 'time=[0-9]*.[0-9]' | awk -F '=' '{print$2}'"%luci.http.formvalue("domain"))
+	local e = {}
+	local domain = luci.http.formvalue("domain")
+	local port = luci.http.formvalue("port")
+	e.index = luci.http.formvalue("index")
+	local iret = luci.sys.call(" ipset add ss_spec_wan_ac " .. domain .. " 2>/dev/null")
+	local socket = nixio.socket("inet", "stream")
+	socket:setopt("socket", "rcvtimeo", 3)
+	socket:setopt("socket", "sndtimeo", 3)
+	e.socket = socket:connect(domain, port)
+	socket:close()
+	e.ping = luci.sys.exec("ping -c 1 -W 1 %q 2>&1 | grep -o 'time=[0-9]*.[0-9]' | awk -F '=' '{print$2}'" % domain)
+	if (iret == 0) then
+		luci.sys.call(" ipset del ss_spec_wan_ac " .. domain)
+	end
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end

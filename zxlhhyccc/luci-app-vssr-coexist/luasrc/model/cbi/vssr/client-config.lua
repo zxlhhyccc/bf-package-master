@@ -105,6 +105,8 @@ o.rmempty = true
 o:depends("type", "ssr")
 o:depends("type", "ss")
 o:depends("type", "trojan")
+
+
 o = s:option(ListValue, "encrypt_method", translate("Encrypt Method"))
 for _, v in ipairs(encrypt_methods) do o:value(v) end
 o.rmempty = true
@@ -114,6 +116,8 @@ o = s:option(ListValue, "encrypt_method_ss", translate("Encrypt Method"))
 for _, v in ipairs(encrypt_methods_ss) do o:value(v) end
 o.rmempty = true
 o:depends("type", "ss")
+
+-- Shadowsocks Plugin
 
 o = s:option(ListValue, "plugin", translate("plugin"))
 o:value("none", "None")
