@@ -46,7 +46,7 @@ return L.Class.extend({
 		    systeminfo  = data[1],
 		    cpubench    = data[2],
 		    cpuinfo     = data[3],
-		    cpuusage    = data[4];
+		    cpuusage    = data[4],
 		    luciversion = data[5];
 
 		luciversion = luciversion.filter(function(l) {
