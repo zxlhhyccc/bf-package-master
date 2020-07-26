@@ -12,9 +12,6 @@ uci commit fstab
 
 sed -i 's/\"services\"/\"nas\"/g' /usr/lib/lua/luci/controller/aria2.lua
 sed -i 's#admin/services#admin/nas#g' /usr/lib/lua/luci/view/aria2/settings_header.htm
-sed -i 's/\"services\"/\"nas\"/g' /usr/share/luci/menu.d/luci-app-hd-idle.json
-sed -i 's/\"services\"/\"nas\"/g' /usr/share/luci/menu.d/luci-app-minidlna.json
-sed -i 's/\"services\"/\"nas\"/g' /usr/share/luci/menu.d/luci-app-mjpg-streamer.json
 
 ln -sf /sbin/ip /usr/bin/ip
 
