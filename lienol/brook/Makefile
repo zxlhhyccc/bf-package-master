@@ -22,7 +22,10 @@ ifeq ($(ARCH),arm)
 	PKG_ARCH_BROOK:=_linux_arm7
 endif
 ifeq ($(BOARD),bcm53xx)
+	PKG_ARCH_BROOK:=_linux_arm6
+ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
 	PKG_ARCH_BROOK:=_linux_arm5
+endif
 endif
 ifeq ($(BOARD),kirkwood)
 	PKG_ARCH_BROOK:=_linux_arm5
