@@ -16,10 +16,18 @@ Written in shell scripts, so it shall work all good on all devices.
 
 Config
 ---
-The config file path is: `/etc/config/beardropper`  and this is the CUI configuration format.
+The config file path is: `/etc/config/beardropper`  and this is the uci configuration format.
+
+
 
 Compile
 ---
+RECOMMENDED!!!! (推荐使用右边的feeds---->)You can use [natelol feeds][feeds]
+
+
+OR
+
+
 0. Go under `openwrt/`
 
 1. Make your own local feeds, say a folder `mkdir yourfeeds`
@@ -41,7 +49,6 @@ make menuconfig
 make package/feeds/luci-app-beardropper/compile V=99
 ```
 
-
 Logs
 ---
 `2020-05-21` Added a new tab listing the blocked IPs.
@@ -49,3 +56,4 @@ Logs
 
  [preview]: https://github.com/natelol/luci-app-beardropper/tree/master/preview
  [bearDropper]: https://github.com/robzr/bearDropper
+ [feeds]: https://github.com/natelol/natelol
