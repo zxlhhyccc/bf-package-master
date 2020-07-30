@@ -1,5 +1,6 @@
 include $(TOPDIR)/rules.mk
 
+
 PKG_NAME:=pdnsd
 PKG_VERSION:=1.2.9b-par
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
@@ -9,6 +10,8 @@ PKG_SOURCE_URL:=https://github.com/shadowsocks/pdnsd.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=a8e46ccba7b0fa2230d6c42ab6dcd92926f6c21d
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
+PKG_MIRROR_HASH:=skip
 # PKG_MIRROR_MD5SUM:=
 # CMAKE_INSTALL:=1
 
@@ -20,6 +23,10 @@ define Package/pdnsd-alt
   SUBMENU:=Web Servers/Proxies
   DEPENDS:=+libpthread
   TITLE:=Proxy DNS Server
+endef
+
+define Package/$(PKG_NAME)/conffiles
+/etc/pdnsd.conf
 endef
 
 define Package/pdnsd-alt/description
@@ -34,13 +41,21 @@ endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
 #TARGET_CFLAGS += -ggdb3
+TARGET_CFLAGS += -ffunction-sections -fdata-sections
+TARGET_LDFLAGS += -Wl,--gc-sections
+
+# Use Link time optimization
+TARGET_CFLAGS += -flto
+TARGET_LDFLAGS += -Wl,-flto
+
 
 CMAKE_OPTIONS += -DDEBUG=1
 
 CONFIGURE_ARGS += \
 		--with-cachedir=/var/pdnsd \
 		--with-target=Linux \
-		--enable-ipv6
+		--enable-ipv6 \
+		--enable-ipv6-startup
 
 define Package/pdnsd-alt/install
 	$(INSTALL_DIR) $(1)/usr/sbin
