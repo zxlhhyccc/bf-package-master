@@ -1,6 +1,5 @@
 include $(TOPDIR)/rules.mk
 
-
 PKG_NAME:=pdnsd
 PKG_VERSION:=1.2.9b-par
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
