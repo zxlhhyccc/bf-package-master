@@ -13,8 +13,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
-#PKG_MIRROR_HASH:=e877e2d911248666862133c05cc007bb04c8a09ca727f6b4f3060bf06af0d562
-PKG_SOURCE_VERSION:=ddb9a2e872799e814d0a5ca2c1e0c2924bfa0ec0
+#PKG_MIRROR_HASH:=11ffc493604c10c6c22c973bc69e5697738c12b05219dd123597cadfd174d2af
+PKG_SOURCE_VERSION:=3cecd6f090c47181a63134660e1ad98cdf6db5cd
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -23,6 +23,10 @@ PKG_MAINTAINER:=Dobroslaw Kijowski <dobo90@gmail.com>
 PKG_BUILD_DEPENDS:=golang/host node/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
+
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_ADGUARDHOME_COMPRESS_GOPROXY \
+	CONFIG_ADGUARDHOME_COMPRESS_UPX
 
 GO_PKG:=github.com/AdguardTeam/AdGuardHome
 GO_PKG_EXCLUDES:=dhcpd/standalone
@@ -50,6 +54,21 @@ define Package/AdGuardHome/description
 Free and open source, powerful network-wide ads and trackers blocking DNS server.
 endef
 
+define Package/$(PKG_NAME)/config
+config ADGUARDHOME_COMPRESS_GOPROXY
+	bool "Compiling with GOPROXY proxy"
+	default n
+
+config ADGUARDHOME_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	default y
+endef
+
+ifeq ($(CONFIG_ADGUARDHOME_COMPRESS_GOPROXY),y)
+export GO111MODULE=on
+export GOPROXY=https://goproxy.cn
+endif
+
 define Build/Compile
 ( \
   cd $(PKG_BUILD_DIR) ; \
@@ -59,12 +78,16 @@ define Build/Compile
   "$$$$(go env GOPATH)/bin/packr" -v -z -i $(PKG_BUILD_DIR)/home ; \
   $(call GoPackage/Build/Compile) ; \
 )
+ifeq ($(CONFIG_ADGUARDHOME_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome
+endif
 endef
 
 define Package/AdGuardHome/install
-	$(call GoPackage/Package/Install/Bin,$(1))
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/etc/AdGuardHome
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome $(1)/usr/bin/AdGuardHome
 	$(INSTALL_CONF) ./conf/$(ADG_CONF_NAME).yaml $(1)/etc/AdGuardHome/AdGuardHome.yaml
 endef
 
