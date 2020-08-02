@@ -1,3 +1,5 @@
+diff --git a/m4/libupnp.m4 b/m4/libupnp.m4
+index a9e08db..21619ab 100644
 --- a/m4/libupnp.m4
 +++ b/m4/libupnp.m4
 @@ -57,7 +57,6 @@ dnl	Test for --with-libupnp-prefix
@@ -8,7 +10,7 @@
  		AC_MSG_CHECKING([for libupnp version >= MIN_LIBUPNP_VERSION])
  		AS_IF([test -n "$PKG_CONFIG"], [
  			AS_IF([$PKG_CONFIG libupnp --exists], [
-@@ -84,11 +83,6 @@ dnl	Check for libupnp >= MIN_LIBUPNP_VER
+@@ -84,11 +83,6 @@ dnl	Check for libupnp >= MIN_LIBUPNP_VERSION
  		])
  		AC_MSG_RESULT([$result$resultstr])
  		libupnp_error="libupnp >= MIN_LIBUPNP_VERSION not found$resultstr"
