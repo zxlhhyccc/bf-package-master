@@ -1,3 +1,5 @@
+diff --git a/src/UPnPBase.cpp b/src/UPnPBase.cpp
+index 01a7c3a..1af858e 100644
 --- a/src/UPnPBase.cpp
 +++ b/src/UPnPBase.cpp
 @@ -828,7 +828,7 @@ m_WanService(NULL)
