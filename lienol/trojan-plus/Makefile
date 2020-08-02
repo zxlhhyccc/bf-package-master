@@ -51,7 +51,7 @@ CMAKE_OPTIONS += \
 	-DBoost_DEBUG=ON \
 	-DBoost_NO_BOOST_CMAKE=ON
 
-define Package/trojan-plus
+define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=An unidentifiable mechanism that helps you bypass GFW. It's compatible with original trojan with experimental features.
@@ -60,10 +60,9 @@ define Package/trojan-plus
 		+boost +boost-system +boost-program_options
 endef
 
-define Package/trojan-plus/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/trojan $(1)/usr/sbin/trojan-plus
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/trojan $(1)/usr/sbin/$(PKG_NAME)
 endef
 
-$(eval $(call BuildPackage,trojan-plus))
-
+$(eval $(call BuildPackage,$(PKG_NAME)))
