@@ -1,0 +1,184 @@
+bind_host: 0.0.0.0
+bind_port: 3000
+clients: []
+dhcp:
+  enabled: false
+  gateway_ip: ""
+  icmp_timeout_msec: 1000
+  interface_name: ""
+  lease_duration: 86400
+  range_end: ""
+  range_start: ""
+  subnet_mask: ""
+dns:
+  all_servers: true
+  allowed_clients: []
+  bind_host: 0.0.0.0
+  blocked_hosts: []
+  blocked_response_ttl: 10
+  blocked_services: []
+  blocking_mode: nxdomain
+  bootstrap_dns:
+  - 1.0.0.1:53
+  - 2606:4700:4700::1001:53
+  cache_size: 4194304
+  cache_time: 30
+  disallowed_clients: []
+  filtering_enabled: true
+  filters_update_interval: 24
+  parental_block_host: ""
+  parental_cache_size: 1048576
+  parental_enabled: false
+  parental_sensitivity: 13
+  port: 5553
+  protection_enabled: true
+  querylog_enabled: false
+  querylog_interval: 1
+  ratelimit: 0
+  ratelimit_whitelist: []
+  refuse_any: false
+  rewrites: []
+  safebrowsing_block_host: ""
+  safebrowsing_cache_size: 1048576
+  safebrowsing_enabled: false
+  safesearch_cache_size: 1048576
+  safesearch_enabled: false
+  statistics_interval: 1
+  upstream_dns:
+  - 202.141.178.13:5353
+  - 202.38.93.153:5353
+  - 202.141.162.123:5353
+  - https://neatdns.ustclug.org/resolve
+  - https://dns.rubyfish.cn/dns-query
+  - https://ndns.233py.com/dns-query
+  - https://edns.233py.com/dns-query
+  - https://wdns.233py.com/dns-query
+  - https://sdns.233py.com/dns-query
+  - 1.1.1.1
+  - 9.9.9.9
+  - 117.50.10.10
+  - 119.29.29.29
+  - 114.114.114.114
+  - 223.5.5.5
+  - 208.67.222.222:5353
+  - 2606:4700:4700::1111
+  - 2606:4700:4700::1001
+  - tcp://8.8.8.8
+  - tcp://8.8.4.4
+  - tcp://2001:4860:4860::8888
+  - tcp://2001:4860:4860::8844
+  - tls://dns.google
+  - tls://1dot1dot1dot1.cloudflare-dns.com
+  - https://dns9.quad9.net/dns-query
+filters:
+- enabled: true
+  id: 1
+  name: AdGuard Simplified Domain Names filter
+  url: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
+- enabled: true
+  id: 2
+  name: AdAway
+  url: https://adaway.org/hosts.txt
+- enabled: false
+  id: 3
+  name: hpHosts - Ad and Tracking servers only
+  url: https://hosts-file.net/ad_servers.txt
+- enabled: true
+  id: 4
+  name: MalwareDomainList.com Hosts List
+  url: https://www.malwaredomainlist.com/hostslist/hosts.txt
+- enabled: false
+  id: 1575018007
+  name: tvbox
+  url: https://raw.githubusercontent.com/vokins/yhosts/master/data/tvbox.txt
+- enabled: true
+  id: 1575618240
+  name: neoHosts full
+  url: https://hosts.nfz.moe/full/hosts
+- enabled: false
+  id: 1575618241
+  name: neoHosts basic
+  url: https://hosts.nfz.moe/basic/hosts
+- enabled: false
+  id: 1575618242
+  name: StevenBlack host basic
+  url: http://sbc.io/hosts/hosts
+- enabled: false
+  id: 1575618243
+  name: StevenBlack host+fakenews + gambling + porn + social
+  url: http://sbc.io/hosts/alternates/fakenews-gambling-porn-social/hosts
+- enabled: false
+  id: 1577113202
+  name: anti-AD(Adblock+neohosts+yhosts+cjxlist+adhlist)
+  url: https://cdn.jsdelivr.net/gh/privacy-protection-tools/anti-AD/anti-ad-easylist.txt
+- enabled: true
+  id: 1553073381
+  name: Diablo AdFilters
+  url: https://raw.githubusercontent.com/523860169/list/master/ad.txt
+- enabled: true
+  id: 1553073382
+  name: ChinaListV2.0[20190224001]
+  url: http://tools.yiclear.com/ChinaList2.0.txt
+- enabled: true
+  id: 1553073383
+  name: Adblock Warning Removal List
+  url: https://easylist-downloads.adblockplus.org/antiadblockfilters.txt
+- enabled: true
+  id: 1553073384
+  name: Fanboy's problematic-sites
+  url: https://fanboy.co.nz/fanboy-problematic-sites.txt
+- enabled: true
+  id: 1553073385
+  name: ABP-FX
+  url: https://raw.githubusercontent.com/xinggsf/Adblock-Plus-Rule/master/ABP-FX.txt
+- enabled: true
+  id: 1553073386
+  name: lazy
+  url: https://raw.githubusercontent.com/adbyby/xwhyc-rules/master/lazy.txt
+- enabled: true
+  id: 1553073387
+  name: hosts
+  url: https://hosts.nfz.moe/127.0.0.1/full/hosts
+- enabled: true
+  id: 1553073388
+  name: yhosts
+  url: https://raw.githubusercontent.com/vokins/yhosts/master/hosts
+- enabled: true
+  id: 1553073405
+  name: ChinaList+EasyList(淇)
+  url: http://sub.adtchrome.com/adt-chinalist-easylist.txt
+- enabled: true
+  id: 1568716204
+  name: EasyList
+  url: https://easylist.to/easylist/easylist.txt
+- enabled: true
+  id: 1568716205
+  name: EasyList China
+  url: https://easylist-downloads.adblockplus.org/easylistchina.txt
+- enabled: true
+  id: 1568716206
+  name: CJX's Annoyance List
+  url: https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt
+- enabled: true
+  id: 1568716207
+  name: CJX's EasyList Lite
+  url: https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjxlist.txt
+language: ""
+log_file: ""
+rlimit_nofile: 0
+schema_version: 6
+tls:
+  certificate_chain: ""
+  certificate_path: ""
+  enabled: false
+  force_https: false
+  port_dns_over_tls: 853
+  port_https: 443
+  private_key: ""
+  private_key_path: ""
+  server_name: ""
+user_rules: []
+users:
+- name: root
+  password: $2y$10$FfeQavihMUiXCuJhHuQwy.6EOXDvkXb/S50qI5fXizqarNT/ShhQm
+verbose: false
