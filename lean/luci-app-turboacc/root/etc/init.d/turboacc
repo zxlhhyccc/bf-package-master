@@ -242,6 +242,7 @@ start(){
 		stop_dnscache
 		sleep 1
 		rm -f "/var/log/dnscache.file"
+		rm -f "/etc/AdGuardHome/data/querylog.json*"
 		if [ "${dns_caching_mode}" = "1" ];  then
 			start_pdnsd
 		elif [ "${dns_caching_mode}" = "2" ];  then
