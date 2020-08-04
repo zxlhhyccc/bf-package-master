@@ -6,8 +6,8 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=n2n
 PKG_SOURCE_URL:=https://github.com/ntop/n2n.git
-PKG_SOURCE_VERSION:=bc0a6bf8b78c90dd902efa75891d41d2a489286e
-PKG_VERSION:=2.6.0_git-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_VERSION:=2ea8dd53b7c5ed5390f3df42df3d92f43682c5c6
+PKG_VERSION:=2.7.0_git-$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -34,12 +34,13 @@ endef
 define Package/n2n-edge
   $(call Package/n2n/Default)
   TITLE+= client (edge node)
-  DEPENDS+=+kmod-tun +resolveip +libopenssl
+  DEPENDS+=+kmod-tun +resolveip +libopenssl +libcap +libzstd
 endef
 
 define Package/n2n-supernode
   $(call Package/n2n/Default)
   TITLE+= server (supernode)
+  DEPENDS+=+libcap
 endef
 
 define Package/n2n-edge/description
