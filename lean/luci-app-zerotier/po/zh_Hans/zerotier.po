@@ -1,12 +1,10 @@
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Project-Id-Version: PACKAGE VERSION\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
-"Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Gtranslator 2.91.7\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Zerotier is an open source, cross-platform and easy to use virtual LAN"
 msgstr "Zerotier是一个开源，跨平台，而且适合内网穿透互联的傻瓜配置虚拟 VPN LAN"
@@ -22,9 +20,3 @@ msgstr "点击跳转到Zerotier官网管理平台，新建或者管理网络，�
 
 msgid "Interface Info"
 msgstr "接口信息"
-
-msgid "Zerotier access control"
-msgstr "Zerotier 准入控制"
-
-msgid "Manual Config"
-msgstr "手动设置"
