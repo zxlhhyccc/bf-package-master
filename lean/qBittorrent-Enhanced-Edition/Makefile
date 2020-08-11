@@ -7,7 +7,7 @@ PKG_RELEASE=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/c0re100/qBittorrent-Enhanced-Edition.git
-PKG_SOURCE_VERSION:=d9011d3c377484399c0af1ceaa6c6c14d3102324
+PKG_SOURCE_VERSION:=bf3f782b2e9645cd2f7d325909cc05c2a7e2bf8c
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/qBittorrent-Enhanced-Edition-$(PKG_VERSION)
 
