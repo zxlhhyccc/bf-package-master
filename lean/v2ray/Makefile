@@ -15,8 +15,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/v2ray-$(PKG_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=v2ray-core-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/v2ray/v2ray-core.git
-PKG_SOURCE_VERSION:=e1b349bf74be7aa0577ad4f414340d173071cc26
+PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
+PKG_SOURCE_VERSION:=a150775352adddc8bc7e564d4fec985fdfca3dfe
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
