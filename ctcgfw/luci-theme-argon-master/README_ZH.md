@@ -5,7 +5,7 @@
 [4]: https://github.com/jerrykuku/luci-theme-argon/pulls
 [5]: https://img.shields.io/badge/Issues-welcome-brightgreen.svg
 [6]: https://github.com/jerrykuku/luci-theme-argon/issues/new
-[7]: https://img.shields.io/badge/release-v2.2.2-blue.svg?
+[7]: https://img.shields.io/badge/release-v2.2.3-blue.svg?
 [8]: https://github.com/jerrykuku/luci-theme-argon/releases
 [9]: https://img.shields.io/github/downloads/jerrykuku/luci-theme-argon/total
 [10]: https://img.shields.io/badge/Contact-telegram-blue
@@ -18,8 +18,9 @@
 [![Contact Me][10]][11]
 
 
-![](/Screenshots/pc1.jpg)
-![](/Screenshots/phone.jpg)
+![](/Screenshots/screenshot_pc.jpg)
+![](/Screenshots/screenshot_phone.jpg)
+
 全新的 Openwrt 主题，基于luci-theme-material 和 开源免费的 Argon 模板进行移植。 
 
 ## 注意
@@ -50,17 +51,19 @@ make -j1 V=s
 ## 安装
 ### For Lean openwrt
 ```
-wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v1.6.6/luci-theme-argon_1.6.6-20200815_all.ipk
+wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v1.6.8/luci-theme-argon_1.6.8-20200820_all.ipk
 opkg install luci-theme-argon*.ipk
 ```
 
 ### For openwrt official 19.07 Snapshots LuCI master 
 ```
-wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.2.2/luci-theme-argon_2.2.2-20200816_all.ipk
+wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.2.3/luci-theme-argon_2.2.3-20200820_all.ipk
 opkg install luci-theme-argon*.ipk
 ```
 
-## 更新日志 2020.08.16 v2.2.2 
+## 更新日志 2020.08.20 v2.2.3 
+- 修正了在暗色模式下，固件刷写弹窗内的显示错误。【v2.2.3】
+- 更新了图标库，为未定义的菜单增加了一个默认的图标。【v2.2.3】
 
 - 背景文件策略调整为，同时接受 jpg png gif mp4, 自行上传文件至 /www/luci-static/argon/background 图片和视频同时随机。【v2.2.2】
 - 增加强制暗色模式，进入ssh 输入 "touch /etc/dark" 进行开启。【v2.2.2】
