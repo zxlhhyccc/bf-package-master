@@ -1,0 +1,261 @@
+#!/bin/sh /etc/rc.common
+START=99
+STOP=10
+SERVICE_DAEMONIZE=1
+PROG_PATH=/usr/share/adbyby
+DATA_PATH=$PROG_PATH/data
+WAN_FILE=/var/etc/dnsmasq-adbyby.d/03-adbyby-ipset.conf
+CONFIG=adbyby
+ipt_n="iptables -t nat"
+STATUS=Y
+TAG="_ADBYBY_FW_RULE_"
+
+uci_get_by_name() {
+	local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+uci_get_by_type() {
+	local index=0
+	if [ -n $4 ]; then
+		index=$4
+	fi
+	local ret=$(uci get $CONFIG.@$1[$index].$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+get_config()
+{
+	config_get_bool enable $1 enable
+	config_get_bool cron_mode $1 cron_mode
+	config_get wan_mode $1 wan_mode
+	config_get_bool block_ios $1 block_ios 0
+	config_get time_update $1 time_update 6
+}
+
+add_rules()
+{
+	rm -f $DATA_PATH/user.bin
+	grep -v ^! $PROG_PATH/rules.txt > $DATA_PATH/user.txt
+	cp $PROG_PATH/rules.txt $DATA_PATH/rules.txt
+}
+
+add_cron()
+{
+	del_cron
+	if [ $cron_mode -eq 1 ]; then
+		crontab -l | {
+		cat
+		echo "0 $time_update * * * $PROG_PATH/adblock.sh > /tmp/adupdate.log 2>&1"
+		} | crontab -
+	fi
+}
+
+del_cron()
+{
+	crontab -l | sed '/adblock.sh/d' | crontab -
+}
+
+ip_rule()
+{
+	ipset -N adbyby_esc hash:ip
+	$ipt_n -A ADBYBY_FW -m set --match-set adbyby_esc dst -j RETURN
+
+	for i in $(seq 0 100)
+	do
+		local ip=$(uci_get_by_type acl_rule ipaddr '' $i)
+		local mode=$(uci_get_by_type acl_rule filter_mode '' $i)
+		case "$mode" in
+		disable)
+			$ipt_n -A ADBYBY_FW -s $ip -j RETURN
+			;;
+		global)
+			$ipt_n -A ADBYBY_FW -s $ip -p tcp -j REDIRECT --to-ports 8118
+			;;
+		esac
+	done
+
+	case $wan_mode in
+		0)
+			;;
+		1)
+			ipset -N adbyby_wan hash:ip
+			$ipt_n -A ADBYBY_FW -m set ! --match-set adbyby_wan dst -j RETURN
+			;;
+		2)
+			$ipt_n -I ADBYBY_FW -j RETURN
+			;;
+	esac
+
+	echo "create blockip hash:net family inet hashsize 1024 maxelem 65536" > /tmp/blockip.ipset
+	awk '!/^$/&&!/^#/{printf("add blockip %s'" "'\n",$0)}' $PROG_PATH/blockip.conf >> /tmp/blockip.ipset
+	ipset -! restore < /tmp/blockip.ipset 2>/dev/null
+	rm -f /tmp/blockip.ipset
+	iptables -I FORWARD -m set --match-set blockip dst -m comment --comment "$TAG" -j DROP
+	iptables -I OUTPUT -m set --match-set blockip dst -m comment --comment "$TAG" -j DROP
+}
+
+add_dns()
+{
+	mkdir -p /var/etc/dnsmasq-adbyby.d
+	mkdir -p /tmp/dnsmasq.d
+	awk '!/^$/&&!/^#/{printf("ipset=/%s/'"adbyby_esc"'\n",$0)}' $PROG_PATH/adesc.conf > /var/etc/dnsmasq-adbyby.d/01-dnsmasq.esc
+	awk '!/^$/&&!/^#/{printf("address=/%s/'"0.0.0.0"'\n",$0)}' $PROG_PATH/adblack.conf > /var/etc/dnsmasq-adbyby.d/02-dnsmasq.black
+	cat > /tmp/dnsmasq.d/dnsmasq-adbyby.conf <<EOF
+conf-dir=/var/etc/dnsmasq-adbyby.d
+EOF
+
+	if [ $wan_mode -eq 1 ]; then
+		awk '!/^$/&&!/^#/{printf("ipset=/%s/'"adbyby_wan"'\n",$0)}' $PROG_PATH/adhost.conf > $WAN_FILE
+		cp -f /tmp/adbyby/adbyby_adblock/dnsmasq.adblock /var/etc/dnsmasq-adbyby.d/04-dnsmasq.adblock
+	fi
+	sed -i '/mesu.apple.com/d' /etc/dnsmasq.conf && [ $block_ios -eq 1 ] && echo 'address=/mesu.apple.com/0.0.0.0' >> /etc/dnsmasq.conf
+}
+
+del_dns()
+{
+	rm -f /tmp/dnsmasq.d/dnsmasq-adbyby.conf
+	rm -rf /var/etc/dnsmasq-adbyby.d
+	sed -i '/mesu.apple.com/d' /etc/dnsmasq.conf
+}
+
+add_rule()
+{
+	$ipt_n -N ADBYBY_FW
+	ipset restore < $PROG_PATH/adbyby_local
+	$ipt_n -A ADBYBY_FW -m set --match-set adbyby_local dst -j RETURN || (
+	$ipt_n -A ADBYBY_FW -d 0.0.0.0/8 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 10.0.0.0/8 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 100.64.0.0/10 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 127.0.0.0/8 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 169.254.0.0/16 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 172.16.0.0/12 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 192.0.0.0/24 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 192.0.2.0/24 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 192.88.99.0/24 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 192.168.0.0/16 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 198.18.0.0/15 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 198.51.100.0/24 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 203.0.113.0/24 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 224.0.0.0/4 -j RETURN
+	$ipt_n -A ADBYBY_FW -d 240.0.0.0/4 -j RETURN
+	)
+	ip_rule
+	$ipt_n -A ADBYBY_FW -p tcp -j REDIRECT --to-ports 8118
+	$ipt_n -I PREROUTING -p tcp --dport 80 -m comment --comment "$TAG" -j ADBYBY_FW
+	$PROG_PATH/gen_include gen
+}
+
+del_rule()
+{
+	$ipt_n -D PREROUTING -p tcp --dport 80 -m comment --comment "$TAG" -j ADBYBY_FW 2>/dev/null
+	$ipt_n -F ADBYBY_FW 2>/dev/null
+	$ipt_n -X ADBYBY_FW 2>/dev/null
+	iptables -D FORWARD -m set --match-set blockip dst -m comment --comment "$TAG" -j DROP 2>/dev/null
+	iptables -D OUTPUT -m set --match-set blockip dst -m comment --comment "$TAG" -j DROP 2>/dev/null
+	ipset -F adbyby_esc 2>/dev/null
+	ipset -X adbyby_esc 2>/dev/null
+	ipset -F adbyby_wan 2>/dev/null
+	ipset -X adbyby_wan 2>/dev/null
+	ipset -F blockip 2>/dev/null
+	ipset -X blockip 2>/dev/null
+	ipset -F adbyby_local 2>/dev/null
+	ipset -X adbyby_local 2>/dev/null
+	$PROG_PATH/gen_include default
+}
+
+addown(){
+	local retry=1
+	while ps -w | grep $PROG_PATH/addown.sh | grep -v grep >/dev/null 2>&1; do
+		[ $retry -ge 10 ] && return 1 || let retry++
+		sleep 1
+	done
+	rm -f /var/lock/adbyby.lock
+	service_start $PROG_PATH/addown.sh --down
+}
+
+start()
+{
+	config_load adbyby
+	config_foreach get_config adbyby
+	if [ $enable -eq 0 ];then
+		echo "Adbyby is disabled."
+		return 1
+	fi
+	if pgrep /usr/share/adbyby/adbyby >/dev/null;then
+		echo "Adbyby has started."
+		return 1
+	fi
+	echo "Start mem mode"
+	if mount | grep adbyby >/dev/null 2>&1; then
+		echo "Adbyby has mount"
+	else
+		echo "Mount Adbyby"
+		if [ ! -d "/tmp/adbyby" ]; then
+			mkdir -p /tmp/adbyby
+			cp -a $DATA_PATH /tmp/adbyby/
+			mount --bind /tmp/adbyby/data $DATA_PATH
+		fi
+	fi
+	[ "$(head -1 $DATA_PATH/lazy.txt | awk -F' ' '{print $3,$4}')" == "2017-1-2 00:12:25" ] && A=1
+	[ $wan_mode -eq 1 ] && [ ! -s "/tmp/adbyby/adbyby_adblock/dnsmasq.adblock" ] && A=1
+	if [ "$A" == "1" ];then
+		echo "Download Rules..."
+		addown
+		return 9
+	fi
+	echo "Add Adbyby rules"
+	add_rules
+	echo "Start Adbyby"
+	service_start $PROG_PATH/adbyby
+	add_dns
+	add_cron
+	iptables-save | grep ADBYBY_ >/dev/null || (
+	$PROG_PATH/gen_include default
+	add_rule
+	)
+	if [ "$STATUS" == "Y" ]; then
+		echo "Dnsmasq Change"
+		/etc/init.d/dnsmasq restart >/dev/null 2>&1
+	fi
+}
+
+stop()
+{
+	del_rule
+	del_cron
+	del_dns
+	echo "Stop Adbyby"
+	service_stop $PROG_PATH/adbyby
+	if [ "$STATUS" == "Y" ]; then
+		if mount | grep adbyby >/dev/null 2>&1; then
+			echo "Umount adbyby"
+			umount -l $DATA_PATH
+			rm -rf /tmp/adbyby
+		fi
+		echo "Revert Dnsmasq"
+		/etc/init.d/dnsmasq restart >/dev/null 2>&1
+		rm -f /tmp/adbyby.updated
+	fi
+}
+
+restart()
+{
+	if [ "$(uci get adbyby.@adbyby[0].enable)" == "1" ]; then
+		STATUS=N
+		stop
+		start
+		if [ $? != 9 ]; then
+			echo "Restart Dnsmasq"
+			/etc/init.d/dnsmasq restart >/dev/null 2>&1
+		fi
+	else
+		stop
+	fi
+}
+
+boot()
+{
+	$PROG_PATH/gen_include default
+	start
+}
