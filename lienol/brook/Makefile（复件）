@@ -22,7 +22,10 @@ ifeq ($(ARCH),arm)
 	PKG_ARCH_BROOK:=_linux_arm7
 endif
 ifeq ($(BOARD),bcm53xx)
+	PKG_ARCH_BROOK:=_linux_arm6
+ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
 	PKG_ARCH_BROOK:=_linux_arm5
+endif
 endif
 ifeq ($(BOARD),kirkwood)
 	PKG_ARCH_BROOK:=_linux_arm5
@@ -32,8 +35,8 @@ ifeq ($(ARCH),aarch64)
 endif
 
 PKG_NAME:=brook
-PKG_VERSION:=20200201
-PKG_RELEASE:=2
+PKG_VERSION:=20200901
+PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=brook$(PKG_ARCH_BROOK)
 PKG_SOURCE_URL:=https://github.com/txthinking/brook/releases/download/v$(PKG_VERSION)
@@ -54,14 +57,14 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	mv $(DL_DIR)/$(PKG_SOURCE) $(PKG_BUILD_DIR)
+	cp $(DL_DIR)/$(PKG_SOURCE) $(PKG_BUILD_DIR)
 endef
 
 define Build/Configure
 endef
 
 define Build/Compile
-       chmod +x $(PKG_BUILD_DIR)/brook && upx --lzma $(PKG_BUILD_DIR)/brook
+       chmod +x $(PKG_BUILD_DIR)/brook$(PKG_ARCH_BROOK) && upx --lzma $(PKG_BUILD_DIR)/brook$(PKG_ARCH_BROOK)
 endef
 
 define Package/$(PKG_NAME)/install

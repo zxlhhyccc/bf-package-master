@@ -1,45 +1,48 @@
-#
-# Copyright (C) 2015-2016 OpenWrt.org
+# Copyright (C) 2020 xiaorouji
 #
 # This is free software, licensed under the GNU General Public License v3.
 #
 
 include $(TOPDIR)/rules.mk
 
-ifeq ($(ARCH),x86_64)
-	PKG_ARCH_BROOK:=
-endif
-ifeq ($(ARCH),mipsel)
-	PKG_ARCH_BROOK:=_linux_mipsle
-endif
-ifeq ($(ARCH),mips)
-	PKG_ARCH_BROOK:=_linux_mips
-endif
-ifeq ($(ARCH),i386)
-	PKG_ARCH_BROOK:=_linux_386
-endif
-ifeq ($(ARCH),arm)
-	PKG_ARCH_BROOK:=_linux_arm7
-endif
-ifeq ($(BOARD),bcm53xx)
-	PKG_ARCH_BROOK:=_linux_arm6
-ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
-	PKG_ARCH_BROOK:=_linux_arm5
-endif
-endif
-ifeq ($(BOARD),kirkwood)
-	PKG_ARCH_BROOK:=_linux_arm5
-endif
-ifeq ($(ARCH),aarch64)
-	PKG_ARCH_BROOK:=_linux_arm64
-endif
-
 PKG_NAME:=brook
 PKG_VERSION:=20200901
 PKG_RELEASE:=1
+
+ifeq ($(ARCH),i386)
+	PKG_ARCH:=386
+endif
+ifeq ($(ARCH),x86_64)
+	PKG_ARCH:=amd64
+endif
+ifeq ($(ARCH),mipsel)
+	PKG_ARCH:=mipsle
+endif
+ifeq ($(ARCH),mips)
+	PKG_ARCH:=mips
+endif
+ifeq ($(ARCH),arm)
+	PKG_ARCH:=arm7
+endif
+ifeq ($(BOARD),bcm53xx)
+	PKG_ARCH:=arm6
+ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
+	PKG_ARCH:=arm5
+endif
+endif
+ifeq ($(BOARD),kirkwood)
+	PKG_ARCH:=arm5
+endif
+ifeq ($(ARCH),arm64)
+	PKG_ARCH:=arm64
+endif
+ifeq ($(ARCH),aarch64)
+	PKG_ARCH:=arm64
+endif
+
+PKG_FILE:=$(PKG_NAME)_$(PKG_VERSION)_$(PKG_ARCH)
+PKG_URL:=https://github.com/txthinking/brook/releases/download/v$(PKG_VERSION)/$(PKG_NAME)_linux_$(PKG_ARCH)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE:=brook$(PKG_ARCH_BROOK)
-PKG_SOURCE_URL:=https://github.com/txthinking/brook/releases/download/v$(PKG_VERSION)
 PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
@@ -57,19 +60,24 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	cp $(DL_DIR)/$(PKG_SOURCE) $(PKG_BUILD_DIR)
+	if [ ! -f $(DL_DIR)/$(PKG_FILE) ] ; then \
+		curl -f --connect-timeout 20 --retry 5 --location --insecure $(PKG_URL) -o $(DL_DIR)/$(PKG_FILE); \
+	fi
+	rm -r $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)
+	cp -f $(DL_DIR)/$(PKG_FILE) $(PKG_BUILD_DIR)/$(PKG_NAME)
 endef
 
 define Build/Configure
 endef
 
 define Build/Compile
-       chmod +x $(PKG_BUILD_DIR)/brook$(PKG_ARCH_BROOK) && upx --lzma $(PKG_BUILD_DIR)/brook$(PKG_ARCH_BROOK)
+       chmod +x $(PKG_BUILD_DIR)/$(PKG_NAME) && upx --lzma $(PKG_BUILD_DIR)/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/brook$(PKG_ARCH_BROOK) $(1)/usr/bin/brook
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME) $(1)/usr/bin/brook
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
