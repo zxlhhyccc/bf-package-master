@@ -24,12 +24,18 @@ ifeq ($(ARCH),x86_64)
 endif
 ifeq ($(ARCH),arm)
 	NPC_ARCH:=arm_v7
-	ifeq ($(BOARD),bcm53xx)
-		NPC_ARCH:=arm_v5
-  endif
-	ifeq ($(BOARD),kirkwood)
-		NPC_ARCH:=arm_v5
-  endif
+endif
+ifeq ($(BOARD),bcm53xx)
+	NPC_ARCH:=arm_v6
+ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
+	NPC_ARCH:=arm_v5
+endif
+endif
+ifeq ($(BOARD),kirkwood)
+	NPC_ARCH:=arm_v5
+endif
+ifeq ($(ARCH),arm64)
+	NPC_ARCH:=arm64
 endif
 ifeq ($(ARCH),aarch64)
 	NPC_ARCH:=arm64
