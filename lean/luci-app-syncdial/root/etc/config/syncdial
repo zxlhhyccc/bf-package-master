@@ -16,6 +16,6 @@ config syncdial 'config'
 	option bindwan '0'
 	option bindwan2 '0'
 	option ipv4 '1'
-	option ipv6 '1'
+	option ipv6 '0'
 	option enabled '0'
 

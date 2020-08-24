@@ -16,7 +16,7 @@ wanselect=$(uci get syncdial.config.wanselect)
 wannum=$(uci get syncdial.config.wannum)
 oldframe=$(uci get syncdial.config.old_frame)
 bindwan=$(uci -q get syncdial.config.bindwan)
-
+ipv6=$(uci get syncdial.config.ipv6)
 dial_type=$(uci get syncdial.config.dial_type)
 [ "$dial_type" -eq 2 ] && {
 	wanselect2=$(uci get syncdial.config.wanselect2)
@@ -132,6 +132,15 @@ pppoe_if_add() {
 	uci set network.${1}.password=${4}
 	uci set network.${1}.metric=${5}
 	uci set network.${1}.macaddr=$NEW_MACADDR
+	[ "$ipv6" == "1" ] && {
+	v6=${1}_6
+	uci set network.${v6}=interface
+	uci set network.${v6}.ifname=pppoe-${1}
+	uci set network.${v6}.proto=dhcpv6
+	uci set network.${v6}.metric=$((${5}+984))
+	uci set network.${v6}.macaddr=$NEW_MACADDR
+	uci add_list firewall.@zone[1].network=${v6}
+	}
 	#gen firewall
 	uci add_list firewall.@zone[1].network=${1}
 }
@@ -278,6 +287,13 @@ else
 fi
 
 ###dualdial configuration
+[ "$nomwan" -ne 1 ] && [ -z "$(uci get mwan3.ipv6_default_rule)" ] && {
+	uci set mwan3.ipv6_default_rule=rule
+	uci set mwan3.ipv6_default_rule.dest_ip='::/0'
+	uci set mwan3.ipv6_default_rule.proto='all'
+	uci set mwan3.ipv6_default_rule.sticky='0'
+	uci set mwan3.ipv6_default_rule.use_policy='balanced'
+}
 [ "$(uci -q get syncdial.config.dial_type)" = "2" ] && {
 
 	uci set network.$wanselect2.metric=60
