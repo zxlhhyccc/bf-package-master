@@ -2,7 +2,7 @@ diff --git a/configure.ac b/configure.ac
 index 6865c66..e61a6df 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -89,6 +89,14 @@ MULE_IF_ENABLED([static], [MULE_APPEND([LDFLAGS], [-static])])
+@@ -87,6 +87,14 @@ MULE_IF_ENABLED([static], [MULE_APPEND([LDFLAGS], [-static])])
  KDE_CONFIG_OPTIONS
  QT_CONFIG_OPTIONS
  
@@ -17,8 +17,8 @@ index 6865c66..e61a6df 100644
  # Default is yes, because they're most likely compatible.
  # However, this is only used when cross-compiling.
  AC_ARG_WITH(
-@@ -449,6 +457,8 @@ AM_CONDITIONAL(COMPILE_NLS, test x$USE_NLS = xyes)
- AM_CONDITIONAL(GENERATE_FLEX_HEADER, test x$HAVE_FLEX_EXTENDED = xyes)
+@@ -445,6 +453,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x$SYS = xdarwin)
+ AM_CONDITIONAL(COMPILE_NLS, test x$USE_NLS = xyes)
  AM_CONDITIONAL(INSTALL_SKINS, test MULE_IS_ENABLED_ANY([monolithic, amule-gui]))
  AM_CONDITIONAL(PLASMAMULE, test MULE_IS_ENABLED([plasmamule]))
 +#Dynamic Leech Protection - Bill Lee
@@ -584,7 +584,7 @@ index ecf36f0..b9e1f05 100644
  
  //-------------------- File_Encoder --------------------
  
-@@ -1387,6 +1390,15 @@ CECPacket *CECServerSocket::ProcessRequest2(const CECPacket *request)
+@@ -1390,6 +1393,15 @@ CECPacket *CECServerSocket::ProcessRequest2(const CECPacket *request)
  				}
  			}
  			break;
@@ -652,7 +652,7 @@ diff --git a/src/Makefile.am b/src/Makefile.am
 index 47bb20a..0d0a3a0 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -179,6 +179,13 @@ core_sources = \
+@@ -178,6 +178,13 @@ core_sources = \
  	kademlia/routing/RoutingZone.cpp
  
  
