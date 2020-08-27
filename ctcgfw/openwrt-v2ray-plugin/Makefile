@@ -11,11 +11,14 @@ PKG_NAME:=v2ray-plugin
 PKG_VERSION:=1.3.5
 PKG_RELEASE:=1
 
+PKG_SOURCE_PROTO:=git
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/teddysun/v2ray-plugin/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=46b3b9aec066df710f7ff27518c73c94ed63bbcdd6827e759da8627bf300a8d9
+PKG_SOURCE_URL:=https://github.com/teddysun/v2ray-plugin.git
+PKG_SOURCE_VERSION:=339ce7c8442d171945b458469e3151473456b3a5
+#PKG_SOURCE_URL:=https://codeload.github.com/teddysun/v2ray-plugin/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=b49818abe7dd97aed20252764488d7f1bc37b4a762029c1eb4a44e27632317de
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
