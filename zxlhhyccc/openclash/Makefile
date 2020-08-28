@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash
-PKG_VERSION:=v1.0.0-33
-PKG_RELEASE:=g8b7c731
+PKG_VERSION:=v1.1.0-5
+PKG_RELEASE:=gc9735ef
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_ARCH:=mipsle-softfloat
@@ -26,7 +26,10 @@ ifeq ($(ARCH),arm)
 	OPENCLASH_ARCH:=armv7
 endif
 ifeq ($(BOARD),bcm53xx)
+	OPENCLASH_ARCH:=armv6
+ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
 	OPENCLASH_ARCH:=armv5
+endif
 endif
 ifeq ($(BOARD),kirkwood)
 	OPENCLASH_ARCH:=armv5

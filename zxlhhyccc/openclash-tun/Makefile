@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-tun
-PKG_VERSION:=2020.08.21
-PKG_RELEASE:=g0e83591
+PKG_VERSION:=2020.08.26
+PKG_RELEASE:=g3803f5f
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_TUN_ARCH:=mipsle-softfloat
@@ -26,7 +26,10 @@ ifeq ($(ARCH),arm)
 	OPENCLASH_TUN_ARCH:=armv7
 endif
 ifeq ($(BOARD),bcm53xx)
+	OPENCLASH_TUN_ARCH:=armv6
+ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
 	OPENCLASH_TUN_ARCH:=armv5
+endif
 endif
 ifeq ($(BOARD),kirkwood)
 	OPENCLASH_TUN_ARCH:=armv5
