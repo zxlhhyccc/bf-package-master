@@ -15,6 +15,7 @@ RULES_PATH=/usr/share/${CONFIG}/rules
 TMP_DNSMASQ_PATH=/var/etc/dnsmasq-passwall.d
 DNSMASQ_PATH=/etc/dnsmasq.d
 RESOLVFILE=/tmp/resolv.conf.d/resolv.conf.auto
+LOCAL_DOH_PORT=7912
 DNS_PORT=7913
 TUN_DNS="127.0.0.1#${DNS_PORT}"
 IS_DEFAULT_DNS=
@@ -27,6 +28,7 @@ LUA_API_PATH=/usr/lib/lua/luci/model/cbi/$CONFIG/api
 API_GEN_SS=$LUA_API_PATH/gen_shadowsocks.lua
 API_GEN_V2RAY=$LUA_API_PATH/gen_v2ray.lua
 API_GEN_TROJAN=$LUA_API_PATH/gen_trojan.lua
+API_GEN_NAIVE=$LUA_API_PATH/gen_naiveproxy.lua
 echolog() {
 	local d="$(date "+%Y-%m-%d %H:%M:%S")"
 	echo -e "$d: $*" >>$LOG_FILE
@@ -341,6 +343,9 @@ run_socks() {
 	elif [ "$type" == "trojan-go" ]; then
 		lua $API_GEN_TROJAN $node client $bind $local_port > $config_file
 		ln_start_bin "$(first_type $(config_t_get global_app trojan_go_file notset) trojan-go)" trojan-go -config "$config_file"
+	elif [ "$type" == "naiveproxy" ]; then
+		lua $API_GEN_NAIVE $node socks $bind $local_port > $config_file
+		ln_start_bin "$(first_type naive)" naive "$config_file"
 	elif [ "$type" == "brook" ]; then
 		local protocol=$(config_n_get $node protocol client)
 		local brook_tls=$(config_n_get $node brook_tls 0)
@@ -397,6 +402,8 @@ run_redir() {
 		elif [ "$type" == "trojan-go" ]; then
 			lua $API_GEN_TROJAN $node nat "0.0.0.0" $local_port >$config_file
 			ln_start_bin "$(first_type $(config_t_get global_app trojan_go_file notset) trojan-go)" trojan-go -config "$config_file"
+		elif [ "$type" == "naiveproxy" ]; then
+			echolog "Naiveproxy不支持UDP转发！"
 		elif [ "$type" == "brook" ]; then
 			local protocol=$(config_n_get $node protocol client)
 			if [ "$protocol" == "wsclient" ]; then
@@ -438,6 +445,9 @@ run_redir() {
 		elif [ "$type" == "trojan-go" ]; then
 			lua $API_GEN_TROJAN $node nat "0.0.0.0" $local_port > $config_file
 			ln_start_bin "$(first_type $(config_t_get global_app trojan_go_file notset) trojan-go)" trojan-go -config "$config_file"
+		elif [ "$type" == "naiveproxy" ]; then
+			lua $API_GEN_NAIVE $node redir "0.0.0.0" $local_port > $config_file
+			ln_start_bin "$(first_type naive)" naive "$config_file"
 		else
 			local kcptun_use=$(config_n_get $node use_kcp 0)
 			if [ "$kcptun_use" == "1" ]; then
@@ -619,12 +629,20 @@ stop_crontab() {
 }
 
 start_dns() {
-	local dns2socks_socks_server dns2socks_forward dns2sock_cache pdnsd_port pdnsd_forward other_port up_trust_pdnsd_dns msg
+	if [ "${LOCAL_DNS}" = "https-dns-proxy" ]; then
+		up_china_dns_doh_url=$(config_t_get global up_china_dns_doh_url "https://dns.alidns.com/dns-query")
+		up_china_dns_doh_bootstrap=$(config_t_get global up_china_dns_doh_bootstrap "223.5.5.5,223.6.6.6")
+		ln_start_bin "$(first_type https-dns-proxy)" https-dns-proxy -a 127.0.0.1 -p "${LOCAL_DOH_PORT}" -b "${up_china_dns_doh_bootstrap}" -r "${up_china_dns_doh_url}" -4
+		LOCAL_DNS="127.0.0.1#${LOCAL_DOH_PORT}"
+	fi
+
+	local dns2socks_socks_server dns2socks_forward dns2sock_cache doh_port pdnsd_port pdnsd_forward other_port up_trust_pdnsd_dns msg
 	local global chnlist returnhome china_ng_chn china_ng_gfw chnlist_param gfwlist_param extra_mode up_trust_chinadns_ng_dns
 	dns2socks_socks_server=$(echo $(config_t_get global socks_server 127.0.0.1:9050) | sed "s/#/:/g")
 	dns2socks_forward=$(get_first_dns DNS_FORWARD 53 | sed 's/#/:/g')
 	dns2socks_listen="127.0.0.1:${DNS_PORT}"
 	[ "$DNS_CACHE" == "0" ] && dns2sock_cache="/d"
+	doh_port=${DNS_PORT}
 	pdnsd_port=${DNS_PORT}
 	pdnsd_forward=${DNS_FORWARD}
 	china_ng_chn="${LOCAL_DNS}"
@@ -645,19 +663,12 @@ start_dns() {
 		echolog "  - 域名解析 dns2socks..."
 	;;
 	https-dns-proxy)
-		doh_url=$(config_t_get global doh_url "https://dns.google/dns-query")
-		doh_bootstrap=$(config_t_get global doh_bootstrap "8.8.4.4")
-		
 		up_trust_doh_dns=$(config_t_get global up_trust_doh_dns "tcp")
 		if [ "$up_trust_doh_dns" = "socks" ]; then
-			socks_server=$(echo $(config_t_get global socks_server 127.0.0.1:9050) | sed "s/#/:/g")
 			use_tcp_node_resolve_dns=0
-			ln_start_bin "$(first_type https-dns-proxy)" https-dns-proxy -a 127.0.0.1 -p "${DNS_PORT}" -b "${doh_bootstrap}" -r "${doh_url}" -4 -t socks5h://${socks_server}
-			msg="dns2socks"
+			msg="Socks节点"
 		elif [ "${up_trust_doh_dns}" = "tcp" ]; then
 			use_tcp_node_resolve_dns=1
-			DNS_FORWARD=${doh_bootstrap}:443
-			ln_start_bin "$(first_type https-dns-proxy)" https-dns-proxy -a 127.0.0.1 -p "${DNS_PORT}" -b "${doh_bootstrap}" -r "${doh_url}" -4
 			msg="TCP节点"
 		fi
 		echolog "  - 域名解析 https-dns-proxy(DOH)..."
@@ -688,8 +699,11 @@ start_dns() {
 			msg="pdnsd"
 		elif [ "$up_trust_chinadns_ng_dns" = "dns2socks" ]; then
 			dns2socks_listen=${china_ng_gfw}
-			[ -n "${global}${chnlist}" ] && TUN_DNS="${dns2socks_listen}"
+			#[ -n "${global}${chnlist}" ] && TUN_DNS="${dns2socks_listen}"
 			msg="dns2socks"
+		elif [ "$up_trust_chinadns_ng_dns" = "https-dns-proxy" ]; then
+			doh_port=${other_port}
+			msg="https-dns-proxy(DoH)"
 		elif [ "$up_trust_chinadns_ng_dns" = "udp" ]; then
 			use_udp_node_resolve_dns=1
 			if [ -z "${returnhome}" ]; then
@@ -731,11 +745,24 @@ start_dns() {
 		gen_pdnsd_config "${pdnsd_port}" "${pdnsd_forward}"
 		ln_start_bin "$(first_type pdnsd)" pdnsd --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
 	fi
+	if [ -n "$(echo ${DNS_MODE}${up_trust_chinadns_ng_dns} | grep 'https-dns-proxy')" ]; then
+		doh_url=$(config_t_get global doh_url "https://dns.google/dns-query")
+		doh_bootstrap=$(config_t_get global doh_bootstrap "8.8.4.4")
+		
+		up_trust_doh_dns=$(config_t_get global up_trust_doh_dns "tcp")
+		if [ "$up_trust_doh_dns" = "socks" ]; then
+			socks_server=$(echo $(config_t_get global socks_server 127.0.0.1:9050) | sed "s/#/:/g")
+			ln_start_bin "$(first_type https-dns-proxy)" https-dns-proxy -a 127.0.0.1 -p "${doh_port}" -b "${doh_bootstrap}" -r "${doh_url}" -4 -t socks5h://${socks_server}
+		elif [ "${up_trust_doh_dns}" = "tcp" ]; then
+			DNS_FORWARD=${doh_bootstrap}:443
+			ln_start_bin "$(first_type https-dns-proxy)" https-dns-proxy -a 127.0.0.1 -p "${doh_port}" -b "${doh_bootstrap}" -r "${doh_url}" -4
+		fi
+	fi
 	if [ -n "$(echo ${DNS_MODE}${up_trust_chinadns_ng_dns}${up_trust_pdnsd_dns} | grep dns2socks)" ]; then
 		dns2socks_listen=$(echo "${dns2socks_listen}" | sed 's/#/:/g')
 		ln_start_bin "$(first_type dns2socks)" dns2socks "$dns2socks_socks_server" "$dns2socks_forward" "$dns2socks_listen" $dns2sock_cache
 		echolog "  - dns2sock(${dns2socks_listen}${dns2sock_cache})，${dns2socks_socks_server:-127.0.0.1:9050} -> ${dns2socks_forward-D46.182.19.48:53}"
-		[ "${DNS_MODE}" = "chinadns-ng" ] && [ -n "${global}${chnlist}" ] && [ -z "${returnhome}" ] && TUN_DNS="${dns2socks_listen}"
+		#[ "${DNS_MODE}" = "chinadns-ng" ] && [ -n "${global}${chnlist}" ] && [ -z "${returnhome}" ] && TUN_DNS=$(echo "${dns2socks_listen}" | sed 's/:/#/g')
 	fi
 	[ "${use_udp_node_resolve_dns}" = "1" ] && echolog "  * 要求代理 DNS 请求，如上游 DNS 非直连地址，确保 UDP 代理打开，并且已经正确转发"
 	[ "${use_tcp_node_resolve_dns}" = "1" ] && echolog "  * 请确认上游 DNS 支持 TCP 查询，如非直连地址，确保 TCP 代理打开，并且已经正确转发"
