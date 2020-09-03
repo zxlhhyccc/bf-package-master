@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aMule
 PKG_VERSION:=2.3.2
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 #PKG_REV=004879a
 PKG_REV=f28e82b
 
@@ -46,7 +46,9 @@ CONFIGURE_ARGS+= \
 	--disable-rpath \
 	--with-gnu-ld \
 	--disable-ccache \
-	--disable-optimize \
+	--enable-gettext \
+	--enable-geoip \
+	--enable-optimize \
 	--disable-profile \
 	--disable-monolithic \
 	--enable-amule-daemon \
@@ -63,6 +65,7 @@ CONFIGURE_ARGS+= \
 	--without-wxdebug \
 	--enable-dlp \
 	--enable-upnp \
+	--with-language=zh_CN \
 	--with-zlib="$(STAGING_DIR)/usr" \
 	--with-gdlib-prefix="$(STAGING_DIR)/usr" \
 	--with-libpng-prefix="$(STAGING_DIR)/usr" \
