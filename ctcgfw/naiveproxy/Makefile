@@ -15,11 +15,10 @@ PKG_SOURCE_URL:=https://codeload.github.com/klzgrad/naiveproxy/tar.gz/v$(PKG_VER
 PKG_HASH:=5fa9b2f26212f2414dc0ebc021f64c566585e26c20ec17955cef53ce3bc314da
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
-PKG_LICENSE:=BSD-3-Clause
+PKG_LICENSE:=BSD 3-Clause
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=CN_SZTL <cnsztl@project-openwrt.eu.org>
 
-PKG_FIXUP:=autoreconf
 PKG_BUILD_DEPENDS:=ninja/host python3/host
 PKG_USE_MIPS16:=0
 PKG_BUILD_PARALLEL:=1
