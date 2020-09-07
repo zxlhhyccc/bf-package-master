@@ -1,5 +1,5 @@
 
-config ssocks
+config ssocksd
 	option enable '0'
 	option bind_addr 'wan'
 	option listen_port '10800'

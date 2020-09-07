@@ -1,0 +1,17 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@ssocksd[-1]
+	add ucitrack ssocksd
+	set ucitrack.@ssocksd[-1].init=ssocksd
+	commit ucitrack
+	delete firewall.ssocksd
+	set firewall.ssocksd=include
+	set firewall.ssocksd.type=script
+	set firewall.ssocksd.path=/var/etc/ssocksd.include
+	set firewall.ssocksd.reload=1
+	commit firewall
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

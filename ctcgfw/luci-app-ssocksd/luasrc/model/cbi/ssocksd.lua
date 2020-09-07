@@ -2,12 +2,12 @@
 -- Created By [CTCGFW]Project OpenWRT
 -- https://github.com/project-openwrt
 
-mp = Map("ssocks", translate("sSocks Server"))
-mp.description = translate("sSocks Server is a simple, small, and easy-to-use Socks5 server program, but supports TCP on IPv4 only.")
+mp = Map("ssocksd", translate("sSocksd Server"))
+mp.description = translate("sSocksd Server is a simple, small, and easy-to-use Socks5 server program, but supports TCP on IPv4 only.")
 
-mp:section(SimpleSection).template = "ssocks/ssocks_status"
+mp:section(SimpleSection).template = "ssocksd/ssocksd_status"
 
-s = mp:section(TypedSection, "ssocks")
+s = mp:section(TypedSection, "ssocksd")
 s.anonymous=true
 s.addremove=false
 
@@ -18,12 +18,12 @@ enable.rmempty = false
 bind_addr = s:option(ListValue, "bind_addr", translate("Bind Address"))
 bind_addr:value("lan", translate("LAN"))
 bind_addr:value("wan", translate("WAN"))
-bind_addr.description = translate("The address that sSocks Server binded.")
+bind_addr.description = translate("The address that sSocksd Server binded.")
 bind_addr.default = "wan"
 bind_addr.rmempty = false
 
 listen_port = s:option(Value, "listen_port", translate("Listen Port"))
-listen_port.description = translate("The port that sSocks Server listened at, don't reuse the port with other program.")
+listen_port.description = translate("The port that sSocksd Server listened at, don't reuse the port with other program.")
 listen_port.placeholder = "10800"
 listen_port.default = "10800"
 listen_port.datatype = "port"

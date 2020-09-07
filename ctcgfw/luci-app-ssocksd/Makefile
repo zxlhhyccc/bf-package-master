@@ -8,9 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for sSocks
-LUCI_DEPENDS:=+busybox +iptables +ssocks
+LUCI_DEPENDS:=+busybox +iptables +ssocksd
 LUCI_PKGARCH:=all
-PKG_NAME:=luci-app-ssocks
+PKG_NAME:=luci-app-ssocksd
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
