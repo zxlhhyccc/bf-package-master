@@ -171,7 +171,6 @@ o = s:taboption("dns", ListValue, "ipv6_enable", translate("Enable ipv6 Resolve"
 o.description = font_red..bold_on..translate("Enable Clash to Resolve ipv6 DNS Requests")..bold_off..font_off
 o:value("0", translate("Disable"))
 o:value("1", translate("Enable"))
-o:depends("en_mode", "redir-host")
 o.default=0
 
 o = s:taboption("dns", ListValue, "disable_masq_cache", translate("Disable Dnsmasq's DNS Cache"))
@@ -219,7 +218,7 @@ end
 end
 
 o = s:taboption("dns", Value, "custom_domain_dns_server", translate("Specify DNS Server"))
-o.description = translate("Specify DNS Server For List, Only One IP Server Address Support")
+o.description = translate("Specify DNS Server For List and Server Nodes With Fake-IP Mode, Only One IP Server Address Support")
 o.default="114.114.114.114"
 o.placeholder = translate("114.114.114.114 or 127.0.0.1#5300")
 o:depends("dns_advanced_setting", "1")
