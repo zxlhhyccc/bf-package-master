@@ -12,14 +12,14 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qt5
 PKG_VERSION:=5.15
-PKG_RELEASE:=0
+PKG_RELEASE:=1
 
 PKG_SOURCE:=qt-everywhere-src-$(PKG_VERSION).$(PKG_RELEASE).tar.xz
 PKG_SOURCE_URL:=https://mirrors.cloud.tencent.com/qt/archive/qt/$(PKG_VERSION)/$(PKG_VERSION).$(PKG_RELEASE)/single/ \
 		https://mirrors.tuna.tsinghua.edu.cn/qt/archive/qt/$(PKG_VERSION)/$(PKG_VERSION).$(PKG_RELEASE)/single/ \
 		https://mirrors.ustc.edu.cn/qtproject/archive/qt/$(PKG_VERSION)/$(PKG_VERSION).$(PKG_RELEASE)/single/ \
 		http://download.qt-project.org/archive/qt/$(PKG_VERSION)/$(PKG_VERSION).$(PKG_RELEASE)/single/
-PKG_HASH:=22b63d7a7a45183865cc4141124f12b673e7a17b1fe2b91e433f6547c5d548c3
+PKG_HASH:=44da876057e21e1be42de31facd99be7d5f9f07893e1ea762359bcee0ef64ee9
 
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
