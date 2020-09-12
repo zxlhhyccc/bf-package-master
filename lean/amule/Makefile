@@ -46,7 +46,6 @@ CONFIGURE_ARGS+= \
 	--disable-rpath \
 	--with-gnu-ld \
 	--disable-ccache \
-	--enable-gettext \
 	--enable-geoip \
 	--enable-optimize \
 	--disable-profile \
@@ -74,7 +73,6 @@ CONFIGURE_ARGS+= \
 	--with-libiconv-prefix="$(ICONV_PREFIX)" \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
 	--with-libupnp-prefix="$(STAGING_DIR)/usr" \
-	--without-x \
 	--disable-debug 
 
 TARGET_LDFLAGS += -liconv 

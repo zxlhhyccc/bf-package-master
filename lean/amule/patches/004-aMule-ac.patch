@@ -1,0 +1,10 @@
+--- aMule-2.3.2/m4/nls.m4.orig	2016-09-16 09:55:06.000000000 +0200
++++ aMule-2.3.2/m4/nls.m4	2017-06-07 15:45:13.860893406 +0200
+@@ -85,7 +85,6 @@
+ 	AM_GNU_GETTEXT([no-libtool], [need-ngettext])
+ 	AS_IF([test $USE_INCLUDED_LIBINTL = yes], [INCINTL=-I\${top_builddir}/intl])
+ 
+-	AS_IF([test x$USE_NLS = xyes], [MULE_CHECK_AUTOPOINT(, [USE_NLS=no])])
+ 	AS_IF([test x$USE_NLS = xno -a x${enable_nls:-yes} = xyes], [MULE_WARNING([You need to install GNU gettext/gettext-tools to compile aMule with i18n support.])])
+ 
+ 	AS_IF([test ${USE_NLS:-no} = yes], [

@@ -1,0 +1,12 @@
+diff -urN a/src/utils/cas/Makefile.am b/src/utils/cas/Makefile.am
+--- a/src/utils/cas/Makefile.am	2005-05-07 11:24:19.000000000 +0200
++++ b/src/utils/cas/Makefile.am	2005-05-07 11:24:46.000000000 +0200
+@@ -5,7 +5,7 @@
+ bin_PROGRAMS = cas
+ 
+ dist_cas_DATA = tmp.html stat.png
+-casdir = $(datadir)/cas
++casdir = $(datadir)/amule/cas
+ 
+ cas_SOURCES = cas.c \
+ 	      configfile.c \
