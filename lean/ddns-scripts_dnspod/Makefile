@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ddns-scripts_dnspod
-PKG_VERSION:=1.0.2
-PKG_RELEASE:=1
+PKG_VERSION:=1.0.3
+PKG_RELEASE:=4
 
 PKG_LICENSE:=GPLv2
 PKG_MAINTAINER:=Small_5
@@ -17,7 +17,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=IP Addresses and Names
 	TITLE:=DDNS extension for Dnspod.com/Dnspod.cn
 	PKGARCH:=all
-	DEPENDS:=+ddns-scripts +wget +ca-certificates
+	DEPENDS:=+ddns-scripts +curl +jsonfilter
 endef
 
 define Package/$(PKG_NAME)/description
@@ -29,6 +29,15 @@ endef
 
 define Build/Compile
 	$(CP) ./*.sh $(PKG_BUILD_DIR)
+	# remove comments, white spaces and empty lines
+	for FILE in `find $(PKG_BUILD_DIR) -type f`; do \
+		$(SED) 's/^[[:space:]]*//' \
+		-e '/^#[[:space:]]\|^#$$$$/d' \
+		-e 's/[[:space:]]#[[:space:]].*$$$$//' \
+		-e 's/[[:space:]]*$$$$//' \
+		-e '/^\/\/[[:space:]]/d'	\
+		-e '/^[[:space:]]*$$$$/d'	$$$$FILE; \
+	done
 endef
 
 define Package/$(PKG_NAME)/preinst
