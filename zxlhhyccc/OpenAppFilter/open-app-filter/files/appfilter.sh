@@ -35,12 +35,12 @@ load_rule()
     if [ x"$enable" != x"1" ];then
 		echo "appfilter is disabled"
 		echo 0 >/proc/sys/oaf/enable>/dev/null
-		uci set firewall.@defaults[0].flow_offloading=1
+		uci set firewall.@defaults[0].flow_offloading=0
 		return 0
     else
 		insmod oaf >/dev/null
 		echo 1 >/proc/sys/oaf/enable
-		uci set firewall.@defaults[0].flow_offloading=0
+		uci set firewall.@defaults[0].flow_offloading=1
 	fi
     echo "appfilter is enabled"
     json_add_int "op" 1
