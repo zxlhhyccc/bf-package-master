@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/cnsilvan/UnblockNeteaseMusic.git
-PKG_SOURCE_VERSION:=7ff431267eb2b2683ea25e1b3860447aa7b482e9
+PKG_SOURCE_VERSION:=c9e0c108beab56ee042039b63fd22c8d69b60ef0
 PKG_MAINTAINER:=Silvan <cnsilvan@gmail.com>
 
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)
