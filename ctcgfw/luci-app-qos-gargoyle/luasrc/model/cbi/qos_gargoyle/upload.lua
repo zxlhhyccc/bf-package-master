@@ -1,113 +1,160 @@
---[[
+-- Copyright 2017 Xingwang Liao <kuoruan@gmail.com>
+-- Licensed to the public under the Apache License 2.0.
 
-]]--
+local wa   = require "luci.tools.webadmin"
+local uci  = require "luci.model.uci".cursor()
+local dsp  = require "luci.dispatcher"
+local http = require "luci.http"
+local qos  = require "luci.model.qos_gargoyle"
 
-local wa = require "luci.tools.webadmin"
-local fs = require "nixio.fs"
+local m, class_s, rule_s, o
+local upload_classes = {}
+local qos_gargoyle = "qos_gargoyle"
 
-m = Map("qos_gargoyle", translate("upload"),translate("UpLoad set"))
+uci:foreach(qos_gargoyle, "upload_class", function(s)
+	local class_alias = s.name
+	if class_alias then
+		upload_classes[#upload_classes + 1] = {name = s[".name"], alias = class_alias}
+	end
+end)
 
-s = m:section(TypedSection, "upload_class", translate("upload_class"))
-s.addremove = true
-s.template = "cbi/tblsection"
+m = Map(qos_gargoyle, translate("Upload Settings"))
+m.template = "qos_gargoyle/list_view"
 
-name = s:option(Value, "name", translate("name"))
-
-pb = s:option(Value, "percent_bandwidth", translate("percent_bandwidth"), translate("percent of total bandwidth to use"))
-
-minb = s:option(Value, "min_bandwidth", translate("min_bandwidth"), translate("min bandwidth useage in absolute speed (kbit/s)"))
-minb.datatype = "and(uinteger,min(0))"
-
-maxb = s:option(Value, "max_bandwidth", translate("max_bandwidth"), translate("max bandwidth useage in absolute speed (kbit/s)"))
-maxb.datatype = "and(uinteger,min(0))"
-
-minRTT = s:option(ListValue, "minRTT", translate("minRTT"))
-minRTT:value("Yes")
-minRTT:value("No")
-minRTT.default = "No"
-
-
-local tmp = "upload_rule"
-s = m:section(TypedSection, "upload_rule", translate(tmp))
-s.addremove = true
---s.sortable = true
-s.template = "cbi/tblsection"
-
-class = s:option(Value, "class", translate("class"), translate("<abbr title=\"name of bandwidth class to use if rule matches, this is required in each rule section\">Help</abbr>"))
-for line in io.lines("/etc/config/qos_gargoyle") do
-	local str = line
-	line = string.gsub(line, "config ['\"]*upload_class['\"]* ", "")
-	if str ~= line then
-		line = string.gsub(line, "^'", "")
-		line = string.gsub(line, "^\"", "")
-		line = string.gsub(line, "'$", "")
-		line = string.gsub(line, "\"$", "")
-		class:value(line, translate(m.uci:get("qos_gargoyle", line, "name")))
+class_s = m:section(TypedSection, "upload_class", translate("Service Classes"),
+	translate("Each upload service class is specified by three parameters: percent bandwidth at "
+	.. "capacity, minimum bandwidth and maximum bandwidth."))
+class_s.anonymous = true
+class_s.addremove = true
+class_s.template  = "cbi/tblsection"
+class_s.extedit   = dsp.build_url("admin/network/qos_gargoyle/upload/class/%s")
+class_s.create    = function(...)
+	local sid = TypedSection.create(...)
+	if sid then
+		m.uci:save(qos_gargoyle)
+		http.redirect(class_s.extedit % sid)
+		return
 	end
 end
-class.default = "uclass_2"
 
-to = s:option(Value, "test_order", translate("test_order"), translate("<abbr title=\"an integer that specifies the order in which the rule should be checked for a match (lower numbers are checked first)\">Help</abbr>"))
-to.rmempty = "true"
-minb.datatype = "and(uinteger,min(0))"
-to:value(100)
-to:value(200)
-to:value(300)
-to:value(400)
-to:value(500)
-to:value(600)
-to:value(700)
-to:value(800)
-to:value(900)
-
-pr = s:option(Value, "proto", translate("proto"), translate("<abbr title=\"check that packet has this protocol (tcp, udp, both)\">Help</abbr>"))
-pr:value("tcp")
-pr:value("udp")
-pr:value("icmp")
-pr:value("gre")
-pr.rmempty = "true"
-
-sip = s:option(Value, "source", translate("source ip"), translate("<abbr title=\"check that packet has this source ip, can optionally have /[mask] after it (see -s option in iptables man page)\">Help</abbr>"))
-wa.cbi_add_knownips(sip)
-sip.datatype = "and(ipaddr)"
-
-dip = s:option(Value, "destination", translate("destination ip"), translate("<abbr title=\"check that packet has this destination ip, can optionally have /[mask] after it (see -d option in iptables man page)\">Help</abbr>"))
-wa.cbi_add_knownips(dip)
-dip.datatype = "and(ipaddr)"
-
-dport = s:option(Value, "dstport", translate("destination port"), translate("<abbr title=\"check that packet has this destination port\">Help</abbr>"))
---dport.datatype = "and(uinteger,max(65536),min(1))"
-
-sport = s:option(Value, "srcport", translate("source port"), translate("<abbr title=\"check that packet has this source port\">Help</abbr>"))
---sport.datatype = "and(uinteger,max(65536),min(1))"
-
-min_pkt_size = s:option(Value, "min_pkt_size", translate("min_pkt_size"), translate("<abbr title=\"check that packet is at least this size (in bytes)\">Help</abbr>"))
-min_pkt_size.datatype = "and(uinteger,min(1))"
-
-max_pkt_size = s:option(Value, "max_pkt_size", translate("max_pkt_size"), translate("<abbr title=\"check that packet is no larger than this size (in bytes)\">Help</abbr>"))
-max_pkt_size.datatype = "and(uinteger,min(1))"
-
-connbytes_kb = s:option(Value, "connbytes_kb", translate("connbytes_kbyte"), translate("<abbr title=\"kbyte\">Help</abbr>"))
-connbytes_kb.datatype = "and(uinteger,min(0))"
-
-layer7 = s:option(Value, "layer7", translate("layer7"), translate("<abbr title=\"check whether packet matches layer7 specification\">Help</abbr>"))
-local pats = io.popen("find /etc/l7-protocols/ -type f -name '*.pat'")
-if pats then
-	local l
-	while true do
-		l = pats:read("*l")
-		if not l then break end
-
-		l = l:match("([^/]+)%.pat$")
-		if l then
-			layer7:value(l)
-		end
-	end
-	pats:close()
+o = class_s:option(DummyValue, "name", translate("Class Name"))
+o.cfgvalue = function(...)
+	return Value.cfgvalue(...) or translate("None")
 end
 
-ipp2p = s:option(Value, "ipp2p", translate("ipp2p"), translate("<abbr title=\"check wither packet matches ipp2p specification (used to recognize p2p protocols),ipp2p or all will match any of the specified p2p protocols, you can also specifically match any protocol listed in the documentation here: http://ipp2p.org/docu_en.html\">Help</abbr>"))
-ipp2p:value("ipp2p")
-ipp2p:value("all")
+o = class_s:option(DummyValue, "percent_bandwidth", translate("Percent Bandwidth At Capacity"))
+o.cfgvalue = function(...)
+	local v = tonumber(Value.cfgvalue(...))
+	if v and v > 0 then
+		return "%d %%" % v
+	end
+	return translate("Not set")
+end
+
+o = class_s:option(DummyValue, "min_bandwidth", "%s (kbps)" % translate("Minimum Bandwidth"))
+o.cfgvalue = function(...)
+	local v = tonumber(Value.cfgvalue(...))
+	return v or translate("Zero")
+end
+
+o = class_s:option(DummyValue, "max_bandwidth", "%s (kbps)" % translate("Maximum Bandwidth"))
+o.cfgvalue = function(...)
+	local v = tonumber(Value.cfgvalue(...))
+	return v or translate("Unlimited")
+end
+
+o = class_s:option(DummyValue, "_ld", "%s (kbps)" % translate("Load"))
+o.rawhtml = true
+o.value   = "<em class=\"ld-upload\">*</em>"
+
+rule_s = m:section(TypedSection, "upload_rule",translate("Classification Rules"),
+	translate("Packets are tested against the rules in the order specified -- rules toward the top "
+	.. "have priority. As soon as a packet matches a rule it is classified, and the rest of the rules "
+	.. "are ignored. The order of the rules can be altered using the arrow controls.")
+)
+rule_s.addremove = true
+rule_s.sortable  = true
+rule_s.anonymous = true
+rule_s.template  = "cbi/tblsection"
+rule_s.extedit   = dsp.build_url("admin/network/qos_gargoyle/upload/rule/%s")
+rule_s.create    = function(...)
+	local sid = TypedSection.create(...)
+	if sid then
+		m.uci:save(qos_gargoyle)
+		http.redirect(rule_s.extedit % sid)
+		return
+	end
+end
+
+o = rule_s:option(ListValue, "class", translate("Service Class"))
+for _, s in ipairs(upload_classes) do o:value(s.name, s.alias) end
+
+o = rule_s:option(Value, "proto", translate("Transport Protocol"))
+o:value("", translate("All"))
+o:value("tcp", "TCP")
+o:value("udp", "UDP")
+o:value("icmp", "ICMP")
+o:value("gre", "GRE")
+o.size = "10"
+o.cfgvalue = function(...)
+	local v = Value.cfgvalue(...)
+	return v and v:upper() or ""
+end
+o.write = function(self, section, value)
+	Value.write(self, section, value:lower())
+end
+
+o = rule_s:option(Value, "source", translate("Source IP(s)"))
+o:value("", translate("All"))
+wa.cbi_add_knownips(o)
+o.datatype = "ipmask4"
+
+o = rule_s:option(Value, "srcport", translate("Source Port(s)"))
+o:value("", translate("All"))
+o.datatype = "or(port, portrange)"
+
+o = rule_s:option(Value, "destination", translate("Destination IP(s)"))
+o:value("", translate("All"))
+wa.cbi_add_knownips(o)
+o.datatype = "ipmask4"
+
+o = rule_s:option(Value, "dstport", translate("Destination Port(s)"))
+o:value("", translate("All"))
+o.datatype = "or(port, portrange)"
+
+o = rule_s:option(DummyValue, "min_pkt_size", translate("Minimum Packet Length"))
+o.cfgvalue = function(...)
+	local v = tonumber(Value.cfgvalue(...))
+	if v and v > 0 then
+		return wa.byte_format(v)
+	end
+	return translate("Not set")
+end
+
+o = rule_s:option(DummyValue, "max_pkt_size", translate("Maximum Packet Length"))
+o.cfgvalue = function(...)
+	local v = tonumber(Value.cfgvalue(...))
+	if v and v > 0 then
+		return wa.byte_format(v)
+	end
+	return translate("Not set")
+end
+
+o = rule_s:option(DummyValue, "connbytes_kb", translate("Connection Bytes Reach"))
+o.cfgvalue = function(...)
+	local v = tonumber(Value.cfgvalue(...))
+	if v and v > 0 then
+		return wa.byte_format(v * 1024)
+	end
+	return translate("Not set")
+end
+
+if qos.has_ndpi() then
+	o = rule_s:option(DummyValue, "ndpi", translate("DPI Protocol"))
+	o.cfgvalue = function(...)
+		local v = Value.cfgvalue(...)
+		return v and v:upper() or translate("All")
+	end
+end
 
 return m

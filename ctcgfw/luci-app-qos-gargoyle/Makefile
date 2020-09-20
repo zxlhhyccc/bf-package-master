@@ -19,4 +19,13 @@ LUCI_PKGARCH:=all
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
+define Package/$(PKG_NAME)/config
+# shown in make menuconfig <Help>
+help
+	$(LUCI_TITLE)
+	.
+	Version: $(PKG_VERSION)-$(PKG_RELEASE)
+	$(PKG_MAINTAINER)
+endef
+
 # call BuildPackage - OpenWrt buildroot signature
