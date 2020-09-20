@@ -47,6 +47,9 @@ msgstr "DNS设置"
 msgid "Config Update"
 msgstr "配置文件订阅"
 
+msgid "Config Subscribe Edit"
+msgstr "编辑配置文件订阅信息"
+
 msgid "Rules Update"
 msgstr "第三方规则订阅"
 
@@ -846,12 +849,6 @@ msgstr "（用于区分，请勿重名）"
 msgid "Subscribe Address"
 msgstr "订阅地址"
 
-msgid "Subscribe Type"
-msgstr "订阅地址类型"
-
-msgid "(Power By fndroid)"
-msgstr "（API提供：Fndroid）"
-
 msgid "(Not Null)"
 msgstr "（空值无效）"
 
@@ -1013,3 +1010,33 @@ msgstr "配置文件编辑"
 
 msgid "Delete All File"
 msgstr "删除所有文件"
+
+msgid "Template Name"
+msgstr "订阅转换模板"
+
+msgid "Subscribe Convert Online"
+msgstr "在线订阅转换"
+
+msgid "Custom Template URL"
+msgstr "自定义模板地址"
+
+msgid "Custom Template"
+msgstr "自定义模板"
+
+msgid "Emoji"
+msgstr "添加Emoji"
+
+msgid "skip-cert-verify"
+msgstr "跳过证书验证"
+
+msgid "Sort"
+msgstr "排序"
+
+msgid "Append Node Type"
+msgstr "插入节点类型"
+
+msgid "Convert Subscribe Online With Template, Mix Proxies and Keep Settings options Will Not Effect"
+msgstr "根据模板在线转换配置文件，混合节点和保留配置功能将不可用"
+
+msgid "Convert Subscribe function of Online is Supported By subconverter Written By tindy X"
+msgstr "在线订阅转换功能由tindy X通过subconverter提供支持"
