@@ -1,0 +1,34 @@
+#!/bin/sh /etc/rc.common
+# wulishui 20200908
+
+START=55
+
+
+start() {
+sumenabled=$(cat /etc/config/rebootschedule|grep -c 'option enable .1.')
+[ "$sumenabled" -gt 0 ] || exit 0
+sed -i '/rebootschedule/d' /etc/crontabs/root 2>/dev/null
+sum=$(cat /etc/config/rebootschedule|grep -c 'config crontab')
+for i in $(seq 0 $((sum-1)))
+do
+enable=`uci get rebootschedule.@crontab[$i].enable 2>/dev/null`
+if [ "$enable" == 1 ]; then
+month=`uci get rebootschedule.@crontab[$i].month 2>/dev/null` || month="*"
+day=`uci get rebootschedule.@crontab[$i].day 2>/dev/null` || day="*"
+week=`uci get rebootschedule.@crontab[$i].week 2>/dev/null` || week="*"
+hour=`uci get rebootschedule.@crontab[$i].hour 2>/dev/null` || hour="*"
+minute=`uci get rebootschedule.@crontab[$i].minute 2>/dev/null` || minute="00"
+command=`uci get rebootschedule.@crontab[$i].command 2>/dev/null` || command="echo "Reboot schedule tested.""
+[ "$command" = "reboot" ] && echo "$minute $hour $day $month $week sleep 5 && touch /etc/banner && $command    #By rebootschedule" >> /etc/crontabs/root
+[ "$command" = "reboot" ] || echo "$minute $hour $day $month $week $command    #By rebootschedule" >> /etc/crontabs/root
+fi
+done
+/etc/init.d/cron restart
+}
+
+stop() {
+sed -i '/rebootschedule/d' /etc/crontabs/root 2>/dev/null && /etc/init.d/cron restart
+}
+
+
+

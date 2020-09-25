@@ -1,0 +1,11 @@
+{
+	"luci-app-rebootschedule": {
+		"description": "Grant UCI access for luci-app-rebootschedule",
+		"read": {
+			"uci": [ "rebootschedule" ]
+		},
+		"write": {
+			"uci": [ "rebootschedule" ]
+		}
+	}
+}
