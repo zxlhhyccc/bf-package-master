@@ -1,0 +1,13 @@
+#!/bin/sh
+touch /etc/config/rebootschedule
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@rebootschedule[-1]
+	add ucitrack rebootschedule
+	set ucitrack.@rebootschedule[-1].exec='/etc/init.d/rebootschedule restart'
+	commit ucitrack
+EOF
+
+# remove LuCI cache
+rm -f /tmp/luci*
+exit 0

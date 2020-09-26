@@ -1,0 +1,38 @@
+msgid "Reboot schedule"
+msgstr "计划重启"
+
+msgid "Week Day"
+msgstr "星期"
+
+msgid "Everyday"
+msgstr "每天"
+
+msgid "Day"
+msgstr "日期"
+
+msgid "Month"
+msgstr "月份"
+
+msgid "Hour"
+msgstr "小时"
+
+msgid "Minute"
+msgstr "分钟"
+
+msgid "Reboot system"
+msgstr "重启系统"
+
+msgid "Power off"
+msgstr "关闭电源"
+
+msgid "Wifi down"
+msgstr "关闭WIFI"
+
+msgid "Wifi up"
+msgstr "打开WIFI"
+
+msgid "Restart network"
+msgstr "重启网络"
+
+msgid "Reconnect wan"
+msgstr "重新连接"
