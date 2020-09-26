@@ -1,0 +1,99 @@
+#!/bin/sh /etc/rc.common
+# wulishui 20191115-20200915
+
+START=99
+USE_PROCD=1
+
+new_run() {
+mkdir -p $profile_dir/qBittorrent/config
+cat>$profile_dir/qBittorrent/config/qBittorrent.conf<<EOF
+[AutoRun]
+enabled=false
+program=
+
+[BitTorrent]
+Session\GlobalMaxSeedingMinutes=-1
+
+[LegalNotice]
+Accepted=true
+
+[Network]
+Cookies=@Invalid()
+
+[Preferences]
+Bittorrent\AddTrackers=true
+Bittorrent\TrackersList=http://aaa.army:8866/announce\nhttp://bobbialbano.com:6969/announce\nhttp://explodie.org:6969/announce\nhttp://h4.trakx.nibba.trade:80/announce\nhttp://jsb.by:8000/announce\nhttp://open.acgnxtracker.com:80/announce\nhttp://open.acgtracker.com:1096/announce\nhttp://opentracker.i2p.rocks:6969/announce\nhttp://p4p.arenabg.com:1337/announce\nhttp://pow7.com:80/announce\nhttp://retracker.sevstar.net:2710/announce\nhttp://rt.tace.ru:80/announce\nhttp://t.acg.rip:6699/announce\nhttp://t.nyaatracker.com:80/announce\nhttp://t.overflow.biz:6969/announce\nhttp://tracker.anonwebz.xyz:8080/announce\nhttp://tracker.bt4g.com:2095/announce\nhttp://tracker.dler.org:6969/announce\nhttp://tracker.gbitt.info:80/announce\nhttp://tracker.kamigami.org:2710/announce\nhttp://tracker.lelux.fi:80/announce\nhttp://tracker.noobsubs.net:80/announce\nhttp://tracker.opentrackr.org:1337/announce\nhttp://tracker.skyts.net:6969/announce\nhttp://tracker.sloppyta.co:80/announce\nhttp://tracker.ygsub.com:6969/announce\nhttp://tracker.zerobytes.xyz:1337/announce\nhttp://tracker.zum.bi:6969/announce\nhttp://tracker1.itzmx.com:8080/announce\nhttp://tracker2.dler.org:80/announce\nhttp://tracker2.itzmx.com:6961/announce\nhttp://tracker3.itzmx.com:6961/announce\nhttp://tracker4.itzmx.com:2710/announce\nhttp://trun.tom.ru:80/announce\nhttp://vpn.flying-datacenter.de:6969/announce\nhttp://vps02.net.orel.ru:80/announce\nhttps://1337.abcvg.info:443/announce\nhttps://aaa.army:8866/announce\nhttps://tr.ready4.icu:443/announce\nhttps://tracker.gbitt.info:443/announce\nhttps://tracker.hama3.net:443/announce\nhttps://tracker.imgoingto.icu:443/announce\nhttps://tracker.lelux.fi:443/announce\nhttps://tracker.nitrix.me:443/announce\nhttps://tracker.sloppyta.co:443/announce\nhttps://tracker.tamersunion.org:443/announce\nhttps://trakx.herokuapp.com:443/announce\nhttps://w.wwwww.wtf:443/announce\nudp://47.ip-51-68-199.eu:6969/announce\nudp://61626c.net:6969/announce\nudp://6ahddutb1ucc3cp.ru:6969/announce\nudp://9.rarbg.me:2710/announce\nudp://9.rarbg.to:2710/announce\nudp://aaa.army:8866/announce\nudp://adm.category5.tv:6969/announce\nudp://admin.videoenpoche.info:6969/announce\nudp://adminion.n-blade.ru:6969/announce\nudp://anidex.moe:6969/announce\nudp://api.bitumconference.ru:6969/announce\nudp://aruacfilmes.com.br:6969/announce\nudp://bclearning.top:6969/announce\nudp://benouworldtrip.fr:6969/announce\nudp://bioquantum.co.za:6969/announce\nudp://bitsparadise.info:6969/announce\nudp://blokas.io:6969/announce\nudp://bms-hosxp.com:6969/announce\nudp://bt.firebit.org:2710/announce\nudp://bt1.archive.org:6969/announce\nudp://bt2.54new.com:8080/announce\nudp://bt2.archive.org:6969/announce\nudp://btt.royalquest.ru:2710/announce\nudp://bubu.mapfactor.com:6969/announce\nudp://camera.lei001.com:6969/announce\nudp://cdn-1.gamecoast.org:6969/announce\nudp://cdn-2.gamecoast.org:6969/announce\nudp://chanchan.uchuu.co.uk:6969/announce\nudp://code2chicken.nl:6969/announce\nudp://concen.org:6969/announce\nudp://cutiegirl.ru:6969/announce\nudp://daveking.com:6969/announce\nudp://discord.heihachi.pw:6969/announce\nudp://dpiui.reedlan.com:6969/announce\nudp://drumkitx.com:6969/announce\nudp://edu.uifr.ru:6969/announce\nudp://eliastre100.fr:6969/announce\nudp://engplus.ru:6969/announce\nudp://exodus.desync.com:6969/announce\nudp://explodie.org:6969/announce\nudp://fe.dealclub.de:6969/announce\nudp://forever-tracker.zooki.xyz:6969/announce\nudp://free-tracker.zooki.xyz:6969/announce\nudp://git.vulnix.sh:6969/announce\nudp://handrew.me:6969/announce\nudp://inferno.demonoid.is:3391/announce\nudp://ipv4.tracker.harry.lu:80/announce\nudp://josueunhuit.com:6969/announce\nudp://jsb.by:8000/announce\nudp://kanal-4.de:6969/announce\nudp://koli.services:6969/announce\nudp://line-net.ru:6969/announce\nudp://ln.mtahost.co:6969/announce\nudp://mail.realliferpg.de:6969/announce\nudp://movies.zsw.ca:6969/announce\nudp://mts.tvbit.co:6969/announce\nudp://nagios.tks.sumy.ua:80/announce\nudp://ns-1.x-fins.com:6969/announce\nudp://ns389251.ovh.net:6969/announce\nudp://open.lolicon.eu:7777/announce\nudp://open.stealth.si:80/announce\nudp://opentor.org:2710/announce\nudp://opentracker.arg.bz:6969/announce\nudp://opentracker.i2p.rocks:6969/announce\nudp://p4p.arenabg.ch:1337/announce\nudp://public.publictracker.xyz:6969/announce\nudp://publictracker.xyz:6969/announce\nudp://public-tracker.zooki.xyz:6969/announce\nudp://qg.lorzl.gq:2710/announce\nudp://retracker.akado-ural.ru:80/announce\nudp://retracker.lanta-net.ru:2710/announce\nudp://retracker.local.msn-net.ru:6969/announce\nudp://retracker.netbynet.ru:2710/announce\nudp://retracker.sevstar.net:2710/announce\nudp://rutorrent.frontline-mod.com:6969/announce\nudp://sd-161673.dedibox.fr:6969/announce\nudp://storage.groupees.com:6969/announce\nudp://t1.leech.ie:1337/announce\nudp://t2.leech.ie:1337/announce\nudp://t3.leech.ie:1337/announce\nudp://teamspeak.value-wolf.org:6969/announce\nudp://tr.bangumi.moe:6969/announce\nudp://tr.cili001.com:8070/announce\nudp://tracker.army:6969/announce\nudp://tracker.blacksparrowmedia.net:6969/announce\nudp://tracker.coppersurfer.tk:6969/announce\nudp://tracker.cyberia.is:6969/announce\nudp://tracker.dler.org:6969/announce\nudp://tracker.ds.is:6969/announce\nudp://tracker.dyne.org:6969/announce\nudp://tracker.fortu.io:6969/announce\nudp://tracker.kali.org:6969/announce\nudp://tracker.kamigami.org:2710/announce\nudp://tracker.lelux.fi:6969/announce\nudp://tracker.moeking.me:6969/announce\nudp://tracker.opentrackr.org:1337/announce\nudp://tracker.publictracker.xyz:6969/announce\nudp://tracker.shkinev.me:6969/announce\nudp://tracker.skynetcloud.site:6969/announce\nudp://tracker.skyts.net:6969/announce\nudp://tracker.tiny-vps.com:6969/announce\nudp://tracker.torrent.eu.org:451/announce\nudp://tracker.uw0.xyz:6969/announce\nudp://tracker.v6speed.org:6969/announce\nudp://tracker.vulnix.sh:6969/announce\nudp://tracker.zemoj.com:6969/announce\nudp://tracker.zerobytes.xyz:1337/announce\nudp://tracker.zum.bi:6969/announce\nudp://tracker0.ufibox.com:6969/announce\nudp://tracker2.dler.org:80/announce\nudp://tracker2.itzmx.com:6961/announce\nudp://tracker3.itzmx.com:6961/announce\nudp://tracker4.itzmx.com:2710/announce\nudp://tracker6.dler.org:2710/announce\nudp://tracker-udp.gbitt.info:80/announce\nudp://tsundere.pw:6969/announce\nudp://u.wwwww.wtf:1/announce\nudp://ultra.zt.ua:6969/announce\nudp://valakas.rollo.dnsabr.com:2710/announce\nudp://vibe.community:6969/announce\nudp://wassermann.online:6969/announce\nudp://www.midea123.z-media.com.cn:6969/announce\nudp://zephir.monocul.us:6969/announce\n
+Connection\GlobalDLLimit=0
+Connection\GlobalDLLimitAlt=1000
+Connection\GlobalUPLimit=0
+Connection\GlobalUPLimitAlt=100
+Downloads\SavePath=$downloadpath
+WebUI\LocalHostAuth=false
+WebUI\AuthSubnetWhitelist=$localip
+WebUI\AuthSubnetWhitelistEnabled=true
+WebUI\CSRFProtection=false
+General\Locale=zh
+WebUI\Port=$port
+WebUI\UseUPnP=false
+EOF
+}
+
+start_service() {
+    enabled=$(uci get qbittorrent.config.enabled 2>/dev/null)
+    if [ $enabled -eq 1 ]; then
+	GlobalDLLimit=$(uci get qbittorrent.config.GlobalDLLimit 2>/dev/null)
+ 	GlobalUPLimit=$(uci get qbittorrent.config.GlobalUPLimit 2>/dev/null)
+	GlobalDLLimitAlt=$(uci get qbittorrent.config.GlobalDLLimitAlt 2>/dev/null)
+	GlobalUPLimitAlt=$(uci get qbittorrent.config.GlobalUPLimitAlt 2>/dev/null)
+	GlobalMaxSeedingMinutes=$(uci get qbittorrent.config.GlobalMaxSeedingMinutes 2>/dev/null)
+	port=$(uci get qbittorrent.config.port 2>/dev/null)
+	downloadpath=$(uci get qbittorrent.config.downloadpath 2>/dev/null|sed 's#/$##g')
+	profile_dir=$(uci get qbittorrent.config.profile_dir 2>/dev/null|sed 's#/$##g')
+	localip=`uci get network.lan.ipaddr  2>/dev/null|awk -F '.' '{print $1"."$2"."$3".0/24"}'`
+	olocalip=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "WebUI.AuthSubnetWhitelist="|awk -F '=' '{print $2}'`
+
+	[ -s $profile_dir/qBittorrent/config/qBittorrent.conf ] || new_run
+	[ -n "$olocalip" ] && [ "$localip" = "$olocalip" ] || sed -i 's#WebUI\\AuthSubnetWhitelist='"$olocalip"'#WebUI\\AuthSubnetWhitelist='"$localip"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+	oGlobalDLLimit=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "Connection.GlobalDLLimit="|awk -F '=' '{print $2}'`
+	[ $GlobalDLLimit -ge 0 ] && [ "$GlobalDLLimit" != "$oGlobalDLLimit" ] && sed -i 's#Connection\\GlobalDLLimit=[0-9]*#Connection\\GlobalDLLimit='"$GlobalDLLimit"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+	oGlobalUPLimit=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "Connection.GlobalUPLimit="|awk -F '=' '{print $2}'`
+	[ $GlobalUPLimit -ge 0 ] && [ "$GlobalDLLimit" != "$oGlobalDLLimit" ] && sed -i 's#Connection\\GlobalUPLimit=[0-9]*#Connection\\GlobalUPLimit='"$GlobalUPLimit"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+	oGlobalDLLimitAlt=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "Connection.GlobalDLLimitAlt="|awk -F '=' '{print $2}'`
+	[ $GlobalDLLimitAlt -ge 0 ] && [ "$GlobalDLLimitAlt" != "$oGlobalDLLimitAlt" ] && sed -i 's#Connection\\GlobalDLLimitAlt=[0-9]*#Connection\\GlobalDLLimitAlt='"$GlobalDLLimitAlt"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+ 	oGlobalUPLimitAlt=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "Connection.GlobalUPLimitAlt="|awk -F '=' '{print $2}'`
+	[ $GlobalUPLimitAlt -ge 0 ] && [ "$GlobalUPLimitAlt" != "$oGlobalUPLimitAlt" ] && sed -i 's#Connection\\GlobalUPLimitAlt=[0-9]*#Connection\\GlobalUPLimitAlt='"$GlobalUPLimitAlt"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+	oGlobalMaxSeedingMinutes=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "Session.GlobalMaxSeedingMinutes="|awk -F '=' '{print $2}'`
+	[ $GlobalMaxSeedingMinutes -ge 0 ] && [ "$GlobalMaxSeedingMinutes" != "$oGlobalMaxSeedingMinutes" ] && sed -i 's#Session\\GlobalMaxSeedingMinutes=[0-9, -1]*#Session\\GlobalMaxSeedingMinutes='"$GlobalMaxSeedingMinutes"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+	oport=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "WebUI.Port=[0-9]*"|egrep -o '[0-9]*'`
+	[ "$port" = "$oport" ] || sed -i 's#WebUI\\Port=[0-9]*#WebUI\\Port='"$port"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+	odownloadpath=`cat $profile_dir/qBittorrent/config/qBittorrent.conf|egrep "Downloads.SavePath="|awk -F '=' '{print $2}'`
+	[ "$downloadpath" = "$odownloadpath" ] || sed -i 's#Downloads\\SavePath=[0-9, /, a-z]*#Downloads\\SavePath='"$downloadpath"'#g' $profile_dir/qBittorrent/config/qBittorrent.conf
+
+	procd_open_instance
+	procd_set_param command /usr/bin/qbittorrent-nox --profile=$profile_dir
+	procd_set_param respawn retry=10
+	procd_set_param stderr 1
+	procd_close_instance
+    fi
+}
+
+service_triggers() {
+	procd_add_reload_trigger "qbittorrent"
+}
+
+stop_service() {
+	kill -9 $(busybox ps -w | grep 'qbittorrent-nox' | grep -v 'grep' | awk '{print $1}') >/dev/null 2>&1
+}
+
+restart() {
+stop
+start
+}
+

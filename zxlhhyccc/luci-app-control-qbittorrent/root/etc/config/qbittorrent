@@ -1,0 +1,11 @@
+config setting 'config'
+	option profile_dir '/mnt/sda1'
+	option downloadpath '/mnt/sda1/download'
+	option port '8080'
+	option enabled '0'
+	option GlobalDLLimit 'n'
+	option GlobalUPLimit 'n'
+	option GlobalDLLimitAlt 'n'
+	option GlobalUPLimitAlt 'n'
+	option GlobalMaxSeedingMinutes 'n'
+

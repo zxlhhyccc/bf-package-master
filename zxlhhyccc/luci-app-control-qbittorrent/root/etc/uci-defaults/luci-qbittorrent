@@ -1,0 +1,12 @@
+#!/bin/sh
+touch /etc/config/qbittorrent
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@qbittorrent[-1]
+	add ucitrack qbittorrent
+	set ucitrack.@qbittorrent[-1].exec='/etc/init.d/qbittorrent start'
+	commit ucitrack
+EOF
+# remove LuCI cache
+rm -f /tmp/luci*
+exit 0
