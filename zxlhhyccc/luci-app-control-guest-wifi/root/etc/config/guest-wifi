@@ -1,0 +1,14 @@
+
+config guest-wifi
+	option wifi_name 'Guest-IOU'
+	option interface_name 'guest'
+	option encryption 'psk2'
+	option passwd '12345678'
+	option interface_ip '192.254.245.1'
+	option isolate '1'
+	option start '50'
+	option limit '200'
+	option leasetime '6h'
+	option device 'radio0'
+	option create '0'
+	option delete '0'

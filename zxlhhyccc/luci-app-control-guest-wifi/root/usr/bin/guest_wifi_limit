@@ -1,0 +1,109 @@
+#!/bin/bash
+# wulishui 20200820
+# Author: wulishui <wulishui@gmail.com>
+. /usr/bin/cowbfunction
+
+command_ips() {
+tc class add dev "$LAN" parent 1:11 classid 1:$IPNUM htb rate "$ip_dn"kbit ceil "$ip_dn"kbit prio 22 quantum 1500
+tc qdisc add dev "$LAN" parent 1:$IPNUM handle $IPNUM: sfq perturb 1
+tc filter add dev "$LAN" parent 1:0 prio 10 protocol ip u32 match ip dst "$iphead""$IPNUM" classid 1:$IPNUM
+
+tc class add dev "$WAN" parent 1:11 classid 1:$IPNUM htb rate "$ip_up"kbit ceil "$ip_up"kbit prio 22 quantum 1500
+tc qdisc add dev "$WAN" parent 1:$IPNUM handle $IPNUM: sfq perturb 1
+tc filter add dev "$WAN" parent 1:0 prio 10 protocol ip u32 match ip src "$iphead""$IPNUM" classid 1:$IPNUM
+}
+command_htb() {
+tc class add dev "$IFACE" parent 1:0 classid 1:1 htb rate "$RATE"kbit prio 0 quantum 1500
+tc class add dev "$IFACE" parent 1:0 classid 1:300 htb rate 8gbit prio 20 quantum 1500
+tc class add dev "$IFACE" parent 1:1 classid 1:1000 htb rate $((RATE*1/10))kbit ceil $((RATE*20/100))kbit burst $((RATE*1/100))kbit cburst $((RATE*1/100))kbit prio 1 quantum 1500
+tc class add dev "$IFACE" parent 1:1 classid 1:2000 htb rate $((RATE*8/10))kbit ceil $((RATE*99/100))kbit burst $((RATE*1/100))kbit cburst $((RATE*1/100))kbit prio 2 quantum 1500
+tc qdisc add dev "$IFACE" parent 1:300 handle 300: sfq perturb 1
+tc qdisc add dev "$IFACE" parent 1:1000 handle 1000: sfq perturb 1
+tc qdisc add dev "$IFACE" parent 1:2000 handle 2000: sfq perturb 1
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 2 u32 match ip protocol 1 0xff flowid 1:1000	#ICMP From /etc/protocols
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 3 u32 match ip protocol 6 0xff match ip sport 22 0xffff flowid 1:1000	#ssh
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 4 u32 match ip protocol 6 0xff match ip dport 22 0xffff flowid 1:1000	#ssh
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 5 u32 match ip sport 53 0xffff flowid 1:1000	#domain
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 9 u32 match ip dport 53 0xffff flowid 1:1000	#domain
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 7 u32 match u8 0x12 0xff at 33 match u8 0x06 0xff at 9 flowid 1:1000	#SYN ACK
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 8 u32 match ip src "$iphead"0/24 match ip dst "$iphead"0/24 flowid 1:300
+if [ "$RATEIP" != 0 ]; then
+i=2 ; while [ $i -le 254 ] ; do
+tc class add dev "$IFACE" parent 1:2000 classid 1:$i htb rate "$RATEIP"kbit ceil "$RATEIP"kbit prio 4 quantum 1500
+tc qdisc add dev "$IFACE" parent 1:$i handle $i: sfq perturb 1
+tc filter add dev "$IFACE" parent 1:0 protocol ip prio 11 u32 match ip $DRT "$iphead""$i"/32 classid 1:$i
+i=$((i+1))
+done
+fi
+}
+guest_wifi_limit() {
+cnt=`echo "$DEV" | wc -l `; [ "$cnt" != 1 ] && exit 0
+LAN="$DEV"
+WAN="$DEV"_ifb
+[ "$UL" != 0 -o "$DL" != 0 ] && echo "# DEVICE "$DEV"" >> /tmp/log/guest_wifi_limit
+tc qdisc del dev $LAN root 2>/dev/null
+tc qdisc del dev $WAN root 2>/dev/null
+tc qdisc del dev $LAN ingress 2>/dev/null
+ip link del dev $WAN 2>/dev/null
+cat>>/tmp/log/guest_wifi_limit<<EOF
+tc qdisc del dev $LAN root 2>/dev/null
+tc qdisc del dev $WAN root 2>/dev/null
+tc qdisc del dev $LAN ingress 2>/dev/null
+ip link del dev $WAN 2>/dev/null
+EOF
+chmod 0775 /tmp/log/guest_wifi_limit 2>/dev/null
+[ "$DL" = "0" ] && defaultl=0 || defaultl=2000
+[ "$UL" != 0 -o "$DL" != 0 ] && tc qdisc add dev "$LAN" root handle 1:0 htb default "$defaultl"
+if [ "$UL" != 0 ]; then
+ ip link add dev "$WAN" name "$WAN" type ifb
+ ip link set dev "$WAN" up
+ tc qdisc add dev "$WAN" root handle 1:0 htb default "$defaultl"
+ IFACE="$WAN"
+ RATE=""$UL""
+ RATEIP="$ip_up"
+ DRT=src
+ command_htb
+ tc qdisc add dev "$LAN" ingress
+ tc filter add dev "$LAN" parent ffff: prio 1 u32 match u32 0 0 flowid 1:1 action connmark action mirred egress redirect dev "$WAN"
+fi
+if [ "$DL" != 0 ]; then
+ IFACE="$LAN"
+ RATE=""$DL""
+ RATEIP="$ip_dn"
+ DRT=dst
+ command_htb
+fi
+exit 0
+}
+
+[ -f /etc/config/guestwifi/guest_del ] || exit 0
+sh /tmp/log/guest_wifi_limit 2>/dev/null
+sed -i '/guest wifi/d' /etc/crontabs/root 2>/dev/null
+/etc/init.d/cron restart 2>/dev/null
+echo "" > /tmp/log/guest_wifi_limit
+iphead=`uci get guest-wifi.@guest-wifi[0].interface_ip 2>/dev/null|awk -F '.' '{print $1"."$2"."$3"."}'`
+RATE_=`uci get guest-wifi.@guest-wifi[0].wifi_up 2>/dev/null` ; get_rate ; UL="$RATE"
+RATE_=`uci get guest-wifi.@guest-wifi[0].wifi_dn 2>/dev/null` ; get_rate ; DL="$RATE"
+[ "$UL" = 0 -a "$DL" = 0 ] && exit 0
+RATE_=`uci get guest-wifi.@guest-wifi[0].ip_up 2>/dev/null` ; get_rate ; ip_up="$RATE"
+RATE_=`uci get guest-wifi.@guest-wifi[0].ip_dn 2>/dev/null` ; get_rate ; ip_dn="$RATE"
+device=$(uci get guest-wifi.@guest-wifi[0].device 2>/dev/null) || device=0
+ifname=`uci get guest-wifi.@guest-wifi[0].ifname 2>/dev/null`
+interface_name=`uci get guest-wifi.@guest-wifi[0].interface_name 2>/dev/null`
+[ "$device" = "0" -a -z "$ifname" ] && exit 0
+DEV=br-"$interface_name"
+
+CNT=0 ; while [ $CNT -le 5 ]
+do
+DEVEXT=`ls /sys/class/net|grep -o "$DEV"`
+[ -n "$DEVEXT" ] && guest_wifi_limit || sleep 5
+CNT=$((CNT+1))
+done
+
+# tc -s qdisc show dev eth1
+# tc -s class ls dev eth1
+
+
+
+
+

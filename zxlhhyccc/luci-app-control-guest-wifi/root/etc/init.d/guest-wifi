@@ -1,0 +1,289 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2015
+# Must keep author's information if you use this file.
+# Mod. by wulishui 20200730
+
+START=50
+
+add_interface() {
+	name=`uci show network |grep "$interface_ip"`
+	if [ $? = 1 ]; then
+		uci set network.$interface_name=interface
+		uci set network.$interface_name.proto='static'
+		uci set network.$interface_name.ipaddr="$interface_ip"
+		uci set network.$interface_name.netmask='255.255.255.0'
+		uci set network.$interface_name.type='bridge'
+		uci set network.$interface_name.ifname="devguest $ifname"
+		echo "uci del network.$interface_name" >> /etc/config/guestwifi/guest_del
+		echo "uci commit network" >> /etc/config/guestwifi/guest_del
+		uci commit network
+		/etc/init.d/network reload >/dev/null 2>&1
+	fi
+}
+
+add_ssid() {
+	[ "$device" = "0" ] && return
+	check_name=`uci show wireless |grep "$wifi_name"`
+	if [ $? = 1 ]; then
+		uci set wireless.$interface_name=wifi-iface
+		uci set wireless.$interface_name.device="$device"
+		uci set wireless.$interface_name.mode='ap'
+		uci set wireless.$interface_name.network="$interface_name"
+		uci set wireless.$interface_name.ssid="$wifi_name"
+		uci set wireless.$interface_name.encryption="$encryption"
+		uci set wireless.$interface_name.isolate="$isolate"
+		if [ "$encryption" != "none" ]; then
+			uci set wireless.$interface_name.key="$passwd"
+		fi
+		echo "uci del wireless.$interface_name" >> /etc/config/guestwifi/guest_del
+		echo "uci commit wireless" >> /etc/config/guestwifi/guest_del
+		uci commit wireless
+		wifi reload $device >/dev/null 2>&1
+	fi
+
+}
+
+mod_dhcp() {
+	check_dhcp=`uci show dhcp |grep "$interface_name=dhcp"`
+	if [ $? = 1 ]; then
+		uci set dhcp.$interface_name=dhcp
+		uci set dhcp.$interface_name.interface="$interface_name"
+		uci set dhcp.$interface_name.start="$start"
+		uci set dhcp.$interface_name.limit="$limit"
+		uci set dhcp.$interface_name.leasetime="$leasetime"
+		uci set dhcp.$interface_name.force="$forcedhcp"
+		echo "uci del dhcp.$interface_name" >> /etc/config/guestwifi/guest_del
+		echo "uci commit dhcp" >> /etc/config/guestwifi/guest_del
+		uci commit dhcp
+		/etc/init.d/dnsmasq reload >/dev/null 2>&1
+	fi
+}
+
+mod_fw() {
+	num_a=`uci show firewall |grep '=zone' |wc -l`
+	num_b=`uci show firewall |grep '=forwarding' |wc -l`
+	check_zone=`uci show firewall |grep "name=\'$interface_name\'"`
+	if [ $? = 1 ]; then
+		uci add firewall zone
+		echo "uci del firewall.@zone[$num_a]" >> /etc/config/guestwifi/guest_del
+		echo "uci commit firewall" >> /etc/config/guestwifi/guest_del
+		uci set firewall.@zone[$num_a]=zone
+		uci set firewall.@zone[$num_a].name="$interface_name"
+		uci set firewall.@zone[$num_a].network="$interface_name"
+		uci set firewall.@zone[$num_a].forward='REJECT'
+		uci set firewall.@zone[$num_a].output='ACCEPT'
+		uci set firewall.@zone[$num_a].input='REJECT'
+		uci commit firewall
+	fi
+
+	check_forward=`uci show firewall |grep "forwarding\[.*\].src=\'"$interface_name\'""`
+	if [ $? = 1 ]; then
+		uci add firewall forwarding
+		echo "uci del firewall.@forwarding[$num_b]" >> /etc/config/guestwifi/guest_del
+		echo "uci commit firewall" >> /etc/config/guestwifi/guest_del
+		uci set firewall.@forwarding[$num_b]=forwarding
+		uci set firewall.@forwarding[$num_b].src="$interface_name"
+		uci set firewall.@forwarding[$num_b].dest='wan'
+		uci commit firewall
+	fi
+
+	check_DNS=`uci show firewall |grep "Allow DNS Queries for $wifi_name"`
+	if [ $? = 1 ]; then
+		num_c=`uci show firewall |grep '=rule' |wc -l`
+		uci add firewall rule
+		uci set firewall.@rule[$num_c]=rule
+		uci set firewall.@rule[$num_c].name="Allow DNS Queries for $wifi_name"
+		uci set firewall.@rule[$num_c].src="$interface_name"
+		uci set firewall.@rule[$num_c].dest_port='53'
+		uci set firewall.@rule[$num_c].proto='tcpudp'
+		uci set firewall.@rule[$num_c].target='ACCEPT'
+		uci commit firewall
+		unset num_c
+	fi
+
+	check_DHCP=`uci show firewall |grep "Allow DHCP request for $wifi_name"`
+	if [ $? = 1 ]; then
+		num_c=`uci show firewall |grep '=rule' |wc -l`
+		uci add firewall rule
+		uci set firewall.@rule[$num_c]=rule
+		uci set firewall.@rule[$num_c].name="Allow DHCP request for $wifi_name"
+		uci set firewall.@rule[$num_c].src="$interface_name"
+		uci set firewall.@rule[$num_c].src_port='67-68'
+		uci set firewall.@rule[$num_c].dest_port='67-68'
+		uci set firewall.@rule[$num_c].proto='udp'
+		uci set firewall.@rule[$num_c].target='ACCEPT'
+		uci commit firewall
+		unset num_c
+	fi
+
+	check_HIDE=`uci show firewall |grep "Hide My LAN for $wifi_name"`
+	if [ $? = 1 ]; then
+		num_c=`uci show firewall |grep '=rule' |wc -l`
+		uci add firewall rule
+		uci set firewall.@rule[$num_c]=rule
+		uci set firewall.@rule[$num_c].enabled='1'
+		uci set firewall.@rule[$num_c].name="Hide My LAN for $wifi_name"
+		uci set firewall.@rule[$num_c].proto='all'
+		uci set firewall.@rule[$num_c].src="$interface_name"
+		#convert netmask to cidr
+		local lan_netmask=`uci get network.lan.netmask`
+		local nbits=0
+		local IFS=.
+		for netmask_dec in $lan_netmask ; do
+			case $netmask_dec in
+				255) let nbits+=8 ;;
+				254) let nbits+=7 ;;
+				252) let nbits+=6 ;;
+				248) let nbits+=5 ;;
+				240) let nbits+=4 ;;
+				224) let nbits+=3 ;;
+				192) let nbits+=2 ;;
+				128) let nbits+=1 ;;
+				0) ;;
+				*) echo "Error: $netmask_dec can not be recognised as netmask decimal." && exit 1 ;;
+			esac
+		done
+		unset netmask_dec
+		uci set firewall.@rule[$num_c].dest_ip="`uci get network.lan.ipaddr`/$nbits"
+		uci set firewall.@rule[$num_c].target='REJECT'
+		uci commit firewall
+		unset num_c
+	fi
+
+	/etc/init.d/firewall reload >/dev/null 2>&1
+}
+
+guest_wifi_on() {
+cat>/usr/bin/guest_wifi_on<<EOF
+[ -f /etc/config/guestwifi/guest_del ] || exit
+uci del wireless.$interface_name.disabled=1 2>/dev/null
+uci commit wireless 2>/dev/null
+wifi reload $device 2>/dev/null
+sh /tmp/log/guest_wifi_limit 2>/dev/null
+guest_wifi_limit 2>/dev/null &
+EOF
+chmod 0755 /usr/bin/guest_wifi_on
+}
+
+guest_wifi_off() {
+cat>/usr/bin/guest_wifi_off<<EOF
+[ -f /etc/config/guestwifi/guest_del ] || exit
+uci set wireless.$interface_name.disabled=1 2>/dev/null
+uci commit wireless 2>/dev/null
+wifi reload $device 2>/dev/null
+sh /tmp/log/guest_wifi_limit 2>/dev/null
+guest_wifi_limit 2>/dev/null &
+EOF
+chmod 0755 /usr/bin/guest_wifi_off
+}
+
+guest_ifname_on() {
+[ -n "$ifname" ] || return
+cat>/usr/bin/guest_ifname_on<<EOF
+uci del network.$interface_name.auto #打开一个接口
+uci commit network
+/etc/init.d/network reload $interface_name >/dev/null 2>&1
+EOF
+chmod 0755 /usr/bin/guest_ifname_on
+}
+
+guest_ifname_off() {
+[ -n "$ifname" ] || return
+cat>/usr/bin/guest_ifname_off<<EOF
+uci set network.$interface_name.auto=0 #关闭一个接口
+uci commit network
+/etc/init.d/network reload $interface_name >/dev/null 2>&1
+EOF
+chmod 0755 /usr/bin/guest_ifname_off
+}
+
+flush_config() {
+	wifi_name=`grep '# wifi_name' /etc/config/guestwifi/guest_del 2>/dev/null| awk -F ' ' '{print $3}'`
+	device=`grep '# device' /etc/config/guestwifi/guest_del 2>/dev/null| awk -F ' ' '{print $3}'`
+	sh /etc/config/guestwifi/guest_del >/dev/null 2>&1
+	rule_c=`uci show firewall |grep "Hide My LAN for $wifi_name"|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_c]
+	uci commit firewall
+	rule_b=`uci show firewall |grep "Allow DHCP request for $wifi_name"|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_b]
+	uci commit firewall
+	rule_a=`uci show firewall |grep "Allow DNS Queries for $wifi_name"|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_a]
+	uci commit firewall
+	sh /etc/config/guestwifi/guest_del >/dev/null 2>&1
+	sh /tmp/log/guest_wifi_limit 2>/dev/null
+	uci set guest-wifi.@guest-wifi[0].create='0'
+	uci set guest-wifi.@guest-wifi[0].delete='0'
+	uci commit guest-wifi
+	rm -f /etc/config/guestwifi/guest_del
+	rm -f /tmp/log/guest_wifi_limit 2>/dev/null
+	rm -f /tmp/log/guest_wifi_dev 2>/dev/null
+	echo "" > /usr/bin/guest_wifi_off
+	echo "" > /usr/bin/guest_wifi_on
+	wifi reload $device >/dev/null 2>&1
+	/etc/init.d/firewall reload >/dev/null 2>&1
+	/etc/init.d/dnsmasq reload >/dev/null 2>&1
+	/etc/init.d/network reload >/dev/null 2>&1
+	sed -i '/guest wifi/d' /etc/crontabs/root 2>/dev/null
+	/etc/init.d/cron restart 2>/dev/null
+	kill -9 $(busybox ps -w | grep 'smbd'| grep -v grep | awk '{print $1}') 2>/dev/null
+	/etc/init.d/samba4 start  >/dev/null 2>&1
+}
+
+create=$(uci get guest-wifi.@guest-wifi[0].create 2>/dev/null)
+delete=$(uci get guest-wifi.@guest-wifi[0].delete 2>/dev/null)
+ip link add dev devguest name devguest type ifb  2>/dev/null && ip link set dev devguest up  2>/dev/null
+
+start() {
+if [ "$create" = 1 ]; then
+	flush_config
+	wifi_name=$(uci get guest-wifi.@guest-wifi[0].wifi_name 2>/dev/null)
+	device=$(uci get guest-wifi.@guest-wifi[0].device 2>/dev/null) || device=0
+	encryption=$(uci get guest-wifi.@guest-wifi[0].encryption 2>/dev/null)
+	passwd=$(uci get guest-wifi.@guest-wifi[0].passwd 2>/dev/null)
+	interface_ip=$(uci get guest-wifi.@guest-wifi[0].interface_ip 2>/dev/null)
+	isolate=$(uci get guest-wifi.@guest-wifi[0].isolate 2>/dev/null)
+	start=$(uci get guest-wifi.@guest-wifi[0].start 2>/dev/null) || start=50
+	limit=$(uci get guest-wifi.@guest-wifi[0].limit 2>/dev/null) || limit=200
+	leasetime=$(uci get guest-wifi.@guest-wifi[0].leasetime 2>/dev/null) || leasetime=6h
+	forcedhcp=$(uci get guest-wifi.@guest-wifi[0].forcedhcp 2>/dev/null) || forcedhcp=0
+	ifname=$(uci get guest-wifi.@guest-wifi[0].ifname 2>/dev/null)
+	interface_name=$(uci get guest-wifi.@guest-wifi[0].interface_name 2>/dev/null) || interface_name=guest
+	[ -d /etc/config/guestwifi ] || mkdir /etc/config/guestwifi
+	[ -f /etc/config/guestwifi/guest_del ] || echo "#! /bin/sh" > /etc/config/guestwifi/guest_del
+	add_interface
+	add_ssid
+	mod_dhcp
+	mod_fw
+	guest_wifi_on
+	guest_wifi_off
+	#guest_ifname_on
+	#guest_ifname_off
+	uci set guest-wifi.@guest-wifi[0].create='0'
+	uci set guest-wifi.@guest-wifi[0].delete='0'
+	uci commit guest-wifi
+	uci del wireless.$interface_name.disabled >/dev/null 2>&1
+	uci commit wireless
+	echo "uci delete wireless.$interface_name" >> /etc/config/guestwifi/guest_del
+	echo "uci commit wireless" >> /etc/config/guestwifi/guest_del
+	echo "# interface_ip $interface_ip" >> /etc/config/guestwifi/guest_del
+	echo "# interface_name $interface_name" >> /etc/config/guestwifi/guest_del
+	echo "# wifi_name $wifi_name" >> /etc/config/guestwifi/guest_del
+	echo "# device $device" >> /etc/config/guestwifi/guest_del
+	kill -9 $(busybox ps -w | grep 'smbd'| grep -v grep | awk '{print $1}') 2>/dev/null
+	/etc/init.d/samba4 start  >/dev/null 2>&1
+fi
+[ "$delete" = 1 ] && flush_config
+[ -f /etc/config/guestwifi/guest_del ] && /usr/bin/guest_wifi_limit &
+}
+
+stop() {
+[ "$delete" = 1 ] && flush_config
+}
+
+restart() {
+	stop
+	sleep 2
+	start	
+}
+

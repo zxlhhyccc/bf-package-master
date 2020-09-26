@@ -1,0 +1,13 @@
+#!/bin/sh
+. /lib/functions.sh
+
+[ -f /etc/config/guestwifi/guest_del ] || exit
+
+[ "$ACTION" = "ifup" ] || exit
+
+DEV=$(grep 'DEVICE' /tmp/log/guest_wifi_limit 2>/dev/null| awk -F ' ' '{print $3}')
+[ "$DEV" = "$DEVICE" ] || exit
+
+running=`pgrep 'guest_wifi_limit' 2>/dev/null` && kill -9 $(busybox ps -w | grep 'guest_wifi_limit' | grep -v 'grep' | awk '{print $1}') >/dev/null 2>&1
+/usr/bin/guest_wifi_limit &
+

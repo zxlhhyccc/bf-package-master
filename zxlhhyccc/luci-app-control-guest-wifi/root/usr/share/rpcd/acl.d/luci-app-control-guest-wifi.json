@@ -1,0 +1,11 @@
+{
+	"luci-app-control-guest-wifi": {
+		"description": "Grant UCI access for luci-app-control-guest-wifi",
+		"read": {
+			"uci": [ "guest-wifi" ]
+		},
+		"write": {
+			"uci": [ "guest-wifi" ]
+		}
+	}
+}

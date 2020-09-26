@@ -1,0 +1,10 @@
+#!/bin/sh
+
+sh /tmp/log/guest_wifi_limit
+sed -i '/guest wifi/d' /etc/crontabs/root 2>/dev/null
+ADT=$(uci get guest-wifi.@guest-wifi[0].offtimer 2>/dev/null|awk -F ' ' '{print $1*60}') || offtimer=1800
+time_cur=`date -d "$(date "+%Y-%m-%d %H:%M:%S")" +%s`
+time_new=`expr "$time_cur" + "$ADT"`
+add_crond=`date -d @"$time_new"  "+%M %H"`
+echo ""$add_crond" * * * guest_wifi_limit #From guest wifi " >> /etc/crontabs/root 2>/dev/null
+/etc/init.d/cron restart 2>/dev/null
