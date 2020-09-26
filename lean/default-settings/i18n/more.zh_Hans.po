@@ -1053,3 +1053,9 @@ msgstr "过滤 IPv6 记录"
 
 msgid "Filter IPv6(AAAA) Records during DNS resolution"
 msgstr "在域名解析时，过滤 IPv6(AAAA) 记录"
+
+msgid "Addresses"
+msgstr "地址"
+
+msgid "List of domains to force to an IP address."
+msgstr "允许强制到 IP 地址的域名列表"
