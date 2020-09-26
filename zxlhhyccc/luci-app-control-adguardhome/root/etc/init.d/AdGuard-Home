@@ -1,0 +1,178 @@
+#!/bin/sh /etc/rc.common
+# Auther: wulishui, at 20200513
+
+USE_PROCD=1
+ 
+START=95
+
+add_iptable53() {
+	 iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+	 iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+	ip6tables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+	ip6tables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+}
+
+add_iptable5335() {
+	 iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+	 iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+	ip6tables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+	ip6tables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+}
+
+del_iptable() {
+	 iptables -t nat -D PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+	 iptables -t nat -D PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+	ip6tables -t nat -D PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+	ip6tables -t nat -D PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 54 2>/dev/null
+	 iptables -t nat -D PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+	 iptables -t nat -D PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+	ip6tables -t nat -D PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+	ip6tables -t nat -D PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 5335 2>/dev/null
+}
+
+clear_settings() {
+	uci del_list dhcp.@dnsmasq[-1].server='127.0.0.0#5335' 2>/dev/null
+	uci del_list dhcp.@dnsmasq[-1].server='127.0.0.1#5335' 2>/dev/null
+	uci del_list dhcp.@dnsmasq[-1].server='127.0.0.0#54' 2>/dev/null
+	uci del_list dhcp.@dnsmasq[-1].server='127.0.0.1#54' 2>/dev/null
+ 	uci delete dhcp.@dnsmasq[-1].server 2>/dev/null
+	uci del dhcp.@dnsmasq[-1].noresolv=1 2>/dev/null
+	uci del dhcp.@dnsmasq[-1].port=55 2>/dev/null
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+}
+
+reset_default() {
+	reset=$(uci get AdGuardHome.AdGuardHome.reset 2>/dev/null)
+	Adreset=$(uci get AdGuardHome.AdGuardHome.Confirm_reset 2>/dev/null)
+	[ "$reset" == 1 -a "$Adreset" == 1 ] || return
+	rm -f /usr/bin/AdGuardHome.yaml 2>/dev/null
+	rm -rf /usr/bin/data 2>/dev/null
+	uci set AdGuardHome.AdGuardHome.enabled=0
+	uci set AdGuardHome.AdGuardHome.reset=0
+	uci set AdGuardHome.AdGuardHome.Confirm_reset=0
+	uci set AdGuardHome.AdGuardHome.port=3003
+	uci commit AdGuardHome
+ 	uci delete dhcp.@dnsmasq[-1].server 2>/dev/null
+	uci del dhcp.@dnsmasq[-1].noresolv=1
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+}
+
+flush_settings() {
+	[ -s /tmp/log/adg_mode ] || return
+	clear_settings
+	del_iptable
+	[ -s /usr/bin/agh-backup/AdGuardHome ] && rm -rf /usr/bin/agh-backup/AdGuardHome 2>/dev/null
+}
+
+start_service() {
+	reset_default
+	flush_settings
+
+	enabled=$(uci get AdGuardHome.AdGuardHome.enabled 2>/dev/null)
+
+  if [ "$enabled" == 1 ]; then
+
+	OPORT=`egrep "bind_port: [0-9]*" /usr/bin/AdGuardHome.yaml|egrep -o '[0-9]*'`
+	PORT=`uci get AdGuardHome.AdGuardHome.port 2>/dev/null`
+	if [ "$OPORT" != "$PORT" ]; then
+	 sed -i  's/bind_port: [0-9]*/bind_port: '"$PORT"'/g' /usr/bin/AdGuardHome.yaml
+	fi
+
+ 	mode=$(uci get AdGuardHome.AdGuardHome.work_mode 2>/dev/null)
+     	mode_=$(cat /tmp/log/adg_mode 2>/dev/null) && kill -9 $(busybox ps -w | grep 'AdGuardHome' | grep -v grep | awk '{print $1}') >/dev/null 2>&1
+	if [ -n "$mode_" -a "$mode_" != "$mode" ]; then
+	 rm -f /usr/bin/data/stats.db 2>/dev/null
+	 echo "" /tmp/log/querylog.json 2>/dev/null
+	fi
+
+	echo "$mode" > /tmp/log/adg_mode
+	touch /tmp/log/querylog.json
+	if [ ! -L /usr/bin/data/querylog.json ]; then
+	 rm -f /usr/bin/data/querylog.json 2>/dev/null
+	 ln -s /tmp/log/querylog.json /usr/bin/data/querylog.json
+	fi
+
+       case "$mode" in
+	"1")
+	echo "AdguardHome will run in free_mode ." 2>/dev/null
+	;;
+
+	"2")
+	sed -i  's/  port: [0-9]*/  port: '"54"'/g' /usr/bin/AdGuardHome.yaml
+  	uci delete dhcp.@dnsmasq[-1].server 2>/dev/null
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.0#54'
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#54'
+	uci set dhcp.@dnsmasq[-1].noresolv=1 2>/dev/null
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+	;;
+
+	"3")
+	sed -i  's/  port: [0-9]*/  port: '"54"'/g' /usr/bin/AdGuardHome.yaml
+	uci delete dhcp.@dnsmasq[-1].server 2>/dev/null
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.0#54'
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#54'
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+	add_iptable53
+	;;
+
+	"4")
+	sed -i  's/  port: [0-9]*/  port: '"53"'/g' /usr/bin/AdGuardHome.yaml
+	uci delete dhcp.@dnsmasq[-1].server 2>/dev/null
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.0#54'
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#54'
+	uci set dhcp.@dnsmasq[-1].noresolv=1 2>/dev/null
+	uci set dhcp.@dnsmasq[-1].port=55 2>/dev/null
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+	;;
+
+	"5")
+	sed -i  's/  port: [0-9]*/  port: '"5335"'/g' /usr/bin/AdGuardHome.yaml
+  	uci delete dhcp.@dnsmasq[-1].server 2>/dev/null
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.0#5335'
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#5335'
+	uci set dhcp.@dnsmasq[-1].noresolv=1 2>/dev/null
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+	;;
+
+	"6")
+	sed -i  's/  port: [0-9]*/  port: '"5335"'/g' /usr/bin/AdGuardHome.yaml
+	uci delete dhcp.@dnsmasq[-1].server 2>/dev/null
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.0#5335'
+	uci add_list dhcp.@dnsmasq[-1].server='127.0.0.1#5335'
+	uci commit dhcp
+	/etc/init.d/dnsmasq reload
+	add_iptable5335
+	;;
+       esac
+
+	procd_open_instance
+	procd_set_param command /usr/bin/AdGuardHome -p $PORT -l /var/log/AdGuardHome.log    #-c /usr/bin/AdGuardHome.yaml -w /etc/config/AdGuardHomeconfig
+	procd_set_param respawn
+	procd_set_param stderr 1
+	procd_close_instance
+  fi
+}
+
+service_triggers() {
+	procd_add_reload_trigger "AdGuardHome"
+}
+
+stop_service() {
+	kill -9 $(busybox ps -w | grep 'AdGuardHome' | grep -v grep | awk '{print $1}') >/dev/null 2>&1
+	flush_settings
+}
+
+restart_service() {
+	stop
+	start
+}
+
+
+
+

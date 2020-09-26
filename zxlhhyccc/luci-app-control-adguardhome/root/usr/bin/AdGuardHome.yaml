@@ -1,0 +1,143 @@
+bind_host: 0.0.0.0
+bind_port: 3003
+users:
+- name: AdGuardHome
+  password: $2y$05$r.WXZfS0JbDj01xXmScIiuFPirVYB2FXmH0o1CUgyECxPNMlkWorq
+http_proxy: ""
+language: zh-cn
+rlimit_nofile: 0
+debug_pprof: false
+web_session_ttl: 720
+dns:
+  bind_host: 0.0.0.0
+  port: 54
+  statistics_interval: 1
+  querylog_enabled: true
+  querylog_file_enabled: true
+  querylog_interval: 1
+  querylog_size_memory: 1000
+  anonymize_client_ip: false
+  protection_enabled: true
+  blocking_mode: nxdomain
+  blocking_ipv4: ""
+  blocking_ipv6: ""
+  blocked_response_ttl: 10
+  parental_block_host: family-block.dns.adguard.com
+  safebrowsing_block_host: standard-block.dns.adguard.com
+  ratelimit: 0
+  ratelimit_whitelist: []
+  refuse_any: true
+  upstream_dns:
+  - 202.141.178.13:5353
+  - 202.38.93.153:5353
+  - 202.141.162.123:5353
+  - 1.1.1.1
+  - 9.9.9.9
+  - 117.50.10.10
+  - 119.29.29.29
+  - 114.114.114.114
+  - 223.5.5.5
+  - 208.67.222.222:5353
+  - tcp://8.8.8.8
+  - tcp://8.8.4.4
+  - tls://dns.google
+  - tls://1dot1dot1dot1.cloudflare-dns.com
+  - https://dns9.quad9.net/dns-query
+  upstream_dns_file: ""
+  bootstrap_dns:
+  - 223.5.5.5
+  - 223.6.6.6
+  all_servers: true
+  fastest_addr: false
+  allowed_clients: []
+  disallowed_clients: []
+  blocked_hosts: []
+  cache_size: 4194304
+  cache_ttl_min: 0
+  cache_ttl_max: 0
+  bogus_nxdomain: []
+  aaaa_disabled: true
+  enable_dnssec: false
+  edns_client_subnet: false
+  filtering_enabled: true
+  filters_update_interval: 24
+  parental_enabled: false
+  safesearch_enabled: false
+  safebrowsing_enabled: false
+  safebrowsing_cache_size: 1048576
+  safesearch_cache_size: 1048576
+  parental_cache_size: 1048576
+  cache_time: 30
+  rewrites: []
+  blocked_services: []
+tls:
+  enabled: false
+  server_name: ""
+  force_https: false
+  port_https: 443
+  port_dns_over_tls: 853
+  allow_unencrypted_doh: false
+  strict_sni_check: false
+  certificate_chain: ""
+  private_key: ""
+  certificate_path: ""
+  private_key_path: ""
+filters:
+- enabled: false
+  url: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
+  name: AdGuard DNS filter
+  id: 1
+- enabled: true
+  url: https://adaway.org/hosts.txt
+  name: AdAway
+  id: 2
+- enabled: false
+  url: https://hosts-file.net/ad_servers.txt
+  name: hpHosts - Ad and Tracking servers only
+  id: 3
+- enabled: true
+  url: https://www.malwaredomainlist.com/hostslist/hosts.txt
+  name: MalwareDomainList.com Hosts List
+  id: 4
+- enabled: false
+  url: http://tools.yiclear.com/ChinaList2.0.txt
+  name: ChinaListV2.0[20191126000]
+  id: 1571839061
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt
+  name: EasyList China+EasyList
+  id: 1571839062
+- enabled: true
+  url: https://easylist-downloads.adblockplus.org/easyprivacy.txt
+  name: EasyPrivacy
+  id: 1571975336
+- enabled: true
+  url: https://raw.githubusercontent.com/notracking/hosts-blocklists/master/hostnames.txt
+  name: hostnames
+  id: 1572887725
+- enabled: true
+  url: https://raw.githubusercontent.com/notracking/hosts-blocklists/master/domains.txt
+  name: domains
+  id: 1572887726
+whitelist_filters: []
+user_rules:
+- 192.168.18.1 iou.lan
+dhcp:
+  enabled: false
+  interface_name: ""
+  gateway_ip: ""
+  subnet_mask: ""
+  range_start: ""
+  range_end: ""
+  lease_duration: 86400
+  icmp_timeout_msec: 1000
+clients: []
+log_compress: false
+log_localtime: false
+log_max_backups: 0
+log_max_size: 100
+log_max_age: 3
+log_file: ""
+verbose: false
+schema_version: 6
+

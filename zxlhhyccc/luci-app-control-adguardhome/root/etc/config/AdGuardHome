@@ -1,0 +1,8 @@
+
+config AdGuardHome 'AdGuardHome'
+	option enabled '0'
+	option reset '0'
+	option Confirm_reset '0'
+	option port '3003'
+	option dnsport '54'
+
