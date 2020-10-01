@@ -35,12 +35,12 @@ load_rule()
     if [ x"$enable" != x"1" ];then
 		echo "appfilter is disabled"
 		echo 0 >/proc/sys/oaf/enable>/dev/null
-		uci set firewall.@defaults[0].flow_offloading=0
+		uci set firewall.@defaults[0].flow_offloading=1
 		return 0
     else
 		insmod oaf >/dev/null
 		echo 1 >/proc/sys/oaf/enable
-		uci set firewall.@defaults[0].flow_offloading=1
+		[ $(uci get firewall.@defaults[0].flow_offloading 2>/dev/null) == 1 ] && { uci set firewall.@defaults[0].flow_offloading=0 ; uci commit firewall ; /etc/init.d/firewall reload  >/dev/null 2>&1 ; } #如果人家本来就没有启用的就不要多此一举了，缩短开机时间。
 	fi
     echo "appfilter is enabled"
     json_add_int "op" 1
@@ -88,4 +88,3 @@ load_mac_list()
 clean_rule
 load_rule
 load_mac_list
-fw3 reload
