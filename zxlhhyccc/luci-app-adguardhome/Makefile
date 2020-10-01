@@ -1,13 +1,10 @@
-# Copyright (C) 2018-2019 Lienol
-#
 # This is free software, licensed under the Apache License, Version 2.0 .
 #
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-adguardhome
-PKG_VERSION:=1.8
-PKG_RELEASE:=11
+PKG_RELEASE:=15
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
