@@ -40,8 +40,8 @@ endif
 
 PKG_LICENSE:=Apache-2.0
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)-$(PKG_RELEASE)
-PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).$(PKG_RELEASE).gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)
+PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz
 PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/
 PKG_HASH:=skip
 
@@ -60,13 +60,13 @@ openclash-tun is a cross-platform proxy software
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).$(PKG_RELEASE).gz ] && wget https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).$(PKG_RELEASE).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).$(PKG_RELEASE).gz
-	gzip -d -k -f -c $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).$(PKG_RELEASE).gz > $(PKG_BUILD_DIR)/clash-tun
+	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz ] && wget https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz
+	gzip -d -k -f -c $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz > $(PKG_BUILD_DIR)/clash-tun
 	chmod +x $(PKG_BUILD_DIR)/clash-tun
 endef
 
 define Build/Configure
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/clash-tun
+	# $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/clash-tun
 endef
 
 define Build/Compile
