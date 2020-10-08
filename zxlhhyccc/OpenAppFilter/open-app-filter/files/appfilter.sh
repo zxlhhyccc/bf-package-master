@@ -80,7 +80,7 @@ load_mac_list()
 		echo "appid=$appid"
 		json_add_string "" $appid
 	done
-    json_str=`json_dump`
+    json_str=json_dump
     config_apply "$json_str"
 	echo "json str=$json_str"
     json_cleanup
