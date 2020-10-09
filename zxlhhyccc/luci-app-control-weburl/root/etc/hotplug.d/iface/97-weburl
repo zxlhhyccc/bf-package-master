@@ -1,0 +1,7 @@
+#!/bin/sh
+. /lib/functions.sh
+
+[ "$ACTION" = ifup ] || exit 0
+[ "$(uci get weburl.@basic[0].enabled 2>/dev/null)" == 1 ] || exit 0
+/etc/init.d/weburl start
+

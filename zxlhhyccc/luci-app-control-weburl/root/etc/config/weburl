@@ -1,7 +1,6 @@
 
 config basic
 	option algos 'kmp'
-	option enabled '0'
 
 config macbind
 	option timeoff '00:00'

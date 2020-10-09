@@ -5,11 +5,11 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for Weburl
+LUCI_TITLE:=LuCI support for Weburl From Koolshare
 LUCI_DEPENDS:=+iptables-mod-filter +kmod-ipt-filter
 LUCI_PKGARCH:=all
-PKG_VERSION:=1.5
-PKG_RELEASE:=20200923
+PKG_VERSION:=1.7
+PKG_RELEASE:=20200927
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

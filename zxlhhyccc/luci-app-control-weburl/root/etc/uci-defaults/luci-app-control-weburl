@@ -7,5 +7,12 @@ uci -q batch <<-EOF >/dev/null
 	commit ucitrack
 EOF
 
+uci delete firewall.weburl
+uci set firewall.weburl=include
+uci set firewall.weburl.type=script
+uci set firewall.weburl.path=/etc/weburl.include
+uci set firewall.weburl.reload=1
+uci commit firewall
+
 rm -f /tmp/luci-indexcache
 exit 0
