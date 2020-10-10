@@ -1,0 +1,24 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Verysync"
+msgstr "微力同步"
+
+msgid "An Efficient Data Transfer Tool"
+msgstr "Verysync 一款高效的数据传输工具"
+
+msgid "Simple and easy-to-use multi-platform file synchronization software, astonishing transmission speed is different from the greatest advantage of other products. Micro-force synchronization of intelligent P2P technology to accelerate synchronization, will split the file into several KB-only data synchronization, and the file will be AES encryption processing."
+msgstr "简单易用的多平台文件同步软件，最大优势是不同于其他产品的惊人的传输速度，微力同步的智能 P2P 技术会将文件分割成若干份仅 KB 的数据进行同步，而文件都会进行 AES 加密处理。"
+
+msgid "Open Verysync page"
+msgstr "打开微力同步页面"
+
+msgid "Store configuration files in the Path"
+msgstr "配置文件存放路径"

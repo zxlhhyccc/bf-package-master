@@ -1,0 +1,11 @@
+{
+	"luci-app-control-verysync": {
+		"description": "Grant UCI access for luci-app-control-verysync",
+		"read": {
+			"uci": [ "verysync" ]
+		},
+		"write": {
+			"uci": [ "verysync" ]
+		}
+	}
+}

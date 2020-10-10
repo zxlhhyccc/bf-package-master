@@ -1,0 +1,5 @@
+config setting 'config'
+	option port '8886'
+	option home '/mnt/sda1/verysync'
+	option enabled '0'
+
