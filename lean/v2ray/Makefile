@@ -74,7 +74,7 @@ define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Project V
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-c9f4640ce817be9d77e81b42540926acc65187e4eertificates
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
 endef
 
 define Package/$(PKG_NAME)/config
