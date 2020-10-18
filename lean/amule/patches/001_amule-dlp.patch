@@ -17,7 +17,7 @@ index 6865c66..e61a6df 100644
  # Default is yes, because they're most likely compatible.
  # However, this is only used when cross-compiling.
  AC_ARG_WITH(
-@@ -445,6 +453,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x$SYS = xdarwin)
+@@ -450,6 +458,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x$SYS = xdarwin)
  AM_CONDITIONAL(COMPILE_NLS, test x$USE_NLS = xyes)
  AM_CONDITIONAL(INSTALL_SKINS, test MULE_IS_ENABLED_ANY([monolithic, amule-gui]))
  AM_CONDITIONAL(PLASMAMULE, test MULE_IS_ENABLED([plasmamule]))
