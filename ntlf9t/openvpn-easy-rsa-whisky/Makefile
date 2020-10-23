@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openvpn-easy-rsa-whisky
-
 PKG_VERSION:=3.0.8
 PKG_RELEASE:=1
+
 PKG_SOURCE_URL:=https://github.com/OpenVPN/easy-rsa/releases/download/v$(PKG_VERSION)/
 PKG_SOURCE:=EasyRSA-$(PKG_VERSION).tgz
 PKG_HASH:=cae114c212a5be4d89f2253d36c70ab94f68d295f24e8b6711c2cab0fabf7e18
 PKG_LICENSE:=GPL-2.0
-PKG_BUILD_DIR:=$(BUILD_DIR)/EasyRSA-v$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/EasyRSA-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 
