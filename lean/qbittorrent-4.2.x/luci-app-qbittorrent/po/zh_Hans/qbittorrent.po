@@ -1,0 +1,750 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:225
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:230
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:235
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:240
+msgid "0 means has no limit."
+msgstr "0代表不限制。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:129
+msgid "A BT/PT downloader base on Qt."
+msgstr "一个基于QT的BT/PT下载器。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:505
+msgid "Advance Settings"
+msgstr "高级设置"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:234
+msgid "Alternative Download Speed"
+msgstr "备用下行速度"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:235
+msgid "Alternative Download Speed Limit(KiB/s)."
+msgstr "备用下行速度限制（KiB/s）。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:239
+msgid "Alternative Upload Speed"
+msgstr "备用上行速度"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:240
+msgid "Alternative Upload Speed Limit(KiB/s)."
+msgstr "备用上行速度限制（KiB/s）。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:553
+msgid "Announce To All Tiers"
+msgstr "响应所有层"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:547
+msgid "Announce To All Trackers"
+msgstr "响应所有Trackers"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:548
+msgid "Announce To all trackers of per tier."
+msgstr "响应单层的所有Trackers。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:507
+msgid "Anonymous Mode"
+msgstr "匿名模式"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:544
+msgid "Anti-Leech"
+msgstr "反吸血"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:363
+msgid "Apply rate limit to μTP protocol."
+msgstr "对μTP协议进行速度限制。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:212
+msgid ""
+"Assign a different port randomly every time when qBittorrent starts up, "
+"which will voids the self-defined option."
+msgstr "每次qBittorrent启动时，随机分配一个不同端口，这将使自定义选项无效。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:269
+msgid "Auto Delete Torrent File"
+msgstr "自动删除torrent文件"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:315
+msgid "Automaic"
+msgstr "自动"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:178
+msgid "Backup log file when oversize the given size."
+msgstr "超过指定大小自动备份日志文件。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:142
+msgid "Basic Settings"
+msgstr "基本设置"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:342
+msgid "Bittorrent Settings"
+msgstr "BT设置"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:300
+msgid ""
+"By default, this value 64. Besides, -1 is auto and 0 is disable. (Unit: MiB)"
+msgstr "默认值是64。此外，-1表示自动设置，0表示禁用缓存。（单位：MiB）"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:305
+msgid "By default, this value is 60. (Unit: s)"
+msgstr "默认值是60。（单位：秒）"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:473
+msgid "CSRF Protection"
+msgstr "CSRF防护"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:331
+msgid "Category Save Path Changed"
+msgstr "分类的保存路径修改时"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:166
+msgid "Chinese (zh)"
+msgstr "中文(zh)"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:540
+msgid "Choking Algorithm"
+msgstr "上传连接策略"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:331
+msgid "Choose the action when category save path changed."
+msgstr "选择分类的保存路径修改时的行为。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:325
+msgid "Choose the action when default save path changed."
+msgstr "选择默认保存路径修改时的行为。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:319
+msgid "Choose the action when torrent category changed."
+msgstr "选择torrent分类修改时的行为。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:479
+msgid "Clickjacking Protection"
+msgstr "点击劫持防护"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:47
+msgid "Collecting data..."
+msgstr "收集数据中"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:218
+msgid "Connection Port"
+msgstr "连接端口"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:202
+msgid "Connection Settings"
+msgstr "连接设置"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:256
+msgid "Create Subfolder"
+msgstr "创建子目录"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:257
+msgid "Create subfolder for torrents with multiple files."
+msgstr "为多文件torrents创建子目录。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:131
+msgid "Current Version: %s."
+msgstr "当前版本：%s。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:153
+msgid "Customized path"
+msgstr "自定义路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:325
+msgid "Default Save Path Changed"
+msgstr "默认保存路径修改时"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:313
+msgid "Default Torrent Management Mode"
+msgstr "默认torrent管理模式"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:184
+msgid "Delete Old Backup"
+msgstr "删除旧备份"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:371
+msgid "Disable Encryption"
+msgstr "禁用加密"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:299
+msgid "Disk Cache Size"
+msgstr "磁盘缓存大小"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:304
+msgid "Disk Cache TTL"
+msgstr "磁盘缓存TTL"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:430
+msgid "Do not count slow torrents in these limits."
+msgstr "不将慢速种子计算在这些限制里。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:263
+msgid "Do not start the download automatically."
+msgstr "读入torrent文件时不立即自动下载。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:436
+msgid "Download rate threshold"
+msgstr "下载速率阈值"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:254
+msgid "Downloads Settings"
+msgstr "下载设置"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:177
+msgid "Enable Backup"
+msgstr "启用日志备份"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:474
+msgid "Enable Cross-Site Request Forgery (CSRF) protection."
+msgstr "启用跨站点请求伪造(CSRF)防护。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:344
+msgid "Enable DHT"
+msgstr "启用DHT"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:345
+msgid "Enable DHT (decentralized network) to find more peers."
+msgstr "启用DHT（分散网络）以获取更多资源。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:356
+msgid "Enable LSD"
+msgstr "启用LSD"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:357
+msgid "Enable Local Peer Discovery to find more peers."
+msgstr "启用本地资源搜索以获取更多资源。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:169
+msgid "Enable Log"
+msgstr "启用日志"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:350
+msgid "Enable PeX"
+msgstr "启用PeX"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:351
+msgid "Enable Peer Exchange (PeX) to find more peers."
+msgstr "启用用户交换（PeX）以获取更多资源。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:497
+msgid "Enable Subnet Whitelist"
+msgstr "启用子网白名单"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:289
+msgid "Enable Temp Path"
+msgstr "启用临时文件路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:412
+msgid "Enable Torrent Queueing"
+msgstr "启用种子排队"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:480
+msgid "Enable clickjacking protection."
+msgstr "启用“点击劫持”防护。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:169
+msgid "Enable logger to log file."
+msgstr "将日志记录到日志文件。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:144
+msgid "Enabled"
+msgstr "启用"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:368
+msgid "Encryption Mode"
+msgstr "加密模式"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:165
+msgid "English (en)"
+msgstr "英文(en)"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:543
+msgid "Fastest Upload"
+msgstr "快速上传"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:339
+msgid "Finished Torrent Export Dir"
+msgstr "已完成torrent文件导出路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:492
+msgid "Force authentication for clients on localhost."
+msgstr "强制本地主机上的客户端进行身份验证。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:77
+msgid "Generate Randomly"
+msgstr "随机生成"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:196
+msgid ""
+"Give the time for keeping the old log, refer the setting 'Delete Old "
+"Backup', eg. 1d for one day, 1m for one month and 1y for one year."
+msgstr ""
+"给出保存旧日志文件的时间, 参考设置 '删除旧备份', 例如， 1d代表1天， 1m代表1个"
+"月， 1y代表一年。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:224
+msgid "Global Download Speed"
+msgstr "全局下行速度"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:225
+msgid "Global Download Speed Limit(KiB/s)."
+msgstr "全局下行速度限制（KiB/s）。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:229
+msgid "Global Upload Speed"
+msgstr "全局上行速度"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:230
+msgid "Global Upload Speed Limit(KiB/s)."
+msgstr "全局上行速度限制（KiB/s）。"
+
+#: root/usr/share/rpcd/acl.d/luci-app-qbittorrent.json:3
+msgid "Grant access to LuCI app qBittorrent"
+msgstr "给LuCI应用qbittorrent授予权限"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:485
+msgid "Host Header Validation"
+msgstr "主机标头验证"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:521
+msgid "Ignore LAN Limit"
+msgstr "取消LAN限制"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:429
+msgid "Ignore Slow Torrents"
+msgstr "忽略慢速torrent"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:522
+msgid "Ignore the speed limit to LAN."
+msgstr "忽略限制本地用户带宽。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:251
+msgid "Inet Address"
+msgstr "提交的地址"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:515
+msgid "Limit Overhead Usage"
+msgstr "总开销限制"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:466
+msgid "Listening Address"
+msgstr "监听地址"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:469
+msgid "Listening Port"
+msgstr "监听端口"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:491
+msgid "Local Host Authentication"
+msgstr "本地主机验证"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:163
+msgid "Locale Language"
+msgstr "语言"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:196
+msgid "Log Keep Time"
+msgstr "日志保存时间"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:191
+msgid "Log Max Size"
+msgstr "日志最大大小"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:174
+msgid "Log Path"
+msgstr "日志路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:314
+msgid "Manual"
+msgstr "手动"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:425
+msgid "Max Active Torrents"
+msgstr "最大活动torrent数"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:421
+msgid "Max Active Uploads"
+msgstr "最大活动上传数"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:374
+msgid "Max Connections"
+msgstr "最大连接数"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:380
+msgid "Max Connections Per Torrent"
+msgstr "单torrent最大连接数"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:532
+msgid "Max Outgoing Port"
+msgstr "最大端口"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:394
+msgid "Max Ratio"
+msgstr "最大分享率"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:399
+msgid "Max Ratio Action"
+msgstr "达到最大分享率时"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:406
+msgid "Max Seeding Minutes"
+msgstr "最大做种时长"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:384
+msgid "Max Uploads"
+msgstr "全局最大上传数"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:389
+msgid "Max Uploads Per Torrent"
+msgstr "单torrent最大上传线程数。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:417
+msgid "Maximum Active Downloads"
+msgstr "最大活动下载数"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:149
+msgid "Memory Limit"
+msgstr "内存限制"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:536
+msgid "Min Outgoing Port"
+msgstr "最小端口"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:155
+msgid "Parent Path for Profile Folder"
+msgstr "配置文件夹保存路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:461
+msgid "Password"
+msgstr "密码"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:401
+msgid "Pause them"
+msgstr "暂停"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:149
+msgid "Percentage."
+msgstr "百分比"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:274
+msgid "Pre Allocation"
+msgstr "预分配"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:275
+msgid "Pre-allocate disk space for all files."
+msgstr "为所有文件预分配硬盘空间。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:369
+msgid "Prefer Encryption"
+msgstr "偏好加密"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:160
+msgid "Profile Folder Suffix"
+msgstr "配置文件夹后缀"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:244
+msgid "Protocol Enabled"
+msgstr "启用的协议"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:409
+msgid "Queueing Setting"
+msgstr "排队设置"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:129
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:205
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:509
+msgid "Refer to the"
+msgstr "参考："
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:327
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:333
+msgid "Relocate affected torrent"
+msgstr "重新定位受影响的torrent"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:321
+msgid "Relocate torrent"
+msgstr "重新定位torrent"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:402
+msgid "Remove them"
+msgstr "移除"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:370
+msgid "Require Encryption"
+msgstr "强制加密"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:542
+msgid "Round Robin"
+msgstr "轮流上传"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:147
+msgid "Run daemon as user"
+msgstr "用户组"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:286
+msgid "Save Path"
+msgstr "保存路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:309
+msgid "Saving Management"
+msgstr "保存管理"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:153
+msgid "Specify the binary file path for qBittorrent."
+msgstr "指定qBittorrent二进制文件路径。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:156
+msgid ""
+"Specify the profile path and it is is equivalent to the commandline "
+"parameter: <b>--profile [PATH]</b>. The default is /tmp."
+msgstr ""
+"指定profile路径，等效于命令行参数：<b>--profile [PATH]</b>。默认值是/tmp"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:262
+msgid "Start In Pause"
+msgstr "暂停立即下载"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:58
+msgid "Start qBittorrent"
+msgstr "启动 qBittorrent"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:502
+msgid "Subnet Whitelist"
+msgstr "子网白名单地址"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:161
+msgid "Suffix for profile folder, for example, <b>qBittorrent_[NAME]</b>."
+msgstr "配置文件文件夹的后缀。例如： <b>qBittorrent_[NAME]</b>。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:326
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:332
+msgid "Switch affected torrent to Manual Mode"
+msgstr "切换受影响的torrent到手动模式"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:320
+msgid "Switch torrent to Manual Mode"
+msgstr "切换torrent到手动模式"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:247
+msgid "TCP"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:246
+msgid "TCP and UTP"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:294
+msgid "Temp Path"
+msgstr "临时文件路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:340
+msgid ""
+"The .torrent files for finished downloads will be copied to the target "
+"directory."
+msgstr "已完成的.torrent文件会被自动复制到目标目录。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:337
+msgid "The .torrent files will be copied to the target directory."
+msgstr "未完成的.torrent文件会被自动复制到目标目录。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:269
+msgid "The .torrent files will be deleted afterwards."
+msgstr "完成后.torrent文件会被自动删除。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:295
+msgid "The absolute and relative path can be set."
+msgstr "可以设置绝对和相对路径。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:400
+msgid "The action when reach the max seeding ratio."
+msgstr "达到最大分享率时的行为。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:252
+msgid "The address that respond to the trackers."
+msgstr "向trackers提交的地址（IP/域名）。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:554
+msgid "The first tier (0 tier) is announced by default."
+msgstr "默认响应第一个层（0层）。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:281
+msgid "The incomplete tasks will be added the extension of !qB."
+msgstr "为不完整的文件添加扩展名<code>!qB</code>。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:466
+msgid "The listening IP address for WebUI."
+msgstr "监听WebUI的IP地址。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:469
+msgid "The listening port for WebUI."
+msgstr "连接WebUI的端口。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:458
+msgid "The login name for WebUI."
+msgstr "WebUI的登录名。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:461
+msgid "The login password for WebUI."
+msgstr "WebUI的登陆密码。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:390
+msgid "The max number of connected peers per torrent."
+msgstr "每个torrent最大上传线程数。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:385
+msgid "The max number of connected peers."
+msgstr "全局最大上传线程数。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:380
+msgid "The max number of connections per torrent."
+msgstr "每个torrent的最大连接数。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:375
+msgid "The max number of connections."
+msgstr "最大连接数。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:533
+msgid "The max outgoing port."
+msgstr "最大的对外连接端口。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:395
+msgid "The max ratio for seeding. -1 is not to limit the seeding."
+msgstr "做种的最大比率。-1代表不限制做种比率。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:192
+msgid "The max size for qBittorrent log (Unit: Bytes)."
+msgstr "qBittorrent日志文件的最大大小（单位：字节）。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:537
+msgid "The min outgoing port."
+msgstr "最小的对外连接端口。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:516
+msgid "The overhead usage is been limitted."
+msgstr "对传送总开销进行速度限制。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:174
+msgid "The path for qBittorrent log."
+msgstr "保存qBittorrent日志文件的路径。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:245
+msgid "The protocol that was enabled."
+msgstr "已经启用的协议。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:57
+msgid ""
+"The qBittorrent daemon is not running. Click the button below to startup the "
+"daemon."
+msgstr "qBittorrent已停止运行。点击以下按钮以启动客户端。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:53
+msgid ""
+"The qBittorrent daemon is running. Click the button below to startup the "
+"WebUI."
+msgstr "qBittorrent正在运行中。点击以下按钮以启动WebUI。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:541
+msgid "The strategy of choking algorithm."
+msgstr "上传连接算法的策略。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:164
+msgid "The supported language codes can be used to customize the setting."
+msgstr "可以使用支持的语言代码来自定义设置。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:318
+msgid "Torrent Category Changed"
+msgstr "torrent分类修改时"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:336
+msgid "Torrent Export Dir"
+msgstr "未完成torrent文件导出路径"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:446
+msgid "Torrent inactivity timer"
+msgstr "torrent不活动时长"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:248
+msgid "UTP"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:436
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:441
+msgid "Units: KiB/s"
+msgstr "单位：KiB/s"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:406
+msgid "Units: minutes"
+msgstr "单位：分钟"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:446
+msgid "Units: s"
+msgstr "单位：秒"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:441
+msgid "Upload rate threshold"
+msgstr "上传速率阈值"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:280
+msgid "Use Incomplete Extension"
+msgstr "使用未完成扩展名"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:211
+msgid "Use Random Port"
+msgstr "使用随机端口"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:204
+msgid "Use UPnP for Connections"
+msgstr "启用UPnP"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:452
+msgid "Use UPnP for WebUI"
+msgstr "为WebUI启用UPnP"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:205
+msgid "Use UPnP/ NAT-PMP port forwarding from the router."
+msgstr "使用路由器的UPnP/NAT-PMP进行端口转发。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:527
+msgid "Use os Cache"
+msgstr "使用系统缓存"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:458
+msgid "Username"
+msgstr "用户名"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:453
+msgid "Using the UPnP / NAT-PMP port of the router for connecting to WebUI."
+msgstr "使用路由器的UPnP/NAT-PMP端口转发连接WebUI。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:486
+msgid "Validate the host header."
+msgstr "验证主机连接的header。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:450
+msgid "WebUI Settings"
+msgstr "WebUI设置"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:508
+msgid ""
+"When enabled, qBittorrent will take certain measures to try to mask its "
+"identity."
+msgstr "当启用时, qBittorrent会采用某些手动来隐藏客户端特征。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:185
+msgid ""
+"When enabled, the overdue log files will be deleted after given keep time."
+msgstr "如果启用，超过给定的保存时间，过期的日志文件将自动删除。"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:128
+#: luasrc/controller/qbittorrent.lua:10
+msgid "qBittorrent"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:134
+msgid "qBittorrent Status"
+msgstr "qBittorrent状态"
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:362
+msgid "μTP Rate Limit"
+msgstr "μTP速度限制"
