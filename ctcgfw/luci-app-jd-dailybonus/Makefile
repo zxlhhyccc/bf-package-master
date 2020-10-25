@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 PKG_NAME:=luci-app-jd-dailybonus
 LUCI_PKGARCH:=all
-PKG_VERSION:=0.8.4
-PKG_RELEASE:=20200826
+PKG_VERSION:=0.8.6
+PKG_RELEASE:=20201021
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -37,7 +37,7 @@ define Package/luci-app-jd-dailybonus/install
 	$(INSTALL_DIR) $(1)/
 	cp -pR ./root/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	po2lmo ./po/zh-cn/jd-dailybonus.po $(1)/usr/lib/lua/luci/i18n/jd-dailybonus.zh-cn.lmo
+	po2lmo ./po/zh_Hans/jd-dailybonus.po $(1)/usr/lib/lua/luci/i18n/jd-dailybonus.zh-cn.lmo
 endef
 
 define Package/luci-app-jd-dailybonus/postinst
