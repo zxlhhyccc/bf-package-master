@@ -475,7 +475,7 @@ return L.view.extend({
 			_('Enable Cross-Site Request Forgery (CSRF) protection.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
-		o.default = o.disabled;
+		o.default = o.enabled;
 
 		o = s.taboption('webgui', form.Flag, 'ClickjackingProtection', _('Clickjacking Protection'),
 			_('Enable clickjacking protection.'));
