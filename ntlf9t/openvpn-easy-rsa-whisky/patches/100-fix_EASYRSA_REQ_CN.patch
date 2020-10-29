@@ -1,13 +1,11 @@
-diff --git a/easyrsa b/easyrsa
-index e95c53a..322e0a9 100644
 --- a/easyrsa
 +++ b/easyrsa
-@@ -639,7 +639,7 @@ current CA keypair. If you intended to start a new CA, run init-pki first."
+@@ -549,7 +549,7 @@ current CA keypair. If you intended to s
  
  	# Default CN only when not in global EASYRSA_BATCH mode:
  	# shellcheck disable=SC2015
 -	[ "$EASYRSA_BATCH" ] && opts="$opts -batch" || export EASYRSA_REQ_CN="Easy-RSA CA"
 +	[ "$EASYRSA_BATCH" ] && opts="$opts -batch" || export EASYRSA_REQ_CN="${EASYRSA_REQ_CN:-Easy-RSA CA}"
  
- 	out_key_tmp="$(easyrsa_mktemp)" || die "Failed to create temporary file"
- 	out_file_tmp="$(easyrsa_mktemp)" || die "Failed to create temporary file"
+ 	out_key_tmp="$(mktemp "$out_key.XXXXXXXXXX")"; EASYRSA_TEMP_FILE_2="$out_key_tmp"
+ 	out_file_tmp="$(mktemp "$out_file.XXXXXXXXXX")"; EASYRSA_TEMP_FILE_3="$out_file_tmp"
