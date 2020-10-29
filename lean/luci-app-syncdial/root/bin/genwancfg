@@ -4,18 +4,17 @@
 . /lib/functions.sh
 
 #检测IP列表
-chk_ipv4_list="www.baidu.com 114.114.114.114 119.29.29.29"
-chk_ipv6_list="240c::6644 240c::6666 ipv6.baidu.com"
-ipv4=$(uci -q get syncdial.config.ipv4)
-ipv6=$(uci -q get syncdial.config.ipv6)
+chk_ip_list="www.baidu.com 114.114.114.114 119.29.29.29"
+chk_ip6_list="2400:da00:2::29"
 origfirewall=$(uci get firewall.@zone[1].network)
 backupdev=$(uci get syncdial.config.devbackup)
 norun=$(echo $origfirewall|grep vwan)
-nomwan=$(cat /etc/config/syncdial | grep "nomwan '1'" | wc -l)
+nomwan=$(uci get syncdial.config.nomwan)
 wanselect=$(uci get syncdial.config.wanselect)
 wannum=$(uci get syncdial.config.wannum)
 oldframe=$(uci get syncdial.config.old_frame)
 bindwan=$(uci -q get syncdial.config.bindwan)
+ipv6=$(uci get syncdial.config.ipv6)
 dial_type=$(uci get syncdial.config.dial_type)
 [ "$dial_type" -eq 2 ] && {
 	wanselect2=$(uci get syncdial.config.wanselect2)
@@ -36,7 +35,6 @@ dial_type=$(uci get syncdial.config.dial_type)
 #$1:接口名称
 mwan_cfg_add() {
 	#gen mwan3_interface
-	if [ "$ipv4" -eq 1 ]; then
 	uci set mwan3.${1}=interface
 	uci set mwan3.${1}.enabled=1
 	uci set mwan3.${1}.count=2
@@ -44,7 +42,7 @@ mwan_cfg_add() {
 	uci set mwan3.${1}.interval=5
 	uci set mwan3.${1}.down=4
 	uci set mwan3.${1}.up=1
-	for i in $chk_ipv4_list
+	for i in $chk_ip_list
 	do
 		uci add_list mwan3.${1}.track_ip="$i"
 	done
@@ -63,10 +61,7 @@ mwan_cfg_add() {
 	uci set mwan3.${1}_m1_w1.weight=1
 	#gen mwan3_policy
 	uci add_list mwan3.balanced.use_member=${1}_m1_w1
-	fi
-
-	#gen mwan3_interface
-	if [ "$ipv6" -eq 1 ]; then
+	[ "$ipv6" == "1" ] && {
 		#gen mwan3_interface
 		uci set mwan3.${1}_6=interface
 		uci set mwan3.${1}_6.enabled=1
@@ -75,7 +70,7 @@ mwan_cfg_add() {
 		uci set mwan3.${1}_6.interval=5
 		uci set mwan3.${1}_6.down=4
 		uci set mwan3.${1}_6.up=1
-		for i in $chk_ipv6_list
+		for i in $chk_ip6_list
 		do
 			uci add_list mwan3.${1}.track_ip="$i"
 		done
@@ -94,7 +89,7 @@ mwan_cfg_add() {
 		uci set mwan3.${1}_6_m1_w1.weight=1
 		#gen mwan3_policy
 		uci add_list mwan3.balanced.use_member=${1}_6_m1_w1
-	fi
+	}
 }
 
 #删除MWAN负载均衡相关配置
@@ -103,11 +98,11 @@ mwan_cfg_del() {
 	uci del mwan3.${1}
 	uci del mwan3.${1}_m1_w1
 	uci del_list mwan3.balanced.use_member=${1}_m1_w1
-	if [ "$ipv6" -eq 1 ]; then
+	[ "$ipv6" == "1" ] && {
 		uci del mwan3.${1}_6
 		uci del mwan3.${1}_6_m1_w1
 		uci del_list mwan3.balanced.use_member=${1}_6_m1_w1
-	fi
+	}
 }
 
 #添加macvlan设备
@@ -132,14 +127,14 @@ pppoe_if_add() {
 	uci set network.${1}.password=${4}
 	uci set network.${1}.metric=${5}
 	uci set network.${1}.macaddr=$NEW_MACADDR
-	if [ "$ipv6" -eq 1 ]; then
+	[ "$ipv6" == "1" ] && {
 	uci set network.${1}_6=interface
 	uci set network.${1}_6.ifname=pppoe-${1}
 	uci set network.${1}_6.proto=dhcpv6
 	uci set network.${1}_6.metric=$((${5}+984))
 	uci set network.${1}_6.macaddr=$NEW_MACADDR
 	uci add_list firewall.@zone[1].network=${1}_6
-	fi
+	}
 	#gen firewall
 	uci add_list firewall.@zone[1].network=${1}
 }

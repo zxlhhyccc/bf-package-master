@@ -20,7 +20,7 @@ o=s:option(Value,"wanselect",translate("选择外网接口"),translate("指定�
 luci.tools.webadmin.cbi_add_networks(o)
 o.optional=false
 o.rmempty=false
-o=s:option(Flag,"ipv6","启用虚拟接口 IPV6")
+o=s:option(Flag,"ipv6","启用ipv6")
 o.rmempty=false
 o=s:option(Value,"wannum","虚拟WAN接口数量")
 o.datatype="range(0,249)"
@@ -58,16 +58,6 @@ o=s:option(Flag,"old_frame","使用旧的macvlan创建方式")
 o.rmempty=false
 o=s:option(Flag,"nomwan","不自动配置MWAN3负载均衡","需要自定义负载均衡设置或者要使用策略路由的用户选择")
 o.rmempty=false
-o:depends("ipv4", 0)
-o:depends("ipv6", 0)
-
-o=s:option(Flag,"ipv4","配置IPV4负载均衡","自动给MWAN3配置IPV4负载均衡")
-o.rmempty=false
-o:depends("nomwan", 0)
-
-o=s:option(Flag,"ipv6","配置IPV6负载均衡","自动给MWAN3配置IPV6负载均衡")
-o.rmempty=false
-o:depends("nomwan", 0)
 o=s:option(DummyValue,"_redial","重新并发拨号")
 o.template="syncdial/redial_button"
 o.width="10%"
