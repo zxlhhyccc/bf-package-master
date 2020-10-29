@@ -171,7 +171,7 @@ return L.view.extend({
 			_('The supported language codes can be used to customize the setting.'));
 		o.value('en', _('English (en)'));
 		o.value('zh', _('Chinese (zh)'));
-		o.default = 'en';
+		o.default = 'zh';
 
 		o = s.taboption('basic', form.Flag, 'overwrite', _('Overwrite the settings'),
 			_('If this option is enabled, the configuration set in WebUI will be replaced by the one in the LuCI.'));
@@ -477,7 +477,7 @@ return L.view.extend({
 			_('Enable Cross-Site Request Forgery (CSRF) protection.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
-		o.default = o.enabled;
+		o.default = o.disabled;
 
 		o = s.taboption('webgui', form.Flag, 'ClickjackingProtection', _('Clickjacking Protection'),
 			_('Enable clickjacking protection.'));

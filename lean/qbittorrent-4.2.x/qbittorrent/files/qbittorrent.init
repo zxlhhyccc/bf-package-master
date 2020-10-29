@@ -55,7 +55,7 @@ validate_QBT () {
 		'TempPath:string:temp/' \
 		'UseIncompleteExtension:or("true","false"):false' \
 		'TorrentExportDir:string' \
-		'Locale:string:en' \
+		'Locale:string:zh' \
 		'UseRandomPort:or("true","false"):true' \
 		'IgnoreSlowTorrents:or("true","false")' \
 		'MaxActiveDownloads:integer' \
@@ -66,7 +66,7 @@ validate_QBT () {
 		'Address:ipaddr' \
 		'AuthSubnetWhitelistEnabled:or("true","false"):false' \
 		'ClickjackingProtection:or("true","false"):true' \
-		'CSRFProtection:or("true","false"):true' \
+		'CSRFProtection:or("true","false"):false' \
 		'HostHeaderValidation:or("true","false"):true' \
 		'LocalHostAuth:or("true","false"):true' \
 		'Password:string' \
