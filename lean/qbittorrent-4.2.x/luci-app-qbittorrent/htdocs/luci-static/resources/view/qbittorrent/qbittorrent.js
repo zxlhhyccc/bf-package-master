@@ -141,6 +141,12 @@ return L.view.extend({
 		s = m.section(form.NamedSection, 'main', 'qbittorrent');
 
 		s.tab('basic', _('Basic Settings'));
+		s.tab('logger', _('Log Settings'));
+		s.tab('connection', _('Connection Settings'));
+		s.tab('downloads', _('Downloads Settings'));
+		s.tab('bittorrent', _('Bittorrent Settings'));
+		s.tab('webgui', _('WebUI Settings'));
+		s.tab('advanced', _('Advance Settings'));
 
 		o = s.taboption('basic', form.Flag, 'enabled', _('Enabled'));
 		o.default = '0';
@@ -165,42 +171,44 @@ return L.view.extend({
 			_('The supported language codes can be used to customize the setting.'));
 		o.value('en', _('English (en)'));
 		o.value('zh', _('Chinese (zh)'));
-		o.default = 'zh';
+		o.default = 'en';
 
-		o = s.taboption('basic', form.Flag, 'Enabled', _('Enable Log'), _('Enable logger to log file.'));
+		o = s.taboption('basic', form.Flag, 'overwrite', _('Overwrite the settings'),
+			_('If this option is enabled, the configuration set in WebUI will be replaced by the one in the LuCI.'));
+		o.default = o.disabled;
+
+		o = s.taboption('logger', form.Flag, 'Enabled', _('Enable Log'), _('Enable logger to log file.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('basic', form.Value, 'Path', _('Log Path'), _('The path for qBittorrent log.'));
+		o = s.taboption('logger', form.Value, 'Path', _('Log Path'), _('The path for qBittorrent log.'));
 		o.depends('Enabled', 'true');
 
-		o = s.taboption('basic', form.Flag, 'Backup', _('Enable Backup'),
+		o = s.taboption('logger', form.Flag, 'Backup', _('Enable Backup'),
 			_('Backup log file when oversize the given size.'));
 		o.depends('Enabled', 'true');
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('basic', form.Flag, 'DeleteOld', _('Delete Old Backup'),
+		o = s.taboption('logger', form.Flag, 'DeleteOld', _('Delete Old Backup'),
 			_('When enabled, the overdue log files will be deleted after given keep time.'));
 		o.depends('Enabled', 'true');
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('basic', form.Value, 'MaxSizeBytes', _('Log Max Size'),
+		o = s.taboption('logger', form.Value, 'MaxSizeBytes', _('Log Max Size'),
 			_('The max size for qBittorrent log (Unit: Bytes).'));
 		o.depends('Enabled', 'true');
 		o.placeholder = '66560';
 
-		o = s.taboption('basic', form.Value, 'SaveTime', _('Log Keep Time'), _('Give the ' +
+		o = s.taboption('logger', form.Value, 'SaveTime', _('Log Keep Time'), _('Give the ' +
 			'time for keeping the old log, refer the setting \'Delete Old Backup\', eg. 1d' +
 			' for one day, 1m for one month and 1y for one year.'));
 		o.depends('Enabled', 'true');
 		o.datatype = 'string';
-
-		s.tab('connection', _('Connection Settings'));
 
 		o = s.taboption('connection', form.Flag, 'UPnP', _('Use UPnP for Connections'), '%s %s %s.'
 			.format(_('Use UPnP/ NAT-PMP port forwarding from the router.'), _('Refer to the'),
@@ -251,8 +259,6 @@ return L.view.extend({
 
 		o = s.taboption('connection', form.Value, 'InetAddress', _('Inet Address'),
 			_('The address that respond to the trackers.'));
-
-		s.tab('downloads', _('Downloads Settings'))
 
 		o = s.taboption('downloads', form.Flag, 'CreateTorrentSubfolder', _('Create Subfolder'),
 			_('Create subfolder for torrents with multiple files.'));
@@ -339,8 +345,6 @@ return L.view.extend({
 
 		o = s.taboption('downloads', form.Value, 'FinishedTorrentExportDir', _('Finished Torrent Export Dir'),
 			_('The .torrent files for finished downloads will be copied to the target directory.'));
-
-		s.tab('bittorrent', _('Bittorrent Settings'));
 
 		o = s.taboption('bittorrent', form.Flag, 'DHT', _('Enable DHT'),
 			_('Enable DHT (decentralized network) to find more peers.'));
@@ -448,8 +452,6 @@ return L.view.extend({
 		o.datatype = 'integer';
 		o.placeholder = '60';
 
-		s.tab('webgui', _('WebUI Settings'));
-
 		o = s.taboption('webgui', form.Flag, 'UseUPnP', _('Use UPnP for WebUI'),
 			_('Using the UPnP / NAT-PMP port of the router for connecting to WebUI.'));
 		o.enabled = 'true';
@@ -475,7 +477,7 @@ return L.view.extend({
 			_('Enable Cross-Site Request Forgery (CSRF) protection.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
-		o.default = o.disabled;
+		o.default = o.enabled;
 
 		o = s.taboption('webgui', form.Flag, 'ClickjackingProtection', _('Clickjacking Protection'),
 			_('Enable clickjacking protection.'));
@@ -502,8 +504,6 @@ return L.view.extend({
 
 		o = s.taboption('webgui', form.DynamicList, 'AuthSubnetWhitelist', _('Subnet Whitelist'));
 		o.depends('AuthSubnetWhitelistEnabled', 'true');
-
-		s.tab('advanced', _('Advance Settings'));
 
 		o = s.taboption('advanced', form.Flag, 'AnonymousMode', _('Anonymous Mode'), '%s %s %s.'.format(
 			_('When enabled, qBittorrent will take certain measures to try to mask its identity.'),

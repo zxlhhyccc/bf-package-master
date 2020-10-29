@@ -28,11 +28,12 @@ PKG_BUILD_DEPENDS:=qtbase
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-	SECTION:=libs
-	CATEGORY:=Libraries
-	SUBMENU:=Qt5
-	TITLE:=qttools
-	URL:=http://qt-project.org
+  SECTION:=libs
+  CATEGORY:=Libraries
+  SUBMENU:=Qt5
+  TITLE:=qttools
+  URL:=http://qt-project.org
+  BUILDONLY:=1
 endef
 
 define Build/Configure
@@ -40,7 +41,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)
+	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)
 endef
 
 define Build/InstallDev

@@ -18,6 +18,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/qBittorrent-release-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0+
 PKG_LICENSE_FILES:=COPYING
+PKG_CPE_ID:=cpe:/a:qbittorrent:qbittorrent
 
 PKG_BUILD_DEPENDS:=qttools
 
@@ -31,7 +32,7 @@ define Package/qbittorrent
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=BitTorrent
-	DEPENDS:=+libstdcpp \
+	DEPENDS:=+libgcc +libstdcpp \
 		+libtorrent-rasterbar \
 		+libopenssl \
 		+qt5-core \

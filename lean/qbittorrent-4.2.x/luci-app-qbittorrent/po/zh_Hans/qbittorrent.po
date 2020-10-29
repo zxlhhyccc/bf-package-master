@@ -729,7 +729,7 @@ msgstr "WebUI设置"
 msgid ""
 "When enabled, qBittorrent will take certain measures to try to mask its "
 "identity."
-msgstr "当启用时, qBittorrent会采用某些手动来隐藏客户端特征。"
+msgstr "当启用时, qBittorrent会采用某些手段来隐藏客户端特征。"
 
 #: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:185
 msgid ""
@@ -748,3 +748,12 @@ msgstr "qBittorrent状态"
 #: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:362
 msgid "μTP Rate Limit"
 msgstr "μTP速度限制"
+
+msgid "Log Settings"
+msgstr "日志设置"
+
+msgid "Overwrite the settings"
+msgstr "覆盖设置"
+
+msgid "If this option is enabled, the configuration set in WebUI will be replaced by the one in the LuCI."
+msgstr "如果启用此选项，在WebUI中设置的配置将被LuCI中的配置替代。"

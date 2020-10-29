@@ -7,5 +7,5 @@ function index()
 		return
 	end
 
-	entry({"admin", "nas", "qbittorrent"}, view("qbittorrent/qbittorrent"), _("qBittorrent")).acl_depends = { "luci-app-qbittorrent" }
+	entry({"admin", "services", "qbittorrent"}, view("qbittorrent/qbittorrent"), _("qBittorrent")).acl_depends = { "luci-app-qbittorrent" }
 end

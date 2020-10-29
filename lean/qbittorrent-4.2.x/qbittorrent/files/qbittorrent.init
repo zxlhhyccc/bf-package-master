@@ -20,6 +20,7 @@ _err() {
 validate_QBT () {
 	uci_validate_section "$NAME" vlmcsd "$1" \
 		'enabled:bool:0' \
+		'overwrite:bool:0' \
 		'user:string:root' \
 		'nice:range(-20,19):0' \
 		'MemoryPercent:range(0,99):50' \
@@ -54,7 +55,7 @@ validate_QBT () {
 		'TempPath:string:temp/' \
 		'UseIncompleteExtension:or("true","false"):false' \
 		'TorrentExportDir:string' \
-		'Locale:string:zh' \
+		'Locale:string:en' \
 		'UseRandomPort:or("true","false"):true' \
 		'IgnoreSlowTorrents:or("true","false")' \
 		'MaxActiveDownloads:integer' \
@@ -65,7 +66,7 @@ validate_QBT () {
 		'Address:ipaddr' \
 		'AuthSubnetWhitelistEnabled:or("true","false"):false' \
 		'ClickjackingProtection:or("true","false"):true' \
-		'CSRFProtection:or("true","false"):false' \
+		'CSRFProtection:or("true","false"):true' \
 		'HostHeaderValidation:or("true","false"):true' \
 		'LocalHostAuth:or("true","false"):true' \
 		'Password:string' \
@@ -107,23 +108,24 @@ sed_options () {
 	shift
 	shift
 
-	if [ $( sed -n '/^\['"$Anchor"'\]/p' $QBT_CONF_FILE | wc -l ) -lt 1 ]; then
-		sed -i '$a\\n\['"$Anchor"'\]' "$QBT_CONF_FILE"
+	if [ -z "$(grep ^\\[$Anchor\\]\$ $QBT_CONF_FILE)" ]; then
+		test -s "$QBT_CONF_FILE" && sed -i "\${/./G;s/\$/\n\[$Anchor\]/}"  "$QBT_CONF_FILE" || echo "[$Anchor]" >>"$QBT_CONF_FILE"
 	fi
 
 	local o; local v; local ol
 	for o in "$@"; do
-		v=$( echo "$(eval echo "\$$o")" | sed 's/[\/\.]/\\&/g' )
+		v="$( eval echo \$$o | sed 's/[\/\.]/\\&/g' )"
 		[ -n "$category" ] && ol="$category\\\\$o" || ol="$o"
 
 		[ -n "$v" ] && {
-			if [ $( sed -n '/^'"$ol"'=/p' $QBT_CONF_FILE | wc -l ) -lt 1 ]; then
-				sed -i '/'"$Anchor"'/a'"$ol"'='"$v" "$QBT_CONF_FILE"
+			if [ -z "$(grep ^$ol=.* $QBT_CONF_FILE)" ]; then
+				sed -i "/\[$Anchor\]/a $ol=$v" "$QBT_CONF_FILE"
+				#sed -i '/\['"$Anchor"'\]/{$ba;h;d};x;/\['"$Anchor"'\]/{x;/./{$bm;H;d};:m;x;:a;s/$/\n'"$ol=$v"'/;x;H};x' "$QBT_CONF_FILE"
 			else
-				sed -i 's/'"$ol"'=.*/'"$ol"'='"$v"'/g' "$QBT_CONF_FILE"
+				[ "$overwrite" = "1" ] && sed -i "s/$ol=.*/$ol=$v/g" "$QBT_CONF_FILE"
 			fi
 		} || {
-			sed -i '/'"$ol"'=.*/d' "$QBT_CONF_FILE"
+			[ "$overwrite" = "1" ] && sed -i "/$ol=.*/d" "$QBT_CONF_FILE"
 		}
 	done
 }
@@ -185,7 +187,6 @@ EOF
 				"OutgoingPortsMin"
 	sed_options "Application" "FileLogger" \
 				"Enabled" "Path" "Backup" "DeleteOld" "MaxSizeBytes" "Age" "AgeType"
-
 }
 
 init_QBT(){

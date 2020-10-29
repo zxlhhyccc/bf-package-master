@@ -12,17 +12,14 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/arvidn/libtorrent/releases/download/libtorrent-$(PKG_VERSION)
 PKG_HASH:=d0dd30bdc3926587c4241f4068d8e39628a6c1f9f6cf53195f0e9bc90017befb
 
-PKG_LICENSE:=BSL-1.0
+PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
+PKG_CPE_ID:=cpe:/a:libtorrent:libtorrent
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
-
-ifneq ($(PKG_JOBS),-j1)
-	PKG_JOBS:=-j2
-endif
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
@@ -30,15 +27,15 @@ include $(INCLUDE_DIR)/nls.mk
 define Package/$(PKG_NAME)
   SECTION:=libs
   CATEGORY:=Libraries
-  TITLE:=Rasterbar BitTorrent library
+  TITLE:=C++ bittorrent library by Rasterbar Software
   URL:=https://www.libtorrent.org
   DEPENDS:=+boost +boost-system +libgcc +libopenssl +libstdcpp $(ICONV_DEPENDS)
 endef
 
 define Package/$(PKG_NAME)/description
-  Rasterbar libtorrent is an open source C++ library implementing the BitTorrent
-  protocol, along with most popular extensions, making it suitable for real world
-  deployment. It is configurable to be able to fit both servers and embedded devices.
+  Libtorrent is a feature complete C++ bittorrent implementation focusing on
+  efficiency and scalability. It runs on embedded devices as well as desktops.
+  It boasts a well documented library interface that is easy to use.
 endef
 
 TARGET_CFLAGS += $(FPIC) -std=c++14 -ffunction-sections -fdata-sections
@@ -59,12 +56,12 @@ CONFIGURE_ARGS += \
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)
-	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	$(CP) $(PKG_INSTALL_DIR)/* $(1)
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so* $(1)/usr/lib
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

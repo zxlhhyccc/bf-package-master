@@ -24,6 +24,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
+PKG_CPE_ID:=cpe:/a:qt:qt
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -158,8 +159,8 @@ CONFIGURE_ARGS = \
 		-no-compile-examples \
 		-no-feature-concurrent \
 		-no-feature-gssapi \
-		-no-feature-sqlmodel \
-		-no-feature-testlib_selfcover \
+		-no-feature-sql \
+		-no-feature-testlib \
 		-make libs \
 		-nomake examples \
 		-nomake tests \
@@ -167,7 +168,7 @@ CONFIGURE_ARGS = \
 		-v
 
 define Build/Compile
-	$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)
+	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)
 endef
 
 define Build/InstallDev
@@ -176,7 +177,7 @@ endef
 
 define Package/qtbase/Default/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_BUILD_DIR)/lib/libQt5$(shell echo $(2) | sed -e 's/\b[[:alpha:]]/\u&/g').so* $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/lib/libQt5$(shell echo $(2) | sed -e 's/\b[[:alpha:]]/\u&/g').so* $(1)/usr/lib
 endef
 
 define DefineQtbaseLibrary
@@ -185,25 +186,24 @@ define DefineQtbaseLibrary
   QTBASE_LIBS+=$(1)
 
   define Package/qt5-$(1)
-	$(call Package/qtbase/Default)
-	TITLE+=$(1)
-	DEPENDS+=$$(foreach lib,$(2),+qt5-$$(lib)) $(3)
-	HIDDEN:=1
+    $(call Package/qtbase/Default)
+    TITLE+=$(1)
+    DEPENDS+=$(foreach lib,$(2),+qt5-$(lib)) $(3)
+    HIDDEN:=1
   endef
 
   define Package/qt5-$(1)/description
-	This package contains the qt5 $(1) library.
+    This package contains the qt5 $(1) library.
   endef
 
   define Package/qt5-$(1)/install
-	$(call Package/qtbase/Default/install,$$(1),$(1))
+    $(call Package/qtbase/Default/install,$$(1),$(1))
   endef
-
-  $$(eval $$(call BuildPackage,qt5-$(1)))
 endef
 
 $(eval $(call DefineQtbaseLibrary,core,,+QT5_INCLUDE_ATOMIC:libatomic +libpcre2-16 +zlib))
 $(eval $(call DefineQtbaseLibrary,network,core,+libopenssl +zlib))
 $(eval $(call DefineQtbaseLibrary,xml,core,))
 
+$(foreach lib,$(QTBASE_LIBS),$(eval $(call BuildPackage,qt5-$(lib))))
 $(eval $(call BuildPackage,qtbase))
