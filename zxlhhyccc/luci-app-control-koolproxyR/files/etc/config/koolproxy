@@ -14,4 +14,10 @@ config rss_rules
 	option name '1'
 	option url '1'
 
+config rss_rule
+	option load '1'
+	option name 'kpr_our_rule.txt'
+	option url 'https://github.com/user1121114685/koolproxyR_rule_list/raw/master/kpr_our_rule.txt'
+	option file 'kpr_our_rule.txt'
+
 
