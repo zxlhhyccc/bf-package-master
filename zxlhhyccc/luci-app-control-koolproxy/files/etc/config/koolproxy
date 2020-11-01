@@ -1,0 +1,11 @@
+
+config global
+	option time_update '10'
+	option koolproxy_port '0'
+	option startup_delay '5'
+	option koolproxy_acl_default '1'
+	option koolproxy_mode '1'
+	option koolproxy_host '1'
+	option koolproxy_rules 'koolproxy.txt kp.dat daily.txt'
+	option enabled '0'
+	
