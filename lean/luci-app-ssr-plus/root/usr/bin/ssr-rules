@@ -183,7 +183,7 @@ ac_rule() {
 			;;
 		esac
 	fi
-	IFNAME=$(uci get -P/var/state network.lan.ifname 2>/dev/null)
+	IFNAME=$(uci -P /var/state get network.lan.ifname 2>/dev/null)
 	ipset -! -R <<-EOF || return 1
 		create ss_spec_lan_ac hash:net
 		$(for ip in ${LAN_AC_IP:1}; do echo "add ss_spec_lan_ac $ip"; done)
@@ -414,13 +414,16 @@ if [ -z "$server" -o -z "$local_port" ]; then
 	usage 2
 fi
 
-if [ "$TPROXY" == 1 ]; then
+	case "$TPROXY" in
+	1)
 	SERVER=$server
 	LOCAL_PORT=$local_port
-elif [ "$TPROXY" == 2 ]; then
+	;;
+	2)
 	: ${SERVER:?"You must assign an ip for the udp relay server."}
 	: ${LOCAL_PORT:?"You must assign a port for the udp relay server."}
-fi
+	;;
+	esac
 
 flush_r && fw_rule && ipset_r && ac_rule && tp_rule && gen_include
 [ "$?" == 0 ] || loger 3 "Start failed!"

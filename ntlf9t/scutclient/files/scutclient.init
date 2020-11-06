@@ -7,7 +7,7 @@ USE_PROCD=1
 SCUTCLIENT_PATH=/usr/bin/scutclient
 SCUTCLIENT_CONFIG=scutclient
 
-EXTRA_COMMANDS="logoff"
+EXTRA_COMMAND "logoff" "logoff"
 EXTRA_HELP=<<EOF
 	logoff	Log off manually
 EOF

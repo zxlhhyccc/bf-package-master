@@ -6,9 +6,8 @@ START=99
 STOP=01
 CRON_FILE=/etc/crontabs/root
 CONFIGURATION=autoipsetadder
-EXTRA_COMMANDS="test_crontab"
-EXTRA_HELP="
-		test_crontab"
+EXTRA_COMMAND "test_crontab" "test_crontab"
+
 set_dnsmasq_log()
 {
 	sed -i '/log-facility/d' /etc/dnsmasq.conf
