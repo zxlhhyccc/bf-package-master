@@ -12,7 +12,7 @@ START=95
 STOP=15
 SERVICE_DAEMONIZE=1
 # EXTRA_COMMANDS=rules
-EXTRA_COMMAND "rules"
+EXTRA_COMMAND "rules" "rules"
 MAXFD=32768
 NAME=shadowsocksr
 LOCK_FILE=/var/lock/${NAME}.lock
