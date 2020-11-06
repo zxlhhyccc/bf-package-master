@@ -4,7 +4,10 @@ START=96
 STOP=10
 
 
-EXTRA_COMMANDS="add_rule del_rule reload_rule"
+# EXTRA_COMMANDS="add_rule del_rule reload_rule"
+EXTRA_COMMAND "add_rule" "add_rule"
+EXTRA_COMMAND "del_rule" "del_rule"
+EXTRA_COMMAND "reload_rule" "reload_rule"
 PROG_PATH=/usr/share/adbyby
 DATA_PATH=$PROG_PATH/data
 WAN_FILE=/var/etc/dnsmasq-adbyby.d/03-adbyby-ipset.conf
