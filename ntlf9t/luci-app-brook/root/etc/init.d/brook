@@ -13,8 +13,7 @@ STOP=15
 
 SERVICE_DAEMONIZE=1
 NAME=brook
-# EXTRA_COMMANDS=rules
-EXTRA_COMMAND "rules" "rules"
+EXTRA_COMMANDS=rules
 FWI=$(uci get firewall.brook.path 2>/dev/null)
 
 uci_get_by_name() {

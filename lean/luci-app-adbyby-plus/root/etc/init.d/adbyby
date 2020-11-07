@@ -4,10 +4,7 @@ START=96
 STOP=10
 
 
-# EXTRA_COMMANDS="add_rule del_rule reload_rule"
-EXTRA_COMMAND "add_rule" "add_rule"
-EXTRA_COMMAND "del_rule" "del_rule"
-EXTRA_COMMAND "reload_rule" "reload_rule"
+EXTRA_COMMANDS="add_rule del_rule reload_rule"
 PROG_PATH=/usr/share/adbyby
 DATA_PATH=$PROG_PATH/data
 WAN_FILE=/var/etc/dnsmasq-adbyby.d/03-adbyby-ipset.conf
@@ -23,7 +20,7 @@ uci_get_by_name() {
 uci_get_by_type() {
 	local index=0
 	if [ -n $4 ]; then
-	
+
 		index=$4
 	fi
 	local ret=$(uci get $CONFIG.@$1[$index].$2 2>/dev/null)
@@ -68,7 +65,7 @@ ip_rule()
 
   ipset -N adbyby_esc hash:ip
   $ipt_n -A ADBYBY -m set --match-set adbyby_esc dst -j RETURN
-  
+
   local icount=$(uci show adbyby | grep 'filter_mode' | wc -l)
   let icount=icount-1
 	for i in $(seq 0 $icount)
@@ -85,9 +82,9 @@ ip_rule()
 			;;
 		esac
 	done
-	
-	
-	
+
+
+
 	case $wan_mode in
 		0)
 			;;
@@ -99,7 +96,7 @@ ip_rule()
 			$ipt_n -A ADBYBY -j RETURN
 			;;
 	esac
-	
+
 	echo "create blockip hash:net family inet hashsize 1024 maxelem 65536" > /tmp/blockip.ipset
   awk '!/^$/&&!/^#/{printf("add blockip %s'" "'\n",$0)}' /usr/share/adbyby/blockip.conf >> /tmp/blockip.ipset
   ipset -! restore < /tmp/blockip.ipset 2>/dev/null
@@ -116,7 +113,7 @@ add_dns()
     awk '!/^$/&&!/^#/{printf("address=/%s/'"0.0.0.0"'\n",$0)}' $PROG_PATH/adblack.conf > /var/etc/dnsmasq-adbyby.d/07-dnsmasq.black
 
     echo 'conf-dir=/var/etc/dnsmasq-adbyby.d' > /tmp/dnsmasq.d/dnsmasq-adbyby.conf
-    
+
 	local var=1
 		if [ $wan_mode -eq 1 ]; then
 		awk '!/^$/&&!/^#/{printf("ipset=/%s/'"adbyby_wan"'\n",$0)}' $PROG_PATH/adhost.conf > $WAN_FILE
@@ -126,7 +123,7 @@ add_dns()
       cp /usr/share/adbyby/dnsmasq.ads /var/etc/dnsmasq-adbyby.d/05-dnsmasq.ads
 	  fi
 	fi
-	
+
 	mkdir -p /tmp/adbyby/rules/data /tmp/adbyby/rules/host
 	rm -f /tmp/adbyby/rules/data/* /tmp/adbyby/rules/host/*
 	cp -a /usr/share/adbyby/rules/data/* /tmp/adbyby/rules/data 2>/dev/null
@@ -169,7 +166,7 @@ add_rule()
 	fi
 	$ipt_n -A ADBYBY -p tcp -j REDIRECT --to-ports 8118 2>/dev/null
 	$ipt_n -I PREROUTING -p tcp --dport 80 -j ADBYBY 2>/dev/null
-	
+
 	mkdir -p /var/etc
 	echo -e "/etc/init.d/adbyby restart" > "/var/etc/adbyby.include"
 }
@@ -202,14 +199,14 @@ start()
 {
 	config_load adbyby
 	config_foreach get_config adbyby
-	
+
 	if [ $enable -ne 0 ];  then
     add_cron
     [ ! -d "/tmp/adbyby/data" ]  && cp -a /usr/share/adbyby /tmp/ && rm -f /tmp/adbyby.updated
     add_rules
-    
+
     /tmp/adbyby/adbyby >/dev/null 2>&1 &
-    
+
     add_dns
     add_rule
     /etc/init.d/dnsmasq restart

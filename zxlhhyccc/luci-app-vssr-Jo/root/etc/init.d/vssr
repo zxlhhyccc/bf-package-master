@@ -13,8 +13,7 @@ STOP=15
 
 SERVICE_DAEMONIZE=1
 NAME=vssr
-# EXTRA_COMMANDS=rules
-EXTRA_COMMAND "rules" "rules"
+EXTRA_COMMANDS=rules
 CONFIG_FILE=/var/etc/${NAME}.json
 CONFIG_UDP_FILE=/var/etc/${NAME}_u.json
 CONFIG_SOCK5_FILE=/var/etc/${NAME}_s.json
