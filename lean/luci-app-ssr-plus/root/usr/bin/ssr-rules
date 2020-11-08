@@ -414,16 +414,13 @@ if [ -z "$server" -o -z "$local_port" ]; then
 	usage 2
 fi
 
-	case "$TPROXY" in
-	1)
+if [ "$TPROXY" == 1 ]; then
 	SERVER=$server
 	LOCAL_PORT=$local_port
-	;;
-	2)
+elif [ "$TPROXY" == 2 ]; then
 	: ${SERVER:?"You must assign an ip for the udp relay server."}
 	: ${LOCAL_PORT:?"You must assign a port for the udp relay server."}
-	;;
-	esac
+fi
 
 flush_r && fw_rule && ipset_r && ac_rule && tp_rule && gen_include
 [ "$?" == 0 ] || loger 3 "Start failed!"
