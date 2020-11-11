@@ -1,0 +1,13 @@
+
+config global
+	option enabled '0'
+	option time '50'
+
+config koolddns
+	option name 'www'
+	option service 'alidns'
+	option interface 'wan'
+	option domain 'alidns.com'
+	option accesskey ''
+	option signature ''
+	option enable '0'

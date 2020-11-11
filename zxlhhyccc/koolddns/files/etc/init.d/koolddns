@@ -1,0 +1,127 @@
+#!/bin/sh /etc/rc.common
+#copyright by koolshare.cn crwnet
+
+START=95
+STOP=10
+EXTRA_COMMANDS="update"
+EXTRA_HELP="	update	Perform the update immediately"
+LOGFILE=/var/log/koolddns.log
+LOCK_FILE=/var/lock/koolddns.lock
+
+set_lock(){
+	exec 1000>"$LOCK_FILE"
+	flock -x 1000
+}
+
+unset_lock(){
+	flock -u 1000
+	rm -rf "$LOCK_FILE"
+}
+
+_exit()
+{
+    local rc=$1
+    unset_lock
+    exit ${rc}
+}
+
+Reduce_Log(){
+	local log=$1
+	[ ! -f "$log" ] && return
+	local sc=100
+	[ -n "$2" ] && sc=$2
+	local count=$(grep -c "" $log)
+	if [ $count -gt $sc ];then
+		let count=count-$sc
+		sed -i "1,$count d" $log
+	fi
+}
+
+get_config()
+{
+	config_get_bool enable $1 enable 0
+	config_get service $1 service
+	config_get domain $1 domain
+	config_get name $1 name
+	config_get interface $1 interface
+	[ $enable -eq 0 ] || [ -z "$service" ] || [ -z "$domain" ] || [ -z "$name" ] || [ -z "$interface" ] && continue
+	echo $(date): -------------------------------------------------- >>$LOGFILE
+	echo $(date): 目标域名: $name.$domain >>$LOGFILE
+	if [ "$interface" = "url" ]; then
+		config_get ipurl $1 ipurl
+		config_get urlinterface $1 urlinterface
+		[ -n "$urlinterface" ] && urlif=$(cat /var/state/network 2>/dev/null | grep -w "network.$urlinterface.ifname" |awk -F"'" '{print $2}')
+		[ -z "$urlif" ] && urlif=`ifstatus $urlinterface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
+		[ -n "$urlif" ] && urlface="--interface $urlif"
+		ip=$(curl $urlface -s $ipurl 2>&1)
+			[ -z $(echo $ip|grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}") ] && echo $(date): "通过URL获取公网IP出错" >>$LOGFILE && echo >>$LOGFILE && continue    
+	else
+		ifname=`cat /var/state/network 2>/dev/null | grep -w "network.$interface.ifname" |awk -F"'" '{print $2}'`
+		[ -z "$ifname" ] && ifname=`ifstatus $interface 2>/dev/null| grep l3_device |awk -F'"' '{print $4}'`
+		[ -z "$ifname" ] && echo $(date): "获取网络 $interface 信息出错" >>$LOGFILE && echo >>$LOGFILE && continue
+		ip=$(ifconfig $ifname 2>/dev/null | grep 'inet addr' | awk '{print $2}' | cut -d: -f2 2>/dev/null)
+		[ -z "$ip" ] && echo $(date): "获取网络 $interface 接口 $ifname 信息出错" >>$LOGFILE && echo >>$LOGFILE && continue   
+	fi
+	if [ "$service" = "aliddns" ]; then
+		config_get accesskey $1 accesskey
+		config_get signature $1 signature
+		config_get record_type $1 record_type
+		config_get ttl_time $1 ttl_time
+		config_get recordid $1 recordid
+		klaliddns "$accesskey" "$signature" "$domain" "$name" "$ip" "$1" "$record_type" "$ttl_time" "$recordid">>$LOGFILE
+	fi
+	if [ "$service" = "cloudxns" ]; then
+		config_get accesskey $1 accesskey
+		config_get signature $1 signature
+		klcloudxns "$accesskey" "$signature" "$domain" "$name" "$ip" >>$LOGFILE
+	fi
+	if [ "$service" = "dnspod" ]; then
+		config_get apitoken $1 apitoken
+		kldnspod "$apitoken" "$domain" "$name" "$ip" >>$LOGFILE
+	fi
+	echo >>$LOGFILE
+}
+
+update(){
+	local enabled=$(uci get koolddns.@global[0].enabled)
+	[ "$enabled" -eq 0 ] && exit
+	set_lock
+	Reduce_Log $LOGFILE
+	config_load koolddns
+	config_foreach get_config koolddns
+	unset_lock
+}
+
+reload(){
+	stop
+	start
+	update
+}
+
+del_cru(){
+	if [ -f "/etc/crontabs/root" ] && [ $(cat /etc/crontabs/root | grep "koolddns update" | wc -l) -ne 0 ]; then
+		sed -i '/koolddns update/d' /etc/crontabs/root >/dev/null 2>&1
+	fi
+}
+
+add_cru(){
+	local time=$(uci -q get koolddns.@global[0].time)
+	[ -z "$time" ] && time=0
+	[ "$time" -gt 0 ] && {
+		local cmd="*/$time * * * * /etc/init.d/koolddns update"
+		if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
+			sed -i '/koolddns update/d' /etc/crontabs/root >/dev/null 2>&1
+			echo "$cmd" >> /etc/crontabs/root
+		fi
+	}
+}
+
+start() {
+	local enabled=$(uci get koolddns.@global[0].enabled)
+	[ "$enabled" -eq 0 ] && exit
+	add_cru
+}
+
+stop() {
+	del_cru
+}
