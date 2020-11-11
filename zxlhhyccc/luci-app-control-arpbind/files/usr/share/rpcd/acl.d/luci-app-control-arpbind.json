@@ -1,0 +1,11 @@
+{
+	"luci-app-control-arpbind": {
+		"description": "Grant UCI access for luci-app-control-arpbind",
+		"read": {
+			"uci": [ "arpbind" ]
+		},
+		"write": {
+			"uci": [ "arpbind" ]
+		}
+	}
+}
