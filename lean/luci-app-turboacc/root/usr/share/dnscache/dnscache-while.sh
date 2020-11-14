@@ -13,10 +13,10 @@ if [ "${logrow}" -ge "500" ];then
     echo "${curtime} Log条数超限，清空处理！" > "${logfile}"
 fi
 if [ "${dns_caching_mode}" = "3" ]; then
-	adg_logrow="$(grep -c "" "${adg_logfile}")"
-	if [ "${adg_logrow}" -ge "500" ];then
-		echo "${curtime} Log条数超限，清空处理！" > "${adg_logfile}"
-	fi
+	adg_logrow="$(grep -c "" "${adg_logfile}")"	
+	if [ "${adg_logrow}" -ge "500" ];then	
+		echo "${curtime} Log条数超限，清空处理！" > "${adg_logfile}"	
+	fi	
 fi
 }
 
@@ -31,11 +31,11 @@ do
 }
 	else
 		pidof dnscache>/dev/null || {
-			if [ "${dns_caching_mode}" = "1" ]; then
-				/var/sbin/dnscache -c "/var/etc/dnscache.conf" &
-			elif [ "${dns_caching_mode}" = "2" ]; then
-				/var/sbin/dnscache -f "/var/run/dnscache/dnscache.conf" &
-			fi
+			if [ "${dns_caching_mode}" = "1" ]; then	
+				/var/sbin/dnscache -c "/var/etc/dnscache.conf" &	
+			elif [ "${dns_caching_mode}" = "2" ]; then	
+				/var/sbin/dnscache -f "/var/run/dnscache/dnscache.conf" &	
+			fi	
 			echo "${curtime} 重启服务！" >> ${logfile}
 }
 	fi
