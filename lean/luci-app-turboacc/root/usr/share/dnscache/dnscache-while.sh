@@ -30,13 +30,13 @@ do
 			echo "${curtime} 重启服务！" >> ${logfile}
 }
 	else
-		pidof dnscache>/dev/null || {
-			if [ "${dns_caching_mode}" = "1" ]; then	
-				/var/sbin/dnscache -c "/var/etc/dnscache.conf" &	
-			elif [ "${dns_caching_mode}" = "2" ]; then	
-				/var/sbin/dnscache -f "/var/run/dnscache/dnscache.conf" &	
-			fi	
-			echo "${curtime} 重启服务！" >> ${logfile}
+	pidof dnscache>/dev/null || {
+		if [ "${dns_caching_mode}" = "1" ]; then
+			/var/sbin/dnscache -c "/var/etc/dnscache.conf" &
+		elif [ "${dns_caching_mode}" = "2" ]; then
+			/var/sbin/dnscache -f "/var/run/dnscache/dnscache.conf" &
+		fi
+		echo "${curtime} 重启服务！" >> ${logfile}
 }
 	fi
 
