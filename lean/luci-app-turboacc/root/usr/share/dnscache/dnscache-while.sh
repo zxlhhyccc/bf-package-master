@@ -26,7 +26,7 @@ do
 	echo "${curtime} online!"
 	if [ "${dns_caching_mode}" = "3" ]; then
 		pidof AdGuardHome>/dev/null || {
-			AdGuardHome -c "/etc/AdGuardHome/AdGuardHome.yaml" -w "/etc/AdGuardHome" -h "${lan_addr}" -p "3001" --no-check-update &
+			AdGuardHome -c "/var/etc/AdGuardHome/AdGuardHome.yaml" -w "/var/etc/AdGuardHome" -h "${lan_addr}" -p "3001" --no-check-update &
 			echo "${curtime} 重启服务！" >> ${logfile}
 }
 	else

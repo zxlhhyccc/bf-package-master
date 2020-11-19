@@ -55,6 +55,10 @@ fullcone_nat.default = 0
 fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
 end 
 
+free_memory = s:option(Flag, "free_memory", translate("Automatic Free Memory"))
+free_memory.default = 0
+free_memory.rmempty = false
+
 dns_acc = s:option(Flag, "dns_acc", translate("DNS Acceleration"))
 dns_acc.default = 0
 dns_acc.rmempty = false

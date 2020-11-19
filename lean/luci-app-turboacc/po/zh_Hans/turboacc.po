@@ -111,3 +111,6 @@ msgstr "AdGuardHome 去广告"
 
 msgid "Open Web Interface"
 msgstr "打开 Web 界面"
+
+msgid "Automatic Free Memory"
+msgstr "自动释放内存"
