@@ -19,7 +19,7 @@ diff --git a/src/BUILD.gn b/src/BUILD.gn
 index 97494c0a0..daddf5213 100644
 --- a/src/BUILD.gn
 +++ b/src/BUILD.gn
-@@ -751,7 +751,6 @@ group("gn_all") {
+@@ -754,7 +754,6 @@ group("gn_all") {
        if (enable_nacl) {
          deps += [ "//native_client/src/trusted/platform_qualify:vcpuid" ]
        }
