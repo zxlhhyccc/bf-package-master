@@ -27,7 +27,7 @@ cd "$PWD/src"
 # AFDO profile
 [ ! -f "chrome/android/profiles/afdo.prof" ] && {
 	AFDO_NAME="$(cat "chrome/android/profiles/newest.txt")"
-	[ ! -f "${dl_dir}/${AFDO_NAME}" ] && curl -f --connect-timeout 20 --retry 5 --location --insecure "https://storage.googleapis.com/chromeos-prebuilt/afdo-job/llvm/${AFDO_NAME}" -o "${dl_dir}/${AFDO_NAME}"
+	[ ! -f "${dl_dir}/${AFDO_NAME}" ] && curl -f --connect-timeout 20 --retry 5 --location --insecure "https://storage.googleapis.com.cnpmjs.org/chromeos-prebuilt/afdo-job/llvm/${AFDO_NAME}" -o "${dl_dir}/${AFDO_NAME}"
 	bzip2 -cd > "chrome/android/profiles/afdo.prof" < "${dl_dir}/${AFDO_NAME}"
 }
 
