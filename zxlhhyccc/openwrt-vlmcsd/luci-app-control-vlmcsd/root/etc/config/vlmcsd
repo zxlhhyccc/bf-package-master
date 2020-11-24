@@ -1,0 +1,7 @@
+
+config vlmcsd
+	option enabled '0'
+	option auto '1'
+	option conf '0'
+	option log '0'
+

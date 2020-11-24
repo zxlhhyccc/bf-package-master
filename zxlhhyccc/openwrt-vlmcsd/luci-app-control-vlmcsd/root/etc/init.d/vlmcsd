@@ -1,0 +1,101 @@
+#!/bin/sh /etc/rc.common
+START=90
+STOP=10
+
+A="uci -q get vlmcsd.@vlmcsd[0]"
+B=$($A.enabled)
+C=$($A.auto)
+D=$($A.conf)
+E=$($A.log)
+F=$($A.port) || F=1688
+G=/usr/bin/vlmcsd
+J=/var/vlmcsd.log
+K=/etc/crontabs/root
+
+entry(){
+	echo "Start Autoactivate"
+	uci -q batch <<-EOF >/dev/null
+add dhcp srvhost
+set dhcp.@srvhost[-1].srv=_vlmcs._tcp
+set dhcp.@srvhost[-1].target=$H
+set dhcp.@srvhost[-1].port=$F
+set dhcp.@srvhost[-1].class=0
+set dhcp.@srvhost[-1].weight=100
+commit dhcp
+EOF
+	echo "Dnsmasq Change"
+	/etc/init.d/dnsmasq restart >/dev/null 2>&1
+}
+
+add(){
+	H=$(uci -q get system.@system[0].hostname)
+	I=$(uci -q show dhcp | grep "].srv='_vlmcs._tcp'" | sed 's/.*\[\(.*\)].*/\1/')
+	if [ -n "$I" ];then
+		if [ "$H" != "$(uci -q get dhcp.@srvhost[$I].target)" -o $F != "$(uci -q get dhcp.@srvhost[$I].port)" ];then
+			echo "Autoactivate Change"
+			uci delete dhcp.@srvhost[$I]
+			entry
+		fi
+	else
+		entry
+	fi
+}
+
+del(){
+	uci delete dhcp.@srvhost[$I]
+	uci commit dhcp
+	echo "Revert Dnsmasq"
+	/etc/init.d/dnsmasq restart >/dev/null 2>&1
+}
+
+add_cron(){
+	if [ $E -lt 7 ];then
+		if ! grep -wq "\* $E .*vlmcsd" $K;then
+			grep -q vlmcsd $K && sed -i '/vlmcsd/d' $K
+			echo "0 0 * * $E rm -f $J" >> $K
+			/etc/init.d/cron restart
+		fi
+	else
+		del_cron
+	fi
+}
+
+del_cron(){
+	if grep -q vlmcsd $K;then
+		sed -i '/vlmcsd/d' $K
+		/etc/init.d/cron restart
+	fi
+}
+
+start(){
+	if [ $B = 0 ];then
+		echo "KMS Server is Disabled"
+		exit 1
+	elif pgrep $G >/dev/null;then
+		echo "KMS Server has Started"
+		exit 1
+	fi
+	echo "Start KMS Server"
+	if [ $D = 1 ];then
+		P=/etc/vlmcsd.ini
+		sed -i 's/^[ \t]*\(Port.*\)/;\1/' $P
+		sed -i 's/.*\(Listen.*:\)[0-9]*/\1'"$F"'/' $P
+		sed -i 's/.*\(LogFile[ ]*=[ ]*\).*/\1\/var\/vlmcsd\.log/' $P
+		$G -i $P >/dev/null 2>&1 &
+	else
+		$G -d -P $F -l $J >/dev/null 2>&1 &
+	fi
+	add_cron
+	[ $C = 1 ] && add
+}
+
+stop(){
+	echo "Stop KMS Server"
+	kill -9 $(pgrep $G) 2>/dev/null
+	[ $B = 0 ] && del_cron
+	rm -f $J
+	if [ $B = 0 -o $C = 0 ];then
+		I=$(uci -q show dhcp | grep "].srv='_vlmcs._tcp'" | sed 's/.*\[\(.*\)].*/\1/')
+		[ -n "$I" ] && (echo "Stop Autoactivate";del)
+	fi
+}
