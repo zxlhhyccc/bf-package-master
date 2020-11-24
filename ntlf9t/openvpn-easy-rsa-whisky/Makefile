@@ -7,15 +7,18 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openvpn-easy-rsa-whisky
+PKG_SOURCE_URL:=https://github.com/OpenVPN/easy-rsa.git
+PKG_SOURCE_VERSION:=19a20046ca0110ad5435d69f481c5148726af252
 
-PKG_VERSION:=3.0.6
-PKG_RELEASE:=2
-PKG_SOURCE_URL:=https://github.com/OpenVPN/easy-rsa/releases/download/v$(PKG_VERSION)/
-PKG_SOURCE:=EasyRSA-unix-v$(PKG_VERSION).tgz
-PKG_HASH:=cb29aed2d27824e59dbaad547f11dcab380a53c9fe05681249e804af436f1396
+PKG_NAME:=openvpn-easy-rsa
+PKG_VERSION:=3.0.8_git-$(PKG_SOURCE_VERSION)
+PKG_RELEASE:=1
 PKG_LICENSE:=GPL-2.0
-PKG_BUILD_DIR:=$(BUILD_DIR)/EasyRSA-v$(PKG_VERSION)
+
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
+PKG_SOURCE_PROTO:=git
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -37,11 +40,11 @@ endef
 
 define Package/openvpn-easy-rsa-whisky/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/easyrsa $(1)/usr/bin/
-	$(INSTALL_DIR) $(1)/etc/easy-rsa
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/openssl-easyrsa.cnf $(1)/etc/easy-rsa/openssl-easyrsa.cnf
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/easyrsa3/easyrsa $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/easy-rsa/x509-types
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/x509-types/* $(1)/etc/easy-rsa/x509-types/
+	$(INSTALL_DATA) ./files/vars $(1)/etc/easy-rsa/vars
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/easyrsa3/openssl-easyrsa.cnf $(1)/etc/easy-rsa/openssl-easyrsa.cnf
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/easyrsa3/x509-types/* $(1)/etc/easy-rsa/x509-types/
 endef
 
 $(eval $(call BuildPackage,openvpn-easy-rsa-whisky))
