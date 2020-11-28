@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=frp
-PKG_VERSION:=0.34.2
+PKG_VERSION:=0.34.3
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
