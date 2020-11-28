@@ -2719,7 +2719,7 @@ input[name="nslookup"] {
 	transition: box-shadow .25s, -webkit-box-shadow .25s;
 	border-radius: 2px;
 	text-align: left;
-	background: #faf5f3c2;
+	background: rgba(255, 255, 255, 0.75);
 	margin: 0;
 }
 
@@ -4109,3 +4109,9 @@ div[id^="cbi-unblockmusic"] .cbi-button {
 	height: 100%;
 }
 
+[data-page="admin-network-wifi"] tr > td .cbi-button{
+	margin-left: 0 !important;
+}
+[data-page="admin-network-wifi"] tr > td input[type="button"]{
+	    padding: 0.5rem 1rem !important;
+}
