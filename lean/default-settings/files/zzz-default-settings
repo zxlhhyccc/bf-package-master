@@ -24,6 +24,14 @@ sed -i 's/services/nas/g' /root/usr/share/luci/menu.d/luci-app-p910nd.json
 sed -i 's/\"services\"/\"nas\"/g' /usr/lib/lua/luci/controller/usb_printer.lua
 sed -i 's/\"services\"/\"nas\"/g' /usr/lib/lua/luci/controller/xunlei.lua
 
+uci set minidlna.config.enabled='0'
+uci commit minidlna
+# /etc/init.d/minidlna stop
+
+uci set vsftpd.@listen[0].enable4='0'
+uci commit vsftpd
+# /etc/init.d/vsftpd stop
+
 ln -sf /sbin/ip /usr/bin/ip
 
 sed -i 's/root::0:0:99999:7:::/root:$1$gSikykrC$1dqepKd6Exe8BOxn9JffZ0:0:0:99999:7:::/g' /etc/shadow
