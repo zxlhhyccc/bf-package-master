@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=Virtual WAN config generator
-LUCI_DEPENDS:=+kmod-macvlan +luci-app-mwan3
+LUCI_DEPENDS:=+kmod-macvlan +luci-app-mwan3 +luci-compat
 PKG_VERSION:=2.0
 PKG_RELEASE:=26
 
