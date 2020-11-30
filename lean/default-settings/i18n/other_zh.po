@@ -52,7 +52,7 @@ msgstr "自定义挟持域名"
 msgid "Define a custom domain name and the corresponding PTR record"
 msgstr "自定义域名对应的IP地址（需要客户端DNS指向本路由）"
 
-msgid "Domain Name"
+msgid "Domain name"
 msgstr "域名（不带 HTTP(S)://）"
 
 msgid "Comments"
