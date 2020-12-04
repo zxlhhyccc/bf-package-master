@@ -155,6 +155,17 @@ default_node:value("nil", translate("Close"))
 for k, v in pairs(nodes_table) do default_node:value(v.id, v.remarks) end
 default_node:depends("protocol", "_shunt")
 
+domainStrategy = s:option(ListValue, "domainStrategy", translate("Domain Strategy"))
+domainStrategy:value("AsIs")
+domainStrategy:value("IPIfNonMatch")
+domainStrategy:value("IPOnDemand")
+domainStrategy.description = "<br /><ul><li>" .. translate("'AsIs': Only use domain for routing. Default value.")
+.. "</li><li>" .. translate("'IPIfNonMatch': When no rule matches current domain, resolves it into IP addresses (A or AAAA records) and try all rules again.")
+.. "</li><li>" .. translate("'IPOnDemand': As long as there is a IP-based rule, resolves the domain into IP immediately.")
+.. "</li></ul>"
+domainStrategy:depends("protocol", "_balancing")
+domainStrategy:depends("protocol", "_shunt")
+
 -- Brook协议
 brook_protocol = s:option(ListValue, "brook_protocol", translate("Protocol"))
 brook_protocol:value("client", translate("Brook"))
@@ -449,6 +460,8 @@ flow:value("xtls-rprx-origin")
 flow:value("xtls-rprx-origin-udp443")
 flow:value("xtls-rprx-direct")
 flow:value("xtls-rprx-direct-udp443")
+flow:value("xtls-rprx-splice")
+flow:value("xtls-rprx-splice-udp443")
 flow:depends("xtls", "1")
 
 -- [[ TLS部分 ]] --
