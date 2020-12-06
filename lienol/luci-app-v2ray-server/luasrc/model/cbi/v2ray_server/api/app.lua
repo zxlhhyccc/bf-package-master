@@ -56,7 +56,7 @@ local function start()
         if enable and tonumber(enable) == 1 then
             local remarks = user.remarks
             local port = tonumber(user.port)
-            local bin = "/usr/bin/v2ray/v2ray"
+            local bin = "/usr/bin/v2ray"
             local config = {}
             local config_file = CONFIG_PATH .. "/" .. id .. ".json"
 
