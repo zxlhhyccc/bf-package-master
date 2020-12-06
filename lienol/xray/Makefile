@@ -1,7 +1,6 @@
 #
 # Copyright (C) 2019-2020 Xingwang Liao
-# Copyright (C) 2019-2020 Mattraks
-# Copyright (C) 2020 xiaorouji
+# Copyright (C) 2020-2021 Mattraks
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -10,13 +9,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray
-PKG_VERSION:=1.0.0
+PKG_VERSION:=1.1.1
 PKG_RELEASE:=1
-PKG_BUILD_DIR:=$(BUILD_DIR)/Xray-core-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/xray-$(PKG_VERSION)
 
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=xray-core-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/XTLS/xray-core/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=9f0e8f7a885f082780419ac7211a6e6150529d58fa5317ae4dfb61d3a7ba218c
+PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
+PKG_SOURCE_VERSION:=41beb4ec04b84cef0acb628f9f5134d53c920205
 
 PKG_LICENSE:=MPL
 PKG_LICENSE_FILES:=LICENSE
@@ -44,19 +44,21 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_XRAY_WITHOUT_HTTP_PROTO \
 	CONFIG_XRAY_WITHOUT_SHADOWSOCKS_PROTO \
 	CONFIG_XRAY_WITHOUT_SOCKS_PROTO \
+	CONFIG_XRAY_WITHOUT_VLESS_PROTO \
 	CONFIG_XRAY_WITHOUT_VMESS_PROTO \
 	CONFIG_XRAY_WITHOUT_TCP_TRANS \
 	CONFIG_XRAY_WITHOUT_MKCP_TRANS \
 	CONFIG_XRAY_WITHOUT_WEBSOCKET_TRANS \
 	CONFIG_XRAY_WITHOUT_HTTP2_TRANS \
 	CONFIG_XRAY_WITHOUT_DOMAIN_SOCKET_TRANS \
-	CONFIG_XRAY_WITHOUT_QUIC_TRANS
+	CONFIG_XRAY_WITHOUT_QUIC_TRANS \
+	CONFIG_XRAY_COMPATIBILITY_MODE
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=github.com/xtls/xray-core/v1
+GO_PKG:=github.com/xtls/xray-core
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/core.version=$(PKG_VERSION) \
@@ -71,6 +73,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=Network
   SUBMENU:=Project X
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
+  # PROVIDES:=v2ray
 endef
 
 define Package/$(PKG_NAME)/config
@@ -178,6 +181,12 @@ XRAY_SED_ARGS += \
 	s,_ "$(GO_PKG)/core/proxy/socks",// &,;
 endif
 
+ifeq ($(CONFIG_XRAY_WITHOUT_VLESS_PROTO),y)
+XRAY_SED_ARGS += \
+	s,_ "$(GO_PKG)/core/proxy/vless/inbound",// &,; \
+	s,_ "$(GO_PKG)/core/proxy/vless/outbound",// &,;
+endif
+
 ifeq ($(CONFIG_XRAY_WITHOUT_VMESS_PROTO),y)
 XRAY_SED_ARGS += \
 	s,_ "$(GO_PKG)/core/proxy/vmess/inbound",// &,; \
@@ -252,8 +261,8 @@ define Build/Prepare
 
 ifneq ($(CONFIG_XRAY_EXCLUDE_ASSETS),y)
 	# move file to make sure download new file every build
-	mv -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/release/config/geoip.dat
-	mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/release/config/geosite.dat
+	mv -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/geoip.dat
+	mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/geosite.dat
 endif
 
 ifneq ($(XRAY_SED_ARGS),)
@@ -276,12 +285,16 @@ endif
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/bin/xray
+	$(INSTALL_DIR) $(1)/usr/bin
 
-	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/xray $(1)/usr/bin/xray
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/xray $(1)/usr/bin
+ifeq ($(CONFIG_XRAY_COMPATIBILITY_MODE),y)
+	$(LN) $(1)/usr/bin/xray $(1)/usr/bin/v2ray
+endif
 
 ifneq ($(CONFIG_XRAY_EXCLUDE_ASSETS),y)
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/release/config/{geoip,geosite}.dat $(1)/usr/bin/xray
+	$(INSTALL_DIR) $(1)/usr/share/xray
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/{geoip,geosite}.dat $(1)/usr/share/xray
 endif
 endef
 

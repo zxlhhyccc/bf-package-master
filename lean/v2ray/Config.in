@@ -108,6 +108,10 @@ config V2RAY_WITHOUT_VMESS_PROTO
 	bool "Without VMess Protocol"
 	default n
 
+config V2RAY_WITHOUT_VLESS_PROTO
+	bool "Without VLess Protocol"
+	default n
+
 config V2RAY_WITHOUT_TCP_TRANS
 	bool "Without TCP Transport"
 	default n
