@@ -128,7 +128,7 @@ end
 if nixio.fs.access("/usr/bin/ss-server") then
 o:value("ss", translate("Shadowsocks New Version"))
 end
-if nixio.fs.access("/usr/bin/v2ray/v2ray") then
+if nixio.fs.access("/usr/bin/v2ray") then
 o:value("v2ray", translate("V2Ray"))
 end
 o.description = translate("Using incorrect encryption mothod may causes service fail to start")

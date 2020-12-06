@@ -271,7 +271,7 @@ s.value = translate("Not Running")
 end
 end
 
-if nixio.fs.access("/usr/bin/v2ray/v2ray") then
+if nixio.fs.access("/usr/bin/v2ray") then
 s=m:field(DummyValue,"ssock5_run",translate("V2SOCKS5 Proxy")) 
 s.rawhtml  = true
 if v2sock5_run == 1 then

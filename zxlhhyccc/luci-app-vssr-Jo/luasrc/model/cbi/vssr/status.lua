@@ -122,7 +122,7 @@ function processlist()
 			}
 		end
 	end
--- 5103     1 root     S     661m 543%   0% /usr/bin/v2ray/v2ray -config /var/etc/shadowsocksr.json
+-- 5103     1 root     S     661m 543%   0% /usr/bin/v2ray -config /var/etc/shadowsocksr.json
 	for line in ps do
 		local pid, ppid, user, stat, vsz, mem, cpu, cmd = line:match(
 			"^ *(%d+) +(%d+) +(%S.-%S) +([RSDZTW][W ][<N ]) +(%d+.?) +(%d+%%) +(%d+%%) +(.+)"
@@ -368,7 +368,7 @@ end
 end
 
 
-if nixio.fs.access("/usr/bin/v2ray/v2ray") then
+if nixio.fs.access("/usr/bin/v2ray") then
 s=m:field(DummyValue,"ssock5_run",translate("V2SOCKS5 Proxy")) 
 s.rawhtml  = true
 if v2sock5_run == 1 then
