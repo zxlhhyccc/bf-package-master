@@ -192,13 +192,8 @@ local function processData(szType, content)
 			result.server_port = query[1]
 			local params = {}
 			for _, v in pairs(split(query[2], '&')) do
-			    if v:find("plugin") == 1 then
-				local idx_pn = v:find("=")
-				params[v:sub(1, idx_pn - 1)] = v:sub(idx_pn + 1, #v)
-			    else
 				local t = split(v, '=')
 				params[t[1]] = t[2]
-			    end
 			end
 			if params.plugin then
 				local plugin_info = UrlDecode(params.plugin)
