@@ -100,6 +100,10 @@ config XRAY_WITHOUT_SOCKS_PROTO
 	bool "Without Socks Protocol"
 	default n
 
+config XRAY_WITHOUT_TROJAN_PROTO
+	bool "Without Trojan Protocol"
+	default n
+
 config XRAY_WITHOUT_VLESS_PROTO
 	bool "Without VLess Protocol"
 	default n
