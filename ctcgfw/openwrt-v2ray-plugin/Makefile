@@ -18,7 +18,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/teddysun/v2ray-plugin.git
 PKG_SOURCE_VERSION:=351c09ada7beccab01369f0adb7542af143a182b
 #PKG_SOURCE_URL:=https://codeload.github.com/teddysun/v2ray-plugin/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=d2d5e05ae4cd744e0a26a9b290677f72461b8a5fedfd513ea1a682e4ece73e4c
+PKG_MIRROR_HASH:=d2d5e05ae4cd744e0a26a9b290677f72461b8a5fedfd513ea1a682e4ece73e4c
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE

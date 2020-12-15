@@ -17,6 +17,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=v2ray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
 PKG_SOURCE_VERSION:=3e9b74c2342c53feea89c82499fed7e6599d5e7a
+PKG_MIRROR_HASH:=3972e92127d3211abdaf5ac6e4bd8ad7a3e5d4b3bd2d7567dd2f32b5ef1d513a
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -252,7 +253,7 @@ define Download/geoip.dat
   URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=skip
+  HASH:=817985216dab339def530ecfba901661636b597ba9e046eeed0c85094214a4b1
 endef
 
 GEOSITE_VER:=latest
@@ -262,7 +263,7 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=skip
+  HASH:=f3067afe378b4a1eb76f401bbad1e120a42e9833ecf6a79d5e4c1b15ad8ebd52
 endef
 
 define Build/Prepare
