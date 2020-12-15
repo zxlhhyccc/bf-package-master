@@ -1,12 +1,4 @@
 #!/bin/sh
-
-uci -q batch <<-EOF >/dev/null
-  delete ucitrack.@openvpn-server[-1]
-	add ucitrack openvpn-server
-	set ucitrack.@openvpn-server[-1].init=openvpn
-	commit ucitrack
-EOF
-
-rm -f /tmp/luci-indexcache
+rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*
 [ -s /etc/openvpn/ta.key ] || openvpn --genkey --secret /etc/openvpn/ta.key
 exit 0
