@@ -205,7 +205,7 @@ dhcp:
   subnet_mask: ""
   range_start: ""
   range_end: ""
-  lease_duration: 0
+  lease_duration: 86400
   icmp_timeout_msec: 1000
 clients: []
 log_file: ""
