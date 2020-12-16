@@ -29,15 +29,11 @@ dns:
   refuse_any: true
   upstream_dns:
   - tls://1dot1dot1dot1.cloudflare-dns.com
-  - https://1.0.0.1/dns-query
-  - https://dns.adgk.net:4433/dns-query
-  - https://esdns.kbsml.com/dns-query
-  - tcp://8.8.8.8
+  - tls://dns.google
   - tcp://8.8.4.4
-  - 117.50.11.11
-  - 117.50.22.22
   - 223.5.5.5
   - 223.6.6.6
+  - 119.29.29.29
   - 208.67.222.222
   - 114.114.114.114
   - 180.76.76.76
@@ -46,10 +42,9 @@ dns:
   - 119.29.29.29
   - 223.5.5.5
   - 114.114.114.114
-  - 8.8.8.8
   - 2620:fe::10
   - 2620:fe::fe:10
-  all_servers: false
+  all_servers: true
   fastest_addr: false
   allowed_clients: []
   disallowed_clients: []
@@ -57,7 +52,7 @@ dns:
   - version.bind
   - id.server
   - hostname.bind
-  cache_size: 1194304
+  cache_size: 4194304
   cache_ttl_min: 60
   cache_ttl_max: 86400
   bogus_nxdomain: []
@@ -124,12 +119,12 @@ filters:
   name: CJX's uBlock list隐私相关
   id: 139789141
 - enabled: false
-  url: https://gitee.com/xinggsf/Adblock-Rule/raw/master/rule.txt
-  name: 乘风 广告过滤规则
+  url: https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds-Ultra.txt
+  name: GoodbyeAds 大全去广告
   id: 139789142
-- enabled: false
-  url: https://gitee.com/xinggsf/Adblock-Rule/raw/master/mv.txt
-  name: 乘风 视频广告过滤规则
+- enabled: true
+  url: https://gist.githubusercontent.com/Ewpratten/a25ae63a7200c02c850fede2f32453cf/raw/b9318009399b99e822515d388b8458557d828c37/hosts-yt-ads
+  name: YouTube-去广告
   id: 139789143
 - enabled: false
   url: https://raw.githubusercontent.com/Goooler/1024_hosts/master/hosts
@@ -209,6 +204,7 @@ filters:
   id: 139789184
 whitelist_filters: []
 user_rules:
+- '@@||taobao.com^$important'
 - '@@||jd.com^important'
 - '@@||flyme.cn^$important'
 - '@@||meizu.com^$important'
