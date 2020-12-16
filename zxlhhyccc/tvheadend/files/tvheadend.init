@@ -10,7 +10,7 @@ TEMP_CONFIG=/tmp/tvheadend
 PERSISTENT_CONFIG=/etc/tvheadend
 
 execute_first_run() {
-	"$PROG" -C "$1" -B -C -A >/dev/null 2>&1
+	"$PROG" -c "$1" -B -C -A >/dev/null 2>&1
 }
 
 ensure_config_exists() {
@@ -65,7 +65,7 @@ start_service() {
 	ensure_config_exists
 	procd_open_instance
 	procd_set_param file /etc/config/tvheadend
-	procd_set_param command "$PROG" -B -C
+	procd_set_param command "$PROG" -B
 	load_uci_config
 	procd_close_instance
 }

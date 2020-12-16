@@ -11,11 +11,13 @@ PKG_NAME:=tvheadend
 PKG_VERSION:=4.3
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/tvheadend/tvheadend.git
-PKG_MIRROR_HASH:=a2b201e6d7d862359d9a134264ea9a332fcd546fe0ded0382ec9c668709dc584
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=bd88f3db6a7ed43dc0dca5ed832da13bf627feaf
+# This is stable git version...
+# PKG_SOURCE_VERSION:=1a0262f5870e4fabd6b9c70a7bf2ebe420bc956e
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/tvheadend/tvheadend.git
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-3.0
@@ -25,6 +27,8 @@ PKG_FIXUP:=autoreconf
 
 PKG_USE_MIPS16:=0
 
+SHORT_GIT_VER:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -7)
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
@@ -32,7 +36,7 @@ define Package/tvheadend
   SECTION:=multimedia
   CATEGORY:=Multimedia
   TITLE:=Tvheadend is a TV streaming server for Linux
-  DEPENDS:=+libopenssl +librt +zlib +TVHEADEND_AVAHI_SUPPORT:libavahi-client $(ICONV_DEPENDS)
+  DEPENDS:=+libopenssl +librt +zlib +libpcre +libpcre2 +libdvbcsa +TVHEADEND_AVAHI_SUPPORT:libavahi-client $(ICONV_DEPENDS)
   URL:=https://tvheadend.org
   MAINTAINER:=Jan Čermák <jan.cermak@nic.cz>
 endef
@@ -73,12 +77,41 @@ CONFIGURE_ARGS += \
 	--arch=$(ARCH) \
 	--disable-dbus_1 \
 	--disable-libav \
-	--enable-bundle
+	--enable-bundle \
+	--enable-dvben50221 \
+	--enable-tvhcsa \
+	--enable-dvbcsa \
+	--enable-inotify \
+	--enable-epoll \
+	--enable-trace \
+	--nowerror \
+        --disable-dvbscan \
+        --disable-avahi \
+        --disable-hdhomerun_static \
+        --disable-pie \
+        --disable-imagecache \
+        --disable-ffmpeg_static \
+        --disable-libx264 \
+        --disable-libx264_static \
+        --disable-libx265 \
+        --disable-libx265_static \
+        --disable-libvpx \
+        --disable-libvpx_static \
+        --disable-libtheora \
+        --disable-libtheora_static \
+        --disable-libvorbis \
+        --disable-libvorbis_static \
+        --disable-libfdkaac \
+        --disable-libfdkaac_static \
+        --disable-nvenc \
+        --disable-libmfx_static \
+        --disable-timeshift
+
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
-	echo 'Tvheadend $(shell echo $(PKG_SOURCE_VERSION) | sed "s/^v//")~openwrt$(PKG_RELEASE)' \
-		> $(PKG_BUILD_DIR)/debian/changelog
+	echo 'Tvheadend $(shell echo $(PKG_VERSION)~$(SHORT_GIT_VER)-$(PKG_RELEASE))' \
+	> $(PKG_BUILD_DIR)/debian/changelog
 endef
 
 define Package/conffiles
