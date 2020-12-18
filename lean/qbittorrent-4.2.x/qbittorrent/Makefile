@@ -38,6 +38,7 @@ define Package/qbittorrent
 		+qt5-core \
 		+qt5-network \
 		+qt5-xml \
+		+qt5-sql \
 		+zlib
 	TITLE:=bittorrent client programmed in C++ / Qt
 	URL:=https://www.qbittorrent.org/
