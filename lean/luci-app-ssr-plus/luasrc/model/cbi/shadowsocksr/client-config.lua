@@ -289,7 +289,7 @@ o.rmempty = true
 
 -- WS域名
 o = s:option(Value, "ws_host", translate("WebSocket Host"))
-o:depends("transport", "ws")
+o:depends({transport = "ws", tls = false})
 o.rmempty = true
 
 -- WS路径
