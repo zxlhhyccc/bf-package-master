@@ -153,19 +153,18 @@ gen_config_file() {
 			"timeout": $(uci_get_by_name $1 timeout 60),
 			"method": "$(uci_get_by_name $1 encrypt_method_ss)",
 			"reuse_port": true,
-			"fast_open": $fastopen,
-			"plugin": "$(uci_get_by_name $1 plugin)",
-			"plugin_opts": "$(uci_get_by_name $1 simple_obfs)$(uci_get_by_name $1 v2ray_plugin)$(uci_get_by_name $1 plugin_opts)"
+			"fast_open": $fastopen
 			}
 		EOF
-		# local plugin=$(uci_get_by_name $1 plugin)
-		# if [ -n "$plugin" ]; then
-			# if [ -x "/usr/bin/$plugin" ]; then
-				# sed -i "s@$hostip\",@$hostip\",\n\"plugin\": \"$plugin\",\n\"plugin_opts\": \"$(uci_get_by_name $1 ss_obfs)$(uci_get_by_name $1 plugin_opts)\",@" $config_file
-			# else
-				# echo "$(date "+%Y-%m-%d %H:%M:%S") Warning!!! SIP003 plugin $plugin not found!!!" >>/tmp/ssrplus.log
-			# fi
-		# fi
+		local plugin=$(uci_get_by_name $1 plugin)
+		if [ -n "$plugin" ]; then
+			[ "$plugin" == "simple-obfs" ] && plugin="obfs-local"
+			if [ -x "/usr/bin/$plugin" ]; then
+				sed -i "s@$hostip\",@$hostip\",\n\"plugin\": \"$plugin\",\n\"plugin_opts\": \"$(uci_get_by_name $1 plugin_opts)\",@" $config_file
+			else
+				echo "$(date "+%Y-%m-%d %H:%M:%S") Warning!!! SIP003 plugin $plugin not found!!!" >>/tmp/ssrplus.log
+			fi
+		fi
 		;;
 	ssr)
 		cat <<-EOF >$config_file

@@ -167,7 +167,7 @@ local function processData(szType, content)
 		if info.tls == "tls" or info.tls == "1" then
 			result.tls = "1"
 			result.tls_host = info.host
-			-- result.insecure = 1
+			result.insecure = 1
 		else
 			result.tls = "0"
 		end
