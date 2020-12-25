@@ -41,8 +41,8 @@ endif
 PKG_LICENSE:=Apache-2.0
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)-$(PKG_RELEASE)
-PKG_SOURCE:=clash-linux-$(OPENCLASH_ARCH).tar.gz
-PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/Clash
+# PKG_SOURCE:=clash-linux-$(OPENCLASH_ARCH).tar.gz
+# PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/Clash/
 PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk

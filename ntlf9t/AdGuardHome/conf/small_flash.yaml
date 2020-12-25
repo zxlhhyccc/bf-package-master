@@ -186,18 +186,6 @@ filters:
   name: aak-cont-list-notubo
   id: 139789184
 user_rules: []
-- '@@||taobao.com^$important'
-- '@@||jd.com^important'
-- '@@||flyme.cn^$important'
-- '@@||meizu.com^$important'
-- '@@||wl.jd.com^$important'
-- '@@||flydigi.com^'
-- '@@||pv.sohu.com^$important'
-- /googleads.$~script,domain=~googleads.github.io
-- /pagead/lvz?
-- '||google.com/pagead/'
-- '||static.doubleclick.net^$domain=youtube.com'
-- '||youtube.com/get_midroll_'
 dhcp:
   enabled: false
   interface_name: ""
