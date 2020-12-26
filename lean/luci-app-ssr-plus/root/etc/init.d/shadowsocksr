@@ -515,7 +515,7 @@ Start_Run() {
 		for i in $(seq 1 $threads); do
 			ln_start_bin $(first_type $type) $type --config $tcp_config_file
 		done
-		echolog "Main node:$($bin --version 2>&1 | head -1) , $threads Threads Started!"
+		echolog "Main node:$($(first_type $type) --version 2>&1 | head -1) , $threads Threads Started!"
 		;;
 	naiveproxy)
 		gen_config_file $GLOBAL_SERVER $type 1 $tcp_port

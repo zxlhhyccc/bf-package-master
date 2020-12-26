@@ -42,7 +42,7 @@ set shadowsocksr.@global[0].switch_try_count='3'
 set shadowsocksr.@global[0].gfwlist_url='https://cdn.jsdelivr.net/gh/v2fly/domain-list-community@release/gfwlist.txt'
 set shadowsocksr.@global[0].chnroute_url='https://ispip.clang.cn/all_cn.txt'
 set shadowsocksr.@global[0].nfip_url='https://cdn.jsdelivr.net/gh/QiuSimons/Netflix_IP/getflix.txt'
-set shadowsocksr.@global[0].adblock_url='https://anti-ad.net/anti-ad-for-dnsmasq.conf'
+set shadowsocksr.@global[0].adblock_url='https://neodev.team/lite_host_dnsmasq.conf'
 add shadowsocksr server_subscribe
 set shadowsocksr.@server_subscribe[0].proxy='0'
 set shadowsocksr.@server_subscribe[0].auto_update_time='2'

@@ -72,59 +72,9 @@ end
 
 function refresh_data()
 	local set = luci.http.formvalue("set")
-	local uci = luci.model.uci.cursor()
-	local icount = 0
-	local retstring = 0
-	local TMP_DNSMASQ_PATH = "/var/etc/dnsmasq-ssrplus.d"
-	local TMP_PATH = "/var/etc/ssrplus"
-	local function update(url, file, type, file2)
-		local Num = 1
-		refresh_cmd = "wget --no-check-certificate -q -T 10 -O /tmp/ssr-update." .. type .. " " .. url
-		sret = luci.sys.call(refresh_cmd .. " 2>/dev/null")
-		if sret == 0 then
-			if type == "gfw_data" then
-				luci.sys.call("/usr/bin/ssr-gfw " .. type)
-				Num = 2
-			end
-			if type == "ad_data" then
-				luci.sys.call("/usr/bin/ssr-ad " .. type)
-			end
-			local new_md5 = luci.sys.exec("echo -n $([ -f '/tmp/ssr-update." .. type .. "' ] && md5sum /tmp/ssr-update." .. type .. " | awk '{print $1}')")
-			local old_md5 = luci.sys.exec("echo -n $([ -f '" .. file .. "' ] && md5sum " .. file .. " | awk '{print $1}')")
-			if new_md5 == old_md5 then
-				retstring = "0"
-			else
-				icount = luci.sys.exec("cat /tmp/ssr-update." .. type .. " | wc -l")
-				luci.sys.exec("cp -f /tmp/ssr-update." .. type .. " " .. file)
-				if file2 then
-					luci.sys.exec("cp -f /tmp/ssr-update." .. type .. " " .. file2)
-				end
-				retstring = tostring(tonumber(icount) / Num)
-				if type == "gfw_data" or type == "ad_data" then
-					luci.sys.exec("/usr/share/shadowsocksr/gfw2ipset.sh")
-				else
-					luci.sys.exec("/usr/share/shadowsocksr/chinaipset.sh " .. TMP_PATH .. "/china_ssr.txt")
-				end
-			end
-		else
-			retstring = "-1"
-		end
-		luci.sys.exec("rm -f /tmp/ssr-update." .. type)
-	end
-	if set == "gfw_data" then
-		update(uci:get_first("shadowsocksr", "global", "gfwlist_url", "https://cdn.jsdelivr.net/gh/gfwlist/gfwlist/gfwlist.txt"), "/etc/ssrplus/gfw_list.conf", set, TMP_DNSMASQ_PATH .. "/gfw_list.conf")
-	end
-	if set == "ip_data" then
-		update(uci:get_first("shadowsocksr", "global", "chnroute_url", "https://ispip.clang.cn/all_cn.txt"), "/etc/ssrplus/china_ssr.txt", set, TMP_PATH .. "/china_ssr.txt")
-	end
-	if set == "ad_data" then
-		update(uci:get_first("shadowsocksr", "global", "adblock_url", "https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt"), "/etc/ssrplus/ad.conf", set, TMP_DNSMASQ_PATH .. "/ad.conf")
-	end
-	if set == "nfip_data" then
-		update(uci:get_first("shadowsocksr", "global", "nfip_url", "https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/NF_only.txt"), "/etc/ssrplus/netflixip.list", set)
-	end
+	local retstring = luci.sys.exec("/usr/bin/lua /usr/share/shadowsocksr/update.lua " .. set)
 	luci.http.prepare_content("application/json")
-	luci.http.write_json({ret = retstring})
+	luci.http.write_json({ret = tonumber(retstring)})
 end
 
 function check_port()
