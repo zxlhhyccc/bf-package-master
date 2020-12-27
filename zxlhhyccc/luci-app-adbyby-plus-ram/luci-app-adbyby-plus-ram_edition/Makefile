@@ -11,7 +11,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=LuCI support for Adbyby
-  DEPENDS:=+adbyby-ram_edition +wget +ipset +coreutils +coreutils-nohup +dnsmasq-full +ca-certificates
+  DEPENDS:=+adbyby-ram_edition +wget-ssl +ipset +coreutils +coreutils-nohup +dnsmasq-full +ca-certificates
   PKGARCH:=all
 endef
 

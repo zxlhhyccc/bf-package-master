@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for koolproxy
 LUCI_DESCRIPTION:=This package contains LuCI configuration pages for koolproxy.
-LUCI_DEPENDS:=+koolproxy +wget
+LUCI_DEPENDS:=+koolproxy +wget-ssl
 LUCI_PKGARCH:=all
 
 PKG_NAME:=luci-app-koolproxy

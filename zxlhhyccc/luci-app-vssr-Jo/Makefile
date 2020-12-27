@@ -130,7 +130,7 @@ define Package/luci-app-vssr-Jo
 	SUBMENU:=3. Applications
 	TITLE:=A New SS/SSR/V2Ray/Trojan LuCI interface
 	PKGARCH:=all
-	DEPENDS:=+shadowsocksr-libev-alt +ipset +ip-full +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +bash +pdnsd-alt +wget  +tcpping +lua-maxminddb +lua +luasocket +jshn +lua-cjson +coreutils-nohup  +curl \
+	DEPENDS:=+shadowsocksr-libev-alt +ipset +ip-full +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +bash +pdnsd-alt +wget-ssl  +tcpping +lua-maxminddb +lua +luasocket +jshn +lua-cjson +coreutils-nohup  +curl \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks:shadowsocks-libev-ss-redir \
             +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan \
