@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2019-2020 Xingwang Liao
-# Copyright (C) 2019-2020 Mattraks
+# Copyright (C) 2019-2021 Mattraks
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -10,52 +10,24 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray
 PKG_VERSION:=4.33.0
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/v2ray-$(PKG_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=v2ray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
-PKG_SOURCE_VERSION:=d8c03f10b5f3180b6a9e56711b81d984c783020c
-PKG_MIRROR_HASH:=f5a2a1f6965349b98b93e779a862051502fa271d1f6bc47eb58f65690fd89e59
+PKG_SOURCE_VERSION:=8c5b392f2763e0485e0a9c1b2bc3e38a7da507fb
+PKG_MIRROR_HASH:=131505fc17b2e4736bf48c2e1ef78bbc5ce55b110a1d3423f9120ffac2952154
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Xingwang Liao <kuoruan@gmail.com>
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_V2RAY_JSON_V2CTL \
-	CONFIG_V2RAY_JSON_INTERNAL \
-	CONFIG_V2RAY_JSON_NONE \
 	CONFIG_V2RAY_EXCLUDE_V2CTL \
 	CONFIG_V2RAY_EXCLUDE_ASSETS \
 	CONFIG_V2RAY_COMPRESS_GOPROXY \
-	CONFIG_V2RAY_COMPRESS_UPX \
-	CONFIG_V2RAY_CUSTOM_FEATURES \
-	CONFIG_V2RAY_WITHOUT_DNS \
-	CONFIG_V2RAY_WITHOUT_LOG \
-	CONFIG_V2RAY_WITHOUT_TLS \
-	CONFIG_V2RAY_WITHOUT_UDP \
-	CONFIG_V2RAY_WITHOUT_POLICY \
-	CONFIG_V2RAY_WITHOUT_REVERSE \
-	CONFIG_V2RAY_WITHOUT_ROUTING \
-	CONFIG_V2RAY_WITHOUT_STATISTICS \
-	CONFIG_V2RAY_WITHOUT_BLACKHOLE_PROTO \
-	CONFIG_V2RAY_WITHOUT_DNS_PROXY \
-	CONFIG_V2RAY_WITHOUT_DOKODEMO_PROTO \
-	CONFIG_V2RAY_WITHOUT_FREEDOM_PROTO \
-	CONFIG_V2RAY_WITHOUT_MTPROTO_PROXY \
-	CONFIG_V2RAY_WITHOUT_HTTP_PROTO \
-	CONFIG_V2RAY_WITHOUT_SHADOWSOCKS_PROTO \
-	CONFIG_V2RAY_WITHOUT_SOCKS_PROTO \
-	CONFIG_V2RAY_WITHOUT_VMESS_PROTO \
-	CONFIG_V2RAY_WITHOUT_VLESS_PROTO \
-	CONFIG_V2RAY_WITHOUT_TCP_TRANS \
-	CONFIG_V2RAY_WITHOUT_MKCP_TRANS \
-	CONFIG_V2RAY_WITHOUT_WEBSOCKET_TRANS \
-	CONFIG_V2RAY_WITHOUT_HTTP2_TRANS \
-	CONFIG_V2RAY_WITHOUT_DOMAIN_SOCKET_TRANS \
-	CONFIG_V2RAY_WITHOUT_QUIC_TRANS
+	CONFIG_V2RAY_COMPRESS_UPX
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
@@ -80,7 +52,25 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/config
-	source "$(SOURCE)/Config.in"
+menu "V2Ray Configuration"
+	depends on PACKAGE_v2ray
+
+config V2RAY_COMPRESS_GOPROXY
+	bool "Compiling with GOPROXY proxy"
+	default n
+
+config V2RAY_EXCLUDE_V2CTL
+	bool "Exclude V2Ctl"
+	default y
+
+config V2RAY_EXCLUDE_ASSETS
+	bool "Exclude geoip.dat & geosite.dat"
+	default y
+
+config V2RAY_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	default y
+endmenu
 endef
 
 define Package/$(PKG_NAME)/description
@@ -96,156 +86,6 @@ export GOPROXY=https://goproxy.io
 #export GOPROXY=https://mirrors.aliyun.com/goproxy/
 endif
 
-V2RAY_SED_ARGS:=
-
-ifeq ($(CONFIG_V2RAY_JSON_INTERNAL),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/main/json",// &,; \
-	s,// \(_ "$(GO_PKG)/main/jsonem"\),\1,;
-else ifeq ($(CONFIG_V2RAY_JSON_NONE),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/main/json",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_CUSTOM_FEATURES),y)
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_DNS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/app/dns",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_LOG),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/app/log",// &,; \
-	s,_ "$(GO_PKG)/app/log/command",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_TLS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/tls",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_UDP),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/udp",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_POLICY),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/app/policy",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_REVERSE),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/app/reverse",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_ROUTING),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/app/router",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_STATISTICS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/app/stats",// &,; \
-	s,_ "$(GO_PKG)/app/stats/command",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_BLACKHOLE_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/blackhole",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_DNS_PROXY),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/dns",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_DOKODEMO_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/dokodemo",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_FREEDOM_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/freedom",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_MTPROTO_PROXY),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/mtproto",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_HTTP_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/http",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_SHADOWSOCKS_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/shadowsocks",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_SOCKS_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/socks",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_VMESS_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/vmess/inbound",// &,; \
-	s,_ "$(GO_PKG)/proxy/vmess/outbound",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_VLESS_PROTO),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/proxy/vless/inbound",// &,; \
-	s,_ "$(GO_PKG)/proxy/vless/outbound",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_TCP_TRANS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/tcp",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_MKCP_TRANS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/kcp",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_WEBSOCKET_TRANS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/websocket",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_HTTP2_TRANS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/http",// &,; \
-	s,_ "$(GO_PKG)/transport/internet/headers/http",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_DOMAIN_SOCKET_TRANS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/domainsocket",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_QUIC_TRANS),y)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/quic",// &,;
-endif
-
-ifeq ($(CONFIG_V2RAY_WITHOUT_MKCP_TRANS)$(CONFIG_V2RAY_WITHOUT_QUIC_TRANS),yy)
-V2RAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/transport/internet/headers/noop",// &,; \
-	s,_ "$(GO_PKG)/transport/internet/headers/srtp",// &,; \
-	s,_ "$(GO_PKG)/transport/internet/headers/tls",// &,; \
-	s,_ "$(GO_PKG)/transport/internet/headers/utp",// &,; \
-	s,_ "$(GO_PKG)/transport/internet/headers/wechat",// &,; \
-	s,_ "$(GO_PKG)/transport/internet/headers/wireguard",// &,;
-endif
-
-endif # custom features
-
 GEOIP_VER:=latest
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
 
@@ -253,7 +93,7 @@ define Download/geoip.dat
   URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=59f96b6801e11951e36af924d42097262fdf08ffdbcfb9580e12ef5d27c015cb
+  HASH:=e47b458b8c12440a22597956dfc8a3dcd6bd308a799446919f87acfc3e75549d
 endef
 
 GEOSITE_VER:=latest
@@ -263,24 +103,15 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=0160d39f6144e6b325bcdc4cd5d93fcd39813a6d2672fd7a3ff6f3865269cfd3
+  HASH:=47aac1b1cc4d2f61932cd54f4ea209c86c020c4b66c954b3d8c4d9e92183fc22
 endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
-
 ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 	# move file to make sure download new file every build
 	mv -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/geoip.dat
 	mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/geosite.dat
-endif
-
-ifneq ($(V2RAY_SED_ARGS),)
-	( \
-		$(SED) \
-			'$(V2RAY_SED_ARGS)' \
-			$(PKG_BUILD_DIR)/main/distro/all/all.go ; \
-	)
 endif
 endef
 
@@ -288,16 +119,13 @@ define Build/Compile
 	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/main)
 	$(call GoPackage/Build/Compile)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
-
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray || true
 endif
-
 ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
 	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/infra/control/main)
 	$(call GoPackage/Build/Compile)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
-
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ctl || true
 endif
@@ -305,14 +133,11 @@ endif
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/bin
-
+	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/v2ray $(1)/usr/bin
-
 ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/v2ctl $(1)/usr/bin
 endif
-
 ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 	$(INSTALL_DIR) $(1)/usr/share/v2ray
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/{geoip,geosite}.dat $(1)/usr/share/v2ray

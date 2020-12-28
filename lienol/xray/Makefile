@@ -16,44 +16,16 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/xray-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=xray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=0203190a984400b715f71d80b4ff6426f72f677d
-PKG_MIRROR_HASH:=3434835c368f8f79a308be4528b95c5955722b8dcbd5c2b407a2c94008db1443
+PKG_SOURCE_VERSION:=6bcac6cb1016295a0722015ec853ece135766cc3
+PKG_MIRROR_HASH:=b5d5f99f21a490d8509f324f5bba1f2e3319d5e5375e99db70e1aa62f34ae6d2
 
 PKG_LICENSE:=MPL
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_XRAY_JSON_INTERNAL \
-	CONFIG_XRAY_JSON_NONE \
 	CONFIG_XRAY_EXCLUDE_ASSETS \
 	CONFIG_XRAY_COMPRESS_GOPROXY \
 	CONFIG_XRAY_COMPRESS_UPX \
-	CONFIG_XRAY_CUSTOM_FEATURES \
-	CONFIG_XRAY_WITHOUT_DNS \
-	CONFIG_XRAY_WITHOUT_LOG \
-	CONFIG_XRAY_WITHOUT_TLS \
-	CONFIG_XRAY_WITHOUT_UDP \
-	CONFIG_XRAY_WITHOUT_POLICY \
-	CONFIG_XRAY_WITHOUT_REVERSE \
-	CONFIG_XRAY_WITHOUT_ROUTING \
-	CONFIG_XRAY_WITHOUT_STATISTICS \
-	CONFIG_XRAY_WITHOUT_BLACKHOLE_PROTO \
-	CONFIG_XRAY_WITHOUT_DNS_PROXY \
-	CONFIG_XRAY_WITHOUT_DOKODEMO_PROTO \
-	CONFIG_XRAY_WITHOUT_FREEDOM_PROTO \
-	CONFIG_XRAY_WITHOUT_MTPROTO_PROXY \
-	CONFIG_XRAY_WITHOUT_HTTP_PROTO \
-	CONFIG_XRAY_WITHOUT_SHADOWSOCKS_PROTO \
-	CONFIG_XRAY_WITHOUT_SOCKS_PROTO \
-	CONFIG_XRAY_WITHOUT_TROJAN_PROTO \
-	CONFIG_XRAY_WITHOUT_VLESS_PROTO \
-	CONFIG_XRAY_WITHOUT_VMESS_PROTO \
-	CONFIG_XRAY_WITHOUT_TCP_TRANS \
-	CONFIG_XRAY_WITHOUT_MKCP_TRANS \
-	CONFIG_XRAY_WITHOUT_WEBSOCKET_TRANS \
-	CONFIG_XRAY_WITHOUT_HTTP2_TRANS \
-	CONFIG_XRAY_WITHOUT_DOMAIN_SOCKET_TRANS \
-	CONFIG_XRAY_WITHOUT_QUIC_TRANS \
 	CONFIG_XRAY_COMPATIBILITY_MODE
 
 PKG_BUILD_DEPENDS:=golang/host
@@ -75,11 +47,36 @@ define Package/$(PKG_NAME)
   CATEGORY:=Network
   SUBMENU:=Project X
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
-  # PROVIDES:=v2ray
+#  PROVIDES:=v2ray
+endef
+
+define Package/$(PKG_NAME)/description
+Project X originates from XTLS protocol, provides a set of network tools such as Xray-core and Xray-flutter.
+It secures your network connections and thus protects your privacy.
+
+  This package contains Xray, geoip.dat and geosite.dat.
 endef
 
 define Package/$(PKG_NAME)/config
-	source "$(SOURCE)/Config.in"
+menu "Xray Configuration"
+	depends on PACKAGE_xray
+
+config XRAY_COMPRESS_GOPROXY
+	bool "Compiling with GOPROXY proxy"
+	default n
+
+config XRAY_EXCLUDE_ASSETS
+	bool "Exclude geoip.dat & geosite.dat"
+	default y
+
+config XRAY_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	default y
+
+config XRAY_COMPATIBILITY_MODE
+	bool "V2ray Compatibility mode(v2ray soft connection Xray)"
+	default n
+endmenu
 endef
 
 ifeq ($(CONFIG_XRAY_COMPRESS_GOPROXY),y)
@@ -88,161 +85,6 @@ export GOPROXY=https://goproxy.io
 #export GOPROXY=https://mirrors.aliyun.com/goproxy/
 endif
 
-XRAY_SED_ARGS:=
-
-ifeq ($(CONFIG_XRAY_JSON_INTERNAL),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/main/json",// &,; \
-	s,// \(_ "$(GO_PKG)/core/main/jsonem"\),\1,;
-else ifeq ($(CONFIG_XRAY_JSON_NONE),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/main/json",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_CUSTOM_FEATURES),y)
-
-ifeq ($(CONFIG_XRAY_WITHOUT_DNS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/app/dns",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_LOG),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/app/log",// &,; \
-	s,_ "$(GO_PKG)/core/app/log/command",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_TLS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/tls",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_UDP),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/udp",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_POLICY),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/app/policy",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_REVERSE),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/app/reverse",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_ROUTING),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/app/router",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_STATISTICS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/app/stats",// &,; \
-	s,_ "$(GO_PKG)/core/app/stats/command",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_BLACKHOLE_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/blackhole",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_DNS_PROXY),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/dns",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_DOKODEMO_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/dokodemo",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_FREEDOM_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/freedom",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_MTPROTO_PROXY),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/mtproto",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_HTTP_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/http",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_SHADOWSOCKS_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/shadowsocks",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_SOCKS_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/socks",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_TROJAN_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/trojan",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_VLESS_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/vless/inbound",// &,; \
-	s,_ "$(GO_PKG)/core/proxy/vless/outbound",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_VMESS_PROTO),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/proxy/vmess/inbound",// &,; \
-	s,_ "$(GO_PKG)/core/proxy/vmess/outbound",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_TCP_TRANS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/tcp",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_MKCP_TRANS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/kcp",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_WEBSOCKET_TRANS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/websocket",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_HTTP2_TRANS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/http",// &,; \
-	s,_ "$(GO_PKG)/core/transport/internet/headers/http",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_DOMAIN_SOCKET_TRANS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/domainsocket",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_QUIC_TRANS),y)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/quic",// &,;
-endif
-
-ifeq ($(CONFIG_XRAY_WITHOUT_MKCP_TRANS)$(CONFIG_XRAY_WITHOUT_QUIC_TRANS),yy)
-XRAY_SED_ARGS += \
-	s,_ "$(GO_PKG)/core/transport/internet/headers/noop",// &,; \
-	s,_ "$(GO_PKG)/core/transport/internet/headers/srtp",// &,; \
-	s,_ "$(GO_PKG)/core/transport/internet/headers/tls",// &,; \
-	s,_ "$(GO_PKG)/core/transport/internet/headers/utp",// &,; \
-	s,_ "$(GO_PKG)/core/transport/internet/headers/wechat",// &,; \
-	s,_ "$(GO_PKG)/core/transport/internet/headers/wireguard",// &,;
-endif
-
-endif # custom features
-
 GEOIP_VER:=latest
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
 
@@ -250,7 +92,7 @@ define Download/geoip.dat
   URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=4fcc82259e6dd42db46fa142885ac82f3148b0992959c1f716f39382f7a393ad
+  HASH:=e47b458b8c12440a22597956dfc8a3dcd6bd308a799446919f87acfc3e75549d
 endef
 
 GEOSITE_VER:=latest
@@ -260,24 +102,15 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=b0026879e478971ec116b77d338b15e69fbb5876dfbcdcb882708c2d17f088cc
+  HASH:=47aac1b1cc4d2f61932cd54f4ea209c86c020c4b66c954b3d8c4d9e92183fc22
 endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
-
 ifneq ($(CONFIG_XRAY_EXCLUDE_ASSETS),y)
 	# move file to make sure download new file every build
 	mv -f $(DL_DIR)/$(GEOIP_FILE) $(PKG_BUILD_DIR)/geoip.dat
 	mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/geosite.dat
-endif
-
-ifneq ($(XRAY_SED_ARGS),)
-	( \
-		$(SED) \
-			'$(XRAY_SED_ARGS)' \
-			$(PKG_BUILD_DIR)/main/distro/all/all.go ; \
-	)
 endif
 endef
 
@@ -285,7 +118,6 @@ define Build/Compile
 	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/main)
 	$(call GoPackage/Build/Compile)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/xray
-
 ifeq ($(CONFIG_XRAY_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/xray || true
 endif
@@ -293,12 +125,10 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/xray $(1)/usr/bin
 ifeq ($(CONFIG_XRAY_COMPATIBILITY_MODE),y)
-	$(LN) $(1)/usr/bin/xray $(1)/usr/bin/v2ray
+	$(LN) xray $(1)/usr/bin/v2ray
 endif
-
 ifneq ($(CONFIG_XRAY_EXCLUDE_ASSETS),y)
 	$(INSTALL_DIR) $(1)/usr/share/xray
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/{geoip,geosite}.dat $(1)/usr/share/xray
