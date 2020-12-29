@@ -13,8 +13,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
-PKG_MIRROR_HASH:=2e86f159e5a239e17872b6256bdfab8dd2300cf9375dcb0987ca0099b04773ee
-PKG_SOURCE_VERSION:=644a9b55651af382f524aba6ab5e954bb4f4bb35
+PKG_MIRROR_HASH:=c68dc9d554456c0ef9c368b58c8fad1e37a1889cca0a8bdb2242acda86c1251e
+PKG_SOURCE_VERSION:=ace7c1c89285bcc0b44e3ea7138b61f31f426c9f
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -79,7 +79,7 @@ define Build/Compile
   $(call GoPackage/Build/Compile) ; \
 )
 ifeq ($(CONFIG_ADGUARDHOME_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome || true
 endif
 endef
 

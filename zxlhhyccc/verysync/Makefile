@@ -64,7 +64,7 @@ define Build/Prepare
 endef
 
 define Build/Configure
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync || true
 endef
 
 define Build/Compile

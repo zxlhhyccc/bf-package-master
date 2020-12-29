@@ -6,11 +6,12 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/xxxserxxx/gotop.git
+PKG_MIRROR_HASH:=b4de9c3fdd144f57dfd713471c9ac7e99ff82b110e1dc0d7ecf1e3d0aaf5058d
 PKG_SOURCE_VERSION:=a8a238ac18725e377addae8a23bf08cf476b404c
 PKG_MAINTAINER:=[CTCGFW] Project OpenWrt
 
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE:=$(PKG_SOURCE_SUBDIR)-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 PKG_BUILD_DEPENDS:=golang/host
@@ -28,7 +29,7 @@ include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 define Package/$(PKG_NAME)
 	SECTION:=admin
 	CATEGORY:=Administration
-	TITLE:=A terminal based graphical activity monitor inspired by gtop and vtop
+	TITLE:=A terminal based graphical activity monitor
 	URL:=https://github.com/xxxserxxx/gotop
 	DEPENDS:=$(GO_ARCH_DEPENDS)
 endef

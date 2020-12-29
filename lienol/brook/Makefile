@@ -72,7 +72,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-       chmod +x $(PKG_BUILD_DIR)/$(PKG_NAME) && $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME)
+       chmod +x $(PKG_BUILD_DIR)/$(PKG_NAME) && $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME) || true
 endef
 
 define Package/$(PKG_NAME)/install

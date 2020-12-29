@@ -74,7 +74,7 @@ define Build/Compile
 	$(call GoPackage/Build/Configure)
 	$(call GoPackage/Build/Compile,$(GO_PKG_TAG))
 ifeq ($(CONFIG_TROJAN_GO_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(PKG_NAME)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(PKG_NAME) || true
 endif
 endef
 
