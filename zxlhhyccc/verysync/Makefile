@@ -35,7 +35,7 @@ PKG_NAME:=verysync
 ifneq ($(LATEST_VERSION),)
 	PKG_VERSION:=$(LATEST_VERSION)
 else
-	PKG_VERSION:=v2.3.0
+	PKG_VERSION:=v2.4.1
 endif
 
 PKG_RELEASE:=1
