@@ -6,7 +6,7 @@ config global
 	option dns_mode '0'
 	option monitor_enable '1'
 	option enable_switch '1'
-	option switch_time '600'
+	option switch_time '300'
 	option switch_timeout '5'
 	option switch_try_count '3'
 
