@@ -16,8 +16,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/xray-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=xray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=13ad3fddf6f7ff01fe9541b6c9f2dca6f7f87e4b
-PKG_MIRROR_HASH:=8ae9bc8ed6199c84e20158392a5dc8b9cb85c758fcd9f202a38b3574ad48e453
+PKG_SOURCE_VERSION:=a1eb346a871a04c80fc2bdb2363d686762754332
+PKG_MIRROR_HASH:=fbf34b9ef8816faa2cb8237a7e4d76627e335b04aee1762f868bd5d124355bb0
 
 PKG_LICENSE:=MPL
 PKG_LICENSE_FILES:=LICENSE
@@ -92,7 +92,7 @@ define Download/geoip.dat
   URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=e47b458b8c12440a22597956dfc8a3dcd6bd308a799446919f87acfc3e75549d
+  HASH:=20945f4a1e3f19a80f9e3edee5ea0fb11faf9a817beca0b006380b80c1a6e2fc
 endef
 
 GEOSITE_VER:=latest
@@ -102,7 +102,7 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=47aac1b1cc4d2f61932cd54f4ea209c86c020c4b66c954b3d8c4d9e92183fc22
+  HASH:=6a7fcec473c2f470c2d0f65e9e87b5e7ab0f1ab3b7f4a00b0a2c1dfb393c6b8d
 endef
 
 define Build/Prepare
