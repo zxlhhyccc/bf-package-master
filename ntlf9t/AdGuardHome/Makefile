@@ -13,14 +13,14 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
-PKG_MIRROR_HASH:=a34e2a6d907ec46992cf47214e3dac988e809f4593e844df1e84abc675ea52e0
-PKG_SOURCE_VERSION:=3706f559c19523c35dfd55ebd5a0832b5dcf03cf
+PKG_MIRROR_HASH:=3256f6e6a7b3ffd1b93a74542f1f078ad6241915853203fd4142ca49bce3711f
+PKG_SOURCE_VERSION:=aef4659e934105e6a6e0a7cd691b34ab7d720047
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
 PKG_MAINTAINER:=Dobroslaw Kijowski <dobo90@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host node/host
+PKG_BUILD_DEPENDS:=golang/host node/host packr/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
@@ -71,11 +71,11 @@ endif
 
 define Build/Compile
 ( \
-  cd $(PKG_BUILD_DIR) ; \
+  pushd $(PKG_BUILD_DIR) ; \
   npm --prefix client ci ; \
   npm --prefix client run build-prod ; \
-  GOOS=$$$$(go env GOOS) GOARCH=$$$$(go env GOARCH) GO111MODULE=off go get -v github.com/gobuffalo/packr/... ; \
-  "$$$$(go env GOPATH)/bin/packr" -v -z -i $(PKG_BUILD_DIR)/internal/home ; \
+  packr -z -v -i internal/home ; \
+  popd ; \
   $(call GoPackage/Build/Compile) ; \
 )
 ifeq ($(CONFIG_ADGUARDHOME_COMPRESS_UPX),y)
