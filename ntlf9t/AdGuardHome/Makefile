@@ -31,7 +31,7 @@ PKG_CONFIG_DEPENDS:= \
 GO_PKG:=github.com/AdguardTeam/AdGuardHome
 GO_PKG_EXCLUDES:=internal/dhcpd/standalone
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION) main.channel=release
+GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION) main.channel=release main.goarm=$(GO_ARM)
 
 ifneq ($(findstring $(ARCH),mips mipsel),)
 	ADG_CONF_NAME:=small_flash
