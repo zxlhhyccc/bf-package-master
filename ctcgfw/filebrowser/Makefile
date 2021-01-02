@@ -16,7 +16,7 @@ PKG_SOURCE_URL:=https://github.com/filebrowser/filebrowser
 PKG_MIRROR_HASH:=c6be299b57e31757140de30a438dbf60971f0905911c3f8194c348ba40a7d7b5
 
 PKG_LICENSE:=Apache-2.0
-PKG_LICENSE_FILES:=LICENSE.txt
+PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=CN_SZTL <cnsztl@project-openwrt.eu.org>
 
 PKG_BUILD_DEPENDS:=golang/host node/host
@@ -81,7 +81,7 @@ define Build/Compile
   $(call GoPackage/Build/Compile) ; \
 )
 ifeq ($(CONFIG_FILEBROWSER_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/filebrowser || true
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/filebrowser
 endif
 endef
 
