@@ -1,0 +1,17 @@
+Not overriding core package antfs; use -f to force
+Not overriding core package antfs-mount; use -f to force
+Not overriding core package libidn2; use -f to force
+Not overriding core package libpciaccess; use -f to force
+Not overriding core package librouteros; use -f to force
+Not overriding core package nft-qos; use -f to force
+Not overriding core package port-mirroring; use -f to force
+Not overriding core package proxychains-ng; use -f to force
+Not overriding core package spdlog; use -f to force
+Not overriding core package wsdd2; use -f to force
+Not overriding core package yq; use -f to force
+Installing all packages from feed luci.
+Not overriding core package csstidy; use -f to force
+Not overriding core package luci-app-dockerman; use -f to force
+Not overriding core package luci-app-nft-qos; use -f to force
+Not overriding core package luci-lib-docker; use -f to force
+
