@@ -58,6 +58,7 @@ function gen_config(user)
             local clients = {}
             for i = 1, #user.uuid do
                 clients[i] = {
+                    flow = (user.xtls and user.xtls == "1") and user.flow or nil,
                     password = user.uuid[i],
                     level = tonumber(user.level)
                 }
@@ -75,6 +76,33 @@ function gen_config(user)
                 }
             }
         }
+    end
+
+    if user.fallback and user.fallback == "1" then
+        local fallbacks = {}
+        for i = 1, #user.fallback_list do
+            local fallback = {}
+            local fallbackStr = user.fallback_list[i]
+            if fallbackStr then
+                local tmp = {}
+                string.gsub(fallbackStr, '[^' .. "," .. ']+', function(w)
+                    table.insert(tmp, w)
+                end)
+                local dest = tmp[1] or ""
+                local path = tmp[2] or "/"
+                local xver = tmp[3] and tonumber(tmp[3]) or 1
+                if dest:find("%.") then
+                else
+                    dest = tonumber(dest)
+                end
+                fallbacks[i] = {
+                    path = path,
+                    dest = dest,
+                    xver = xver
+                }
+            end
+        end
+        settings.fallbacks = fallbacks
     end
 
     routing = {
