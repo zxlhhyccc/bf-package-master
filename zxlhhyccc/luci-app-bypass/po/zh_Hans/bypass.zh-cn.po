@@ -97,12 +97,6 @@ msgstr "预加载IP"
 msgid "Preload Google and Telegram IP segments (GFW mode only)"
 msgstr "预加载谷歌与Telegram IP段(仅GFW模式生效)"
 
-msgid "Preload Domain"
-msgstr "预加载域名"
-
-msgid "Preload the domain name (GFW mode only,Solve the problem that the terminal fails to access the website in the list after Bypass restart or switch node)"
-msgstr "预加载域名(仅GFW模式生效，有效解决重启Bypass或者切换节点以后访问预加载名单内的网站失败)"
-
 msgid "All Ports"
 msgstr "所有端口（默认）"
 
@@ -412,16 +406,25 @@ msgstr "增强游戏模式客户端LAN IP"
 msgid "Domain List"
 msgstr "域名列表"
 
-msgid "Bypass Domain List"
+msgid "Direct Domain List"
 msgstr "不走代理的域名"
 
-msgid "Black Domain List"
+msgid "Proxy Domain List"
 msgstr "强制走代理的域名"
 
-msgid "Netflix Domain List"
-msgstr "Netflix 分流域名列表"
+msgid "These had been joined websites will not proxy."
+msgstr "加入的域名将不走代理。"
 
-msgid "Oversea domain"
+msgid "These had been joined websites will use proxy."
+msgstr "加入的域名将走代理。"
+
+msgid "Not valid domain name, please re-enter!"
+msgstr "不是有效域名，请重新输入！"
+
+msgid "Netflix Domain List"
+msgstr "Netflix分流域名"
+
+msgid "Oversea Domain List"
 msgstr "回国模式域名"
 
 msgid "Preload domain(GFW Only)"

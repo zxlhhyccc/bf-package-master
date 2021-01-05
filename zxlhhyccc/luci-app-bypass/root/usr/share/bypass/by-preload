@@ -36,23 +36,13 @@ if [ "$1" = gfw ];then
 		done
 		for i in $A;do ipset add blacklist $i 2>/dev/null;done
 	fi
+	
+	B=1
+	while (curl --retry 3 -m 5 216.239.38.120 >/dev/null 2>&1 && ! curl --retry 3 -m 5 https://google.com && true) >/dev/null 2>&1;do
+		echo "ipset lost,restart bypass..."
+		/etc/rc.d/bypass restart
+		[ $B -ge 10 ] && break || let B++
+		sleep 2
+	done
 
-	B=$(uci -q get bypass.@global[0].pre_domain) || B=1
-	if [ $B = 1 ];then
-		A=$(cat /etc/bypass/preload.list)
-		for i in $A;do
-			B=1
-			while ! nslookup $i >/dev/null 2>&1;do
-				[ $B -ge 20 ] && break || let B++
-				sleep 2
-			done
-		done
-		for i in $A;do
-			B=1
-			while ! curl --retry 3 -m 10 -o /dev/null -LsA "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36" $i;do
-				[ $B -ge 5 ] && break || let B++
-				sleep 2
-			done
-		done
-	fi
 fi

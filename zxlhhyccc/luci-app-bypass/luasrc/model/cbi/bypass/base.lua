@@ -68,11 +68,6 @@ translate("Preload Google and Telegram IP segments (GFW mode only)"))
 o:depends("run_mode","gfw")
 o.default=1
 
-o=s:option(Flag,"pre_domain",translate("Preload Domain"),
-translate("Preload the domain name (GFW mode only,Solve the problem that the terminal fails to access the website in the list after Bypass restart or switch node)"))
-o:depends("run_mode","gfw")
-o.default=1
-
 o=s:option(ListValue,"dports",translate("Proxy Ports"))
 o:value("1",translate("All Ports"))
 o:value("2",translate("Only Common Ports"))

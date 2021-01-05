@@ -141,7 +141,7 @@ s.addremove = false
 
 o = s:option(DummyValue, "ssr_url", "SS/SSR/V2RAY/TROJAN URL")
 o.rawhtml = true
-o.template = "bypass/ssrurl"
+o.template = "bypass/link"
 o.value = sid
 
 o = s:option(ListValue, "type", translate("Server Node Type"))

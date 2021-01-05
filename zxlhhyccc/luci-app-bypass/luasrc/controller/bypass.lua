@@ -5,7 +5,6 @@ local kcptun = require "luci.model.cbi.bypass.kcptun"
 local xray = require "luci.model.cbi.bypass.xray"
 local v2ray = require "luci.model.cbi.bypass.v2ray"
 local trojan_go = require "luci.model.cbi.bypass.trojan_go"
-local appname = "bypass"
 function index()
 	if not nixio.fs.access("/etc/config/bypass") then
 		return
@@ -16,9 +15,8 @@ function index()
 	entry({"admin","services","bypass","base"},cbi("bypass/base"),_("Base Setting"),1).leaf=true
 	entry({"admin","services","bypass","servers"},arcombine(cbi("bypass/servers",{autoapply=true}),cbi("bypass/client-config")),_("Severs Nodes"),2).leaf=true
 	entry({"admin","services","bypass","control"},cbi("bypass/control"),_("Access Control"),3).leaf=true
-	entry({"admin","services","bypass","domain"},form("bypass/domain"),_("Domain List"),4).leaf=true
-	entry({"admin","services","bypass","advanced"},cbi("bypass/advanced"),_("Advanced Settings"),5).leaf=true
-	entry({"admin", "services", "bypass", "app_update"}, cbi("bypass/app_update"), _("App Update"), 6).leaf = true
+	entry({"admin","services","bypass","advanced"},cbi("bypass/advanced"),_("Advanced Settings"),4).leaf=true
+	entry({"admin", "services", "bypass", "app_update"}, cbi("bypass/app_update"), _("App Update"), 5).leaf = true
 	if luci.sys.call("which ssr-server >/dev/null")==0 or luci.sys.call("which ss-server >/dev/null")==0 or luci.sys.call("which microsocks >/dev/null")==0 then
 	      entry({"admin","services","bypass","server"},arcombine(cbi("bypass/server"),cbi("bypass/server-config")),_("SSR Server"),6).leaf=true
 	end
@@ -53,7 +51,7 @@ end
 
 function act_status()
 	local e={}
-	e.running=luci.sys.call("ps -w | grep ssr-retcp | grep -v grep >/dev/null")==0
+	e.running=luci.sys.call("ps -w | grep by-retcp | grep -v grep >/dev/null")==0
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end
@@ -98,7 +96,7 @@ function refresh_data()
 	if set=="gfw_data" then
 		sret=luci.sys.call("curl -Lfso /tmp/gfw.b64 https://cdn.jsdelivr.net/gh/gfwlist/gfwlist/gfwlist.txt")
 		if sret==0 then
-			luci.sys.call("/usr/share/bypass/ssr-gfw")
+			luci.sys.call("/usr/share/bypass/by-gfw")
 			icount=luci.sys.exec("cat /tmp/gfwnew.txt | wc -l")
 			if tonumber(icount)>1000 then
 				oldcount=luci.sys.exec("cat /tmp/bypass/gfw.list | wc -l")
@@ -319,15 +317,14 @@ function check_ip()
 end
 
 function status()
-	-- local dns_mode = ucic:get(appname, "@global[0]", "dns_mode")
 	local e = {}
 	e.dns_mode_status = luci.sys.call("pidof smartdns >/dev/null") == 0
-	e.socks5_status = luci.sys.call("ps -w | grep ssr-socks5 | grep -v grep >/dev/null") == 0
-	e.tcp_node_status = luci.sys.call("ps -w | grep ssr-retcp | grep -v grep >/dev/null") == 0
-	e.udp_node_status = luci.sys.call("ps -w | grep ssr-reudp | grep -v grep >/dev/null") == 0
+	e.socks5_status = luci.sys.call("ps -w | grep by-socks5 | grep -v grep >/dev/null") == 0
+	e.tcp_node_status = luci.sys.call("ps -w | grep by-retcp | grep -v grep >/dev/null") == 0
+	e.udp_node_status = luci.sys.call("ps -w | grep by-reudp | grep -v grep >/dev/null") == 0
 	e.kcptun_tcp_node_status = luci.sys.call("pidof kcptun-client >/dev/null") == 0
-	e.nf_node_status = luci.sys.call("ps -w | grep ssr-nf | grep -v grep >/dev/null") == 0
-	e.server_status = luci.sys.call("ps -w | grep ssr-server | grep -v grep >/dev/null") == 0
+	e.nf_node_status = luci.sys.call("ps -w | grep by-nf | grep -v grep >/dev/null") == 0
+	e.server_status = luci.sys.call("ps -w | grep by-server | grep -v grep >/dev/null") == 0
 	e.chinadns_status = luci.sys.call("ps -w | grep chinadns-ng | grep -v grep >/dev/null") == 0
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)

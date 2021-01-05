@@ -51,7 +51,7 @@ if [ "$C" = gfw -o "$(uci -q get bypass.@global[0].gfw_mode)" = 1 ];then
 	else
 		curl -Lfso /tmp/gfw.b64 https://cdn.jsdelivr.net/gh/gfwlist/gfwlist/gfwlist.txt || curl -Lfso /tmp/gfw.b64 https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
 	fi
-	/usr/share/bypass/ssr-gfw
+	/usr/share/bypass/by-gfw
 	if ! cmp -s /tmp/gfwnew.txt /tmp/bypass/gfw.list;then
 		cp -f /tmp/gfwnew.txt /tmp/bypass/gfw.list
 		echo "Update GFW List!"

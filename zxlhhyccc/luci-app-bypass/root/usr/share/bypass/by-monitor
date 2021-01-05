@@ -32,7 +32,7 @@ while :;do
 	sleep 30
 #redir tcp
 	if [ $redir_tcp -gt 0 ];then
-		t=`ps -w | grep ssr-retcp | grep -v grep | wc -l`
+		t=`ps -w | grep by-retcp | grep -v grep | wc -l`
 		if [ $t -lt $redir_tcp ];then
 			echo "$(date "+%Y-%m-%d %H:%M:%S") Redir TCP Error. Restart!" >> /tmp/bypass.log
 			/etc/init.d/bypass restart
@@ -50,7 +50,7 @@ while :;do
 	fi
 #redir udp
 	if [ $redir_udp = 1 ];then
-		t=`ps -w | grep ssr-reudp | grep -v grep | wc -l`
+		t=`ps -w | grep by-reudp | grep -v grep | wc -l`
 		if [ $t = 0 ];then
 			echo "$(date "+%Y-%m-%d %H:%M:%S") Redir UDP Error. Restart!" >> /tmp/bypass.log
 			/etc/init.d/bypass restart
@@ -59,7 +59,7 @@ while :;do
 	fi
 #redir netflix
 	if [ $redir_nf = 1 ];then
-		t=`ps -w | grep ssr-nf | grep -v grep | wc -l`
+		t=`ps -w | grep by-nf | grep -v grep | wc -l`
 		if [ $t = 0 ];then
 			echo "$(date "+%Y-%m-%d %H:%M:%S") Redir Netflix Error. Restart!" >> /tmp/bypass.log
 			/etc/init.d/bypass restart
@@ -85,7 +85,7 @@ while :;do
 	fi
 #localsocks
 	if [ $socks5 = 1 ];then
-		t=`ps -w | grep ssr-socks | grep -v grep | wc -l`
+		t=`ps -w | grep by-socks | grep -v grep | wc -l`
 		if [ $t = 0 ];then
 			echo "$(date "+%Y-%m-%d %H:%M:%S") Global Socks Server Error. Restart!" >> /tmp/bypass.log
 			/etc/init.d/bypass restart
@@ -94,7 +94,7 @@ while :;do
 	fi
 #server
 	if [ $server_count -gt 0 ];then
-		t=`ps -w | grep ssr-server | grep -v grep | wc -l`
+		t=`ps -w | grep by-server | grep -v grep | wc -l`
 		if [ $t -lt $server_count ];then
 			echo "$(date "+%Y-%m-%d %H:%M:%S") SSR Server Error. Restart!" >> /tmp/bypass.log
 			/etc/init.d/bypass restart

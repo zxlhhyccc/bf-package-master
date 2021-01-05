@@ -90,7 +90,7 @@ gen_config_file() {
 	socks)
 		hostip=$socks5_ip; lport=$socks5_port; PROTO="socks"; fname="socks5";;
 	esac
-	[ $(uci_get_by_name $1 fast_open 0) = 1 ] && fast=true || fast=false; type=$(uci_get_by_name $1 type); config_file="/var/etc/$type-ssr-$fname.json"
+	[ $(uci_get_by_name $1 fast_open 0) = 1 ] && fast=true || fast=false; type=$(uci_get_by_name $1 type); config_file="/var/etc/$type-by-$fname.json"
 	case $type in
 	ss)
 		cat <<-EOF >$config_file
@@ -193,12 +193,12 @@ preload() {
 		X=ns
 		Y=$doh_l_t
 	fi
-	service_start $BIN_DIR/ssr-preload $run_mode $X $Y $Z
+	service_start $BIN_DIR/by-preload $run_mode $X $Y $Z
 }
 
 rules() {
 	[ -n "$GLOBAL_SERVER" ] || return 1
-	if ps -w | grep ssr-retcp | grep -v grep >/dev/null; then
+	if ps -w | grep by-retcp | grep -v grep >/dev/null; then
 		echo "Bypass has Started."
 		return 1
 	fi
@@ -310,11 +310,11 @@ start_rules() {
 	fi
 	dports=$(uci_get_by_type global dports 1)
 	if [ $dports = 2 ]; then
-		proxyport="-m multiport --dports 22,53,587,465,995,993,143,80,443"
+		proxyport="-m multiport --dports 22,53,587,465,995,993,143,80,443,853,9418"
 	fi
 	r=1
 	while
-		! $BIN_DIR/ssr-rules -s "$server" -l "$local_port" -a "$ac_ips" -b "$(uci_get_by_type access_control wan_bp_ips)" -w "$(uci_get_by_type access_control wan_fw_ips)" \
+		! $BIN_DIR/by-rules -s "$server" -l "$local_port" -a "$ac_ips" -b "$(uci_get_by_type access_control wan_bp_ips)" -w "$(uci_get_by_type access_control wan_fw_ips)" \
 		-p "$(uci_get_by_type access_control lan_fp_ips)" -G "$(uci_get_by_type access_control lan_gm_ips)" -D "$proxyport" $mode $UDP $NF
 	do
 		[ $r -ge 20 ] && echo "$(eval $DATE) SSR-rules : Start iptables rules failed!" >>$LOG && return 1
@@ -396,18 +396,18 @@ start_retcp() {
 		;;
 	socks5)
 		redir_tcp=$threads
-		$BIN_DIR/genred2config /var/etc/redsocks-ssr-retcp.json socks5 tcp $local_port $server $(uci_get_by_name $GLOBAL_SERVER server_port) \
+		$BIN_DIR/genred2config /var/etc/redsocks-by-retcp.json socks5 tcp $local_port $server $(uci_get_by_name $GLOBAL_SERVER server_port) \
 		$(uci_get_by_name $GLOBAL_SERVER auth_enable 0) $(uci_get_by_name $GLOBAL_SERVER username) $(uci_get_by_name $GLOBAL_SERVER password)
 		for i in $(seq 1 $threads); do
-			$cmd -c /var/etc/redsocks-ssr-retcp.json >/dev/null 2>&1
+			$cmd -c /var/etc/redsocks-by-retcp.json >/dev/null 2>&1
 		done
 		echo "$(eval $DATE) Main Node: Socks5 $threads Threads Started!" >>$LOG
 		;;
 	tun)
 		redir_tcp=$threads
-		$BIN_DIR/genred2config /var/etc/redsocks-ssr-retcp.json vpn $(uci_get_by_name $GLOBAL_SERVER iface br-lan) $local_port
+		$BIN_DIR/genred2config /var/etc/redsocks-by-retcp.json vpn $(uci_get_by_name $GLOBAL_SERVER iface br-lan) $local_port
 		for i in $(seq 1 $threads); do
-			$cmd -c /var/etc/redsocks-ssr-retcp.json >/dev/null 2>&1
+			$cmd -c /var/etc/redsocks-by-retcp.json >/dev/null 2>&1
 		done
 		echo "$(eval $DATE) Main Node: Network Tunnel $threads Threads Started!" >>$LOG
 		;;
@@ -453,9 +453,9 @@ start_reudp() {
 		echo "$(eval $DATE) $($cmd --version | head -1) UDP Relay not supported!" >>$LOG
 		;;
 	socks5)
-		$BIN_DIR/genred2config /var/etc/redsocks-ssr-reudp.json socks5 udp $udp_local_port $udp_server \
+		$BIN_DIR/genred2config /var/etc/redsocks-by-reudp.json socks5 udp $udp_local_port $udp_server \
 		$(uci_get_by_name $UDP_RELAY_SERVER server_port) $(uci_get_by_name $UDP_RELAY_SERVER auth_enable 0) $(uci_get_by_name $UDP_RELAY_SERVER username) $(uci_get_by_name $UDP_RELAY_SERVER password)
-		$cmd --config /var/etc/redsocks-ssr-reudp.json >/dev/null 2>&1
+		$cmd --config /var/etc/redsocks-by-reudp.json >/dev/null 2>&1
 		echo "$(eval $DATE) UDP Relay: Socks5 Started!" >>$LOG
 		;;
 	tun)
@@ -504,14 +504,14 @@ start_renf() {
 		echo "$(eval $DATE) NF Shunt   : $($cmd --version | head -1) Started!" >>$LOG
 		;;
 	socks5)
-		$BIN_DIR/genred2config /var/etc/redsocks-ssr-nf.json socks5 tcp $nf_local_port $nf_ip $(uci_get_by_name $NF_SERVER server_port) \
+		$BIN_DIR/genred2config /var/etc/redsocks-by-nf.json socks5 tcp $nf_local_port $nf_ip $(uci_get_by_name $NF_SERVER server_port) \
 		$(uci_get_by_name $NF_SERVER auth_enable 0) $(uci_get_by_name $NF_SERVER username) $(uci_get_by_name $NF_SERVER password)
-		$cmd -c /var/etc/redsocks-ssr-nf.json >/dev/null 2>&1
+		$cmd -c /var/etc/redsocks-by-nf.json >/dev/null 2>&1
 		echo "$(eval $DATE) NF Shunt   : Socks5 Started!" >>$LOG
 		;;
 	tun)
-		$BIN_DIR/genred2config /var/etc/redsocks-ssr-nf.json vpn $(uci_get_by_name $NF_SERVER iface "br-lan") $nf_local_port
-		$cmd -c /var/etc/redsocks-ssr-nf.json >/dev/null 2>&1
+		$BIN_DIR/genred2config /var/etc/redsocks-by-nf.json vpn $(uci_get_by_name $NF_SERVER iface "br-lan") $nf_local_port
+		$cmd -c /var/etc/redsocks-by-nf.json >/dev/null 2>&1
 		echo "$(eval $DATE) NF Shunt   : Network Tunnel REDIRECT Started!" >>$LOG
 		;;
 	esac
@@ -707,7 +707,7 @@ gen_dns() {
 	gfw | oversea) port=5336 ;;
 	*) port=5337 ;;
 	esac
-	cat >/tmp/dnsmasq.d/dnsmasq-ssr.conf <<-EOF
+	cat >/tmp/dnsmasq.d/dnsmasq-by.conf <<-EOF
 		no-resolv
 		server=127.0.0.1#$port
 	EOF
@@ -761,7 +761,7 @@ gen_dns() {
 	fi
 	[ -s $CON_T ] && echo "conf-file $CON_T" >>$DNS_T
 	rm -f $DNS_DIR/tmp
-	[ $(find $DNS_DIR -name \* -exec cat {} \; 2>/dev/null | wc -l) = 0 ] && rm -rf $DNS_DIR || echo conf-dir=$DNS_DIR >>/tmp/dnsmasq.d/dnsmasq-ssr.conf
+	[ $(find $DNS_DIR -name \* -exec cat {} \; 2>/dev/null | wc -l) = 0 ] && rm -rf $DNS_DIR || echo conf-dir=$DNS_DIR >>/tmp/dnsmasq.d/dnsmasq-by.conf
 	[ $run_mode = router ] && chinadns_flag=1
 	if [ $STATUS = Y ]; then
 		killall -q -9 smartdns
@@ -773,7 +773,7 @@ gen_dns() {
 
 start_switch() {
 	if [ $(uci_get_by_type global enable_switch 0) = 1 -a -z "$switch_server" ]; then
-		service_start $BIN_DIR/ssr-switch start
+		service_start $BIN_DIR/by-switch start
 		switch_enable=1
 	fi
 }
@@ -903,7 +903,7 @@ run_server() {
 	[ ! -x $cmd ] && echo "$(eval $DATE) SSR server: Can't find $cmd program, start failed!" >>/tmp/bypass.log && return 1
 	port=$(uci_get_by_name $1 server_port)
 	pass=$(uci_get_by_name $1 password)
-	name=ssr-server_$server_count
+	name=by-server_$server_count
 	case $type in
 	ss | ssr)
 		timeout=$(uci_get_by_name $1 timeout 60)
@@ -957,7 +957,7 @@ start_server() {
 start_monitor() {
 	if [ $(uci_get_by_type global monitor_enable 0) = 1 ]; then
 		let total=redir_tcp+kcp_enable+redir_udp+redir_nf+smartdns_flag+chinadns_flag+local_enable+server_count+switch_enable
-		[ $total -gt 0 ] && service_start $BIN_DIR/ssr-monitor $redir_tcp $kcp_enable $redir_udp $redir_nf $smartdns_flag $chinadns_flag $local_enable $server_count
+		[ $total -gt 0 ] && service_start $BIN_DIR/by-monitor $redir_tcp $kcp_enable $redir_udp $redir_nf $smartdns_flag $chinadns_flag $local_enable $server_count
 	fi
 }
 
@@ -983,22 +983,22 @@ start() {
 }
 
 stop() {
-	kill -9 $(ps -w | grep ssr-rules | grep -v grep | awk '{print$1}') 2>/dev/null
+	kill -9 $(ps -w | grep by-rules | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep gfw.b64 | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep $BIN_DIR/checknetwork | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep $BIN_DIR/update | grep -v grep | awk '{print$1}') 2>/dev/null
-	$BIN_DIR/ssr-rules -f
+	$BIN_DIR/by-rules -f
 	srulecount=$(iptables -nL | grep SSR-SERVER-RULE | wc -l)
 	if [ $srulecount -gt 0 ]; then
 		iptables -F SSR-SERVER-RULE
 		iptables -t filter -D INPUT -j SSR-SERVER-RULE
 		iptables -X SSR-SERVER-RULE 2>/dev/null
 	fi
-	[ -z "$switch_server" ] && kill -9 $(ps -w | grep ssr-switch | grep -v grep | awk '{print$1}') 2>/dev/null
-	kill -9 $(ps -w | grep ssr-monitor | grep -v grep | awk '{print$1}') 2>/dev/null
-	kill -9 $(ps -w | grep ssr-preload | grep -v grep | awk '{print$1}') 2>/dev/null
+	[ -z "$switch_server" ] && kill -9 $(ps -w | grep by-switch | grep -v grep | awk '{print$1}') 2>/dev/null
+	kill -9 $(ps -w | grep by-monitor | grep -v grep | awk '{print$1}') 2>/dev/null
+	kill -9 $(ps -w | grep by-preload | grep -v grep | awk '{print$1}') 2>/dev/null
 	killall -q -9 ss-redir ssr-redir v2ray xray trojan-plus trojan-go ipt2socks naive redsocks2 kcptun-client obfs-local obfs-server v2ray-plugin ss-local ss-server ssr-local ssr-server microsocks smartdns chinadns-ng
-	rm -rf $DNS_DIR /var/etc/*ssr*.json /tmp/dnsmasq.d/dnsmasq-ssr.conf $CON_T /var/lock/bypass.lock
+	rm -rf $DNS_DIR /var/etc/*by*.json /tmp/dnsmasq.d/dnsmasq-by.conf $CON_T /var/lock/bypass.lock
 	[ $run_mode = gfw -o $gfw_mode = 1 ] || rm -f /tmp/bypass/gfw.list
 	[ $run_mode = router ] || rm -f /tmp/bypass/china_v6.txt
 	if [ -z "$GLOBAL_SERVER" ]; then

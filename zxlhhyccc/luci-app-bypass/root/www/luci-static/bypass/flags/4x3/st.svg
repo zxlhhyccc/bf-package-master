@@ -1,16 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="flag-icon-css-st" viewBox="0 0 640 480">
-  <path fill="#12ad2b" d="M0 0h640v480H0z"/>
-  <path fill="#ffce00" d="M0 137.1h640V343H0z"/>
-  <path fill="#d21034" d="M0 0v480l240-240"/>
-  <g id="c" transform="translate(351.6 240) scale(.34286)">
-    <g id="b">
-      <path id="a" d="M0-200V0h100" transform="rotate(18 0 -200)"/>
-      <use width="100%" height="100%" transform="scale(-1 1)" xlink:href="#a"/>
-    </g>
-    <use width="100%" height="100%" transform="rotate(72)" xlink:href="#b"/>
-    <use width="100%" height="100%" transform="rotate(144)" xlink:href="#b"/>
-    <use width="100%" height="100%" transform="rotate(-144)" xlink:href="#b"/>
-    <use width="100%" height="100%" transform="rotate(-72)" xlink:href="#b"/>
-  </g>
-  <use width="100%" height="100%" x="700" transform="translate(-523.2)" xlink:href="#c"/>
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<path style="fill:#73AF00;" d="M473.654,423.724H38.345C17.167,423.724,0,406.557,0,385.379V126.621  c0-21.177,17.167-38.345,38.345-38.345h435.309c21.177,0,38.345,17.167,38.345,38.345v258.758  C511.999,406.557,494.831,423.724,473.654,423.724z"/>
+<rect y="167.721" style="fill:#FFE15A;" width="512" height="176.55"/>
+<path style="fill:#FF4B55;" d="M11.527,99.226C4.417,106.187,0,115.886,0,126.621v258.758c0,10.735,4.417,20.435,11.527,27.395  L176.552,256L11.527,99.226z"/>
+<g>
+	<path style="fill:#464655;" d="M278.298,215.768l9.047,27.126l28.594,0.222c3.702,0.029,5.237,4.753,2.259,6.953l-23.002,16.986   l8.626,27.263c1.117,3.53-2.902,6.45-5.914,4.297l-23.263-16.628l-23.263,16.628c-3.011,2.153-7.031-0.767-5.914-4.297   l8.626-27.263l-23.002-16.986c-2.978-2.199-1.443-6.924,2.259-6.953l28.594-0.222l9.047-27.126   C272.159,212.255,277.127,212.255,278.298,215.768z"/>
+	<path style="fill:#464655;" d="M410.299,215.768l9.047,27.126l28.594,0.222c3.702,0.029,5.237,4.753,2.259,6.953l-23.002,16.986   l8.626,27.263c1.117,3.53-2.902,6.45-5.914,4.297l-23.263-16.628l-23.263,16.628c-3.011,2.153-7.031-0.767-5.914-4.297   l8.626-27.263l-23.002-16.986c-2.978-2.199-1.443-6.924,2.259-6.953l28.594-0.222l9.047-27.126   C404.159,212.255,409.127,212.255,410.299,215.768z"/>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
 </svg>

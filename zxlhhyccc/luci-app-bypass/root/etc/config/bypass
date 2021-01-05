@@ -4,6 +4,7 @@ config global
 	option threads '0'
 	option run_mode 'router'
 	option dns_mode '0'
+	option dns 'google'
 	option monitor_enable '1'
 	option enable_switch '1'
 	option switch_time '300'
@@ -19,7 +20,7 @@ config server_global
 
 config server_subscribe
 	option proxy '0'
-	option auto_update_time '2'
+	option auto_update_time '5'
 	option auto_update '1'
 	option filter_words '过期时间/剩余流量/QQ群/官网/防失联地址/回国'
 

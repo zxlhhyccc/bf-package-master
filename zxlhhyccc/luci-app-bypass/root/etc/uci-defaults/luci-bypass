@@ -16,5 +16,4 @@ sed -i 's/vmess_id/uuid/g' /etc/config/bypass 2>/dev/null
 chmod 755 /etc/init.d/bypass /usr/share/bypass/* >/dev/null 2>&1
 /etc/init.d/bypass enable >/dev/null 2>&1
 rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*
-killall -HUP rpcd 2>/dev/null
 exit 0

@@ -1,4 +1,7 @@
 #!/bin/sh
+
+[ "$(ps -w | grep by-switch | grep -v grep)" ] && exit 1
+
 NAME=bypass
 D="date +'%Y-%m-%d %H:%M:%S'"
 L=/tmp/bypass.log
@@ -99,7 +102,7 @@ EOF
 
 curl_check(){
 	if [ $(uci_get_by_name $1 kcp_enable 0) = 1 ];then
-		echo "`eval $D` Ssr-Switch : Skip KCPTUN Node!" >> $L;return 1
+		echo "`eval $D` By-Switch : Skip KCPTUN Node!" >> $L;return 1
 	fi
 	type=$(uci_get_by_name $1 type)
 	if [ $type = tun ];then
@@ -108,12 +111,12 @@ curl_check(){
 		cmd=$(f_bin $type)
 		if [ ! -x $cmd ];then
 			[ $type = ss -o $type = ssr ] && type=$type-local
-			echo "`eval $D` Ssr-Switch : Can't find $(echo $type) program, Skip this Node($($UCI$1.alias || uci_get_by_name $1 server))." >> $L
+			echo "`eval $D` By-Switch : Can't find $(echo $type) program, Skip this Node($($UCI$1.alias || uci_get_by_name $1 server))." >> $L
 			return 1
 		fi
 	fi
 	gen_port
-	J=/var/etc/ssr-socks5-check.json
+	J=/var/etc/by-socks5-check.json
 	gen_config_file $1
 	IP=127.0.0.1
 	param=
@@ -127,7 +130,7 @@ curl_check(){
 		trojan|trojan-go)
 			/usr/share/bypass/gentrojanconfig $1 client $lport $ip > $J
 			sed -i 's/\\//g' $J
-			$cmd -c $J >/dev/null 2>&1 &;;
+			$cmd --config $J >/dev/null 2>&1 &;;
 		naiveproxy)
 			$cmd $J 2>&1 &;;
 		socks5)IP=$ip
@@ -147,7 +150,7 @@ curl_check(){
 	done
 	curl -x socks5h://$IP:$lport $param -so /dev/null --connect-timeout $time_b https://www.google.com;i=$?
 	kill -9 $(ps -w | grep $J | grep -v grep | awk '{print$1}') 2>/dev/null
-	[ $i = 0 ] || echo "`eval $D` Ssr-Switch : Server : $($UCI$1.alias || uci_get_by_name $1 server) cURL check error, Try to switch another server." >> $L
+	[ $i = 0 ] || echo "`eval $D` By-Switch : Server : $($UCI$1.alias || uci_get_by_name $1 server) cURL check error, Try to switch another server." >> $L
 	return $i
 }
 
@@ -189,7 +192,7 @@ select_proxy(){
 		port=$(uci_get_by_name $d server_port)
 		ipset add ss_spec_wan_ac $ip 2>/dev/null
 		x=$?
-		/usr/share/bypass/ssr-check $ip $port $time_b && curl_check $d
+		/usr/share/bypass/by-check $ip $port $time_b && curl_check $d
 		y=$?
 		[ $x = 0 ] && ipset del ss_spec_wan_ac $ip 2>/dev/null
 		if [ $y = 0 ];then
@@ -214,34 +217,34 @@ time_b=$(uci_get_by_type global switch_timeout 5)
 UCI="uci -q get $NAME."
 
 while :;do
-	sleep $time_a
 	if [ $SERVER_A != $SERVER_B ];then
-		echo "`eval $D` Ssr-Switch : Current server : $($UCI$SERVER_B.alias || uci_get_by_name $SERVER_B server) is not main server : $($UCI$SERVER_A.alias || uci_get_by_name $SERVER_A server).Try to switch back." >> $L
+		echo "`eval $D` By-Switch : Current server : $($UCI$SERVER_B.alias || uci_get_by_name $SERVER_B server) is not main server : $($UCI$SERVER_A.alias || uci_get_by_name $SERVER_A server).Try to switch back." >> $L
 		if test_proxy $SERVER_A;then
-			echo "`eval $D` Ssr-Switch : Main server is available.Switch to main server." >> $L
+			echo "`eval $D` By-Switch : Main server is available.Switch to main server." >> $L
 			SERVER_B=$SERVER_A
 			switch_proxy
 			continue
 		else
-			echo "`eval $D` Ssr-Switch : Main server is not available.Continue using current server." >> $L
+			echo "`eval $D` By-Switch : Main server is not available.Continue using current server." >> $L
 		fi
 	fi
 	check_proxy
 	a=$?
 	if [ $a = 0 ];then
-		echo "`eval $D` Ssr-Switch : Bypass No Problem." >> $L
+		echo "`eval $D` By-Switch : Bypass No Problem." >> $L
 	elif [ $a = 1 ];then
-		echo "`eval $D` Ssr-Switch : Current server : $($UCI$SERVER_B.alias || uci_get_by_name $SERVER_B server) error.Try to switch another server." >> $L
+		echo "`eval $D` By-Switch : Current server : $($UCI$SERVER_B.alias || uci_get_by_name $SERVER_B server) error.Try to switch another server." >> $L
 		select_proxy
 		if [ $SERVER_C != 0 ];then
-			echo "`eval $D` Ssr-Switch : Another server : $($UCI$SERVER_C.alias || uci_get_by_name $SERVER_C server) is available.Now switching server." >> $L
+			echo "`eval $D` By-Switch : Another server : $($UCI$SERVER_C.alias || uci_get_by_name $SERVER_C server) is available.Now switching server." >> $L
 			SERVER_B=$SERVER_C
 			switch_proxy
 		else
-			echo "`eval $D` Ssr-Switch : No server available.Try restart current server." >> $L
+			echo "`eval $D` By-Switch : No server available.Try restart current server." >> $L
 			switch_proxy
 		fi
 	else
-		echo "`eval $D` Ssr-Switch : Network Problem.Do nothing." >> $L
+		echo "`eval $D` By-Switch : Network Problem.Do nothing." >> $L
 	fi
+	sleep $time_a
 done
