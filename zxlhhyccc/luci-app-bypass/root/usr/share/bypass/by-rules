@@ -30,7 +30,7 @@ flush_r(){
 	ipset -X netflix 2>/dev/null
 	ipset -X china_v4 2>/dev/null
 	ipset -X china_v6 2>/dev/null
-	ipset -X ssr_plus_all 2>/dev/null
+	ipset -X bypass_all 2>/dev/null
 	echo '#!/bin/sh' > $FWI
 }
 
@@ -53,7 +53,7 @@ ipset_r(){
 	fi
 	[ $A = 1 -o $C = 1 ] && /usr/share/bypass/chinaipset
 	[ $MODE = router ] && /usr/share/bypass/chinaipset v6
-	cat > /tmp/ssr_local.ipset  <<EOF
+	cat > /tmp/by_local.ipset  <<EOF
 0.0.0.0/8
 10.0.0.0/8
 100.64.0.0/10
@@ -70,11 +70,11 @@ ipset_r(){
 224.0.0.0/4
 240.0.0.0/4
 EOF
-	sed -i 's/^/add ss_spec_wan_ac /' /tmp/ssr_local.ipset
-	sed -i '1i\create ss_spec_wan_ac hash:net' /tmp/ssr_local.ipset
+	sed -i 's/^/add ss_spec_wan_ac /' /tmp/by_local.ipset
+	sed -i '1i\create ss_spec_wan_ac hash:net' /tmp/by_local.ipset
 	ipset -F ss_spec_wan_ac 2>/dev/null
-	ipset -R < /tmp/ssr_local.ipset 2>/dev/null
-	rm -f /tmp/ssr_local.ipset
+	ipset -R < /tmp/by_local.ipset 2>/dev/null
+	rm -f /tmp/by_local.ipset
 	for ip in $WAN_BP_IP;do ipset -! add ss_spec_wan_ac $ip;done
 	$IPT -N SS_SPEC_WAN_AC
 	$IPT -A SS_SPEC_WAN_AC -d $server -j RETURN
@@ -128,11 +128,11 @@ tp_rule(){
 		all)$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -j TPROXY --on-port $LOCAL_PORT --tproxy-mark 0x1/0x1;;
 	esac
 
-	ipset -N ssr_plus_all hash:net 2>/dev/null
+	ipset -N bypass_all hash:net 2>/dev/null
 	for i in $(ip -4 add show | grep -v $(uci -P /tmp/state get network.wan.ifname) | grep inet | grep -v 127.0.0.1 | awk '{print$2}');do
-		ipset -! add ssr_plus_all $i
+		ipset -! add bypass_all $i
 	done
-	$ipt -I PREROUTING 1 -p udp $MATCH_SET -m set --match-set ssr_plus_all src -m comment --comment "$TAG" -j SS_SPEC_TPROXY
+	$ipt -I PREROUTING 1 -p udp $MATCH_SET -m set --match-set bypass_all src -m comment --comment "$TAG" -j SS_SPEC_TPROXY
 }
 
 gen_include(){

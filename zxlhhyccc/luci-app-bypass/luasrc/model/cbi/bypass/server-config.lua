@@ -1,5 +1,5 @@
 local m,s,o
-local ssr="bypass"
+local bypass="bypass"
 local sid=arg[1]
 local A=luci.sys.call("which obfs-server >/dev/null")
 local B=luci.sys.call("which v2ray-plugin >/dev/null")
@@ -61,9 +61,9 @@ local obfs={
 "tls1.2_ticket_auth",
 }
 
-m=Map(ssr,translate("Edit Server"))
+m=Map(bypass,translate("Edit Server"))
 m.redirect=luci.dispatcher.build_url("admin/services/bypass/server")
-if m.uci:get(ssr,sid)~="server_config" then
+if m.uci:get(bypass,sid)~="server_config" then
 	luci.http.redirect(m.redirect)
 	return
 end

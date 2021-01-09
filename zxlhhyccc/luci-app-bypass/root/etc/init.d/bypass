@@ -12,7 +12,7 @@ CON_T=$SDNS/rules.conf
 PID=/var/run/smartdns.pid
 LOG=/tmp/bypass.log
 BIN_DIR=/usr/share/bypass
-DNS_DIR=/tmp/dnsmasq.ssr
+DNS_DIR=/tmp/dnsmasq.by
 CRON="grep -q $BIN_DIR $CRON_FILE && sed -i '/\/share\/bypass/d' $CRON_FILE"
 DATE="date +'%Y-%m-%d %H:%M:%S'"
 redir_tcp=0
@@ -204,24 +204,24 @@ rules() {
 	fi
 	if ! cat $LOG 2>/dev/null | sed -n '$p' | grep -q 'Check network status...' && ! cat $LOG 2>/dev/null | sed -n '$p' | grep -q 'Download IP/GFW files...'; then
 		[ -s $LOG ] && echo '------------------------------------------------------------------------------------------------------------------------------------------------------------' >>$LOG
-		echo "$(eval $DATE) SSR-rules : Check network status..." >>$LOG
+		echo "$(eval $DATE) : Check network status..." >>$LOG
 	fi
 	if ! curl -so /dev/null -m 3 www.baidu.com; then
-		echo "$(eval $DATE) SSR-rules : Wait for network to connect..." >>$LOG
+		echo "$(eval $DATE) : Wait for network to connect..." >>$LOG
 		firstdown 1
 		exit 1
 	fi
 	cat $LOG 2>/dev/null | sed -n '$p' | grep -q 'Download IP/GFW files...' || (
-		echo "$(eval $DATE) SSR-rules : Check network status successful!" >>$LOG
-		echo "$(eval $DATE) SSR-rules : Check IP/GFW files..." >>$LOG
+		echo "$(eval $DATE) : Check network status successful!" >>$LOG
+		echo "$(eval $DATE) : Check IP/GFW files..." >>$LOG
 	)
 	mkdir -p /var/run /var/etc
 	if [ ! -s /tmp/bypass/china.txt ] || [ $run_mode = router -a ! -s /tmp/bypass/china_v6.txt ] || ([ $run_mode = gfw -o $gfw_mode = 1 ] && [ ! -s /tmp/bypass/gfw.list ]); then
-		echo "$(eval $DATE) SSR-rules : Download IP/GFW files..." >>$LOG
+		echo "$(eval $DATE) : Download IP/GFW files..." >>$LOG
 		firstdown 2
 		exit 1
 	fi
-	echo "$(eval $DATE) SSR-rules : Check IP/GFW files successful!" >>$LOG
+	echo "$(eval $DATE) : Check IP/GFW files successful!" >>$LOG
 	kcp_enable=$(uci_get_by_name $GLOBAL_SERVER kcp_enable 0)
 	[ $kcp_enable = 1 ] && kcp_server=$server
 	UDP_RELAY_SERVER=$(uci_get_by_type global udp_relay_server)
@@ -294,7 +294,7 @@ start_rules() {
 				done
 			fi
 			if ! A=$(nslookup $nf_ip 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-				echo "$(eval $DATE) NF Shunt   : Unable to get server address.Check domain name!" >>$LOG
+				echo "$(eval $DATE) NF Shunt : Unable to get server address.Check domain name!" >>$LOG
 				return 1
 			fi
 			nf_ip=$(echo "$A" | sed -n 1p)
@@ -317,11 +317,11 @@ start_rules() {
 		! $BIN_DIR/by-rules -s "$server" -l "$local_port" -a "$ac_ips" -b "$(uci_get_by_type access_control wan_bp_ips)" -w "$(uci_get_by_type access_control wan_fw_ips)" \
 		-p "$(uci_get_by_type access_control lan_fp_ips)" -G "$(uci_get_by_type access_control lan_gm_ips)" -D "$proxyport" $mode $UDP $NF
 	do
-		[ $r -ge 20 ] && echo "$(eval $DATE) SSR-rules : Start iptables rules failed!" >>$LOG && return 1
+		[ $r -ge 20 ] && echo "$(eval $DATE) : Start iptables rules failed!" >>$LOG && return 1
 		let r++
 		sleep 1
 	done
-	echo "$(eval $DATE) SSR-rules : Start iptables rules successful!" >>$LOG
+	echo "$(eval $DATE) : Start iptables rules successful!" >>$LOG
 }
 
 start_retcp() {
@@ -470,7 +470,7 @@ start_renf() {
 	type=$(uci_get_by_name $NF_SERVER type)
 	cmd=$(f_bin $type)
 	if [ ! -x $cmd ]; then
-		echo "$(eval $DATE) NF Shunt   : Can't find $(echo $type | tr a-z A-Z) program, start failed!" >>$LOG
+		echo "$(eval $DATE) NF Shunt : Can't find $(echo $type | tr a-z A-Z) program, start failed!" >>$LOG
 		return 1
 	fi
 	redir_nf=1
@@ -479,12 +479,12 @@ start_renf() {
 		gen_config_file $NF_SERVER $rtype
 		$cmd -c $config_file >/dev/null 2>&1 &
 		[ $type = ss ] && name=Shadowsocks || name=ShadowsocksR
-		echo "$(eval $DATE) NF Shunt   : $name Started!" >>$LOG
+		echo "$(eval $DATE) NF Shunt : $name Started!" >>$LOG
 		;;
 	vmess | vless)
 		gen_config_file $NF_SERVER $rtype 0 $nf_ip
 		$cmd -c $config_file >/dev/null 2>&1 &
-		echo "$(eval $DATE) NF Shunt   : $($cmd -version | head -1 | awk '{print$1,$2}') Started!" >>$LOG
+		echo "$(eval $DATE) NF Shunt : $($cmd -version | head -1 | awk '{print$1,$2}') Started!" >>$LOG
 		;;
 	trojan | trojan-go)
 		gen_config_file $NF_SERVER $rtype "" $nf_ip
@@ -501,18 +501,18 @@ start_renf() {
 	naiveproxy)
 		gen_config_file $NF_SERVER $rtype
 		$cmd $config_file >/dev/null 2>&1 &
-		echo "$(eval $DATE) NF Shunt   : $($cmd --version | head -1) Started!" >>$LOG
+		echo "$(eval $DATE) NF Shunt : $($cmd --version | head -1) Started!" >>$LOG
 		;;
 	socks5)
 		$BIN_DIR/genred2config /var/etc/redsocks-by-nf.json socks5 tcp $nf_local_port $nf_ip $(uci_get_by_name $NF_SERVER server_port) \
 		$(uci_get_by_name $NF_SERVER auth_enable 0) $(uci_get_by_name $NF_SERVER username) $(uci_get_by_name $NF_SERVER password)
 		$cmd -c /var/etc/redsocks-by-nf.json >/dev/null 2>&1
-		echo "$(eval $DATE) NF Shunt   : Socks5 Started!" >>$LOG
+		echo "$(eval $DATE) NF Shunt : Socks5 Started!" >>$LOG
 		;;
 	tun)
 		$BIN_DIR/genred2config /var/etc/redsocks-by-nf.json vpn $(uci_get_by_name $NF_SERVER iface "br-lan") $nf_local_port
 		$cmd -c /var/etc/redsocks-by-nf.json >/dev/null 2>&1
-		echo "$(eval $DATE) NF Shunt   : Network Tunnel REDIRECT Started!" >>$LOG
+		echo "$(eval $DATE) NF Shunt : Network Tunnel REDIRECT Started!" >>$LOG
 		;;
 	esac
 }
@@ -624,7 +624,7 @@ gen_dns() {
 			dns_c=1;;
 		1)
 			doh_l="https://doh.pub/dns-query"
-			dns_l="119.29.29.29 182.254.116.116"
+			dns_l="119.29.29.29 119.28.28.28"
 			dns_c=1;;
 		*)
 			doh_l=$dns_l
@@ -656,7 +656,7 @@ gen_dns() {
 	cat >$DNS_T <<-EOF
 		force-AAAA-SOA yes
 		speed-check-mode none
-		cache-persist no
+		prefetch-domain yes
 		cache-size 0
 		log-level fatal
 		log-file $LOG
@@ -897,7 +897,7 @@ gen_service_file() {
 run_server() {
 	[ $(uci_get_by_name $1 enable 0) = 0 ] && return 1
 	let server_count=server_count+1
-	[ $server_count = 1 ] && iptables-save -t filter | grep SSR-SERVER-RULE >/dev/null || iptables -N SSR-SERVER-RULE && iptables -t filter -I INPUT -j SSR-SERVER-RULE
+	[ $server_count = 1 ] && iptables-save -t filter | grep BY-SERVER-RULE >/dev/null || iptables -N BY-SERVER-RULE && iptables -t filter -I INPUT -j BY-SERVER-RULE
 	type=$(uci_get_by_name $1 type ssr)
 	[ $type = ss -o $type = ssr ] && cmd=$(f_bin $type-server) || cmd=$(which microsocks)
 	[ ! -x $cmd ] && echo "$(eval $DATE) SSR server: Can't find $cmd program, start failed!" >>/tmp/bypass.log && return 1
@@ -926,8 +926,8 @@ run_server() {
 		echo "$(eval $DATE) SSR server: Socks5 Server$server_count Started!" >>/tmp/bypass.log
 		;;
 	esac
-	iptables -t filter -A SSR-SERVER-RULE -p tcp --dport $port -j ACCEPT
-	iptables -t filter -A SSR-SERVER-RULE -p udp --dport $port -j ACCEPT
+	iptables -t filter -A BY-SERVER-RULE -p tcp --dport $port -j ACCEPT
+	iptables -t filter -A BY-SERVER-RULE -p udp --dport $port -j ACCEPT
 	return 0
 }
 
@@ -935,7 +935,7 @@ gen_serv_include() {
 	[ -s $FWI ] || echo '#!/bin/sh' >$FWI
 	extract_rules() {
 		echo "*filter"
-		iptables-save -t filter | grep SSR-SERVER-RULE | sed -e "s/^-A INPUT/-I INPUT/"
+		iptables-save -t filter | grep BY-SERVER-RULE | sed -e "s/^-A INPUT/-I INPUT/"
 		echo 'COMMIT'
 	}
 	cat <<-EOF >>$FWI
@@ -988,11 +988,11 @@ stop() {
 	kill -9 $(ps -w | grep $BIN_DIR/checknetwork | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep $BIN_DIR/update | grep -v grep | awk '{print$1}') 2>/dev/null
 	$BIN_DIR/by-rules -f
-	srulecount=$(iptables -nL | grep SSR-SERVER-RULE | wc -l)
+	srulecount=$(iptables -nL | grep BY-SERVER-RULE | wc -l)
 	if [ $srulecount -gt 0 ]; then
-		iptables -F SSR-SERVER-RULE
-		iptables -t filter -D INPUT -j SSR-SERVER-RULE
-		iptables -X SSR-SERVER-RULE 2>/dev/null
+		iptables -F BY-SERVER-RULE
+		iptables -t filter -D INPUT -j BY-SERVER-RULE
+		iptables -X BY-SERVER-RULE 2>/dev/null
 	fi
 	[ -z "$switch_server" ] && kill -9 $(ps -w | grep by-switch | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep by-monitor | grep -v grep | awk '{print$1}') 2>/dev/null

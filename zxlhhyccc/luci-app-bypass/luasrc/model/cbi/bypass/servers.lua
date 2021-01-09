@@ -1,13 +1,13 @@
 local m,s,o
-local ssr="bypass"
+local bypass="bypass"
 local uci=luci.model.uci.cursor()
 local server_count=0
 
-uci:foreach(ssr,"servers",function(s)
+uci:foreach(bypass,"servers",function(s)
 	server_count=server_count+1
 end)
 
-m=Map(ssr,translate("Servers subscription and manage"),translate("Support SS/SSR/V2RAY/TROJAN/TROJAN-GO/NAIVEPROXY/SOCKS5/TUN etc."))
+m=Map(bypass,translate("Servers subscription and manage"),translate("Support SS/SSR/V2RAY/TROJAN/TROJAN-GO/NAIVEPROXY/SOCKS5/TUN etc."))
 s=m:section(TypedSection,"server_subscribe")
 s.anonymous=true
 
@@ -33,8 +33,8 @@ o=s:option(Button,"update_Sub",translate("Update Subscribe List"))
 o.inputstyle="reload"
 o.description=translate("Update subscribe url list first")
 o.write=function()
-	uci:commit(ssr)
-	luci.http.redirect(luci.dispatcher.build_url("admin","services",ssr,"servers"))
+	uci:commit(bypass)
+	luci.http.redirect(luci.dispatcher.build_url("admin","services",bypass,"servers"))
 end
 
 o=s:option(Flag,"switch",translate("Subscribe Default Auto-Switch"))
@@ -54,15 +54,15 @@ o=s:option(Button,"delete",translate("Delete All Subscribe Severs"))
 o.inputstyle="reset"
 o.description=string.format(translate("Server Count")..": %d",server_count)
 o.write=function()
-	uci:delete_all(ssr,"servers",function(s)
+	uci:delete_all(bypass,"servers",function(s)
 		if s.hashkey or s.isSubscribe then
 			return true
 		else
 			return false
 		end
 	end)
-	uci:commit(ssr)
-	luci.http.redirect(luci.dispatcher.build_url("admin","services",ssr,"servers"))
+	uci:commit(bypass)
+	luci.http.redirect(luci.dispatcher.build_url("admin","services",bypass,"servers"))
 end
 
 s=m:section(TypedSection,"servers")
@@ -70,7 +70,7 @@ s.anonymous=true
 s.addremove=true
 s.template="cbi/tblsection"
 s.sortable=true
-s.extedit=luci.dispatcher.build_url("admin","services",ssr,"servers","%s")
+s.extedit=luci.dispatcher.build_url("admin","services",bypass,"servers","%s")
 function s.create(...)
 	local sid=TypedSection.create(...)
 	if sid then
@@ -105,9 +105,9 @@ o.width="10%"
 o=s:option(Button,"apply_node",translate("Apply"))
 o.inputstyle="apply"
 o.write=function(self,section)
-	uci:set(ssr,'@global[0]','global_server',section)
-	uci:commit(ssr)
-	luci.http.redirect(luci.dispatcher.build_url("admin","services",ssr,"base"))
+	uci:set(bypass,'@global[0]','global_server',section)
+	uci:commit(bypass)
+	luci.http.redirect(luci.dispatcher.build_url("admin","services",bypass,"base"))
 end
 
 o=s:option(Flag,"switch_enable",translate("Auto Switch"))

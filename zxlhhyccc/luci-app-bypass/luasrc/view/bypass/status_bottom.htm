@@ -54,7 +54,7 @@ document.write('<script src="https://cdn.staticfile.org/jquery/2.2.4/jquery.min.
     <div class="inner">
         <div class="pure-g">
             <div class="pure-u-1-2">
-                <span class="flag"><img src="/luci-static/bypass/flags/4x3/loading.svg" class="pure-img"></span> <span
+                <span class="flag"><img src="/luci-static/bypass/flags/loading.svg" class="pure-img"></span> <span
                     class="status-info">获取中...</span>
             </div>
             <div class="pure-u-1-2">
@@ -96,7 +96,7 @@ const CHECK_IP_URL = '<%=url([[admin]], [[services]], [[bypass]], [[ip]])%>';
         if (data.outboard) {
             json = data.outboardip;
             country = json.country;
-            $(".flag img").attr("src", _ASSETS + "flags/4x3/" + json.flag + ".svg");
+            $(".flag img").attr("src", _ASSETS + "flags/" + json.flag + ".svg");
             $(".status-info").html(data.outboard + "<br>" + country);
         }
         data.baidu ? $(".i1").attr("src", _ASSETS + "img/site_icon_01.png") : $(".i1").attr("src", _ASSETS + "img/site_icon1_01.png");
