@@ -9,15 +9,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray
-PKG_VERSION:=1.2.0
+PKG_VERSION:=1.2.1
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/xray-$(PKG_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=xray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=7427a55ef1e67e4941a007ed1f5daa83a05e36d7
-PKG_MIRROR_HASH:=00d21d1b56f75468191631dd56e4f391f1f162a8a230cc826e3142e38844fcff
+PKG_SOURCE_VERSION:=e254424c433dba0caae65bb5fdb49398ad5aec22
+PKG_MIRROR_HASH:=8393934733c562c2bcb0d42101b996461471b74680cb14c84e85aa18ac6d4da3
 
 PKG_LICENSE:=MPL
 PKG_LICENSE_FILES:=LICENSE
@@ -102,7 +102,7 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=e74665d055b6f20be776a2a43b8534eee15223cd418f76a7ccf97d3f963c0c32
+  HASH:=2190eb8bf8730f7ddbaa1eff0114183bfb185f55bc58a6dfd2bebe446d927ce3
 endef
 
 define Build/Prepare
