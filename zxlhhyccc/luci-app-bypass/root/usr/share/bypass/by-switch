@@ -1,7 +1,5 @@
 #!/bin/sh
 
-[ "$(ps -w | grep by-switch | grep -v grep)" ] && exit 1
-
 NAME=bypass
 D="date +'%Y-%m-%d %H:%M:%S'"
 L=/tmp/bypass.log
