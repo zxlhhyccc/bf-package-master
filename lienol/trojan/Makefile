@@ -8,20 +8,19 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=trojan
 PKG_VERSION:=1.16.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/trojan-gfw/trojan.git
 PKG_MIRROR_HASH:=73367d53960b42af8a4d9680dbf2ef669d0f3c00d7859a736abfc522d9e0c625
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=3e7bb9aecdc694f9bcae8d646fae395f773d60f8
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 
-CMAKE_INSTALL:=1
-PKG_BUILD_PARALLEL:=0
+PKG_BUILD_PARALLEL:=1
 PKG_BUILD_DEPENDS:=openssl
 
 PKG_LICENSE:=GPL-3.0
+PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=GreaterFire
 
 include $(INCLUDE_DIR)/package.mk
@@ -57,7 +56,8 @@ define Package/trojan
 	CATEGORY:=Network
 	TITLE:=An unidentifiable mechanism that helps you bypass GFW
 	URL:=https://github.com/trojan-gfw/trojan
-	DEPENDS:=+libpthread +libstdcpp +libopenssl \
+	DEPENDS:= \
+		+libpthread +libstdcpp +libopenssl \
 		+boost +boost-system +boost-program_options +boost-date_time
 endef
 
