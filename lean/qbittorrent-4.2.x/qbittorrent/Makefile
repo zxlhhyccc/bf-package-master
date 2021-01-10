@@ -63,7 +63,7 @@ CONFIGURE_ARGS += \
 MAKE_VARS += \
 	INSTALL_ROOT="$(PKG_INSTALL_DIR)"
 
-TARGET_CFLAGS += -std=c++14 -ffunction-sections -fdata-sections -flto
+TARGET_CFLAGS += -std=c++17 -ffunction-sections -fdata-sections -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
 define Package/qbittorrent/conffiles
