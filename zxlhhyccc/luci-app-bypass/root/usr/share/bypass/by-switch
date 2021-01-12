@@ -210,7 +210,7 @@ SERVER_A=$(uci_get_by_type global global_server)
 SERVER_B=$SERVER_A
 [ $(uci_get_by_name $SERVER_A kcp_enable 0) = 1 ] && exit 1
 c=1
-time_a=$(uci_get_by_type global switch_time 600)
+time_a=$(uci_get_by_type global switch_time 300)
 time_b=$(uci_get_by_type global switch_timeout 5)
 UCI="uci -q get $NAME."
 
