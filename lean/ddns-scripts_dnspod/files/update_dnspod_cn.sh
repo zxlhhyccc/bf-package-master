@@ -5,6 +5,7 @@
 [ -z "$password" ] && write_log 14 "Configuration error! [Password] cannot be empty"
 
 # 检查外部调用工具
+WGET_SSL='wget'
 [ -n "$CURL_SSL" ] || write_log 13 "Dnspod communication require cURL with SSL support. Please install"
 [ -n "$CURL_PROXY" ] || write_log 13 "cURL: libcurl compiled without Proxy support"
 
