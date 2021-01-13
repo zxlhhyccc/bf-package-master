@@ -50,6 +50,7 @@ define Package/qtbase/description
   - core
   - network
   - xml
+  - sql
 endef
 
 define Package/qtbase
