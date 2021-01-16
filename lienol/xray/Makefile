@@ -102,7 +102,7 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=c1b4115f2a21f039dec8c44b4d9de5b0ba46747f5d725c4b29defd3d35f358b3
+  HASH:=91b0d056744a810b0cbdf4554e3cf92d5f939275e96cfbc5d5878028cb1b7ea7
 endef
 
 define Build/Prepare
