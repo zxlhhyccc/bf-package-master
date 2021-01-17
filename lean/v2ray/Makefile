@@ -16,8 +16,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/v2ray-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=v2ray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
-PKG_MIRROR_HASH:=7c9414e5b538f044e76ab2c89ec7d2c0d1ee27ada0c4d06c8a3e887036bbaeb3
-PKG_SOURCE_VERSION:=17592cb73dc44ebf0bdadd1ba5fc622c2614ae1b
+PKG_MIRROR_HASH:=6db45301e2e4fad915701bf078686e8e9c51f9fd16b805a97999757e53152a9b
+PKG_SOURCE_VERSION:=feec88c90aea5d99050aabdf5a402d0be83e7882
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -103,7 +103,7 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=ef09e558d619650f6c0c6666dfc62581d7f17f43fa87b4610f64bffb14761f4c
+  HASH:=91b0d056744a810b0cbdf4554e3cf92d5f939275e96cfbc5d5878028cb1b7ea7
 endef
 
 define Build/Prepare
