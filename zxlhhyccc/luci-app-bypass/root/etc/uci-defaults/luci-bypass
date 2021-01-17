@@ -11,8 +11,6 @@ uci -q batch <<-EOF >/dev/null
 	set firewall.bypass.reload=1
 	commit firewall
 EOF
-cp -n /etc/config/shadowsocksr /etc/config/bypass 2>/dev/null
-sed -i 's/vmess_id/uuid/g' /etc/config/bypass 2>/dev/null
 chmod 755 /etc/init.d/bypass /usr/share/bypass/* >/dev/null 2>&1
 /etc/init.d/bypass enable >/dev/null 2>&1
 rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*

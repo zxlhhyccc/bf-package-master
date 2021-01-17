@@ -25,6 +25,7 @@ switch_enable=0
 switch_server=$1
 server_count=0
 STATUS=Y
+log_file="/dev/null"
 
 uci_get_by_name() {
 	ret=$(uci -q get $NAME.$1.$2)
@@ -90,7 +91,10 @@ gen_config_file() {
 	socks)
 		hostip=$socks5_ip; lport=$socks5_port; PROTO="socks"; fname="socks5";;
 	esac
-	[ $(uci_get_by_name $1 fast_open 0) = 1 ] && fast=true || fast=false; type=$(uci_get_by_name $1 type); config_file="/var/etc/$type-by-$fname.json"
+	[ $(uci_get_by_name $1 fast_open 0) = 1 ] && fast=true || fast=false;
+	type=$(uci_get_by_name $1 type);
+	config_file="/var/etc/$type-by-$fname.json"
+	log_file="/var/etc/$type-by-$fname.log"
 	case $type in
 	ss)
 		cat <<-EOF >$config_file
@@ -159,14 +163,12 @@ start_dns() {
 	$(which smartdns) -c $DNS_T
 	case $dns_mode_o in
 	doh)
-		doh=$(echo $doh | sed 's/ -http-host dns.google//g')
-		echo "$(eval $DATE) SmartDNS : Use $doh to start in DoH mode (Foreign DNS)" >>$LOG
-		[ -n "$NF" ] && doh_nf=$(echo $doh_nf | sed 's/ -http-host dns.google//g') && echo "$(eval $DATE) SmartDNS : Use $doh_nf to start in DoH mode (Netflix DNS)" >>$LOG
+		doh_o=$(echo $doh_o | sed 's/ -http-host dns.google//g')
+		echo "$(eval $DATE) SmartDNS : Use $doh_o to start in DoH mode (Foreign DNS)" >>$LOG
 		;;
 	tcp)
-		dns=$(echo $dns | sed 's/ /,/g')
-		echo "$(eval $DATE) SmartDNS : Use $dns to start in TCP mode (Foreign DNS)" >>$LOG
-		[ -n "$NF" ] && dns_nf=$(echo $dns_nf | sed 's/ /,/g') && echo "$(eval $DATE) SmartDNS : Use $dns_nf to start in TCP mode (Netflix DNS)" >>$LOG
+		dns_o_l=$(echo $dns_o_l | sed 's/ /,/g')
+		echo "$(eval $DATE) SmartDNS : Use $dns_o_l to start in TCP mode (Foreign DNS)" >>$LOG
 		;;
 	esac
 	case $dns_mode_d in
@@ -246,7 +248,7 @@ start_rules() {
 			done
 		fi
 		if ! A=$(nslookup $server 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-			echo "$(eval $DATE) Main Node: Unable to get server address.Check domain name!" >>$LOG
+			echo "$(eval $DATE) Main Node: Unable to get $server address. Check domain name!" >>$LOG
 			return 1
 		fi
 		server=$(echo "$A" | sed -n 1p)
@@ -353,7 +355,7 @@ start_retcp() {
 		gen_config_file $GLOBAL_SERVER $rtype
 		redir_tcp=$threads
 		for i in $(seq 1 $threads); do
-			$cmd -c $config_file >/dev/null 2>&1 &
+			$cmd -c $config_file >$log_file 2>&1 &
 		done
 		[ $type = ss ] && name=Shadowsocks || name=ShadowsocksR
 		echo "$(eval $DATE) Main Node: $name $threads Threads Started!" >>$LOG
@@ -366,7 +368,7 @@ start_retcp() {
 			port=0
 		fi
 		gen_config_file $GLOBAL_SERVER $rtype $port $server
-		$cmd -c $config_file >/dev/null 2>&1 &
+		$cmd -c $config_file >$log_file 2>&1 &
 
 		echo "$(eval $DATE) Main Node: $($cmd -version | head -1 | awk '{print$1,$2}') Started!" >>$LOG
 		if [ "$socks5_start" = 1 ]; then
@@ -375,15 +377,15 @@ start_retcp() {
 		;;
 	trojan | trojan-go)
 		gen_config_file $GLOBAL_SERVER $rtype "" $server
-		$cmd --config $config_file >/dev/null 2>&1 &
 		if [ $type = trojan ]; then
 			redir_tcp=$threads
 			for i in $(seq 1 $threads); do
-				$cmd --config $config_file >/dev/null 2>&1 &
+				$cmd --config $config_file >$log_file 2>&1 &
 			done
 			name="Trojan-Plus"
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
 		else
+			$cmd --config $config_file >$log_file 2>&1 &
 			name="Trojan-Go"
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$2}')"
 		fi
@@ -391,7 +393,7 @@ start_retcp() {
 		;;
 	naiveproxy)
 		gen_config_file $GLOBAL_SERVER $rtype
-		$cmd $config_file >/dev/null 2>&1 &
+		$cmd $config_file >$log_file 2>&1 &
 		echo "$(eval $DATE) Main Node: $($cmd --version | head -1) Threads Started!" >>$LOG
 		;;
 	socks5)
@@ -399,7 +401,7 @@ start_retcp() {
 		$BIN_DIR/genred2config /var/etc/redsocks-by-retcp.json socks5 tcp $local_port $server $(uci_get_by_name $GLOBAL_SERVER server_port) \
 		$(uci_get_by_name $GLOBAL_SERVER auth_enable 0) $(uci_get_by_name $GLOBAL_SERVER username) $(uci_get_by_name $GLOBAL_SERVER password)
 		for i in $(seq 1 $threads); do
-			$cmd -c /var/etc/redsocks-by-retcp.json >/dev/null 2>&1
+			$cmd -c /var/etc/redsocks-by-retcp.json >$log_file 2>&1
 		done
 		echo "$(eval $DATE) Main Node: Socks5 $threads Threads Started!" >>$LOG
 		;;
@@ -407,7 +409,7 @@ start_retcp() {
 		redir_tcp=$threads
 		$BIN_DIR/genred2config /var/etc/redsocks-by-retcp.json vpn $(uci_get_by_name $GLOBAL_SERVER iface br-lan) $local_port
 		for i in $(seq 1 $threads); do
-			$cmd -c /var/etc/redsocks-by-retcp.json >/dev/null 2>&1
+			$cmd -c /var/etc/redsocks-by-retcp.json >$log_file 2>&1
 		done
 		echo "$(eval $DATE) Main Node: Network Tunnel $threads Threads Started!" >>$LOG
 		;;
@@ -426,18 +428,18 @@ start_reudp() {
 	case $type in
 	ss | ssr)
 		gen_config_file $UDP_RELAY_SERVER $rtype
-		$cmd -c $config_file -U >/dev/null 2>&1 &
+		$cmd -c $config_file -U >$log_file 2>&1 &
 		[ $type = ss ] && name=Shadowsocks || name=ShadowsocksR
 		echo "$(eval $DATE) UDP Relay: $name Started!" >>$LOG
 		;;
 	vmess | vless)
 		gen_config_file $UDP_RELAY_SERVER $rtype 0 $udp_server
-		$cmd -c $config_file >/dev/null 2>&1 &
+		$cmd -c $config_file >$log_file 2>&1 &
 		echo "$(eval $DATE) UDP Relay: $($cmd -version | head -1 | awk '{print$1,$2}') Started!" >>$LOG
 		;;
 	trojan | trojan-go)
 		gen_config_file $UDP_RELAY_SERVER $rtype "" $udp_server
-		$cmd --config $config_file >/dev/null 2>&1 &
+		$cmd --config $config_file >$log_file 2>&1 &
 		[ $type = trojan ] && {
 			name="Trojan-Plus"
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
@@ -455,7 +457,7 @@ start_reudp() {
 	socks5)
 		$BIN_DIR/genred2config /var/etc/redsocks-by-reudp.json socks5 udp $udp_local_port $udp_server \
 		$(uci_get_by_name $UDP_RELAY_SERVER server_port) $(uci_get_by_name $UDP_RELAY_SERVER auth_enable 0) $(uci_get_by_name $UDP_RELAY_SERVER username) $(uci_get_by_name $UDP_RELAY_SERVER password)
-		$cmd --config /var/etc/redsocks-by-reudp.json >/dev/null 2>&1
+		$cmd --config /var/etc/redsocks-by-reudp.json >$log_file 2>&1
 		echo "$(eval $DATE) UDP Relay: Socks5 Started!" >>$LOG
 		;;
 	tun)
@@ -477,18 +479,18 @@ start_renf() {
 	case $type in
 	ss | ssr)
 		gen_config_file $NF_SERVER $rtype
-		$cmd -c $config_file >/dev/null 2>&1 &
+		$cmd -c $config_file >$log_file 2>&1 &
 		[ $type = ss ] && name=Shadowsocks || name=ShadowsocksR
 		echo "$(eval $DATE) NF Shunt : $name Started!" >>$LOG
 		;;
 	vmess | vless)
 		gen_config_file $NF_SERVER $rtype 0 $nf_ip
-		$cmd -c $config_file >/dev/null 2>&1 &
+		$cmd -c $config_file >$log_file 2>&1 &
 		echo "$(eval $DATE) NF Shunt : $($cmd -version | head -1 | awk '{print$1,$2}') Started!" >>$LOG
 		;;
 	trojan | trojan-go)
 		gen_config_file $NF_SERVER $rtype "" $nf_ip
-		$cmd --config $config_file >/dev/null 2>&1 &
+		$cmd --config $config_file >$log_file 2>&1 &
 		[ $type = trojan ] && {
 			name="Trojan-Plus"
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
@@ -500,18 +502,18 @@ start_renf() {
 		;;
 	naiveproxy)
 		gen_config_file $NF_SERVER $rtype
-		$cmd $config_file >/dev/null 2>&1 &
+		$cmd $config_file >$log_file 2>&1 &
 		echo "$(eval $DATE) NF Shunt : $($cmd --version | head -1) Started!" >>$LOG
 		;;
 	socks5)
 		$BIN_DIR/genred2config /var/etc/redsocks-by-nf.json socks5 tcp $nf_local_port $nf_ip $(uci_get_by_name $NF_SERVER server_port) \
 		$(uci_get_by_name $NF_SERVER auth_enable 0) $(uci_get_by_name $NF_SERVER username) $(uci_get_by_name $NF_SERVER password)
-		$cmd -c /var/etc/redsocks-by-nf.json >/dev/null 2>&1
+		$cmd -c /var/etc/redsocks-by-nf.json >$log_file 2>&1
 		echo "$(eval $DATE) NF Shunt : Socks5 Started!" >>$LOG
 		;;
 	tun)
 		$BIN_DIR/genred2config /var/etc/redsocks-by-nf.json vpn $(uci_get_by_name $NF_SERVER iface "br-lan") $nf_local_port
-		$cmd -c /var/etc/redsocks-by-nf.json >/dev/null 2>&1
+		$cmd -c /var/etc/redsocks-by-nf.json >$log_file 2>&1
 		echo "$(eval $DATE) NF Shunt : Network Tunnel REDIRECT Started!" >>$LOG
 		;;
 	esac
@@ -551,12 +553,12 @@ start_local() {
 		;;
 	vmess | vless)
 		gen_config_file $SO_SERVER $rtype 0 $socks5_port $socks5_ip
-		$cmd -c $config_file >/dev/null 2>&1 &
+		$cmd -c $config_file >$log_file 2>&1 &
 		echo "$(eval $DATE) Socks5 Node: $($cmd -version | head -1 | awk '{print$1,$2}') Started!" >>$LOG
 		;;
 	trojan | trojan-go)
 		gen_config_file $SO_SERVER $rtype "" $socks5_ip
-		$cmd --config $config_file >/dev/null 2>&1 &
+		$cmd --config $config_file >$log_file 2>&1 &
 		[ $type = trojan ] && {
 			name="Trojan-Plus"
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
@@ -567,7 +569,7 @@ start_local() {
 		echo "$(eval $DATE) Main Node: $name (Ver $ver) $threads Threads Started!" >>$LOG
 		;;
 	naiveproxy)
-		$cmd $config_file >/dev/null 2>&1 &
+		$cmd $config_file >$log_file 2>&1 &
 		echo "$(eval $DATE) Socks5 Node: $($cmd --version | head -1) Started!" >>$LOG
 		;;
 	esac
@@ -578,11 +580,6 @@ gen_dns() {
 	dns_mode_o=$(uci_get_by_type global dns_mode_o doh)
 	if [ $dns_mode_o = "doh" ]; then
 		doh_dns_o=$(uci_get_by_type global doh_dns_o cloudflare)
-		[ -n "$NF" ] && dns_nf=$(uci_get_by_type global dns_nf google)
-		if [ "$dns_nf" = $doh_dns_o ]; then
-			doh_dns_o=cloudflare
-			dns_nf=google
-		fi
 		case $doh_dns_o in
 		cloudflare)
 			doh_o="https://cloudflare-dns.com/dns-query"
@@ -603,7 +600,7 @@ gen_dns() {
 		*)
 			doh_o=$doh_dns_o
 			dns_o_l=$(echo $doh_dns_o | awk -F[/:] '{print$4}')
-			dns_o_l=$(echo $doh_dns_o | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+			dns_o_l=$(echo $dns_o_l | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
 			if [ -z "$dns_o_l" ]; then
 				dns_o_l="1.1.1.1 1.0.0.1"
 				dns_a=1
@@ -615,42 +612,8 @@ gen_dns() {
 			*) ipset del ss_spec_wan_ac $i 2>/dev/null || ipset add ss_spec_wan_ac $i nomatch 2>/dev/null ;;
 			esac
 		done
-		if [ -n "$NF" ]; then
-			case $dns_nf in
-			cloudflare)
-				doh_nf="https://cloudflare-dns.com/dns-query"
-				dns_nf="1.1.1.1 1.0.0.1"
-				dns_b=1;;
-			google)
-				doh_nf="https://dns.google/dns-query"
-				dns_nf="8.8.8.8 8.8.4.4"
-				dns_b=1;;
-			quad9)
-				doh_nf="https://dns.quad9.net/dns-query"
-				dns_nf="9.9.9.9 149.112.112.112"
-				dns_b=1;;
-			opendns)
-				doh_nf="https://doh.opendns.com/dns-query"
-				dns_nf="208.67.222.222 208.67.220.220"
-				dns_b=1;;
-			*)
-				doh_nf=$dns_nf
-				dns_nf=$(echo $dns_nf | awk -F[/:] '{print$4}')
-				dns_nf=$(echo $dns_nf | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-				if [ -z "$dns_nf" ]; then
-					dns_nf="8.8.8.8 8.8.4.4"
-					dns_b=1
-				fi;;
-			esac
-			for i in $dns_nf; do ipset add netflix $i 2>/dev/null; done
-		fi
 	else
 		dns_o_l=$(uci_get_by_type global tcp_dns_o 1.1.1.1,1.0.0.1)
-		[ -n "$NF" ] && dns_nf=$(uci_get_by_type global tcp_dns_nf 8.8.8.8,8.8.4.4)
-		if [ "$dns_nf" = $dns_o_l ]; then
-			dns_o_l=1.1.1.1,1.0.0.1
-			dns_nf=8.8.8.8,8.8.4.4
-		fi
 		dns_o_l=$(echo $dns_o_l | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
 		if ! dns_tmp=$(echo $dns_o_l | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep -v 0.0.0.0 | grep -v 127.0.0.1); then
 			echo "$(eval $DATE) SmartDNS : Get Foreign DNS failed!" >>$LOG
@@ -662,14 +625,6 @@ gen_dns() {
 			*) ipset del ss_spec_wan_ac $i 2>/dev/null || ipset add ss_spec_wan_ac $i nomatch 2>/dev/null ;;
 			esac
 		done
-		if [ -n "$NF" ]; then
-			dns_nf=$(echo $dns_nf | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
-			if ! dns_tmp=$(echo $dns_nf | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep -v 0.0.0.0 | grep -v 127.0.0.1); then
-				echo "$(eval $DATE) SmartDNS : Get Netflix DNS failed!" >>$LOG
-				return 1
-			fi
-			for i in $dns_tmp; do ipset add netflix $i 2>/dev/null; done
-		fi
 	fi
 
 	if [ $dns_mode_d = "doh" ]; then
@@ -686,20 +641,14 @@ gen_dns() {
 		*)
 			doh_d=$doh_dns_d
 			dns_d_l=$(echo $doh_dns_d | awk -F[/:] '{print$4}')
-			dns_d_l=$(echo $doh_dns_d | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+			dns_d_l=$(echo $dns_d_l | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
 			if [ -z "$dns_d_l" ]; then
 				dns_d_l="223.5.5.5 223.6.6.6 2400:3200::1 2400:3200:baba::1"
 				dns_c=1
 			fi;;
 		esac
-		[ $(uci_get_by_type global isp_dns 0) = 1 ] && dns_d_l=isp
 	else
-		dns_d_l=$(uci_get_by_type global udp_dns_d isp)
-	fi
-	if [ "$dns_d_l" = isp ]; then
-		ref=/tmp/resolv.conf.d/resolv.conf.auto
-		[ -s $ref ] || ref=/tmp/resolv.conf.auto
-		dns_d_l=$(cat $ref 2>/dev/null | grep nameserver | awk '{print$2}')
+		dns_d_l=$(uci_get_by_type global udp_dns_d 223.5.5.5,223.6.6.6)
 	fi
 	if [ -z "$dns_d_l" ]; then
 		echo "$(eval $DATE) SmartDNS : Get Domestic DNS failed!" >>$LOG
@@ -723,7 +672,7 @@ gen_dns() {
 	if [ $dns_mode_o = "doh" ]; then
 		if [ "$dns_a" = 1 ]; then
 			echo "server-https $doh_o -group a -check-edns" >>$DNS_T
-			for i in $dns; do echo "server-tcp $i -group b -exclude-default-group" >>$DNS_T; done
+			for i in $dns_o_l; do echo "server-tcp $i -group b -exclude-default-group" >>$DNS_T; done
 			doh_t=$(echo $doh_o | awk -F[/:] '{print$4}')
 			case $run_mode in
 			router | all) echo "nameserver /$doh_t/b" >>$DNS_T ;;
@@ -732,19 +681,8 @@ gen_dns() {
 		else
 			echo $doh_o | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group a -check-edns/g' >>$DNS_T
 		fi
-		if [ -n "$NF" ]; then
-			if [ "$dns_b" = 1 ]; then
-				echo "server-https $doh_nf -group c -exclude-default-group" >>$DNS_T
-				for i in $dns_nf; do echo "server-tcp $i -group d -exclude-default-group" >>$DNS_T; done
-				doh_nf_t=$(echo $doh_nf | awk -F[/:] '{print$4}')
-				echo "domain-rules /$doh_nf_t/ -nameserver d -ipset netflix" >>$DNS_T
-			else
-				echo $doh_nf | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group c -exclude-default-group/g' >>$DNS_T
-			fi
-		fi
 	else
-		for i in $dns; do echo "server-tcp $i -group a -check-edns" >>$DNS_T; done
-		[ -n "$NF" ] && for i in $dns_nf; do echo "server-tcp $i -group c -exclude-default-group" >>$DNS_T; done
+		for i in $dns_o_l; do echo "server-tcp $i -group a -check-edns" >>$DNS_T; done
 	fi
 
 	if [ $dns_mode_d = "doh" ]; then
@@ -998,7 +936,7 @@ stop() {
 	kill -9 $(ps -w | grep by-monitor | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep by-preload | grep -v grep | awk '{print$1}') 2>/dev/null
 	killall -q -9 ss-redir ssr-redir v2ray xray trojan-plus trojan-go ipt2socks naive redsocks2 kcptun-client obfs-local obfs-server v2ray-plugin ss-local ss-server ssr-local ssr-server microsocks smartdns chinadns-ng
-	rm -rf $DNS_DIR /var/etc/*by*.json /tmp/dnsmasq.d/dnsmasq-by.conf $CON_T /var/lock/bypass.lock
+	rm -rf $DNS_DIR /var/etc/*by*.json /var/etc/*by*.log /tmp/dnsmasq.d/dnsmasq-by.conf $CON_T /var/lock/bypass.lock
 	[ $run_mode = gfw -o $gfw_mode = 1 ] || rm -f /tmp/bypass/gfw.list
 	[ $run_mode = router ] || rm -f /tmp/bypass/china_v6.txt
 	if [ -z "$GLOBAL_SERVER" ]; then
@@ -1025,22 +963,9 @@ restart() {
 			bind :5336
 			bind :5337
 		EOF
-		if [ $dns_mode_d = "doh" -a $(uci_get_by_type global isp_dns 0) = 0 ]; then
-			dns_d_l="223.5.5.5 223.6.6.6"
-		else
-			dns_d_l=$(uci_get_by_type global udp_dns_d isp)
-		fi
-		if [ "$dns_d_l" = isp -o $dns_mode_d = "udp" ]; then
-			if [ "$dns_d_l" = isp ]; then
-				ref=/tmp/resolv.conf.d/resolv.conf.auto
-				[ -s $ref ] || ref=/tmp/resolv.conf.auto
-				dns_d_l=$(cat $ref 2>/dev/null | grep nameserver | awk '{print$2}')
-			fi
-			if [ -z "$dns_d_l" ]; then
-				echo "$(eval $DATE) SmartDNS : Get Domestic DNS failed!" >>$LOG
-				exit 1
-			fi
+			dns_d_l=$(uci_get_by_type global udp_dns_d 223.5.5.5,223.6.6.6)
 			dns_d_l=$(echo $dns_d_l | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
+		if [ $dns_mode_d = "udp" ]; then
 			for i in $dns_d_l; do echo "server $i" >>$DNS_T; done
 		else
 			for i in $dns_d_l; do echo "server-https https://$i/dns-query" >>$DNS_T; done
