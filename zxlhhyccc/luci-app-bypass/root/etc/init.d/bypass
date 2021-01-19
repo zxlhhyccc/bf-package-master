@@ -650,6 +650,11 @@ gen_dns() {
 	else
 		dns_d_l=$(uci_get_by_type global udp_dns_d 223.5.5.5,223.6.6.6)
 	fi
+	if [ "$dns_d_l" = "isp" ]; then
+		ref=/tmp/resolv.conf.d/resolv.conf.auto
+		[ -s $ref ] || ref=/tmp/resolv.conf.auto
+		dns_d_l=$(cat $ref 2>/dev/null | grep nameserver | awk '{print$2}')
+	fi
 	if [ -z "$dns_d_l" ]; then
 		echo "$(eval $DATE) SmartDNS : Get Domestic DNS failed!" >>$LOG
 		return 1
@@ -963,13 +968,24 @@ restart() {
 			bind :5336
 			bind :5337
 		EOF
-			dns_d_l=$(uci_get_by_type global udp_dns_d 223.5.5.5,223.6.6.6)
-			dns_d_l=$(echo $dns_d_l | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
-		if [ $dns_mode_d = "udp" ]; then
+
+		dns_d_l=$(uci_get_by_type global udp_dns_d 223.5.5.5,223.6.6.6)
+		dns_d_l=$(echo $dns_d_l | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
+		if [ "$dns_d_l" = "isp" -o $dns_mode_d = "udp" ]; then
+			if [ "$dns_d_l" = "isp" ]; then
+				ref=/tmp/resolv.conf.d/resolv.conf.auto
+				[ -s $ref ] || ref=/tmp/resolv.conf.auto
+				dns_d_l=$(cat $ref 2>/dev/null | grep nameserver | awk '{print$2}')
+			fi
+			if [ -z "$dns_d_l" ]; then
+				echo "$(eval $DATE) SmartDNS : Get Domestic DNS failed!" >>$LOG
+				exit 1
+			fi
 			for i in $dns_d_l; do echo "server $i" >>$DNS_T; done
 		else
 			for i in $dns_d_l; do echo "server-https https://$i/dns-query" >>$DNS_T; done
 		fi
+
 		$(which smartdns) -c $DNS_T
 		r=1
 		while ! ps -w | grep smartdns | grep -v grep >/dev/null; do

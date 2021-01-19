@@ -15,7 +15,7 @@ define KernelPackage/$(PKG_NAME)
 endef
 
 define KernelPackage/$(PKG_NAME)/description
-	Kernel module of modified BBR tcp congestion control
+	Kernel module of modified BBRPLUS tcp congestion control
 endef
 
 EXTRA_KCONFIG:= \

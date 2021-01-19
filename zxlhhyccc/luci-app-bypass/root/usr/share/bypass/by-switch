@@ -22,7 +22,7 @@ get_ip(){
 			sleep 1
 		done
 		if ! ip=$(nslookup $ip 127.0.0.1#5336 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-			echo "$(eval $DATE) By-Switch: Unable to get server address.Check domain name!" >>$L
+			echo "$(eval $DATE) By-Switch: Unable to get $ip address. Check domain name!" >>$L
 			return 1
 		fi
 		ip=$(echo "$ip" | sed -n 1p)

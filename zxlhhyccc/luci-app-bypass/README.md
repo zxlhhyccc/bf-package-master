@@ -7,6 +7,8 @@
 1.  功能与视觉体验增强
 1.  其他大量修复与优化
 
+[TG交流与反馈](https://t.me/opwrts)
+
 ### 相关依赖 
 SmartDNS: https://github.com/garypang13/openwrt-packages/tree/master/smartdns
 
