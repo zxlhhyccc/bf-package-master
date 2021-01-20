@@ -284,7 +284,7 @@ start_pdnsd() {
 			purge_cache=off;
 			}
 		EOF
-    /usr/sbin/pdnsd -c /var/etc/pdnsd.conf >/dev/null 2>&1 &
+    /usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d
 }
 
 
@@ -609,6 +609,7 @@ EOF
     /etc/init.d/dnsmasq restart >/dev/null 2>&1
     start_server
     start_local
+    scount=$(count_shunt)
     if [ $scount != "0" ]; then
         start_shunt
     fi
