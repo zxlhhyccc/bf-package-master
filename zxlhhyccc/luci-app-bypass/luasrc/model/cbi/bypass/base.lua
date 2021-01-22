@@ -75,7 +75,7 @@ o:value("2",translate("Only Common Ports"))
 o=s:option(ListValue,"dns_mode_o",translate("Foreign Resolve Dns Mode"))
 o:value("doh",translate("Use SmartDNS DoH query"))
 o:value("tcp",translate("Use SmartDNS TCP query"))
-o.default="tcp"
+o.default="doh"
 
 o=s:option(Value,"doh_dns_o",translate("Foreign DoH"),
 translate("Custom DNS format is https://cloudflare-dns.com/dns-query or https://104.16.249.249/dns-query -http-host cloudflare-dns.com"))
@@ -114,7 +114,7 @@ o:value("isp",translate("ISP DNS"))
 o:value("223.5.5.5,223.6.6.6","223.5.5.5,223.6.6.6 ("..translate("Ali").." DNS)")
 o:value("119.29.29.29,119.28.28.28","119.29.29.29,119.28.28.28 (Dnspod DNS)")
 o:value("114.114.114.114,114.114.115.115","114.114.114.114,114.114.115.115 (114 DNS)")
-o.default="223.5.5.5,223.6.6.6"
+o.default="isp"
 o:depends("dns_mode_d","udp")
 m:section(SimpleSection).template = 'bypass/status_bottom'
 return m
