@@ -708,7 +708,7 @@ gen_dns() {
 	echo "bind :5336 -group e -no-rule-soa" >>$DNS_T
 	if [ $dns_mode_o = "doh" ]; then
 		if [ "$dns_a" = 1 ]; then
-			echo "server-https $doh_o_a -group a -check-edns" >>$DNS_T
+			echo "server-https $doh_o_a -group a -exclude-default-group -check-edns" >>$DNS_T
 			for i in $doh_o_b; do echo "server-tcp $i -group b -exclude-default-group" >>$DNS_T; done
 			doh_o_dom=$(echo $doh_o_a | awk -F[/:] '{print$4}')
 			case $run_mode in
@@ -716,30 +716,30 @@ gen_dns() {
 			*) echo "domain-rules /$doh_o_dom/ -nameserver b -ipset blacklist" >>$DNS_T ;;
 			esac
 		else
-			echo $doh_o_a | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group a -check-edns/g' >>$DNS_T
+			echo $doh_o_a | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group a -exclude-default-group -check-edns/g' >>$DNS_T
 		fi
 		if [ -n "$NF" ]; then	
-				echo "server-https $doh_nf_a -group c -check-edns" >>$DNS_T	
+				echo "server-https $doh_nf_a -group c -exclude-default-group -check-edns" >>$DNS_T	
 				for i in $doh_nf_b; do echo "server-tcp $i -group d -exclude-default-group" >>$DNS_T; done	
 				doh_nf_dom=$(echo $doh_nf_a | awk -F[/:] '{print$4}')	
 				echo "domain-rules /$doh_nf_dom/ -nameserver d -ipset netflix" >>$DNS_T	
 		fi
 	else
-		for i in $tcp_dns_o; do echo "server-tcp $i -group a -check-edns" >>$DNS_T; done
-		[ -n "$NF" ] && for i in $tcp_dns_nf; do echo "server-tcp $i -group c -check-edns" >>$DNS_T; done
+		for i in $tcp_dns_o; do echo "server-tcp $i -group a -exclude-default-group -check-edns" >>$DNS_T; done
+		[ -n "$NF" ] && for i in $tcp_dns_nf; do echo "server-tcp $i -group c -exclude-default-group -check-edns" >>$DNS_T; done
 	fi
 
 	if [ $dns_mode_d = "doh" ]; then
 		if [ "$dns_c" = 1 ]; then
-			echo "server-https $doh_d_a -group e -check-edns" >>$DNS_T
+			echo "server-https $doh_d_a -group e -exclude-default-group -check-edns" >>$DNS_T
 			for i in $doh_d_b; do echo "server $i -group f -exclude-default-group" >>$DNS_T; done
 			doh_d_dom=$(echo $doh_d_a | awk -F[/:] '{print$4}')
 			echo "domain-rules /$doh_d_dom/ -nameserver f -ipset ss_spec_wan_ac" >>$DNS_T
 		else
-			echo $doh_d_a | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group e -check-edns/g' >>$DNS_T
+			echo $doh_d_a | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group e -exclude-default-group -check-edns/g' >>$DNS_T
 		fi
 	else
-		for i in $udp_dns_d; do echo "server $i -group e -check-edns" >>$DNS_T; done
+		for i in $udp_dns_d; do echo "server $i -group e -exclude-default-group -check-edns" >>$DNS_T; done
 	fi
 	case $run_mode in
 	all) port=5335 ;;
