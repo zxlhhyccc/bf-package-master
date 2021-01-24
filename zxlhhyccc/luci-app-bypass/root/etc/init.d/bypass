@@ -242,17 +242,15 @@ rules() {
 start_rules() {
 	server=$(uci_get_by_name $GLOBAL_SERVER server)
 	if ! echo $server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" >/dev/null; then
-		if [ -f $LOCK ]; then
 			r=1
-			while ! nslookup $server >/dev/null 2>&1; do
-				[ $r -ge 20 ] && return 1 || let r++
-				sleep 1
-			done
+		while ! A=$(nslookup $server 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");do
+		if ! A=$(nslookup $server 223.5.5.5 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
+			[ $r -ge 10 ] && echo "$(eval $DATE) Main Node: Unable to get $server address. Check domain name!" >>$L; return 1 || let r++
+			sleep 1
+		else
+			break
 		fi
-		if ! A=$(nslookup $server 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-			echo "$(eval $DATE) Main Node: Unable to get $server address. Check domain name!" >>$LOG
-			return 1
-		fi
+		done
 		server=$(echo "$A" | sed -n 1p)
 	fi
 	local_port=$(uci_get_by_name $GLOBAL_SERVER local_port 1234)
@@ -265,17 +263,15 @@ start_rules() {
 	elif [ -n "$UDP_RELAY_SERVER" ]; then
 		udp_server=$(uci_get_by_name $UDP_RELAY_SERVER server)
 		if ! echo $udp_server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" >/dev/null; then
-			if [ -f $LOCK ]; then
 				r=1
-				while ! nslookup $udp_server >/dev/null 2>&1; do
-					[ $r -ge 20 ] && return 1 || let r++
-					sleep 1
-				done
-			fi
-			if ! A=$(nslookup $udp_server 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-				echo "$(eval $DATE) UDP Relay: Unable to get server address.Check domain name!" >>$LOG
-				return 1
-			fi
+		while ! A=$(nslookup $udp_server 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");do
+		if ! A=$(nslookup $udp_server 223.5.5.5 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
+			[ $r -ge 10 ] && echo "$(eval $DATE) UDP Relay: Unable to get $udp_server address. Check domain name!" >>$L; return 1 || let r++
+			sleep 1
+		else
+			break
+		fi
+		done
 			udp_server=$(echo "$A" | sed -n 1p)
 		fi
 		udp_local_port="2345"
@@ -290,17 +286,15 @@ start_rules() {
 	if [ -n "$NF_SERVER" -a $run_mode != oversea ]; then
 		nf_ip=$(uci_get_by_name $NF_SERVER server)
 		if ! echo $nf_ip | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" >/dev/null; then
-			if [ -f $LOCK ]; then
 				r=1
-				while ! nslookup $nf_ip >/dev/null 2>&1; do
-					[ $r -ge 20 ] && return 1 || let r++
-					sleep 1
-				done
-			fi
-			if ! A=$(nslookup $nf_ip 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-				echo "$(eval $DATE) NF Shunt : Unable to get server address.Check domain name!" >>$LOG
-				return 1
-			fi
+		while ! A=$(nslookup $nf_ip 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");do
+		if ! A=$(nslookup $nf_ip 223.5.5.5 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
+			[ $r -ge 10 ] && echo "$(eval $DATE) NF Shunt: Unable to get $nf_ip address. Check domain name!" >>$L; return 1 || let r++
+			sleep 1
+		else
+			break
+		fi
+		done
 			nf_ip=$(echo "$A" | sed -n 1p)
 		fi
 		let nf_local_port=local_port+1
@@ -526,17 +520,15 @@ start_local() {
 	[ $SO_SERVER = 0 -o "$socks5_start" = 1 ] && return
 	socks5_ip=$(uci_get_by_name $SO_SERVER server)
 	if ! echo $socks5_ip | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" >/dev/null; then
-		if [ -f $LOCK ]; then
 			r=1
-			while ! nslookup $socks5_ip >/dev/null 2>&1; do
-				[ $r -ge 20 ] && return 1 || let r++
-				sleep 1
-			done
+		while ! A=$(nslookup $socks5_ip 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");do
+		if ! A=$(nslookup $socks5_ip 223.5.5.5 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
+			[ $r -ge 10 ] && echo "$(eval $DATE) Socks5 Node: Unable to get $socks5_ip address. Check domain name!" >>$L; return 1 || let r++
+			sleep 1
+		else
+			break
 		fi
-		if ! A=$(nslookup $socks5_ip 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-			echo "$(eval $DATE) Socks5 Node: Unable to get server address.Check domain name!" >>$LOG
-			return 1
-		fi
+		done
 		socks5_ip=$(echo "$A" | sed -n 1p)
 	fi
 	type=$(uci_get_by_name $SO_SERVER type)
