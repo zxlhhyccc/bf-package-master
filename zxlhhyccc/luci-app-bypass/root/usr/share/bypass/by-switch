@@ -149,7 +149,8 @@ curl_check(){
 		[ $r -ge 10 ] && return 1 || let r++
 		sleep 1
 	done
-	/usr/share/bypass/by-rules -f
+	/usr/share/bypass/by-rules -f 2>/dev/null
+	sleep 1
 	curl -x socks5h://$IP:$lport $param -so /dev/null --connect-timeout $time_b https://www.google.com;i=$?
 	kill -9 $(ps -w | grep $J | grep -v grep | awk '{print$1}') 2>/dev/null
 	[ $i = 0 ] || echo "`eval $D` By-Switch : Server : $($UCI$1.alias || uci_get_by_name $1 server) cURL check error, Try to switch another server." >> $L
@@ -220,7 +221,7 @@ UCI="uci -q get $NAME."
 
 while :;do
 	if [ $SERVER_A != $SERVER_B ];then
-		echo "`eval $D` By-Switch : Current server : $($UCI$SERVER_B.alias || uci_get_by_name $SERVER_B server) is not main server : $($UCI$SERVER_A.alias || uci_get_by_name $SERVER_A server).Try to switch back." >> $L
+		echo "`eval $D` By-Switch : Current server : $($UCI$SERVER_B.alias || uci_get_by_name $SERVER_B server) is not main server, Try to switch back to $($UCI$SERVER_A.alias || uci_get_by_name $SERVER_A server)." >> $L
 		if test_proxy $SERVER_A;then
 			echo "`eval $D` By-Switch : Main server is available. Switch to main server." >> $L
 			SERVER_B=$SERVER_A
