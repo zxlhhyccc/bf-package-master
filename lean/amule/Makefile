@@ -46,6 +46,7 @@ CONFIGURE_ARGS+= \
 	--disable-static \
 	--disable-rpath \
 	--with-gnu-ld \
+	--without-gnu-malloc \
 	--disable-ccache \
 	--enable-geoip \
 	--enable-optimize \
