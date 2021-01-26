@@ -682,7 +682,7 @@ index 8cd82ea..764c4b2 100644
  #ifndef AMULE_DAEMON
  #include <wx/valgen.h>
  #include "muuli_wdr.h"
-@@ -344,6 +349,19 @@ protected:
+@@ -345,6 +350,19 @@ protected:
  	wxWindow*	m_widget;
  };
  
@@ -702,7 +702,7 @@ index 8cd82ea..764c4b2 100644
  
  /** Cfg class for wxStrings. */
  class Cfg_Str : public Cfg_Tmpl<wxString>
-@@ -953,6 +971,11 @@ CPreferences::CPreferences()
+@@ -954,6 +972,11 @@ CPreferences::CPreferences()
  	s_userhash[5] = 14;
  	s_userhash[14] = 111;
  
@@ -714,7 +714,7 @@ index 8cd82ea..764c4b2 100644
  #ifndef CLIENT_GUI
  	LoadPreferences();
  	ReloadSharedFolders();
-@@ -1062,6 +1085,20 @@ void CPreferences::BuildItemList( const wxString& appdir )
+@@ -1063,6 +1086,20 @@ void CPreferences::BuildItemList( const wxString& appdir )
  	NewCfgItem( IDC_NETWORKKAD, (new Cfg_Bool( wxT("/eMule/ConnectToKad"),	s_ConnectToKad, true )) );
  	NewCfgItem( IDC_NETWORKED2K, ( new Cfg_Bool( wxT("/eMule/ConnectToED2K"),	s_ConnectToED2K, true ) ));
  
@@ -735,7 +735,7 @@ index 8cd82ea..764c4b2 100644
  
  	/**
  	 * Files
-@@ -1472,6 +1509,11 @@ void CPreferences::Save()
+@@ -1474,6 +1511,11 @@ void CPreferences::Save()
  
  	SavePreferences();
  
@@ -747,7 +747,7 @@ index 8cd82ea..764c4b2 100644
  	#ifndef CLIENT_GUI
  	CTextFile sdirfile;
  	if (sdirfile.Open(s_configDir + wxT("shareddir.dat"), CTextFile::write)) {
-@@ -1483,6 +1525,21 @@ void CPreferences::Save()
+@@ -1485,6 +1527,21 @@ void CPreferences::Save()
  	#endif
  }
  
@@ -773,7 +773,7 @@ diff --git a/src/Preferences.h b/src/Preferences.h
 index 8e09227..3809fbe 100644
 --- a/src/Preferences.h
 +++ b/src/Preferences.h
-@@ -579,6 +579,11 @@ public:
+@@ -580,6 +580,11 @@ public:
  	// Sleep
  	static bool		GetPreventSleepWhileDownloading() { return s_preventSleepWhileDownloading; }
  	static void		SetPreventSleepWhileDownloading(bool status) { s_preventSleepWhileDownloading = status; }
@@ -785,7 +785,7 @@ index 8e09227..3809fbe 100644
  protected:
  	static	int32 GetRecommendedMaxConnections();
  
-@@ -600,6 +605,11 @@ private:
+@@ -601,6 +606,11 @@ private:
  	void LoadPreferences();
  	void SavePreferences();
  
@@ -797,7 +797,7 @@ index 8e09227..3809fbe 100644
  protected:
  	static wxString	s_configDir;
  
-@@ -813,6 +823,20 @@ protected:
+@@ -815,6 +825,20 @@ protected:
  	// Stats server
  	static wxString s_StatsServerName;
  	static wxString s_StatsServerURL;
@@ -856,7 +856,7 @@ index 157ac5c..846fd37 100644
  #ifdef __DEBUG__
  	,{ wxTRANSLATE("Debugging"),		PreferencesDebug,			25 }
  #endif
-@@ -1087,6 +1100,21 @@ void PrefsUnifiedDlg::OnButtonIPFilterUpdate(wxCommandEvent& WXUNUSED(event))
+@@ -1091,6 +1104,21 @@ void PrefsUnifiedDlg::OnButtonIPFilterUpdate(wxCommandEvent& WXUNUSED(event))
  	theApp->ipfilter->Update( CastChild( IDC_IPFILTERURL, wxTextCtrl )->GetValue() );
  }
  
@@ -1137,7 +1137,7 @@ diff --git a/src/amuleDlg.cpp b/src/amuleDlg.cpp
 index 0629294..e334182 100644
 --- a/src/amuleDlg.cpp
 +++ b/src/amuleDlg.cpp
-@@ -315,7 +315,7 @@ m_clientSkinNames(CLIENT_SKIN_SIZE)
+@@ -316,7 +316,7 @@ m_clientSkinNames(CLIENT_SKIN_SIZE)
  	wxNotebook* logs_notebook = CastChild( ID_SRVLOG_NOTEBOOK, wxNotebook);
  	wxNotebook* networks_notebook = CastChild( ID_NETNOTEBOOK, wxNotebook);
  
@@ -1146,7 +1146,7 @@ index 0629294..e334182 100644
  	wxASSERT(networks_notebook->GetPageCount() == 2);
  
  	for (uint32 i = 0; i < logs_notebook->GetPageCount(); ++i) {
-@@ -507,7 +507,12 @@ void CamuleDlg::OnAboutButton(wxCommandEvent& WXUNUSED(ev))
+@@ -508,7 +508,12 @@ void CamuleDlg::OnAboutButton(wxCommandEvent& WXUNUSED(ev))
  		_("Part of aMule is based on \n") <<
  		_("Kademlia: Peer-to-peer routing based on the XOR metric.\n") <<
                  _(" Copyright (c) 2002-2011 Petar Maymounkov ( petar@post.harvard.edu )\n") <<
@@ -1160,7 +1160,7 @@ index 0629294..e334182 100644
  
  	if (m_is_safe_state) {
  		wxMessageBox(msg, _("Message"), wxOK | wxICON_INFORMATION, this);
-@@ -659,8 +664,24 @@ void CamuleDlg::AddServerMessageLine(wxString& message)
+@@ -660,8 +665,24 @@ void CamuleDlg::AddServerMessageLine(wxString& message)
  		}
  		cv->ShowPosition(cv->GetLastPosition()-1);
  	}
@@ -1185,7 +1185,7 @@ index 0629294..e334182 100644
  
  void CamuleDlg::ShowConnectionState(bool skinChanged)
  {
-@@ -1447,6 +1468,8 @@ void CamuleDlg::DoNetworkRearrange()
+@@ -1441,6 +1462,8 @@ void CamuleDlg::DoNetworkRearrange()
  		logs_notebook->AddPage(m_logpages[3].page, m_logpages[3].name);
  	}
  
@@ -1208,7 +1208,7 @@ index 46f4e13..b4e16ea 100644
  	void ResetLog(int id);
  
  	void ShowUserCount(const wxString& info = wxEmptyString);
-@@ -224,7 +227,7 @@ private:
+@@ -222,7 +225,7 @@ private:
  	WX_DECLARE_STRING_HASH_MAP(wxZipEntry*, ZipCatalog);
  	ZipCatalog cat;
  
@@ -1392,7 +1392,7 @@ diff --git a/src/muuli_wdr.cpp b/src/muuli_wdr.cpp
 index c8bc727..1b25336 100644
 --- a/src/muuli_wdr.cpp
 +++ b/src/muuli_wdr.cpp
-@@ -1768,6 +1768,51 @@ wxSizer *PreferencesServerTab( wxWindow *parent, bool call_fit, bool set_sizer )
+@@ -1772,6 +1772,51 @@ wxSizer *PreferencesServerTab( wxWindow *parent, bool call_fit, bool set_sizer )
      return item0;
  }
  
@@ -1444,7 +1444,7 @@ index c8bc727..1b25336 100644
  wxSizer *PreferencesFilesTab( wxWindow *parent, bool call_fit, bool set_sizer )
  {
      wxBoxSizer *item0 = new wxBoxSizer( wxVERTICAL );
-@@ -2586,6 +2631,42 @@ wxSizer *serverListDlgUp( wxWindow *parent, bool call_fit, bool set_sizer )
+@@ -2590,6 +2635,42 @@ wxSizer *serverListDlgUp( wxWindow *parent, bool call_fit, bool set_sizer )
      return item0;
  }
  
@@ -1487,7 +1487,7 @@ index c8bc727..1b25336 100644
  wxSizer *serverListDlgDown( wxWindow *parent, bool call_fit, bool set_sizer )
  {
      wxStaticBox *item1 = new wxStaticBox( parent, -1, wxT("") );
-@@ -2614,6 +2695,10 @@ wxSizer *serverListDlgDown( wxWindow *parent, bool call_fit, bool set_sizer )
+@@ -2618,6 +2699,10 @@ wxSizer *serverListDlgDown( wxWindow *parent, bool call_fit, bool set_sizer )
      Kad_Info( item7, FALSE );
      item3->AddPage( item7, _("Kad Info") );
  
@@ -1502,19 +1502,19 @@ diff --git a/src/muuli_wdr.h b/src/muuli_wdr.h
 index 525e79c..e55d337 100644
 --- a/src/muuli_wdr.h
 +++ b/src/muuli_wdr.h
-@@ -331,6 +331,10 @@ wxSizer *CategoriesEditWindow( wxWindow *parent, bool call_fit = TRUE, bool set_
- #define ID_DOWNLOADSSPLATTER 10238
+@@ -332,6 +332,10 @@ wxSizer *CategoriesEditWindow( wxWindow *parent, bool call_fit = TRUE, bool set_
+ #define ID_DOWNLOADSSPLATTER 10239
  wxSizer *transferDlg( wxWindow *parent, bool call_fit = TRUE, bool set_sizer = TRUE );
  
 +#define ID_DLPINFO 22001
 +#define ID_BTN_RESET_DLP 22002
 +wxSizer *DLPInfoLog( wxWindow *parent, bool call_fit = TRUE, bool set_sizer = TRUE );
 +
- #define ID_SERVERINFO 10239
- #define ID_BTN_RESET_SERVER 10240
+ #define ID_SERVERINFO 10240
+ #define ID_BTN_RESET_SERVER 10241
  wxSizer *ServerInfoLog( wxWindow *parent, bool call_fit = TRUE, bool set_sizer = TRUE );
-@@ -424,6 +428,21 @@ wxSizer *CoreConnect( wxWindow *parent, bool call_fit = TRUE, bool set_sizer = T
- #define ID_DEBUGCATS 10307
+@@ -425,6 +429,21 @@ wxSizer *CoreConnect( wxWindow *parent, bool call_fit = TRUE, bool set_sizer = T
+ #define ID_DEBUGCATS 10308
  wxSizer *PreferencesDebug( wxWindow *parent, bool call_fit = TRUE, bool set_sizer = TRUE );
  
 +/* Dynamic Leecher Protection */
@@ -1533,8 +1533,8 @@ index 525e79c..e55d337 100644
 +#endif
 +
  extern wxSizer *IDC_CURJOB;
- #define IDC_CONV_PB_LABEL 10308
- #define IDC_CONV_PROZENT 10309
+ #define IDC_CONV_PB_LABEL 10309
+ #define IDC_CONV_PROZENT 10310
 diff --git a/src/updownclient.h b/src/updownclient.h
 index 2930df4..ae1c467 100644
 --- a/src/updownclient.h
