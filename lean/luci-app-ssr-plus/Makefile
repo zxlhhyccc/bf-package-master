@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-ssr-plus
 PKG_VERSION:=183
-PKG_RELEASE:=1
+PKG_RELEASE:=5
 
 define Package/$(PKG_NAME)/conffiles
 /etc/config/shadowsocksr
@@ -17,6 +17,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks
 config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_plugin
 	bool "Include Shadowsocks V2ray Plugin"
 	default n
+	
+config PACKAGE_$(PKG_NAME)_INCLUDE_Xray
+	bool "Include Xray (V2RAY/Trojan-GO implemented)"
+	default y if i386||x86_64||arm||aarch64
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
+	bool "Include Trojan (OpenSSL)"
+	default n if i386||x86_64||arm||aarch64
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2
 	bool "Include Redsocks2"
@@ -38,12 +46,15 @@ endef
 
 LUCI_TITLE:=SS/SSR/V2Ray/Trojan/NaiveProxy/Socks5/Tun LuCI interface
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+xray +shadowsocksr-libev-alt +ipset +ip-full +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +pdnsd-alt +wget-ssl +lua +libuci-lua \
+LUCI_DEPENDS:=+shadowsocksr-libev-alt +ipset +ip-full +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +pdnsd-alt +wget-ssl +lua +libuci-lua \
 	+microsocks +dns2socks +shadowsocksr-libev-ssr-local +tcping +resolveip +ipt2socks-alt \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks:shadowsocks-libev-ss-local \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks:shadowsocks-libev-ss-redir \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks:simple-obfs \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_plugin:v2ray-plugin \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:ipt2socks \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2:redsocks2 \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
