@@ -492,7 +492,7 @@ local execute = function()
 					luci.sys.call("/etc/init.d/" .. name .. " start > /dev/null 2>&1 &")
 				else
 					log('维持当前主服务器节点。')
-					-- luci.sys.call("/etc/init.d/" .. name .." restart > /dev/null 2>&1 &")
+					luci.sys.call("/etc/init.d/" .. name .." restart > /dev/null 2>&1 &")
 				end
 			else
 				log('没有服务器节点了，停止服务')
