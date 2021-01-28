@@ -2,7 +2,7 @@ diff --git a/configure.ac b/configure.ac
 index 6865c66..e61a6df 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -87,6 +87,14 @@ MULE_IF_ENABLED([static], [MULE_APPEND([LDFLAGS], [-static])])
+@@ -91,6 +91,14 @@ MULE_IF_ENABLED([static], [MULE_APPEND([LDFLAGS], [-static])])
  KDE_CONFIG_OPTIONS
  QT_CONFIG_OPTIONS
  
@@ -17,7 +17,7 @@ index 6865c66..e61a6df 100644
  # Default is yes, because they're most likely compatible.
  # However, this is only used when cross-compiling.
  AC_ARG_WITH(
-@@ -450,6 +458,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x$SYS = xdarwin)
+@@ -454,6 +462,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x$SYS = xdarwin)
  AM_CONDITIONAL(COMPILE_NLS, test x$USE_NLS = xyes)
  AM_CONDITIONAL(INSTALL_SKINS, test MULE_IS_ENABLED_ANY([monolithic, amule-gui]))
  AM_CONDITIONAL(PLASMAMULE, test MULE_IS_ENABLED([plasmamule]))
@@ -574,7 +574,7 @@ diff --git a/src/ExternalConn.cpp b/src/ExternalConn.cpp
 index ecf36f0..b9e1f05 100644
 --- a/src/ExternalConn.cpp
 +++ b/src/ExternalConn.cpp
-@@ -57,6 +57,9 @@
+@@ -55,6 +55,9 @@
  #include "kademlia/kademlia/UDPFirewallTester.h"
  #include "Statistics.h"
  
@@ -584,7 +584,7 @@ index ecf36f0..b9e1f05 100644
  
  //-------------------- File_Encoder --------------------
  
-@@ -1390,6 +1393,15 @@ CECPacket *CECServerSocket::ProcessRequest2(const CECPacket *request)
+@@ -1388,6 +1391,15 @@ CECPacket *CECServerSocket::ProcessRequest2(const CECPacket *request)
  				}
  			}
  			break;
@@ -670,7 +670,7 @@ diff --git a/src/Preferences.cpp b/src/Preferences.cpp
 index 8cd82ea..764c4b2 100644
 --- a/src/Preferences.cpp
 +++ b/src/Preferences.cpp
-@@ -51,6 +51,11 @@
+@@ -49,6 +49,11 @@
  
  #include "UserEvents.h"
  
@@ -682,7 +682,7 @@ index 8cd82ea..764c4b2 100644
  #ifndef AMULE_DAEMON
  #include <wx/valgen.h>
  #include "muuli_wdr.h"
-@@ -345,6 +350,19 @@ protected:
+@@ -343,6 +348,19 @@ protected:
  	wxWindow*	m_widget;
  };
  
@@ -702,7 +702,7 @@ index 8cd82ea..764c4b2 100644
  
  /** Cfg class for wxStrings. */
  class Cfg_Str : public Cfg_Tmpl<wxString>
-@@ -954,6 +972,11 @@ CPreferences::CPreferences()
+@@ -952,6 +970,11 @@ CPreferences::CPreferences()
  	s_userhash[5] = 14;
  	s_userhash[14] = 111;
  
@@ -714,7 +714,7 @@ index 8cd82ea..764c4b2 100644
  #ifndef CLIENT_GUI
  	LoadPreferences();
  	ReloadSharedFolders();
-@@ -1063,6 +1086,20 @@ void CPreferences::BuildItemList( const wxString& appdir )
+@@ -1061,6 +1084,20 @@ void CPreferences::BuildItemList( const wxString& appdir )
  	NewCfgItem( IDC_NETWORKKAD, (new Cfg_Bool( wxT("/eMule/ConnectToKad"),	s_ConnectToKad, true )) );
  	NewCfgItem( IDC_NETWORKED2K, ( new Cfg_Bool( wxT("/eMule/ConnectToED2K"),	s_ConnectToED2K, true ) ));
  
@@ -735,7 +735,7 @@ index 8cd82ea..764c4b2 100644
  
  	/**
  	 * Files
-@@ -1474,6 +1511,11 @@ void CPreferences::Save()
+@@ -1472,6 +1509,11 @@ void CPreferences::Save()
  
  	SavePreferences();
  
@@ -747,7 +747,7 @@ index 8cd82ea..764c4b2 100644
  	#ifndef CLIENT_GUI
  	CTextFile sdirfile;
  	if (sdirfile.Open(s_configDir + wxT("shareddir.dat"), CTextFile::write)) {
-@@ -1485,6 +1527,21 @@ void CPreferences::Save()
+@@ -1483,6 +1525,21 @@ void CPreferences::Save()
  	#endif
  }
  
@@ -856,7 +856,7 @@ index 157ac5c..846fd37 100644
  #ifdef __DEBUG__
  	,{ wxTRANSLATE("Debugging"),		PreferencesDebug,			25 }
  #endif
-@@ -1091,6 +1104,21 @@ void PrefsUnifiedDlg::OnButtonIPFilterUpdate(wxCommandEvent& WXUNUSED(event))
+@@ -1096,6 +1109,21 @@ void PrefsUnifiedDlg::OnButtonIPFilterUpdate(wxCommandEvent& WXUNUSED(event))
  	theApp->ipfilter->Update( CastChild( IDC_IPFILTERURL, wxTextCtrl )->GetValue() );
  }
  
@@ -932,7 +932,7 @@ diff --git a/src/TextClient.cpp b/src/TextClient.cpp
 index 50bd7ea..d99f79f 100644
 --- a/src/TextClient.cpp
 +++ b/src/TextClient.cpp
-@@ -73,6 +73,7 @@ enum {
+@@ -67,6 +67,7 @@ enum {
  	CMD_ID_RELOAD_SHARED,
  	CMD_ID_RELOAD_IPFILTER_LOCAL,
  	CMD_ID_RELOAD_IPFILTER_NET,
@@ -940,7 +940,7 @@ index 50bd7ea..d99f79f 100644
  	CMD_ID_SET_IPFILTER_ON,
  	CMD_ID_SET_IPFILTER_OFF,
  	CMD_ID_SET_IPFILTER_CLIENTS_ON,
-@@ -106,7 +107,6 @@ enum {
+@@ -100,7 +101,6 @@ enum {
  	CMD_ID_DOWNLOAD,
  	// IDs for deprecated commands
  	CMD_ID_SET_IPFILTER
@@ -948,7 +948,7 @@ index 50bd7ea..d99f79f 100644
  };
  
  // method to create a SearchFile
-@@ -240,6 +240,12 @@ int CamulecmdApp::ProcessCommand(int CmdId)
+@@ -234,6 +234,12 @@ int CamulecmdApp::ProcessCommand(int CmdId)
  		case CMD_ID_DISCONNECT_KAD:
  			request_list.push_back(new CECPacket(EC_OP_KAD_STOP));
  			break;
@@ -961,7 +961,7 @@ index 50bd7ea..d99f79f 100644
  
  		case CMD_ID_RELOAD_SHARED:
  			request_list.push_back(new CECPacket(EC_OP_SHAREDFILES_RELOAD));
-@@ -910,6 +916,9 @@ void CamulecmdApp::OnInitCommandSet()
+@@ -904,6 +910,9 @@ void CamulecmdApp::OnInitCommandSet()
  	tmp2->AddCommand(wxT("Net"), CMD_ID_RELOAD_IPFILTER_NET, wxTRANSLATE("Update IP filtering table from URL."),
  					wxTRANSLATE("If URL is omitted the URL from the preferences is used."), CMD_PARAM_OPTIONAL);
  
@@ -1025,7 +1025,7 @@ index fcb984e..99094a7 100644
  #include "amule.h"			// Interface declarations.
  
  #include <csignal>
-@@ -90,6 +89,11 @@
+@@ -87,6 +86,11 @@
  #include <wx/sysopt.h>			// Do_not_auto_remove
  #endif
  
@@ -1037,7 +1037,7 @@ index fcb984e..99094a7 100644
  #ifndef AMULE_DAEMON
  	#ifdef __WXMAC__
  		#include <CoreFoundation/CFBundle.h>  // Do_not_auto_remove
-@@ -520,6 +524,11 @@ bool CamuleApp::OnInit()
+@@ -517,6 +521,11 @@ bool CamuleApp::OnInit()
  	uploadqueue	= new CUploadQueue();
  	ipfilter	= new CIPFilter();
  
@@ -1049,7 +1049,7 @@ index fcb984e..99094a7 100644
  	// Creates all needed listening sockets
  	wxString msg;
  	if (!ReinitializeNetwork(&msg)) {
-@@ -2062,3 +2071,8 @@ DEFINE_LOCAL_EVENT_TYPE(wxEVT_CORE_SOURCE_DNS_DONE)
+@@ -2063,3 +2072,8 @@ DEFINE_LOCAL_EVENT_TYPE(wxEVT_CORE_SOURCE_DNS_DONE)
  DEFINE_LOCAL_EVENT_TYPE(wxEVT_CORE_UDP_DNS_DONE)
  DEFINE_LOCAL_EVENT_TYPE(wxEVT_CORE_SERVER_DNS_DONE)
  // File_checked_for_headers
@@ -1062,7 +1062,7 @@ diff --git a/src/amule.h b/src/amule.h
 index c778c34..29a8257 100644
 --- a/src/amule.h
 +++ b/src/amule.h
-@@ -138,6 +138,8 @@ protected:
+@@ -135,6 +135,8 @@ protected:
  	bool		m_geometryEnabled;
  	wxString	m_geometryString;
  	wxString	m_logFile;
@@ -1071,7 +1071,7 @@ index c778c34..29a8257 100644
  	wxString	m_appName;
  	wxString	m_PidFile;
  
-@@ -413,6 +415,7 @@ public:
+@@ -410,6 +412,7 @@ public:
  	wxString GetLog(bool reset = false);
  	wxString GetServerLog(bool reset = false);
  	void AddServerMessageLine(wxString &msg);
@@ -1079,7 +1079,7 @@ index c778c34..29a8257 100644
  	DECLARE_EVENT_TABLE()
  };
  
-@@ -583,6 +586,8 @@ public:
+@@ -574,6 +577,8 @@ public:
  
  	virtual int ShowAlert(wxString msg, wxString title, int flags);
  
@@ -1088,7 +1088,7 @@ index c778c34..29a8257 100644
  	DECLARE_EVENT_TABLE()
  };
  
-@@ -593,3 +598,8 @@ extern CamuleDaemonApp *theApp;
+@@ -584,3 +589,8 @@ extern CamuleDaemonApp *theApp;
  
  #endif // AMULE_H
  // File_checked_for_headers
@@ -1137,7 +1137,7 @@ diff --git a/src/amuleDlg.cpp b/src/amuleDlg.cpp
 index 0629294..e334182 100644
 --- a/src/amuleDlg.cpp
 +++ b/src/amuleDlg.cpp
-@@ -316,7 +316,7 @@ m_clientSkinNames(CLIENT_SKIN_SIZE)
+@@ -311,7 +311,7 @@ m_clientSkinNames(CLIENT_SKIN_SIZE)
  	wxNotebook* logs_notebook = CastChild( ID_SRVLOG_NOTEBOOK, wxNotebook);
  	wxNotebook* networks_notebook = CastChild( ID_NETNOTEBOOK, wxNotebook);
  
@@ -1146,7 +1146,7 @@ index 0629294..e334182 100644
  	wxASSERT(networks_notebook->GetPageCount() == 2);
  
  	for (uint32 i = 0; i < logs_notebook->GetPageCount(); ++i) {
-@@ -508,7 +508,12 @@ void CamuleDlg::OnAboutButton(wxCommandEvent& WXUNUSED(ev))
+@@ -503,7 +503,12 @@ void CamuleDlg::OnAboutButton(wxCommandEvent& WXUNUSED(ev))
  		_("Part of aMule is based on \n") <<
  		_("Kademlia: Peer-to-peer routing based on the XOR metric.\n") <<
                  _(" Copyright (c) 2002-2011 Petar Maymounkov ( petar@post.harvard.edu )\n") <<
@@ -1160,7 +1160,7 @@ index 0629294..e334182 100644
  
  	if (m_is_safe_state) {
  		wxMessageBox(msg, _("Message"), wxOK | wxICON_INFORMATION, this);
-@@ -660,8 +665,24 @@ void CamuleDlg::AddServerMessageLine(wxString& message)
+@@ -655,8 +660,24 @@ void CamuleDlg::AddServerMessageLine(wxString& message)
  		}
  		cv->ShowPosition(cv->GetLastPosition()-1);
  	}
@@ -1185,7 +1185,7 @@ index 0629294..e334182 100644
  
  void CamuleDlg::ShowConnectionState(bool skinChanged)
  {
-@@ -1441,6 +1462,8 @@ void CamuleDlg::DoNetworkRearrange()
+@@ -1436,6 +1457,8 @@ void CamuleDlg::DoNetworkRearrange()
  		logs_notebook->AddPage(m_logpages[3].page, m_logpages[3].name);
  	}
  
@@ -1221,7 +1221,7 @@ diff --git a/src/amuled.cpp b/src/amuled.cpp
 index 86e1ff8..8d1e022 100644
 --- a/src/amuled.cpp
 +++ b/src/amuled.cpp
-@@ -784,4 +784,10 @@ int CamuleDaemonApp::ShowAlert(wxString msg, wxString title, int flags)
+@@ -783,4 +783,10 @@ int CamuleDaemonApp::ShowAlert(wxString msg, wxString title, int flags)
  	return 0;	// That's neither yes nor no, ok, cancel
  }
  
