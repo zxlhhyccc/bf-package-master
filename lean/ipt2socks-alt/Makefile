@@ -1,24 +1,27 @@
+#
+# Copyright (C) 2021 CTCGFW Project-OpenWrt
+# <https://project-openwrt.eu.org>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ipt2socks-alt
 PKG_VERSION:=1.0.2
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/zfl9/ipt2socks.git
-PKG_MIRROR_HASH:=c94ff0df2d4f066475078c873d9b3983994b60ef6a3086145a496d1cff55cde0
-PKG_SOURCE_VERSION:=e6c9b60444bfe2f30830619aacbc67d26ee1015e
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/zfl9/ipt2socks/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=f247d72b61b1f40ce347904c43523bff257fc9f00ff269ecccf06f1d0f4b9d5e
 
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(firstword $(subst -, ,$(PKG_NAME)))-$(PKG_VERSION)
 PKG_BUILD_PARALLEL:=1
-PKG_BUILD_DEPENDS:=libuv
-PKG_USE_MIPS16:=0
+PKG_INSTALL:=1
 
-PKG_LICENSE:=GPLv3
-PKG_LICENSE_FILES:=LICENSE
-
+PKG_LICENSE:=AGPL-3.0
+PKG_LICENSE_FILE:=LICENSE
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -26,22 +29,16 @@ define Package/ipt2socks-alt
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=Utility for converting iptables (REDIRECT/TPROXY) to SOCKS5
-	URL:=https://github.com/zfl9/ipt2socks.git
+	URL:=https://github.com/zfl9/ipt2socks
+	DEPENDS:=+libpthread +libuv
 endef
 
-define Package/ipt2socks-alt/description
-Utility for converting iptables (REDIRECT/TPROXY) to SOCKS5.
-endef
-
-define Package/ipt2socks-alt/conffiles
-/etc/config/ipt2socks
-endef
-
-MAKE_FLAGS += LIBS="-l:libuv_a.a"
+TARGET_CFLAGS += $(FPIC) -flto
+TARGET_LDFLAGS += -flto
 
 define Package/ipt2socks-alt/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ipt2socks $(1)/usr/bin/ipt2socks-alt
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/ipt2socks $(1)/usr/bin/ipt2socks-alt
 endef
 
 $(eval $(call BuildPackage,ipt2socks-alt))
