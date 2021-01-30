@@ -1062,7 +1062,7 @@ diff --git a/src/amule.h b/src/amule.h
 index c778c34..29a8257 100644
 --- a/src/amule.h
 +++ b/src/amule.h
-@@ -135,6 +135,8 @@ protected:
+@@ -134,6 +134,8 @@ protected:
  	bool		m_geometryEnabled;
  	wxString	m_geometryString;
  	wxString	m_logFile;
@@ -1071,7 +1071,7 @@ index c778c34..29a8257 100644
  	wxString	m_appName;
  	wxString	m_PidFile;
  
-@@ -410,6 +412,7 @@ public:
+@@ -409,6 +411,7 @@ public:
  	wxString GetLog(bool reset = false);
  	wxString GetServerLog(bool reset = false);
  	void AddServerMessageLine(wxString &msg);
@@ -1079,7 +1079,7 @@ index c778c34..29a8257 100644
  	DECLARE_EVENT_TABLE()
  };
  
-@@ -574,6 +577,8 @@ public:
+@@ -573,6 +576,8 @@ public:
  
  	virtual int ShowAlert(wxString msg, wxString title, int flags);
  
@@ -1088,7 +1088,7 @@ index c778c34..29a8257 100644
  	DECLARE_EVENT_TABLE()
  };
  
-@@ -584,3 +589,8 @@ extern CamuleDaemonApp *theApp;
+@@ -583,3 +588,8 @@ extern CamuleDaemonApp *theApp;
  
  #endif // AMULE_H
  // File_checked_for_headers
