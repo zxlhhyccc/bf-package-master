@@ -1,0 +1,13 @@
+diff --git a/Makefile b/Makefile
+index 30303b2..4be7a37 100644
+--- a/Makefile
++++ b/Makefile
+@@ -6,7 +6,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=LuCI support for SSR Libev Server
+-LUCI_DEPENDS:=+libsodium +shadowsocksr-libev-server
++LUCI_DEPENDS:=+libsodium +shadowsocksr-libev-ssr-server
+ LUCI_PKGARCH:=all
+ PKG_VERSION:=1
+ PKG_RELEASE:=9-20200513
