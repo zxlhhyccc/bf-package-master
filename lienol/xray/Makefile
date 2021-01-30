@@ -92,7 +92,7 @@ define Download/geoip.dat
   URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=e1ed85a010a7810de27b4a417d5f55847591d74f42b74824c6ceb56e90950416
+  HASH:=69bb1f820f416e4591a7b76bfabf9fde9cce6550cddcc1a99b2ccafeb2a8ebd3
 endef
 
 GEOSITE_VER:=latest
@@ -102,7 +102,7 @@ define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=5499a5fcbc42e62489fc8b57ae9765fda0191d0625da650ef77ba970463f92a6
+  HASH:=bc9748c95b0545376356174b005fccfbc21d647df46293d5197853ee06a9c0a2
 endef
 
 define Build/Prepare
