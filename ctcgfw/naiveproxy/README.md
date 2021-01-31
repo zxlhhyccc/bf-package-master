@@ -1,3 +1,5 @@
+naiveproxy的依赖路径:
+
 ```
 chromeos-chrome-amd64-$$(AFDO_VER).afdo.bz2:src/chrome/android/profiles/newest.txt
 ````
