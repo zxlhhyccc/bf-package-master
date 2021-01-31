@@ -621,11 +621,11 @@ gen_dns() {
 				doh_nf_b="8.8.8.8 8.8.4.4"	
 				dns_b=1;;
 			esac	
-			for i in $dns_nf_l; do ipset add netflix $i 2>/dev/null; done	
+			for i in $doh_nf_b; do ipset add netflix $i 2>/dev/null; done	
 		fi
 	else
 		tcp_dns_o=$(uci_get_by_type global tcp_dns_o 1.1.1.1,1.0.0.1)
-		tcp_dns_o=$(echo $tcp_dns_o | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
+		tcp_dns_o=$(echo $tcp_dns_o | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/ /g')
 		if ! dns_tmp=$(echo $tcp_dns_o | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep -v 0.0.0.0 | grep -v 127.0.0.1); then
 			echo "$(eval $DATE) SmartDNS : Get Foreign DNS failed!" >>$LOG
 			return 1
@@ -636,7 +636,7 @@ gen_dns() {
 			*) ipset del ss_spec_wan_ac $i 2>/dev/null || ipset add ss_spec_wan_ac $i nomatch 2>/dev/null ;;
 			esac
 		done
-		[ -n "$NF" ] && tcp_dns_nf="8.8.8.8,8.8.4.4"
+		[ -n "$NF" ] && tcp_dns_nf="8.8.8.8 8.8.4.4"
 		if [ "$tcp_dns_nf" = "$tcp_dns_o" ]; then	
 			tcp_dns_nf="1.1.1.1,1.0.0.1"
 		fi
