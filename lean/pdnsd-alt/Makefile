@@ -30,6 +30,10 @@ define Package/pdnsd-alt
   TITLE:=Proxy DNS Server
 endef
 
+define Package/$(PKG_NAME)/conffiles	
+/etc/pdnsd.conf	
+endef
+
 define Package/pdnsd-alt/description
   pdnsd, is an IPv6 capable proxy DNS server with permanent caching (the cache
   contents are written to hard disk on exit) that is designed to cope with
