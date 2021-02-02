@@ -17,7 +17,7 @@ index 6865c66..e61a6df 100644
  # Default is yes, because they're most likely compatible.
  # However, this is only used when cross-compiling.
  AC_ARG_WITH(
-@@ -454,6 +462,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x$SYS = xdarwin)
+@@ -451,6 +459,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x$SYS = xdarwin)
  AM_CONDITIONAL(COMPILE_NLS, test x$USE_NLS = xyes)
  AM_CONDITIONAL(INSTALL_SKINS, test MULE_IS_ENABLED_ANY([monolithic, amule-gui]))
  AM_CONDITIONAL(PLASMAMULE, test MULE_IS_ENABLED([plasmamule]))
@@ -48,20 +48,20 @@ index c6ba48a..d5aae79 100644
 +msgid " Homepage: http://amule-dlp.googlecode.com \n"
 +msgstr " 主页：http://amule-dlp.googlecode.com \n"
 +
- #: src/amuleDlg.cpp:513 src/KadDlg.cpp:193 src/PartFile.cpp:918
- #: src/PartFile.cpp:926 src/PrefsUnifiedDlg.cpp:632 src/PrefsUnifiedDlg.cpp:737
- #: src/PrefsUnifiedDlg.cpp:857
-@@ -3848,6 +3855,9 @@ msgstr "Kad 信息"
+ #: src/amuleDlg.cpp:509 src/KadDlg.cpp:193 src/PartFile.cpp:919
+ #: src/PartFile.cpp:927 src/PrefsUnifiedDlg.cpp:637 src/PrefsUnifiedDlg.cpp:742
+ #: src/PrefsUnifiedDlg.cpp:862
+@@ -3878,6 +3885,9 @@ msgstr "Kad 信息"
  msgid "Click on this button to update the nodes list from URL ..."
  msgstr "按此更新节点列表自网址..."
  
 +msgid "DLP Info"
 +msgstr "动态反吸血信息"
 +
- #: src/muuli_wdr.cpp:2648
+ #: src/muuli_wdr.cpp:2652
  msgid "Nodes (0)"
  msgstr "节点（0）"
-@@ -7415,6 +7425,48 @@ msgstr "已请求注销\n"
+@@ -7448,6 +7458,48 @@ msgstr "已请求注销\n"
  msgid "Processing request [redirected]: "
  msgstr "正在处理请求 [已重定向]："
  
