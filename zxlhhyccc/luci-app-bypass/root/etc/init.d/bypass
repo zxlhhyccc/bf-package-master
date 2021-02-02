@@ -691,7 +691,6 @@ gen_dns() {
 	cat >$DNS_T <<-EOF
 		force-AAAA-SOA yes
 		speed-check-mode none
-		prefetch-domain yes
 		cache-size 0
 		log-level fatal
 		log-file $LOG
