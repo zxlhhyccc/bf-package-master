@@ -37,6 +37,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Xray
 	bool "Include Xray"
 	default y if i386||x86_64||arm||aarch64
 
+config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray	
+	bool "Include V2ray"	
+	default n
+
 config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus
 	bool "Include Trojan_Plus"
 	default y
@@ -96,6 +100,7 @@ define Package/$(PKG_NAME)
   +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR:shadowsocksr-libev-ssr-redir \
   +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR:shadowsocksr-libev-ssr-local \
   +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server:shadowsocksr-libev-ssr-server \
+  +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray \
   +PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray \
   +PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus:trojan-plus \
   +PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_GO:trojan-go \
