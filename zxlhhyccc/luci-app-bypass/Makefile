@@ -106,7 +106,7 @@ define Package/$(PKG_NAME)
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_obfs_server:simple-obfs-server \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_plugin:v2ray-plugin \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray-core \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan-plus \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan-Go:trojan-go \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
