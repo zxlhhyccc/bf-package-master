@@ -85,7 +85,7 @@ export GOPROXY=https://goproxy.io
 #export GOPROXY=https://mirrors.aliyun.com/goproxy/
 endif
 
-GEOIP_VER:=latest
+GEOIP_VER:=202101280019
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
 
 define Download/geoip.dat
@@ -95,7 +95,7 @@ define Download/geoip.dat
   HASH:=69bb1f820f416e4591a7b76bfabf9fde9cce6550cddcc1a99b2ccafeb2a8ebd3
 endef
 
-GEOSITE_VER:=latest
+GEOSITE_VER:=20210130061540
 GEOSITE_FILE:=geosite-$(GEOSITE_VER).dat
 
 define Download/geosite.dat
