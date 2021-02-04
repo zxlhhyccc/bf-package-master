@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray-core
 PKG_VERSION:=1.2.4
-PKG_RELEASE:=1
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -38,7 +38,7 @@ define Package/xray/template
   TITLE:=A platform for building proxies to bypass network restrictions
   SECTION:=net
   CATEGORY:=Network
-  URL:=https://xtls.github.io
+  URL:=https://xray.sh
 endef
 
 define Package/xray-core
@@ -47,10 +47,18 @@ define Package/xray-core
   PROVIDES:=v2ray-core
 endef
 
+define Package/xray-example
+  $(call Package/xray/template)
+  TITLE+= (example configs)
+  DEPENDS:=xray-core
+  PKGARCH:=all
+endef
+
 define Package/xray-geodata
   $(call Package/xray/template)
   TITLE+= (geodata files)
   DEPENDS:=xray-core
+  PKGARCH:=all
 endef
 
 define Package/xray/description
@@ -60,6 +68,12 @@ endef
 
 define Package/xray-core/description
   $(call Package/xray/description)
+endef
+
+define Package/xray-example/description
+  $(call Package/xray/description)
+
+  This includes example configuration files for xray-core.
 endef
 
 define Package/xray-geodata/description
@@ -84,6 +98,11 @@ config XRAY_CORE_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	default y
 endmenu
+endef
+
+define Package/xray-core/conffiles
+/etc/xray/
+/etc/config/xray
 endef
 
 GEOIP_VER:=202101280019
@@ -128,12 +147,28 @@ endef
 
 define Package/xray-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/xray
 ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
 	$(LN) xray $(1)/usr/bin/v2ray
 endif
+
+	$(INSTALL_DIR) $(1)/etc/xray/
+	$(INSTALL_CONF) $(CURDIR)/files/config.json.example $(1)/etc/xray/
+
+	$(INSTALL_DIR) $(1)/etc/config/
+	$(INSTALL_CONF) $(CURDIR)/files/xray.conf $(1)/etc/config/xray
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) $(CURDIR)/files/xray.init $(1)/etc/init.d/xray
+
+	$(INSTALL_DIR) $(1)/etc/capabilities/
+	$(INSTALL_DATA) $(CURDIR)/files/xray.capabilities $(1)/etc/capabilities/xray.json
+endef
+
+define Package/xray-example/install
+	$(INSTALL_DIR) $(1)/etc/xray/
+	$(INSTALL_CONF) $(CURDIR)/files/vpoint_socks_vmess.json $(1)/etc/xray/
+	$(INSTALL_CONF) $(CURDIR)/files/vpoint_vmess_freedom.json $(1)/etc/xray/
 endef
 
 define Package/xray-geodata/install
@@ -143,4 +178,5 @@ define Package/xray-geodata/install
 endef
 
 $(eval $(call BuildPackage,xray-core))
+$(eval $(call BuildPackage,xray-example))
 $(eval $(call BuildPackage,xray-geodata))
