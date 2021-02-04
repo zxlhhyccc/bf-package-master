@@ -105,14 +105,14 @@ define Package/xray-core/conffiles
 /etc/config/xray
 endef
 
-GEOIP_VER:=202101280019
+GEOIP_VER:=202102040014
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
   URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=69bb1f820f416e4591a7b76bfabf9fde9cce6550cddcc1a99b2ccafeb2a8ebd3
+  HASH:=e426e71ec9fd1254117633fe9c83339eb26f5c0b037316c8f0b22bd47e120d6d
 endef
 
 GEOSITE_VER:=20210130061540
