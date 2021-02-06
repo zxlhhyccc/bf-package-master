@@ -1,7 +1,7 @@
 #!/bin/sh
 [ "$1" = check ] || exit 1
 LOCK=/var/lock/bypass.lock
-LOG=/tmp/bypass.log
+LOG=/tmp/log/bypass.log
 D="date +'%Y-%m-%d %H:%M:%S'"
 # 防止重复启动
 [ -f $LOCK ] && exit 1

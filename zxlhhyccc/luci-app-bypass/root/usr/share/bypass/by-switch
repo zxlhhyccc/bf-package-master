@@ -2,7 +2,7 @@
 
 NAME=bypass
 D="date +'%Y-%m-%d %H:%M:%S'"
-L=/tmp/bypass.log
+L=/tmp/log/bypass.log
 
 uci_get_by_name(){
 	w=$(uci -q get $NAME.$1.$2)
@@ -117,7 +117,7 @@ curl_check(){
 		fi
 	fi
 	gen_port
-	J=/var/etc/by-socks5-check.json
+	J=/var/etc/bypass/by-socks5-check.json
 	gen_config_file $1
 	IP=127.0.0.1
 	param=

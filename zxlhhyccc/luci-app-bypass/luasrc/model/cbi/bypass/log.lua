@@ -1,5 +1,5 @@
 local fs=require "nixio.fs"
-local conffile="/tmp/bypass.log"
+local conffile="/var/log/bypass.log"
 
 f=SimpleForm("logview")
 f.reset=false
