@@ -2,8 +2,8 @@
 #
 # This is a free software, use it under GNU General Public License v3.0.
 #
-# Created By [CTCGFW]Project-OpenWrt
-# https://github.com/project-openwrt
+# Created By ImmortalWrt
+# https://github.com/ImmortalWrt
 
 include $(TOPDIR)/rules.mk
 
