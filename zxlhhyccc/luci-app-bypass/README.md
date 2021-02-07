@@ -10,9 +10,6 @@
 [TG交流与反馈](https://t.me/opwrts)
 
 ### 相关依赖 
-SmartDNS: https://github.com/garypang13/openwrt-packages/tree/master/smartdns
-
-TCPing: https://github.com/garypang13/openwrt-packages/tree/master/tcping
 
 Lua-Maxminddb: https://github.com/garypang13/openwrt-packages/tree/master/lua-maxminddb
 
