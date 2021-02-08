@@ -699,6 +699,7 @@ gen_dns() {
 		force-AAAA-SOA yes
 		speed-check-mode none
 		cache-size 0
+		dualstack-ip-selection yes
 		log-level fatal
 		log-file $LOG
 	EOF
