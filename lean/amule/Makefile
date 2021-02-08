@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aMule
-PKG_VERSION:=2.3.2
-PKG_RELEASE:=5
+PKG_VERSION:=2.3.3
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/amule-project/amule.git
-PKG_MIRROR_HASH:=45684b3e5132e57e6223c86534b18e395302efcd6bf67eb2bf1a02ec67e7a777
-PKG_SOURCE_DATE:=2021-01-31
-PKG_SOURCE_VERSION:=fe3591094d23f40e6d5106cc18b64792a6ed1936
+PKG_SOURCE_DATE:=2021-02-08
+PKG_SOURCE_VERSION:=74d96296aaf52d22a19d6df8c42eca4073b6efd1
+PKG_MIRROR_HASH:=skip
 
 PKG_CONFIG_DEPEDS:= CONFIG_AMULE_CRYPTOPP_STATIC_LINKING
 
@@ -78,7 +78,6 @@ CONFIGURE_ARGS+= \
 	--with-libiconv-prefix="$(ICONV_PREFIX)" \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
 	--with-libupnp-prefix="$(STAGING_DIR)/usr" \
-	--without-x \
 	--disable-debug 
 
 MAKE_FLAGS += HOSTCC="$(HOSTCC)"
