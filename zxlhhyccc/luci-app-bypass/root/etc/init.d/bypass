@@ -703,7 +703,7 @@ gen_dns() {
 		log-level fatal
 		log-file $LOG
 	EOF
-	echo "bind :5335 -group a" >>$DNS_T
+	echo "bind :5335 -group a -no-dualstack-selection" >>$DNS_T
 	echo "bind :5336 -group e -no-rule-soa" >>$DNS_T
 	if [ $dns_mode_o = "doh" ]; then
 		if [ "$dns_a" = 1 ]; then
@@ -998,8 +998,8 @@ stop() {
 restart() {
 	STATUS=N
 	stop
-	[ "$(uci_get_by_type global global_server)" ] || exit 0
 	if [ -s $DNS_T ]; then
+		[ "$(uci_get_by_type global global_server)" ] || exit 0
 		if [[ "$(uci get smartdns.@smartdns[0].enabled 2>/dev/null)" == "1" ]]; then
 			uci del smartdns.@smartdns[0].enabled 2>/dev/null
 			uci commit smartdns

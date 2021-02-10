@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-bypass
 PKG_VERSION:=1.2
-PKG_RELEASE:=48
+PKG_RELEASE:=49
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
