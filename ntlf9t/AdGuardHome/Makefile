@@ -7,20 +7,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=AdGuardHome
-PKG_VERSION:=0.104.3
+PKG_VERSION:=0.105.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
-PKG_MIRROR_HASH:=3256f6e6a7b3ffd1b93a74542f1f078ad6241915853203fd4142ca49bce3711f
-PKG_SOURCE_VERSION:=aef4659e934105e6a6e0a7cd691b34ab7d720047
+PKG_SOURCE_VERSION:=e272e19516bff782c27bda5e15c6efb115a72d99
+PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
 PKG_MAINTAINER:=Dobroslaw Kijowski <dobo90@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host node/host packr/host
+PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host packr/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
@@ -30,6 +30,7 @@ PKG_CONFIG_DEPENDS:= \
 
 GO_PKG:=github.com/AdguardTeam/AdGuardHome
 GO_PKG_EXCLUDES:=internal/dhcpd/standalone
+GO_PKG_BUILD_PKG:=github.com/AdguardTeam/AdGuardHome
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION) main.channel=release main.goarm=$(GO_ARM)
 
@@ -72,8 +73,7 @@ endif
 define Build/Compile
 ( \
   pushd $(PKG_BUILD_DIR) ; \
-  npm --prefix client ci ; \
-  npm --prefix client run build-prod ; \
+  make js-deps js-build ; \
   packr -z -v -i internal/home ; \
   popd ; \
   $(call GoPackage/Build/Compile) ; \
