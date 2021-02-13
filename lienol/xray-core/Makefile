@@ -7,7 +7,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=1b87264c532b8e250e5098b15fc0b29d7f551e6e
+PKG_SOURCE_VERSION:=573b7807c099dc268a0d3a3d011539bb44f2f314
 PKG_MIRROR_HASH:=skip
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@project-openwrt.eu.org>
@@ -105,24 +105,28 @@ define Package/xray-core/conffiles
 /etc/config/xray
 endef
 
-GEOIP_VER:=202102040014
+GEOIP_VER:=202102112209
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
-  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
+#  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=e426e71ec9fd1254117633fe9c83339eb26f5c0b037316c8f0b22bd47e120d6d
+  HASH:=acce62bcb45e9cb832c02da5e2d7b5d615fc7b5f4771c6356a406e1449f5673f
 endef
 
-GEOSITE_VER:=20210212142233
-GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
+GEOSITE_VER:=202102112209
+#GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
+GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
 define Download/geosite
-  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
-  URL_FILE:=dlc.dat
+#  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOSITE_VER)/
+#  URL_FILE:=dlc.dat
+  URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=c89e203fcef2e3e390f523f5f2d45329a0996714d16739234cb1395b73cd4cd5
+  HASH:=c4071fd268ab38d3b09ebf8dbbcb82c4ab8833ecdab991b40b57b75da47e536e
 endef
 
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
