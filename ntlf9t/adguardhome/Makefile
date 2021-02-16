@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=AdGuardHome
-PKG_VERSION:=0.105.0
+PKG_VERSION:=0.105.1
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
-PKG_SOURCE_VERSION:=e272e19516bff782c27bda5e15c6efb115a72d99
+PKG_SOURCE_VERSION:=f68f6c9b37cea1f33cb6fa791e6678b9df3a237b
 PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-only
@@ -32,7 +32,10 @@ GO_PKG:=github.com/AdguardTeam/AdGuardHome
 GO_PKG_EXCLUDES:=internal/dhcpd/standalone
 GO_PKG_BUILD_PKG:=github.com/AdguardTeam/AdGuardHome
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION) main.channel=release main.goarm=$(GO_ARM)
+GO_PKG_LDFLAGS_X:= \
+	main.version=$(PKG_SOURCE_VERSION) \
+	main.channel=release \
+	main.goarm=$(GO_ARM)
 
 ifneq ($(findstring $(ARCH),mips mipsel),)
 	ADG_CONF_NAME:=small_flash
