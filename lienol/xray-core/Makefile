@@ -7,7 +7,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=d22c2d034cc29bf553566d3483f3bf761d2225ab
+PKG_SOURCE_VERSION:=fed8610d3f778242635ce0f1e528620b8eae85f0
 PKG_MIRROR_HASH:=skip
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@project-openwrt.eu.org>
@@ -105,7 +105,7 @@ define Package/xray-core/conffiles
 /etc/config/xray
 endef
 
-GEOIP_VER:=202102162209
+GEOIP_VER:=202102172207
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -116,7 +116,7 @@ define Download/geoip
   HASH:=c43f9779a1bc13b8de20592b7d4d6369b2848664f636b33c4e4d4ecbe10ec641
 endef
 
-GEOSITE_VER:=202102152209
+GEOSITE_VER:=202102172207
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -126,7 +126,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=4e7acfd4445cf0c2aa563b3c5455ca8e606bfc5811e10a8192f5aec0d9fab5ce
+  HASH:=68c16f3b00afffe16bb381a229e762324ca4bbc1cdd8c90e4812475aecd6d9fa
 endef
 
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
