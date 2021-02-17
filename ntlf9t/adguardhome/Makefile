@@ -76,7 +76,7 @@ endif
 define Build/Compile
 ( \
   pushd $(PKG_BUILD_DIR) ; \
-  make js-deps js-build ; \
+  make js-deps js-build js-lint js-test js-beta-lint build-release ; \
   packr -z -v -i internal/home ; \
   popd ; \
   $(call GoPackage/Build/Compile) ; \
