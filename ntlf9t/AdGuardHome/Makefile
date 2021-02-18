@@ -13,7 +13,7 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
-PKG_SOURCE_VERSION:=f68f6c9b37cea1f33cb6fa791e6678b9df3a237b
+PKG_SOURCE_VERSION:=a0abad6644d1cbe80d9293b6742e38c4c6ddc282
 PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-only
@@ -29,13 +29,16 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_ADGUARDHOME_COMPRESS_UPX
 
 GO_PKG:=github.com/AdguardTeam/AdGuardHome
-GO_PKG_EXCLUDES:=internal/dhcpd/standalone
+# GO_PKG_EXCLUDES:=internal/dhcpd/standalone
 GO_PKG_BUILD_PKG:=github.com/AdguardTeam/AdGuardHome
+
+AGH_VERSION_PKG:=github.com/AdguardTeam/AdGuardHome/internal/version
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	main.version=$(PKG_SOURCE_VERSION) \
-	main.channel=release \
-	main.goarm=$(GO_ARM)
+	$(AGH_VERSION_PKG).channel=releas \
+	$(AGH_VERSION_PKG).version=$(PKG_SOURCE_VERSION) \
+	$(AGH_VERSION_PKG).goarm=$(GO_ARM) \
+	$(AGH_VERSION_PKG).gomips=$(GO_MIPS)
 
 ifneq ($(findstring $(ARCH),mips mipsel),)
 	ADG_CONF_NAME:=small_flash

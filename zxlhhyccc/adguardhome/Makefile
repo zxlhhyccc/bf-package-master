@@ -22,16 +22,16 @@ ifeq ($(ARCH),mips)
 	PKG_ARCH:=mips_softfloat
 endif
 ifeq ($(ARCH),arm)
-	PKG_ARCH:=arm7
+	PKG_ARCH:=armv7
 endif
 ifeq ($(BOARD),bcm53xx)
-	PKG_ARCH:=arm6
+	PKG_ARCH:=armv6
 ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
-	PKG_ARCH:=arm5
+	PKG_ARCH:=armv5
 endif
 endif
 ifeq ($(BOARD),kirkwood)
-	PKG_ARCH:=arm5
+	PKG_ARCH:=armv5
 endif
 ifeq ($(ARCH),arm64)
 	PKG_ARCH:=arm64
