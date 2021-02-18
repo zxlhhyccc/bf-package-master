@@ -11,7 +11,7 @@ PKG_VERSION:=2.11.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=f1b7bd59f67e719b7bfd203b0d7ec016fd21ab49
+PKG_SOURCE_VERSION:=977ec339181a60c32a60baaf0f36277479c6964a
 PKG_SOURCE_URL:=https://github.com/filebrowser/filebrowser
 PKG_MIRROR_HASH:=skip
 
@@ -30,8 +30,8 @@ PKG_CONFIG_DEPENDS:= \
 GO_PKG:=github.com/filebrowser/filebrowser
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	github.com/filebrowser/filebrowser/v2/version.CommitSHA=$(PKG_SOURCE_VERSION) \
-	github.com/filebrowser/filebrowser/v2/version.Version=$(PKG_VERSION)
+	$(GO_PKG)/v2/version.CommitSHA=$(PKG_SOURCE_VERSION) \
+	$(GO_PKG)/v2/version.Version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -39,7 +39,7 @@ include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 define Package/filebrowser
   SECTION:=utils
   CATEGORY:=Utilities
-  TITLE:=Web File Browser which can be used as a middleware or standalone app.
+  TITLE:=Web File Browser
   URL:=https://github.com/filebrowser/filebrowser
   DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
