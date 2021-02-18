@@ -1,9 +1,5 @@
 #
-# Copyright (C) 2020 stepheny
-# <https://github.com/aircrack-ng/rtl8812au/pull/619>
-#
 # Copyright (C) 2021 ImmortalWrt
-# <https://project-openwrt.eu.org>
 #
 # This is free software, licensed under the GNU General Public License v3.
 # See /LICENSE for more information.
@@ -11,18 +7,14 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=rtl8812au-ac
+PKG_NAME:=rtl8188eu
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=https://github.com/aircrack-ng/rtl8812au.git
+PKG_SOURCE_URL:=https://github.com/aircrack-ng/rtl8188eus.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2021-02-03
-PKG_SOURCE_VERSION:=b65dcf4105641716d16f3a6c96507fdd9c1862b4
-PKG_MIRROR_HASH:=5416d4a6e671c6b07f44f35fae54662baef71f448c4be4ade58bf7fc5ca4f192
-
-PKG_LICENSE:=GPL-2.0
-PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Marty Jones <mj8263788@gmail.com>
+PKG_SOURCE_DATE:=2021-02-06
+PKG_SOURCE_VERSION:=1e7145f3237b3eeb3baf775f4a883e6d79c1cfe6
+PKG_MIRROR_HASH:=3f68779aed2b9fabca042ea4effbdf35e25e632a00febe6c3f09646a8c75ee5d
 
 PKG_BUILD_PARALLEL:=1
 
@@ -31,13 +23,12 @@ STAMP_CONFIGURED_DEPENDS := $(STAGING_DIR)/usr/include/mac80211-backport/backpor
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
 
-define KernelPackage/rtl8812au-ac
+define KernelPackage/rtl8188eu
   SUBMENU:=Wireless Drivers
-  TITLE:=Realtek RTL8812AU/21AU wireless drivers
-  DEPENDS:=+kmod-cfg80211 +kmod-usb-core +@DRIVER_11N_SUPPORT +@DRIVER_11AC_SUPPORT
-  FILES:=$(PKG_BUILD_DIR)/rtl8812au.ko
-  AUTOLOAD:=$(call AutoProbe,rtl8812au)
-  CONFLICTS:=kmod-rtl8812au-ct
+  TITLE:=Realtek 8188EU(S)/8188ETV support
+  DEPENDS:=+kmod-cfg80211 +kmod-usb-core +@DRIVER_11N_SUPPORT
+  FILES:=$(PKG_BUILD_DIR)/rtl8188eu.ko
+  AUTOLOAD:=$(call AutoProbe,rtl8188eu)
 endef
 
 NOSTDINC_FLAGS = \
@@ -49,10 +40,6 @@ NOSTDINC_FLAGS = \
 	-I$(STAGING_DIR)/usr/include/mac80211/uapi \
 	-include backport/autoconf.h \
 	-include backport/backport.h
-
-EXTRA_KCONFIG:= \
-	CONFIG_88XXAU=m \
-	USER_MODULE_NAME=rtl8812au
 
 EXTRA_CFLAGS:= \
 	-DRTW_SINGLE_WIPHY \
@@ -67,6 +54,10 @@ else
 EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
 endif
 
+EXTRA_KCONFIG:= \
+	CONFIG_RTL8188EU=m \
+	USER_MODULE_NAME=rtl8188eu
+
 MAKE_OPTS:= \
 	$(KERNEL_MAKE_FLAGS) \
 	M="$(PKG_BUILD_DIR)" \
@@ -80,4 +71,4 @@ define Build/Compile
 		modules
 endef
 
-$(eval $(call KernelPackage,rtl8812au-ac))
+$(eval $(call KernelPackage,rtl8188eu))
