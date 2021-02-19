@@ -1445,3 +1445,6 @@ msgstr "重启时间(每周)"
 
 msgid "Restart time (every day)"
 msgstr "重启时间(每天)"
+
+msgid "DNS Port"
+msgstr "DNS监听端口"
