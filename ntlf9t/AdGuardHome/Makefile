@@ -35,8 +35,8 @@ GO_PKG_BUILD_PKG:=github.com/AdguardTeam/AdGuardHome
 AGH_VERSION_PKG:=github.com/AdguardTeam/AdGuardHome/internal/version
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	$(AGH_VERSION_PKG).channel=releas \
-	$(AGH_VERSION_PKG).version=$(PKG_SOURCE_VERSION) \
+	$(AGH_VERSION_PKG).channel=release \
+	$(AGH_VERSION_PKG).version=v$(PKG_VERSION) \
 	$(AGH_VERSION_PKG).goarm=$(GO_ARM) \
 	$(AGH_VERSION_PKG).gomips=$(GO_MIPS)
 
