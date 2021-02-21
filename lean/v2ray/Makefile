@@ -16,8 +16,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/v2ray-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=v2ray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
-PKG_SOURCE_DATE:=2021-02-11
-PKG_SOURCE_VERSION:=afcbb4feb8e506ec6ba181f5fbc9794f55203712
+PKG_SOURCE_DATE:=2021-02-20
+PKG_SOURCE_VERSION:=efb963237ca5517d8224733041dabeded6f9b104
 PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=MIT
@@ -87,24 +87,24 @@ export GOPROXY=https://goproxy.io
 #export GOPROXY=https://mirrors.aliyun.com/goproxy/
 endif
 
-GEOIP_VER:=latest
+GEOIP_VER:=202102180014
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
 
 define Download/geoip.dat
   URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=e426e71ec9fd1254117633fe9c83339eb26f5c0b037316c8f0b22bd47e120d6d
+  HASH:=0fccec9c0314a6d6a8ca16febcc4dc61964cc32ad2e59d7ab8ba6e8e374d86aa
 endef
 
-GEOSITE_VER:=latest
+GEOSITE_VER:=20210218112005
 GEOSITE_FILE:=geosite-$(GEOSITE_VER).dat
 
 define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=fe6d3ac856b5422fe2c78e3a1f834397e1d2dbda853cf05a1761dd8ecf1a9f1e
+  HASH:=4c28815b84a9b93ceaf2ac607abb9db9110f3badf9b59bb620966c8cb425fb3c
 endef
 
 define Build/Prepare
