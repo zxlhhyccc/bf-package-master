@@ -11,9 +11,7 @@ s.anonymous=true
 s:tab("basic",translate("Basic Setting"))
 enable=s:taboption("basic",Flag,"enabled",translate("Enable"))
 enable.rmempty=false
-server=s:taboption("basic",Value,"server_addr",translate("Server"),translate("Must an IPv4 address"))
-server.datatype="ipaddr"
-server.optional=false
+server=s:taboption("basic",Value,"server_addr",translate("Server"))
 server.rmempty=false
 port=s:taboption("basic",Value,"server_port",translate("Port"))
 port.datatype="port"
