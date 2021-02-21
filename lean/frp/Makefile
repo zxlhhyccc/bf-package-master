@@ -25,6 +25,10 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
+PKG_CONFIG_DEPENDS := \
+	CONFIG_FRPC_COMPRESS_UPX \
+	CONFIG_FRPS_COMPRESS_UPX
+
 GO_PKG:=github.com/fatedier/frp
 GO_PKG_BUILD_PKG:=github.com/fatedier/frp/cmd/...
 
@@ -51,13 +55,33 @@ define frp/templates
   This package contains the $(1).
   endef
 
+  define Package/frpc/config
+	config FRPC_COMPRESS_UPX
+		bool "Compress executable files with UPX"
+		default y
+  endef
+
+  define Package/frps/config
+	config FRPS_COMPRESS_UPX
+		bool "Compress executable files with UPX"
+		default y
+  endef
+
+  define Build/Compile
+	$(call GoPackage/Build/Compile)
+  ifeq ($(CONFIG_FRPC_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/frpc
+  endif
+  ifeq ($(CONFIG_FRPS_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/frps
+  endif
+  endef
+
   define Package/$(1)/install
 	$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))
 
 	$$(INSTALL_DIR) $$(1)/usr/bin
 	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/$(1) $$(1)/usr/bin/
-	
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $$(1)/usr/bin/$(1) || true
   endef
 endef
 
