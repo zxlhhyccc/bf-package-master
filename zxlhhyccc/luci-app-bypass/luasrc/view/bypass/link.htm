@@ -149,7 +149,7 @@ local dsp = require "luci.dispatcher"
 				b64encsafe(v_password.value) +
 				"/?obfsparam=" + b64encsafe(v_obfs_param.value) +
 				"&protoparam=" + b64encsafe(v_protocol_param.value) +
-				"&alias=" + b64encutf8safe(v_alias.value);
+				"&remarks=" + b64encutf8safe(v_alias.value);
 			url = b64encsafe(ssr_str);
 		} else if (v_type === "trojan" || v_type === "trojan-go") {
 			var v_password = opt.get(!opt.client && v_type === "trojan-go"  ? "passwords" : "password");
@@ -321,7 +321,7 @@ local dsp = require "luci.dispatcher"
 			opt.set('password', b64decsafe(ssm[6]));
 			opt.set('obfs_param', dictvalue(pdict, 'obfsparam'));
 			opt.set('protocol_param', dictvalue(pdict, 'protoparam'));
-			var rem = pdict['alias'];
+			var rem = pdict['remarks'];
 			if (typeof(rem) !== 'undefined' && rem !== '' && rem.length > 0)
 				opt.set('alias', b64decutf8safe(rem));
 		} else if (ssu[0] === "ss") {

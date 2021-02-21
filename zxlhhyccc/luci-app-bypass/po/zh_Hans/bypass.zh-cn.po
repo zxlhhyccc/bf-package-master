@@ -191,10 +191,10 @@ msgid "Update subscribe url list first"
 msgstr "修改订阅URL和节点关键字后，请先点击更新"
 
 msgid "Subscribe Default Auto-Switch"
-msgstr "订阅新节点自动切换设置"
+msgstr "订阅新节点故障转移设置"
 
 msgid "Subscribe new add server default Auto-Switch on"
-msgstr "订阅加入的新节点默认开启自动切换"
+msgstr "订阅加入的新节点默认开启故障转移"
 
 msgid "Through proxy update"
 msgstr "通过代理更新"
@@ -242,7 +242,7 @@ msgid "Apply"
 msgstr "使用"
 
 msgid "Auto Switch"
-msgstr "自动切换"
+msgstr "故障转移"
 
 msgid "Edit Server"
 msgstr "编辑服务器配置"
@@ -350,7 +350,7 @@ msgid "TCP Fast Open"
 msgstr "TCP快速打开"
 
 msgid "Enable Auto Switch"
-msgstr "启用自动切换"
+msgstr "启用故障转移"
 
 msgid "Local Port"
 msgstr "本地端口"
@@ -434,13 +434,13 @@ msgid "Advanced Settings"
 msgstr "高级设置"
 
 msgid "Server failsafe auto swith settings"
-msgstr "服务器节点故障自动切换设置"
+msgstr "服务器节点故障故障转移设置"
 
 msgid "Enable Process Deamon"
 msgstr "启用进程自动守护"
 
 msgid "Switch check cycly(second)"
-msgstr "自动切换检查周期（秒）"
+msgstr "故障转移检查周期（秒）"
 
 msgid "Check timout(second)"
 msgstr "切换检查超时时间（秒）"
