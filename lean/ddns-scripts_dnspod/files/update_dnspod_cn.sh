@@ -105,7 +105,6 @@ update_domain(){
 # 获取域名解析记录
 describe_domain(){
 	ret=0
-
 	__POST="login_token=$username,$password&format=json&domain=$__DOMAIN&sub_domain=$__HOST&record_type=$__TYPE"
 	__POST1="$__POST&value=$__IP&record_type=$__TYPE&record_line_id=0"
 	dnspod_transfer 0
