@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk 
 
 PKG_NAME:=luci-app-clash
-PKG_VERSION:=v1.7.5.7
+PKG_VERSION:=v1.8.0
 PKG_MAINTAINER:=frainzy1477
 
 include $(INCLUDE_DIR)/package.mk
@@ -9,9 +9,9 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=luci
 	CATEGORY:=LuCI
-	SUBMENU:=3. Applications
+	SUBMENU:=2. Clash For OpenWRT
 	TITLE:=LuCI app for clash
-	DEPENDS:=+luci-base +wget-ssl +iptables +coreutils-base64 +coreutils +coreutils-nohup +bash +ipset +libustream-openssl +curl +jsonfilter +ca-certificates +iptables-mod-tproxy +kmod-tun +rpcd
+	DEPENDS:=+luci-base +wget-ssl +iptables +coreutils-base64 +coreutils +coreutils-nohup +bash +ipset +libustream-openssl +curl +jsonfilter +ca-certificates +iptables-mod-tproxy +kmod-tun
 	PKGARCH:=all
 	MAINTAINER:=frainzy1477
 endef
@@ -21,7 +21,7 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Build/Prepare
-	po2lmo ${CURDIR}/po/zh_Hans/clash.po ${CURDIR}/po/zh_Hans/clash.zh-cn.lmo
+	po2lmo ${CURDIR}/po/zh-cn/clash.po ${CURDIR}/po/zh-cn/clash.zh-cn.lmo
 endef
 
 define Build/Configure
@@ -168,7 +168,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DATA) ./luasrc/model/cbi/clash/logs/*.lua $(1)/usr/lib/lua/luci/model/cbi/clash/logs
 	$(INSTALL_DATA) ./luasrc/model/cbi/clash/update/*.lua $(1)/usr/lib/lua/luci/model/cbi/clash/update
 	$(INSTALL_DATA) ./luasrc/view/clash/* $(1)/usr/lib/lua/luci/view/clash
-	$(INSTALL_DATA) ./po/zh_Hans/clash.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n
+	$(INSTALL_DATA) ./po/zh-cn/clash.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
