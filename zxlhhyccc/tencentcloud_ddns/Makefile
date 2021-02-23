@@ -69,7 +69,7 @@ define Package/luci-app-tencentddns/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/tencentddns.*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DATA) ./files/luci/controller/*.lua $(1)/usr/lib/lua/luci/controller/
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi/tencentddns
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
 	$(INSTALL_DATA) ./files/luci/model/cbi/*.lua $(1)/usr/lib/lua/luci/model/cbi/
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/root/etc/config/tencentddns $(1)/etc/config/tencentddns
