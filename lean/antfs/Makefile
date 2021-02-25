@@ -37,7 +37,7 @@ define Build/Compile
 		$(MAKE_OPTS) \
 		CONFIG_ANTFS_FS=m \
 		CONFIG_ANTFS_SYMLINKS=y \
-		ANTFS_VERSION=07.19-$(call version_abbrev,$(PKG_SOURCE_VERSION)) \
+		ANTFS_VERSION=07.22-$(call version_abbrev,$(PKG_SOURCE_VERSION)) \
 		modules
 endef
 
