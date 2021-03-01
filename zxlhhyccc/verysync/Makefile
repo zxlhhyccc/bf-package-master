@@ -38,6 +38,9 @@ PKG_SOURCE:=$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://dl.verysync.com/releases/$(PKG_VERSION)/
 PKG_HASH:=skip
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_VERYSYNC_COMPRESS_UPX
+
 include $(INCLUDE_DIR)/package.mk
 
 TAR_CMD:=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
@@ -53,8 +56,17 @@ define Package/verysync/description
 	Verysync is a efficient data transmission tool.
 endef
 
+define Package/verysync/config
+	config VERYSYNC_COMPRESS_UPX
+		bool "Compress executable files with UPX"
+		default y
+endef
+
 define Build/Configure
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/verysync-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync || true
+	true
+ifeq ($(CONFIG_VERYSYNC_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/verysync-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync
+endif
 endef
 
 define Build/Compile
