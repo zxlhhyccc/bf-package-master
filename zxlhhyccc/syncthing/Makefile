@@ -19,6 +19,9 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_SYNCTHING_COMPRESS_UPX
+
 GO_PKG:=github.com/syncthing/syncthing/
 GO_PKG_BUILD_PKG:=github.com/syncthing/syncthing/cmd/syncthing/
 GO_PKG_INSTALL_EXTRA:=^gui/
@@ -44,9 +47,17 @@ GO_PKG_LDFLAGS_X:= \
 	github.com/syncthing/syncthing/lib/build.Program=syncthing
 GO_PKG_TAGS:=noupgrade
 
+define Package/syncthing/config
+	config SYNCTHING_COMPRESS_UPX
+		bool "Compress executable files with UPX"
+		default y
+endef
+
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/syncthing || true
+ifeq ($(CONFIG_SYNCTHING_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/syncthing
+endif
 endef
 
 define Package/syncthing/description
