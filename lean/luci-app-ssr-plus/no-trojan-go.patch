@@ -1,0 +1,417 @@
+diff --git a/Makefile b/Makefile
+index d98db3c..5d442cd 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=luci-app-ssr-plus
+ PKG_VERSION:=183
+-PKG_RELEASE:=7
++PKG_RELEASE:=8
+ 
+ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
+diff --git a/luasrc/controller/shadowsocksr.lua b/luasrc/controller/shadowsocksr.lua
+index 55be05e..b24fcf1 100644
+--- a/luasrc/controller/shadowsocksr.lua
++++ b/luasrc/controller/shadowsocksr.lua
+@@ -6,7 +6,10 @@ function index()
+ 	if not nixio.fs.access("/etc/config/shadowsocksr") then
+ 		call("act_reset")
+ 	end
+-	entry({"admin", "services", "shadowsocksr"}, alias("admin", "services", "shadowsocksr", "client"), _("ShadowSocksR Plus+"), 10).dependent = true
++	local page
++	page = entry({"admin", "services", "shadowsocksr"}, alias("admin", "services", "shadowsocksr", "client"), _("ShadowSocksR Plus+"), 10)
++	page.dependent = true
++	page.acl_depends = { "luci-app-ssr-plus" }
+ 	entry({"admin", "services", "shadowsocksr", "client"}, cbi("shadowsocksr/client"), _("SSR Client"), 10).leaf = true
+ 	entry({"admin", "services", "shadowsocksr", "servers"}, arcombine(cbi("shadowsocksr/servers", {autoapply = true}), cbi("shadowsocksr/client-config")), _("Severs Nodes"), 20).leaf = true
+ 	entry({"admin", "services", "shadowsocksr", "control"}, cbi("shadowsocksr/control"), _("Access Control"), 30).leaf = true
+@@ -123,4 +126,4 @@ end
+ function act_delete()
+ 	luci.sys.call("/etc/init.d/shadowsocksr restart &")
+ 	luci.http.redirect(luci.dispatcher.build_url("admin", "services", "shadowsocksr", "servers"))
+-end
+\ No newline at end of file
++end
+diff --git a/luasrc/model/cbi/shadowsocksr/client-config.lua b/luasrc/model/cbi/shadowsocksr/client-config.lua
+index 7c288d0..09691bf 100644
+--- a/luasrc/model/cbi/shadowsocksr/client-config.lua
++++ b/luasrc/model/cbi/shadowsocksr/client-config.lua
+@@ -155,10 +155,6 @@ end
+ if is_finded("trojan") then
+ 	o:value("trojan", translate("Trojan"))
+ end
+-if is_finded("trojan-go") then
+-	o:value("trojan", translate("Trojan"))
+-	o:value("trojan-go", translate("Trojan-Go"))
+-end
+ if is_finded("naive") then
+ 	o:value("naiveproxy", translate("NaiveProxy"))
+ end
+@@ -200,7 +196,6 @@ o:depends("type", "v2ray")
+ o:depends("type", "trojan")
+ o:depends("type", "naiveproxy")
+ o:depends("type", "socks5")
+-o:depends("type", "trojan-go")
+ 
+ o = s:option(Value, "server_port", translate("Server Port"))
+ o.datatype = "port"
+@@ -211,7 +206,6 @@ o:depends("type", "v2ray")
+ o:depends("type", "trojan")
+ o:depends("type", "naiveproxy")
+ o:depends("type", "socks5")
+-o:depends("type", "trojan-go")
+ 
+ o = s:option(Flag, "auth_enable", translate("Enable Authentication"))
+ o.rmempty = false
+@@ -239,7 +233,6 @@ o:depends({type = "v2ray", v2ray_protocol = "http", auth_enable = true})
+ o:depends({type = "v2ray", v2ray_protocol = "socks", auth_enable = true})
+ o:depends({type = "v2ray", v2ray_protocol = "shadowsocks"})
+ o:depends({type = "v2ray", v2ray_protocol = "trojan"})
+-o:depends("type", "trojan-go")
+ 
+ o = s:option(ListValue, "encrypt_method", translate("Encrypt Method"))
+ for _, v in ipairs(encrypt_methods) do
+@@ -341,14 +334,6 @@ o:value("quic", "QUIC")
+ o.rmempty = true
+ o:depends("type", "v2ray")
+ 
+-trojan_transport = s:option(ListValue, "trojan_transport", translate("Transport"))
+-trojan_transport:value("original", "Original")
+-trojan_transport:value("ws", "WebSocket")
+-trojan_transport:value("h2", "HTTP/2")
+-trojan_transport:value("h2+ws", "HTTP/2 & WebSocket")
+-trojan_transport.default = "original"
+-trojan_transport:depends("type", "trojan-go")
+-
+ -- [[ TCP部分 ]]--
+ -- TCP伪装
+ o = s:option(ListValue, "tcp_guise", translate("Camouflage Type"))
+@@ -494,22 +479,6 @@ o.placeholder = "eg: [\"-config\", \"test.json\"]"
+ o:depends({plugin_type = "shadowsocks"})
+ o:depends({plugin_type = "other"})
+ 
+--- [[ Trojan-Go Shadowsocks2 ]] --
+-o = s:option(Flag, "ss_aead", translate("Shadowsocks2"))
+-o:depends("type", "trojan-go")
+-o.default = "0"
+-
+-o = s:option(ListValue, "ss_aead_method", translate("Encrypt Method"))
+-o:value("aes-128-gcm")
+-o:value("aes-256-gcm")
+-o:value("chacha20-ietf-poly1305")
+-o.default = "aes-128-gcm"
+-o:depends("ss_aead", "1")
+-
+-o = s:option(Value, "ss_aead_pwd", translate("Password"))
+-o.password = true
+-o:depends("ss_aead", "1")
+-
+ -- [[ TLS ]]--
+ o = s:option(Flag, "tls", translate("TLS"))
+ o.rmempty = true
+@@ -517,7 +486,6 @@ o.default = "0"
+ o:depends({type = "v2ray", xtls = false})
+ -- o:depends({type = "v2ray", v2ray_protocol = "vless", xtls = false})
+ o:depends("type", "trojan")
+-o:depends("type", "trojan-go")
+ 
+ -- XTLS
+ if is_finded("xray") then
+@@ -542,7 +510,6 @@ o:depends("xtls", true)
+ -- [[ TLS部分 ]] --
+ o = s:option(Flag, "tls_sessionTicket", translate("Session Ticket"))
+ o:depends({type = "trojan", tls = true})
+-o:depends({type = "trojan-go", tls = true})
+ o.default = "0"
+ 
+ -- [[ Trojan TLS ]]--
+@@ -550,14 +517,10 @@ o = s:option(ListValue, "fingerprint", translate("Finger Print"))
+ o:value("disable", translate("disable"))
+ o:value("firefox", translate("firefox"))
+ o:value("chrome", translate("chrome"))
+-if is_finded("Trojan-go") then
+-	o:value("ios", translate("ios"))
+-end
+ if is_finded("xray") then
+ 	o:value("safari", translate("safari"))
+ 	o:value("randomized", translate("random"))
+ end
+-o:depends({type = "trojan-go", tls = true})
+ o:depends({type = "v2ray", tls = true})
+ o.default = "firefox"
+ 
+@@ -590,7 +553,6 @@ o = s:option(Flag, "certificate", translate("Self-signed Certificate"))
+ o.rmempty = true
+ o.default = "0"
+ o:depends({type = "trojan", tls = true, insecure = false})
+-o:depends({type = "trojan-go", tls = true, insecure = false})
+ o:depends({type = "v2ray", v2ray_protocol = "vmess", tls = true, insecure = false})
+ o:depends({type = "v2ray", v2ray_protocol = "vless", tls = true, insecure = false})
+ o:depends({type = "v2ray", v2ray_protocol = "vmess", xtls = true, insecure = false})
+@@ -633,9 +595,9 @@ end
+ 
+ o = s:option(Value, "certpath", translate("Current Certificate Path"))
+ o:depends("certificate", 1)
+-o:value("/etc/ssl/private/")
++o:value("/etc/ssl/private/ca.pem")
+ o.description = translate("Please confirm the current certificate path")
+-o.default = "/etc/ssl/private/"
++o.default = "/etc/ssl/private/ca.pem"
+ 
+ o = s:option(Flag, "fast_open", translate("TCP Fast Open"))
+ o.rmempty = true
+@@ -643,7 +605,6 @@ o.default = "0"
+ o:depends("type", "ssr")
+ o:depends("type", "ss")
+ o:depends("type", "trojan")
+-o:depends("type", "trojan-go")
+ 
+ o = s:option(Flag, "switch_enable", translate("Enable Auto Switch"))
+ o.rmempty = false
+diff --git a/luasrc/view/shadowsocksr/ssrurl.htm b/luasrc/view/shadowsocksr/ssrurl.htm
+index db56e08..2023906 100644
+--- a/luasrc/view/shadowsocksr/ssrurl.htm
++++ b/luasrc/view/shadowsocksr/ssrurl.htm
+@@ -227,58 +227,6 @@ function import_ssr_url(btn, urlname, sid) {
+ 			}
+ 			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
+ 			return false;
+-		case "trojan-go":
+-			var url0, param = "";
+-			var ploc = ssu[1].indexOf("#");
+-			if (ploc > 0) {
+-				url0 = ssu[1].substr(0, ploc);
+-				param = ssu[1].substr(ploc + 1);
+-			} else {
+-				url0 = ssu[1]
+-			}
+-			var sstr = url0;
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.type')[0].value = ssu[0];
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.type')[0].dispatchEvent(event);
+-			var team = sstr.split('@');
+-			var password = team[0]
+-			var serverPart = team[1].split(':');
+-			var others = serverPart[1].split('?');
+-			var port = parseInt(others[0]);
+-			var queryParam = {}
+-			if (others.length > 1) {
+-				var queryParams = others[1]
+-				var queryArray = queryParams.split('&');
+-				for (i = 0; i < queryArray.length; i++) {
+-					var params = queryArray[i].split('=');
+-					queryParam[decodeURIComponent(params[0])] = decodeURIComponent(params[1] || '');
+-				}
+-			}
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.server')[0].value = serverPart[0];
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.server_port')[0].value = port || '443';
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.password')[0].value = password;
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.trojan_transport')[0].value = queryParam.type || 'original';
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.trojan_transport')[0].dispatchEvent(event);
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.ws_host')[0].value = queryParam.host;
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.ws_path')[0].value = queryParam.path;
+-			if (queryParam.encryption)
+-			{
+-				var ss_aead = queryParam.encryption.split(';');
+-				var ss_aead_method = ss_aead[1].split(':');
+-				document.getElementsByName('cbid.shadowsocksr.' + sid + '.ss_aead')[0].checked = ss_aead[0] == 'ss';
+-				document.getElementsByName('cbid.shadowsocksr.' + sid + '.ss_aead')[0].dispatchEvent(event);
+-				document.getElementsByName('cbid.shadowsocksr.' + sid + '.ss_aead_method')[0].value = ss_aead_method[0];
+-				document.getElementsByName('cbid.shadowsocksr.' + sid + '.ss_aead_pwd')[0].value = ss_aead_method[1];
+-			}
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.tls')[0].checked = true;
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.tls')[0].dispatchEvent(event);
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.tls_host')[0].value = queryParam.sni || '';
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.insecure')[0].checked = queryParam.allowInsecure == '1';
+-			document.getElementsByName('cbid.shadowsocksr.' + sid + '.insecure')[0].dispatchEvent(event);
+-			if (param != undefined) {
+-				document.getElementsByName('cbid.shadowsocksr.' + sid + '.alias')[0].value = decodeURI(param);
+-			}
+-			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
+-			return false;
+ 		case "vmess":
+ 			var sstr = b64DecodeUnicode(ssu[1]);
+ 			var ploc = sstr.indexOf("/?");
+diff --git a/po/zh-cn/ssr-plus.po b/po/zh-cn/ssr-plus.po
+index 887be0c..af4f523 100644
+--- a/po/zh-cn/ssr-plus.po
++++ b/po/zh-cn/ssr-plus.po
+@@ -733,8 +733,5 @@ msgstr "输入的内容不正确！"
+ msgid "Reset complete"
+ msgstr "重置完成"
+ 
+-msgid "Shadowsocks2"
+-msgstr "二次加密"
+-
+ msgid "Finger Print"
+ msgstr "指纹伪造"
+diff --git a/po/zh_Hans/ssr-plus.po b/po/zh_Hans/ssr-plus.po
+index 887be0c..af4f523 100644
+--- a/po/zh_Hans/ssr-plus.po
++++ b/po/zh_Hans/ssr-plus.po
+@@ -733,8 +733,5 @@ msgstr "输入的内容不正确！"
+ msgid "Reset complete"
+ msgstr "重置完成"
+ 
+-msgid "Shadowsocks2"
+-msgstr "二次加密"
+-
+ msgid "Finger Print"
+ msgstr "指纹伪造"
+diff --git a/root/etc/init.d/shadowsocksr b/root/etc/init.d/shadowsocksr
+index 2c9a123..21d0284 100755
+--- a/root/etc/init.d/shadowsocksr
++++ b/root/etc/init.d/shadowsocksr
+@@ -304,20 +304,6 @@ gen_config_file() { #server1 type2 code3 local_port4 socks_port5 threads5
+ 			;;
+ 		esac
+ 		;;
+-	trojan-go)
+-		case "$3" in
+-		1 | 2)
+-			lua /usr/share/shadowsocksr/gen_config.lua $1 nat $4 >$config_file
+-			;;
+-		3)
+-			lua /usr/share/shadowsocksr/gen_config.lua $1 nat $4 >$config_file
+-			lua /usr/share/shadowsocksr/gen_config.lua $1 client $tmp_port >$shunt_dns_config_file
+-			;;
+-		4)
+-			lua /usr/share/shadowsocksr/gen_config.lua $1 client $4 >$config_file
+-			;;
+-		esac
+-		;;
+ 	naiveproxy)
+ 		case "$3" in
+ 		1)
+@@ -363,14 +349,9 @@ start_udp() {
+ 		;;
+ 	trojan) #client
+ 		gen_config_file $UDP_RELAY_SERVER $type 2 $tmp_udp_local_port
+-		ln_start_bin $(first_type trojan-go trojan) $type --config $udp_config_file
++		ln_start_bin $(first_type trojan) $type --config $udp_config_file
+ 		ln_start_bin $(first_type ipt2socks) ipt2socks -U -b 0.0.0.0 -4 -s 127.0.0.1 -p $tmp_udp_local_port -l $tmp_udp_port
+-		echolog "UDP TPROXY Relay:$($(first_type trojan-go trojan) --version 2>&1 | head -1) Started!"
+-		;;
+-	trojan-go)
+-		gen_config_file $UDP_RELAY_SERVER $type 2 $udp_config_file
+-		ln_start_bin $(first_type trojan-go) $type --config $udp_config_file
+-		echolog "UDP TPROXY Relay:$($(first_type trojan-go) --version 2>&1 | head -1) Started!"
++		echolog "UDP TPROXY Relay:$($(first_type trojan) --version 2>&1 | head -1) Started!"
+ 		;;
+ 	naiveproxy)
+ 		echolog "NaïveProxy UDP TPROXY Relay not supported!"
+@@ -420,17 +401,17 @@ start_shunt() {
+ 		ln_start_bin $(first_type dns2socks) dns2socks 127.0.0.1:$tmp_port 8.8.8.8:53 127.0.0.1:$tmp_shunt_dns_port -q
+ 		echolog "shunt:$($(first_type xray v2ray) -version | head -1) Started!"
+ 		;;
+-	trojan | trojan-go)
++	trojan)
+ 		gen_config_file $SHUNT_SERVER $type 3 $tmp_shunt_port
+-		ln_start_bin $(first_type trojan-go trojan) $type --config $shunt_config_file
++		ln_start_bin $(first_type trojan) $type --config $shunt_config_file
+ 		if [ -n "$tmp_local_port" ]; then
+ 			local tmp_port=$tmp_local_port
+ 		else
+ 			local tmp_port=$tmp_shunt_local_port
+-			ln_start_bin $(first_type trojan-go trojan) $type --config $shunt_dns_config_file
++			ln_start_bin $(first_type trojan) $type --config $shunt_dns_config_file
+ 		fi
+ 		ln_start_bin $(first_type dns2socks) dns2socks 127.0.0.1:$tmp_port 8.8.8.8:53 127.0.0.1:$tmp_shunt_dns_port -q
+-		echolog "shunt:$($(first_type trojan-go trojan) --version 2>&1 | head -1) Started!"
++		echolog "shunt:$($(first_type trojan) --version 2>&1 | head -1) Started!"
+ 		;;
+ 	naiveproxy)
+ 		gen_config_file $SHUNT_SERVER $type 3 $tmp_shunt_port
+@@ -494,10 +475,10 @@ start_local() {
+ 			echolog "Global_Socks5:$($(first_type "xray" "v2ray") -version | head -1) Started!"
+ 		fi
+ 		;;
+-	trojan | trojan-go) #client
++	trojan) #client
+ 		gen_config_file $LOCAL_SERVER $type 4 $local_port
+-		ln_start_bin $(first_type trojan-go trojan) $type --config $local_config_file
+-		echolog "Global_Socks5:$($(first_type trojan-go trojan) --version 2>&1 | head -1) Started!"
++		ln_start_bin $(first_type trojan) $type --config $local_config_file
++		echolog "Global_Socks5:$($(first_type trojan) --version 2>&1 | head -1) Started!"
+ 		;;
+ 	naiveproxy)
+ 		gen_config_file $LOCAL_SERVER $type 4 $local_port
+@@ -554,10 +535,10 @@ Start_Run() {
+ 		ln_start_bin $(first_type xray v2ray) v2ray -config $tcp_config_file
+ 		echolog "Main node:$($(first_type xray v2ray) -version | head -1) Started!"
+ 		;;
+-	trojan | trojan-go)
++	trojan)
+ 		gen_config_file $GLOBAL_SERVER $type 1 $tcp_port
+-		ln_start_bin $(first_type trojan-go trojan) $type --config $tcp_config_file
+-		echolog "Main node:$($(first_type trojan-go trojan) --version 2>&1 | head -1) Started!"
++		ln_start_bin $(first_type trojan) $type --config $tcp_config_file
++		echolog "Main node:$($(first_type trojan) --version 2>&1 | head -1) Started!"
+ 		;;
+ 	naiveproxy)
+ 		gen_config_file $GLOBAL_SERVER $type 1 $tcp_port
+diff --git a/root/usr/share/shadowsocksr/gen_config.lua b/root/usr/share/shadowsocksr/gen_config.lua
+index 001de86..b1bbb51 100644
+--- a/root/usr/share/shadowsocksr/gen_config.lua
++++ b/root/usr/share/shadowsocksr/gen_config.lua
+@@ -194,7 +194,7 @@ local trojan = {
+ 	ssl = {
+ 		verify = (server.insecure == "0") and true or false,
+ 		verify_hostname = (server.tls == "1") and true or false,
+-		cert = "",
++		cert = (server.certificate) and server.certpath or nil,
+ 		cipher = cipher,
+ 		cipher_tls13 = cipher13,
+ 		sni = server.tls_host,
+@@ -204,12 +204,6 @@ local trojan = {
+ 		session_ticket = (server.tls_sessionTicket == "1") and true or false
+ 	},
+ 	udp_timeout = 60,
+-	mux = (server.mux == "1") and {
+-		-- mux
+-		enabled = true,
+-		concurrency = tonumber(server.concurrency),
+-		idle_timeout = 60
+-	} or nil,
+ 	tcp = {
+ 		-- tcp
+ 		no_delay = true,
+@@ -265,37 +259,6 @@ function config:handleIndex(index)
+ 		trojan = function()
+ 			print(json.stringify(trojan, 1))
+ 		end,
+-		trojan_go = function()
+-			trojan.ssl.cipher = server.fingerprint == nil and cipher or (server.fingerprint == "disable" and cipher13 .. ":" .. cipher or "")
+-			trojan.ssl.cipher_tls13 = server.fingerprint == nil and cipher13 or nil
+-			trojan.ssl.fingerprint = (server.fingerprint ~= nil and server.fingerprint ~= "disable") and server.fingerprint or ""
+-			trojan.ssl.alpn = server.trojan_transport == 'ws' and {} or {"h2", "http/1.1"}
+-			if server.tls ~= "1" and server.trojan_transport == "original" then
+-				-- tls
+-				trojan.ssl = nil
+-				trojan.transport_plugin = server.trojan_transport == "original" and {
+-					enabled = server.plugin_type ~= nil,
+-					type = server.plugin_type or "plaintext",
+-					command = server.plugin_type ~= "plaintext" and server.plugin_cmd or nil,
+-					option = server.plugin_type ~= "plaintext" and server.plugin_option or nil,
+-					arg = server.plugin_type ~= "plaintext" and {server.plugin_arg} or nil,
+-					env = {}
+-				} or nil
+-			end
+-			trojan.websocket = server.trojan_transport and server.trojan_transport:find('ws') and {
+-				-- ws
+-				enabled = true,
+-				path = server.ws_path or "/",
+-				host = server.ws_host or (server.tls_host or server.server)
+-			} or nil
+-			trojan.shadowsocks = (server.ss_aead == "1") and {
+-				-- ss 
+-				enabled = true,
+-				method = server.ss_aead_method or "aead_aes_128_gcm",
+-				password = server.ss_aead_pwd or ""
+-			} or nil
+-			print(json.stringify(trojan, 1))
+-		end,
+ 		naiveproxy = function()
+ 			print(json.stringify(naiveproxy, 1))
+ 		end
