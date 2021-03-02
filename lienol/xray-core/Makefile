@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray-core
-PKG_VERSION:=1.3.0
+PKG_VERSION:=1.3.1
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=c345d4818efa763b07961d6c132afe1cf91845de
+PKG_SOURCE_VERSION:=97fcd6fed219423567ad12f09ee884a36b58cf83
 PKG_MIRROR_HASH:=skip
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@project-openwrt.eu.org>
@@ -38,7 +38,7 @@ define Package/xray/template
   TITLE:=A platform for building proxies to bypass network restrictions
   SECTION:=net
   CATEGORY:=Network
-  URL:=https://xray.sh
+  URL:=https://xtls.github.io
 endef
 
 define Package/xray-core
