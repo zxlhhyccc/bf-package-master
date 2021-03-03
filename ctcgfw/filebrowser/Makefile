@@ -11,7 +11,7 @@ PKG_VERSION:=2.11.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=d8f415f8abd0c4301803bd968c54429dd3fe4b59
+PKG_SOURCE_VERSION:=e8c9d1c53989b4b52f6fba2a8ac41ae612c03a7c
 PKG_SOURCE_URL:=https://github.com/filebrowser/filebrowser
 PKG_MIRROR_HASH:=skip
 
@@ -77,6 +77,7 @@ define Build/Compile
   npm run build ; \
   GOOS=$$$$(go env GOOS) GOARCH=$$$$(go env GOARCH) GO111MODULE=off go get -v github.com/GeertJohan/go.rice/rice/... ; \
   cd $(PKG_BUILD_DIR)/http ; \
+  rm -rf rice-box.go ; \
   "$$$$(go env GOPATH)/bin/rice" embed-go ; \
   $(call GoPackage/Build/Compile) ; \
 )
