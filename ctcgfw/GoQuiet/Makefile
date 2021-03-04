@@ -26,6 +26,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_GQ_SERVER_COMPRESS_UPX
 
 GO_PKG:=github.com/cbeuw/GoQuiet
+GO_PKG_BUILD_PKG:=github.com/cbeuw/GoQuiet/cmd/...
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION)
 
@@ -43,13 +44,16 @@ endef
 
 define Package/gq-client
   $(call Package/GoQuiet/template)
-  TITLE+= Client
+  TITLE+= (client)
 endef
 
 define Package/gq-server
   $(call Package/GoQuiet/template)
-  TITLE+= Server
+  TITLE+= (server)
 endef
+
+Package/gq-client/description = $(Package/GoQuiet/description/template)
+Package/gq-server/description = $(Package/GoQuiet/description/template)
 
 define Package/gq-client/config
 config GQ_CLIENT_COMPRESS_UPX
@@ -66,29 +70,23 @@ endef
 GO_PKG_BUILD_VARS += GO111MODULE=auto
 
 define Build/Compile
-	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/gq-client)
-	$(call GoPackage/Build/Configure)
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_GQ_CLIENT_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/gq-client
 endif
-	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/gq-server)
-	$(call GoPackage/Build/Configure)
-	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_GQ_SERVER_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/gq-server
 endif
 endef
 
-define Package/gq-client/install
+define Package/GoQuiet/install/template
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/gq-client $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(2) $(1)/usr/bin/$(2)
 endef
 
-define Package/gq-server/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/gq-server $(1)/usr/bin/
-endef
+Package/gq-client/install = $(call Package/GoQuiet/install/template,$(1),gq-client)
+Package/gq-server/install = $(call Package/GoQuiet/install/template,$(1),gq-server)
 
 $(eval $(call GoBinPackage,gq-client))
 $(eval $(call GoBinPackage,gq-server))

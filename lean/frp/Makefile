@@ -1,8 +1,7 @@
 #
-# Copyright (C) 2019 Xingwang Liao
+# Copyright (C) 2015-2016 OpenWrt.org
 #
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
+# This is free software, licensed under the GNU General Public License v3.
 #
 
 include $(TOPDIR)/rules.mk
@@ -25,7 +24,7 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-PKG_CONFIG_DEPENDS := \
+PKG_CONFIG_DEPENDS:= \
 	CONFIG_FRPC_COMPRESS_UPX \
 	CONFIG_FRPS_COMPRESS_UPX
 
@@ -37,58 +36,68 @@ GO_PKG_LDFLAGS:=-s -w
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define frp/templates
-  define Package/$(1)
-    TITLE:=A fast reverse proxy ($(1))
-    URL:=https://github.com/fatedier/frp
-    SECTION:=net
-    CATEGORY:=Network
-    SUBMENU:=Web Servers/Proxies
-    DEPENDS:=$$(GO_ARCH_DEPENDS)
-  endef
+define Package/frp/template
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=A fast reverse proxy FRPC FRPS
+  DEPENDS:=$(GO_ARCH_DEPENDS)
+  URL:=https://github.com/fatedier/frp
+  SUBMENU:=Web Servers/Proxies
+endef
 
-  define Package/$(1)/description
+define Package/frpc
+  $(call Package/frp/template)
+  TITLE+= (client)
+endef
+
+define Package/frps
+  $(call Package/frp/template)
+  TITLE+= (server)
+endef
+
+define Package/frp/description
   frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall
   to the internet. As of now, it supports tcp & udp, as well as http and https protocols,
   where requests can be forwarded to internal services by domain name.
-
-  This package contains the $(1).
-  endef
-
-  define Package/frpc/config
-	config FRPC_COMPRESS_UPX
-		bool "Compress executable files with UPX"
-		default y
-  endef
-
-  define Package/frps/config
-	config FRPS_COMPRESS_UPX
-		bool "Compress executable files with UPX"
-		default y
-  endef
-
-  define Build/Compile
-	$(call GoPackage/Build/Compile)
-  ifeq ($(CONFIG_FRPC_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/frpc
-  endif
-  ifeq ($(CONFIG_FRPS_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/frps
-  endif
-  endef
-
-  define Package/$(1)/install
-	$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))
-
-	$$(INSTALL_DIR) $$(1)/usr/bin
-	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/$(1) $$(1)/usr/bin/
-  endef
 endef
 
-FRP_COMPONENTS:=frpc frps
+Package/frpc/description = $(Package/frp/description/template)
+Package/frps/description = $(Package/frp/description/template)
 
-$(foreach component,$(FRP_COMPONENTS), \
-  $(eval $(call frp/templates,$(component))) \
-  $(eval $(call GoBinPackage,$(component))) \
-  $(eval $(call BuildPackage,$(component))) \
-)
+define Package/frpc/config
+config FRPC_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	default y
+endef
+
+define Package/frps/config
+config FRPS_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	default y
+endef
+
+GO_PKG_BUILD_VARS += GO111MODULE=auto
+
+define Build/Compile
+	$(call GoPackage/Build/Compile)
+ifeq ($(CONFIG_FRPC_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/frpc
+endif
+ifeq ($(CONFIG_FRPS_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/frps
+endif
+endef
+
+define Package/frp/install/template
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(2) $(1)/usr/bin/$(2)
+endef
+
+Package/frpc/install = $(call Package/frp/install/template,$(1),frpc)
+Package/frps/install = $(call Package/frp/install/template,$(1),frps)
+
+$(eval $(call GoBinPackage,frpc))
+$(eval $(call GoBinPackage,frps))
+$(eval $(call BuildPackage,frpc))
+$(eval $(call BuildPackage,frps))
