@@ -7,7 +7,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=055fb51ed9c1b44bcc790613b71720e85aeaf83d
+PKG_SOURCE_VERSION:=54af48a1ae0a3d13ab4d26b7f48763551a3c72ab
 PKG_MIRROR_HASH:=skip
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@project-openwrt.eu.org>
