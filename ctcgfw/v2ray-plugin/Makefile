@@ -11,14 +11,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-plugin
-PKG_VERSION:=1.8.0
-PKG_RELEASE:=2
+PKG_VERSION:=4.35.0
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/teddysun/v2ray-plugin.git
-PKG_MIRROR_HASH:=ece37799f6e4b6106a331bea7fff70efc5af7a13968a759100909de532a443ec
-PKG_SOURCE_VERSION:=32aa1cb4e629bd42406869c50418209d62b8cba5
+PKG_SOURCE_VERSION:=f77c07707c8d135158b8cd61fc29c71a5467e842
+PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -34,6 +34,7 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/shadowsocks/v2ray-plugin
 GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS_X:=main.VERSION=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -57,7 +58,7 @@ define Package/v2ray-plugin
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=SIP003 plugin for shadowsocks, based on v2ray
-	URL:=https://github.com/shadowsocks/v2ray-plugin
+	URL:=https://github.com/teddysun/v2ray-plugin
 	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
 endef
 
