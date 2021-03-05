@@ -9,7 +9,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray
-PKG_VERSION:=4.34.0
+PKG_VERSION:=4.35.0
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/v2ray-$(PKG_VERSION)
 
@@ -17,7 +17,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=v2ray-core-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
 PKG_SOURCE_DATE:=2021-02-20
-PKG_SOURCE_VERSION:=efb963237ca5517d8224733041dabeded6f9b104
+PKG_SOURCE_VERSION:=bda84984a01a0d986aa4d05d66e7fb8d1925faf0
 PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=MIT
@@ -34,11 +34,11 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=v2ray.com/core
+GO_PKG:=github.com/v2fly/v2ray-core/v4
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG).version=$(PKG_VERSION) \
-	$(GO_PKG).codename=OpenWrt
+	$(GO_PKG).build=OpenWrt \
+	$(GO_PKG).version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -49,7 +49,7 @@ define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Project V
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-certificates
+  DEPENDS:=@BROKEN $(GO_ARCH_DEPENDS) +ca-certificates
 endef
 
 define Package/$(PKG_NAME)/config
@@ -87,24 +87,24 @@ export GOPROXY=https://goproxy.io
 #export GOPROXY=https://mirrors.aliyun.com/goproxy/
 endif
 
-GEOIP_VER:=202102180014
+GEOIP_VER:=202103041656
 GEOIP_FILE:=geoip-$(GEOIP_VER).dat
 
 define Download/geoip.dat
   URL:=https://github.com/v2fly/geoip/releases/$(GEOIP_VER)/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=0fccec9c0314a6d6a8ca16febcc4dc61964cc32ad2e59d7ab8ba6e8e374d86aa
+  HASH:=11772b0776f75aeeebe393371302ec2b55eb04a2915167a03a569682280795c5
 endef
 
-GEOSITE_VER:=20210218112005
+GEOSITE_VER:=20210305122856
 GEOSITE_FILE:=geosite-$(GEOSITE_VER).dat
 
 define Download/geosite.dat
   URL:=https://github.com/v2fly/domain-list-community/releases/$(GEOSITE_VER)/download
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=4c28815b84a9b93ceaf2ac607abb9db9110f3badf9b59bb620966c8cb425fb3c
+  HASH:=5d6c3cae7ee0abbf7bc5af83b964853faf9c538a58074de4fb9275404fa6468e
 endef
 
 define Build/Prepare
