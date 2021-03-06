@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-nginx-pingos
-PKG_VERSION:=1.19.2
-PKG_RELEASE:=2
+PKG_VERSION:=1.19.6
+PKG_RELEASE:=1
 
 PKG_SOURCE:=nginx-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://nginx.org/download/
-PKG_HASH:=7c1f7bb13e79433ee930c597d272a64bc6e30c356a48524f38fd34fa88d62473
+PKG_HASH:=b11195a02b1d3285ddf2987e02c6b6d28df41bb1b1dd25f33542848ef4fc33b5
 
 PKG_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DIR:=$(PKG_DIR)/nginx-$(PKG_VERSION)
@@ -77,12 +77,12 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_CONF) ./root/etc/uci-defaults/* $(1)/etc/uci-defaults
 
+	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
+	cp -pR ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d
+
 	$(INSTALL_DIR) $(1)/usr/share/pingos
 	cp -pR $(PKG_INSTALL_DIR)/usr/share/pingos/conf $(1)/usr/share/pingos
 	$(INSTALL_DATA) ./root/resource/conf-template/nginx.conf $(1)/usr/share/pingos/conf/nginx.conf
-
-	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
-	cp -pR ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d
 	
 	cp -pR $(PKG_INSTALL_DIR)/usr/html $(1)/usr/share/pingos/html
 	$(INSTALL_DATA) ./root/resource/crossdomain.xml $(1)/usr/share/pingos/html/crossdomain.xml
