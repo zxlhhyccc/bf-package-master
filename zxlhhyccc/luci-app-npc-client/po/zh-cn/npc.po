@@ -1,0 +1,50 @@
+msgid "Nps Client"
+msgstr "Nps 内网穿透"
+
+msgid "Nps is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."
+msgstr "Nps 是一种快速反向代理，可帮助您将 NAT 或防火墙后面的本地服务器公开到 Internet。"
+
+msgid "Must an IPv4 address"
+msgstr "必须是 IPv4 地址"
+
+msgid "vkey"
+msgstr "密钥(vkey)"
+
+msgid "Enable Compression"
+msgstr "使用压缩传输"
+
+msgid "Enable Encryption"
+msgstr "使用加密传输"
+
+msgid "Enable AutoReconnection"
+msgstr "开启断线自动重连"
+
+msgid "The contents will be compressed to speed up the traffic forwarding speed, but this will consume some additional cpu resources."
+msgstr "压缩传输内容，加快流量转发速度，会额外消耗 CPU 资源。"
+
+msgid "Encrypted the communication between Npc and Nps, will effectively prevent the traffic intercepted."
+msgstr "加密传输 npc 与 nps 之间的通信内容，会有效防止流量被拦截。"
+
+msgid "Auto reconnect to the server when the connection is down."
+msgstr "连接断开时自动重新连接到服务器。"
+
+msgid "The Nps service is running."
+msgstr "Nps 运行中"
+
+msgid "The Nps service is not running."
+msgstr "Nps 未运行"
+
+msgid "Basic Setting"
+msgstr "基本设置"
+
+msgid "Protocol Type"
+msgstr "协议类型"
+
+msgid "Server"
+msgstr "服务端地址"
+
+msgid "TCP Protocol"
+msgstr "TCP"
+
+msgid "KCP Protocol"
+msgstr "KCP"

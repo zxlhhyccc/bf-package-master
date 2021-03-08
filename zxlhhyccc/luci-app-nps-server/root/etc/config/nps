@@ -1,0 +1,4 @@
+
+config nps
+	option enabled '0'
+

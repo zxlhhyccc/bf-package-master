@@ -1,0 +1,17 @@
+msgid "Nps Server"
+msgstr "Nps 服务器"
+
+msgid "Nps Server"
+msgstr "Nps 服务器"
+
+msgid "Basic Setting"
+msgstr "基本设置"
+
+msgid "Nps Conf"
+msgstr "Nps配置"
+
+msgid "The Nps service is running."
+msgstr "Nps 运行中"
+
+msgid "The Nps service is not running."
+msgstr "Nps 未运行"

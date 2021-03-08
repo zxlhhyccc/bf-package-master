@@ -1,0 +1,12 @@
+
+config npc
+	option enabled '0'
+	option server_addr 'nps1.nihaodd.com'
+	option server_port '8024'
+	option protocol 'tcp'
+	option compress '0'
+	option crypt '0'
+	option auto_reconnection '1'
+	option vkey 'aabbcc'
+	option log_level '4'
+

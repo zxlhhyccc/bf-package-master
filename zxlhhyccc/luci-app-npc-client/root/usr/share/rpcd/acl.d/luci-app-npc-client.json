@@ -1,0 +1,11 @@
+{
+	"luci-app-npc-client": {
+		"description": "Grant UCI access for luci-app-npc-client",
+		"read": {
+			"uci": [ "npc" ]
+		},
+		"write": {
+			"uci": [ "npc" ]
+		}
+	}
+}
