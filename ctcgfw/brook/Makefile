@@ -11,9 +11,15 @@ PKG_NAME:=brook
 PKG_VERSION:=20210214
 PKG_RELEASE:=1
 
+#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+#PKG_SOURCE_URL:=https://codeload.github.com/txthinking/brook/tar.gz/v$(PKG_VERSION)?
+#PKG_HASH:=a8e2e989f6d09e36c1fbe8593404d53a0615dc93e91a0be94dda898f0d55ff1d
+
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/txthinking/brook/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=a8e2e989f6d09e36c1fbe8593404d53a0615dc93e91a0be94dda898f0d55ff1d
+PKG_SOURCE_VERSION:=4c460bee6cb421199f83fb24ada966bf4e3e41cc
+PKG_SOURCE_URL:=https://github.com/txthinking/brook.git
+PKG_MIRROR_HASH:=7407c6c96c5b96d9d830e022d180138ddd2fcbeafe7ee0cd639565b1efbff2e7
 
 PKG_MAINTAINER:=CN_SZTL <cnsztl@immortalwrt.org>
 PKG_LICENSE:=GPL-3.0
