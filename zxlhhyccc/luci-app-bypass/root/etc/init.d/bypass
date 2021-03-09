@@ -280,10 +280,13 @@ start_rules() {
 		done
 			udp_server=$(echo "$A" | sed -n 1p)
 		fi
-		udp_local_port="2345"
 		UDP=1
 	fi
-	[ "$UDP" = 1 ] && UDP="-S $udp_server -L $udp_local_port"
+	ttype=$(uci_get_by_name $GLOBAL_SERVER type)
+	utype=$(uci_get_by_name $UDP_RELAY_SERVER type 0)
+	if [ "$UDP" = 1 ];then
+		[ $ttype = trojan -o $utype = trojan ] && [ $udp_local_port = $local_port ] && let udp_local_port=local_port+1;UDP="-S $udp_server -L $udp_local_port"
+	fi
 	case $run_mode in
 	router) mode=-r ;;
 	oversea) mode=-c ;;
@@ -304,6 +307,7 @@ start_rules() {
 			nf_ip=$(echo "$A" | sed -n 1p)
 		fi
 		let nf_local_port=local_port+1
+		[ $utype = trojan -a $nf_local_port = "$udp_local_port" ] && let nf_local_port=nf_local_port+1
 		NF=1
 	fi
 	[ "$NF" = 1 ] && NF="-N $nf_ip -P $nf_local_port"
@@ -344,22 +348,21 @@ start_retcp() {
 		[ -n "$password" ] && password="--key "${password}
 		service_start $cmd -r $kcp_server:$kcp_port -l :$server_port $password $kcp_param
 	fi
-	type=$(uci_get_by_name $GLOBAL_SERVER type)
-	cmd=$(f_bin $type)
+	cmd=$(f_bin $ttype)
 	if [ ! -x $cmd ]; then
-		echolog "Main Node: Can't find $(echo $type | tr a-z A-Z) program, start failed!"
+		echolog "Main Node: Can't find $(echo $ttype | tr a-z A-Z) program, start failed!"
 		return 1
 	fi
 	[ $SO_SERVER = same ] && SO_SERVER=$GLOBAL_SERVER
 	redir_tcp=1
-	case $type in
+	case $ttype in
 	ss | ssr)
 		gen_config_file $GLOBAL_SERVER $rtype
 		redir_tcp=$threads
 		for i in $(seq 1 $threads); do
 			$cmd -c $config_file >$log_file 2>&1 &
 		done
-		[ $type = ss ] && name=Shadowsocks || name=ShadowsocksR
+		[ $ttype = ss ] && name=Shadowsocks || name=ShadowsocksR
 		echolog "Main Node: $name $threads Threads Started!"
 		;;
 	vmess | vless)
@@ -420,18 +423,17 @@ start_retcp() {
 
 start_reudp() {
 	rtype="udp"
-	type=$(uci_get_by_name $UDP_RELAY_SERVER type)
-	cmd=$(f_bin $type)
+	cmd=$(f_bin $utype)
 	if [ ! -x $cmd ]; then
-		echolog "UDP Relay: Can't find $(echo $type | tr a-z A-Z) program, start failed!"
+		echolog "UDP Relay: Can't find $(echo $utype | tr a-z A-Z) program, start failed!"
 		return 1
 	fi
 	redir_udp=1
-	case $type in
+	case $utype in
 	ss | ssr)
 		gen_config_file $UDP_RELAY_SERVER $rtype
 		$cmd -c $config_file -U >$log_file 2>&1 &
-		[ $type = ss ] && name=Shadowsocks || name=ShadowsocksR
+		[ $utype = ss ] && name=Shadowsocks || name=ShadowsocksR
 		echolog "UDP Relay: $name Started!"
 		;;
 	vmess | vless)
@@ -442,7 +444,7 @@ start_reudp() {
 	trojan | trojan-go)
 		gen_config_file $UDP_RELAY_SERVER $rtype "" $udp_server
 		$cmd --config $config_file >$log_file 2>&1 &
-		[ $type = trojan ] && {
+		[ $utype = trojan ] && {
 			name="Trojan-Plus"
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
 		} || {
