@@ -244,7 +244,7 @@ while :;do
 			echo "`eval $D` By-Switch : No server available. Try restart current server." >> $L
 			switch_proxy
 		fi
-	else
+	elif [ $a != 0 ];then
 		echo "`eval $D` By-Switch : Network Problem. Do nothing." >> $L
 	fi
 	sleep $time_a
