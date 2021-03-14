@@ -1,5 +1,4 @@
 #!/bin/sh
-
 NAME=bypass
 D="date +'%Y-%m-%d %H:%M:%S'"
 L=/tmp/log/bypass.log
@@ -15,19 +14,16 @@ uci_get_by_type(){
 }
 
 get_ip(){
-	if ! echo $server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/null;then
+	if ! echo $ip | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/null;then
 		r=1
-		while ! ip=$(nslookup $server 127.0.0.1#5336 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");do
-		if ! ip=$(nslookup $server 223.5.5.5 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$"); then
-			[ $r -ge 10 ] && echo "$(eval $DATE) By-Switch: Unable to get $server address Check domain name!" >>$L; return 1 || let r++
+		while ! nslookup $ip 127.0.0.1#5336 >/dev/null 2>&1;do
+			[ $r -ge 10 ] && return 1 || let r++
 			sleep 1
-		else
-			break
-		fi
 		done
+		ip=$(nslookup $ip 127.0.0.1#5336 2>/dev/null | grep Address | awk -F' ' '{print$NF}' | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");i=$?
 		ip=$(echo "$ip" | sed -n 1p)
-		return 0
 	fi
+	return $i
 }
 
 f_bin(){
@@ -43,7 +39,7 @@ f_bin(){
 }
 
 gen_port(){
-	lport=1234
+	lport=1090
 	while [ $(netstat -tln | grep -c :$lport) != 0 ];do let lport++;done
 }
 
@@ -107,7 +103,7 @@ curl_check(){
 	fi
 	type=$(uci_get_by_name $1 type)
 	if [ $type = tun ];then
-		curl --interface $(uci_get_by_name $1 iface br-lan) -so /dev/null --connect-timeout $time_b https://www.google.com;return $?
+		curl --interface $(uci_get_by_name $1 iface br-lan) --resolve dns.google:443:8.8.8.8 -so /dev/null --connect-timeout 20 https://dns.google;return $?
 	elif [ $type != socks5 ];then
 		cmd=$(f_bin $type)
 		if [ ! -x $cmd ];then
@@ -145,20 +141,19 @@ curl_check(){
 			fi;;
 	esac
 	r=1
-	while ! ps -w | grep $J | grep -v grep >/dev/null;do
+	while [ $(netstat -tlnp | grep ${cmd##*/} | grep -c :$lport) = 0 ];do
 		[ $r -ge 10 ] && return 1 || let r++
 		sleep 1
 	done
-	/usr/share/bypass/by-rules -f 2>/dev/null
-	sleep 1
-	curl -x socks5h://$IP:$lport $param -so /dev/null --connect-timeout $time_b https://www.google.com;i=$?
+	curl -x socks5://$IP:$lport $param --resolve dns.google:443:8.8.8.8 -so /dev/null --connect-timeout 20 https://dns.google;i=$?
 	kill -9 $(ps -w | grep $J | grep -v grep | awk '{print$1}') 2>/dev/null
+	rm -f $J
 	[ $i = 0 ] || echo "`eval $D` By-Switch : Server : $($UCI$1.alias || uci_get_by_name $1 server) cURL check error, Try to switch another server." >> $L
 	return $i
 }
 
 test_proxy(){
-	server=$(uci_get_by_name $1 server)
+	ip=$(uci_get_by_name $1 server)
 	get_ip || return 1
 	port=$(uci_get_by_name $1 server_port)
 	ipset add ss_spec_wan_ac $ip 2>/dev/null
@@ -190,7 +185,7 @@ select_proxy(){
 	for i in $(seq $c $b);do
 		d=$(echo "$a" | sed 's/.*\.\(.*\)=.*/\1/' | sed -n ${i}p)
 		([ $d = $SERVER_B ] || [ $(uci_get_by_name $d switch_enable 0) != 1 ]) && continue
-		server=$(uci_get_by_name $d server)
+		ip=$(uci_get_by_name $d server)
 		get_ip || continue
 		port=$(uci_get_by_name $d server_port)
 		ipset add ss_spec_wan_ac $ip 2>/dev/null
@@ -244,7 +239,7 @@ while :;do
 			echo "`eval $D` By-Switch : No server available. Try restart current server." >> $L
 			switch_proxy
 		fi
-	elif [ $a != 0 ];then
+	elif [ $a = 2 ];then
 		echo "`eval $D` By-Switch : Network Problem. Do nothing." >> $L
 	fi
 	sleep $time_a

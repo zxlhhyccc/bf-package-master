@@ -80,11 +80,11 @@ f_bin() {
 }
 
 gen_config_file() {
+	type=$(uci_get_by_name $1 type)
 	rtype=$2
 	ssport=$3
 	serv_ip=$4
 	sport=$(uci_get_by_name $1 server_port)
-	socks5_port=$(uci_get_by_type socks5_proxy local_port 1080)
 	pass=$(uci_get_by_name $1 password)
 	timeout=$(uci_get_by_name $1 timeout 60)
 	case $rtype in
@@ -98,8 +98,7 @@ gen_config_file() {
 		hostip=$socks5_ip; lport=$socks5_port; PROTO="socks"; fname="socks5";;
 	esac
 	[ $(uci_get_by_name $1 fast_open 0) = 1 ] && fast=true || fast=false;
-	type=$(uci_get_by_name $1 type);
-	config_file="$TMP_PATH/$type-by-$fname.json"
+	[ "$socks5_start" = 1 ] && config_file=$TMP_PATH/$type-by-$fname-socks5.json || config_file=$TMP_PATH/$type-by-$fname.json
 	log_file="$TMP_PATH/$type-by-$fname.log"
 	case $type in
 	ss)
@@ -150,7 +149,8 @@ gen_config_file() {
 		EOF
 		;;
 	vmess | vless)
-		[ $rtype == "udp" ] && smode="udp" || smode="tcp"
+		[ $rtype = udp ] && smode=udp || smode=tcp
+		[ $rtype = socks ] && lport=0
 		lua $BIN_DIR/genv2config $1 $smode $lport $ssport $serv_ip >$config_file
 		sed -i 's/\\//g' $config_file
 		;;
@@ -307,8 +307,10 @@ start_rules() {
 		done
 			nf_ip=$(echo "$A" | sed -n 1p)
 		fi
-		let nf_local_port=local_port+1
-		[ $utype = trojan -a $nf_local_port = "$udp_local_port" ] && let nf_local_port=nf_local_port+1
+		ntype=$(uci_get_by_name $NF_SERVER type)
+		nf_local_port=$(uci_get_by_name $NF_SERVER local_port 1234)
+		[ $nf_local_port = $local_port ] && let nf_local_port=local_port+1
+		[ $utype = trojan -o $ntype = trojan ] && [ $nf_local_port = "$udp_local_port" ] && let nf_local_port=nf_local_port+1
 		NF=1
 	fi
 	[ "$NF" = 1 ] && NF="-N $nf_ip -P $nf_local_port"
@@ -474,18 +476,17 @@ start_reudp() {
 
 start_renf() {
 	rtype="nf"
-	type=$(uci_get_by_name $NF_SERVER type)
-	cmd=$(f_bin $type)
+	cmd=$(f_bin $ntype)
 	if [ ! -x $cmd ]; then
-		echolog "NF Shunt : Can't find $(echo $type | tr a-z A-Z) program, start failed!"
+		echolog "NF Shunt : Can't find $(echo $ntype | tr a-z A-Z) program, start failed!"
 		return 1
 	fi
 	redir_nf=1
-	case $type in
+	case $ntype in
 	ss | ssr)
 		gen_config_file $NF_SERVER $rtype
 		$cmd -c $config_file >$log_file 2>&1 &
-		[ $type = ss ] && name=Shadowsocks || name=ShadowsocksR
+		[ $ntype = ss ] && name=Shadowsocks || name=ShadowsocksR
 		echolog "NF Shunt : $name Started!"
 		;;
 	vmess | vless)
@@ -496,7 +497,7 @@ start_renf() {
 	trojan | trojan-go)
 		gen_config_file $NF_SERVER $rtype "" $nf_ip
 		$cmd --config $config_file >$log_file 2>&1 &
-		[ $type = trojan ] && {
+		[ $ntype = trojan ] && {
 			name="Trojan-Plus"
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
 		} || {
@@ -547,6 +548,7 @@ start_local() {
 		return 1
 	fi
 	local_enable=1
+	socks5_port=$(uci_get_by_type socks5_proxy local_port 1080)
 	case $type in
 	ss | ssr)
 		gen_config_file $SO_SERVER $rtype
@@ -555,7 +557,7 @@ start_local() {
 		echolog "Socks5 Node: $name Started!"
 		;;
 	vmess | vless)
-		gen_config_file $SO_SERVER $rtype 0 $socks5_port $socks5_ip
+		gen_config_file $SO_SERVER $rtype $socks5_port $socks5_ip
 		$cmd -c $config_file >$log_file 2>&1 &
 		echolog "Socks5 Node: $($cmd -version | head -1 | awk '{print$1,$2}') Started!"
 		;;
