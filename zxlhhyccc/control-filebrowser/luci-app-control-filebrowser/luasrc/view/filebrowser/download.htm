@@ -75,7 +75,7 @@ local dsp = require "luci.dispatcher"
 
     var ckeckDetailElm = document.getElementById(btn.id + '-detail');
 
-    doAjaxGet('<%=dsp.build_url("admin/services/filebrowser/check")%>/', {
+    doAjaxGet('<%=dsp.build_url("admin/nas/filebrowser/check")%>/', {
       token: tokenStr
     }, function (json) {
       removePageNotice();
@@ -109,7 +109,7 @@ local dsp = require "luci.dispatcher"
 
     addPageNotice();
 
-    var UpdateUrl = '<%=dsp.build_url("admin/services/filebrowser/download")%>';
+    var UpdateUrl = '<%=dsp.build_url("admin/nas/filebrowser/download")%>';
     // Download file
     doAjaxGet(UpdateUrl, {
       token: tokenStr,
