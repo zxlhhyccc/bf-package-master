@@ -213,7 +213,7 @@ c=1
 time_a=$(uci_get_by_type global switch_time 300)
 time_b=$(uci_get_by_type global switch_timeout 5)
 UCI="uci -q get $NAME."
-
+sleep 10
 while :;do
 	if [ $SERVER_A != $SERVER_B ];then
 		echo "`eval $D` By-Switch : Current server : $($UCI$SERVER_B.alias || uci_get_by_name $SERVER_B server) is not main server, Try to switch back to $($UCI$SERVER_A.alias || uci_get_by_name $SERVER_A server)." >> $L

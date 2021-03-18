@@ -182,7 +182,16 @@ msgid "Subscribe Filter Words"
 msgstr "订阅节点关键字过滤"
 
 msgid "Filter Words splited by /"
-msgstr "命中关键字的节点将被丢弃。多个关键字用 / 分隔"
+msgstr "命中关键字的节点将被丢弃或保留。多个关键字用 / 分隔"
+
+msgid "Filter Words Mode"
+msgstr "节点关键字过滤模式"
+
+msgid "Discard Mode"
+msgstr "丢弃命中关键词的节点"
+
+msgid "Keep Mode"
+msgstr "保留命中关键词的节点"
 
 msgid "Update Subscribe List"
 msgstr "更新订阅URL列表"

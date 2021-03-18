@@ -10,8 +10,6 @@ uci -q batch <<-EOF >/dev/null
 	set firewall.bypass.path=/var/etc/bypass.include
 	set firewall.bypass.reload=1
 	commit firewall
+	set smartdns.@smartdns[0].enabled=0
+	commit smartdns
 EOF
-chmod 755 /etc/init.d/bypass /usr/share/bypass/* >/dev/null 2>&1
-/etc/init.d/bypass enable >/dev/null 2>&1
-rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*
-exit 0

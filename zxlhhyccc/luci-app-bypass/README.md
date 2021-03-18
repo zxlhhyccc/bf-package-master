@@ -13,6 +13,8 @@
 
 Lua-Maxminddb: https://github.com/garypang13/openwrt-packages/tree/master/lua-maxminddb
 
+smartdns-le:   https://github.com/garypang13/smartdns-le
+
 lean等源码编译本插件前请先执行
 
 ```

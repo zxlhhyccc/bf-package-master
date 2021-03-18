@@ -1,20 +1,21 @@
 #!/bin/sh
 [ "$1" = check ] || exit 1
-LOCK=/var/lock/bypass.lock
-LOG=/tmp/log/bypass.log
-D="date +'%Y-%m-%d %H:%M:%S'"
-# 防止重复启动
-[ -f $LOCK ] && exit 1
-touch $LOCK
+NAME=bypass
+
+log(){
+	 echo "$(date +'%Y-%m-%d %H:%M:%S') : $*" >> /var/log/$NAME.log
+}
+
 sleep 2
 while ! curl -so /dev/null -m 3 www.baidu.com;do
 	sleep 2
 done
-echo "`eval $D` : Check network status successful!" >> $LOG
-rm -f $LOCK
-if [ ! -s /tmp/bypass/china.txt ] || ([ "$(uci -q get bypass.@global[0].run_mode)" = gfw -o "$(uci -q get bypass.@global[0].gfw_mode)" = 1 ] && [ ! -s /tmp/bypass/gfw.list ]);then
-	echo "`eval $D` : Download IP/GFW files..." >> $LOG
-	/usr/share/bypass/update --First &
+log "Check network status successful!"
+if [ -z "$(uci -q get $NAME.@global[0].global_server)" ];then
+	/etc/init.d/$NAME start &
+elif [ ! -s /tmp/$NAME/china.txt ] || ([ "$(uci -q get $NAME.@global[0].run_mode)" = gfw -o "$(uci -q get $NAME.@global[0].gfw_mode)" = 1 ] && [ ! -s /tmp/$NAME/gfw.list ]);then
+	log "Download IP/GFW files..."
+	/usr/share/$NAME/update --First &
 else
-	/etc/init.d/bypass start &
+	/etc/init.d/$NAME start &
 fi
