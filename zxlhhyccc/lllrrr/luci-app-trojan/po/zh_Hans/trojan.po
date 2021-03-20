@@ -15,7 +15,7 @@ msgid "TYPE"
 msgstr "配置类型"
 
 msgid "SERVER"
-msgstr "器配置"
+msgstr "服务器配置"
 
 msgid "Server List"
 msgstr "自定义配置"
