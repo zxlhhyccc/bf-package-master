@@ -1,8 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-bypass
-PKG_VERSION:=1.2
-PKG_RELEASE:=61
+PKG_VERSION:=1.2-62
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -93,16 +92,8 @@ define Package/$(PKG_NAME)
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Socks_Server:microsocks
 endef
 
-define Build/Prepare
-	$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-endef
-
-define Package/$(PKG_NAME)/postinst
-[ -n "$$IPKG_INSTROOT" ] || (rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*;killall -HUP rpcd 2>/dev/null;/etc/init.d/smartdns stop 2>/dev/null;/etc/init.d/bypass enable)
-endef
-
 define Build/Compile
+	chmod +x root/usr/share/bypass/* >/dev/null 2>&1
 endef
 
 define Package/$(PKG_NAME)/conffiles
@@ -110,34 +101,6 @@ define Package/$(PKG_NAME)/conffiles
 /etc/bypass/
 endef
 
-define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
-	$(INSTALL_DATA) ./luasrc/controller/* $(1)/usr/lib/lua/luci/controller/
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi/bypass
-	$(INSTALL_DATA) ./luasrc/model/cbi/bypass/* $(1)/usr/lib/lua/luci/model/cbi/bypass/
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/bypass
-	$(INSTALL_DATA) ./luasrc/view/bypass/* $(1)/usr/lib/lua/luci/view/bypass/
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/bypass.*.lmo $(1)/usr/lib/lua/luci/i18n/
-	$(INSTALL_DIR) $(1)/etc/bypass
-	$(INSTALL_DATA) ./root/etc/bypass/* $(1)/etc/bypass/
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_DATA) ./root/etc/config/* $(1)/etc/config/
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
-	$(INSTALL_BIN) ./root/etc/hotplug.d/iface/* $(1)/etc/hotplug.d/iface/
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./root/etc/init.d/* $(1)/etc/init.d/
-	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./root/etc/uci-defaults/* $(1)/etc/uci-defaults/
-	$(INSTALL_DIR) $(1)/usr/share/bypass
-	$(INSTALL_BIN) ./root/usr/share/bypass/* $(1)/usr/share/bypass/
-	$(INSTALL_DATA) ./root/GeoLite2-Country.mmdb $(1)/usr/share/bypass/
-	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
-	$(INSTALL_DATA) ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d/
-	$(INSTALL_DIR) $(1)/www/luci-static/bypass/flags
-	$(INSTALL_DATA) ./root/www/luci-static/bypass/flags/* $(1)/www/luci-static/bypass/flags/
-	$(INSTALL_DIR) $(1)/www/luci-static/bypass/img
-	$(INSTALL_DATA) ./root/www/luci-static/bypass/img/* $(1)/www/luci-static/bypass/img/
-endef
+include $(TOPDIR)/feeds/luci/luci.mk
 
-$(eval $(call BuildPackage,$(PKG_NAME)))
+# call BuildPackage - OpenWrt buildroot signature

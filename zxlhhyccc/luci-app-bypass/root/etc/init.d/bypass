@@ -66,17 +66,17 @@ firstdown(){
 
 f_bin(){
 	case $1 in
-	ss) ret=$(which ss-redir) ;;
-	ss-local) ret=$(which ss-local) ;;
-	ss-server) ret=$(which ss-server) ;;
-	ssr) ret=$(which ssr-redir) ;;
-	ssr-local) ret=$(which ssr-local) ;;
-	ssr-server) ret=$(which ssr-server) ;;
-	vmess|vless) ret=$(which xray) || ret=$(which v2ray) ;;
-	trojan) ret=$(which trojan-plus) ;;
-	trojan-go) ret=$(which trojan-go) ;;
-	naiveproxy) ret=$(which naive) ;;
-	socks5|tun) ret=$(which redsocks2) ;;
+	ss) ret=$(which ss-redir);;
+	ss-local) ret=$(which ss-local);;
+	ss-server) ret=$(which ss-server);;
+	ssr) ret=$(which ssr-redir);;
+	ssr-local) ret=$(which ssr-local);;
+	ssr-server) ret=$(which ssr-server);;
+	vmess|vless) ret=$(which xray);;
+	trojan) ret=$(which trojan-plus);;
+	trojan-go) ret=$(which trojan-go);;
+	naiveproxy) ret=$(which naive);;
+	socks5|tun) ret=$(which redsocks2);;
 	esac
 	echo ${ret:=0}
 }
@@ -91,13 +91,13 @@ gen_config_file(){
 	timeout=$(uci_get_by_name $1 timeout 60)
 	case $rtype in
 	tcp)
-		[ $kcp_enable = 1 ] && hostip="127.0.0.1" || hostip=$server; PROTO="redir"; lport=$local_port;fname="retcp";;
+		[ $kcp_enable = 1 ] && hostip=127.0.0.1 || hostip=$server;PROTO=redir;lport=$local_port;fname=retcp;;
 	udp)
-		hostip=$udp_server; PROTO=redir; lport=$udp_local_port; fname="reudp";;
+		hostip=$udp_server;PROTO=redir;lport=$udp_local_port;fname=reudp;;
 	nf)
-		hostip=$nf_ip; lport=$nf_local_port; fname="nf";;
+		hostip=$nf_ip;lport=$nf_local_port;fname=nf;;
 	socks)
-		hostip=$socks5_ip; lport=$socks5_port; PROTO="socks"; fname="socks5";;
+		hostip=$socks5_ip;lport=$socks5_port;PROTO=socks;fname=socks5;;
 	esac
 	[ $(uci_get_by_name $1 fast_open 0) = 1 ] && fast=true || fast=false;
 	[ "$socks5_start" = 1 ] && config_file=$VAR/$type-by-$fname-socks5.json || config_file=$VAR/$type-by-$fname.json
@@ -157,9 +157,9 @@ gen_config_file(){
 		sed -i 's/\\//g' $config_file
 		;;
 	trojan|trojan-go)
-		case "$rtype" in
-		tcp|udp|nf) smode="nat" ;;
-		socks) smode="client" ;;
+		case $rtype in
+		tcp|udp|nf) smode=nat;;
+		socks) smode=client;;
 		esac
 		lua $BIN_DIR/gentrojanconfig $1 $smode $lport $serv_ip $threads >$config_file
 		sed -i 's/\\//g' $config_file
@@ -182,7 +182,7 @@ start_dns(){
 		;;
 	esac
 	case $dns_mode_d in
-	doh) log "SmartDNS : Use $doh_d_a to start in DoH mode (Domestic DNS)" ;;
+	doh) log "SmartDNS : Use $doh_d_a to start in DoH mode (Domestic DNS)";;
 	udp)
 		udp_dns_d=$(echo $udp_dns_d | sed 's/ /,/g')
 		log "SmartDNS : Use $udp_dns_d to start in UDP mode (Domestic DNS)"
@@ -362,7 +362,7 @@ rules(){
 }
 
 start_retcp(){
-	rtype="tcp"
+	rtype=tcp
 	if [ $kcp_enable = 1 ];then
 		cmd=$(which kcptun-client) || cmd=0
 		if [ ! -x $cmd ];then
@@ -389,7 +389,7 @@ start_retcp(){
 	ss|ssr)
 		gen_config_file $GLOBAL_SERVER $rtype
 		redir_tcp=$threads
-		for i in $(seq 1 $threads); do
+		for i in $(seq 1 $threads);do
 			$cmd -c $config_file >$log_file 2>&1 &
 		done
 		[ $ttype = ss ] && name=Shadowsocks || name=ShadowsocksR
@@ -414,14 +414,14 @@ start_retcp(){
 		gen_config_file $GLOBAL_SERVER $rtype "" $server
 		if [ $type = trojan ];then
 			redir_tcp=$threads
-			for i in $(seq 1 $threads); do
+			for i in $(seq 1 $threads);do
 				$cmd --config $config_file >$log_file 2>&1 &
 			done
-			name="Trojan-Plus"
+			name=Trojan-Plus
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
 		else
 			$cmd --config $config_file >$log_file 2>&1 &
-			name="Trojan-Go"
+			name=Trojan-Go
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$2}')"
 		fi
 		log "Main Node: $name (Ver $ver) $threads Threads Started!"
@@ -435,7 +435,7 @@ start_retcp(){
 		redir_tcp=$threads
 		$BIN_DIR/genred2config $VAR/redsocks-by-retcp.json socks5 tcp $local_port $server $(uci_get_by_name $GLOBAL_SERVER server_port) \
 		$(uci_get_by_name $GLOBAL_SERVER auth_enable 0) $(uci_get_by_name $GLOBAL_SERVER username) $(uci_get_by_name $GLOBAL_SERVER password)
-		for i in $(seq 1 $threads); do
+		for i in $(seq 1 $threads);do
 			$cmd -c $VAR/redsocks-by-retcp.json >$VAR/redsocks-by-retcp.log 2>&1
 		done
 		log "Main Node: Socks5 $threads Threads Started!"
@@ -443,7 +443,7 @@ start_retcp(){
 	tun)
 		redir_tcp=$threads
 		$BIN_DIR/genred2config $VAR/redsocks-by-retcp.json vpn $(uci_get_by_name $GLOBAL_SERVER iface br-lan) $local_port
-		for i in $(seq 1 $threads); do
+		for i in $(seq 1 $threads);do
 			$cmd -c $VAR/redsocks-by-retcp.json >$VAR/redsocks-by-retcp.log 2>&1
 		done
 		log "Main Node: Network Tunnel $threads Threads Started!"
@@ -452,7 +452,7 @@ start_retcp(){
 }
 
 start_reudp(){
-	rtype="udp"
+	rtype=udp
 	cmd=$(f_bin $utype)
 	if [ ! -x $cmd ];then
 		log "UDP Relay: Can't find $(echo $utype | tr a-z A-Z) program, start failed!"
@@ -475,10 +475,10 @@ start_reudp(){
 		gen_config_file $UDP_RELAY_SERVER $rtype "" $udp_server
 		$cmd --config $config_file >$log_file 2>&1 &
 		[ $utype = trojan ] && {
-			name="Trojan-Plus"
+			name=Trojan-Plus
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
 		} || {
-			name="Trojan-Go"
+			name=Trojan-Go
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$2}')"
 		}
 		log "UDP Relay: $name (Ver $ver) Started!"
@@ -502,7 +502,7 @@ start_reudp(){
 }
 
 start_renf(){
-	rtype="nf"
+	rtype=nf
 	cmd=$(f_bin $ntype)
 	if [ ! -x $cmd ];then
 		log "NF Shunt : Can't find $(echo $ntype | tr a-z A-Z) program, start failed!"
@@ -525,10 +525,10 @@ start_renf(){
 		gen_config_file $NF_SERVER $rtype "" $nf_ip
 		$cmd --config $config_file >$log_file 2>&1 &
 		[ $ntype = trojan ] && {
-			name="Trojan-Plus"
+			name=Trojan-Plus
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
 		} || {
-			name="Trojan-Go"
+			name=Trojan-Go
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$2}')"
 		}
 		log "NF Shunt : $name (Ver $ver) Started!"
@@ -553,7 +553,7 @@ start_renf(){
 }
 
 start_local(){
-	rtype="socks"
+	rtype=socks
 	[ $SO_SERVER = 0 -o "$socks5_start" = 1 ] && return
 	type=$(uci_get_by_name $SO_SERVER type)
 	[ $type = ss -o $type = ssr ] && cmd=$(f_bin $type-local) || cmd=$(f_bin $type)
@@ -578,10 +578,10 @@ start_local(){
 		gen_config_file $SO_SERVER $rtype "" $socks5_ip
 		$cmd --config $config_file >$log_file 2>&1 &
 		[ $type = trojan ] && {
-			name="Trojan-Plus"
+			name=Trojan-Plus
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$3}')"
 		} || {
-			name="Trojan-Go"
+			name=Trojan-Go
 			ver="$($cmd --version 2>&1 | head -1 | awk '{print$2}')"
 		}
 		log "Socks5 Node: $name (Ver $ver) Started!"
@@ -625,15 +625,15 @@ gen_dns(){
 				dns_a=1
 			fi;;
 		esac
-		for i in $doh_o_b; do
+		for i in $doh_o_b;do
 			case $run_mode in
-			gfw|oversea) ipset add blacklist $i 2>/dev/null ;;
-			*) ipset del ss_spec_wan_ac $i 2>/dev/null || ipset add ss_spec_wan_ac $i nomatch 2>/dev/null ;;
+			gfw|oversea) ipset add blacklist $i 2>/dev/null;;
+			*) ipset del ss_spec_wan_ac $i 2>/dev/null || ipset add ss_spec_wan_ac $i nomatch 2>/dev/null;;
 			esac
 		done
-		[ -n "$NF" ] && doh_dns_nf="google"
+		[ -n "$NF" ] && doh_dns_nf=google
 		if [ "$doh_dns_nf" = $doh_dns_o ];then
-			doh_dns_nf="cloudflare"
+			doh_dns_nf=cloudflare
 		fi
 		if [ -n "$NF" ];then
 			case $doh_dns_nf in
@@ -646,7 +646,7 @@ gen_dns(){
 				doh_nf_b="8.8.8.8 8.8.4.4"
 				dns_b=1;;
 			esac
-			for i in $doh_nf_b; do ipset add netflix $i 2>/dev/null; done
+			for i in $doh_nf_b;do ipset add netflix $i 2>/dev/null;done
 		fi
 	else
 		tcp_dns_o=$(uci_get_by_type global tcp_dns_o 1.1.1.1,1.0.0.1)
@@ -655,10 +655,10 @@ gen_dns(){
 			log "SmartDNS : Get Foreign DNS failed!"
 			return 1
 		fi
-		for i in $dns_tmp; do
+		for i in $dns_tmp;do
 			case $run_mode in
-			gfw|oversea) ipset add blacklist $i 2>/dev/null ;;
-			*) ipset del ss_spec_wan_ac $i 2>/dev/null || ipset add ss_spec_wan_ac $i nomatch 2>/dev/null ;;
+			gfw|oversea) ipset add blacklist $i 2>/dev/null;;
+			*) ipset del ss_spec_wan_ac $i 2>/dev/null || ipset add ss_spec_wan_ac $i nomatch 2>/dev/null;;
 			esac
 		done
 		[ -n "$NF" ] && tcp_dns_nf="8.8.8.8 8.8.4.4"
@@ -671,7 +671,7 @@ gen_dns(){
 				log "SmartDNS : Get Netflix DNS failed!"
 				return 1
 			fi
-			for i in $dns_tmp; do ipset add netflix $i 2>/dev/null; done
+			for i in $dns_tmp;do ipset add netflix $i 2>/dev/null;done
 		fi
 	fi
 
@@ -695,7 +695,7 @@ gen_dns(){
 				dns_c=1
 			fi;;
 		esac
-		for i in $doh_d_b; do ipset add ss_spec_wan_ac $i 2>/dev/null; done
+		for i in $doh_d_b;do ipset add ss_spec_wan_ac $i 2>/dev/null;done
 	else
 		udp_dns_d=$(uci_get_by_type global udp_dns_d 223.5.5.5,223.6.6.6)
 		if [ "$udp_dns_d" = "isp" ];then
@@ -709,7 +709,7 @@ gen_dns(){
 		fi
 		udp_dns_d=$(echo $udp_dns_d | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
 		dns_tmp=$(echo $udp_dns_d | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" | grep -v 0.0.0.0 | grep -v 127.0.0.1)
-		for i in $dns_tmp; do ipset add ss_spec_wan_ac $i 2>/dev/null; done
+		for i in $dns_tmp;do ipset add ss_spec_wan_ac $i 2>/dev/null;done
 	fi
 	smartdns_flag=1
 	mkdir -p /tmp/dnsmasq.d $SDNS $DNS_DIR
@@ -725,42 +725,42 @@ gen_dns(){
 	if [ $dns_mode_o = "doh" ];then
 		if [ "$dns_a" = 1 ];then
 			echo "server-https $doh_o_a -group a -exclude-default-group" >>$DNS_T
-			for i in $doh_o_b; do echo "server-tcp $i -group b -exclude-default-group" >>$DNS_T; done
+			for i in $doh_o_b;do echo "server-tcp $i -group b -exclude-default-group" >>$DNS_T;done
 			doh_o_dom=$(echo $doh_o_a | awk -F[/:] '{print$4}')
 			case $run_mode in
-			router|all) echo "nameserver /$doh_o_dom/b" >>$DNS_T ;;
-			*) echo "domain-rules /$doh_o_dom/ -nameserver b -ipset blacklist" >>$DNS_T ;;
+			router|all) echo "nameserver /$doh_o_dom/b" >>$DNS_T;;
+			*) echo "domain-rules /$doh_o_dom/ -nameserver b -ipset blacklist" >>$DNS_T;;
 			esac
 		else
 			echo $doh_o_a | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group a -exclude-default-group/g' >>$DNS_T
 		fi
 		if [ -n "$NF" ];then
 				echo "server-https $doh_nf_a -group c -exclude-default-group" >>$DNS_T
-				for i in $doh_nf_b; do echo "server-tcp $i -group d -exclude-default-group" >>$DNS_T; done
+				for i in $doh_nf_b;do echo "server-tcp $i -group d -exclude-default-group" >>$DNS_T;done
 				doh_nf_dom=$(echo $doh_nf_a | awk -F[/:] '{print$4}')
 				echo "domain-rules /$doh_nf_dom/ -nameserver d -ipset netflix" >>$DNS_T
 		fi
 	else
-		for i in $tcp_dns_o; do echo "server-tcp $i -group a -exclude-default-group" >>$DNS_T; done
-		[ -n "$NF" ] && for i in $tcp_dns_nf; do echo "server-tcp $i -group c -exclude-default-group" >>$DNS_T; done
+		for i in $tcp_dns_o;do echo "server-tcp $i -group a -exclude-default-group" >>$DNS_T;done
+		[ -n "$NF" ] && for i in $tcp_dns_nf;do echo "server-tcp $i -group c -exclude-default-group" >>$DNS_T;done
 	fi
 
 	if [ $dns_mode_d = "doh" ];then
 		if [ "$dns_c" = 1 ];then
 			echo "server-https $doh_d_a -group e -exclude-default-group" >>$DNS_T
-			for i in $doh_d_b; do echo "server $i -group f -exclude-default-group" >>$DNS_T; done
+			for i in $doh_d_b;do echo "server $i -group f -exclude-default-group" >>$DNS_T;done
 			doh_d_dom=$(echo $doh_d_a | awk -F[/:] '{print$4}')
 			echo "domain-rules /$doh_d_dom/ -nameserver f -ipset ss_spec_wan_ac" >>$DNS_T
 		else
 			echo $doh_d_a | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group e -exclude-default-group/g' >>$DNS_T
 		fi
 	else
-		for i in $udp_dns_d; do echo "server $i -group e -exclude-default-group" >>$DNS_T; done
+		for i in $udp_dns_d;do echo "server $i -group e -exclude-default-group" >>$DNS_T;done
 	fi
 	case $run_mode in
-	all) port=5335 ;;
-	gfw|oversea) port=5336 ;;
-	*) port=5337 ;;
+	all) port=5335;;
+	gfw|oversea) port=5336;;
+	*) port=5337;;
 	esac
 	cat >$DNS_FILE <<-EOF
 		no-resolv
@@ -791,7 +791,7 @@ gen_dns(){
 		if [ -n "$NF" ];then
 			cp -f $T_FILE/netflix.list $O
 			D=$(cat $O)
-			for i in $D; do
+			for i in $D;do
 				sed -i -e "/\/$i\//d" -e "/\.$i\//d" $DNS_DIR/black.conf 2>/dev/null
 				sed -i -e "/\/$i\//d" -e "/\.$i\//d" $CON_T 2>/dev/null
 				echo "domain-rules /$i/ -nameserver c -ipset netflix" >>$CON_T
@@ -806,7 +806,7 @@ gen_dns(){
 		if [ -s $T_FILE/white.list ];then
 			cp -f $T_FILE/white.list $O
 			D=$(cat $O)
-			for i in $D; do
+			for i in $D;do
 				sed -i -e "/\/$i\//d" -e "/\.$i\//d" $DNS_DIR/black.conf 2>/dev/null
 				sed -i -e "/\/$i\//d" -e "/\.$i\//d" $CON_T 2>/dev/null
 			done

@@ -1,5 +1,4 @@
-#!/bin/sh
-uci -q batch <<-EOF >/dev/null
+uci batch <<EOF
 	delete ucitrack.@bypass[-1]
 	add ucitrack bypass
 	set ucitrack.@bypass[-1].init=bypass
@@ -10,6 +9,5 @@ uci -q batch <<-EOF >/dev/null
 	set firewall.bypass.path=/var/etc/bypass.include
 	set firewall.bypass.reload=1
 	commit firewall
-	set smartdns.@smartdns[0].enabled=0
-	commit smartdns
+	/etc/init.d/smartdns stop 2>/dev/null;
 EOF
