@@ -14,4 +14,9 @@ config rss_rules
 	option name '1'
 	option url '1'
 
+config rss_rule
+	option load '1'
+	option name 'kpr_our_rule'
+	option url 'https://gitee.com/godros/godproxy/raw/master/rules/kpr_our_rule.txt'
+
 
