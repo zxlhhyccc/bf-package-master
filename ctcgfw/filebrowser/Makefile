@@ -11,9 +11,9 @@ PKG_VERSION:=2.13.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=e1f658633dd0d603693e869ed49be66ad1c7991d
+PKG_SOURCE_VERSION:=d2e6d23741d92dbc7608aed9797dc960bbe1fd6b
 PKG_SOURCE_URL:=https://github.com/filebrowser/filebrowser
-PKG_MIRROR_HASH:=d2b9af0b58442f2e214a957cef455b9852e34203e813870f6e2166ea7cf407c7
+PKG_MIRROR_HASH:=81ccb0bca5f0a384fda3206f78475be79e50286b48742083a7438dd30f025ff4
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -68,17 +68,10 @@ endif
 
 define Build/Compile
 ( \
-  cd $(PKG_BUILD_DIR) ; \
-  rm -rf frontend/dist ; \
-  rm -f http/rice-box.go ; \
   cd $(PKG_BUILD_DIR)/frontend ; \
   npm ci; \
   npm run lint ; \
   npm run build ; \
-  GOOS=$$$$(go env GOOS) GOARCH=$$$$(go env GOARCH) GO111MODULE=off go get -v github.com/GeertJohan/go.rice/rice/... ; \
-  cd $(PKG_BUILD_DIR)/http ; \
-  rm -rf rice-box.go ; \
-  "$$$$(go env GOPATH)/bin/rice" embed-go ; \
   $(call GoPackage/Build/Compile) ; \
 )
 ifeq ($(CONFIG_FILEBROWSER_COMPRESS_UPX),y)
