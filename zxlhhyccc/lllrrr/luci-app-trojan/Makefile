@@ -21,7 +21,8 @@ define Package/luci-app-trojan/description
 endef
 
 define Build/Prepare
-	po2lmo ${CURDIR}/po/zh-cn/trojan.po ${CURDIR}/po/zh-cn/trojan.zh-cn.lmo
+	$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
 endef
 
 define Build/Configure
@@ -107,7 +108,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DATA) ./luasrc/controller/*.lua $(1)/usr/lib/lua/luci/controller
 	$(INSTALL_DATA) ./luasrc/model/cbi/trojan/*.lua $(1)/usr/lib/lua/luci/model/cbi/trojan
 	$(INSTALL_DATA) ./luasrc/view/trojan/* $(1)/usr/lib/lua/luci/view/trojan
-	$(INSTALL_DATA) ./po/zh-cn/trojan.zh-cn.lmo $(1)/usr/lib/lua/luci/i18n
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/trojan.*.lmo $(1)/usr/lib/lua/luci/i18n
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
