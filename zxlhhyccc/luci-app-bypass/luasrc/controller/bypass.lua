@@ -3,7 +3,6 @@ local http = require "luci.http"
 local api = require "luci.model.cbi.bypass.api"
 local kcptun = require "luci.model.cbi.bypass.kcptun"
 local xray = require "luci.model.cbi.bypass.xray"
-local v2ray = require "luci.model.cbi.bypass.v2ray"
 local trojan_go = require "luci.model.cbi.bypass.trojan_go"
 function index()
 	if not nixio.fs.access("/etc/config/bypass") then
@@ -221,25 +220,6 @@ function xray_update()
 		json = xray.to_move(http.formvalue("file"))
 	else
 		json = xray.to_download(http.formvalue("url"))
-	end
-
-	http_write_json(json)
-end
-
-function v2ray_check()
-	local json = v2ray.to_check("")
-	http_write_json(json)
-end
-
-function v2ray_update()
-	local json = nil
-	local task = http.formvalue("task")
-	if task == "extract" then
-		json = v2ray.to_extract(http.formvalue("file"), http.formvalue("subfix"))
-	elseif task == "move" then
-		json = v2ray.to_move(http.formvalue("file"))
-	else
-		json = v2ray.to_download(http.formvalue("url"))
 	end
 
 	http_write_json(json)

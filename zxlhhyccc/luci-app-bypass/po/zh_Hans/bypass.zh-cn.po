@@ -4,8 +4,8 @@ msgstr "基本设置"
 msgid "Bypass Settings"
 msgstr "Bypass 设置"
 
-msgid "Support SS/SSR/V2RAY/TROJAN/TROJAN-GO/NAIVEPROXY/SOCKS5/TUN etc."
-msgstr "支持 SS/SSR/V2ray/Trojan/Trojan-Go/NavieProxy/Socks5/TUN 等协议"
+msgid "Support SS/SSR/XRAY/TROJAN/TROJAN-GO/NAIVEPROXY/SOCKS5/TUN etc."
+msgstr "支持 SS/SSR/Xray/Trojan/Trojan-Go/NavieProxy/Socks5/TUN 等协议"
 
 msgid "Bypass RUNNING"
 msgstr "Bypass 客户端运行中"

@@ -139,7 +139,7 @@ s = m:section(NamedSection, sid, "servers")
 s.anonymous = true
 s.addremove = false
 
-o = s:option(DummyValue, "ssr_url", "SS/SSR/V2RAY/TROJAN URL")
+o = s:option(DummyValue, "ssr_url", "SS/SSR/VLESS/VMESS/TROJAN URL")
 o.rawhtml = true
 o.template = "bypass/link"
 o.value = sid
