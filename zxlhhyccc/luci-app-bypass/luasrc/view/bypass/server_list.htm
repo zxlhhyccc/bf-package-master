@@ -44,8 +44,12 @@ local dsp=require "luci.dispatcher"
 			xhr(task).then(thread);
 		}
 	}
-	for (let i=0; i < 20; i++){
-		thread()
+	if (doms.length < 150){
+		setTimeout(function(){
+			for (let i=0; i < 20; i++){
+				thread()
+			}
+		}, 100);
 	}
 	function cbi_row_drop(fromId,toId,store,isToBottom){
 		var fromNode=document.getElementById(fromId);
