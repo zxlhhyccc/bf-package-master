@@ -13,8 +13,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
-PKG_MIRROR_HASH:=13d7d5c51a8c8fa3061106cbfe0499f2daa8c3bfda1fa3f3c1ef805f9288cfd7
-PKG_SOURCE_VERSION:=5d0d32b926b1b437d2527024cdda6a795070bcd2
+PKG_MIRROR_HASH:=e513e55a6dac49783b071aad3ce0ea3570b7dc00860d23597ce2e9f7d0b6256e
+PKG_SOURCE_VERSION:=ba3fc242ab8a0e52eeec6498c218ab84208531a6
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -79,8 +79,8 @@ endif
 define Build/Compile
 ( \
   pushd $(PKG_BUILD_DIR) ; \
-  make js-deps js-build js-lint js-test js-beta-lint build-release ; \
-  packr -z -v -i internal/home ; \
+  make js-deps js-build ; \
+  packr -z -v -i internal ; \
   popd ; \
   $(call GoPackage/Build/Compile) ; \
 )
