@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 OpenWrt.org
+# Copyright (C) 2021 ImmortalWrt
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bpytop
 PKG_VERSION:=1.0.63
-PKG_RELEASE:=1
+PKG_RELEASE:=$(AUTORELEASE)
 
 PYPI_NAME:=bpytop
 PKG_HASH:=21d4c87ceae7c9152e8c8094f50843c6174e47a94649dcbecda63c4190168762
@@ -35,11 +35,11 @@ define Package/bpytop/description
 endef
 
 define Package/bpytop/install
-	$(call Py3Package/$(1)/install,$(PKG_BUILD_DIR))
-	$(INSTALL_DIR) $(1)/usr
-	$(CP) $(PKG_INSTALL_DIR)/usr/* $(1)/usr/
-	$(INSTALL_DIR) $(1)/usr/share/bpytop
-	$(CP) $(PKG_BUILD_DIR)/bpytop-themes/* $(1)/usr/share/bpytop/
+	$(call Py3Package/$(1)/install,$(PKG_INSTALL_DIR))
+	$(INSTALL_DIR) $(1)
+	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
+	$(INSTALL_DIR) $(1)/usr/share
+	$(CP) $(PKG_BUILD_DIR)/bpytop-themes $(1)/usr/share/bpytop
 endef
 
 $(eval $(call Py3Package,bpytop))
