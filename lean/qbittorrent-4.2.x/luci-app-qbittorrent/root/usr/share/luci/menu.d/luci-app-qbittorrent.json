@@ -1,0 +1,14 @@
+{
+	"admin/nas/qbittorrent": {
+		"title": "qBittorrent",
+		"order": 90,
+		"action": {
+			"type": "view",
+			"path": "qbittorrent/qbittorrent"
+		},
+		"depends": {
+			"acl": [ "luci-app-qbittorrent" ],
+			"uci": { "qbittorrent": true }
+		}
+	}
+}
