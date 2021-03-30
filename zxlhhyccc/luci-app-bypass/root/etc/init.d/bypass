@@ -113,7 +113,6 @@ gen_config_file(){
 			"password":"$pass",
 			"timeout":$timeout,
 			"method":"$(uci_get_by_name $1 encrypt_method_ss)",
-			"reuse_port":true,
 			"fast_open":$fast
 			}
 		EOF
@@ -136,7 +135,6 @@ gen_config_file(){
 			"protocol_param":"$(uci_get_by_name $1 protocol_param)",
 			"obfs":"$(uci_get_by_name $1 obfs)",
 			"obfs_param":"$(uci_get_by_name $1 obfs_param)",
-			"reuse_port":true,
 			"fast_open":$fast
 			}
 		EOF
