@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openwrt_chinadns
 PKG_VERSION:=1.3.3
-PKG_RELEASE:=1
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/aa65535/ChinaDNS.git
@@ -31,20 +31,35 @@ PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/$(PKG_NAME)
+define Package/$(PKG_NAME)/Default
 	SECTION:=net
 	CATEGORY:=Network
+	SUBMENU:=IP Addresses and Names
 	TITLE:=Protect yourself against DNS poisoning in China.
 	URL:=https://github.com/shadowsocks/ChinaDNS
 endef
 
+define Package/$(PKG_NAME)
+  $(call Package/$(PKG_NAME)/Default)
+endef
+
 define Package/$(PKG_NAME)/description
-Protect yourself against DNS poisoning in China.
+A DNS forwarder that ignores incorrect(you knew it) responses.
+endef
+
+define Package/$(PKG_NAME)/conffiles
+/usr/share/chinadns/chnroute.txt
+/usr/share/chinadns/iplist.txt
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/chinadns $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/chinadns $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/chinadns.init $(1)/etc/init.d/chinadns
+	$(INSTALL_DIR) $(1)/usr/share/chinadns
+	$(CP) $(PKG_INSTALL_DIR)/usr/share/chnroute.txt $(1)/usr/share/chinadns/
+	$(CP) $(PKG_INSTALL_DIR)/usr/share/iplist.txt $(1)/usr/share/chinadns/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
