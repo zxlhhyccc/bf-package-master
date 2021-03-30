@@ -73,13 +73,13 @@ return baseclass.extend({
 
 		// TODO: This is ugly
 		var projectlink = document.createElement('a');
-		projectlink.append('Project ImmortalWrt');
-		projectlink.href = 'https://github.com/immortalwrt';
+		projectlink.append('Project OpenWrt');
+		projectlink.href = 'https://github.com/openwrt';
 		projectlink.target = '_blank';
 
 		var corelink = document.createElement('a');
-		corelink.append('ImmortalWrt Core');
-		corelink.href = 'https://github.com/immortalwrt/immortalwrt';
+		corelink.append('OpenWrt Core');
+		corelink.href = 'https://github.com/openwrt/openwrt';
 		corelink.target = '_blank';
 
 		var sourcelink = document.createElement('placeholder');
