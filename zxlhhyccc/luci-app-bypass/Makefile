@@ -93,6 +93,10 @@ define Package/$(PKG_NAME)
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Socks_Server:microsocks
 endef
 
+define Build/Prepare
+	chmod +x root/etc/init.d/bypass root/usr/share/bypass/* >/dev/null 2>&1
+endef
+
 define Package/$(PKG_NAME)/postinst
 [ -n "$$IPKG_INSTROOT" ] || (rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*;killall -HUP rpcd 2>/dev/null;/etc/init.d/smartdns stop 2>/dev/null;/etc/init.d/bypass enable)
 endef
