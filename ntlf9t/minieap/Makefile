@@ -36,6 +36,10 @@ define Package/minieap/description
   Extendable 802.1x client with Ruijie v3 (v4) plugin.
 endef
 
+define Package/minieap/conffiles
+/etc/minieap.conf
+endef
+
 define Package/minieap/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/local/sbin/minieap $(1)/usr/sbin/
