@@ -11,15 +11,15 @@ diff --git a/fs/config/config.go b/fs/config/config.go
 index 53d67ef03..cc5d6436b 100644
 --- a/fs/config/config.go
 +++ b/fs/config/config.go
-@@ -26,7 +26,6 @@ import (
- 	"unicode/utf8"
+@@ -14,7 +14,6 @@ import (
+ 	"strings"
+ 	"time"
  
- 	"github.com/Unknwon/goconfig"
--	homedir "github.com/mitchellh/go-homedir"
+-	"github.com/mitchellh/go-homedir"
  	"github.com/pkg/errors"
+ 
  	"github.com/rclone/rclone/fs"
- 	"github.com/rclone/rclone/fs/accounting"
-@@ -133,21 +132,10 @@ func makeConfigPath() string {
+@@ -134,21 +134,10 @@ func makeConfigPath() string {
  	}
  
  	// Find user's home directory
