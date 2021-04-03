@@ -2,6 +2,7 @@
 1.  Trojan-Go 支持
 1.  DNS over Https(DoH) 支持
 1.  基于ChinaDNS-NG的国外智能DNS解析
+1.  走代理网站屏蔽IPV6,不影响其他正常网站使用IPV6
 1.  国内DNS方案集成
 1.  故障转移支持中转节点
 1.  功能与视觉体验增强

@@ -113,6 +113,7 @@ gen_config_file(){
 			"password":"$pass",
 			"timeout":$timeout,
 			"method":"$(uci_get_by_name $1 encrypt_method_ss)",
+			"reuse_port":true,
 			"fast_open":$fast
 			}
 		EOF
@@ -135,6 +136,7 @@ gen_config_file(){
 			"protocol_param":"$(uci_get_by_name $1 protocol_param)",
 			"obfs":"$(uci_get_by_name $1 obfs)",
 			"obfs_param":"$(uci_get_by_name $1 obfs_param)",
+			"reuse_port":true,
 			"fast_open":$fast
 			}
 		EOF
@@ -166,7 +168,7 @@ gen_config_file(){
 }
 
 start_dns(){
-	$(which smartdns) -c $DNS_T
+	$(which smartdns-le) -c $DNS_T
 	case $dns_mode_o in
 	doh)
 		doh_o_a=$(echo $doh_o_a | sed 's/ -http-host dns.google//g')
@@ -816,7 +818,7 @@ gen_dns(){
 	rm -f $O
 	[ $(find $DNS_DIR -name \* -exec cat {} \; 2>/dev/null | wc -l) = 0 ] && rm -rf $DNS_DIR || echo conf-dir=$DNS_DIR >>$DNS_FILE
 	[ $run_mode = router ] && chinadns_flag=1
-	killall -q -9 smartdns
+	killall -q -9 smartdns-le
 	start_dns
 	/etc/init.d/dnsmasq restart >/dev/null 2>&1
 	preload
@@ -950,6 +952,11 @@ start_monitor(){
 }
 
 start(){
+	if [[ "$(uci get smartdns.@smartdns[0].enabled 2>/dev/null)" == "1" ]]; then
+		uci del smartdns.@smartdns[0].enabled 2>/dev/null
+		uci commit smartdns
+		/etc/init.d/smartdns stop 2>/dev/null
+	fi
 	touch $LOC
 	if [ -n "$switch_server" ];then
 		GLOBAL_SERVER=$switch_server
@@ -986,7 +993,7 @@ stop(){
 	kill -9 $(ps -w | grep by-monitor | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep by-preload | grep -v grep | awk '{print$1}') 2>/dev/null
 	kill -9 $(ps -w | grep $VAR | grep -v grep | awk '{print$1}') 2>/dev/null
-	killall -q -9 smartdns chinadns-ng kcptun-client microsocks
+	killall -q -9 smartdns-le chinadns-ng kcptun-client microsocks
 	rm -rf $DNS_DIR $VAR $DNS_FILE $CON_T /var/lock/bypass-update.lock
 	[ $run_mode = gfw -o $gfw_mode = 1 ] || rm -f $K/gfw.list
 	[ $run_mode = router ] || rm -f $K/china_v6.txt
@@ -1021,9 +1028,9 @@ stop(){
 			dns_d_l=$(echo $dns_d_l | sed -e 's/，/,/g' -e 's/。/./g' -e 's/：/:/g' -e 's/,/\n/g')
 			for i in $dns_d_l;do echo "server $i" >> $DNS_T;done
 		fi
-		$(which smartdns) -c $DNS_T
+		$(which smartdns-le) -c $DNS_T
 		r=1
-		while ! ps -w | grep smartdns | grep -v grep >/dev/null;do
+		while ! ps -w | grep smartdns-le | grep -v grep >/dev/null;do
 			[ $r -ge 10 ] && return 1 || let r++
 			sleep 1
 		done
