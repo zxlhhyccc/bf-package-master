@@ -13,11 +13,11 @@ LUCI_DEPENDS:=+bash +busybox +coreutils +coreutils-nohup +curl +dnsmasq-full +ip
 LUCI_PKGARCH:=all
 
 PKG_NAME:=luci-app-unblockneteasemusic
-PKG_VERSION:=2.8
-PKG_RELEASE:=10
+PKG_VERSION:=2.9
+PKG_RELEASE:=1
 
 PKG_MAINTAINER:=CN_SZTL <cnsztl@immortalwrt.org>
 
-include $(TOPDIR)/feeds/luci/luci.mk
+include ../../luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
