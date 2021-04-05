@@ -192,6 +192,10 @@ start_dns(){
 		service_start $(which chinadns-ng) -l 5337 -c '127.0.0.1#5336' -t '127.0.0.1#5335' -4 china_v4 -6 china_v6 -f -n $([ $gfw_mode = 1 ] && echo -g $K/gfw.list)
 		log "ChinaDNS : Start ChinaDNS-NG successful!"
 	fi
+	if [[ "$(uci get dhcp.@dnsmasq[0].cachesize 2>/dev/null)" == "0" ]]; then
+		uci set dhcp.@dnsmasq[0].cachesize='1500'
+		uci commit dhcp
+	fi
 }
 
 preload(){
@@ -716,7 +720,9 @@ gen_dns(){
 	cat >$DNS_T <<-EOF
 		force-AAAA-SOA yes
 		speed-check-mode none
+		dualstack-ip-selection yes
 		cache-size 0
+		cache-persist no
 		log-level fatal
 		log-file $LOG
 	EOF
