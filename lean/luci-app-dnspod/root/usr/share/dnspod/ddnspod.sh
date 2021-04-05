@@ -73,15 +73,17 @@ function getPublicIp() {
 
     case $IPtype in
         '1')
-            WanIp=`curl -4 -s 'https://api.myip.com' | grep ip |sed 's/.*ip":"\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\)".*/\1/g'`
+            #WanIp=`curl -4 -s 'https://api.myip.com' | grep ip |sed 's/.*ip":"\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\)".*/\1/g'`
+			WanIp=`curl -sL --connect-timeout 3 14.215.150.17:6666`
             echo $WanIp
             ;;
         '2')
-            WanIp=`curl -4 -s 'http://ip-api.com/json/?fields=query' | grep query |sed 's/.*query":"\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\)".*/\1/g'`
+            #WanIp=`curl -4 -s 'http://ip-api.com/json/?fields=query' | grep query |sed 's/.*query":"\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\)".*/\1/g'`
+			WanIp=`curl -sL --connect-timeout 3 members.3322.org/dyndns/getip`
             echo $WanIp
             ;;
         '3')
-	    WanIp=`curl -4 -s 'https://ipapi.co/ip/'`
+			WanIp=`curl -4 -s 'https://ipapi.co/ip/'`
             echo $WanIp
             ;;
         '4')
@@ -280,10 +282,10 @@ arDdnsUpdate() {
 	fi
 
     # Get Record ID
-    recordID=$(arApiPost "Record.List" "domain_id=${domainID}&sub_domain=${2}&record_type=${record_types}&record_line=%e9%bb%98%e8%ae%a4")
+    recordID=$(arApiPost "Record.List" "domain_id=${domainID}&sub_domain=${2}&record_type=${record_types}&record_line=默认")
     recordID=$(echo $recordID | sed 's/.*"id":"\([0-9]*\)".*/\1/')
     
-    recordRS=$(arApiPost "$post_type" "domain_id=${domainID}&record_id=${recordID}&sub_domain=${2}&record_type=${record_types}&value=${myIP}&record_line=%e9%bb%98%e8%ae%a4")
+    recordRS=$(arApiPost "$post_type" "domain_id=${domainID}&record_id=${recordID}&sub_domain=${2}&record_type=${record_types}&value=${myIP}&record_line=默认")
     recordCD=$(echo $recordRS | sed 's/.*{"code":"\([0-9]*\)".*/\1/')
 
     # Output IP
