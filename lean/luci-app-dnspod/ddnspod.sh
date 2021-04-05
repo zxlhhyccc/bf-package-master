@@ -83,11 +83,11 @@ function getPublicIp() {
             echo $WanIp
             ;;
         '3')
-			WanIp=`curl -4 -s 'http://myip.ipip.net/s'`
+			WanIp=`curl -4 -s 'https://ipapi.co/ip/'`
             echo $WanIp
             ;;
         '4')
-            WanIp=`curl -4 -s 'http://ip.3322.net'`
+            WanIp=`curl -4 -s 'https://ifconfig.co'`
             echo $WanIp
             ;;
         '5')
@@ -95,7 +95,7 @@ function getPublicIp() {
             echo $WanIp
             ;;
         '6')
-            WanIp=`curl -4 -s 'http://ip.cip.cc'`
+            WanIp=`curl -4 -s 'https://ip4.seeip.org'`
             echo $WanIp
             ;;
     esac
