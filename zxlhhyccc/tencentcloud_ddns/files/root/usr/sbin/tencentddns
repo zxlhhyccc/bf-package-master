@@ -24,7 +24,7 @@ intelnetip() {
 		tmp_ip=`curl -sL --connect-timeout 3 14.215.150.17:6666`
 	fi
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`curl -sL --connect-timeout 3 whatismyip.akamai.com`
+		tmp_ip=`curl -sL --connect-timeout 3 myip.ipip.net/s`
 	fi
 	echo -n $tmp_ip
 }
