@@ -1,0 +1,228 @@
+
+config smartdns
+	option dualstack_ip_selection '0'
+	option rr_ttl_min '300'
+	option seconddns_no_speed_check '0'
+	option seconddns_no_rule_addr '0'
+	option seconddns_no_rule_ipset '0'
+	option seconddns_no_rule_soa '0'
+	option seconddns_no_dualstack_selection '1'
+	option coredump '0'
+	option seconddns_no_rule_nameserver '0'
+	option rr_ttl_max '3600'
+	option prefetch_domain '1'
+	option seconddns_port '5335'
+	option seconddns_server_group 'us'
+	option seconddns_no_cache '1'
+	option seconddns_tcp_server '1'
+	option ipv6_server '0'
+	option server_name 'smartdns'
+	option port '6053'
+	option tcp_server '1'
+	option serve_expired '1'
+	option force_aaaa_soa '1'
+	option redirect 'dnsmasq-upstream'
+	option cache_size '50000'
+	list old_redirect 'dnsmasq-upstream'
+	list old_port '6054'
+	list old_enabled '0'
+
+config server
+	option type 'udp'
+	option ip '106.14.204.26'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'Aliddns'
+
+config server
+	option type 'udp'
+	option ip '101.132.183.99'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'PdoMo'
+
+config server
+	option type 'udp'
+	option ip '123.123.123.123'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'unicom'
+
+config server
+	option type 'udp'
+	option ip '219.141.136.10'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'chinanet'
+
+config server
+	option type 'udp'
+	option ip '221.179.155.161'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'cmcc'
+
+config server
+	option type 'udp'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'unicom'
+	option ip '220.248.192.12'
+
+config server
+	option type 'udp'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'chinanet'
+	option ip '202.101.224.69'
+
+config server
+	option type 'udp'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+	option name 'cmcc'
+	option ip '211.141.90.68'
+
+config server
+	option type 'udp'
+	option name 'baidu'
+	option ip '114.114.114.114'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+
+config server
+	option type 'udp'
+	option name 'dnspod'
+	option ip '223.5.5.5'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+
+config server
+	option name 'rubyfish'
+	option ip 'rubyfish.cn'
+	option type 'tls'
+	option blacklist_ip '0'
+	option enabled '1'
+	option server_group 'china'
+
+config server
+	option enabled '1'
+	option name '360'
+	option ip 'dot.360.cn'
+	option type 'tls'
+	option server_group 'china'
+	option blacklist_ip '0'
+
+config server
+	option enabled '1'
+	option name 'ali'
+	option ip 'https://223.5.5.5/dns-query'
+	option type 'https'
+	option server_group 'china'
+	option blacklist_ip '0'
+
+config server
+	option name 'google'
+	option ip '8.8.8.8'
+	option type 'tcp'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option enabled '1'
+
+config server
+	option name 'google'
+	option ip '8.8.8.8'
+	option type 'tls'
+	option blacklist_ip '0'
+	option server_group 'us'
+	option enabled '0'
+
+config server
+	option name 'google'
+	option type 'https'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option ip 'https://dns.google/dns-query'
+	option enabled '0'
+
+config server
+	option name 'google'
+	option ip '8.8.4.4'
+	option type 'tcp'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option enabled '0'
+
+config server
+	option name 'google'
+	option ip '8.8.4.4'
+	option type 'tls'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option enabled '0'
+
+config server
+	option name 'google'
+	option ip '8.8.4.4'
+	option type 'https'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option enabled '0'
+
+config server
+	option name 'opendns'
+	option ip '208.67.222.222'
+	option type 'tcp'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option enabled '1'
+
+config server
+	option name 'opendns'
+	option ip '208.67.222.222'
+	option type 'tls'
+	option blacklist_ip '0'
+	option server_group 'us'
+	option enabled '0'
+
+config server
+	option name 'opendns'
+	option type 'https'
+	option blacklist_ip '0'
+	option ip 'https://doh.opendns.com/dns-query'
+	option server_group 'us'
+	option enabled '0'
+
+config server
+	option name 'Quad9'
+	option ip '9.9.9.9'
+	option type 'tcp'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option enabled '1'
+
+config server
+	option name 'Quad9'
+	option ip '9.9.9.9'
+	option type 'tls'
+	option blacklist_ip '0'
+	option server_group 'us'
+	option enabled '0'
+
+config server
+	option name 'Quad9'
+	option type 'https'
+	option server_group 'us'
+	option blacklist_ip '0'
+	option ip 'https://dns.quad9.net/dns-query'
+	option enabled '0'
