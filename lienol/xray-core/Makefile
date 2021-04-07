@@ -7,8 +7,8 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_MIRROR_HASH:=7139f3ea662ba1f1ba9431b812794ea1321dea25c6d3bcc4d264fa96d7768ec7
-PKG_SOURCE_VERSION:=1d13a8da4907802c0fc506a989100b81d7abd604
+PKG_MIRROR_HASH:=e06df173753c50a31a595d83d95a7eaca7fc933bbda432965f46ea59ce8a6e8f
+PKG_SOURCE_VERSION:=bf94fb53caf61244abeb031a6088566290702a0d
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@project-openwrt.eu.org>
 PKG_LICENSE:=MPL-2.0
@@ -105,7 +105,7 @@ define Package/xray-core/conffiles
 /etc/config/xray
 endef
 
-GEOIP_VER:=202104042202
+GEOIP_VER:=202104062203
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -113,10 +113,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=13977ad0f79bcaf535f4f838179b64e5de74972832490f6c872a042068a717b0
+  HASH:=1c02c970b5d849c7c7678ea70339b4d581c72be16f141e3adbfe036a19095d4f
 endef
 
-GEOSITE_VER:=202104042202
+GEOSITE_VER:=202104062203
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -126,7 +126,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=b393118b0ccd4972070fb33a3a43f6c6b00123d3387cec7d307a02afdd0d964d
+  HASH:=f3559da082bc7ba6096413dd1d5f31666172a6365efacba6991e07a793303f41
 endef
 
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
