@@ -110,11 +110,8 @@ msgstr "保存配置"
 msgid "Apply Configurations"
 msgstr "应用配置"
 
-msgid "Download Config"
+msgid "Download Configurations"
 msgstr "下载配置"
-
-msgid "Download Running Config"
-msgstr "下载运行配置"
 
 msgid "Select Mode"
 msgstr "*运行模式"
@@ -493,17 +490,11 @@ msgstr "Youtube流量"
 msgid "Apple"
 msgstr "苹果服务流量"
 
-msgid "Scholar"
-msgstr "学术网站流量"
-
 msgid "Microsoft"
 msgstr "微软服务流量"
 
 msgid "Netflix"
 msgstr "Netflix流量"
-
-msgid "Disney"
-msgstr "Disney流量"
 
 msgid "Spotify"
 msgstr "Spotify流量"
@@ -798,7 +789,7 @@ msgstr "检测频率（秒）"
 msgid "Tolerance(ms)"
 msgstr "节点切换容忍值（毫秒）"
 
-msgid "Manual-Select"
+msgid "Select"
 msgstr "Select【手动选择】"
 
 msgid "URL-Test"
@@ -810,7 +801,7 @@ msgstr "Fallback【故障切换】"
 msgid "Load-Balance"
 msgstr "Load-Balance【负载均衡】"
 
-msgid "Relay-Traffic"
+msgid "Relay Traffic"
 msgstr "Relay【嵌套中转】"
 
 msgid "Other Group"
@@ -886,7 +877,7 @@ msgid "Exclude Keyword Match"
 msgstr "排除节点"
 
 msgid "(eg: hk or tw&bgp)"
-msgstr "（格式示例：香港 或 台湾&bgp 或 新加坡&bgp&奈飞）"
+msgstr "（格式示例：香港、台湾&bgp）"
 
 msgid "Config File List"
 msgstr "配置文件列表"
@@ -1436,30 +1427,3 @@ msgstr "选择配置文件后请点击以获取对应的策略组"
 
 msgid "Other Rules Name"
 msgstr "第三方规则"
-
-msgid "Note"
-msgstr "备注"
-
-msgid "Auto Restart"
-msgstr "定时重启"
-
-msgid "Auto Restart OpenClash"
-msgstr "定时重启插件"
-
-msgid "Restart Time (Every Week)"
-msgstr "重启时间(每周)"
-
-msgid "Restart time (every day)"
-msgstr "重启时间(每天)"
-
-msgid "DNS Port"
-msgstr "DNS监听端口"
-
-msgid "Log Size (KB)"
-msgstr "日志大小（KB）"
-
-msgid "Set Log File Size (KB)"
-msgstr "设置日志文件大小（KB）"
-
-msgid "Download Log"
-msgstr "下载日志"
