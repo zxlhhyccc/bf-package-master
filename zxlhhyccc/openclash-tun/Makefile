@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-tun
-PKG_VERSION:=2021.03.10
+PKG_VERSION:=2021.04.08
 PKG_RELEASE:=
 
 ifeq ($(ARCH),mipsel)
