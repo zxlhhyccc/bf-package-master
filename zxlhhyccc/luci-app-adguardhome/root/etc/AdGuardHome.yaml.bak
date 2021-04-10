@@ -1,0 +1,158 @@
+bind_host: 0.0.0.0
+bind_port: 3000
+users:
+- name: root
+  password: $2y$10$vHRcARdPCieYG3RXWomV5evDYN.Nj/edtwEkQgQJZcK6z7qTLaIc6
+http_proxy: ""
+language: ""
+rlimit_nofile: 0
+debug_pprof: false
+web_session_ttl: 720
+dns:
+  bind_host: 0.0.0.0
+  port: 52
+  statistics_interval: 1
+  querylog_enabled: true
+  querylog_interval: 7
+  querylog_size_memory: 1000
+  anonymize_client_ip: false
+  protection_enabled: true
+  blocking_mode: null_ip
+  blocking_ipv4: ""
+  blocking_ipv6: ""
+  blocked_response_ttl: 60
+  parental_block_host: family-block.dns.adguard.com
+  safebrowsing_block_host: standard-block.dns.adguard.com
+  ratelimit: 0
+  ratelimit_whitelist: []
+  refuse_any: true
+  upstream_dns:
+  - 127.0.0.1:6052
+  bootstrap_dns:
+  - 127.0.0.1:6052
+  - 223.5.5.5
+  all_servers: false
+  fastest_addr: true
+  allowed_clients: []
+  disallowed_clients: []
+  blocked_hosts: []
+  cache_size: 4194304
+  cache_ttl_min: 0
+  cache_ttl_max: 0
+  bogus_nxdomain: []
+  aaaa_disabled: true
+  enable_dnssec: false
+  edns_client_subnet: false
+  filtering_enabled: true
+  filters_update_interval: 24
+  parental_enabled: false
+  safesearch_enabled: false
+  safebrowsing_enabled: false
+  safebrowsing_cache_size: 1048576
+  safesearch_cache_size: 1048576
+  parental_cache_size: 1048576
+  cache_time: 30
+  rewrites: []
+  blocked_services: []
+tls:
+  enabled: false
+  server_name: ""
+  force_https: false
+  port_https: 443
+  port_dns_over_tls: 853
+  allow_unencrypted_doh: false
+  strict_sni_check: false
+  certificate_chain: ""
+  private_key: ""
+  certificate_path: ""
+  private_key_path: ""
+filters:
+- enabled: false
+  url: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
+  name: AdGuard DNS filter
+  id: 1
+- enabled: false
+  url: https://adaway.org/hosts.txt
+  name: AdAway
+  id: 2
+- enabled: false
+  url: https://www.malwaredomainlist.com/hostslist/hosts.txt
+  name: MalwareDomainList.com Hosts List
+  id: 4
+- enabled: false
+  url: https://easylist.to/easylist/easylist.txt
+  name: EasyList
+  id: 1587884900
+- enabled: false
+  url: https://fanboy.co.nz/r/fanboy-ultimate.txt
+  name: Fanboy+Easylist-Merged Ultimate List
+  id: 1587884903
+- enabled: false
+  url: https://raw.githubusercontent.com/xinggsf/Adblock-Plus-Rule/master/ABP-FX.txt
+  name: AdblockPlus
+  id: 1587885735
+- enabled: false
+  url: https://easylist-downloads.adblockplus.org/easyprivacy.txt
+  name: EasyPrivacy
+  id: 1587885736
+- enabled: false
+  url: https://hosts.nfz.moe/full/hosts
+  name: NeoHosts
+  id: 1587885737
+- enabled: false
+  url: https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjx-annoyance.txt
+  name: CJX's Annoyance List
+  id: 1587885738
+- enabled: false
+  url: https://raw.githubusercontent.com/cjx82630/cjxlist/master/cjxlist.txt
+  name: CJX's EasyList Lite
+  id: 1587885739
+- enabled: false
+  url: https://easylist-downloads.adblockplus.org/easylistchina.txt
+  name: EasyList China
+  id: 1587885740
+- enabled: false
+  url: https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+  name: StevenBlack/hosts
+  id: 1587885741
+- enabled: false
+  url: https://gitee.com/xinggsf/Adblock-Rule/raw/master/rule.txt
+  name: 乘风 广告过滤规则
+  id: 1587885742
+- enabled: false
+  url: https://gitee.com/xinggsf/Adblock-Rule/raw/master/mv.txt
+  name: 乘风 视频广告过滤规则
+  id: 1587885743
+- enabled: false
+  url: https://raw.githubusercontent.com/Goooler/1024_hosts/master/hosts
+  name: 澳门皇家赌场
+  id: 1594429889
+- enabled: false
+  url: https://raw.githubusercontent.com/BlackJack8/iOSAdblockList/master/iPv4Hosts.txt
+  name: iOSAdblockList
+  id: 1594429890
+- enabled: false
+  url: https://gitee.com/privacy-protection-tools/anti-ad/raw/master/easylist.txt
+  name: anti-AD
+  id: 1594470017
+- enabled: false
+  url: https://raw.githubusercontent.com/VeleSila/yhosts/master/hosts.txt
+  name: yhosts
+  id: 1594470018
+whitelist_filters: []
+user_rules:
+- ""
+dhcp:
+  enabled: false
+  interface_name: ""
+  gateway_ip: ""
+  subnet_mask: ""
+  range_start: ""
+  range_end: ""
+  lease_duration: 86400
+  icmp_timeout_msec: 1000
+clients: []
+log_file: ""
+verbose: false
+schema_version: 6
+
