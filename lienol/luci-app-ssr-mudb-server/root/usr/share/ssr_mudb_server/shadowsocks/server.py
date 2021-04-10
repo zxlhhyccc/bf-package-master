@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2015 clowwindy
@@ -33,7 +33,7 @@ from shadowsocks import shell, daemon, eventloop, tcprelay, udprelay, \
 
 
 def main():
-    shell.check_python()
+    shell.check_python3()
 
     config = shell.get_config(False)
 

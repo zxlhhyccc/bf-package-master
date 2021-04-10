@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2014 clowwindy
@@ -45,7 +45,7 @@ class ServerPool(object):
 	instance = None
 
 	def __init__(self):
-		shell.check_python()
+		shell.check_python3()
 		self.config = shell.get_config(False)
 		self.dns_resolver = asyncdns.DNSResolver()
 		if not self.config.get('dns_ipv6', False):

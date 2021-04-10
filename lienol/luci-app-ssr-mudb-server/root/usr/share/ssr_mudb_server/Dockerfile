@@ -15,7 +15,7 @@ ARG BRANCH=manyuser
 ARG WORK=~
 
 
-RUN apk --no-cache add python \
+RUN apk --no-cache add python3 \
     libsodium \
     wget
 
@@ -28,4 +28,4 @@ WORKDIR $WORK/shadowsocksr-$BRANCH/shadowsocks
 
 
 EXPOSE $SERVER_PORT
-CMD python server.py -p $SERVER_PORT -k $PASSWORD -m $METHOD -O $PROTOCOL -o $OBFS -G $PROTOCOLPARAM
+CMD python3 server.py -p $SERVER_PORT -k $PASSWORD -m $METHOD -O $PROTOCOL -o $OBFS -G $PROTOCOLPARAM

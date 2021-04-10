@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2015 clowwindy
@@ -32,7 +32,7 @@ VERBOSE_LEVEL = 5
 verbose = 0
 
 
-def check_python():
+def check_python3():
     info = sys.version_info
     if info[0] == 2 and not info[1] >= 6:
         print('Python 2.6+ required')

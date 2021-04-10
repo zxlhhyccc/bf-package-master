@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2012-2015 clowwindy
@@ -32,7 +32,7 @@ from shadowsocks import shell, daemon, eventloop, tcprelay, udprelay, asyncdns
 
 
 def main():
-    shell.check_python()
+    shell.check_python3()
 
     # fix py2exe
     if hasattr(sys, "frozen") and sys.frozen in \
