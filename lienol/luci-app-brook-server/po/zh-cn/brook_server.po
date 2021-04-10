@@ -29,7 +29,7 @@ msgid "Protocol"
 msgstr "协议"
 
 msgid "if shadowsocks server mode, fixed method is aes-256-cfb"
-msgid "当shadowsocks服务器模式时，固定的加密为 aes-256-cfb"
+msgstr "当shadowsocks服务器模式时，固定的加密为 aes-256-cfb"
 
 msgid "Logs"
 msgstr "日志"
