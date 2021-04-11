@@ -74,7 +74,8 @@ function getPublicIp() {
     case $IPtype in
         '1')
             #WanIp=`curl -4 -s 'https://api.myip.com' | grep ip |sed 's/.*ip":"\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\)".*/\1/g'`
-			WanIp=`curl -sL --connect-timeout 3 14.215.150.17:6666`
+			#WanIp=`curl -sL --connect-timeout 3 14.215.150.17:6666`
+			WanIp=`curl -sL --connect-timeout 3 ns1.dnspod.net:6666`
             echo $WanIp
             ;;
         '2')
