@@ -105,7 +105,7 @@ define Package/xray-core/conffiles
 /etc/config/xray
 endef
 
-GEOIP_VER:=202104132202
+GEOIP_VER:=202104142202
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -116,7 +116,7 @@ define Download/geoip
   HASH:=e172f452da2fa83850f695ba37f21df334b06bb90745ee45711333d567660f8d
 endef
 
-GEOSITE_VER:=202104132202
+GEOSITE_VER:=202104142202
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -126,7 +126,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=5e6e71ca35282ca8f7a178324d98c7a03ec109d5b9f43b742deff36f2d491c9c
+  HASH:=236120bec3c045a3c4f5dc0af2d17bb744574f1da0f050286b95138fd99efa40
 endef
 
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
