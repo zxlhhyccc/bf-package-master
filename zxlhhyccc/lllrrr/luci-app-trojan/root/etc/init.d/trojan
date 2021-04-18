@@ -1,13 +1,14 @@
 #!/bin/sh /etc/rc.common
- 
+
 START=93
 STOP=15
-   
+
 SERVICE_DAEMONIZE=1
 NAME=trojan
 CONFIG_FILE=/etc/trojan/${NAME}.json
 Trojan=/etc/trojan/trojan
-REAL_LOG="/usr/share/trojan/trojan.txt"
+LOG="/usr/share/trojan/trojan.txt"
+REAL_LOG="/usr/share/trojan/readlog.txt"
 redir_tcp=0
 pdnsd_enable_flag=0
 switch_enable=0
@@ -36,34 +37,40 @@ revert_dns() {
 	uci set dhcp.@dnsmasq[0].noresolv=0
 	uci set dhcp.@dnsmasq[0].resolvfile=""
 	uci delete dhcp.@dnsmasq[0].cachesize
-	uci commit dhcp	
+	uci commit dhcp
 	/etc/init.d/dnsmasq restart >/dev/null 2>&1
-#=========================================================================================================================== 	 
+#=========================================================================================================================== 
+
 }
 
 add_cron(){
 
 	[ -z "$(grep -w "/usr/share/trojan/watchdog.sh" $CRON_FILE)" ] && echo "*/1 * * * * /usr/share/trojan/watchdog.sh" >> $CRON_FILE
+	[ -z "$(grep -w "/usr/share/trojan/cnroute.sh" $CRON_FILE)" ] && echo "59 23 * * * /usr/share/trojan/cnroute.sh" >> $CRON_FILE
 	auto=$(uci get trojan.@server_subscribe[0].auto_update 2>/dev/null)
 	if [ "${auto}" -eq 1 ]; then
 	[ -z "$(grep -w "/usr/share/trojan/subscribe.sh" $CRON_FILE)" ] && echo "0 */$(uci get trojan.@server_subscribe[0].auto_update_time 2>/dev/null) * * * bash /usr/share/trojan/subscribe.sh >/usr/share/trojan/trojan.txt 2>&1 &" >> $CRON_FILE
 	fi
 	crontab $CRON_FILE
-#=========================================================================================================================== 	
+#=========================================================================================================================== 
+
 }
 
 del_cron(){
 #=========================================================================================================================== 
 	sed -i '/watchdog.sh/d' $CRON_FILE
+	sed -i '/cnroute.sh/d' $CRON_FILE
 	sed -i '/subscribe.sh/d' $CRON_FILE
 	/etc/init.d/cron restart
-#=========================================================================================================================== 	
+#=========================================================================================================================== 
+
 }
 
 
 
 dns_change(){
-#=========================================================================================================================== 	
+#=========================================================================================================================== 
+
 			dns_mode=$(uci get trojan.@settings[0].dns_mode 2>/dev/null)
 			dnscache=$(uci get trojan.@settings[0].dnscache 2>/dev/null)
 			port=$(uci get trojan.@settings[0].port 2>/dev/null)
@@ -85,24 +92,26 @@ dns_change(){
 				uci set dhcp.@dnsmasq[0].resolvfile=/etc/resolv-crypt.conf
 			fi
 				uci set dhcp.@dnsmasq[0].allservers=0	
-			fi	
-	       	 
-			uci commit dhcp 
-			 
-			
+			fi
+
+			uci commit dhcp
+
+
 			#if [ "$dnscache"  -eq 0 ];then
 			#	uci set dhcp.@dnsmasq[0].cachesize=0 
 			#	uci commit dhcp
-			#fi	      
-	   
-	
-#=========================================================================================================================== 	   
+			#fi   
+
+
+#=========================================================================================================================== 
+
 }
 
 
 gen_config_file() {
- 
+
 global_config=$(uci_get_by_type global ctype 2>/dev/null)
+
 
 if [ "${global_config}" -eq 1 ];then
 #sh /usr/share/trojan/rule.sh >/dev/null 2>&1
@@ -150,7 +159,7 @@ cat  >> /tmp/trojan.json <<-EOF
         "arg": [$(uci_get_by_name $1 plugin_arg)],
         "env": [$(uci_get_by_name $1 plugin_env)],
         "option": "$(uci_get_by_name $1 plugin_option)"
-        
+
     },
 EOF
 fi
@@ -173,9 +182,9 @@ cat  >> /tmp/trojan.json <<-EOF
     "run_type": "nat",	
     "local_addr": "0.0.0.0",
     "local_port": 51837,
-    "buffer_size": 32,	
+    "buffer_size": 64,	
     "log_level": 1,	
-    "log_file": "$REAL_LOG",
+    "log_file": "$LOG",
     "password": ["$(uci_get_by_name $1 password)"],
     "remote_addr": "$(uci_get_by_name $1 remote_addr)",
     "remote_port": $(uci_get_by_name $1 remote_port),	
@@ -191,25 +200,25 @@ cat  >> /tmp/trojan.json <<-EOF
         "fingerprint": "$(uci_get_by_name $1 fingerprint)",
 EOF
 if [ "$(uci_get_by_name $1 reuse_session)" == "true" ];then
-cat  >> /tmp/trojan.json <<-EOF	
+cat  >> /tmp/trojan.json <<-EOF
         "reuse_session": $(uci_get_by_name $1 reuse_session),
 		EOF
 fi
 if [ "$(uci_get_by_name $1 session_ticket)" == "true" ];then
-cat  >> /tmp/trojan.json <<-EOF			
+cat  >> /tmp/trojan.json <<-EOF		
         "session_ticket": $(uci_get_by_name $1 session_ticket),
 		EOF
-fi		
-cat  >> /tmp/trojan.json <<-EOF		
+fi
+cat  >> /tmp/trojan.json <<-EOF	
         "sni": "$(uci_get_by_name $1 sni)",
         "verify": true,
         "verify_hostname": true
     }
 EOF
-cat  >> /tmp/trojan.json <<-EOF	
+cat  >> /tmp/trojan.json <<-EOF
 }
 EOF
-   
+
 
 mv  /tmp/trojan.json $CONFIG_FILE
 
@@ -230,21 +239,22 @@ if [ $local_port != "51837" ];then
   sed -i "s/$local_port/51837/g" $CONFIG_FILE  
 fi
 
-fi  
+fi
 }
 
 
 start_rules(){
 #===========================================================================================================================
-
+		
+		
 				server=`awk '/remote_addr/ {print $0}' $CONFIG_FILE | sed 's/\,//' | sed 's/\"//g' | grep : | awk -F ': ' '{print $2}'`
 				udp_allow=$(uci get trojan.@settings[0].udp 2>/dev/null)
-				
-				if echo $server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/null; then         
+
+				if echo $server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/null; then   
 				    Trojan_Server=$server
 				else
 					Trojan_Server=`nslookup ${server} | grep 'Address 1' | sed 's/Address 1: //g'`
-				fi		
+				fi	
 
 				if [ "$(uci get trojan.@settings[0].access_control 2>/dev/null)" = "1" ] && [ -n "$(uci get trojan.@settings[0].proxy_lan_ips 2>/dev/null)" ]; then
 					proxy_ips=$(uci get trojan.@settings[0].proxy_lan_ips 2>/dev/null)
@@ -258,12 +268,16 @@ start_rules(){
 						create reject_lan hash:net
 						$(for ip in $reject_ips; do echo "add reject_lan $ip"; done)
 					EOF
-				
-				fi
-				
-				sh /usr/share/trojan/chinaipset.sh >/dev/null 2>&1
 
-		
+				fi
+				proxy_mode=$(uci get trojan.@global[0].proxy_mode 2>/dev/null)
+
+				if [ "$proxy_mode" == "chnroute" ];then
+					sh /usr/share/trojan/cnroute.sh >/dev/null 2>&1
+					sleep 1
+					sh /usr/share/trojan/chinaipset.sh >/dev/null 2>&1
+				fi
+
 
 				if [ -z "$(uci get firewall.trojan 2>/dev/null)" ] || [ -z "$(uci get ucitrack.@trojan[-1].init 2>/dev/null)" ]; then
 				   uci delete ucitrack.@trojan[-1] >/dev/null 2>&1
@@ -275,37 +289,18 @@ start_rules(){
 				   uci set firewall.trojan.type=script >/dev/null 2>&1
 				   uci set firewall.trojan.path=/var/etc/trojan.include >/dev/null 2>&1
 				   uci set firewall.trojan.reload=1 >/dev/null 2>&1
-				fi	
-				
+				fi
+
 				mkdir -p /var/etc
 				cat > "/var/etc/trojan.include" <<-EOF
 				/etc/init.d/trojan reload >/dev/null 2>&1
 				EOF
-				
-				#INTERFACE=$(uci -P/var/state get network.lan.ifname 2>/dev/null)
 
-				#iptables -t nat -N TROJAN_GO				
-				#iptables -t nat -A TROJAN_GO -d $Trojan_Server -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 0.0.0.0/8 -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 10.0.0.0/8 -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 127.0.0.0/8 -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 169.254.0.0/16 -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 172.16.0.0/12 -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 192.168.0.0/16 -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 224.0.0.0/4 -j RETURN
-				#iptables -t nat -A TROJAN_GO -d 240.0.0.0/4 -j RETURN
-				#iptables -t nat -A TROJAN_GO -m set --match-set reject_lan src -j RETURN
-				#iptables -t nat -A TROJAN_GO -m set ! --match-set proxy_lan src -j RETURN
-				#iptables -t nat -A TROJAN_GO -m set --match-set china dst -j RETURN
-				#iptables -t nat -A TROJAN_GO -p tcp -j REDIRECT --to-ports 51837
-				#iptables -t nat -I PREROUTING -p tcp -d 8.8.8.8 -j REDIRECT --to-ports 51837
-				#iptables -t nat -I PREROUTING -p tcp -d 8.8.4.4 -j REDIRECT --to-ports 51837			
-           			#iptables -t nat -A PREROUTING -p tcp -j TROJAN_GO
-				
+
 				ip route add local default dev lo table 100
 				ip rule add fwmark 1 lookup 100	
 
-				iptables -t mangle -N TROJAN_GO				
+				iptables -t mangle -N TROJAN_GO
 				iptables -t mangle -A TROJAN_GO -d $Trojan_Server -j RETURN
 				iptables -t mangle -A TROJAN_GO -d 0.0.0.0/8 -j RETURN
 				iptables -t mangle -A TROJAN_GO -d 10.0.0.0/8 -j RETURN
@@ -315,22 +310,28 @@ start_rules(){
 				iptables -t mangle -A TROJAN_GO -d 192.168.0.0/16 -j RETURN
 				iptables -t mangle -A TROJAN_GO -d 224.0.0.0/4 -j RETURN
 				iptables -t mangle -A TROJAN_GO -d 240.0.0.0/4 -j RETURN
+
 				iptables -t mangle -A TROJAN_GO -m set --match-set reject_lan src -j RETURN
 				iptables -t mangle -A TROJAN_GO -m set ! --match-set proxy_lan src -j RETURN
-				iptables -t mangle -A TROJAN_GO -m set --match-set china dst -j RETURN
+
+				if [ "$proxy_mode" == "chnroute" ];then
+					//iptables -t mangle -A TROJAN_GO -m set --match-set china src -j RETURN
+					iptables -t mangle -A TROJAN_GO -m set --match-set china dst -j RETURN			
+				fi
+
 				if [ "$udp_allow" -eq 1 ];then
-				iptables -t mangle -A TROJAN_GO -p udp --dport 53 -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01
+					iptables -t mangle -A TROJAN_GO -p udp --dport 53 -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01
 				else
-				iptables -t mangle -A TROJAN_GO -p udp -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01
+					iptables -t mangle -A TROJAN_GO -p udp -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01
 				fi
 				iptables -t mangle -A TROJAN_GO -p tcp -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01
+	
+
 				iptables -t mangle -A PREROUTING -p tcp -j TROJAN_GO
 				iptables -t mangle -A PREROUTING -p udp -j TROJAN_GO
-				
-	
-				
+		
 #=========================================================================================================================== 
-}	 
+}
 
 redir(){
 		gen_config_file $GLOBAL_SERVER 0	
@@ -348,12 +349,20 @@ rules() {
 }
 
 start(){
+		lang=$(uci get luci.main.lang 2>/dev/null)
+
+
 		enable=$(uci_get_by_type global enable 2>/dev/null)
 		rm -rf $CONFIG_FILE
 
 		if [ "${enable}" -eq 1 ] && [ -f /etc/trojan/trojan ]; then
-
-			local GLOBAL_SERVER 
+			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+				echo "Starting Client" >$REAL_LOG
+			elif [ "${lang}" == "zh_cn" ];then
+				 echo "启动客户端" >$REAL_LOG
+			fi
+			sleep 1
+			local GLOBAL_SERVER
 			local dns_mode pdnsd  dnscrypt
 			
 			if [ -z "$switch_server" ] ;then
@@ -362,74 +371,112 @@ start(){
 				GLOBAL_SERVER=$switch_server
 				switch_enable=1
 			fi
-					
+	
 			rm -f /var/etc/trojan*
-			
+
 			if [ "$dns_mode" != "off" ];then
-			dns_change 2>/dev/null 2>&1
+				if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+					echo "Enabling Dns" >$REAL_LOG
+				elif [ "${lang}" == "zh_cn" ];then
+					echo "启用DNS" >$REAL_LOG
+				fi
+				dns_change 2>/dev/null 2>&1
 			fi
-			
+			sleep 1
 			redir >/dev/null 2>&1
-			
+
 			if [ "$(ls -l $CONFIG_FILE|awk '{print int($5)}')" -ne 0 ]; then
 			
+			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+					echo "Setting up  iptables rules" >$REAL_LOG
+			elif [ "${lang}" == "zh_cn" ];then
+					echo "设置 iptables" >$REAL_LOG
+			fi
 			rules >/dev/null 2>&1
 
+			sleep 2
+
+			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+					echo "Setting Cron Job" >$REAL_LOG
+				elif [ "${lang}" == "zh_cn" ];then
+					echo "设置Cron" >$REAL_LOG
+		
+			fi	
 			add_cron >/dev/null 2>&1
-			
+
+			sleep 1
+			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+				echo "Restarting Dnsmasq " >$REAL_LOG
+			elif [ "${lang}" == "zh_cn" ];then
+				echo "重启 Dnsmasq 程序" >$REAL_LOG
+			fi
+
 			/etc/init.d/dnsmasq restart >/dev/null 2>&1
 
+			sleep 1
 			$Trojan -config $CONFIG_FILE  >/dev/null 2>&1 &
-			
+				if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+					echo "Trojan-GO Core Started Successfully " >$REAL_LOG
+				elif [ "${lang}" == "zh_cn" ];then
+					echo "Trojan-GO计划任务,启动进程守护程序" >$REAL_LOG
+				fi
 			fi
-			
+			echo "1" > /usr/share/trojan/1 >/dev/null 2>&1 &
+			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+				echo "Trojan-GO Started Successfully " >$REAL_LOG
+				sleep 1
+				echo "Trojan-GO is Running " >$REAL_LOG
+				sleep 1
+				echo "Trojan-GO for OpenWRT" >$REAL_LOG
+			elif [ "${lang}" == "zh_cn" ];then
+				echo "Trojan-GO启动成功，请等待服务器上线！" >$REAL_LOG
+				sleep 1
+				echo "Trojan-GO运行中" >$REAL_LOG
+				sleep 1
+				echo "Trojan-GO for OpenWRT" >$REAL_LOG
+			fi			
 		fi
 }
 
 
 remove_mark(){
+	    rm -rf /var/etc/trojan.include 2>/dev/null
+		rm -rf  /usr/share/trojan/1  >/dev/null
+	    ip route del local default dev lo table 100
+	    ip rule del fwmark 1 lookup 100
 
-	    	rm -rf /var/etc/trojan.include 2>/dev/null
-
-	    	ip route del local default dev lo table 100
-	    	ip rule del fwmark 1 lookup 100
-		
 		iptables -t mangle -F TROJAN_GO 2>/dev/null
-		iptables -t mangle -X TROJAN_GO 2>/dev/null
-		
-		#iptables -t nat -F TROJAN_GO 2>/dev/null
-		#iptables -t nat -X TROJAN_GO 2>/dev/null
+		iptables -t mangle -X TROJAN_GO 2>/dev/null		
 
-		
 		ipset -! flush proxy_lan >/dev/null 2>&1
 		ipset -! flush reject_lan >/dev/null 2>&1
 		ipset -! flush china >/dev/null 2>&1
-		
+
 		ipset destroy reject_lan >/dev/null 2>&1
 		ipset destroy proxy_lan >/dev/null 2>&1
 		ipset destroy china >/dev/null 2>&1
-		
+
 		nat=$(iptables -nvL PREROUTING -t nat | sed 1,2d | sed -n '/tcp dpt:53/=' | sort -r)
 		for natx in $nat; do
 			iptables -t nat -D PREROUTING $natx >/dev/null 2>&1
 		done
-		   
-	   
+
+
 		mag=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/TROJAN_GO/=' | sort -r)
 		for nat_indexv in $mag; do
 			iptables -t mangle -D PREROUTING $nat_indexv >/dev/null 2>&1
-		done						
-			
-		
+		done					
+	
+
 		proxy_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/! match-set proxy_lan src/=' | sort -r)
 		for natx in $proxy_lan; do
 			iptables -t mangle -D PREROUTING $natx >/dev/null 2>&1
 		done
-		
+
 		reject_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/match-set reject_lan src/=' | sort -r)
 		for natx in $reject_lan; do
 			iptables -t mangle -D PREROUTING $natx >/dev/null 2>&1
-		done		
+		done	
 
 		china_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/match-set china/=' | sort -r)
 		for natx in $china_lan; do
@@ -437,42 +484,22 @@ remove_mark(){
 		done
 
 
-	   
-		#magg=$(iptables -nvL PREROUTING -t nat | sed 1,2d | sed -n '/TROJAN_GO/=' | sort -r)
-		#for nat_indexv in $magg; do
-		#	iptables -t nat -D PREROUTING $nat_indexv >/dev/null 2>&1
-		#done						
-		
-		
-		#proxy_lann=$(iptables -nvL PREROUTING -t nat | sed 1,2d | sed -n '/! match-set proxy_lan src/=' | sort -r)
-		#for natx in $proxy_lann; do
-		#	iptables -t nat -D PREROUTING $natx >/dev/null 2>&1
-		#done
-		
-		#reject_lann=$(iptables -nvL PREROUTING -t nat | sed 1,2d | sed -n '/match-set reject_lan src/=' | sort -r)
-		#for natx in $reject_lann; do
-		#	iptables -t nat -D PREROUTING $natx >/dev/null 2>&1
-		#done		
-
-		#china_lann=$(iptables -nvL PREROUTING -t nat | sed 1,2d | sed -n '/match-set china/=' | sort -r)
-		#for natx in $china_lann; do
-		#	iptables -t nat -D PREROUTING $natx >/dev/null 2>&1
-		#done
-
-	   	#pre_lines=$(iptables -nvL PREROUTING -t nat |sed 1,2d |sed -n '/8\.8\./=' 2>/dev/null |sort -rn)
-	   	#for pre_line in $pre_lines; do
-		#  	iptables -t nat -D PREROUTING "$pre_line" >/dev/null 2>&1
-	   	#done
-
-
 		iptables -t nat -I PREROUTING -p tcp --dport 53 -j ACCEPT
-		
+
 		revert_dns >/dev/null 2>&1
-		
+
 }
 
 stop(){
 #=========================================================================================================================== 
+		lang=$(uci get luci.main.lang 2>/dev/null)
+
+		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+			echo "Stopping Client..." >$REAL_LOG
+		elif [ "${lang}" == "zh_cn" ];then
+			echo "正在停止客户端..." >$REAL_LOG
+		fi
+
 
 		rm -rf $CONFIG_FILE
 
@@ -483,27 +510,39 @@ stop(){
 		rm -rf /var/etc/pdnsd.conf
 
 		kill -9 `pidof trojan|sed "s/$//g"` 2>/dev/null
-		
-		kill -9 $(busybox ps -w | grep pdnsd | grep -v grep | awk '{print $1}') >/dev/null 2>&1 
 
-		kill -9 $(busybox ps -w | grep dnscrypt-proxy | grep -v grep | awk '{print $1}') >/dev/null 2>&1 
-		
+		kill -9 $(busybox ps -w | grep pdnsd | grep -v grep | awk '{print $1}') >/dev/null 2>&1
+
+		kill -9 $(busybox ps -w | grep dnscrypt-proxy | grep -v grep | awk '{print $1}') >/dev/null 2>&1
+
   	  	del_cron >/dev/null 2>&1
-		
+
 	 	echo "" >/usr/share/trojan/trojan.txt >/dev/null 2>&1
 
 		echo "0" > /usr/share/trojan/logstatus_check >/dev/null 2>&1
-			
-#=========================================================================================================================== 	
+
+		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
+			echo "Trojan-GO Core Stoped Successfully " >$REAL_LOG
+		elif [ "${lang}" == "zh_cn" ];then
+			echo "Trojan-GO停止进程守护程序" >$REAL_LOG
+		fi
+		sleep 1
+		echo "Trojan-GO for OpenWRT" >$REAL_LOG
+
+#=========================================================================================================================== 
+
 }
 
 
 
 restart(){
 #=========================================================================================================================== 
-		stop  >/dev/null 2>&1
-            	sleep 2
-		start >/dev/null 2>&1
+		if pidof trojan >/dev/null; then
+			stop  >/dev/null 2>&1
+			start >/dev/null 2>&1	
+		else
+		    start >/dev/null 2>&1
+		fi	
 #=========================================================================================================================== 
 }
 
@@ -516,6 +555,6 @@ reload(){
 		if pidof trojan >/dev/null; then
 			remove_mark 2>/dev/null
 			dns_change 2>/dev/null 2>&1
-			rules >/dev/null 2>&1 
-		fi	  
+			rules >/dev/null 2>&1
+		fi 
 }

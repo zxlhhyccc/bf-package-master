@@ -18,28 +18,31 @@ function index()
 	entry({"admin", "services", "trojan", "client"},cbi("trojan/client"),_("Client"), 20).leaf = true
 	--entry({"admin", "services", "trojan", "rules"},cbi("trojan/rules"), nil).leaf = true
 	--entry({"admin", "services", "trojan", "rule"},cbi("trojan/add-rule"), nil).leaf = true
-
 	entry({"admin", "services", "trojan", "servers" },cbi("trojan/servers"),_("Servers"), 30).leaf = true
 	entry({"admin", "services", "trojan", "server"},cbi("trojan/add-server"), nil).leaf = true
 	entry({"admin", "services", "trojan", "settings"},cbi("trojan/settings"),_("Settings"), 50).leaf = true
 	entry({"admin", "services", "trojan", "update"},cbi("trojan/update"),_("Update"), 60).leaf = true
 	entry({"admin", "services", "trojan", "logs"},cbi("trojan/logs"),_("Logs"), 70).leaf = true
 	
-
 	entry({"admin", "services", "trojan", "ping"}, call("act_ping")).leaf=true
 	entry({"admin", "services", "trojan", "status"},call("action_status")).leaf=true
+	entry({"admin", "services", "trojan", "run"},call("action_run")).leaf=true
 	entry({"admin", "services", "trojan", "check_update_log"}, call("check_update_log")).leaf=true
 	entry({"admin", "services", "trojan", "do_update"}, call("do_update")).leaf=true
-
 	entry({"admin", "services", "trojan", "corelog"},call("down_check")).leaf=true
 	entry({"admin", "services", "trojan", "logstatus"},call("logstatus_check")).leaf=true
 	entry({"admin", "services", "trojan", "readlog"},call("action_read")).leaf=true
+	entry({'admin', 'services', "trojan", 'ip'}, call('checkip')).leaf=true
 	
 end
 
 
 local function trojan_running()
-   return luci.sys.call("pidof trojan >/dev/null") == 0
+	if nixio.fs.access("/usr/share/trojan/1") then
+		return "1"
+	else
+		return "0"
+	end	
 end
 
 local function dnscrypt_proxy()
@@ -76,7 +79,6 @@ local function trojan_core_new()
 	return luci.sys.exec("sed -n 1p /usr/share/trojan/trojan_core_new")
 end
 
-
 local function current_version()
 	return luci.sys.exec("sed -n 1p /usr/share/trojan/luci_version")
 end
@@ -94,7 +96,7 @@ local function downcheck()
 		return "0"
 	elseif nixio.fs.access("/var/run/core_update") then
 		return "1"
-	elseif nixio.fs.access("/usr/share/trojan/core_download") then
+	elseif nixio.fs.access("/usr/share/trojan/core_down_complete") then
 		return "2"
 	end
 end
@@ -106,7 +108,6 @@ function down_check()
 	 downcheck = downcheck();
 	})
 end
-
 
 function action_status()
 	luci.http.prepare_content("application/json")
@@ -120,6 +121,15 @@ function action_status()
 		current_version = current_version(),
 		new_version = new_version(),
 		traffic = trojan_traffic(),		
+		client = trojan_running()
+	})
+end
+
+function action_run()
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({
+		pdnsd = pdnsd_running(),
+		dnscrypt = dnscrypt_proxy(),	
 		client = trojan_running()
 	})
 end
@@ -177,6 +187,7 @@ else
 end
 end
 
+
 local function readlog()
 	return luci.sys.exec("sed -n '$p' /usr/share/trojan/readlog.txt 2>/dev/null")
 end
@@ -187,4 +198,27 @@ function action_read()
 	luci.http.write_json({
 	readlog = readlog();
 	})
+end
+
+
+function check(host, port)
+    local nixio = require "nixio"
+    local socket = nixio.socket("inet", "stream")
+    socket:setopt("socket", "rcvtimeo", 2)
+    socket:setopt("socket", "sndtimeo", 2)
+    local ret = socket:connect(host, port)
+    socket:close()
+    return ret
+end
+
+
+function checkip()
+    local e = {}
+    local port = 80
+    e.baidu = check('www.baidu.com', port)
+    e.taobao = check('www.taobao.com', port)
+    e.google = check('www.google.com', port)
+    e.youtube = check('www.youtube.com', port)
+    luci.http.prepare_content('application/json')
+    luci.http.write_json(e)
 end

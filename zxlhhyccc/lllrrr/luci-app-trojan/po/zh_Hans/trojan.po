@@ -2,6 +2,12 @@
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 
+msgid "Download Trojan-go Core from Here"
+msgstr "点击下载Trojan-go内核"
+
+msgid "MODE"
+msgstr "模式"
+
 msgid "Client"
 msgstr "客户端"
 
@@ -15,7 +21,7 @@ msgid "TYPE"
 msgstr "配置类型"
 
 msgid "SERVER"
-msgstr "服务器配置"
+msgstr "器配置"
 
 msgid "Server List"
 msgstr "自定义配置"

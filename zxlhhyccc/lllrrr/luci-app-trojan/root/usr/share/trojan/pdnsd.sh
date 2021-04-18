@@ -1,17 +1,17 @@
 #!/bin/bash /etc/rc.common
 . /lib/functions.sh
- 
+
 	dns_mode=$(uci get trojan.@settings[0].dns_mode 2>/dev/null)
 	dnsstr=$(uci get trojan.@settings[0].tunnel_forward 2>/dev/null)
-		
+
 	usr_dns=`echo "$dnsstr"|sed 's/^\(.*\):\([^:]*\)$/\1/'`
 	usr_port=`echo "$dnsstr"|sed 's/^\(.*\):\([^:]*\)$/\2/'`
-	
+
 	[ "$usr_dns" == "127.0.0.1" ] && usr_dns="8.8.4.4" && usr_port="53" && dnsforward=1
-		
+
 	#local usr_dns="$1"
 	#local usr_port="$2"
-  
+
 	tcp_dns_list="208.67.222.222, 208.67.220.220"
 	[ -z "$usr_dns" ] && usr_dns="8.8.4.4" && usr_port="53"
 
@@ -61,4 +61,4 @@ server {
 }
 EOF
 
-/usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d
+/usr/sbin/pdnsd -c /var/etc/pdnsd.conf >/dev/null 2>&1 &
