@@ -11,4 +11,4 @@ echo "0" > /usr/share/trojan/trojan_core_new 2>&1 & >/dev/null
 fi
 fi
 
- 
+

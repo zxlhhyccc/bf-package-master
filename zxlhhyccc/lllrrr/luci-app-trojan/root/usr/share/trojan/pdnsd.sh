@@ -22,7 +22,7 @@
        echo -ne "pd13\000\000\000\000" >/var/pdnsd/pdnsd.cache
        chown -R nobody:nogroup /var/pdnsd
    fi
-	
+
 cat > /var/etc/pdnsd.conf <<EOF
 global {
 	perm_cache=1024;

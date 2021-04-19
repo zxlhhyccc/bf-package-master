@@ -8,6 +8,9 @@ msgstr "点击下载Trojan-go内核"
 msgid "MODE"
 msgstr "模式"
 
+msgid "Taobao"
+msgstr "淘宝网"
+
 msgid "Client"
 msgstr "客户端"
 
@@ -36,13 +39,13 @@ msgid "MANAGER"
 msgstr "规则经理"
 
 msgid "SERVER"
-msgstr "服务器配置"
+msgstr "器配置"
 
 msgid "PDNSD"
 msgstr "PDNSD"
 
 msgid "Servers"
-msgstr "服务器配置"
+msgstr "器配置"
 
 msgid "Settings"
 msgstr "设置"

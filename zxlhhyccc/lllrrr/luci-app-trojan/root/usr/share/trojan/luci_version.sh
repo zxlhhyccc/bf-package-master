@@ -7,4 +7,4 @@ if [ $new_version ]; then
 echo $new_version > /usr/share/trojan/new_luci_version 2>&1 & >/dev/null
 fi
 fi
- 
+
