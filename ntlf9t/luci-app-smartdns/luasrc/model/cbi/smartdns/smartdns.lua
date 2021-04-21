@@ -120,6 +120,14 @@ o.optional    = true
 o = s:taboption("settings", Value, "rr_ttl_max", translate("Domain TTL Max"), translate("Maximum TTL for all domain result."))
 o.rempty      = true
 
+---- Update china list(GFW)
+o = s:taboption("settings", Flag, "gfw_smartdns", translate("Update China list"), translate("If you need to use the Chinese domain name file, Remove the # sign before 'conf-file' in the custom settings."))
+o.rmempty     = false
+o.default     = o.disabled
+o.cfgvalue    = function(...)
+    return Flag.cfgvalue(...) or "0"
+end
+
 ---- Eanble
 o = s:taboption("seconddns", Flag, "seconddns_enabled", translate("Enable"), translate("Enable or disable second DNS server."))
 o.default     = o.disabled

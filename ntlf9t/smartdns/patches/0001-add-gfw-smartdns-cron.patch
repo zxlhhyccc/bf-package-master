@@ -1,0 +1,24 @@
+diff --git a/package/openwrt/files/etc/init.d/smartdns b/package/openwrt/files/etc/init.d/smartdns
+index 2bf799e..e5b88fc 100644
+--- a/package/openwrt/files/etc/init.d/smartdns
++++ b/package/openwrt/files/etc/init.d/smartdns
+@@ -21,6 +21,7 @@ USE_PROCD=1
+ SERVICE_USE_PID=1
+ SERVICE_WRITE_PID=1
+ SERVICE_DAEMONIZE=1
++SMARTDNS_CRON_FILE="/etc/crontabs/root"
+ SERVICE_PID_FILE="/var/run/smartdns.pid"
+ SMARTDNS_CONF_DIR="/etc/smartdns"
+ SMARTDNS_VAR_CONF_DIR="/var/etc/smartdns"
+@@ -343,6 +344,11 @@ load_service()
+ 	uci add_list smartdns.@smartdns[0].old_enabled="$enabled" 2>/dev/null
+ 	uci commit smartdns
+ 
++	config_get gfw_smartdns "$section" "gfw_smartdns" "0"
++	sed -i '/smartdns\/update-china-list/d' $SMARTDNS_CRON_FILE
++	[ "$gfw_smartdns" = "1" -a "$enabled" -gt 0 ] && echo "0 5 * * * sh /usr/share/smartdns/update-china-list.sh" >> $SMARTDNS_CRON_FILE
++	crontab $SMARTDNS_CRON_FILE
++
+ 	[ "$enabled" -gt 0 ] || return 1
+ 
+ 	if [ "$redirect" = "redirect" ]; then
