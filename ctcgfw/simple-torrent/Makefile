@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=simple-torrent
 PKG_VERSION:=1.2.19
-PKG_RELEASE:=1
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/boypt/simple-torrent/tar.gz/$(PKG_VERSION)?
@@ -37,18 +37,18 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/simple-torrent
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=BitTorrent
-	TITLE:=A self-hosted remote torrent client
-	URL:=URL:=https://github.com/boypt/simple-torrent
-	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +libstdcpp
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=BitTorrent
+  TITLE:=A self-hosted remote torrent client
+  URL:=URL:=https://github.com/boypt/simple-torrent
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +libstdcpp
 endef
 
 define Package/simple-torrent/description
-	SimpleTorrent is a a self-hosted remote torrent client, written in Go (golang).
-	Started torrents remotely, download sets of files on the local disk of the server,
-	which are then retrievable or streamable via HTTP.
+  SimpleTorrent is a a self-hosted remote torrent client, written in Go (golang).
+  Started torrents remotely, download sets of files on the local disk of the server,
+  which are then retrievable or streamable via HTTP.
 endef
 
 define Package/simple-torrent/config
