@@ -4,8 +4,14 @@ local http = require "luci.http"
 local v2ray = require "luci.model.cbi.v2ray_server.api.v2ray"
 
 function index()
-    if not nixio.fs.access("/etc/config/v2ray_server") then return end
-    entry({"admin", "services", "v2ray_server"}, cbi("v2ray_server/index"), _("V2ray Server"), 3).dependent = true
+    if not nixio.fs.access("/etc/config/v2ray_server") then
+	    return
+    end
+
+    local page = entry({"admin", "services", "v2ray_server"}, cbi("v2ray_server/index"), _("V2ray Server"))
+    page.order = 3
+    page.dependent = true
+    page.acl_depends = { "luci-app-v2ray-server" }
     entry({"admin", "services", "v2ray_server", "config"}, cbi("v2ray_server/user")).leaf = true
     entry({"admin", "services", "v2ray_server", "users_status"}, call("users_status")).leaf = true
     entry({"admin", "services", "v2ray_server", "check"}, call("v2ray_check")).leaf = true

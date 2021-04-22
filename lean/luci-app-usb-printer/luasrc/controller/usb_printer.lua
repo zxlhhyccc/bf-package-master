@@ -21,9 +21,9 @@ function index()
 		return
 	end
 	
-  entry({"admin", "nas"}, firstchild(), "NAS", 44).dependent = false
+	entry({"admin", "nas"}, firstchild(), "NAS", 44).dependent = false
 	
 	local page
-
 	page = entry({"admin", "nas", "usb_printer"}, cbi("usb_printer"), _("USB Printer Server"), 50)
+	page.acl_depends = { "luci-app-usb-printer" }
 end

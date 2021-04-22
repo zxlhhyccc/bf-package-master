@@ -10,30 +10,30 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "services", "trojan"},alias("admin", "services", "trojan", "overview"), _("TrojanGO"), 2)
+	local page = entry({"admin", "services", "trojan"}, alias("admin",  "services", "trojan", "overview"), _("TrojanGO"), 2)
 	page.dependent = true
 	page.acl_depends = {"luci-app-trojan"}
 	
-    entry({"admin", "services", "trojan", "overview"},cbi("trojan/status"),_("Overview"), 10).leaf = true
-	entry({"admin", "services", "trojan", "client"},cbi("trojan/client"),_("Client"), 20).leaf = true
-	--entry({"admin", "services", "trojan", "rules"},cbi("trojan/rules"), nil).leaf = true
-	--entry({"admin", "services", "trojan", "rule"},cbi("trojan/add-rule"), nil).leaf = true
-	entry({"admin", "services", "trojan", "servers" },cbi("trojan/servers"),_("Servers"), 30).leaf = true
-	entry({"admin", "services", "trojan", "server"},cbi("trojan/add-server"), nil).leaf = true
-	entry({"admin", "services", "trojan", "settings"},cbi("trojan/settings"),_("Settings"), 50).leaf = true
-	entry({"admin", "services", "trojan", "update"},cbi("trojan/update"),_("Update"), 60).leaf = true
-	entry({"admin", "services", "trojan", "logs"},cbi("trojan/logs"),_("Logs"), 70).leaf = true
+    entry({"admin", "services", "trojan", "overview"}, cbi("trojan/status"),_("Overview"), 10).leaf = true
+	entry({"admin", "services", "trojan", "client"}, cbi("trojan/client"),_("Client"), 20).leaf = true
+	--entry({"admin", "services", "trojan", "rules"}, cbi("trojan/rules"), nil).leaf = true
+	--entry({"admin", "services", "trojan", "rule"}, cbi("trojan/add-rule"), nil).leaf = true
+	entry({"admin", "services", "trojan", "servers" }, cbi("trojan/servers"),_("Servers"), 30).leaf = true
+	entry({"admin", "services", "trojan", "server"}, cbi("trojan/add-server"), nil).leaf = true
+	entry({"admin", "services", "trojan", "settings"}, cbi("trojan/settings"),_("Settings"), 50).leaf = true
+	entry({"admin", "services", "trojan", "update"}, cbi("trojan/update"),_("Update"), 60).leaf = true
+	entry({"admin", "services", "trojan", "logs"}, cbi("trojan/logs"),_("Logs"), 70).leaf = true
 	
-	entry({"admin", "services", "trojan", "ping"}, call("act_ping")).leaf=true
-	entry({"admin", "services", "trojan", "status"},call("action_status")).leaf=true
-	entry({"admin", "services", "trojan", "run"},call("action_run")).leaf=true
-	entry({"admin", "services", "trojan", "check_update_log"}, call("check_update_log")).leaf=true
-	entry({"admin", "services", "trojan", "do_update"}, call("do_update")).leaf=true
-	entry({"admin", "services", "trojan", "corelog"},call("down_check")).leaf=true
-	entry({"admin", "services", "trojan", "logstatus"},call("logstatus_check")).leaf=true
-	entry({"admin", "services", "trojan", "readlog"},call("action_read")).leaf=true
-	entry({'admin', 'services', "trojan", 'web'}, call('web_check')).leaf=true
-	entry({'admin', 'services', "trojan", 'traffic'}, call('action_traffic')).leaf=true
+	entry({"admin", "services", "trojan", "ping"}, call("act_ping")).leaf = true
+	entry({"admin", "services", "trojan", "status"}, call("action_status")).leaf = true
+	entry({"admin", "services", "trojan", "run"}, call("action_run")).leaf = true
+	entry({"admin", "services", "trojan", "check_update_log"}, call("check_update_log")).leaf = true
+	entry({"admin", "services", "trojan", "do_update"}, call("do_update")).leaf = true
+	entry({"admin", "services", "trojan",  "corelog"}, call("down_check")).leaf = true
+	entry({"admin", "services", "trojan", "logstatus"}, call("logstatus_check")).leaf = true
+	entry({"admin", "services", "trojan", "readlog"}, call("action_read")).leaf = true
+	entry({'admin', 'services', "trojan", 'web'}, call('web_check')).leaf = true
+	entry({'admin', 'services', "trojan", 'traffic'}, call('action_traffic')).leaf = true
 	
 end
 

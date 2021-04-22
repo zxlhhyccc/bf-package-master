@@ -1,12 +1,14 @@
 module("luci.controller.serverchand",package.seeall)
 
 function index()
-
 	if not nixio.fs.access("/etc/config/serverchand")then
 		return
 	end
 
-	entry({"admin", "services", "serverchand"}, alias("admin", "services", "serverchand", "setting"),_("钉钉推送"), 30).dependent = true
+	local page = entry({"admin", "services", "serverchand"}, alias("admin", "services", "serverchand", "setting"),_("钉钉推送"))
+	page.order = 30
+	page.dependent = true
+	page.acl_depends = { "luci-app-serverchand" }
 	entry({"admin", "services", "serverchand", "setting"}, cbi("serverchand/setting"),_("配置"), 40).leaf = true
 	entry({"admin", "services", "serverchand", "advanced"}, cbi("serverchand/advanced"),_("高级设置"), 50).leaf = true
 	entry({"admin", "services", "serverchand", "client"}, form("serverchand/client"), "在线设备", 80)

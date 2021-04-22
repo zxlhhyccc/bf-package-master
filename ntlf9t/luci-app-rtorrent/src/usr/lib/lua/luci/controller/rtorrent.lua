@@ -7,7 +7,10 @@ local dm = require "luci.model.cbi.rtorrent.download"
 module("luci.controller.rtorrent", package.seeall)
 
 function index()
-	entry({"admin", "rtorrent"},  firstchild(), "Torrent", 45).dependent = false
+
+	local page = entry({"admin", "rtorrent"},  firstchild(), "Torrent", 45)
+	page.dependent = false
+	page.acl_depends = { "luci-app-rtorrent" }
 	entry({"admin", "rtorrent", "main"}, cbi("rtorrent/main"), "Torrent List", 10).leaf = true
 	entry({"admin", "rtorrent", "add"}, cbi("rtorrent/add", {autoapply=true}), "Add Torrent", 20)
 	entry({"admin", "rtorrent", "rss"}, arcombine(cbi("rtorrent/rss"), cbi("rtorrent/rss-rule")), "RSS Downloader", 30).leaf = true

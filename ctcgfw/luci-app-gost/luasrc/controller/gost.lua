@@ -12,7 +12,8 @@ function index()
 	local page
 	page = entry({"admin", "services", "gost"}, cbi("gost"), _("Gost"), 100)
 	page.dependent = true
-	entry({"admin", "services", "gost", "status"},call("act_status")).leaf=true
+	page.acl_depends = { "luci-app-gost" }
+	entry({"admin", "services", "gost", "status"}, call("act_status")).leaf = true
 end
 
 function act_status()

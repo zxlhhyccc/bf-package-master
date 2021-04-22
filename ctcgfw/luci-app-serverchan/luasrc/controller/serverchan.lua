@@ -1,19 +1,21 @@
 module("luci.controller.serverchan",package.seeall)
 
 function index()
-
 	if not nixio.fs.access("/etc/config/serverchan")then
 		return
 	end
 
-	entry({"admin", "services", "serverchan"}, alias("admin", "services", "serverchan", "setting"),_("微信推送"), 30).dependent = true
+	local page = entry({"admin", "services", "serverchan"}, alias("admin", "services", "serverchan", "setting"),_("微信推送"))
+	page.order = 30
+	page.dependent = true
+	page.acl_depends = { "luci-app-serverchan" }
 	entry({"admin", "services", "serverchan", "setting"}, cbi("serverchan/setting"),_("配置"), 40).leaf = true
 	entry({"admin", "services", "serverchan", "advanced"}, cbi("serverchan/advanced"),_("高级设置"), 50).leaf = true
 	entry({"admin", "services", "serverchan", "client"}, form("serverchan/client"), "在线设备", 80)
 	entry({"admin", "services", "serverchan", "log"}, form("serverchan/log"),_("日志"), 99).leaf = true
 	entry({"admin", "services", "serverchan", "get_log"}, call("get_log")).leaf = true
 	entry({"admin", "services", "serverchan", "clear_log"}, call("clear_log")).leaf = true
-	entry({"admin", "services", "serverchan", "status"}, call("act_status")).leaf=true
+	entry({"admin", "services", "serverchan", "status"}, call("act_status")).leaf = true
 end
 
 function act_status()

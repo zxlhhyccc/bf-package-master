@@ -8,11 +8,13 @@ function index()
 	if not nixio.fs.access("/etc/config/ssocksd") then
 		return
 	end
+
 	local page
 	page = entry({"admin", "vpn", "ssocksd"}, cbi("ssocksd"), _("sSocksd Server"), 100)
 	page.i18n = "ssocksd"
 	page.dependent = true
-	entry({"admin", "vpn", "ssocksd", "status"},call("act_status")).leaf=true
+	page.acl_depends = { "luci-app-ssocksd" }
+	entry({"admin", "vpn", "ssocksd", "status"},call("act_status")).leaf = true
 end
 
 function act_status()

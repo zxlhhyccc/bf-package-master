@@ -6,11 +6,16 @@ local http = require "luci.http"
 local api = require "luci.model.cbi.filebrowser.api"
 
 function index()
-    if not nixio.fs.access("/etc/config/filebrowser") then return end
+    if not nixio.fs.access("/etc/config/filebrowser") then
+	    return
+    end
 
     entry({"admin", "nas"}, firstchild(), "NAS", 44).dependent = false
-    entry({"admin", "nas", "filebrowser"}, cbi("filebrowser/settings"),
-          _("File Browser"), 2).dependent = true
+    local page = entry({"admin", "nas", "filebrowser"}, cbi("filebrowser/settings"),
+          _("File Browser"))
+    page.order = 2
+    page.dependent = true
+    page.acl_depends = { "luci-app-control-filebrowser" }
 
     entry({"admin", "nas", "filebrowser", "check"}, call("action_check")).leaf =
         true

@@ -22,17 +22,16 @@ function index()
 		return
 	end
 	
-	local page = entry({"admin","services","smartinfo"},cbi("smartinfo"),_("S.M.A.R.T Info"))
+	local page = entry({"admin", "services", "smartinfo"}, cbi("smartinfo"), _("S.M.A.R.T Info"))
 	page.i18n="smartinfo"
 	page.dependent=true
-	entry({"admin","services","smartinfo","smartdetail"},call("smart_detail")).leaf = true
-
-	entry({"admin","services","smartinfo","status"}, call("smart_status")).leaf = true
-	entry({"admin","services","smartinfo","run"},call("run_smart")).leaf=true
-	entry({"admin","services","smartinfo","smartattr"},call("smart_attr")).leaf=true
+	page.acl_depends = { "luci-app-smartinfo" }
+	entry({"admin", "services", "smartinfo", "smartdetail"}, call("smart_detail")).leaf = true
+	entry({"admin", "services", "smartinfo", "status"},  call("smart_status")).leaf = true
+	entry({"admin", "services", "smartinfo", "run"}, call("run_smart")).leaf = true
+	entry({"admin", "services", "smartinfo", "smartattr"}, call("smart_attr")).leaf = true
 
 end
-
 
 function smart_status()
   local cmd = io.popen("/usr/lib/smartinfo/smart_status.sh")

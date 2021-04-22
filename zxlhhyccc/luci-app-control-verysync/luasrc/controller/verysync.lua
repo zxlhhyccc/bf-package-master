@@ -5,6 +5,8 @@ function index()
 		return
 	end
 	
-	entry({"admin", "nas", "verysync"}, cbi("verysync"), _("Verysync"), 10).dependent = true
+	local page = entry({"admin", "nas", "verysync"}, cbi("verysync"), _("Verysync"), 10)
+	page.dependent = true
+	page.acl_depends = { "luci-app-control-verysync" }
 end
 

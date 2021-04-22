@@ -9,12 +9,15 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "unblockneteasemusic"},firstchild(), _("解除网易云音乐播放限制"), 50).dependent = false
+	local page = entry({"admin", "services", "unblockneteasemusic"},firstchild(), _("解除网易云音乐播放限制"))
+	page.order = 50
+	page.dependent = false
+	page.acl_depends = { "luci-app-unblockmusic-go" }
 
 	entry({"admin", "services", "unblockneteasemusic", "general"},cbi("unblockneteasemusic"), _("基本设定"), 1)
 	entry({"admin", "services", "unblockneteasemusic", "log"},form("unblockneteasemusic_log"), _("日志"), 2)
 
-	entry({"admin", "services", "unblockneteasemusic", "status"},call("act_status")).leaf=true
+	entry({"admin", "services", "unblockneteasemusic", "status"},call("act_status")).leaf = true
 end
 
 function act_status()

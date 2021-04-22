@@ -25,6 +25,7 @@ function index()
 	local page
 	page = entry({"admin", "services", "smartdns"}, cbi("smartdns/smartdns"), _("SmartDNS"), 60)
 	page.dependent = true
+	page.acl_depends = { "luci-app-smartdns" }
 	page = entry({"admin", "services", "smartdns", "status"}, call("act_status"))
 	page.leaf = true
 	page = entry({"admin", "services", "smartdns", "upstream"}, cbi("smartdns/upstream"), nil)

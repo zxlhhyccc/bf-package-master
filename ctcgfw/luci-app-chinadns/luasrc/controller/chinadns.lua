@@ -9,13 +9,16 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "chinadns"}, cbi("chinadns"), _("ChinaDNS"), 70).dependent = true
-	entry({"admin", "services", "chinadns", "status"},call("act_status")).leaf=true
+	local page = entry({"admin", "services", "chinadns"}, cbi("chinadns"), _("ChinaDNS"))
+	page.order = 70
+	page.dependent = true
+	page.acl_depends = { "luci-app-chinadns" }
+	entry({"admin", "services", "chinadns",  "status"}, call("act_status")).leaf = true
 end
 
 function act_status()
-  local e={}
-  e.running=luci.sys.call("ps | grep /usr/sbin/chinadns | grep -v grep >/dev/null")==0
-  luci.http.prepare_content("application/json")
-  luci.http.write_json(e)
+	local e={}
+	e.running=luci.sys.call("ps | grep /usr/sbin/chinadns | grep -v grep >/dev/null")==0
+	luci.http.prepare_content("application/json")
+	luci.http.write_json(e)
 end

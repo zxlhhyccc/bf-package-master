@@ -5,7 +5,10 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "chinadns-ng"}, alias("admin", "services", "chinadns-ng", "basic"), _("ChinaDNS-NG"), 70).dependent = true
+	local page = entry({"admin", "services", "chinadns-ng"}, alias("admin", "services", "chinadns-ng", "basic"), _("ChinaDNS-NG"))
+ 	page.order = 70
+	page.dependent = true
+	page.acl_depends = { "luci-app-chinadns-ng" }
 	entry({"admin", "services", "chinadns-ng", "basic"}, cbi("chinadns-ng/basic"), _("General Setting"), 80).leaf = true
 	entry({"admin", "services", "chinadns-ng", "routes"}, cbi("chinadns-ng/routes"), _("Route Setting"), 90).leaf = true
 	entry({"admin", "services", "chinadns-ng", "update"}, cbi("chinadns-ng/update"), _("Rules Update"), 99).leaf = true

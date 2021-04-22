@@ -30,8 +30,9 @@ sleep_file = tcpdump_root_folder .. "tcpdump.sleep"
 
 function index()
 	template("myapp-mymodule/helloworld")
-	entry({"admin", "network", "tcpdump"}, template("tcpdump"), _ "Tcpdump", 70).dependent =
-		false
+	local page = entry({"admin", "network", "tcpdump"}, template("tcpdump"), _ "Tcpdump", 70)
+	page.dependent = false
+	page.acl_depends = { "luci-app-tcpdump" }
 
 	page = entry({"admin", "network", "tcpdump", "capture_start"},
 				 call("capture_start"), nil)

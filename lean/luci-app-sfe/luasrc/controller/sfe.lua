@@ -8,6 +8,7 @@ function index()
 	page = entry({"admin", "network", "sfe"}, cbi("sfe"), _("Turbo ACC Center"), 100)
 	page.i18n = "sfe"
 	page.dependent = true
+	page.acl_depends = { "luci-app-sfe" }
 	
 	entry({"admin", "network", "sfe", "status"}, call("action_status"))
 end
