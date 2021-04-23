@@ -6,6 +6,7 @@ function index()
 	if not nixio.fs.access("/etc/config/shadowsocksr") then
 		call("act_reset")
 	end
+
 	local page
 	page = entry({"admin", "services", "shadowsocksr"}, alias("admin", "services", "shadowsocksr", "client"), _("ShadowSocksR Plus+"), 10)
 	page.dependent = true
