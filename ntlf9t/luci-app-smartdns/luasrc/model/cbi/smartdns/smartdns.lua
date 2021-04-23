@@ -121,7 +121,7 @@ o = s:taboption("settings", Value, "rr_ttl_max", translate("Domain TTL Max"), tr
 o.rempty      = true
 
 ---- Update china list(GFW)
-o = s:taboption("settings", Flag, "gfw_smartdns", translate("Update China list"), translate("If you need to use the Chinese domain name file, Remove the # sign before 'conf-file' in the custom settings."))
+o = s:taboption("settings", Flag, "gfw_smartdns", translate("Update China list And Advertising Data"), translate("If you need to use the Chinese domain name file and Advertising data, Remove the # sign before 'conf-file' in the custom settings."))
 o.rmempty     = false
 o.default     = o.disabled
 o.cfgvalue    = function(...)
