@@ -9,5 +9,5 @@ function index()
 		return
 	end
 
-	entry({"admin", "system", "argon-config"}, form("argon-config/configuration"), _("Argon Config"),90).acl_depends = { "luci-app-argon-config" }
+	entry({"admin", "system", "argon-config"}, form("argon-config"), _("Argon Config"), 90).acl_depends = { "luci-app-argon-config" }
 end
