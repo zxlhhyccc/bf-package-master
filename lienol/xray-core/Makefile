@@ -62,7 +62,7 @@ define Package/xray-geodata
 endef
 
 define Package/xray/description
-  Xray, Penetrates Everything. Also the best v2ray-core, with XTLS support. Fully compatible configuration.
+  Xray, Penetrates Everything. It helps you to build your own computer network.
   It secures your network connections and thus protects your privacy.
 endef
 
@@ -103,6 +103,7 @@ endef
 define Package/xray-core/conffiles
 /etc/xray/
 /etc/config/xray
+/usr/share/xray
 endef
 
 GEOIP_VER:=202104272202
@@ -158,7 +159,7 @@ ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
 endif
 
 	$(INSTALL_DIR) $(1)/etc/xray/
-	$(INSTALL_CONF) $(CURDIR)/files/config.json.example $(1)/etc/xray/
+	$(INSTALL_DATA) $(CURDIR)/files/config.json.example $(1)/etc/xray/
 
 	$(INSTALL_DIR) $(1)/etc/config/
 	$(INSTALL_CONF) $(CURDIR)/files/xray.conf $(1)/etc/config/xray
@@ -171,8 +172,8 @@ endef
 
 define Package/xray-example/install
 	$(INSTALL_DIR) $(1)/etc/xray/
-	$(INSTALL_CONF) $(CURDIR)/files/vpoint_socks_vmess.json $(1)/etc/xray/
-	$(INSTALL_CONF) $(CURDIR)/files/vpoint_vmess_freedom.json $(1)/etc/xray/
+	$(INSTALL_DATA) $(CURDIR)/files/vpoint_socks_vmess.json $(1)/etc/xray/
+	$(INSTALL_DATA) $(CURDIR)/files/vpoint_vmess_freedom.json $(1)/etc/xray/
 endef
 
 define Package/xray-geodata/install
