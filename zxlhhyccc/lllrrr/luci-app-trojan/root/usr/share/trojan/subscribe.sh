@@ -62,20 +62,20 @@ do
    ss_cipher=$(echo "$ss" | grep ";" |awk -F ";" '{print $2}' >/dev/null 2>&1)
    ss_pass=$(echo "$ss" | grep ";" |awk -F ":" '{print $3}' >/dev/null 2>&1)
   fi
-
- 	if [ $lang == "en" ] || [ $lang == "auto" ];then
-		echo "Now Reading 【Trojan-Go】 - 【$sever_name】 Servers..." >$REAL_LOG
-	elif [ $lang == "zh_cn" ];then
-		echo "正在读取 【Trojan-Go】 - 【$sever_name】 代理..." >$REAL_LOG
-	fi
-			
+ 
+  if [ $lang == "en" ] || [ $lang == "auto" ];then
+	echo "Now Reading 【Trojan-Go】 - 【$sever_name】 Servers..." >$REAL_LOG
+  elif [ $lang == "zh_cn" ];then
+	echo "正在读取 【Trojan-Go】 - 【$sever_name】 代理..." >$REAL_LOG
+  fi
+		
   name=trojan
   uci_name_tmp=$(uci add $name servers)
 
   uci_set="uci -q set $name.$uci_name_tmp."
   uci_add="uci -q add_list $name.$uci_name_tmp."
 
-  ${uci_set}name="$sever_name"
+  ${uci_set}name="$sever_name" 
   ${uci_set}remote_addr="$server" >/dev/null 2>&1
   ${uci_set}remote_port="$port" >/dev/null 2>&1
   ${uci_set}password="$server_passwd"  >/dev/null 2>&1
@@ -91,7 +91,7 @@ do
   if [ $ss_type == "ss" ];then  >/dev/null 2>&1
     ${uci_set}shadowdocks="true"  >/dev/null 2>&1
     ${uci_set}cipher="$ss_cipher" >/dev/null 2>&1
-    ${uci_set}shadowdocks_passw="$ss_pass" >/dev/null 2>&1
+    ${uci_set}shadowdocks_passw="$ss_pass" >/dev/null 2>&1   
   fi >/dev/null 2>&1
 
   count=$(( $count + 1))
