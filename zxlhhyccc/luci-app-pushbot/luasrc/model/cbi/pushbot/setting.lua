@@ -6,7 +6,7 @@ local net = require "luci.model.network".init()
 local sys = require "luci.sys"
 local ifaces = sys.net:devices()
 
-m=Map("pushbot",translate("pushbot"),
+m=Map("pushbot",translate("PushBot"),
 translate("「全能推送」，英文名「PushBot」，是一款从服务器推送报警信息和日志到各平台的工具。<br>支持钉钉推送，企业微信推送，PushPlus推送。<br>本插件由tty228/luci-app-serverchan创建，然后七年修改为全能推送自用。<br /><br />如果你在使用中遇到问题，请到这里提交：")
 .. [[<a href="https://github.com/zzsj0928/luci-app-pushbot" target="_blank">]]
 .. translate("github 项目地址")
@@ -33,6 +33,8 @@ a.default=""
 a.rmempty = true
 a:value("",translate("钉钉"))
 a:value("1",translate("企业微信"))
+a:value("3",translate("飞书"))
+a:value("4",translate("Bark"))
 a:value("2",translate("PushPlus"))
 
 a=s:taboption("basic", Value,"dd_webhook",translate('Webhook'), translate("钉钉机器人 Webhook").."<br>调用代码获取<a href='https://ding-doc.dingtalk.com/' target='_blank'>点击这里</a><br><br>")
@@ -70,6 +72,23 @@ a:depends("pp_channel","wechat")
 a=s:taboption("basic", Value,"pp_topic",translate('PushPlus Topic'), translate("PushPlus 群组编码").."<br>一对多推送时指定的群组编码<br>具体群组编码Topic设定参见：<a href='http://www.pushplus.plus/push2.html' target='_blank'>点击这里</a><br><br>")
 a.rmempty = true
 a:depends("pp_topic_enable","1")
+
+a=s:taboption("basic", Value,"fs_webhook",translate('WebHook'), translate("飞书 WebHook").."<br>调用代码获取<a href='https://www.feishu.cn/hc/zh-CN/articles/360024984973' target='_blank'>点击这里</a><br><br>")
+a.rmempty = true
+a:depends("send_we","3")
+
+a=s:taboption("basic", Value,"bark_token",translate('Bark Token'), translate("Bark Token").."<br>调用代码获取<a href='https://github.com/Finb/Bark' target='_blank'>点击这里</a><br><br>")
+a.rmempty = true
+a:depends("send_we","4")
+
+a=s:taboption("basic", Flag,"bark_srv_enable",translate("自建 Bark 服务器"))
+a.default=0
+a.rmempty = true
+a:depends("send_we","4")
+
+a=s:taboption("basic", Value,"bark_srv",translate('Bark Server'), translate("Bark 自建服务器地址").."<br>如https://your.domain:port<br>具体自建服务器设定参见：<a href='https://github.com/Finb/Bark' target='_blank'>点击这里</a><br><br>")
+a.rmempty = true
+a:depends("bark_srv_enable","1")
 
 a=s:taboption("basic", Value,"device_name",translate('本设备名称'))
 a.rmempty = true
