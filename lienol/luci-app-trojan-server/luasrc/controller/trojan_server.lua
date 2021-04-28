@@ -3,23 +3,19 @@ module("luci.controller.trojan_server", package.seeall)
 local http = require "luci.http"
 
 function index()
-    if not nixio.fs.access("/etc/config/trojan_server") then
-	    return
-    end
-
+    if not nixio.fs.access("/etc/config/trojan_server") then return end
     entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
-    local page = entry({"admin", "vpn", "trojan_server"}, cbi("trojan_server/index"),
-          _("Trojan Server"))
-    page.order = 3
-    page.dependent = true
-    page.acl_depends = { "luci-app-trojan-server" }
+    entry({"admin", "vpn", "trojan_server"}, cbi("trojan_server/index"),
+          _("Trojan Server"), 3).dependent = true
     entry({"admin", "vpn", "trojan_server", "config"},
           cbi("trojan_server/config")).leaf = true
 
     entry({"admin", "vpn", "trojan_server", "users_status"},
           call("trojan_users_status")).leaf = true
-    entry({"admin", "vpn", "trojan_server", "get_log"}, call("get_log")).leaf = true
-    entry({"admin", "vpn", "trojan_server", "clear_log"}, call("clear_log")).leaf = true
+    entry({"admin", "vpn", "trojan_server", "get_log"}, call("get_log")).leaf =
+        true
+    entry({"admin", "vpn", "trojan_server", "clear_log"}, call("clear_log")).leaf =
+        true
 end
 
 local function http_write_json(content)

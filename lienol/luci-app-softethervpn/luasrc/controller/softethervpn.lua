@@ -5,12 +5,9 @@ function index()
 		return
 	end
 	
-	entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
-	local page = entry({"admin", "vpn", "softethervpn"}, cbi("softethervpn"), _("SoftEther VPN"))
-	page.order = 50
-	page.dependent = true
-	page.acl_depends = { "luci-app-softethervpn" }
-	entry({"admin", "vpn", "softethervpn", "status"}, call("status")).leaf = true
+	entry({"admin","vpn"}, firstchild(), "VPN", 45).dependent = false
+	entry({"admin","vpn","softethervpn"},cbi("softethervpn"),_("SoftEther VPN"),50).dependent=true
+	entry({"admin","vpn","softethervpn","status"},call("status")).leaf=true
 end
 
 function status()

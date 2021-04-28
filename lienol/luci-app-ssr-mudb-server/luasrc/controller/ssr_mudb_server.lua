@@ -4,15 +4,10 @@ local http = require "luci.http"
 local jsonc = require "luci.jsonc"
 
 function index()
-    if not nixio.fs.access("/etc/config/ssr_mudb_server") then
-	    return
-    end
-
+    if not nixio.fs.access("/etc/config/ssr_mudb_server") then return end
     entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
     if nixio.fs.access("/usr/share/ssr_mudb_server") then
-        local page = entry({"admin", "vpn", "ssr_mudb_server"}, cbi("ssr_mudb_server/index"), _("SSR MuDB Server"), 2)
-        page.dependent = true
-        page.acl_depends = { "luci-app-ssr-mudb-server" }
+        entry({"admin", "vpn", "ssr_mudb_server"}, cbi("ssr_mudb_server/index"), _("SSR MuDB Server"), 2).dependent = true
     end
 
     entry({"admin", "vpn", "ssr_mudb_server", "user"}, template("ssr_mudb_server/user")).leaf = true

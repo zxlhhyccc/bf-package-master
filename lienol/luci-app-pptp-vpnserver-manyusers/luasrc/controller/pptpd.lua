@@ -2,13 +2,11 @@
 module("luci.controller.pptpd", package.seeall)
 
 function index()
-    if not nixio.fs.access("/etc/config/pptpd") then
-	    return
-    end
+    if not nixio.fs.access("/etc/config/pptpd") then return end
 
     entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
     entry({"admin", "vpn", "pptpd"}, alias("admin", "vpn", "pptpd", "settings"),
-          _("PPTP VPN Server"), 48).acl_depends = { "luci-app-pptp-vpnserver-manyusers" }
+          _("PPTP VPN Server"), 48)
     entry({"admin", "vpn", "pptpd", "settings"}, cbi("pptpd/settings"),
           _("General Settings"), 10).leaf = true
     entry({"admin", "vpn", "pptpd", "users"}, cbi("pptpd/users"),

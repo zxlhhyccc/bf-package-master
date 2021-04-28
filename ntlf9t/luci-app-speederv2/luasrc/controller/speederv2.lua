@@ -2,9 +2,7 @@ module("luci.controller.speederv2", package.seeall)
 
 function index()
 	if nixio.fs.access("/etc/config/speederv2") then
-        local page = entry({"admin", "services", "speederv2"}, firstchild(), _("speederv2-tunnel"))
-        page.dependent = false
-        page.acl_depends = { "luci-app-speederv2" }
+        entry({"admin", "services", "speederv2"}, firstchild(), _("speederv2-tunnel")).dependent = false
         entry({"admin", "services", "speederv2", "general"}, cbi("speederv2/general"), _("Settings"), 1)
         entry({"admin", "services", "speederv2", "servers"}, arcombine(cbi("speederv2/servers"), cbi("speederv2/servers-details")), _("Configure Management"), 2).leaf = true
         entry({"admin", "services", "speederv2", "status"}, call("action_status"))

@@ -3,15 +3,11 @@ module("luci.controller.pppoe-relay", package.seeall)
 local uci = require"luci.model.uci".cursor()
 
 function index()
-    if not nixio.fs.access("/etc/config/pppoe-relay") then
-	    return
-    end
-
-    local page = entry({"admin", "services", "pppoe-relay"}, cbi("pppoe-relay"),
-          _("PPPoE Relay"), 2)
-	page.dependent = true
-	page.acl_depends = { "luci-app-pppoe-relay" }
-	entry({"admin", "services", "pppoe-relay", "get_status"}, call("get_status")).leaf = true
+    if not nixio.fs.access("/etc/config/pppoe-relay") then return end
+    entry({"admin", "services", "pppoe-relay"}, cbi("pppoe-relay"),
+          _("PPPoE Relay"), 2).dependent = true
+    entry({"admin", "services", "pppoe-relay", "get_status"}, call("get_status")).leaf =
+        true
 end
 
 function get_status()

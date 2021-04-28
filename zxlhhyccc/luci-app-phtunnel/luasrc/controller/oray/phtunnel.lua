@@ -1,9 +1,8 @@
 module("luci.controller.oray.phtunnel", package.seeall)
 
 function index()
-
 	entry({"admin", "oray"}, alias("admin", "oray", "phtunnel"), _("Oray"), 50).index = true
-	entry({"admin", "oray", "phtunnel"}, alias("admin", "oray", "phtunnel", "setup"), _("Phtunnel")).acl_depends = { "luci-app-phtunnel" }
+	entry({"admin", "oray", "phtunnel"}, alias("admin", "oray", "phtunnel", "setup"), _("Phtunnel"))
 	entry({"admin", "oray", "phtunnel", "setup"}, cbi("oray/phtunnel_setup"), _("Setup"), 1).leaf = true
 	entry({"admin", "oray", "phtunnel", "status"}, template("oray/phtunnel_status"), _("Status"), 2).leaf = true
 	entry({"admin", "oray", "phtunnel", "log"}, template("oray/phtunnel_log"), _("Log"), 3).leaf = true

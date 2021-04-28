@@ -9,6 +9,5 @@ function index()
 	local page = entry({"admin", "network", "guest-wifi"}, cbi("guest-wifi"), translate("Guest-network"), 20)
 	page.i18n = "guest-wifi"
 	page.dependent = true
-	page.acl_depends = { "luci-app-control-guest-wifi" }
 	
 end

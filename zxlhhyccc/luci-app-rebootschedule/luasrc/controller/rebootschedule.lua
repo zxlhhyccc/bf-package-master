@@ -7,7 +7,6 @@ function index()
 	local page
 	page = entry({"admin", "system", "rebootschedule"}, cbi("rebootschedule"), "Reboot schedule", 88)
 	page.dependent = true
-	page.acl_depends = { "luci-app-rebootschedule" }
 end
 
 

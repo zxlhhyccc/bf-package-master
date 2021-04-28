@@ -5,31 +5,29 @@ local kcptun = require "luci.model.cbi.bypass.kcptun"
 local xray = require "luci.model.cbi.bypass.xray"
 local trojan_go = require "luci.model.cbi.bypass.trojan_go"
 function index()
-
 	if not nixio.fs.access("/etc/config/bypass") then
 		return
 	end
-
-	local e=entry({"admin", "services", "bypass"}, firstchild(), _("Bypass"),2)
+	local e=entry({"admin","services","bypass"},firstchild(),_("Bypass"),2)
 	e.dependent=false
 	e.acl_depends={ "luci-app-bypass" }
-	entry({"admin","services", "bypass", "base"},cbi("bypass/base"), _("Base Setting"), 1).leaf = true
-	entry({"admin", "services", "bypass", "servers"},  arcombine(cbi("bypass/servers", {autoapply=true}), cbi("bypass/client-config")), _("Severs Nodes"), 2).leaf = true
-	entry({"admin", "services", "bypass", "control"}, cbi("bypass/control"), _("Access Control"), 3).leaf = true
-	entry({"admin", "services","bypass", "advanced"}, cbi("bypass/advanced"), _("Advanced Settings"), 4).leaf = true
+	entry({"admin","services","bypass","base"},cbi("bypass/base"),_("Base Setting"),1).leaf=true
+	entry({"admin","services","bypass","servers"},arcombine(cbi("bypass/servers",{autoapply=true}),cbi("bypass/client-config")),_("Severs Nodes"),2).leaf=true
+	entry({"admin","services","bypass","control"},cbi("bypass/control"),_("Access Control"),3).leaf=true
+	entry({"admin","services","bypass","advanced"},cbi("bypass/advanced"),_("Advanced Settings"),4).leaf=true
 	entry({"admin", "services", "bypass", "app_update"}, cbi("bypass/app_update"), _("App Update"), 5).leaf = true
 	if luci.sys.call("which ssr-server >/dev/null")==0 or luci.sys.call("which ss-server >/dev/null")==0 or luci.sys.call("which microsocks >/dev/null")==0 then
-	entry({"admin", "services", "bypass", "server"}, arcombine(cbi("bypass/server"), cbi("bypass/server-config")), _("SSR Server"), 6).leaf = true
+	      entry({"admin","services","bypass","server"},arcombine(cbi("bypass/server"),cbi("bypass/server-config")),_("SSR Server"),6).leaf=true
 	end
-	entry({"admin", "services", "bypass","status"}, form("bypass/status"), _("Status"), 7).leaf = true
-	entry({"admin", "services", "bypass", "log"},form("bypass/log"), _("Log"), 8).leaf = true
-	entry({"admin", "services", "bypass", "check"}, call("check_status"))
-	entry({"admin", "services", "bypass", "refresh"}, call("refresh_data"))
-	entry({"admin", "services", "bypass", "subscribe"}, call("subscribe"))
-	entry({"admin", "services", "bypass", "checkport"}, call("check_port"))
-	entry({"admin", "services", "bypass", "run"}, call("act_status"))
-	entry({"admin", "services", "bypass", "ping"}, call("act_ping"))
-	entry({"admin", "services", "bypass", "kcptun_check"},  call("kcptun_check")).leaf = true
+	entry({"admin","services","bypass","status"},form("bypass/status"),_("Status"),7).leaf=true
+	entry({"admin","services","bypass","log"},form("bypass/log"),_("Log"),8).leaf=true
+	entry({"admin","services","bypass","check"},call("check_status"))
+	entry({"admin","services","bypass","refresh"},call("refresh_data"))
+	entry({"admin","services","bypass","subscribe"},call("subscribe"))
+	entry({"admin","services","bypass","checkport"},call("check_port"))
+	entry({"admin","services","bypass","run"},call("act_status"))
+	entry({"admin","services","bypass","ping"},call("act_ping"))
+	entry({"admin", "services", "bypass", "kcptun_check"}, call("kcptun_check")).leaf = true
 	entry({"admin", "services", "bypass", "kcptun_update"}, call("kcptun_update")).leaf = true
 	entry({"admin", "services", "bypass", "xray_check"}, call("xray_check")).leaf = true
 	entry({"admin", "services", "bypass", "xray_update"}, call("xray_update")).leaf = true

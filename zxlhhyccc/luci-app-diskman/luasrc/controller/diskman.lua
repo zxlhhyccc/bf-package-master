@@ -18,13 +18,10 @@ function index()
     end
   end
 
-  if not executables_all_existed then
-		return
-	end
-
+  if not executables_all_existed then return end
   -- entry(path, target, title, order)
   -- set leaf attr to true to pass argument throughe url (e.g. admin/system/disk/partition/sda)
-  entry({"admin", "system", "diskman"}, alias("admin", "system", "diskman", "disks"), _("Disk Man"), 55).acl_depends = { "luci-app-diskman" }
+  entry({"admin", "system", "diskman"}, alias("admin", "system", "diskman", "disks"), _("Disk Man"), 55)
   entry({"admin", "system", "diskman", "disks"}, form("diskman/disks"), nil).leaf = true
   entry({"admin", "system", "diskman", "partition"}, form("diskman/partition"), nil).leaf = true
   entry({"admin", "system", "diskman", "btrfs"}, form("diskman/btrfs"), nil).leaf = true

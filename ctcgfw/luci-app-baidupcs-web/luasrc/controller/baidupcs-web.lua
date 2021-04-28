@@ -4,12 +4,8 @@ function index()
 	if not nixio.fs.access("/etc/config/baidupcs-web") then
 		return
 	end
-
-	local page = entry({"admin", "nas", "baidupcs-web"}, cbi("baidupcs-web"), _("BaiduPCS Web"))
-	page.order = 300
-	page.dependent = true
-	page.acl_depends = { "luci-app-baidupcs-web" }
-	entry({"admin", "nas", "baidupcs-web", "status"}, call("act_status")).leaf = true
+	entry({"admin", "nas", "baidupcs-web"}, cbi("baidupcs-web"), _("BaiduPCS Web"), 300).dependent = true
+	entry({"admin","nas","baidupcs-web","status"},call("act_status")).leaf=true
 end
 
 function act_status()

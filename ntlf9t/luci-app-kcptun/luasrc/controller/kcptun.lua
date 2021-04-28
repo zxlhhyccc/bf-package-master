@@ -11,10 +11,8 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "services", "kcptun"},
-		firstchild(), _("Kcptun Client"))
-	page.dependent = false
-	page.acl_depends = { "luci-app-kcptun" }
+	entry({"admin", "services", "kcptun"},
+		firstchild(), _("Kcptun Client")).dependent = false
 
 	entry({"admin", "services", "kcptun", "settings"},
 		cbi("kcptun/settings"), _("Settings"), 1)

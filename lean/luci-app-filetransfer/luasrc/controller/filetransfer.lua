@@ -8,6 +8,5 @@ Modify: ayongwifi@126.com  www.openwrtdl.com
 module("luci.controller.filetransfer", package.seeall)
 
 function index()
-
-	entry({"admin", "system", "filetransfer"}, form("filetransfer"), _("FileTransfer"),89).acl_depends = { "luci-app-filetransfer" }
+	entry({"admin", "system", "filetransfer"}, form("filetransfer"), _("FileTransfer"),89)
 end

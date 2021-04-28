@@ -10,5 +10,4 @@ function index()
 	local page
 	page = entry({"admin", "system", "advancedsetting"}, cbi("advancedsetting"), _("Advanced Setting"), 60)
 	page.dependent = true
-	page.acl_depends = { "luci-app-advancedsetting" }
 end

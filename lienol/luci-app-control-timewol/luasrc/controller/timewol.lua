@@ -1,15 +1,11 @@
 module("luci.controller.timewol", package.seeall)
 
 function index()
-    if not nixio.fs.access("/etc/config/timewol") then
-	    return
-    end
+    if not nixio.fs.access("/etc/config/timewol") then return end
 
     entry({"admin", "control"}, firstchild(), "Control", 44).dependent = false
-    local page = entry({"admin", "control", "timewol"}, cbi("timewol"), _("定时唤醒"))
-    page.order = 95
-    page.dependent = true
-    page.acl_depends = { "luci-app-control-timewol" }
+    entry({"admin", "control", "timewol"}, cbi("timewol"), _("定时唤醒"), 95).dependent =
+        true
     entry({"admin", "control", "timewol", "status"}, call("status")).leaf = true
 end
 

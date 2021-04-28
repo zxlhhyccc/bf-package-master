@@ -10,7 +10,7 @@ function index()
 	end
 
 	local page
+
 	page = entry({"admin", "services", "cifs"}, cbi("cifs"), _("Mounting NAT drives"))
 	page.dependent = true
-	page.acl_depends = { "luci-app-cifs" }
 end

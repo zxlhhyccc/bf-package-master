@@ -11,7 +11,6 @@ function index()
 	if not fs.access("/etc/config/scutclient") then
 		return
 	end
-
 	local uci = require "luci.model.uci".cursor()
 	local mainorder = uci:get_first("scutclient", "luci", "mainorder", 10)
 	if not uci:get_first("scutclient", "luci", "configured", false) then
@@ -19,7 +18,7 @@ function index()
 			alias("admin", "scutclient", "settings"),
 			"华南理工大学客户端",
 			mainorder
-		).acl_depends = { "luci-app-scutclient" }
+		)
 
 		entry({"admin", "scutclient", "settings"},
 			cbi("scutclient/scutclient"),
@@ -37,7 +36,7 @@ function index()
 			alias("admin", "scutclient", "status"),
 			"华南理工大学客户端",
 			mainorder
-		).acl_depends = { "luci-app-scutclient" }
+		)
 
 		entry({"admin", "scutclient", "status"},
 			call("action_status"),

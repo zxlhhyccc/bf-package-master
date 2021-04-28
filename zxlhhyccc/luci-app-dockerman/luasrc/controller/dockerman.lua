@@ -27,24 +27,24 @@ function index()
   end
 
   if (require "luci.model.docker").new():_ping().code ~= 200 then return end
-  entry({"admin", "docker", "containers"}, form("dockerman/containers"), _("Containers"), 1).leaf = true
-  entry({"admin", "docker", "images"}, form("dockerman/images"), _("Images"), 2).leaf = true
-  entry({"admin","docker","networks"},form("dockerman/networks"),_("Networks"),3).leaf = true
-  entry({"admin", "docker", "volumes"}, form("dockerman/volumes"), _("Volumes"), 4).leaf = true
-  entry({"admin","docker", "events"}, call("action_events"), _("Events"), 5)
-  entry({"admin", "docker", "newcontainer"}, form("dockerman/newcontainer")).leaf = true
-  entry({"admin", "docker", "newnetwork"}, form("dockerman/newnetwork")).leaf = true
-  entry({"admin", "docker", "container"}, form("dockerman/container")).leaf = true
-  entry({"admin", "docker", "container_stats"}, call("action_get_container_stats")).leaf = true
-  entry({"admin", "docker", "container_get_archive"}, call("download_archive")).leaf = true
-  entry({"admin", "docker", "container_put_archive"}, call("upload_archive")).leaf = true
-  entry({"admin", "docker", "images_save"}, call("save_images")).leaf = true
-  entry({"admin", "docker", "images_load"}, call("load_images")).leaf = true
-  entry({"admin", "docker", "images_import"}, call("import_images")).leaf = true
-  entry({"admin", "docker", "images_get_tags"}, call("get_image_tags")).leaf = true
-  entry({"admin", "docker", "images_tag"}, call("tag_image")).leaf = true
-  entry({"admin", "docker", "images_untag"}, call("untag_image")).leaf = true
-  entry({"admin", "docker", "confirm"}, call("action_confirm")).leaf = true
+  entry({"admin","docker","containers"},form("dockerman/containers"),_("Containers"),1).leaf=true
+  entry({"admin","docker","images"},form("dockerman/images"),_("Images"),2).leaf=true
+  entry({"admin","docker","networks"},form("dockerman/networks"),_("Networks"),3).leaf=true
+  entry({"admin","docker","volumes"},form("dockerman/volumes"),_("Volumes"),4).leaf=true
+  entry({"admin","docker","events"},call("action_events"),_("Events"),5)
+  entry({"admin","docker","newcontainer"},form("dockerman/newcontainer")).leaf=true
+  entry({"admin","docker","newnetwork"},form("dockerman/newnetwork")).leaf=true
+  entry({"admin","docker","container"},form("dockerman/container")).leaf=true
+  entry({"admin","docker","container_stats"},call("action_get_container_stats")).leaf=true
+  entry({"admin","docker","container_get_archive"},call("download_archive")).leaf=true
+  entry({"admin","docker","container_put_archive"},call("upload_archive")).leaf=true
+  entry({"admin","docker","images_save"},call("save_images")).leaf=true
+  entry({"admin","docker","images_load"},call("load_images")).leaf=true
+  entry({"admin","docker","images_import"},call("import_images")).leaf=true
+  entry({"admin","docker","images_get_tags"},call("get_image_tags")).leaf=true
+  entry({"admin","docker","images_tag"},call("tag_image")).leaf=true
+  entry({"admin","docker","images_untag"},call("untag_image")).leaf=true
+  entry({"admin","docker","confirm"},call("action_confirm")).leaf=true
 end
 
 function action_events()

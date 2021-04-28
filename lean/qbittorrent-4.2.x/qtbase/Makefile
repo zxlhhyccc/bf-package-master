@@ -146,10 +146,10 @@ CONFIGURE_ARGS = \
 		-no-sql-oci \
 		-no-sql-odbc \
 		-no-sql-psql \
-		-no-sql-sqlite \
+		-sql-sqlite \
 		-no-sql-sqlite2 \
 		-no-sql-tds \
-		-no-sqlite \
+		-sqlite \
 		-no-trace \
 		-no-tslib \
 		-no-vulkan \

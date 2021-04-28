@@ -6,10 +6,7 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "services", "pushbot"}, alias("admin", "services", "pushbot", "setting"),_("全能推送"))
-	page.order = 30
-	page.dependent = true
-	page.acl_depends = { "luci-app-pushbot" }
+	entry({"admin", "services", "pushbot"}, alias("admin", "services", "pushbot", "setting"),_("全能推送"), 30).dependent = true
 	entry({"admin", "services", "pushbot", "setting"}, cbi("pushbot/setting"),_("配置"), 40).leaf = true
 	entry({"admin", "services", "pushbot", "advanced"}, cbi("pushbot/advanced"),_("高级设置"), 50).leaf = true
 	entry({"admin", "services", "pushbot", "client"}, form("pushbot/client"), "在线设备", 80)

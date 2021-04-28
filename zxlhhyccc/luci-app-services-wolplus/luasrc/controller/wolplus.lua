@@ -4,14 +4,8 @@ local x = luci.model.uci.cursor()
 
 function index()
     if not nixio.fs.access("/etc/config/wolplus") then return end
-	return
-    end
-
-    local page = entry({"admin", "services", "wolplus"}, cbi("wolplus"), _("wolplus"))
-    page.order = 95
-    page.dependent = true
-    page.acl_depends = { "luci-app-services-wolplus" }
-    entry( {"admin", "services", "wolplus", "awake"}, post("awake") ).leaf = true
+    entry({"admin", "services", "wolplus"}, cbi("wolplus"), _("wolplus"), 95).dependent = true
+	entry( {"admin", "services", "wolplus", "awake"}, post("awake") ).leaf = true
 end
 
 function awake(sections)

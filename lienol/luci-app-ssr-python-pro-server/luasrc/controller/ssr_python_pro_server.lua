@@ -3,17 +3,12 @@ module("luci.controller.ssr_python_pro_server", package.seeall)
 local http = require "luci.http"
 
 function index()
-    if not nixio.fs.access("/etc/config/ssr_python_pro_server") then
-	    return
-    end
-
+    if not nixio.fs.access("/etc/config/ssr_python_pro_server") then return end
     entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
     if nixio.fs.access("/usr/share/ssr_python_pro_server") then
-        local page = entry({"admin", "vpn", "ssr_python_pro_server"},
-              cbi("ssr_python_pro_server/index"), _("SSR Python Server"))
-	page.order = 2
-	page.dependent = true
-	page.acl_depends = { "luci-app-ssr-python-pro-server" }
+        entry({"admin", "vpn", "ssr_python_pro_server"},
+              cbi("ssr_python_pro_server/index"), _("SSR Python Server"), 2).dependent =
+            true
     end
 
     entry({"admin", "vpn", "ssr_python_pro_server", "config"},

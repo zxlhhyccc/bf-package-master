@@ -4,24 +4,23 @@ local http = require "luci.http"
 local brook = require "luci.model.cbi.brook_server.api.brook"
 
 function index()
-    if not nixio.fs.access("/etc/config/brook_server") then
-	    return
-    end
-
+    if not nixio.fs.access("/etc/config/brook_server") then return end
     entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
-    local page = entry({"admin", "vpn", "brook_server"}, cbi("brook_server/index"),
-          _("Brook Server"))
-    page.order = 3
-    page.dependent = true
-    page.acl_depends = { "luci-app-brook-server" }
-    entry({"admin", "vpn", "brook_server", "config"}, cbi("brook_server/config")).leaf = true
+    entry({"admin", "vpn", "brook_server"}, cbi("brook_server/index"),
+          _("Brook Server"), 3).dependent = true
+    entry({"admin", "vpn", "brook_server", "config"}, cbi("brook_server/config")).leaf =
+        true
 
     entry({"admin", "vpn", "brook_server", "users_status"},
           call("brook_users_status")).leaf = true
-    entry({"admin", "vpn", "brook_server", "check"}, call("brook_check")).leaf = true
-    entry({"admin", "vpn", "brook_server", "update"}, call("brook_update")).leaf = true
-    entry({"admin", "vpn", "brook_server", "get_log"}, call("get_log")).leaf = true
-    entry({"admin", "vpn", "brook_server", "clear_log"}, call("clear_log")).leaf = true
+    entry({"admin", "vpn", "brook_server", "check"}, call("brook_check")).leaf =
+        true
+    entry({"admin", "vpn", "brook_server", "update"}, call("brook_update")).leaf =
+        true
+    entry({"admin", "vpn", "brook_server", "get_log"}, call("get_log")).leaf =
+        true
+    entry({"admin", "vpn", "brook_server", "clear_log"}, call("clear_log")).leaf =
+        true
 end
 
 local function http_write_json(content)

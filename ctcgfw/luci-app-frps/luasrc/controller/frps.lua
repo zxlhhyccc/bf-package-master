@@ -12,10 +12,8 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "services", "frps"},
-		firstchild(), _("Frps"))
-	page.dependent = false
-	page.acl_depends = { "luci-app-frps" }
+	entry({"admin", "services", "frps"},
+		firstchild(), _("Frps")).dependent = false
 
 	entry({"admin", "services", "frps", "common"},
 		cbi("frps/common"), _("Settings"), 1)

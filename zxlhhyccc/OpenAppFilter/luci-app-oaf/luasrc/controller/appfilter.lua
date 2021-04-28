@@ -6,9 +6,9 @@ function index()
 	end
 	
 	local page
+
 	page = entry({"admin", "network", "appfilter"}, cbi("appfilter/appfilter"), _("appfilter"))
 	page.dependent = true
-	page.acl_depends = { "luci-app-oaf" }
 	
 	page = entry({"admin", "network", "user_status"}, call("user_status"), nil)
 	page.leaf = true

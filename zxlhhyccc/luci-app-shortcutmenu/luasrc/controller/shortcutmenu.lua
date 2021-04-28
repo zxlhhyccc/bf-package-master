@@ -7,9 +7,5 @@ function index()
 	if not nixio.fs.access("/etc/config/shortcutmenu") then
 		return
 	end
-
-	local page = entry({"admin", "status", "shortcutmenu"}, cbi("shortcutmenu"), _("Shortcutmenu"))
-	page.order = 55
-	page.dependent = true
-	page.acl_depends = { "luci-app-shortcutmenu" }
+	entry({"admin", "status", "shortcutmenu"}, cbi("shortcutmenu"), _("Shortcutmenu"), 55).dependent = true
 end
