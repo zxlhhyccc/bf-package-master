@@ -34,7 +34,7 @@ fi
 sleep 3
 
 if [ -f $TSHARE/download_core_version ];then
-	VER=$(sed -n 1p $TSHARE/download_core_version 2>/dev/null) 
+	VER=$(sed -n 1p $TSHARE/download_core_version 2>/dev/null)
 fi
 
 
@@ -46,7 +46,7 @@ update(){
 			 echo "${LOGTIME} - 开始下载 trojan-go 内核..." >$LOG_FILE
 		elif [ $lang == "en" ] || [ $lang == "auto" ];then
 			 echo "${LOGTIME} - Starting trojan-go Core download" >$LOG_FILE
-		fi
+		fi		
 		mkdir p /tmp/trojan-go >/dev/null 2>&1
 		cd /tmp/trojan-go
 		wget --no-check-certificate  https://github.com/"$source"/releases/download/"$VER"/trojan-go-"$MODELTYPE".zip -O 2>&1 >1 /tmp/trojan-go/trojan-go-"$MODELTYPE".zip
@@ -54,7 +54,7 @@ update(){
 	    if [ "$?" -eq "0" ]; then
 			if [ $lang == "zh_cn" ];then
 				echo "${LOGTIME} - 开始解压缩文件" >$LOG_FILE
-			elif [ $lang == "en" ] || [ $lang == "auto" ];then
+			elif [ $lang == "en" ] || [ $lang == "auto" ];then 
 				echo "${LOGTIME} - Beginning to unzip file" >$LOG_FILE
 			fi
 		    unzip /tmp/trojan-go/trojan-go-"$MODELTYPE".zip >/dev/null 2>&1\
@@ -65,7 +65,7 @@ update(){
 			   echo "${LOGTIME} - 完成下载内核，正在更新..." >$LOG_FILE
 			elif [ $lang == "en" ] || [ $lang == "auto" ];then
 			   echo "${LOGTIME} - Successfully downloaded core, updating now..." >$LOG_FILE
-			fi	  
+			fi
 			mv /tmp/trojan-go/trojan-go-$MODELTYPE/trojan-go /usr/bin/trojan-go >/dev/null 2>&1
 			chmod -R 755 /usr/bin
 			rm -rf /tmp/trojan-go >/dev/null 2>&1
@@ -85,7 +85,7 @@ update(){
 	    else
 		  if [ $lang == "zh_cn" ];then
 			echo "${LOGTIME} - 核心程序下载失败，请检查网络或稍后再试！" >$LOG_FILE
-		  elif [ $lang == "en" ] || [ $lang == "auto" ];then
+		  elif [ $lang == "en" ] || [ $lang == "auto" ];then     
 			echo "${LOGTIME} - Core Update Error" >$LOG_FILE
 		  fi
 		  rm -rf /tmp/trojan-go/trojan-go-"$MODELTYPE".zip >/dev/null 2>&1

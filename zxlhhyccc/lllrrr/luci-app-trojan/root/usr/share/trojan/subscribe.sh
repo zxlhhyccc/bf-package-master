@@ -8,7 +8,7 @@ REAL_LOG="/usr/share/trojan/readlog.txt"
 CFG_FILE="/etc/config/trojan"
 
 name=trojan
-subscribe_url=($(uci get $name.@server_subscribe[0].subscribe_url))
+subscribe_url=($(uci get $name.@server_subscribe[0].subscribe_url)) 
 [ ${#subscribe_url[@]} -eq 0 ] && exit 1
 for ((o=0;o<${#subscribe_url[@]};o++))
 do
@@ -51,7 +51,7 @@ do
   ws_type="$(cfg_get "type=" "$single_server")"
 
   ws_host="$(cfg_get "host=" "$single_server")"
-
+   
   ws_path="$(cfg_get "path=" "$single_server")"
 
   ss="$(cfg_get "encryption=" "$single_server")"
@@ -62,20 +62,20 @@ do
    ss_cipher=$(echo "$ss" | grep ";" |awk -F ";" '{print $2}' >/dev/null 2>&1)
    ss_pass=$(echo "$ss" | grep ";" |awk -F ":" '{print $3}' >/dev/null 2>&1)
   fi
- 
+
   if [ $lang == "en" ] || [ $lang == "auto" ];then
 	echo "Now Reading 【Trojan-Go】 - 【$sever_name】 Servers..." >$REAL_LOG
   elif [ $lang == "zh_cn" ];then
 	echo "正在读取 【Trojan-Go】 - 【$sever_name】 代理..." >$REAL_LOG
   fi
-		
+
   name=trojan
   uci_name_tmp=$(uci add $name servers)
 
   uci_set="uci -q set $name.$uci_name_tmp."
   uci_add="uci -q add_list $name.$uci_name_tmp."
 
-  ${uci_set}name="$sever_name" 
+  ${uci_set}name="$sever_name"
   ${uci_set}remote_addr="$server" >/dev/null 2>&1
   ${uci_set}remote_port="$port" >/dev/null 2>&1
   ${uci_set}password="$server_passwd"  >/dev/null 2>&1

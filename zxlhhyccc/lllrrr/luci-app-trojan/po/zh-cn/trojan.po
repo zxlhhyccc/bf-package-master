@@ -2,6 +2,9 @@
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 
+msgid "None"
+msgstr "无"
+
 msgid "Global Mode"
 msgstr "全局代理模式"
 
@@ -65,7 +68,7 @@ msgstr "客户端"
 msgid "Status"
 msgstr "状态"
 
-msgid "Config"
+msgid "Type"
 msgstr "选择类型"
 
 msgid "Server"
@@ -200,9 +203,6 @@ msgstr "添加/编辑规则"
 msgid "Add/Edit Server"
 msgstr "添加/编辑服务器"
 
-msgid "Type"
-msgstr "类型"
-
 msgid "Format"
 msgstr "格式"
 
@@ -265,9 +265,6 @@ msgstr "启用"
 
 msgid "Disabled"
 msgstr "禁用"
-
-msgid "Type"
-msgstr "节点类型"
 
 msgid "Alias"
 msgstr "节点别名"
@@ -347,7 +344,7 @@ msgstr "启用Websocket"
 msgid "Websocket Path"
 msgstr "Websocket路径"
 
-msgid "Websockrt Host"
+msgid "Websocket Host"
 msgstr "Websocket主机"
 
 msgid "Enable Shadowdocks"
@@ -380,7 +377,7 @@ msgstr "启用"
 msgid "False"
 msgstr "禁用"
 
-msgid "CONFIG"
+msgid "Config"
 msgstr "配置"
 
 msgid "DNS Servers"
@@ -532,3 +529,27 @@ msgstr "UDP目标端口"
 
 msgid "GEOLOCATION"
 msgstr "地理位置"
+
+msgid "Trojan Log Level"
+msgstr "Trojan-go输出日志"
+
+msgid "Output Debug logs(All logs)"
+msgstr "输出Debug以上日志（所有日志）"
+
+msgid "Output Info log"
+msgstr "输出Info及以上日志"
+
+msgid "Output Warning logs"
+msgstr "输出Warning及以上日志"
+
+msgid "Output Error logs"
+msgstr "输出Error及以上日志"
+
+msgid "Output Fatal logs"
+msgstr "输出Fatal及以上日志"
+
+msgid "No log output"
+msgstr "完全不输出日志"
+
+msgid "Specify the log level. The higher the level, the less information is output"
+msgstr "指定日志等级。等级越高，输出的信息越少"

@@ -1,5 +1,18 @@
+diff --git a/Makefile b/Makefile
+index 24e92d4..2aa23cc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -11,7 +11,7 @@ define Package/luci-app-trojan
+ 	CATEGORY:=LuCI
+ 	SUBMENU:=2. Trojan
+ 	TITLE:=LuCI app for Trojan
+-	DEPENDS:=+luci-base +wget +unzip +ip +iptables +bash +ipset +libmbedtls +ca-certificates +iptables-mod-tproxy +pdnsd-alt +curl +dnscrypt-proxy
++	DEPENDS:=+luci-base +wget-ssl +unzip +ip +iptables +bash +ipset +libmbedtls +ca-certificates +iptables-mod-tproxy +pdnsd-alt +curl +dnscrypt-proxy
+ 	PKGARCH:=all
+ 	MAINTAINER:=frainzy1477
+ endef
 diff --git a/root/etc/init.d/trojan b/root/etc/init.d/trojan
-index d6a9baf..a86109e 100644
+index 4e47881..e559ac0 100644
 --- a/root/etc/init.d/trojan
 +++ b/root/etc/init.d/trojan
 @@ -1,8 +1,8 @@
@@ -13,7 +26,7 @@ index d6a9baf..a86109e 100644
  SERVICE_DAEMONIZE=1
  NAME=trojan
  CONFIG_FILE=/etc/$NAME/config.json
-@@ -106,8 +106,8 @@ gen_config_file() {
+@@ -103,8 +103,8 @@ gen_config_file() {
  }
  
  redir(){
@@ -24,7 +37,7 @@ index d6a9baf..a86109e 100644
  		sh $TSHARE/dnscrypt.sh >/dev/null 2>&1 &
  	elif [ "$dns_mode" == "pdnsd" ];then
  		sh $TSHARE/pdnsd.sh >/dev/null 2>&1 &
-@@ -126,61 +126,61 @@ start(){
+@@ -123,60 +123,60 @@ start(){
  	rm -rf $CONFIG_FILE
  	if [ "${enable}" -eq 1 ] && [ -f $Core ] && [ -f  $TSHARE/disable.lock ]; then
  		if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
@@ -33,23 +46,22 @@ index d6a9baf..a86109e 100644
  		elif [ "${lang}" == "zh_cn" ];then
  			echo "启动客户端" >$REAL_LOG
 -		fi			
-+		fi	
++		fi
  		sleep 1
 -		local GLOBAL_SERVER 
 +		local GLOBAL_SERVER
  		local dns_mode pdnsd  dnscrypt
 -		dns_mode=$(uci get $NAME.@settings[0].dns_mode 2>/dev/null)			
-+		dns_mode=$(uci get $NAME.@settings[0].dns_mode 2>/dev/null)		
++		dns_mode=$(uci get $NAME.@settings[0].dns_mode 2>/dev/null)
  		if [ -z "$switch_server" ] ;then
  			GLOBAL_SERVER=$(uci_get_by_type global global_server 2>/dev/null)
  		else
  			GLOBAL_SERVER=$switch_server
- 			switch_enable=1
 -		fi					
 -		rm -f /var/etc/$NAME*				
 -		sleep 1	
-+		fi				
-+		rm -f /var/etc/$NAME*			
++		fi
++		rm -f /var/etc/$NAME*
 +		sleep 1
  		redir >/dev/null 2>&1
  		if [ "$dns_mode" != "off" ];then
@@ -59,16 +71,16 @@ index d6a9baf..a86109e 100644
  			elif [ "${lang}" == "zh_cn" ];then
  				echo "启用DNS" >$REAL_LOG
  			fi
- 			dns_change 2>/dev/null 2>&1
+ 			set_forward_dnsmasq 2>/dev/null 2>&1
 -		fi	
 -		if [ "$(ls -l $CONFIG_FILE|awk '{print int($5)}')" -ne 0 ]; then	
 +		fi
 +		if [ "$(ls -l $CONFIG_FILE|awk '{print int($5)}')" -ne 0 ]; then
  			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
--						echo "Setting up  iptables rules" >$REAL_LOG 
-+						echo "Setting up  iptables rules" >$REAL_LOG
+-				echo "Setting up  iptables rules" >$REAL_LOG 
++				echo "Setting up  iptables rules" >$REAL_LOG
  			elif [ "${lang}" == "zh_cn" ];then
- 						echo "设置 iptables" >$REAL_LOG
+ 				echo "设置 iptables" >$REAL_LOG
  			fi
  			rules >/dev/null 2>&1
  			sleep 2
@@ -92,10 +104,10 @@ index d6a9baf..a86109e 100644
 -			/etc/init.d/dnsmasq restart >/dev/null 2>&1				
 -			sleep 1				
 -			$Core -config $CONFIG_FILE  >/dev/null 2>&1 &		
-+			fi		
-+			/etc/init.d/dnsmasq restart >/dev/null 2>&1	
-+			sleep 1		
-+			$Core -config $CONFIG_FILE  >/dev/null 2>&1 &	
++			fi
++			/etc/init.d/dnsmasq restart >/dev/null 2>&1
++			sleep 1
++			$Core -config $CONFIG_FILE  >/dev/null 2>&1 &
  			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
 -				echo "Trojan-GO Core Started Successfully " >$REAL_LOG 
 +				echo "Trojan-GO Core Started Successfully " >$REAL_LOG
@@ -104,11 +116,11 @@ index d6a9baf..a86109e 100644
 -			fi	
 -			mv $TSHARE/disable.lock $TSHARE/enable.lock			
 +			fi
-+			mv $TSHARE/disable.lock $TSHARE/enable.lock	
++			mv $TSHARE/disable.lock $TSHARE/enable.lock
  			if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
  				echo "Trojan-GO Started Successfully " >$REAL_LOG
  				sleep 1
-@@ -197,8 +197,8 @@ start(){
+@@ -193,8 +193,8 @@ start(){
  		else
  			stop >/dev/null 2>&1 &
  		fi
@@ -116,65 +128,10 @@ index d6a9baf..a86109e 100644
 -		if [ ! -f  $TSHARE/disable.lock ]; then	
 +	else
 +		if [ ! -f  $TSHARE/disable.lock ]; then
- 				touch /usr/share/$NAME/disable.lock 2>/dev/null
- 				rm rf /usr/share/$NAME/enable.lock 2>/dev/null	
- 				start >/dev/null 2>&1 &
-@@ -230,19 +230,19 @@ remove_mark(){
- 	for natx in $nat; do
- 			iptables -t nat -D PREROUTING $natx >/dev/null 2>&1
- 	done
--	
-+
- 	mag=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/TROJAN_GO/=' | sort -r)
- 	for nat_indexv in $mag; do
- 		iptables -t mangle -D PREROUTING $nat_indexv >/dev/null 2>&1
--	done									
-+	done								
- 	proxy_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/proxy_lan src/=' | sort -r)
- 	for natx in $proxy_lan; do
- 		iptables -t mangle -D PREROUTING $natx >/dev/null 2>&1
--	done		
-+	done	
- 	reject_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/reject_lan src/=' | sort -r)
- 	for natx in $reject_lan; do
- 		iptables -t mangle -D PREROUTING $natx >/dev/null 2>&1
--	done		
-+	done	
- 	chinav4_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/chinav4/=' | sort -r)
- 	for natv4 in $chinav4_lan; do
- 		iptables -t mangle -D PREROUTING $natv4 >/dev/null 2>&1
-@@ -262,7 +262,7 @@ remove_mark(){
- 	done
- 
- 	iptables -t nat -I PREROUTING -p tcp --dport 53 -j ACCEPT		
--	revert_dns >/dev/null 2>&1	
-+	revert_dns >/dev/null 2>&1
- }
- 
- stop(){ 
-@@ -271,32 +271,32 @@ stop(){
- 		echo "Stopping Client..." >$REAL_LOG
- 	elif [ "${lang}" == "zh_cn" ];then
- 		echo "正在停止客户端..." >$REAL_LOG
--	fi				
-+	fi			
- 	rm -rf $CONFIG_FILE /var/etc/dnsmasq.$NAME /var/dnsmasq.d/$NAME.conf
- 	remove_mark >/dev/null 2>&1
- 	rm -rf /var/etc/dnscrypt-proxy-ns1.conf >/dev/null 2>&1
- 	rm -rf /var/etc/pdnsd.conf >/dev/null 2>&1
- 	kill -9 `pidof $NAME-go|sed "s/$//g"` 2>/dev/null		
--	kill -9 $(busybox ps -w | grep pdnsd | grep -v grep | awk '{print $1}') >/dev/null 2>&1 
--	kill -9 $(busybox ps -w | grep dnscrypt-proxy | grep -v grep | awk '{print $1}') >/dev/null 2>&1 	
--  	del_cron >/dev/null 2>&1		
--	echo "0" > /usr/share/$NAME/logstatus_check >/dev/null 2>&1		
-+	kill -9 $(busybox ps -w | grep pdnsd | grep -v grep | awk '{print $1}') >/dev/null 2>&1
-+	kill -9 $(busybox ps -w | grep dnscrypt-proxy | grep -v grep | awk '{print $1}') >/dev/null 2>&1
-+  	del_cron >/dev/null 2>&1	
-+	echo "0" > /usr/share/$NAME/logstatus_check >/dev/null 2>&1	
- 	if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
--		echo "Trojan-GO Core Stopped Successfully " >$REAL_LOG 
-+		echo "Trojan-GO Core Stopped Successfully " >$REAL_LOG
- 	elif [ "${lang}" == "zh_cn" ];then
+ 			touch /usr/share/$NAME/disable.lock 2>/dev/null
+ 			rm rf /usr/share/$NAME/enable.lock 2>/dev/null	
+ 			start >/dev/null 2>&1 &
+@@ -226,26 +226,26 @@ stop(){
  		echo "Trojan-GO停止进程守护程序" >$REAL_LOG
  	fi
  	sleep 1
@@ -182,7 +139,7 @@ index d6a9baf..a86109e 100644
 +	echo "Trojan-GO for OpenWRT" >$REAL_LOG
  	rm rf $TSHARE/enable.lock >/dev/null 2>&1
 -	touch $TSHARE/disable.lock 2>/dev/null		
-+	touch $TSHARE/disable.lock 2>/dev/null	
++	touch $TSHARE/disable.lock 2>/dev/null
  	if [ "${lang}" == "en" ] || [ $lang == "auto" ];then
  		echo "" $LOG >/dev/null 2>&1
 -		echo "Client Stopped" >$LOG 
@@ -191,21 +148,33 @@ index d6a9baf..a86109e 100644
  		echo "" $LOG >/dev/null 2>&1
  		echo "客户端停止" >$LOG
 -	fi		 	
-+	fi	 	
++	fi
  }
  
  
-@@ -306,7 +306,7 @@ restart(){
- 		start >/dev/null 2>&1		
+ restart(){
+ 	if pidof trojan-go >/dev/null; then
+ 		stop  >/dev/null 2>&1
+-		start >/dev/null 2>&1		
++		start >/dev/null 2>&1
  	else
  		start >/dev/null 2>&1
 -	fi		
 +	fi
  }
  
- 
+ boot(){
+@@ -256,6 +256,6 @@ reload(){
+ 	if pidof trojan-go >/dev/null; then
+ 		remove_mark 2>/dev/null
+ 		dns_change 2>/dev/null 2>&1
+-		rules >/dev/null 2>&1 
+-	fi	  
++		rules >/dev/null 2>&1
++	fi
+ }
 diff --git a/root/usr/share/trojan/core_download.sh b/root/usr/share/trojan/core_download.sh
-index 3d44c7f..5e85853 100644
+index 3d44c7f..c9297dc 100644
 --- a/root/usr/share/trojan/core_download.sh
 +++ b/root/usr/share/trojan/core_download.sh
 @@ -12,15 +12,15 @@ if [ -f /tmp/trojan-go.zip ];then
@@ -227,7 +196,15 @@ index 3d44c7f..5e85853 100644
  fi
  
  version=`wget -qO- https://github.com/$source/tags | grep "/$source/releases/"| head -n 1| awk -F "/tag/" '{print $2}'| sed 's/\">//'`
-@@ -41,59 +41,59 @@ fi
+@@ -34,66 +34,66 @@ fi
+ sleep 3
+ 
+ if [ -f $TSHARE/download_core_version ];then
+-	VER=$(sed -n 1p $TSHARE/download_core_version 2>/dev/null) 
++	VER=$(sed -n 1p $TSHARE/download_core_version 2>/dev/null)
+ fi
+ 
+ 
  update(){
  		if [ -f /tmp/trojan-go/trojan-go-"$MODELTYPE".zip ];then
  			rm -rf /tmp/trojan-go/trojan-go-"$MODELTYPE".zip >/dev/null 2>&1
@@ -240,7 +217,7 @@ index 3d44c7f..5e85853 100644
 -			 echo "  ${LOGTIME} - Starting trojan-go Core download" >$LOG_FILE
 -		fi				
 +			 echo "${LOGTIME} - Starting trojan-go Core download" >$LOG_FILE
-+		fi
++		fi		
  		mkdir p /tmp/trojan-go >/dev/null 2>&1
  		cd /tmp/trojan-go
 -		wget --no-check-certificate  https://github.com/"$source"/releases/download/"$VER"/trojan-go-"$MODELTYPE".zip -O 2>&1 >1 /tmp/trojan-go/trojan-go-"$MODELTYPE".zip	  
@@ -250,11 +227,10 @@ index 3d44c7f..5e85853 100644
  	    if [ "$?" -eq "0" ]; then
  			if [ $lang == "zh_cn" ];then
 -				echo "  ${LOGTIME} - 开始解压缩文件" >$LOG_FILE
--			elif [ $lang == "en" ] || [ $lang == "auto" ];then 
++				echo "${LOGTIME} - 开始解压缩文件" >$LOG_FILE
+ 			elif [ $lang == "en" ] || [ $lang == "auto" ];then 
 -				echo "  ${LOGTIME} - Beginning to unzip file" >$LOG_FILE
 -			fi			   
-+				echo "${LOGTIME} - 开始解压缩文件" >$LOG_FILE
-+			elif [ $lang == "en" ] || [ $lang == "auto" ];then
 +				echo "${LOGTIME} - Beginning to unzip file" >$LOG_FILE
 +			fi
  		    unzip /tmp/trojan-go/trojan-go-"$MODELTYPE".zip >/dev/null 2>&1\
@@ -269,7 +245,7 @@ index 3d44c7f..5e85853 100644
 -			   echo "  ${LOGTIME} - Successfully downloaded core, updating now..." >$LOG_FILE
 -			fi			  
 +			   echo "${LOGTIME} - Successfully downloaded core, updating now..." >$LOG_FILE
-+			fi	  
++			fi
  			mv /tmp/trojan-go/trojan-go-$MODELTYPE/trojan-go /usr/bin/trojan-go >/dev/null 2>&1
  			chmod -R 755 /usr/bin
  			rm -rf /tmp/trojan-go >/dev/null 2>&1
@@ -294,10 +270,9 @@ index 3d44c7f..5e85853 100644
  	    else
  		  if [ $lang == "zh_cn" ];then
 -			echo "  ${LOGTIME} - 核心程序下载失败，请检查网络或稍后再试！" >$LOG_FILE
--		  elif [ $lang == "en" ] || [ $lang == "auto" ];then     
--			echo "  ${LOGTIME} - Core Update Error" >$LOG_FILE
 +			echo "${LOGTIME} - 核心程序下载失败，请检查网络或稍后再试！" >$LOG_FILE
-+		  elif [ $lang == "en" ] || [ $lang == "auto" ];then
+ 		  elif [ $lang == "en" ] || [ $lang == "auto" ];then     
+-			echo "  ${LOGTIME} - Core Update Error" >$LOG_FILE
 +			echo "${LOGTIME} - Core Update Error" >$LOG_FILE
  		  fi
  		  rm -rf /tmp/trojan-go/trojan-go-"$MODELTYPE".zip >/dev/null 2>&1
@@ -367,16 +342,18 @@ index 5c4a6ef..e289fdf 100644
 \ No newline at end of file
 +dnscrypt_start_service
 diff --git a/root/usr/share/trojan/iptables.sh b/root/usr/share/trojan/iptables.sh
-index 4ac63dd..04ab226 100644
+index 1d6a54e..4186d4d 100644
 --- a/root/usr/share/trojan/iptables.sh
 +++ b/root/usr/share/trojan/iptables.sh
-@@ -1,28 +1,28 @@
- #!/bin/sh	
- 	NAME=trojan
+@@ -1,27 +1,27 @@
+ #!/bin/sh 	
+ NAME=trojan
+-if [ "$1" = "start" ];then	
++if [ "$1" = "start" ];then
  	server=`awk '/remote_addr/ {print $0}' /etc/trojan/config.json | sed 's/\,//' | sed 's/\"//g' | grep : | awk -F ': ' '{print $2}'`
 -	udp_allow=$(uci get $NAME.@settings[0].udp 2>/dev/null)				
 -	if echo $server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/null; then         
-+	udp_allow=$(uci get $NAME.@settings[0].udp 2>/dev/null)		
++	udp_allow=$(uci get $NAME.@settings[0].udp 2>/dev/null)	
 +	if echo $server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/null; then
  		Server=$server
  	else
@@ -400,26 +377,18 @@ index 4ac63dd..04ab226 100644
 -		
 +
  	fi
--	
-+
- 
  	if [ -z "$(uci get firewall.$NAME 2>/dev/null)" ] || [ -z "$(uci get ucitrack.@$NAME[-1].init 2>/dev/null)" ]; then
  		uci delete ucitrack.@$NAME[-1] >/dev/null 2>&1
-@@ -34,29 +34,29 @@
+@@ -33,7 +33,7 @@ if [ "$1" = "start" ];then
  		uci set firewall.$NAME.type=script >/dev/null 2>&1
  		uci set firewall.$NAME.path=/var/etc/$NAME.include >/dev/null 2>&1
  		uci set firewall.$NAME.reload=1 >/dev/null 2>&1
 -	fi	
 +	fi
- 
  	if [ "$(uci get firewall.@defaults[0].forward)" != "ACCEPT" ]; then
  		uci set firewall.@defaults[0].forward=ACCEPT >/dev/null 2>&1
  		uci commit firewall >/dev/null 2>&1
- 		/etc/init.d/firewall restart >/dev/null 2>&1
- 	fi
--	
-+
- 	mkdir -p /var/etc
+@@ -43,12 +43,12 @@ if [ "$1" = "start" ];then
  	cat > "/var/etc/$NAME.include" <<-EOF
  		/etc/init.d/$NAME reload >/dev/null 2>&1
  	EOF
@@ -428,22 +397,14 @@ index 4ac63dd..04ab226 100644
  	proxy_mode=$(uci get $NAME.@global[0].proxy_mode 2>/dev/null)
  	ip route add local default dev lo table 100
 -	ip rule add fwmark 1 lookup 100	
--	
 +	ip rule add fwmark 1 lookup 100
-+
  	ipt6="/sbin/ip6tables"
--	
 -	iptables -t mangle -N TROJAN_GO	
-+
 +	iptables -t mangle -N TROJAN_GO
- 
  	wan=$(ifconfig | grep 'inet addr' | awk '{print $2}' | cut -d: -f2 2>/dev/null)
--	
-+
  	ipset create localnetwork hash:net
  	ipset add localnetwork 127.0.0.0/8
- 	ipset add localnetwork 10.0.0.0/8
-@@ -70,12 +70,12 @@
+@@ -63,12 +63,12 @@ if [ "$1" = "start" ];then
  		for wan_ip4s in $wan; do
  			ipset add localnetwork "$wan_ip4s" 2>/dev/null
  		done
@@ -454,18 +415,65 @@ index 4ac63dd..04ab226 100644
  	iptables -t mangle -A TROJAN_GO -m set --match-set reject_lan src -j RETURN
 -	iptables -t mangle -A TROJAN_GO -m set ! --match-set proxy_lan src -j RETURN				
 -	if [ "$proxy_mode" == "bypasscn" ];then	
-+	iptables -t mangle -A TROJAN_GO -m set ! --match-set proxy_lan src -j RETURN			
++	iptables -t mangle -A TROJAN_GO -m set ! --match-set proxy_lan src -j RETURN	
 +	if [ "$proxy_mode" == "bypasscn" ];then
  		sh /usr/bin/cnipset >/dev/null 2>&1
  		sleep 1
  		#iptables -t mangle -A TROJAN_GO -m set  --match-set chinav4 dst -j RETURN
-@@ -103,4 +103,4 @@
- 
+@@ -95,13 +95,13 @@ if [ "$1" = "start" ];then
+ 	fi
  	iptables -t mangle -A PREROUTING -p tcp -j TROJAN_GO
  	iptables -t mangle -A PREROUTING -p udp -j TROJAN_GO
--	
-\ No newline at end of file
-+	
+-fi	
++fi
+ if [ "$1" = "stop" ];then
+ 	rm -rf /var/etc/$NAME.include 2>/dev/null
+ 	ip route del local default dev lo table 100
+-	ip rule del fwmark 1 lookup 100		
++	ip rule del fwmark 1 lookup 100	
+ 	iptables -t mangle -F TROJAN_GO 2>/dev/null
+-	iptables -t mangle -X TROJAN_GO 2>/dev/null			
++	iptables -t mangle -X TROJAN_GO 2>/dev/null
+ 	ipset -! flush proxy_lan >/dev/null 2>&1
+ 	ipset -! flush reject_lan >/dev/null 2>&1
+ 	ipset -! flush gfw >/dev/null 2>&1
+@@ -110,8 +110,8 @@ if [ "$1" = "stop" ];then
+ 	ipset destroy reject_lan >/dev/null 2>&1
+ 	ipset destroy gfw >/dev/null 2>&1
+ 	ipset destroy proxy_lan >/dev/null 2>&1
+-	ipset destroy chinav4 >/dev/null 2>&1 
+-	ipset destroy chinav6 >/dev/null 2>&1 
++	ipset destroy chinav4 >/dev/null 2>&1
++	ipset destroy chinav6 >/dev/null 2>&1
+ 	ipset destroy localnetwork >/dev/null 2>&1
+ 
+ 	nat=$(iptables -nvL PREROUTING -t nat | sed 1,2d | sed -n '/tcp dpt:53/=' | sort -r)
+@@ -121,15 +121,15 @@ if [ "$1" = "stop" ];then
+ 	mag=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/TROJAN_GO/=' | sort -r)
+ 	for nat_indexv in $mag; do
+ 		iptables -t mangle -D PREROUTING $nat_indexv >/dev/null 2>&1
+-	done									
++	done						
+ 	proxy_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/proxy_lan src/=' | sort -r)
+ 	for natx in $proxy_lan; do
+ 		iptables -t mangle -D PREROUTING $natx >/dev/null 2>&1
+-	done		
++	done
+ 	reject_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/reject_lan src/=' | sort -r)
+ 	for natx in $reject_lan; do
+ 		iptables -t mangle -D PREROUTING $natx >/dev/null 2>&1
+-	done		
++	done
+ 	chinav4_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/chinav4/=' | sort -r)
+ 	for natv4 in $chinav4_lan; do
+ 		iptables -t mangle -D PREROUTING $natv4 >/dev/null 2>&1
+@@ -147,5 +147,5 @@ if [ "$1" = "stop" ];then
+ 	for prer in $pre; do
+ 		iptables -t mangle -D PREROUTING $prer 2>/dev/null
+ 	done
+-	iptables -t nat -I PREROUTING -p tcp --dport 53 -j ACCEPT				
++	iptables -t nat -I PREROUTING -p tcp --dport 53 -j ACCEPT
+ fi
 diff --git a/root/usr/share/trojan/pdnsd.sh b/root/usr/share/trojan/pdnsd.sh
 index d984360..6d89b90 100644
 --- a/root/usr/share/trojan/pdnsd.sh
@@ -509,7 +517,7 @@ index d984360..6d89b90 100644
 -/usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d
 +/usr/sbin/pdnsd -c /var/etc/pdnsd.conf >/dev/null 2>&1 &
 diff --git a/root/usr/share/trojan/subscribe.sh b/root/usr/share/trojan/subscribe.sh
-index bdefde8..25becdb 100644
+index bdefde8..9b88cff 100644
 --- a/root/usr/share/trojan/subscribe.sh
 +++ b/root/usr/share/trojan/subscribe.sh
 @@ -1,6 +1,6 @@
@@ -520,15 +528,6 @@ index bdefde8..25becdb 100644
  lang=$(uci get luci.main.lang 2>/dev/null)
  server_file="/tmp/server_file.yaml"
  single_server="/tmp/single_server.yaml"
-@@ -8,7 +8,7 @@ REAL_LOG="/usr/share/trojan/readlog.txt"
- CFG_FILE="/etc/config/trojan"
- 
- name=trojan
--subscribe_url=($(uci get $name.@server_subscribe[0].subscribe_url)) 
-+subscribe_url=($(uci get $name.@server_subscribe[0].subscribe_url))
- [ ${#subscribe_url[@]} -eq 0 ] && exit 1
- for ((o=0;o<${#subscribe_url[@]};o++))
- do
 @@ -24,7 +24,7 @@ urldecode(){
  num=$(grep -c "password=" $server_file 2>/dev/null)
  count=1
@@ -558,8 +557,7 @@ index bdefde8..25becdb 100644
    ws_type="$(cfg_get "type=" "$single_server")"
  
    ws_host="$(cfg_get "host=" "$single_server")"
--   
-+
+    
    ws_path="$(cfg_get "path=" "$single_server")"
 - 
 +
@@ -574,7 +572,7 @@ index bdefde8..25becdb 100644
 -  fi   
 -	  
 +  fi
-+ 
++
    if [ $lang == "en" ] || [ $lang == "auto" ];then
  	echo "Now Reading 【Trojan-Go】 - 【$sever_name】 Servers..." >$REAL_LOG
    elif [ $lang == "zh_cn" ];then
@@ -582,15 +580,16 @@ index bdefde8..25becdb 100644
 -  fi 
 -				
 +  fi
-+		
++
    name=trojan
    uci_name_tmp=$(uci add $name servers)
  
    uci_set="uci -q set $name.$uci_name_tmp."
    uci_add="uci -q add_list $name.$uci_name_tmp."
 -   
+-  ${uci_set}name="$sever_name" 
 +
-   ${uci_set}name="$sever_name" 
++  ${uci_set}name="$sever_name"
    ${uci_set}remote_addr="$server" >/dev/null 2>&1
    ${uci_set}remote_port="$port" >/dev/null 2>&1
    ${uci_set}password="$server_passwd"  >/dev/null 2>&1
@@ -608,21 +607,8 @@ index bdefde8..25becdb 100644
 -/etc/init.d/trojan restart >/dev/null 2>&1
 \ No newline at end of file
 +/etc/init.d/trojan restart >/dev/null 2>&1
-diff --git a/root/usr/share/trojan/traffic.sh b/root/usr/share/trojan/traffic.sh
-index a0504dc..7c9b62e 100644
---- a/root/usr/share/trojan/traffic.sh
-+++ b/root/usr/share/trojan/traffic.sh
-@@ -24,7 +24,7 @@ else
- fi
- 
- if [ "$?" -eq "0" ]; then
--	if [ ! -z $password ];then 
-+	if [ ! -z $password ];then
- 		speed=`${Core} -api-addr 127.0.0.1:57721 -api traffic -target-password "${password}"  | sed 's/{//g' | sed 's/\}//g'  | sed 's/\"//g' | grep "speed_current:" | awk -F 'speed_current:' '{print $2}'  | grep ":" | awk -F ':' '{print $2 " " $3}' | sed 's/download_speed //g'
- 		`
- 		if [ $speed ];then
 diff --git a/root/usr/share/trojan/watchdog.sh b/root/usr/share/trojan/watchdog.sh
-index 050bf2e..45f204d 100644
+index 1f42f6a..015779a 100644
 --- a/root/usr/share/trojan/watchdog.sh
 +++ b/root/usr/share/trojan/watchdog.sh
 @@ -1,7 +1,7 @@
@@ -646,6 +632,6 @@ index 050bf2e..45f204d 100644
  	fi
 -	fi	
 +	fi
- 	if ! pidof trojan >/dev/null; then
+ 	if ! pidof trojan-go >/dev/null; then
  		/etc/init.d/trojan restart 2>&1 &
  	fi
