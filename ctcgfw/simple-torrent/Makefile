@@ -9,16 +9,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=simple-torrent
-PKG_VERSION:=1.2.20
+PKG_VERSION:=1.2.21
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/boypt/simple-torrent/tar.gz/$(PKG_VERSION)?
-PKG_HASH:=470e5007a87aa024d3d410939ebb407bde7f5b36dba7ba7d551b77d6b448a267
+PKG_HASH:=561d75c9a77520bb4d2d58fcd0dc0827ce72cf24863cb92aa8c73b2ba777e2fc
 
 PKG_LICENSE:=AGPL-3.0
 PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=CN_SZTL <cnsztl@immortalwrt.org>
+PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SIMPLE_TORRENT_COMPRESS_GOPROXY \
@@ -30,18 +30,17 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=cloud-torrent
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:= \
-	main.VERSION=$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=main.VERSION=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
-include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
+include ../../lang/golang/golang-package.mk
 
 define Package/simple-torrent
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=BitTorrent
   TITLE:=A self-hosted remote torrent client
-  URL:=URL:=https://github.com/boypt/simple-torrent
+  URL:=https://github.com/boypt/simple-torrent
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +libstdcpp
 endef
 
@@ -63,7 +62,7 @@ endef
 
 ifeq ($(CONFIG_SIMPLE_TORRENT_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
-	export GOPROXY=https://goproxy.io
+	export GOPROXY=https://goproxy.baidu.com
 endif
 
 define Build/Compile
