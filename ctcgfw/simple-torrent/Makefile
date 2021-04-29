@@ -33,7 +33,7 @@ GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.VERSION=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
-include ../../lang/golang/golang-package.mk
+include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/simple-torrent
   SECTION:=net
