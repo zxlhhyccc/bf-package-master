@@ -19,7 +19,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
   TITLE:=phtunnel
-  DEPENDS:=+librt +libpthread +libc +wget-ssl @!PACKAGE_phddns
+  DEPENDS:=+librt +libpthread +libc +wget @!PACKAGE_phddns
 endef
 
 
