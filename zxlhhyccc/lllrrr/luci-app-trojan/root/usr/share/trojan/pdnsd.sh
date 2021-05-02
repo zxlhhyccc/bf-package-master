@@ -61,4 +61,4 @@ server {
 }
 EOF
 
-/usr/sbin/pdnsd -c /var/etc/pdnsd.conf >/dev/null 2>&1 &
+/usr/sbin/pdnsd -c /var/etc/pdnsd.conf -d

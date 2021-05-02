@@ -19,7 +19,7 @@ local securitys = {
 m = Map(trojan, translate("Add/Edit Server"))
 m.redirect = luci.dispatcher.build_url("admin/services/trojan/servers")
 if m.uci:get(trojan, sid) ~= "servers" then
-	luci.http.redirect(m.redirect)
+	luci.http.redirect(m.redirect) 
 	return
 end
 
@@ -27,13 +27,13 @@ s = m:section(NamedSection, sid, "servers")
 s.anonymous = true
 s.addremove   = false
 
-o = s:option(DummyValue,"trojan_url","trojan-go URL")
+o = s:option(DummyValue,"trojan_url","Trojan URL") 
 o.rawhtml  = true
 o.template = "trojan/url"
 o.value =sid
 
 o = s:option(Value, "name", translate("Alias"))
-o.default = "Trojan"
+o.default = "Trojan - Server"
 o.rmempty = false
 
 o = s:option(Value, "remote_addr", translate("Server Address"))
@@ -55,7 +55,6 @@ o.rmempty = true
 -- fingerPrint --
 o = s:option(ListValue, "fingerprint", translate("FingerPrint"))
 o.default = "firefox"
-o:value("", translate("None"))
 o:value("firefox", translate("firefox"))
 o:value("chrome", translate("chrome"))
 o:value("ios", translate("ios"))
@@ -166,7 +165,7 @@ o.rmempty = true
 o:depends("websocket", "true")
 o:depends("shadowdocks", "true")
 
-o = s:option(Value, "websocket_host", translate("Websocket Host"))
+o = s:option(Value, "websocket_host", translate("Websockrt Host"))
 o.placeholder = translate("example.com")
 o.rmempty = true
 o:depends("websocket", "true")
