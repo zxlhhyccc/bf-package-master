@@ -1,13 +1,13 @@
-#!/bin/sh 	
+#!/bin/sh
 NAME=trojan
 if [ "$1" = "start" ];then
 	server=`awk '/remote_addr/ {print $0}' /etc/trojan/config.json | sed 's/\,//' | sed 's/\"//g' | grep : | awk -F ': ' '{print $2}'`
-	udp_allow=$(uci get $NAME.@settings[0].udp 2>/dev/null)	
+	udp_allow=$(uci get $NAME.@settings[0].udp 2>/dev/null)
 	if echo $server | grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/null; then
 		Server=$server
 	else
 		Server=`nslookup ${server} | grep 'Address 1' | sed 's/Address 1: //g'`
-	fi	
+	fi
 	if [ "$(uci get $NAME.@settings[0].access_control 2>/dev/null)" = "1" ] && [ -n "$(uci get $NAME.@settings[0].proxy_lan_ips 2>/dev/null)" ]; then
 		proxy_ips=$(uci get $NAME.@settings[0].proxy_lan_ips 2>/dev/null)
 		ipset -! -R <<-EOF
@@ -63,11 +63,11 @@ if [ "$1" = "start" ];then
 		for wan_ip4s in $wan; do
 			ipset add localnetwork "$wan_ip4s" 2>/dev/null
 		done
-	fi
+	fi	
 	iptables -t mangle -N TROJAN_GO
 	iptables -t mangle -A TROJAN_GO -m set --match-set localnetwork dst -j RETURN
 	iptables -t mangle -A TROJAN_GO -m set --match-set reject_lan src -j RETURN
-	iptables -t mangle -A TROJAN_GO -m set ! --match-set proxy_lan src -j RETURN	
+	iptables -t mangle -A TROJAN_GO -m set ! --match-set proxy_lan src -j RETURN
 	if [ "$proxy_mode" == "bypasscn" ];then
 		sh /usr/bin/cnipset >/dev/null 2>&1
 		sleep 1
@@ -99,7 +99,7 @@ fi
 if [ "$1" = "stop" ];then
 	rm -rf /var/etc/$NAME.include 2>/dev/null
 	ip route del local default dev lo table 100
-	ip rule del fwmark 1 lookup 100	
+	ip rule del fwmark 1 lookup 100
 	iptables -t mangle -F TROJAN_GO 2>/dev/null
 	iptables -t mangle -X TROJAN_GO 2>/dev/null
 	ipset -! flush proxy_lan >/dev/null 2>&1
@@ -121,7 +121,7 @@ if [ "$1" = "stop" ];then
 	mag=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/TROJAN_GO/=' | sort -r)
 	for nat_indexv in $mag; do
 		iptables -t mangle -D PREROUTING $nat_indexv >/dev/null 2>&1
-	done						
+	done
 	proxy_lan=$(iptables -nvL PREROUTING -t mangle | sed 1,2d | sed -n '/proxy_lan src/=' | sort -r)
 	for natx in $proxy_lan; do
 		iptables -t mangle -D PREROUTING $natx >/dev/null 2>&1

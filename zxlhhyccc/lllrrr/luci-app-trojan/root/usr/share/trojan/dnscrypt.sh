@@ -39,7 +39,7 @@ create_config_file() {
     config_get_bool ephemeral_keys  $1 'ephemeral_keys' '0'
     config_get_bool local_cache     $1 'local_cache'    '0'
     config_get_bool block_ipv6      $1 'block_ipv6'     '0'
-
+ 
 
     append_param_not_empty  "ResolverName"  "$resolver"         $config_path
     append_param            "ResolversList" "$resolvers_list"   $config_path

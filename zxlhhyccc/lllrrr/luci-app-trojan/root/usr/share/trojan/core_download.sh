@@ -41,12 +41,12 @@ fi
 update(){
 		if [ -f /tmp/trojan-go/trojan-go-"$MODELTYPE".zip ];then
 			rm -rf /tmp/trojan-go/trojan-go-"$MODELTYPE".zip >/dev/null 2>&1
-		fi
+		fi		
 		if [ $lang == "zh_cn" ];then
 			 echo "${LOGTIME} - 开始下载 trojan-go 内核..." >$LOG_FILE
 		elif [ $lang == "en" ] || [ $lang == "auto" ];then
 			 echo "${LOGTIME} - Starting trojan-go Core download" >$LOG_FILE
-		fi		
+		fi
 		mkdir p /tmp/trojan-go >/dev/null 2>&1
 		cd /tmp/trojan-go
 		wget --no-check-certificate  https://github.com/"$source"/releases/download/"$VER"/trojan-go-"$MODELTYPE".zip -O 2>&1 >1 /tmp/trojan-go/trojan-go-"$MODELTYPE".zip
@@ -85,7 +85,7 @@ update(){
 	    else
 		  if [ $lang == "zh_cn" ];then
 			echo "${LOGTIME} - 核心程序下载失败，请检查网络或稍后再试！" >$LOG_FILE
-		  elif [ $lang == "en" ] || [ $lang == "auto" ];then     
+		  elif [ $lang == "en" ] || [ $lang == "auto" ];then
 			echo "${LOGTIME} - Core Update Error" >$LOG_FILE
 		  fi
 		  rm -rf /tmp/trojan-go/trojan-go-"$MODELTYPE".zip >/dev/null 2>&1
