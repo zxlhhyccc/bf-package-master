@@ -66,8 +66,8 @@ set_forward_dnsmasq(){
 			uci set dhcp.@dnsmasq[0].resolvfile=/etc/resolv-crypt.conf
 		fi
 		uci set dhcp.@dnsmasq[0].allservers=0
-	fi	       	 
-	uci commit dhcp	   
+	fi
+	uci commit dhcp
 }
 
 remove_forward_dnsmasq() {

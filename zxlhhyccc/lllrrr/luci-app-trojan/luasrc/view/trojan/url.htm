@@ -134,7 +134,7 @@
 	function export_trojan_url(btn, urlname, sid) {
 		var s = document.getElementById(urlname + '-status');
 		if (!s)
-			return false;		
+			return false;
 		var v_remote_addr = document.getElementsByName('cbid.trojan.' + sid + '.remote_addr')[0];
 		var v_remote_port = document.getElementsByName('cbid.trojan.' + sid + '.remote_port')[0];
 		var v_password = document.getElementsByName('cbid.trojan.' + sid + '.password')[0];
@@ -150,7 +150,7 @@
 		var enc2 = encodeURIComponent(":")
 		if (v_shadowdocks.value == "true"){
 			var ss = enc + v_cipher.value + enc2 + v_shadowdocks_passw.value;
-		}	
+		}
 		if (v_shadowdocks.value == "true" && v_websocket.value == "true"){
 			var trojan_str = v_password.value + "@" + v_remote_addr.value + ":" + v_remote_port.value + "/?" +
 				"sni=" + v_sni.value +
