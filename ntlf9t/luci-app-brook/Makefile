@@ -11,7 +11,7 @@ include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=Brook LuCI interface
 LUCI_DESCRIPTION:=LuCI Support for Brook.
-LUCI_DEPENDS:=+ipset +ip +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +brook
+LUCI_DEPENDS:=+ipset +ip +iptables +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +brook
 LUCI_PKGARCH:=all
 
 PKG_NAME:=luci-app-brook
