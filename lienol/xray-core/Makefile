@@ -29,7 +29,7 @@ GO_PKG_BUILD_PKG:=github.com/xtls/xray-core/main
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/core.build=OpenWrt \
-	$(GO_PKG)/core.version=$(PKG_VERSION)
+	$(GO_PKG)/core.version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk

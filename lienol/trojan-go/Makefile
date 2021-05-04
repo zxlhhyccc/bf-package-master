@@ -36,7 +36,7 @@ GO_PKG_BUILD_PKG:=$$(GO_PKG)
 GO_PKG_TAGS:=full
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/constant.Version=$(PKG_VERSION) \
+	$(GO_PKG)/constant.Version=v$(PKG_VERSION) \
 	$(GO_PKG)/constant.Commit=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
