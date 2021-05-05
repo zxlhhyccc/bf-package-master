@@ -202,7 +202,7 @@ define DefineQtbaseLibrary
 endef
 
 $(eval $(call DefineQtbaseLibrary,core,,+QT5_INCLUDE_ATOMIC:libatomic +libzstd +libpcre2-16 +zlib +libdouble-conversion))
-$(eval $(call DefineQtbaseLibrary,network,core,+libopenssl +zlib))
+$(eval $(call DefineQtbaseLibrary,network,core,+krb5-libs +libopenssl +zlib))
 $(eval $(call DefineQtbaseLibrary,xml,core,))
 $(eval $(call DefineQtbaseLibrary,sql,core,+libsqlite3))
 
