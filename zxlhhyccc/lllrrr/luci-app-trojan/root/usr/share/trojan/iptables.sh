@@ -94,7 +94,7 @@ if [ "$1" = "start" ];then
 		fi
 	else
 		iptables -t mangle -A TROJAN_GO -p tcp -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01
-		iptables -t mangle -A TROJAN_GO -p udp -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01	
+		iptables -t mangle -A TROJAN_GO -p udp -j TPROXY --on-port 51837 --tproxy-mark 0x01/0x01
 	fi
 	iptables -t mangle -A PREROUTING -p tcp -j TROJAN_GO
 	iptables -t mangle -A PREROUTING -p udp -j TROJAN_GO

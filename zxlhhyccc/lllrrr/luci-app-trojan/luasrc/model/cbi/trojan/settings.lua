@@ -1,4 +1,4 @@
-local uci 	= require("luci.model.uci").cursor()
+local uci 		= require("luci.model.uci").cursor()
 local fs    	= require("nixio.fs")
 local trojan 	= "trojan"
 local res_input = "/usr/share/trojan/dnscrypt-resolvers.csv"
