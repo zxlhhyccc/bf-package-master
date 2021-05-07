@@ -53,7 +53,7 @@ var CBIQBitStatus = form.DummyValue.extend({
 				if (res.running) {
 					L.dom.content(label, E('em', {}, _('The qBittorrent daemon is running. Click the button below to startup the WebUI.')));
 					btn.textContent = 'PID: %s'.format(res.pid);
-					btn.onclick = onclick_action.bind(this, 'webui');
+					btn.onclick = onclick_action.bind(this, 'webgui');
 				} else {
 					L.dom.content(label, E('em', {}, _('The qBittorrent daemon is not running. Click the button below to startup the daemon.')));
 					btn.textContent = _('Start qBittorrent');
@@ -96,7 +96,7 @@ function encryptPassword (pwd) {
 };
 
 function onclick_action(target) {
-	if ( target == "webui" ) {
+	if ( target == "webgui" ) {
 		Promise.all([
 			callGetLanIPAddr(),
 			callUciGet('qbittorrent', 'main', 'Port')
@@ -145,7 +145,7 @@ return L.view.extend({
 		s.tab('connection', _('Connection Settings'));
 		s.tab('downloads', _('Downloads Settings'));
 		s.tab('bittorrent', _('Bittorrent Settings'));
-		s.tab('webui', _('WebUI Settings'));
+		s.tab('webgui', _('WebUI Settings'));
 		s.tab('advanced', _('Advance Settings'));
 
 		o = s.taboption('basic', form.Flag, 'enabled', _('Enabled'));
@@ -452,57 +452,57 @@ return L.view.extend({
 		o.datatype = 'integer';
 		o.placeholder = '60';
 
-		o = s.taboption('webui', form.Flag, 'UseUPnP', _('Use UPnP for WebUI'),
+		o = s.taboption('webgui', form.Flag, 'UseUPnP', _('Use UPnP for WebUI'),
 			_('Using the UPnP / NAT-PMP port of the router for connecting to WebUI.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('webui', form.Value, 'Username', _('Username'), _('The login name for WebUI.'));
+		o = s.taboption('webgui', form.Value, 'Username', _('Username'), _('The login name for WebUI.'));
 		o.placeholder = 'admin';
 
-		o = s.taboption('webui', form.Value, 'Password', _('Password'), _('The login password for WebUI.'));
+		o = s.taboption('webgui', form.Value, 'Password', _('Password'), _('The login password for WebUI.'));
 		o.password = true;
 
-		if (v && v.split('.')[0] >= 4 && v.split('.')[1] > 1) o = s.taboption('webui', form.HiddenValue, 'Password_PBKDF2');
+		if (v && v.split('.')[0] >= 4 && v.split('.')[1] > 1) o = s.taboption('webgui', form.HiddenValue, 'Password_PBKDF2');
 
-		o = s.taboption('webui', form.Value, 'Address', _('Listening Address'), _('The listening IP address for WebUI.'));
+		o = s.taboption('webgui', form.Value, 'Address', _('Listening Address'), _('The listening IP address for WebUI.'));
 		o.datatype = 'ipaddr';
 
-		o = s.taboption('webui', form.Value, 'Port', _('Listening Port'), _('The listening port for WebUI.'));
+		o = s.taboption('webgui', form.Value, 'Port', _('Listening Port'), _('The listening port for WebUI.'));
 		o.datatype = 'port';
 		o.placeholder = '8080';
 
-		o = s.taboption('webui', form.Flag, 'CSRFProtection', _('CSRF Protection'),
+		o = s.taboption('webgui', form.Flag, 'CSRFProtection', _('CSRF Protection'),
 			_('Enable Cross-Site Request Forgery (CSRF) protection.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.disabled;
 
-		o = s.taboption('webui', form.Flag, 'ClickjackingProtection', _('Clickjacking Protection'),
+		o = s.taboption('webgui', form.Flag, 'ClickjackingProtection', _('Clickjacking Protection'),
 			_('Enable clickjacking protection.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('webui', form.Flag, 'HostHeaderValidation', _('Host Header Validation'),
+		o = s.taboption('webgui', form.Flag, 'HostHeaderValidation', _('Host Header Validation'),
 			_('Validate the host header.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('webui', form.Flag, 'LocalHostAuth', _('Local Host Authentication'),
+		o = s.taboption('webgui', form.Flag, 'LocalHostAuth', _('Local Host Authentication'),
 			_('Force authentication for clients on localhost.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('webui', form.Flag, 'AuthSubnetWhitelistEnabled', _('Enable Subnet Whitelist'));
+		o = s.taboption('webgui', form.Flag, 'AuthSubnetWhitelistEnabled', _('Enable Subnet Whitelist'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.disabled;
 
-		o = s.taboption('webui', form.DynamicList, 'AuthSubnetWhitelist', _('Subnet Whitelist'));
+		o = s.taboption('webgui', form.DynamicList, 'AuthSubnetWhitelist', _('Subnet Whitelist'));
 		o.depends('AuthSubnetWhitelistEnabled', 'true');
 
 		o = s.taboption('advanced', form.Flag, 'AnonymousMode', _('Anonymous Mode'), '%s %s %s.'.format(
