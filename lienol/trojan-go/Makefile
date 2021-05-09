@@ -6,20 +6,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=trojan-go
-PKG_VERSION:=0.10.0
+PKG_VERSION:=0.10.1
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/p4gefau1t/trojan-go.git
-PKG_SOURCE_VERSION:=a9ce6d4ada9143d58e8d1373d23f9ebfe871119e
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_MIRROR_HASH:=6db5dfc053c063d659608b8584062c8f99fe91ed5055284ea50de146737a4d71
-
 #PKG_SOURCE_PROTO:=git
-#PKG_SOURCE_URL:=https://github.com/frainzy1477/trojan-go.git
-#PKG_SOURCE_VERSION:=4932d5071f8188d0945526ccde59f2c2f8e5708e
+#PKG_SOURCE_URL:=https://github.com/p4gefau1t/trojan-go.git
+#PKG_SOURCE_VERSION:=a9ce6d4ada9143d58e8d1373d23f9ebfe871119e
 #PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-#PKG_MIRROR_HASH:=6b31bcd79d2dc4ac742b58c2459d5e9161bafe755d3942be2743670ed48562de
+#PKG_MIRROR_HASH:=6db5dfc053c063d659608b8584062c8f99fe91ed5055284ea50de146737a4d71
+
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/frainzy1477/trojan-go.git
+PKG_SOURCE_VERSION:=a73be3d514b0b6c3ba403d2f67a169acec388749
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_MIRROR_HASH:=7d18e669d4648f7f195dbba09fd870234bb0815bf76aa2e6e7e27df1e7984c2f
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_TROJAN_GO_COMPRESS_GOPROXY \
@@ -29,8 +29,8 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=github.com/p4gefau1t/trojan-go
-#GO_PKG:=github.com/frainzy1477/trojan-go
+#GO_PKG:=github.com/p4gefau1t/trojan-go
+GO_PKG:=github.com/frainzy1477/trojan-go
 GO_PKG_BUILD_PKG:=$$(GO_PKG)
 
 GO_PKG_TAGS:=full
