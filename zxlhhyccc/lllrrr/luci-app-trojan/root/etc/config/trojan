@@ -11,7 +11,7 @@ config settings
 	option log_level '1'	
 	option dns_mode 'pdnsd'
 	option tunnel_forward '8.8.4.4:53'
-
+	
 config server_subscribe
 	list subscribe_url ''
 	option auto_update '0'
