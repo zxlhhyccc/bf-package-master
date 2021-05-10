@@ -572,21 +572,21 @@
 					var dnl = 0;
 				}else{
 					var dnl = dnl_spd;
-				}			
+				}
 			}else{
 				var upl_spd = value.split(",")[1];
 				if (upl_spd == "" || upl_spd == "undefined" || upl_spd == "NaN"){
 					var upl = 0;
 				}else{
 					var upl = upl_spd;
-				}				
+				}
 				var dnl_spd = value.split(",")[2];
 				if (dnl_spd == "" || dnl_spd == "undefined" || dnl_spd == "NaN"){
 					var dnl = 0;
 				}else{
 					var dnl = dnl_spd;
 				}						
-			}			
+			}
 			var uplspd = flow(upl);
 			var dnlspd = flow(dnl);			
 			document.getElementById('_speed_upload').innerHTML = uplspd;
@@ -613,9 +613,9 @@
 			status.taobao ? $(".taobao").attr("src", _IMG + "img/site_icon_02.png") : $(".taobao").attr("src", _IMG + "img/site_icon1_02.png");
 			status.taobao ? document.getElementById('status_taobao').innerHTML = '<b class="green"><%:NORMAL%></b>' : document.getElementById('status_taobao').innerHTML = '<b class="red"><%:NO ACCESS%></b>';
 			status.google ? $(".google").attr("src", _IMG + "img/site_icon_03.png") : $(".google").attr("src", _IMG + "img/site_icon1_03.png");
-			status.google ? document.getElementById('status_google').innerHTML = '<b class="green"><%:NORMAL%></b>' : document.getElementById('status_google').innerHTML = '<b class="red"><%:NO ACCESS%></b>';						
+			status.google ? document.getElementById('status_google').innerHTML = '<b class="green"><%:NORMAL%></b>' : document.getElementById('status_google').innerHTML = '<b class="red"><%:NO ACCESS%></b>';
 			status.youtube ? $(".youtube").attr("src", _IMG + "img/site_icon_04.png") : $(".youtube").attr("src", _IMG + "img/site_icon1_04.png");
-			status.youtube ? document.getElementById('status_youtube').innerHTML = '<b class="green"><%:NORMAL%></b>' : document.getElementById('status_youtube').innerHTML = '<b class="red"><%:NO ACCESS%></b>';			
+			status.youtube ? document.getElementById('status_youtube').innerHTML = '<b class="green"><%:NORMAL%></b>' : document.getElementById('status_youtube').innerHTML = '<b class="red"><%:NO ACCESS%></b>';
 		}
 		XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "trojan", "web")%>', null, function(x, status)  {
 				wirte(status);
