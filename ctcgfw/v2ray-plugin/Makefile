@@ -49,7 +49,7 @@ config V2RAY_PLUGIN_COMPRESS_UPX
 	default y
 endef
 
-ifeq ($(CONFIG_GOWEBDAV_COMPRESS_GOPROXY),y)
+ifeq ($(CONFIG_V2RAY_PLUGIN_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
 	export GOPROXY=https://goproxy.io
 endif
