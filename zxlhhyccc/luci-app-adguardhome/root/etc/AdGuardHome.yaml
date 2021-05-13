@@ -42,7 +42,7 @@ dns:
   - 114.114.114.114
   - 2620:fe::10
   - 2620:fe::fe:10
-  all_servers: true
+  all_servers: false
   fastest_addr: false
   allowed_clients: []
   disallowed_clients: []
@@ -233,4 +233,4 @@ log_max_size: 100
 log_max_age: 3
 log_file: ""
 verbose: false
-schema_version: 8
+schema_version: 7
