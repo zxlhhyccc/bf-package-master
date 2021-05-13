@@ -1,5 +1,3 @@
-# Copyright (C) 2018-2019 Lienol
-#
 # This is free software, licensed under the Apache License, Version 2.0 .
 #
 
@@ -7,7 +5,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-adguardhome
 PKG_VERSION:=1.8
-PKG_RELEASE:=20200824
+PKG_RELEASE:=20200910
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -39,7 +37,7 @@ define Package/luci-app-adguardhome/conffiles
 endef
 
 define Package/luci-app-adguardhome/install
-    $(INSTALL_DIR) $(1)/usr/lib/lua/luci
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci
 	cp -pR ./luasrc/* $(1)/usr/lib/lua/luci
 	$(INSTALL_DIR) $(1)/
 	cp -pR ./root/* $(1)/
@@ -49,6 +47,7 @@ endef
 
 define Package/luci-app-adguardhome/postinst
 #!/bin/sh
+	chmod 755 /usr/share/AdGuardHome/*
 	/etc/init.d/AdGuardHome enable >/dev/null 2>&1
 	enable=$(uci get AdGuardHome.AdGuardHome.enabled 2>/dev/null)
 	if [ "$enable" == "1" ]; then
