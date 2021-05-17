@@ -355,6 +355,7 @@ local function processData(szType, content)
 			if params.type == 'grpc' then
 				result.serviceName = params.serviceName
 			end
+			
 			if params.security == "tls" then
 				result.tls = "1"
 				result.tls_host = params.sni or host[1]
