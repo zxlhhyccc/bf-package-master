@@ -65,7 +65,7 @@ endef
 define Build/Configure
 	true
 ifeq ($(CONFIG_VERYSYNC_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/verysync-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/verysync-linux-$(PKG_ARCH_VERYSYNC)-v$(PKG_VERSION)/verysync
 endif
 endef
 
@@ -75,7 +75,7 @@ endef
 
 define Package/verysync/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/verysync-linux-$(PKG_ARCH_VERYSYNC)-$(PKG_VERSION)/verysync $(1)/usr/bin/verysync
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/verysync-linux-$(PKG_ARCH_VERYSYNC)-v$(PKG_VERSION)/verysync $(1)/usr/bin/verysync
 endef
 
 $(eval $(call BuildPackage,verysync))
