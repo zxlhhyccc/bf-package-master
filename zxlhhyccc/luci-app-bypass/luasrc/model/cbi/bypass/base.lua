@@ -63,11 +63,6 @@ o=s:option(Flag,"gfw_mode",translate("Load GFW List"),
 translate("If the domestic DNS does not hijack foreign domain name to domestic IP, No need to be enabled"))
 o:depends("run_mode","router")
 
-o=s:option(Flag,"pre_ip",translate("Preload IP"),
-translate("Preload Google and Telegram IP segments (GFW mode only)"))
-o:depends("run_mode","gfw")
-o.default=1
-
 o=s:option(ListValue,"dports",translate("Proxy Ports"))
 o:value("1",translate("All Ports"))
 o:value("2",translate("Only Common Ports"))
