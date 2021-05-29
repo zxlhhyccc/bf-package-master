@@ -39,17 +39,17 @@ action_interface(){
 sync_redial(){
 	local wan_select=$1
 	local dialnum=$2
-	p_ifname=`uci -q get network.$wan_select.ifname`
+	p_device=`uci -q get network.$wan_select.device`
 	ppp_num=$(get_ppp_num $wan_select)
 	if [ "$old_frame" -eq 0 ]; then
-		s_ifname=`uci show network| grep macvlandev_macvlan | grep "ifname='$p_ifname'"|awk -F'.' '{print $2}' |awk -F'_' '{print $2}'`
+		s_device=`uci show network| grep macvlandev_macvlan | grep "device='$p_device'"|awk -F'.' '{print $2}' |awk -F'_' '{print $2}'`
 	else
-		s_ifname=`uci show network| grep "ifname='$p_ifname" | awk -F'.' '{print $2}' | grep vwan`
+		s_device=`uci show network| grep "device='$p_device" | awk -F'.' '{print $2}' | grep vwan`
 	fi
 	first_device=$wan_select
-	for ifname in $s_ifname
+	for device in $s_device
 	do
-		s_device=vwan${ifname:7}
+		s_device=vwan${device:7}
 		s_online_num=$(get_ppp_num $s_device)
 		ppp_num=$(($ppp_num + $s_online_num))
 		first_device="$first_device $s_device"
