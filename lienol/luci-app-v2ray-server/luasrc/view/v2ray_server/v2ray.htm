@@ -177,7 +177,7 @@ local v2ray_version=luci.sys.exec("[ -f '/usr/bin/v2ray' ] && /usr/bin/v2ray -ve
 	<div class="cbi-value-field">
 		<div class="cbi-value-description">
 			<span>【 <%=v2ray_version%>】</span>
-			<input class="cbi-button cbi-input-apply" type="submit" id="_v2ray-check_btn" onclick="onBtnClick_v2ray(this);" value="<%:Manually update%>">
+			<input class="btn cbi-button cbi-input-apply" type="submit" id="_v2ray-check_btn" onclick="onBtnClick_v2ray(this);" value="<%:Manually update%>">
 			<span id="_v2ray-check_btn-detail"></span>
 		</div>
 	</div>
