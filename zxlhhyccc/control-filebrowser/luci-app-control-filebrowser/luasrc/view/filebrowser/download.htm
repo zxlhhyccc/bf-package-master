@@ -155,7 +155,7 @@ local dsp = require "luci.dispatcher"
 
 <%+cbi/valueheader%>
 	<% if self:cfgvalue(section) ~= false then %>
-		<input class="cbi-button cbi-input-<%=self.inputstyle or "button" %>" type="button"<%=
+		<input class="btn cbi-button cbi-input-<%=self.inputstyle or "button" %>" type="button"<%=
 			attr("name", cbid) ..
 			attr("id", self.id or cbid) ..
 			attr("value", self.inputtitle or self.title) ..
