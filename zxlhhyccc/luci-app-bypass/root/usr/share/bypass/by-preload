@@ -4,6 +4,16 @@ if [ "$2" = ns ];then
 	[ -n "$4" ] && while ! nslookup $4 >/dev/null 2>&1;do :;done
 fi
 
+if [ "$(uci -q get bypass.@global[0].nf_server)" ];then
+		B=1
+	while ! A=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/f6UiINtMDSmglMK4/A9xehMB2/ht2ix0v4Aj/GMG3rzA5eI || curl -Lfsm 9 https://raw.githubusercontent.com/f6UiINtMDSmglMK4/A9xehMB2/master/ht2ix0v4Aj/GMG3rzA5eI);do
+		[ $B -ge 20 ] && break || let B++
+		sleep 2
+	done
+	A=$(echo "$A" | base64 -d)
+	for i in $A;do ipset add netflix $i 2>/dev/null;done
+fi
+
 if [ "$1" = gfw ];then
 		B=1
 		while ! A=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/f6UiINtMDSmglMK4/A9xehMB2/ht2ix0v4Aj/Fnx8osN6xh || curl -Lfsm 9 https://raw.githubusercontent.com/f6UiINtMDSmglMK4/A9xehMB2/master/ht2ix0v4Aj/Fnx8osN6xh);do
