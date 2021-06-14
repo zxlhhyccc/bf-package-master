@@ -55,14 +55,14 @@ local get_mounts = function(d)
       local v_dest = ""
       for v_sorce_d in v["Source"]:gmatch('[^/]+') do
         if v_sorce_d and #v_sorce_d > 12 then
-          v_sorce = v_sorce .. "/" .. v_sorce_d:sub(1,12) .. "..."
+          v_sorce = v_sorce .. "/" .. v_sorce_d:sub(1,8) .. "..."
         else
           v_sorce = v_sorce .."/".. v_sorce_d
         end
       end
       for v_dest_d in v["Destination"]:gmatch('[^/]+') do
         if v_dest_d and #v_dest_d > 12 then
-          v_dest = v_dest .. "/" .. v_dest_d:sub(1,12) .. "..."
+          v_dest = v_dest .. "/" .. v_dest_d:sub(1,8) .. "..."
         else
           v_dest = v_dest .."/".. v_dest_d
         end
@@ -191,16 +191,21 @@ btnkill.template = "dockerman/cbi/inlinebutton"
 btnkill.inputtitle=translate("Kill")
 btnkill.inputstyle = "reset"
 btnkill.forcewrite = true
+btnexport=action_section:option(Button, "_export")
+btnexport.template = "dockerman/cbi/inlinebutton"
+btnexport.inputtitle=translate("Export")
+btnexport.inputstyle = "apply"
+btnexport.forcewrite = true
 btnupgrade=action_section:option(Button, "_upgrade")
 btnupgrade.template = "dockerman/cbi/inlinebutton"
 btnupgrade.inputtitle=translate("Upgrade")
 btnupgrade.inputstyle = "reload"
-btnstop.forcewrite = true
+btnupgrade.forcewrite = true
 btnduplicate=action_section:option(Button, "_duplicate")
 btnduplicate.template = "dockerman/cbi/inlinebutton"
 btnduplicate.inputtitle=translate("Duplicate/Edit")
 btnduplicate.inputstyle = "add"
-btnstop.forcewrite = true
+btnduplicate.forcewrite = true
 btnremove=action_section:option(Button, "_remove")
 btnremove.template = "dockerman/cbi/inlinebutton"
 btnremove.inputtitle=translate("Remove")
@@ -227,6 +232,9 @@ btnkill.write = function(self, section)
 end
 btnduplicate.write = function(self, section)
   luci.http.redirect(luci.dispatcher.build_url("admin/docker/newcontainer/duplicate/"..container_id))
+end
+btnexport.write = function(self, section)
+  luci.http.redirect(luci.dispatcher.build_url("admin/docker/container_export/"..container_id))
 end
 
 tab_section = m:section(SimpleSection)
@@ -537,10 +545,10 @@ elseif action == "console" then
       luci.util.exec(kill_ttyd)
       local hosts
       local uci = (require "luci.model.uci").cursor()
-      local remote = uci:get("dockerman", "local", "remote_endpoint")
-      local socket_path = (remote == "false" or not remote) and  uci:get("dockerman", "local", "socket_path") or nil
-      local host = (remote == "true") and uci:get("dockerman", "local", "remote_host") or nil
-      local port = (remote == "true") and uci:get("dockerman", "local", "remote_port") or nil
+      local remote = uci:get("dockerd", "dockerman", "remote_endpoint")
+      local socket_path = (remote == "false" or not remote) and  uci:get("dockerd", "dockerman", "socket_path") or nil
+      local host = (remote == "true") and uci:get("dockerd", "dockerman", "remote_host") or nil
+      local port = (remote == "true") and uci:get("dockerd", "dockerman", "remote_port") or nil
       if remote and host and port then
         hosts = host .. ':'.. port
       elseif socket_path then

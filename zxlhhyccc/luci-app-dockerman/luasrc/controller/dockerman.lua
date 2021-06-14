@@ -16,13 +16,13 @@ function index()
 
   entry({"admin","docker","overview"},cbi("dockerman/overview"),_("Overview"),0).leaf=true
 
-  local remote = luci.model.uci.cursor():get("dockerman", "local", "remote_endpoint")
+  local remote = luci.model.uci.cursor():get("dockerd", "dockerman", "remote_endpoint")
   if remote ==  nil then
-    local socket = luci.model.uci.cursor():get("dockerman", "local", "socket_path")
+    local socket = luci.model.uci.cursor():get("dockerd", "dockerman", "socket_path")
     if socket and not nixio.fs.access(socket) then return end
   elseif remote == "true" then
-    local host = luci.model.uci.cursor():get("dockerman", "local", "remote_host")
-    local port = luci.model.uci.cursor():get("dockerman", "local", "remote_port")
+    local host = luci.model.uci.cursor():get("dockerd", "dockerman", "remote_host")
+    local port = luci.model.uci.cursor():get("dockerd", "dockerman", "remote_port")
     if not host or not port then return end
   end
 
@@ -38,6 +38,7 @@ function index()
   entry({"admin","docker","container_stats"},call("action_get_container_stats")).leaf=true
   entry({"admin","docker","container_get_archive"},call("download_archive")).leaf=true
   entry({"admin","docker","container_put_archive"},call("upload_archive")).leaf=true
+  entry({"admin","docker","container_export"},call("export_container")).leaf=true
   entry({"admin","docker","images_save"},call("save_images")).leaf=true
   entry({"admin","docker","images_load"},call("load_images")).leaf=true
   entry({"admin","docker","images_import"},call("import_images")).leaf=true
@@ -85,8 +86,10 @@ local get_memory = function(d)
   -- local limit = string.format("%.2f", tonumber(d["memory_stats"]["limit"]) / 1024 / 1024)
   -- local usage = string.format("%.2f", (tonumber(d["memory_stats"]["usage"]) - tonumber(d["memory_stats"]["stats"]["total_cache"])) / 1024 / 1024)
   -- return usage .. "MB / " .. limit.. "MB" 
+  -- luci.util.perror(luci.jsonc.stringify(d))
   local limit =tonumber(d["memory_stats"]["limit"])
-  local usage = tonumber(d["memory_stats"]["usage"]) - tonumber(d["memory_stats"]["stats"]["total_cache"])
+  local usage = tonumber(d["memory_stats"]["usage"])
+  -- - tonumber(d["memory_stats"]["stats"]["total_cache"])
   return usage, limit
 end
 
@@ -168,6 +171,30 @@ function action_confirm()
   luci.http.status(code, msg)
   luci.http.prepare_content("application/json")
   luci.http.write_json({info = data})
+end
+
+function export_container(id)
+  local dk = docker.new()
+  local first
+
+  local cb = function(res, chunk)
+    if res.code == 200 then
+      if not first then
+        first = true
+        luci.http.header('Content-Disposition', 'inline; filename="archive.tar"')
+        luci.http.header('Content-Type', 'application\/x-tar')
+      end
+      luci.ltn12.pump.all(chunk, luci.http.write)
+    else
+      if not first then
+        first = true
+        luci.http.prepare_content("text/plain")
+      end
+      luci.ltn12.pump.all(chunk, luci.http.write)
+    end
+  end
+
+  local res = dk.containers:export({id = id}, cb)
 end
 
 function download_archive()
