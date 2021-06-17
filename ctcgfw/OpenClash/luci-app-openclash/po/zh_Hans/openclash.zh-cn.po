@@ -251,6 +251,10 @@ msgstr "每行请只填写一个域名，列表中的域名在（Fake-IP模式�
 msgid "Domain Names In The List Use The Custom DNS Server, One rule per line"
 msgstr "每行请只填写一个域名，列表中的域名将使用上方指定的DNS进行查询"
 
+
+msgid "Domain Names In The List Use The Custom DNS Server, But Still Return Fake-IP Results, One rule per line"
+msgstr "每行请只填写一个规则，列表中的域名将使用指定的DNS进行查询，但Fake-IP模式下仍将返回保留地址"
+
 msgid "Fake-IP-Filter List Update"
 msgstr "更新Fake-IP域名黑名单"
 
@@ -479,52 +483,46 @@ msgid "Update Other Rules"
 msgstr "更新第三方规则"
 
 msgid "GlobalTV"
-msgstr "国际流媒体流量"
+msgstr "国际流媒体"
 
 msgid "AsianTV"
-msgstr "亚洲流媒体流量"
+msgstr "亚洲流媒体"
 
 msgid "Proxy"
 msgstr "必须代理的流量"
 
-msgid "Youtube"
-msgstr "Youtube流量"
-
 msgid "Apple"
-msgstr "苹果服务流量"
+msgstr "苹果服务（Apple）"
 
 msgid "Scholar"
-msgstr "学术网站流量"
+msgstr "学术网站（Scholar）"
 
 msgid "Microsoft"
-msgstr "微软服务流量"
+msgstr "微软服务（Microsoft）"
 
 msgid "Netflix"
-msgstr "Netflix流量"
+msgstr "奈飞（Netflix）"
 
 msgid "Disney"
-msgstr "Disney流量"
+msgstr "迪士尼（Disney）"
 
-msgid "Spotify"
-msgstr "Spotify流量"
+msgid "Bilibili"
+msgstr "哔哩哔哩（Bilibili）"
+
+msgid "Bahamut"
+msgstr "巴哈姆特（Bahamut）"
 
 msgid "Steam"
-msgstr "Steam流量（非下载流量）"
+msgstr "Steam（非下载流量）"
 
 msgid "Netease Music"
-msgstr "网易云音乐流量"
+msgstr "网易云音乐"
 
 msgid "Speedtest"
-msgstr "测速流量"
-
-msgid "Telegram"
-msgstr "Telegram流量"
-
-msgid "PayPal"
-msgstr "PayPal流量"
+msgstr "测速流量（Speedtest）"
 
 msgid "AdBlock"
-msgstr "广告流量"
+msgstr "广告（AdBlock）"
 
 msgid "Domestic"
 msgstr "国内流量"
@@ -976,16 +974,16 @@ msgid "The Servers Must Support UDP forwarding"
 msgstr "启用时服务器必须支持UDP转发"
 
 msgid "If Docker is Installed, UDP May Not Forward Normally"
-msgstr "安装了Docker的固件可能无法正常转发UDP"
+msgstr "安装了Docker的固件请使用TUN模式，否则可能无法正常转发UDP，造成游戏异常"
 
-msgid "Disable quic"
-msgstr "*禁用quic"
+msgid "Disable QUIC"
+msgstr "*禁用QUIC"
 
-msgid "Disable yt fb ig use quic"
-msgstr "改善yt fb等走quic速度慢场景"
+msgid "Prevent YouTube and Others To Use QUIC Transmission"
+msgstr "防止YouTube等使用QUIC导致速度不佳"
 
-msgid "REJECT PORT 443 UDP"
-msgstr "禁用443端口udp流量"
+msgid "REJECT UDP Traffic On Port 443"
+msgstr "禁用443端口UDP流量"
 
 msgid "Operation Mode"
 msgstr "模式设置"
@@ -1335,7 +1333,7 @@ msgstr "下载最新版本客户端"
 msgid "Download"
 msgstr "下载到本地"
 
-msgid "Restore Default Configuration"
+msgid "Restore Default Config"
 msgstr "还原默认配置"
 
 msgid "One Click Check Update"
@@ -1344,7 +1342,7 @@ msgstr "一键检查更新"
 msgid "Failed to get the latest version. Please try again later!"
 msgstr "最新版本获取失败，请稍后再试！"
 
-msgid "Are you sure want to restore the default configuration?"
+msgid "Are you sure want to restore the default config?"
 msgstr "确定要还原默认配置吗？"
 
 msgid "Restore succeeded!"
@@ -1479,3 +1477,38 @@ msgstr "订阅转换服务地址"
 msgid "Note: There is A Risk of Privacy Leakage in Online Convert"
 msgstr "注意：在线订阅转换存在隐私泄露风险"
 
+msgid "Remove Core"
+msgstr "删除内核"
+
+msgid "Are you sure want to remove all core files?"
+msgstr "确定要删除所有内核文件吗？"
+
+msgid "Remove succeeded!"
+msgstr "删除成功！"
+
+msgid "Remove failed!"
+msgstr "删除失败！"
+
+msgid "Import"
+msgstr "导入配置信息"
+
+msgid "Export SSR"
+msgstr "导出ssr配置信息"
+
+msgid "Import configuration information successfully."
+msgstr "导入配置信息成功。"
+
+msgid "Invalid format."
+msgstr "无效的格式。"
+
+msgid "User cancelled."
+msgstr "用户已取消。"
+
+msgid "Paste sharing link here"
+msgstr "在此处粘贴分享链接"
+
+msgid "Unable to copy SSR to clipboard."
+msgstr "无法复制SSR网址到剪贴板。"
+
+msgid "Copy SSR to clipboard successfully."
+msgstr "成功复制SSR网址到剪贴板。"
