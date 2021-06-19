@@ -88,7 +88,7 @@ clean_log(){
 
 # 获取接口IP地址
 get_bind_ip(){
-	network=$(uci get "xlnetacc.general.network" 2> /dev/null)
+	network=$(uci get xlnetacc.general.network 2> /dev/null)
 	json_cleanup;json_load "$(ubus call network.interface.$network status 2> /dev/null)" >/dev/null 2>&1
 	json_select "ipv4-address" >/dev/null 2>&1;json_select 1 >/dev/null 2>&1
 	json_get_var _bind_ip "address"
@@ -105,7 +105,7 @@ get_bind_ip(){
 gen_device_sign(){
 	local ifname macaddr
 	while :;do
-		ifname=$(uci get "network.$network.device" 2> /dev/null)
+		ifname=$(uci get network.$network.device 2> /dev/null || uci get network.$network.ifname 2> /dev/null)
 		[ "${ifname:0:1}" = @ ] && network="${ifname:1}" || break
 	done
 	[ -z "$ifname" ] && { _log "获取网络 $network 信息出错";return;}
