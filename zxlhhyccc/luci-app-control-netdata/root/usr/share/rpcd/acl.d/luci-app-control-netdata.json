@@ -1,11 +1,11 @@
 {
 	"luci-app-control-netdata": {
-	"description": "Grant UCI access for luci-app-control-netdata",
-	"read": {
-		"uci": [ "netdata.conf" ]
+		"description": "Grant UCI access for luci-app-control-netdata",
+		"read": {
+			"uci": [ "netdata" ]
 		},
-	"write": {
-		"uci": [ "netdata.conf" ]
+		"write": {
+			"uci": [ "netdata" ]
 		}
 	}
 }
