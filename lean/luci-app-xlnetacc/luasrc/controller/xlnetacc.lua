@@ -4,7 +4,9 @@ function index()
 	if not nixio.fs.access("/etc/config/xlnetacc") then
 		return
 	end
-	entry({"admin","services","xlnetacc"},firstchild(),_("XLNetAcc")).dependent=false
+	local e=entry({"admin","services","xlnetacc"},firstchild(),_("XLNetAcc"))
+	e.dependent=false
+	e.acl_depends={"luci-app-xlnetacc"}
 	entry({"admin","services","xlnetacc","general"},cbi("xlnetacc"),_("Settings"),1)
 	entry({"admin","services","xlnetacc","log"},template("xlnetacc/logview"),_("Log"),2)
 	entry({"admin","services","xlnetacc","status"},call("action_status"))
