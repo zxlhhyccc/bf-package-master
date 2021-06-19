@@ -1,0 +1,6 @@
+/etc/php7/custom.ini
+/etc/mysql/conf.d/custom.cnf
+/etc/nginx/conf.d/filerun.conf
+/usr/data/mysql/
+/www/filerun/system/data/
+

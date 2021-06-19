@@ -1,0 +1,15 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@filerun[-1]
+	add ucitrack filerun
+	set ucitrack.@filerun[-1].init=filerun
+	commit ucitrack
+EOF
+
+/etc/init.d/mysqld disable
+sed -i 's/service_start $PROG -y/service_start $PROG -R -y/g' /etc/init.d/php7-fpm
+sed -i "s/user =.*/user = root/g" /etc/php7-fpm.d/www.conf
+sed -i '/init_lan/d' /etc/init.d/nginx
+rm -f /tmp/luci-indexcache
+exit 0

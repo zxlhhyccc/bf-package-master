@@ -1,0 +1,63 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2018-2020 GaryPang <garyp@qq.com>
+
+START=90
+STOP=10
+
+CONFIG="filerun"
+KOD_NGINX_CONFIG="/etc/nginx/conf.d/filerun.conf"
+# storage_device_path=$(uci -q get $CONFIG.main.storage_device_path)
+dbpasswd=$(uci -q get $CONFIG.main.dbpasswd || echo 'root')
+
+gen_nginx_config() {
+	port=$(uci -q get $CONFIG.main.port || echo '8081')
+	kodomain=$(uci -q get $CONFIG.main.kodomain)
+sed -i "s?listen [0-9]*;?listen $port;?g" $KOD_NGINX_CONFIG
+[ $kodomain ] && {
+	sed -i "s?server_name .*?server_name $kodomain;?g" $KOD_NGINX_CONFIG
+	}
+}
+
+gen_php_config() {
+	memory_limit=$(uci -q get $CONFIG.main.memory_limit || echo '200M')
+	upload_max_filesize=$(uci -q get $CONFIG.main.upload_max_filesize || echo '200M')
+
+	sed -i "s/memory_limit.*/memory_limit = $memory_limit/g" /etc/php7/custom.ini
+	sed -i "s/post_max_size.*/post_max_size = $upload_max_filesize/g" /etc/php7/custom.ini
+	sed -i "s/upload_max_filesize.*/upload_max_filesize = $upload_max_filesize/g" /etc/php7/custom.ini
+	sed -i "s/client_max_body_size.*/client_max_body_size $upload_max_filesize;/g" $KOD_NGINX_CONFIG
+	# sed -i "s?open_basedir=.document?open_basedir=$storage_device_path:/usr/bin/:\$document?g" $KOD_NGINX_CONFIG
+	sed -i "s?open_basedir=.document?open_basedir=\/?g" $KOD_NGINX_CONFIG
+	sed -i "s?open_basedir=.document?open_basedir=\/?g" /etc/nginx/conf.d/_lan.conf
+}
+
+start() {
+	ENABLED=$(uci -q get $CONFIG.main.enable)
+	[ "$ENABLED" = "0" ] && return 0
+	gen_php_config
+	uci set mysqld.general.enabled=1
+	uci set php7-fpm.@php7-fpm[0].enabled=1
+	uci commit mysqld
+	uci commit php7-fpm
+	[ -d "/usr/data/mysql" ] && chown mariadb:mariadb -R /usr/data/mysql || mysql_install_db
+	/etc/init.d/mysqld start
+	# mysqladmin -uroot -proot password $dbpasswd
+	/etc/init.d/php7-fpm start
+	gen_nginx_config
+	/etc/init.d/nginx reload
+}
+
+stop() {
+	uci set mysqld.general.enabled=0
+	uci set php7-fpm.@php7-fpm[0].enabled=0
+	uci commit mysqld
+	uci commit php7-fpm
+	/etc/init.d/php7-fpm stop
+	/etc/init.d/mysqld stop
+	[ "`pgrep php-fpm`" ] && {
+	killall -9 php-fpm
+	}
+	[ "`pgrep mysqld`" ] && {
+	killall mysqld
+	}
+}
