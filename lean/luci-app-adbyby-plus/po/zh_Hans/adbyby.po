@@ -122,15 +122,14 @@ msgstr "手动更新规则"
 msgid "Block Apple iOS OTA update"
 msgstr "拦截 Apple iOS 的OTA更新"
 
-msgid "Block Douyin APP and Website"
-msgstr "拦截 抖音 APP 和网站"
+msgid "Block CNshort APP and Website"
+msgstr "拦截 短视频 APP 和网站"
 
 msgid "RAM Running Mode"
 msgstr "内存运行模式"
 
 msgid "Running Adbyby in RAM.More speed,less disk consumption"
 msgstr "在内存中运行Adbyby。更快的速度，更少的存储空间损耗"
-
 
 msgid "User-defined Rule"
 msgstr "用户自定义规则"
@@ -139,7 +138,7 @@ msgid "<strong>Client Filter Mode Settings</strong>"
 msgstr "<strong>客户端过滤模式设置</strong>"
 
 msgid "Filter mode settings can be set to specific LAN clients ( <font color=blue> No filter , Global filter </font> ) . Does not need to be set by default."
-msgstr "可以为局域网客户端分别设置不同的过滤模式 ( <font color=blue> 不过滤 , 全局过滤 </font> ) 。默认无需设置"
+msgstr "可以为局域网客户端分别设置不同的过滤模式 ( <font color=blue> 不过滤 , 全局过滤 </font> ) 。默认无需设置。"
 
 msgid "IP Address"
 msgstr "IP地址"
@@ -160,7 +159,7 @@ msgid "（!）Will Always block these IP"
 msgstr "拦截黑名单内的IP地址（所有模式中生效）"
 
 msgid "Each line of the beginning exclamation mark is considered an annotation."
-msgstr "每行一条规则，感叹号开头的被认为是注释"
+msgstr "每行一条规则，感叹号开头的被认为是注释。"
 
 msgid "<strong><font color=blue>Adblock Plus Host List：</font></strong>"
 msgstr "<strong><font color=blue>Adblock Plus Host 列表：</font></strong>"
@@ -194,4 +193,3 @@ msgstr "域名黑名单"
 
 msgid "Block IP List"
 msgstr "IP黑名单"
-
