@@ -5,15 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-core
-PKG_VERSION:=4.40.0
+PKG_VERSION:=4.41.0
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
-PKG_MIRROR_HASH:=5d1a3a37e37efeabdee04ccf8b13b0f95649552503a4e1c08d3fa274c54ab0e6
-PKG_SOURCE_DATE:=2021-06-05
-PKG_SOURCE_VERSION:=4d768b575d113e9a505f1f420065b88d051bff69
+PKG_MIRROR_HASH:=e5c851064c1fd2207e395ed3d8b8cbb4d0f9a40271a1acaff37f296262cdbff2
+PKG_SOURCE_DATE:=2021-06-22
+PKG_SOURCE_VERSION:=d7a202a705859aad54af363219961fccec7c9585
 
 #PKG_SOURCE_URL:=https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$(PKG_VERSION)?
 #PKG_HASH:=44538779d3fb887511b35f93be46d04f4b16e30a1b3121d958145f559e110b7f
@@ -147,24 +147,24 @@ define Package/v2ray-core/conffiles
 /etc/v2ray/
 endef
 
-GEOIP_VER:=202106030115
+GEOIP_VER:=202106170022
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
   URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=acf231d7c6461d088ae479fe0c1cb143b5ee3cf7048a897c5a9b7807ab7005df
+  HASH:=af7b0e6b92fa7b1d55b2b9d8155e9a2372b6b0be0e1b9e09353d9859680f6bb1
 endef
 
-GEOSITE_VER:=20210606142051
+GEOSITE_VER:=20210621183458
 GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 
 define Download/geosite
   URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=00e6ee7281cb90d86677fec4f617bae7a45840cf1aac4d195527f52e1a81f18c
+  HASH:=b78075874cb24c82fd2096e521452ff673fadb3d4d8048da73681f9b4722d0e2
 endef
 
 ifneq ($(CONFIG_V2RAY_CORE_COMPRESS_GOPROXY)$(CONFIG_V2RAY_CTL_COMPRESS_GOPROXY),)
