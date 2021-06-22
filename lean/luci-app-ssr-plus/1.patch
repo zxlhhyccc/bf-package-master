@@ -1,0 +1,67 @@
+diff --git a/luasrc/model/cbi/shadowsocksr/advanced.lua b/luasrc/model/cbi/shadowsocksr/advanced.lua
+index a3538b3..88d0bd1 100644
+--- a/luasrc/model/cbi/shadowsocksr/advanced.lua
++++ b/luasrc/model/cbi/shadowsocksr/advanced.lua
+@@ -45,11 +45,11 @@ o:depends("enable_switch", "1")
+ o.default = 3
+ 
+ o = s:option(Value, "gfwlist_url", translate("gfwlist Update url"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/YW5vbnltb3Vz/domain-list-community/release/gfwlist.txt", translate("v2fly/domain-list-community"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt", translate("Loyalsoldier/v2ray-rules-dat"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/Loukky/gfwlist-by-loukky/master/gfwlist.txt", translate("Loukky/gfwlist-by-loukky"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt", translate("gfwlist/gfwlist"))
+-o.default = "https://ghproxy.com/https://raw.githubusercontent.com/YW5vbnltb3Vz/domain-list-community/release/gfwlist.txt"
++o:value("https://raw.githubusercontent.com/YW5vbnltb3Vz/domain-list-community/release/gfwlist.txt", translate("v2fly/domain-list-community"))
++o:value("https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt", translate("Loyalsoldier/v2ray-rules-dat"))
++o:value("https://raw.githubusercontent.com/Loukky/gfwlist-by-loukky/master/gfwlist.txt", translate("Loukky/gfwlist-by-loukky"))
++o:value("https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt", translate("gfwlist/gfwlist"))
++o.default = "https://raw.githubusercontent.com/YW5vbnltb3Vz/domain-list-community/release/gfwlist.txt"
+ 
+ o = s:option(Value, "chnroute_url", translate("Chnroute Update url"))
+ o:value("https://ispip.clang.cn/all_cn.txt", translate("Clang.CN"))
+@@ -60,9 +60,9 @@ o = s:option(Flag, "netflix_enable", translate("Enable Netflix Mode"))
+ o.rmempty = false
+ 
+ o = s:option(Value, "nfip_url", translate("nfip_url"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/NF_only.txt", translate("Netflix IP Only"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/getflix.txt", translate("Netflix and AWS"))
+-o.default = "https://ghproxy.com/https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/NF_only.txt"
++o:value("https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/NF_only.txt", translate("Netflix IP Only"))
++o:value("https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/getflix.txt", translate("Netflix and AWS"))
++o.default = "https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/NF_only.txt"
+ o.description = translate("Customize Netflix IP Url")
+ o:depends("netflix_enable", "1")
+ 
+@@ -70,10 +70,10 @@ o = s:option(Flag, "adblock", translate("Enable adblock"))
+ o.rmempty = false
+ 
+ o = s:option(Value, "adblock_url", translate("adblock_url"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/neodevpro/neodevhost/master/lite_host_dnsmasq.conf", translate("NEO DEV HOST Lite"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/neodevpro/neodevhost/master/host_dnsmasq.conf", translate("NEO DEV HOST Full"))
+-o:value("https://ghproxy.com/https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/adblock-for-dnsmasq.conf", translate("anti-AD"))
+-o.default = "https://ghproxy.com/https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/adblock-for-dnsmasq.conf"
++o:value("https://raw.githubusercontent.com/neodevpro/neodevhost/master/lite_host_dnsmasq.conf", translate("NEO DEV HOST Lite"))
++o:value("https://raw.githubusercontent.com/neodevpro/neodevhost/master/host_dnsmasq.conf", translate("NEO DEV HOST Full"))
++o:value("https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/adblock-for-dnsmasq.conf", translate("anti-AD"))
++o.default = "https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/adblock-for-dnsmasq.conf"
+ o:depends("adblock", "1")
+ o.description = translate("Support AdGuardHome and DNSMASQ format list")
+ 
+diff --git a/root/etc/init.d/shadowsocksr b/root/etc/init.d/shadowsocksr
+index 5986b8c..3abba36 100755
+--- a/root/etc/init.d/shadowsocksr
++++ b/root/etc/init.d/shadowsocksr
+@@ -898,10 +898,10 @@ reset() {
+ 		set shadowsocksr.@global[0].switch_time='667'
+ 		set shadowsocksr.@global[0].switch_timeout='5'
+ 		set shadowsocksr.@global[0].switch_try_count='3'
+-		set shadowsocksr.@global[0].gfwlist_url='https://ghproxy.com/https://raw.githubusercontent.com/YW5vbnltb3Vz/domain-list-community/release/gfwlist.txt'
++		set shadowsocksr.@global[0].gfwlist_url='https://raw.githubusercontent.com/YW5vbnltb3Vz/domain-list-community/release/gfwlist.txt'
+ 		set shadowsocksr.@global[0].chnroute_url='https://ispip.clang.cn/all_cn.txt'
+-		set shadowsocksr.@global[0].nfip_url='https://ghproxy.com/https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/NF_only.txt'
+-		set shadowsocksr.@global[0].adblock_url='https://ghproxy.com/https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/adblock-for-dnsmasq.conf'
++		set shadowsocksr.@global[0].nfip_url='https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/NF_only.txt'
++		set shadowsocksr.@global[0].adblock_url='https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/adblock-for-dnsmasq.conf'
+ 		add shadowsocksr server_subscribe
+ 		set shadowsocksr.@server_subscribe[0].proxy='0'
+ 		set shadowsocksr.@server_subscribe[0].auto_update_time='2'
