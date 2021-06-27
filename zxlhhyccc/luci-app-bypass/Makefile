@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-bypass
 PKG_VERSION:=1.2
-PKG_RELEASE:=68
+PKG_RELEASE:=69
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
@@ -95,10 +95,6 @@ endef
 
 define Build/Prepare
 	chmod +x root/etc/init.d/bypass root/usr/share/bypass/* >/dev/null 2>&1
-endef
-
-define Package/$(PKG_NAME)/postinst
-[ -n "$$IPKG_INSTROOT" ] || (rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*;killall -HUP rpcd 2>/dev/null;/etc/init.d/smartdns stop 2>/dev/null;/etc/init.d/bypass enable)
 endef
 
 define Build/Compile

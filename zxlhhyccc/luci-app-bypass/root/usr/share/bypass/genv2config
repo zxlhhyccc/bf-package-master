@@ -108,7 +108,10 @@ outbound = {
 			header = {
 				type = server.quic_guise
 			}
-		} or nil
+		} or nil,
+	        grpcSettings = (server.transport == "grpc") and {
+                        serviceName = server.grpc_serviceName
+                } or nil
 	},
 	mux = (server.mux == "1" and server.xtls ~= "1") and {
 		enabled = true,

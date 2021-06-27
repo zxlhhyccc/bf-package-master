@@ -295,6 +295,7 @@ o:value("kcp", "mKCP")
 o:value("ws", "WebSocket")
 o:value("h2", "HTTP/2")
 o:value("quic", "QUIC")
+o:value("grpc", "gRPC")
 o.rmempty = true
 o:depends("type", "vmess")
 o:depends("type", "vless")
@@ -384,6 +385,10 @@ o:value("utp", translate("BitTorrent (uTP)"))
 o:value("wechat-video", translate("WechatVideo"))
 o:value("dtls", "DTLS 1.2")
 o:value("wireguard", "WireGuard")
+
+-- [[ gRPC部分 ]]--
+o = s:option(Value, "grpc_serviceName", "ServiceName")
+o:depends("transport", "grpc")
 
 -- [[ mKCP部分 ]]--
 

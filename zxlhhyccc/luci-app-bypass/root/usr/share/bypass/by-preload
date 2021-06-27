@@ -6,21 +6,16 @@ fi
 
 if [ "$(uci -q get bypass.@global[0].nf_server)" ];then
 		B=1
-	while ! A=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/f6UiINtMDSmglMK4/A9xehMB2/ht2ix0v4Aj/GMG3rzA5eI || curl -Lfsm 9 https://raw.githubusercontent.com/f6UiINtMDSmglMK4/A9xehMB2/master/ht2ix0v4Aj/GMG3rzA5eI);do
+	while ! A=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/QiuSimons/Netflix_IP@master/getflix.txt || curl -Lfsm 9 https://raw.githubusercontent.com/QiuSimons/Netflix_IP/master/getflix.txt);do
 		[ $B -ge 20 ] && break || let B++
 		sleep 2
 	done
-	A=$(echo "$A" | base64 -d)
 	for i in $A;do ipset add netflix $i 2>/dev/null;done
 fi
 
 if [ "$1" = gfw ];then
 		B=1
-		while ! A=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/f6UiINtMDSmglMK4/A9xehMB2/ht2ix0v4Aj/Fnx8osN6xh || curl -Lfsm 9 https://raw.githubusercontent.com/f6UiINtMDSmglMK4/A9xehMB2/master/ht2ix0v4Aj/Fnx8osN6xh);do
-			[ $B -ge 20 ] && break || let B++
-			sleep 2
-		done
-		A=$(echo "$A" | base64 -d)
+		A=$(cat /etc/bypass/telegram.list)
 		for i in $A;do ipset add blacklist $i 2>/dev/null;done
 		B=1
 		while ! A=$(nslookup -q=TXT _spf.google.com | grep text | sed -e 's/"v=spf1//' -e 's/ ~all"//' -e 's/ include:/\n/g' | grep -v text);do
