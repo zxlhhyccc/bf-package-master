@@ -1,46 +1,38 @@
 #!/bin/sh
 
 sleeptime=60
-logfile="/var/log/dnscache.file"
-adg_logfile="/etc/AdGuardHome/data/querylog.json"
-dns_caching="$(uci -q get turboacc.config.dns_caching)"
-dns_caching_mode="$(uci -q get turboacc.config.dns_caching_mode 2>/dev/null)"
-lan_addr="$(uci get network.lan.ipaddr)"
 
-clean_log(){
-logrow="$(grep -c "" "${logfile}")"
-if [ "${logrow}" -ge "500" ];then
-    echo "${curtime} Log条数超限，清空处理！" > "${logfile}"
-fi
-if [ "${dns_caching_mode}" = "3" ]; then
-	adg_logrow="$(grep -c "" "${adg_logfile}")"	
-	if [ "${adg_logrow}" -ge "500" ];then	
-		echo "${curtime} Log条数超限，清空处理！" > "${adg_logfile}"	
-	fi	
-fi
+dnsconf="/var/run/dnscache/dnscache.conf"
+dnsprogram="/var/sbin/dnscache"
+logfile="/var/log/dnscache.file"
+
+dns_caching="$(uci -q get turboacc.config.dns_caching)"
+dns_caching_mode="$(uci -q get turboacc.config.dns_caching_mode)"
+
+clean_log() {
+	logrow="$(grep -c "" "${logfile}")"
+	[ "${logrow}" -lt "500" ] || echo "${curtime} Log 条数超限，清空处理！" > "${logfile}"
 }
 
 while [ "${dns_caching}" -eq "1" ];
 do
 	curtime="$(date "+%H:%M:%S")"
-	echo "${curtime} online!"
-	if [ "${dns_caching_mode}" = "3" ]; then
-		pidof AdGuardHome>/dev/null || {
-			AdGuardHome -c "/var/etc/AdGuardHome/AdGuardHome.yaml" -w "/var/etc/AdGuardHome" -h "${lan_addr}" -p "3001" --no-check-update &
-			echo "${curtime} 重启服务！" >> ${logfile}
-}
-	else
-	pidof dnscache>/dev/null || {
-		if [ "${dns_caching_mode}" = "1" ]; then
-			/var/sbin/dnscache -c "/var/etc/dnscache.conf" &
-		elif [ "${dns_caching_mode}" = "2" ]; then
-			/var/sbin/dnscache -f "/var/run/dnscache/dnscache.conf" &
-		fi
-		echo "${curtime} 重启服务！" >> ${logfile}
-}
-	fi
 
 	clean_log
+
+	if pidof dnscache > "/dev/null"; then
+		echo -e "${curtime} online!" >> "${logfile}"
+	else
+		if [ "${dns_caching_mode}" = "1" ]; then
+			${dnsprogram} -c "${dnsconf}" > "${logfile}" 2>&1 &
+		elif [ "${dns_caching_mode}" = "2" ]; then
+			${dnsprogram} -f "${dnsconf}" > "${logfile}" 2>&1 &
+		elif [ "${dns_caching_mode}" = "3" ]; then
+			${dnsprogram} -o "${logfile}" -l "127.0.0.1" -p "5333" -b "tls://9.9.9.9" -f "tls://8.8.8.8" -u "${dnsconf}" --all-servers --cache --cache-min-ttl=3600 > "${logfile}" 2>&1 &
+		fi
+		echo "${curtime} 重启服务！" >> ${logfile}
+	fi
+
 	sleep "${sleeptime}"
 	continue
 done
