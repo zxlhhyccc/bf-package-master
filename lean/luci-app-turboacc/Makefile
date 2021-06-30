@@ -14,7 +14,7 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 LUCI_TITLE:=LuCI support for Flow Offload / Shortcut-FE
 LUCI_DEPENDS:=+pdnsd-alt \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-bbr \
-	+PACKAGE_TURBOACC_INCLUDE_DNSFORWARDER:dnsforwarder \
+	+PACKAGE_TURBOACC_INCLUDE_DNSFORWARDER:dnsforwarder-tur \
 	+PACKAGE_TURBOACC_INCLUDE_DNSPROXY:dnsproxy \
 	+PACKAGE_TURBOACC_INCLUDE_OFFLOADING:kmod-ipt-offload \
 	+PACKAGE_TURBOACC_INCLUDE_SHORTCUT_FE:kmod-fast-classifier
