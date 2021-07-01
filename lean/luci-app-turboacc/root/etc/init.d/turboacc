@@ -5,7 +5,8 @@
 START=90
 STOP=10
 
-extra_command "check_status" "Check running status of utils"
+extra_command "check_status"
+extra_command "Check running status of utils"
 
 restart_utils="true"
 
@@ -18,11 +19,11 @@ inital_conf(){
 	config_get "sfe_ipv6" "config" "sfe_ipv6" "0"
 	config_get "bbr_cca" "config" "bbr_cca" "0"
 	config_get "fullcone_nat" "config" "fullcone_nat" "0"
+	config_get "free_memory" "config" "free_memory" "0"
 	config_get "dns_acc" "config" "dns_acc" "0"
 	config_get "dns_caching" "config" "dns_caching" "0"
 	config_get "dns_caching_mode" "config" "dns_caching_mode" "0"
 	config_get "dns_caching_dns" "config" "dns_caching_dns"
-	config_get "free_memory" "config" "free_memory"
 
 	[ ! -e "/lib/modules/$(uname -r)/xt_FLOWOFFLOAD.ko" ] && { sw_flow="0"; hw_flow="0"; }
 	[ ! -e "/lib/modules/$(uname -r)/fast-classifier.ko" ] && { sfe_flow="0"; sfe_bridge="0"; sfe_ipv6="0"; }
@@ -204,9 +205,10 @@ start_dnsproxy() {
 }
 
 stop_dnscache() {
+	killall -9 "AdGuardHome"
 	killall -9 "dnscache"
 	kill -9 $(ps | grep dnscache-while.sh | grep -v "grep" | awk '{print $1}')
-	rm -rf "/var/dnscache" "/var/run/dnscache"
+	rm -rf "/var/dnscache" "/var/run/dnscache" "/var/etc/AdGuardHome"
 	echo "Stop DNS Caching"
 }
 
@@ -267,12 +269,21 @@ start(){
 		sleep 1
 
 		rm -f "/var/log/dnscache.file"
+		rm -f "/etc/AdGuardHome/data/querylog.json*"
 		if [ "${dns_caching_mode}" = "1" ];  then
 			start_pdnsd
 		elif [ "${dns_caching_mode}" = "2" ];  then
 			start_dnsforwarder
 		elif [ "${dns_caching_mode}" = "3" ];  then
 			start_dnsproxy
+		elif [ "${dns_caching_mode}" = "4" ];  then
+			if [ ! -d "/var/etc/AdGuardHome/" ];  then
+			mkdir -p "/var/etc/AdGuardHome"
+				ln -s "/etc/AdGuardHome/AdGuardHome.yaml" "/var/etc/AdGuardHome/AdGuardHome.yaml"
+			else
+				ln -s "/etc/AdGuardHome/*" "/var/etc/AdGuardHome/"
+			fi
+			AdGuardHome -c "/var/etc/AdGuardHome/AdGuardHome.yaml" -w "/var/etc/AdGuardHome" -h "${lan_addr}" -p "3001" --no-check-update 2>&1 &
 		fi
 
 		change_dns
@@ -311,6 +322,7 @@ stop(){
 		/etc/init.d/dnsmasq restart >"/dev/null" 2>&1 && echo "DNSMASQ revert"
 		/etc/init.d/firewall restart >"/dev/null" 2>&1
 	fi
+	sed -i '/drop_caches/d' /etc/crontabs/root
 }
 
 restart(){
@@ -347,7 +359,10 @@ check_status(){
 			exit 0 || exit 1
 		;;
 	"dns")
-		pgrep "dnscache" >"/dev/null" && exit 0 || exit 1
+		pgrep "dnscache" >"/dev/null"|| pgrep "AdGuardHome" >"/dev/null" && exit 0 || exit 1
+		;;
+	"adguardhome")
+		pgrep "AdGuardHome" >"/dev/null" && exit 0 || exit 1
 		;;
 	*)
 		exit 2

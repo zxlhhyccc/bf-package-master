@@ -8,6 +8,7 @@ logfile="/var/log/dnscache.file"
 
 dns_caching="$(uci -q get turboacc.config.dns_caching)"
 dns_caching_mode="$(uci -q get turboacc.config.dns_caching_mode)"
+lan_addr="$(uci get network.lan.ipaddr)"
 
 clean_log() {
 	logrow="$(grep -c "" "${logfile}")"
@@ -29,6 +30,8 @@ do
 			${dnsprogram} -f "${dnsconf}" > "${logfile}" 2>&1 &
 		elif [ "${dns_caching_mode}" = "3" ]; then
 			${dnsprogram} -o "${logfile}" -l "127.0.0.1" -p "5333" -b "tls://9.9.9.9" -f "tls://8.8.8.8" -u "${dnsconf}" --all-servers --cache --cache-min-ttl=3600 > "${logfile}" 2>&1 &
+		elif [ "${dns_caching_mode}" = "4" ]; then
+			AdGuardHome -c "/var/etc/AdGuardHome/AdGuardHome.yaml" -w "/var/etc/AdGuardHome" -h "${lan_addr}" -p "3001" --no-check-update > "${logfile}" 2>&1 &
 		fi
 		echo "${curtime} 重启服务！" >> ${logfile}
 	fi
