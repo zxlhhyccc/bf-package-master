@@ -52,20 +52,6 @@ index 3c17502..b844b93 100644
 -</div>
 \ No newline at end of file
 +</div>
-diff --git a/luasrc/view/bypass/link.htm b/luasrc/view/bypass/link.htm
-index 75a4e89..85f7f96 100644
---- a/luasrc/view/bypass/link.htm
-+++ b/luasrc/view/bypass/link.htm
-@@ -589,7 +589,7 @@ local dsp = require "luci.dispatcher"
- 
- //]]></script>
- <input type="text" class="hidden" id='<%=self.option%>-dummy' value="0.0.0.0" />
--<input type="button" class="cbi-button cbi-button-apply" value='<%:From Share URL%>' onclick="return fromUrl(this, '<%=self.option%>', '<%=self.value%>')" />
--<input type="button" class="cbi-button cbi-button-apply" value='<%:Build Share URL%>' onclick="return buildUrl(this, '<%=self.option%>', '<%=self.value%>')" />
-+<input type="button" class="btn cbi-button cbi-button-apply" value='<%:From Share URL%>' onclick="return fromUrl(this, '<%=self.option%>', '<%=self.value%>')" />
-+<input type="button" class="btn cbi-button cbi-button-apply" value='<%:Build Share URL%>' onclick="return buildUrl(this, '<%=self.option%>', '<%=self.value%>')" />
- <span id="<%=self.option%>-status"></span>
- <%+cbi/valuefooter%>
 diff --git a/luasrc/view/bypass/refresh.htm b/luasrc/view/bypass/refresh.htm
 index c9ffac2..dae2d59 100644
 --- a/luasrc/view/bypass/refresh.htm
