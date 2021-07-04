@@ -4,7 +4,7 @@ XHR.poll(1, '<%=url([[admin]], [[nas]], [[filebrowser]], [[status]])%>', null,
 		var tb = document.getElementById('filebrowser_status');
 		if (data && tb) {
 			if (data.running) {
-				var links = '<font color=green>Filebrowser <%:运行中%></font><input class="cbi-button mar-10" type="button" value="<%:打开管理界面%>" onclick="openwebui();" />';
+				var links = '<font color=green>Filebrowser <%:运行中%></font><input class="btn cbi-button mar-10" type="button" value="<%:打开管理界面%>" onclick="openwebui();" />';
 				tb.innerHTML = links;
 			} else {
 				tb.innerHTML = '<font color=red>Filebrowser <%:未运行%></font>';
