@@ -31,7 +31,7 @@ var CBIQBitStatus=form.DummyValue.extend({
 	renderWidget:function(){
 		var extAgrs=['instances','qbittorrent.main'];
 		var label=E('div',{},E('em',{},_('Collecting data...')));
-		var btn=E('button',{'class':'cbi-button cbi-button-apply'},_('Start qBittorrent'));
+		var btn=E('button',{'class':'cbi-button cbi-input-apply'},_('Start qBittorrent'));
 		var node=E('div',{},[label,btn]);
 		L.Poll.add(function(){
 			callServiceList('qbittorrent',extAgrs).then(function(res){
@@ -56,7 +56,7 @@ var CBIRandomPort=form.Value.extend({
 		node.appendChild(E('div',{'class':'control-group'},[
 			node.firstElementChild,
 			E('button',{
-				'class':'cbi-button cbi-button-neutral',
+				'class':'cbi-button cbi-input-neutral',
 				'click':function(){
 					this.previousElementSibling.value=randomPort();
 				}
