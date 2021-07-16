@@ -27,7 +27,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/minieap
   SECTION:=net
   CATEGORY:=Network
-  SUBNEMU:=Campus Network
+  SUBMENU:=Campus Network
   TITLE:=Extendable 802.1x client
   URL:=https://github.com/updateing/minieap
 endef
@@ -41,6 +41,8 @@ define Package/minieap/conffiles
 endef
 
 define Package/minieap/install
+	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/minieap.conf $(1)/etc/minieap.conf
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/local/sbin/minieap $(1)/usr/sbin/
 endef
