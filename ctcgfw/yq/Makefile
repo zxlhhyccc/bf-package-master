@@ -1,29 +1,27 @@
-# Copyright (C) 2020 [CTCGFW] Project OpenWrt
-#
-# This is a free software, use it under GNU General Public License v3.0.
-
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=yq
-PKG_VERSION:=4.1.0
-PKG_RELEASE:=1
+PKG_VERSION:=4.10.0
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/mikefarah/yq/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=2ff35db36b2d8226d181deb02b8e80ea7f6d4fbe04b7942fc5de2470e91b66d5
+PKG_HASH:=69f2f8de1e0c5a2d6e529b471f47c2cfacf072ee751e936fd81d645a09346f30
 
-PKG_MAINTAINER:=CN_SZTL <cnsztl@project-openwrt.eu.org>
+PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
+PKG_USE_MIPS16:=0
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_YQ_COMPRESS_GOPROXY \
 	CONFIG_YQ_COMPRESS_UPX
 
 GO_PKG:=github.com/mikefarah/yq
+GO_PKG_LDFLAGS:=-s -w
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -31,7 +29,7 @@ include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 define Package/yq
   SECTION:=utils
   CATEGORY:=Utilities
-  TITLE:=yq is a portable command-line YAML processor
+  TITLE:=Portable command-line YAML processor
   URL:=https://mikefarah.gitbook.io/yq/
   DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
@@ -52,7 +50,7 @@ endef
 
 ifeq ($(CONFIG_YQ_COMPRESS_GOPROXY),y)
 export GO111MODULE=on
-export GOPROXY=https://goproxy.io
+export GOPROXY=https://goproxy.baidu.com
 endif
 
 define Build/Compile
@@ -62,9 +60,5 @@ ifeq ($(CONFIG_YQ_COMPRESS_UPX),y)
 endif
 endef
 
-define Package/yq/install
-	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/yq $(1)/usr/bin/
-endef
-
+$(eval $(call GoBinPackage,yq))
 $(eval $(call BuildPackage,yq))
