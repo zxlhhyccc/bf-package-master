@@ -1,0 +1,11 @@
+{
+	"luci-app-turboacc-bbrplus": {
+		"description": "Grant UCI access for luci-app-turboacc-bbrplus",
+		"read": {
+			"uci": [ "turboacc" ]
+		},
+		"write": {
+			"uci": [ "turboacc" ]
+		}
+	}
+}
