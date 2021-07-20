@@ -36,7 +36,7 @@ function update_core(){
 	mkdir -p "/tmp/unblockneteasemusic/core" >/dev/null 2>&1
 	rm -rf /tmp/unblockneteasemusic/core/* >/dev/null 2>&1
 
-	uclient-fetch --no-check-certificate -T 10 -O /tmp/unblockneteasemusic/core/core.tar.gz "https://github.com/1715173329/UnblockNeteaseMusic/archive/enhanced.tar.gz" >/dev/null 2>&1
+	uclient-fetch --no-check-certificate -T 10 -O  /tmp/unblockneteasemusic/core/core.tar.gz "https://github.com/1715173329/UnblockNeteaseMusic/archive/enhanced.tar.gz"  >/dev/null 2>&1
 	tar -zxf "/tmp/unblockneteasemusic/core/core.tar.gz" -C "/tmp/unblockneteasemusic/core/" >/dev/null 2>&1
 	if [ -e "/usr/share/UnblockNeteaseMusic/ca.crt" ] && [ -e "/usr/share/UnblockNeteaseMusic/server.crt" ] && [ -e "/usr/share/UnblockNeteaseMusic/server.key" ] ; then
 		rm -f /tmp/unblockneteasemusic/core/UnblockNeteaseMusic-enhanced/ca.crt /tmp/unblockneteasemusic/core/UnblockNeteaseMusic-enhanced/server.crt /tmp/unblockneteasemusic/core/UnblockNeteaseMusic-enhanced/server.key
