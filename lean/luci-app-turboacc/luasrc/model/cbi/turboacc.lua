@@ -49,11 +49,17 @@ bbr_cca.default = 0
 bbr_cca.description = translate("Using BBR CCA can improve TCP network performance effectively")
 end 
 
-if nixio.fs.access("/lib/modules/" .. kernel_version .. "/xt_FULLCONENAT.ko") then
-fullcone_nat = s:option(Flag, "fullcone_nat", translate("FullCone NAT"))
-fullcone_nat.default = 0
-fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
-end 
+bbr_cca = s:option(ListValue, "bbr_cca", translate("BBR CCA"))
+bbr_cca:value("0", translate("CUBIC"))
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_bbr.ko") then
+bbr_cca:value("bbr", translate("Enable BBR"))
+end
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_bbrplus.ko") then
+bbr_cca:value("bbrplus", translate("Enable BBRPLUS"))
+end
+bbr_cca.default = 0
+bbr_cca.description = translate("Using BBR CCA can improve TCP network performance effectively")
+
 
 free_memory = s:option(Flag, "free_memory", translate("Automatic Free Memory"))
 free_memory.default = 0

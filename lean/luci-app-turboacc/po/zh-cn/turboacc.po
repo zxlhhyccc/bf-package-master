@@ -43,6 +43,15 @@ msgstr "启用 IPv6 加速"
 msgid "BBR CCA"
 msgstr "BBR 拥塞控制算法"
 
+msgid "CUBIC"
+msgstr "停用"
+
+msgid "Enable BBR"
+msgstr "启用 BBR"
+
+msgid "Enable BBRPLUS"
+msgstr "启用 BBRPLUS"
+
 msgid "Using BBR CCA can improve TCP network performance effectively"
 msgstr "使用 BBR 拥塞控制算法可以有效提升 TCP 网络性能"
 
