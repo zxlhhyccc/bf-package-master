@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_NAME:=tcp-bbr-nanqinlang-5.4
+PKG_NAME:=tcp-nanqinlang
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -10,8 +10,8 @@ define KernelPackage/$(PKG_NAME)
 	SUBMENU:=Network Support
 	TITLE:=Modified bbr tcp congestion control
 	DEPENDS:=@LINUX_5_4
-	FILES:=$(PKG_BUILD_DIR)/tcp_bbr_nanqinlang.ko
-	AUTOLOAD:=$(call AutoLoad,99,tcp-bbr-nanqinlang)
+	FILES:=$(PKG_BUILD_DIR)/tcp_nanqinlang.ko
+	AUTOLOAD:=$(call AutoLoad,99,tcp-nanqinlang)
 	KCONFIG:=
 endef
 
@@ -42,6 +42,13 @@ define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \
 	$(MAKE_OPTS) \
 	modules
+endef
+
+TCP_NANQINLANG_SYSCTL_CONF:=sysctl-tcp-nanqinlang.conf
+
+define KernelPackage/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/etc/sysctl.d
+	$(INSTALL_DATA) ./files/$(TCP_NANQINLANG_SYSCTL_CONF) $(1)/etc/sysctl.d/12-tcp-nanqinlang.conf
 endef
 
 $(eval $(call KernelPackage,$(PKG_NAME)))
