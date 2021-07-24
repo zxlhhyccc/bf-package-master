@@ -63,7 +63,7 @@ ifneq ($(CONFIG_CCACHE),)
 endif
 
 CLANG_VER:=13-init-10392-gd3676d4b-2
-CLANG_FILE:=clang-$(CLANG_VER).tgz
+CLANG_FILE:=clang-llvmorg-$(CLANG_VER).tgz
 define Download/CLANG
 	URL:=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64
 	URL_FILE:=$(CLANG_FILE)
