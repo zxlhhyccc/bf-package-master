@@ -1,1 +1,1 @@
-obj-m := tcp_bbr_nanqinlang.o 
+obj-m := tcp_nanqinlang.o 

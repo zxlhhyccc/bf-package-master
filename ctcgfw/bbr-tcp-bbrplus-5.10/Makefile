@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_NAME:=tcp-bbrplus-5.10
+PKG_NAME:=tcp-bbrplus
 PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
