@@ -256,7 +256,7 @@ start(){
 	if [ $bbr_cca = "bbr" ];  then
 		sysctl -w net.ipv4.tcp_congestion_control="bbr"
 	elif [ $bbr_cca = "bbrplus" ];  then
-		sysctl -w net.core.default_qdisc="fq"
+		sysctl -w net.core.default_qdisc="fq_codel"
 		sysctl -w net.ipv4.tcp_congestion_control="bbrplus"
 	else
 		sysctl -w net.ipv4.tcp_congestion_control="cubic"
