@@ -367,8 +367,8 @@ check_status(){
 		;;
 	"bbr")
 		([ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbr" ] ||
-		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbrplus" ]
-		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xnanqinlang" ]
+		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbrplus" ] ||
+		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xnanqinlang" ] ||
 		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunami" ]) && \
 			exit 0 || exit 1
 		;;
