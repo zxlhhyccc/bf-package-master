@@ -51,6 +51,12 @@ end
 if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_bbrplus.ko") then
 bbr_cca:value("bbrplus", translate("Enable BBRPLUS"))
 end
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_nanqinlang.ko") then
+bbr_cca:value("nanqinlang", translate("Enable NANQINLANG"))
+end
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_tsunami.ko") then
+bbr_cca:value("tsunami", translate("Enable TSUNAMI"))
+end
 bbr_cca.default = 0
 bbr_cca.description = translate("Using BBR CCA can improve TCP network performance effectively")
 
