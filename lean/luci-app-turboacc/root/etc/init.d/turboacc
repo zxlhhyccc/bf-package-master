@@ -29,7 +29,8 @@ inital_conf(){
 	([ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] ||
 	[ ! -e "/lib/modules/$(uname -r)/tcp_bbrplus.ko" ] ||
 	[ ! -e "/lib/modules/$(uname -r)/tcp_nanqinlang.ko" ] ||
-	[ ! -e "/lib/modules/$(uname -r)/tcp_tsunami.ko" ]) && bbr_cca="0"
+	[ ! -e "/lib/modules/$(uname -r)/tcp_tsunami.ko" ] ||
+	[ ! -e "/lib/modules/$(uname -r)/tcp_tsunamio.ko" ]) && bbr_cca="0"
 	[ ! -e "/lib/modules/$(uname -r)/xt_FULLCONENAT.ko" ] && fullcone_nat="0"
 }
 
@@ -266,6 +267,9 @@ start(){
 	elif [ $bbr_cca = "tsunami" ];  then
 		sysctl -w net.core.default_qdisc="fq_codel"
 		sysctl -w net.ipv4.tcp_congestion_control="tsunami"
+	elif [ $bbr_cca = "tsunamio" ];  then
+		sysctl -w net.core.default_qdisc="fq_codel"
+		sysctl -w net.ipv4.tcp_congestion_control="tsunamio"
 	else
 		sysctl -w net.ipv4.tcp_congestion_control="cubic"
 	fi
@@ -369,7 +373,8 @@ check_status(){
 		([ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbr" ] ||
 		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbrplus" ] ||
 		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xnanqinlang" ] ||
-		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunami" ]) && \
+		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunami" ] ||
+		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunamio" ]) && \
 			exit 0 || exit 1
 		;;
 	"dns")

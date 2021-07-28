@@ -57,6 +57,9 @@ end
 if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_tsunami.ko") then
 bbr_cca:value("tsunami", translate("Enable TSUNAMI"))
 end
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_tsunamio.ko") then
+bbr_cca:value("tsunamio", translate("Enable TSUNAMIO"))
+end
 bbr_cca.default = 0
 bbr_cca.description = translate("Using BBR CCA can improve TCP network performance effectively")
 
