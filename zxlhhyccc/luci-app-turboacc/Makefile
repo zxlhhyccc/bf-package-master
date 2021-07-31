@@ -12,12 +12,11 @@ PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 LUCI_TITLE:=LuCI support for Flow Offload / Shortcut-FE
-LUCI_DEPENDS:=@LINUX_5_4 +pdnsd-alt \
+LUCI_DEPENDS:=@LINUX_5_10 +pdnsd-alt \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-bbr \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-bbrplus \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-nanqinlang \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-tsunami \
-	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-tsunamio \
 	+PACKAGE_TURBOACC_INCLUDE_DNSFORWARDER:dnsforwarder-tur \
 	+PACKAGE_TURBOACC_INCLUDE_DNSPROXY:dnsproxy \
 	+PACKAGE_TURBOACC_INCLUDE_ADGUARDHOME:AdGuardHome \

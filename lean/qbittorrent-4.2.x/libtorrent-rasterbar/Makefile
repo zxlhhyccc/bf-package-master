@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libtorrent-rasterbar
 PKG_VERSION:=1.2.14
-PKG_RELEASE=1
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/arvidn/libtorrent.git
@@ -12,61 +12,36 @@ PKG_SOURCE_DATE:=2021-07-27
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_VERSION:=ba56dd1e23621902709f76c14d86aa72a249a874
 
-PKG_LICENSE:=BSD
+PKG_MAINTAINER:=David Yang <mmyangfl@gmail.com>
+PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=COPYING
 
-PKG_USE_MIPS16:=0
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/libtorrent-rasterbar
+  TITLE:=Rasterbar BitTorrent library
+  URL:=https://libtorrent.org/
   SECTION:=libs
   CATEGORY:=Libraries
-  TITLE:=Rasterbar BitTorrent library
-  URL:=https://www.libtorrent.org/
-  DEPENDS:=+libstdcpp +libopenssl +boost +boost-system +boost-chrono +boost-random $(ICONV_DEPENDS)
-  MAINTAINER:=Arvid Norberg <arvid@libtorrent.org>
+  DEPENDS:=+boost-system +libstdcpp +libopenssl $(ICONV_DEPENDS)
 endef
 
 define Package/libtorrent-rasterbar/description
-Rasterbar libtorrent is a C++ library that aims to be a good alternative to
-all the other bittorrent implementations around. It is a library and not a
-full featured client, although it comes with a working example client.
+  Rasterbar libtorrent is a C++ library that aims to be a good
+  alternative to all the other bittorrent implementations around.
 endef
 
-TARGET_CFLAGS += $(if $(CONFIG_SOFT_FLOAT),-DBOOST_NO_FENV_H) -fPIC
-
-EXTRA_CXXFLAGS += $(if $(CONFIG_GCC_VERSION_4_8),-std=gnu++14,-std=gnu++17)
-
-TARGET_LDFLAGS += -lstdc++
-
-CONFIGURE_ARGS += \
-	--enable-shared=yes \
-	--enable-static=yes \
-	--disable-debug \
-	--disable-rpath \
-	--enable-logging=no \
-	--enable-encryption \
-	--enable-deprecated-functions \
-	--with-gnu-ld \
-	--with-openssl=$(STAGING_DIR)/usr \
-	--with-boost=$(STAGING_DIR)/usr \
-	--with-libiconv \
-	--with-libiconv-prefix=$(ICONV_PREFIX)
-
-define Build/Configure
-	cd $(PKG_BUILD_DIR) ; \
-		sh autotool.sh
-	$(call Build/Configure/Default)
-endef
+PKG_UNPACK:=$(HOST_TAR) -C $(PKG_BUILD_DIR) --strip-components=1 -xzf $(DL_DIR)/$(PKG_SOURCE)
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/libtorrent $(1)/usr/include/
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libtorrent-rasterbar.{a,so*} $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libtorrent-rasterbar.so* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libtorrent-rasterbar.pc $(1)/usr/lib/pkgconfig/
 endef
