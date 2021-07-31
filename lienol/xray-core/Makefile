@@ -106,7 +106,7 @@ define Package/xray-core/conffiles
 /usr/share/xray
 endef
 
-GEOIP_VER:=202107262209
+GEOIP_VER:=202107302209
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -114,10 +114,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=6f9b490e18f0c466dfbf459e8f59d8019fca29f118ccf8e6f7dc19584567fb69
+  HASH:=92e6a4b9d43d80263f6048b6238ee3b20016219d45278ae2cf929f31b2440cb4
 endef
 
-GEOSITE_VER:=202107262209
+GEOSITE_VER:=202107302209
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -127,7 +127,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=51b3e8373294d03da1a5f554ac53e5b40cdd07dbf184a7eee67bea074234b359
+  HASH:=92e6a4b9d43d80263f6048b6238ee3b20016219d45278ae2cf929f31b2440cb4
 endef
 
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
