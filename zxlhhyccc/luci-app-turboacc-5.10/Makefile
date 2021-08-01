@@ -5,14 +5,14 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-turboacc
+PKG_NAME:=luci-app-turboacc-5.10
 PKG_RELEASE:=$(COMMITCOUNT)
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 LUCI_TITLE:=LuCI support for Flow Offload / Shortcut-FE
-LUCI_DEPENDS:=@LINUX_5_10 +pdnsd-alt \
+LUCI_DEPENDS:=+pdnsd-alt \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-bbr \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-bbrplus \
 	+PACKAGE_TURBOACC_INCLUDE_BBR_CCA:kmod-tcp-nanqinlang \
@@ -24,7 +24,7 @@ LUCI_DEPENDS:=@LINUX_5_10 +pdnsd-alt \
 	+PACKAGE_TURBOACC_INCLUDE_SHORTCUT_FE:kmod-fast-classifier
 LUCI_PKGARCH:=all
 
-define Package/luci-app-turboacc/config
+define Package/luci-app-turboacc-5.10/config
 config PACKAGE_TURBOACC_INCLUDE_OFFLOADING
 	bool "Include Flow Offload"
 	depends on PACKAGE_TURBOACC_INCLUDE_SHORTCUT_FE=n
