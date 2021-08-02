@@ -51,7 +51,7 @@ endef
 
 CONFIGURE_VARS += \
   	QT_QMAKE="$(STAGING_DIR_HOSTPKG)/bin" \
-	PKG_CONFIG_PATH="$(TOOLCHAIN_DIR)/lib/pkgconfig"
+	PKG_CONFIG_PATH="$(STAGING_DIR_HOSTPKG)/lib/pkgconfig"
 
 CONFIGURE_ARGS += \
 	--disable-gui \
