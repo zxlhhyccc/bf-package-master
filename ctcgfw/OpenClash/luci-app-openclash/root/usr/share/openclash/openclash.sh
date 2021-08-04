@@ -116,7 +116,7 @@ config_cus_up()
 	      end" 2>/dev/null >> $LOG_FILE
 	   fi
 	   if [ "$servers_update" -eq 1 ]; then
-	      LOG_OUT "Config file【$name】is Replaced Successfully, Start to Reserving..."
+	      LOG_OUT "Config File【$name】is Replaced Successfully, Start to Reserving..."
 	      uci -q set openclash.config.config_update_path="/etc/openclash/config/$name.yaml"
 	      uci -q set openclash.config.servers_if_update=1
 	      uci commit openclash
@@ -247,19 +247,19 @@ field_name_check()
          if Value.key?('Proxy') then
             Value['proxies'] = Value['Proxy']
             Value.delete('Proxy')
-            puts '${LOGTIME} Warning: Proxy is no longer used. Auto replaced by proxies.'
+            puts '${LOGTIME} Warning: Proxy is no longer used. Auto replaced by proxies'
          elsif Value.key?('Proxy Group') then
             Value['proxy-groups'] = Value['Proxy Group']
             Value.delete('Proxy Group')
-            puts '${LOGTIME} Warning: Proxy Group is no longer used. Auto replaced by proxy-groups.'
+            puts '${LOGTIME} Warning: Proxy Group is no longer used. Auto replaced by proxy-groups'
          elsif Value.key?('Rule') then
             Value['rules'] = Value['Rule']
             Value.delete('Rule')
-            puts '${LOGTIME} Warning: Rule is no longer used. Auto replaced by rules.'
+            puts '${LOGTIME} Warning: Rule is no longer used. Auto replaced by rules'
          elsif Value.key?('rule-provider') then
             Value['rule-providers'] = Value['rule-provider']
             Value.delete('rule-provider')
-             puts '${LOGTIME} Warning: rule-provider is no longer used. Auto replaced by rule-providers.'
+             puts '${LOGTIME} Warning: rule-provider is no longer used. Auto replaced by rule-providers'
          end;
          File.open('$CFG_FILE','w') {|f| YAML.dump(Value, f)};
       end;

@@ -807,19 +807,19 @@ ruby -ryaml -E UTF-8 -e "
       if Value.key?('Proxy') then
          Value['proxies'] = Value['Proxy']
          Value.delete('Proxy')
-         puts '${LOGTIME} Warning: Proxy is no longer used. Auto replaced by proxies.'
+         puts '${LOGTIME} Warning: Proxy is no longer used. Auto replaced by proxies'
       elsif Value.key?('Proxy Group') then
          Value['proxy-groups'] = Value['Proxy Group']
          Value.delete('Proxy Group')
-         puts '${LOGTIME} Warning: Proxy Group is no longer used. Auto replaced by proxy-groups.'
+         puts '${LOGTIME} Warning: Proxy Group is no longer used. Auto replaced by proxy-groups'
       elsif Value.key?('Rule') then
          Value['rules'] = Value['Rule']
          Value.delete('Rule')
-         puts '${LOGTIME} Warning: Rule is no longer used. Auto replaced by rules.'
+         puts '${LOGTIME} Warning: Rule is no longer used. Auto replaced by rules'
       elsif Value.key?('rule-provider') then
          Value['rule-providers'] = Value['rule-provider']
          Value.delete('rule-provider')
-         puts '${LOGTIME} Warning: rule-provider is no longer used. Auto replaced by rule-providers.'
+         puts '${LOGTIME} Warning: rule-provider is no longer used. Auto replaced by rule-providers'
       end;
       File.open('$CONFIG_FILE','w') {|f| YAML.dump(Value, f)};
    end;
@@ -1281,7 +1281,7 @@ firewall_redirect_exclude()
 set_firewall()
 {
 
-DNSPORT="$(uci get dhcp.@dnsmasq[0].port 2>/dev/null || echo 53)"
+DNSPORT="$(uci -q get dhcp.@dnsmasq[0].port || echo 53)"
 if [ "$enable_redirect_dns" -eq 1 ] && [ -z "$(iptables -t nat -nL PREROUTING --line-number |grep 'dns_hijack')"]; then
    iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports "$DNSPORT" -m comment --comment dns_hijack
    iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports "$DNSPORT" -m comment --comment dns_hijack
@@ -1308,9 +1308,11 @@ if [ -z "$(uci -q get firewall.openclash)" ] || [ -z "$(uci -q get ucitrack.@ope
 fi
           
 if [ "$(uci -q get firewall.@defaults[0].forward)" != "ACCEPT" ]; then
+	 uci -q set openclash.config.firewall_forward_default=$(uci -q get firewall.@defaults[0].forward)
    uci -q set firewall.@defaults[0].forward=ACCEPT
    uci -q commit firewall
-   /etc/init.d/firewall reload >/dev/null 2>&1
+   uci -q commit openclash
+   /etc/init.d/firewall reload >/dev/null 2>&1 &
 fi
 
 mkdir -p /var/etc
@@ -1804,7 +1806,7 @@ start()
       LOG_OUT "Warning: OpenClash Start Successful With Raw Config File, Please Note That It's Restricted Mode Now"
       sleep 5
    fi
-   echo "OpenClash Already Start"
+   echo "OpenClash Already Start!"
    SLOG_CLEAN
    rm -rf /tmp/yaml_*
 }
@@ -1856,11 +1858,13 @@ stop()
       firewall_forward_default=$(uci -q get openclash.config.firewall_forward_default)
       if [ -n "$firewall_forward_default" ] && [ "$firewall_forward_default" != "$(uci -q get firewall.@defaults[0].forward)" ]; then
       	uci -q set firewall.@defaults[0].forward=$firewall_forward_default
+      	uci -q delete openclash.config.firewall_forward_default
       	uci -q commit firewall
-      	/etc/init.d/firewall reload >/dev/null 2>&1
+      	uci -q commit openclash
+      	/etc/init.d/firewall reload >/dev/null 2>&1 &
       fi
       del_lock
-      LOG_OUT "OpenClash 关闭成功！"
+      LOG_OUT "OpenClash Already Stop!"
       sleep 5
    fi
    
@@ -1869,7 +1873,7 @@ stop()
    uci -q commit openclash
    rm -rf /tmp/yaml_*
    rm -rf $START_LOG
-   echo "OpenClash Already Stop"
+   echo "OpenClash Already Stop!"
 }
 
 
