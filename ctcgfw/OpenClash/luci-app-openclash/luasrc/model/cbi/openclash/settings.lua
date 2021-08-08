@@ -18,9 +18,16 @@ local op_mode = string.sub(luci.sys.exec('uci get openclash.config.operation_mod
 if not op_mode then op_mode = "redir-host" end
 local lan_ip=SYS.exec("uci -q get network.lan.ipaddr |awk -F '/' '{print $1}' 2>/dev/null |tr -d '\n' || ip addr show 2>/dev/null | grep -w 'inet' | grep 'global' | grep 'brd' | grep -Eo 'inet [0-9\.]+' | awk '{print $2}' | head -n 1 | tr -d '\n'")
 
-m = Map("openclash", translate("Global Settings(Will Modify The Config File Or Subscribe According To The Settings On This Page)"))
+mm = Map("openclash", translate("Global Settings(Will Modify The Config File Or Subscribe According To The Settings On This Page)"))
+mm.pageaction = false
+mm.description=translate("To restore the default configuration, try accessing:").." <a href='/cgi-bin/luci/admin/services/openclash/restore'>http://"..lan_ip.."/cgi-bin/luci/admin/services/openclash/restore</a>"
+
+cfg_show = Map("openclash_cfg_show")
+cfg_show.pageaction = false
+cfg_show:section(SimpleSection).template  = "openclash/config_show"
+
+m = Map("openclash")
 m.pageaction = false
-m.description=translate("To restore the default configuration, try accessing:").." <a href='/cgi-bin/luci/admin/services/openclash/restore'>http://"..lan_ip.."/cgi-bin/luci/admin/services/openclash/restore</a>"
 
 s = m:section(TypedSection, "openclash")
 s.anonymous = true
@@ -365,7 +372,7 @@ o.default=0
 custom_rules = s:taboption("rules", Value, "custom_rules")
 custom_rules:depends("enable_custom_clash_rules", 1)
 custom_rules.template = "cbi/tvalue"
-custom_rules.description = translate("Custom Rules Here, For More Go Github:https://github.com/Dreamacro/clash/blob/master/README.md, IP To CIDR: http://ip2cidr.com")
+custom_rules.description = translate("Custom Priority Rules Here, For More Go:").." "..'<a href="https://lancellc.gitbook.io/clash/clash-config-file/rules">https://lancellc.gitbook.io/clash/clash-config-file/rules</a>'.." ,"..translate("IP To CIDR:").." "..'<a href="http://ip2cidr.com">http://ip2cidr.com</a>'
 custom_rules.rows = 20
 custom_rules.wrap = "off"
 
@@ -385,7 +392,7 @@ end
 custom_rules_2 = s:taboption("rules", Value, "custom_rules_2")
 custom_rules_2:depends("enable_custom_clash_rules", 1)
 custom_rules_2.template = "cbi/tvalue"
-custom_rules_2.description = translate("Custom Rules 2 Here, For More Go Github:https://github.com/Dreamacro/clash/blob/master/README.md, IP To CIDR: http://ip2cidr.com")
+custom_rules_2.description = translate("Custom Extended Rules Here, For More Go:").." "..'<a href="https://lancellc.gitbook.io/clash/clash-config-file/rules">https://lancellc.gitbook.io/clash/clash-config-file/rules</a>'.." ,"..translate("IP To CIDR:").." "..'<a href="http://ip2cidr.com">http://ip2cidr.com</a>'
 custom_rules_2.rows = 20
 custom_rules_2.wrap = "off"
 
@@ -750,7 +757,7 @@ s.anonymous = true
 
 custom_hosts = s:option(Value, "custom_hosts")
 custom_hosts.template = "cbi/tvalue"
-custom_hosts.description = translate("Custom Hosts Here, For More Go Github:https://github.com/Dreamacro/clash/blob/master/README.md")
+custom_hosts.description = translate("Custom Hosts Here, For More Go:").." "..'<a href="https://lancellc.gitbook.io/clash/clash-config-file/dns/host">https://lancellc.gitbook.io/clash/clash-config-file/dns/host</a>'
 custom_hosts.rows = 20
 custom_hosts.wrap = "off"
 
@@ -790,6 +797,6 @@ o.write = function()
   SYS.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
-return m
+return mm, cfg_show, m
 
 
