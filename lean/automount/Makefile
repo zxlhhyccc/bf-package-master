@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=automount
-PKG_VERSION:=1
-PKG_RELEASE:=35
+PKG_FLAGS:=nonshared
+PKG_RELEASE:=$(COMMITCOUNT)
 PKG_ARCH:=all
 
 include $(INCLUDE_DIR)/package.mk
