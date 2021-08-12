@@ -1,7 +1,6 @@
 #!/bin/sh
 #
 # 用于阿里云解析的DNS更新脚本
-# 2017-2018 Sense <sensec at gmail dot com>
 # 阿里云解析API文档 https://help.aliyun.com/document_detail/29739.html
 #
 # 本脚本由 dynamic_dns_functions.sh 内的函数 send_update() 调用
@@ -13,109 +12,65 @@
 #
 
 # 检查传入参数
-[ -z "$username" ] && write_log 14 "配置错误！保存阿里云API访问账号的'用户名'不能为空"
-[ -z "$password" ] && write_log 14 "配置错误！保存阿里云API访问密钥的'密码'不能为空"
+[ -z "$username" ] && write_log 14 "Configuration error! The 'username' that holds the Alibaba Cloud API access account cannot be empty"
+[ -z "$password" ] && write_log 14 "Configuration error! The 'password' that holds the Alibaba Cloud API access account cannot be empty"
 
 # 检查外部调用工具
-WGET_SSL='wget'
-[ -n "$WGET_SSL" ] || write_log 13 "使用阿里云API需要 GNU Wget 支持，请先安装"
-command -v sed >/dev/null 2>&1 || write_log 13 "使用阿里云API需要 sed 支持，请先安装"
-command -v openssl >/dev/null 2>&1 || write_log 13 "使用阿里云API需要 openssl-util 支持，请先安装"
-
-# 包含用于解析 JSON 格式返回值的函数
-. /usr/share/libubox/jshn.sh
+[ -n "$CURL_SSL" ] || write_log 13 "Alibaba Cloud API communication require cURL with SSL support. Please install"
+[ -n "$CURL_PROXY" ] || write_log 13 "cURL: libcurl compiled without Proxy support"
+command -v sed >/dev/null 2>&1 || write_log 13 "Sed support is required to use Alibaba Cloud API, please install first"
+command -v openssl >/dev/null 2>&1 || write_log 13 "Openssl-util support is required to use Alibaba Cloud API, please install first"
 
 # 变量声明
-local __HOST __DOMAIN __TYPE __URLBASE __CMDBASE __URLARGS __SEPARATOR __RECID
-[ $use_https -eq 0 ] && __URLBASE="http://alidns.aliyuncs.com/" || __URLBASE="https://alidns.aliyuncs.com/"
-__SEPARATOR="&"
+local __HOST __DOMAIN __TYPE __CMDBASE __RECID __TTL
 
 # 从 $domain 分离主机和域名
-[ "${domain:0:2}" == "@." ] && domain="${domain/./}" # 主域名处理
-[ "$domain" == "${domain/@/}" ] && domain="${domain/./@}" # 未找到分隔符，兼容常用域名格式
+[ "${domain:0:2}" = "@." ] && domain="${domain/./}" # 主域名处理
+[ "$domain" = "${domain/@/}" ] && domain="${domain/./@}" # 未找到分隔符，兼容常用域名格式
 __HOST="${domain%%@*}"
 __DOMAIN="${domain#*@}"
-[ -z "$__HOST" -o "$__HOST" == "$__DOMAIN" ] && __HOST="@"
+[ -z "$__HOST" -o "$__HOST" = "$__DOMAIN" ] && __HOST=@
 
 # 设置记录类型
-[ $use_ipv6 -eq 0 ] && __TYPE="A" || __TYPE="AAAA"
+[ $use_ipv6 = 0 ] && __TYPE=A || __TYPE=AAAA
 
 # 构造基本通信命令
-build_command() {
-	__CMDBASE="$WGET_SSL --no-hsts -nv -t 1 -O $DATFILE -o $ERRFILE"
+build_command(){
+	__CMDBASE="$CURL -Ss"
 	# 绑定用于通信的主机/IP
-	if [ -n "$bind_network" ]; then
-		local bind_ip run_prog
-		[ $use_ipv6 -eq 0 ] && run_prog="network_get_ipaddr" || run_prog="network_get_ipaddr6"
-		eval "$run_prog bind_ip $bind_network" || \
-			write_log 13 "无法使用 '$run_prog $bind_network' 获取本地IP地址 - 错误代码: '$?'"
-		write_log 7 "强制使用IP '$bind_ip' 通信"
-		__CMDBASE="$__CMDBASE --bind-address=$bind_ip"
+	if [ -n "$bind_network" ];then
+		local __DEVICE
+		network_get_physdev __DEVICE $bind_network || write_log 13 "Can not detect local device using 'network_get_physdev $bind_network' - Error: '$?'"
+		write_log 7 "Force communication via device '$__DEVICE'"
+		__CMDBASE="$__CMDBASE --interface $__DEVICE"
 	fi
 	# 强制设定IP版本
-	if [ $force_ipversion -eq 1 ]; then
-		[ $use_ipv6 -eq 0 ] && __CMDBASE="$__CMDBASE -4" || __CMDBASE="$__CMDBASE -6"
+	if [ $force_ipversion = 1 ];then
+		[ $use_ipv6 = 0 ] && __CMDBASE="$__CMDBASE -4" || __CMDBASE="$__CMDBASE -6"
 	fi
 	# 设置CA证书参数
-	if [ $use_https -eq 1 ]; then
-		if [ "$cacert" = "IGNORE" ]; then
-			__CMDBASE="$__CMDBASE --no-check-certificate"
-		elif [ -f "$cacert" ]; then
-			__CMDBASE="$__CMDBASE --ca-certificate=${cacert}"
-		elif [ -d "$cacert" ]; then
-			__CMDBASE="$__CMDBASE --ca-directory=${cacert}"
-		elif [ -n "$cacert" ]; then
-			write_log 14 "在 '$cacert' 中未找到用于 HTTPS 通信的有效证书"
+	if [ $use_https = 1 ];then
+		if [ "$cacert" = IGNORE ];then
+			__CMDBASE="$__CMDBASE --insecure"
+		elif [ -f "$cacert" ];then
+			__CMDBASE="$__CMDBASE --cacert $cacert"
+		elif [ -d "$cacert" ];then
+			__CMDBASE="$__CMDBASE --capath $cacert"
+		elif [ -n "$cacert" ];then
+			write_log 14 "No valid certificate(s) found at '$cacert' for HTTPS communication"
 		fi
 	fi
 	# 如果没有设置，禁用代理 (这可能是 .wgetrc 或环境设置错误)
-	[ -z "$proxy" ] && __CMDBASE="$__CMDBASE --no-proxy"
-}
-
-# 用于阿里云API的通信函数
-aliyun_transfer() {
-	local __PARAM=$*
-	local __CNT=0
-	local __RUNPROG __ERR PID_SLEEP
-
-	[ $# -eq 0 ] && write_log 12 "'aliyun_transfer()' 出错 - 参数数量错误"
-
-	while : ; do
-		build_Request $__PARAM
-		__RUNPROG="$__CMDBASE '${__URLBASE}?${__URLARGS}'"
-
-		write_log 7 "#> $__RUNPROG"
-		eval $__RUNPROG
-		__ERR=$?
-		[ $__ERR -eq 0 ] && return 0
-
-		write_log 3 "wget 错误代码: '$__ERR'"
-		write_log 7 "$(cat $ERRFILE)"
-
-		if [ $VERBOSE -gt 1 ]; then
-			write_log 4 "传输失败 - 详细模式: $VERBOSE - 出错后不再重试"
-			return 1
-		fi
-
-		__CNT=$(( $__CNT + 1 ))
-		[ $retry_count -gt 0 -a $__CNT -gt $retry_count ] && \
-			write_log 14 "$retry_count 次重试后传输还是失败"
-
-		write_log 4 "传输失败 - $__CNT/$retry_count 在 $RETRY_SECONDS 秒后重试"
-		sleep $RETRY_SECONDS &
-		PID_SLEEP=$!
-		wait $PID_SLEEP
-		PID_SLEEP=0
-	done
+	[ -z "$proxy" ] && __CMDBASE="$__CMDBASE --noproxy '*'"
 }
 
 # 百分号编码
-percentEncode() {
-	if [ -z "${1//[A-Za-z0-9_.~-]/}" ]; then
+percentEncode(){
+	if [ -z "${1//[A-Za-z0-9_.~-]/}" ];then
 		echo -n "$1"
 	else
-		local string=$1; local i=0; local ret chr
-		while [ $i -lt ${#string} ]; do
+		local string=$1;local i=0;local ret chr
+		while [ $i -lt ${#string} ];do
 			chr=${string:$i:1}
 			[ -z "${chr#[^A-Za-z0-9_.~-]}" ] && chr=$(printf '%%%02X' "'$chr")
 			ret="$ret$chr"
@@ -125,122 +80,124 @@ percentEncode() {
 	fi
 }
 
-# 构造阿里云解析请求参数
-build_Request() {
-	local args=$*; local string
-	local HTTP_METHOD="GET"
-
+# 用于阿里云API的通信函数
+aliyun_transfer(){
+	__CNT=0;__URLARGS=
+	[ $# = 0 ] && write_log 12 "'aliyun_transfer()' Error - wrong number of parameters"
 	# 添加请求参数
-	__URLARGS=
-	for string in $args; do
+	for string in $*;do
 		case "${string%%=*}" in
-			Format|TTL|Version|AccessKeyId|SignatureMethod|Timestamp|SignatureVersion|SignatureNonce|Signature) ;; # 过滤公共参数
-			*) __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}");;
+			Format|Version|AccessKeyId|SignatureMethod|Timestamp|SignatureVersion|SignatureNonce|Signature);; # 过滤公共参数
+			*)__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}");;
 		esac
 	done
 	__URLARGS="${__URLARGS:1}"
-
 	# 附加公共参数
-	string="Format=JSON"; __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-	string="TTL=600";__URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-	string="Version=2015-01-09"; __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-	string="AccessKeyId=$username"; __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-	string="SignatureMethod=HMAC-SHA1"; __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-	string="Timestamp="$(date -u '+%Y-%m-%dT%H:%M:%SZ'); __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-	string="SignatureVersion=1.0"; __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-	string="SignatureNonce="$(cat '/proc/sys/kernel/random/uuid'); __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
-
+	string="Format=JSON";__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="Version=2015-01-09";__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="AccessKeyId=$username";__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="SignatureMethod=HMAC-SHA1";__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="Timestamp="$(date -u '+%Y-%m-%dT%H:%M:%SZ');__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="SignatureVersion=1.0";__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="SignatureNonce="$(cat '/proc/sys/kernel/random/uuid');__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="Line=default";__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
 	# 对请求参数进行排序，用于生成签名
-	string=$(echo -n "$__URLARGS" | sed 's/\'"${__SEPARATOR}"'/\n/g' | sort | sed ':label; N; s/\n/\'"${__SEPARATOR}"'/g; b label')
+	string=$(echo -n "$__URLARGS" | sed 's/\'"&"'/\n/g' | sort | sed ':label; N; s/\n/\'"&"'/g; b label')
 	# 构造用于计算签名的字符串
-	string="${HTTP_METHOD}${__SEPARATOR}"$(percentEncode "/")"${__SEPARATOR}"$(percentEncode "$string")
-	# 字符串计算签名HMAC值
-	local signature=$(echo -n "$string" | openssl dgst -sha1 -hmac "${password}&" -binary)
-	# HMAC值编码成字符串，得到签名值
-	signature=$(echo -n "$signature" | openssl base64)
-
+	string="GET&"$(percentEncode "/")"&"$(percentEncode "$string")
+	# 字符串计算签名值
+	local signature=$(echo -n "$string" | openssl dgst -sha1 -hmac "$password&" -binary | openssl base64)
 	# 附加签名参数
-	string="Signature=$signature"; __URLARGS="$__URLARGS${__SEPARATOR}"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	string="Signature=$signature";__URLARGS="$__URLARGS&"$(percentEncode "${string%%=*}")"="$(percentEncode "${string#*=}")
+	__A="$__CMDBASE 'https://alidns.aliyuncs.com/?$__URLARGS'"
+	write_log 7 "#> $__A"
+	while ! __TMP=`eval $__A 2>&1`;do
+		write_log 3 "[$__TMP]"
+		if [ $VERBOSE -gt 1 ];then
+			write_log 4 "Transfer failed - detailed mode: $VERBOSE - Do not try again after an error"
+			return 1
+		fi
+		__CNT=$(( $__CNT + 1 ))
+		[ $retry_count -gt 0 -a $__CNT -gt $retry_count ] && write_log 14 "Transfer failed after $retry_count retries"
+		write_log 4 "Transfer failed - $__CNT Try again in $RETRY_SECONDS seconds"
+		sleep $RETRY_SECONDS &
+		PID_SLEEP=$!
+		wait $PID_SLEEP
+		PID_SLEEP=0
+	done
+	__ERR=`jsonfilter -s "$__TMP" -e "@.Code"`
+	[ -z "$__ERR" ] && return 0
+	case $__ERR in
+		LastOperationNotFinished)printf "%s\n" " $(date +%H%M%S)       : 最后一次操作未完成,2秒后重试" >> $LOGFILE;return 1;;
+		InvalidTimeStamp.Expired)printf "%s\n" " $(date +%H%M%S)       : 时间戳错误,2秒后重试" >> $LOGFILE;return 1;;
+		InvalidAccessKeyId.NotFound)__ERR="无效AccessKey ID";;
+		SignatureDoesNotMatch)__ERR="无效AccessKey Secret";;
+		InvalidDomainName.NoExist)__ERR="无效域名";;
+	esac
+	local A="$(date +%H%M%S) ERROR : [$__ERR] - 终止进程"
+	logger -p user.err -t ddns-scripts[$$] $SECTION_ID: ${A:15}
+	printf "%s\n" " $A" >> $LOGFILE
+	exit 1
 }
 
 # 添加解析记录
-add_domain() {
-	local value
-	aliyun_transfer "Action=AddDomainRecord" "DomainName=${__DOMAIN}" "RR=${__HOST}" "Type=${__TYPE}" "Value=${__IP}" || write_log 14 "服务器通信失败"
-	json_cleanup; json_load "$(cat "$DATFILE" 2> /dev/null)" >/dev/null 2>&1
-	json_get_var value "RecordId"
-	[ -z "$value" ] && write_log 14 "添加新解析记录失败"
-	write_log 7 "添加新解析记录成功"
-	return 0
-}
-
-# 修改解析记录
-update_domain() {
-	local value
-	aliyun_transfer "Action=UpdateDomainRecord" "RecordId=${__RECID}" "RR=${__HOST}" "Type=${__TYPE}" "Value=${__IP}" || write_log 14 "服务器通信失败"
-	json_cleanup; json_load "$(cat "$DATFILE" 2> /dev/null)" >/dev/null 2>&1
-	json_get_var value "RecordId"
-	[ -z "$value" ] && write_log 14 "修改解析记录失败"
-	write_log 7 "修改解析记录成功"
-	return 0
+add_domain(){
+	while ! aliyun_transfer "Action=AddDomainRecord" "DomainName=$__DOMAIN" "RR=$__HOST" "Type=$__TYPE" "Value=$__IP";do
+		sleep 2
+	done
+	printf "%s\n" " $(date +%H%M%S)       : 添加解析记录成功: [$([ "$__HOST" = @ ] || echo $__HOST.)$__DOMAIN],[IP:$__IP]" >> $LOGFILE
 }
 
 # 启用解析记录
-enable_domain() {
-	local value
-	aliyun_transfer "Action=SetDomainRecordStatus" "RecordId=${__RECID}" "Status=Enable" || write_log 14 "服务器通信失败"
-	json_cleanup; json_load "$(cat "$DATFILE" 2> /dev/null)" >/dev/null 2>&1
-	json_get_var value "Status"
-	[ "$value" != "Enable" ] && write_log 14 "启用解析记录失败"
-	write_log 7 "启用解析记录成功"
-	return 0
+enable_domain(){
+	while ! aliyun_transfer "Action=SetDomainRecordStatus" "RecordId=$__RECID" "Status=Enable";do
+		sleep 2
+	done
+	printf "%s\n" " $(date +%H%M%S)       : 启用解析记录成功" >> $LOGFILE
+}
+
+# 修改解析记录
+update_domain(){
+	while ! aliyun_transfer "Action=UpdateDomainRecord" "RecordId=$__RECID" "RR=$__HOST" "Type=$__TYPE" "Value=$__IP" "TTL=$__TTL";do
+		sleep 2
+	done
+	printf "%s\n" " $(date +%H%M%S)       : 修改解析记录成功: [$([ "$__HOST" = @ ] || echo $__HOST.)$__DOMAIN],[IP:$__IP],[TTL:$__TTL]" >> $LOGFILE
 }
 
 # 获取子域名解析记录列表
-describe_domain() {
-	local count value; local ret=0
-	aliyun_transfer "Action=DescribeSubDomainRecords" "SubDomain=${__HOST}.${__DOMAIN}" || write_log 14 "服务器通信失败"
-	write_log 7 "获取到解析记录: $(cat "$DATFILE" 2> /dev/null)" 
-	json_cleanup; json_load "$(cat "$DATFILE" 2> /dev/null)" >/dev/null 2>&1
-	json_get_var count "TotalCount"
-	if [ $count -eq 0 ]; then
-		write_log 7 "解析记录不存在"
+describe_domain(){
+	ret=0
+	while ! aliyun_transfer "Action=DescribeSubDomainRecords" "SubDomain=$__HOST.$__DOMAIN" "Type=$__TYPE";do
+		sleep 2
+	done
+	__TMP=`jsonfilter -s "$__TMP" -e "@.DomainRecords.Record[@]"`
+	if [ -z "$__TMP" ];then
+		printf "%s\n" " $(date +%H%M%S)       : 解析记录不存在: [$([ "$__HOST" = @ ] || echo $__HOST.)$__DOMAIN]" >> $LOGFILE
 		ret=1
 	else
-		local i=1;
-		while [ $i -le $count ]; do
-			json_cleanup; json_load "$(cat "$DATFILE" 2> /dev/null)" >/dev/null 2>&1
-			json_select "DomainRecords" >/dev/null 2>&1
-			json_select "Record" >/dev/null 2>&1
-			json_select $i >/dev/null 2>&1
-			i=$(( $i + 1 ))
-			json_get_var value "Type"
-			if [ "$value" != "${__TYPE}" ]; then
-				write_log 7 "当前解析类型: ${__TYPE}, 获得不匹配类型: $value"
-				ret=1; continue
-			else
-				ret=0
-				json_get_var __RECID "RecordId"
-				write_log 7 "获得解析记录ID: ${__RECID}, 类型: $value"
-				json_get_var value "Locked"
-				[ $value -ne 0 ] && write_log 14 "解析记录被锁定"
-				json_get_var value "Status"
-				[ "$value" != "ENABLE" ] && ret=$(( $ret | 2 )) && write_log 7 "解析记录被禁用"
-				json_get_var value "Value"
-				[ "$value" != "${__IP}" ] && ret=$(( $ret | 4 )) && write_log 7 "地址需要修改"
-				break
-			fi
-		done
+		__STATUS=`jsonfilter -s "$__TMP" -e "@.Status"`
+		__RECIP=`jsonfilter -s "$__TMP" -e "@.Value"`
+		if [ "$__STATUS" != ENABLE ];then
+			printf "%s\n" " $(date +%H%M%S)       : 解析记录被禁用" >> $LOGFILE
+			ret=$(( $ret | 2 ))
+		fi
+		if [ "$__RECIP" != "$__IP" ];then
+			__TTL=`jsonfilter -s "$__TMP" -e "@.TTL"`
+			printf "%s\n" " $(date +%H%M%S)       : 解析记录需要更新: [解析记录IP:$__RECIP] [本地IP:$__IP]" >> $LOGFILE
+			ret=$(( $ret | 4 ))
+		fi
 	fi
-	return $ret
 }
 
 build_command
 describe_domain
-ret=$?
-if [ $ret -eq 1 ]; then
-	sleep 3 && add_domain
+if [ $ret = 0 ];then
+	printf "%s\n" " $(date +%H%M%S)       : 解析记录不需要更新: [解析记录IP:$__RECIP] [本地IP:$__IP]" >> $LOGFILE
+elif [ $ret = 1 ];then
+	sleep 3
+	add_domain
 else
+	__RECID=`jsonfilter -s "$__TMP" -e "@.RecordId"`
 	[ $(( $ret & 2 )) -ne 0 ] && sleep 3 && enable_domain
 	[ $(( $ret & 4 )) -ne 0 ] && sleep 3 && update_domain
 fi

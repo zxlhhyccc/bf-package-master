@@ -5,7 +5,6 @@
 [ -z "$password" ] && write_log 14 "Configuration error! [Password] cannot be empty"
 
 # 检查外部调用工具
-WGET_SSL='wget'
 [ -n "$CURL_SSL" ] || write_log 13 "Dnspod communication require cURL with SSL support. Please install"
 [ -n "$CURL_PROXY" ] || write_log 13 "cURL: libcurl compiled without Proxy support"
 
@@ -105,7 +104,7 @@ update_domain(){
 # 获取域名解析记录
 describe_domain(){
 	ret=0
-	__POST="login_token=$username,$password&format=json&domain=$__DOMAIN&sub_domain=$__HOST&record_type=$__TYPE"
+	__POST="login_token=$username,$password&format=json&domain=$__DOMAIN&sub_domain=$__HOST"
 	__POST1="$__POST&value=$__IP&record_type=$__TYPE&record_line_id=0"
 	dnspod_transfer 0
 	__TMP=`jsonfilter -s "$__TMP" -e "@.records[@.type='$__TYPE' && @.line_id='0']"`
