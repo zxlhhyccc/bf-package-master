@@ -48,7 +48,7 @@
 		"read": {
 			"file": {
 				"/sbin/ip -[46] neigh show": [ "exec" ],
-				"description": "Grant access to routing status",
+				"/sbin/ip -[46] route show table all": [ "exec" ],
 				"/sbin/ip -[46] rule show": [ "exec" ]
 			},
 			"ubus": {
