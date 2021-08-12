@@ -26,12 +26,19 @@ inital_conf(){
 
 	[ ! -e "/lib/modules/$(uname -r)/xt_FLOWOFFLOAD.ko" ] && { sw_flow="0"; hw_flow="0"; }
 	[ ! -e "/lib/modules/$(uname -r)/fast-classifier.ko" ] && { sfe_flow="0"; sfe_bridge="0"; sfe_ipv6="0"; }
-	([ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] ||
-	[ ! -e "/lib/modules/$(uname -r)/tcp_bbrplus.ko" ] ||
-	[ ! -e "/lib/modules/$(uname -r)/tcp_nanqinlang.ko" ] ||
-	[ ! -e "/lib/modules/$(uname -r)/tcp_tsunami.ko" ] ||
-	[ ! -e "/lib/modules/$(uname -r)/tcp_tsunamio.ko" ]) && bbr_cca="0"
 	[ ! -e "/lib/modules/$(uname -r)/xt_FULLCONENAT.ko" ] && fullcone_nat="0"
+
+	if [ $bbr_cca = "bbr" ];  then
+		[ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] && bbr_cca="0"
+	elif [ $bbr_cca = "bbrplus" ];  then
+		[ ! -e "/lib/modules/$(uname -r)/tcp_bbrplus.ko" ] && bbr_cca="0"
+	elif [ $bbr_cca = "nanqinlang" ];  then
+		[ ! -e "/lib/modules/$(uname -r)/tcp_nanqinlang.ko" ] && bbr_cca="0"
+	elif [ $bbr_cca = "tsunami" ];  then
+		[ ! -e "/lib/modules/$(uname -r)/tcp_tsunami.ko" ] && bbr_cca="0"
+	elif [ $bbr_cca = "tsunamio" ];  then
+		[ ! -e "/lib/modules/$(uname -r)/tcp_tsunamio.ko" ] && bbr_cca="0"
+	fi
 }
 
 start_pdnsd() {
@@ -370,12 +377,19 @@ check_status(){
 			exit 0 || exit 1
 		;;
 	"bbr")
-		([ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbr" ] ||
-		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbrplus" ] ||
-		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xnanqinlang" ] ||
-		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunami" ] ||
-		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunamio" ]) && \
-			exit 0 || exit 1
+		if [ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbr" ]; then
+			exit 0
+		elif [ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbrplus" ]; then
+			exit 0
+		elif [ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xnanqinlang" ]; then
+			exit 0
+		elif [ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunami" ]; then
+			exit 0
+		elif [ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xtsunamio" ]; then
+			exit 0
+		else
+			exit 1
+		fi
 		;;
 	"dns")
 		pgrep "dnscache" >"/dev/null"|| pgrep "AdGuardHome" >"/dev/null" && exit 0 || exit 1
