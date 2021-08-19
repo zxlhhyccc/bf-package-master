@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash
-PKG_VERSION:=v1.6.5-10
-PKG_RELEASE:=g53e17a9
+PKG_VERSION:=v1.6.5-24
+PKG_RELEASE:=g426ca36
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_ARCH:=mipsle-softfloat
