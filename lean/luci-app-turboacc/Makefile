@@ -64,7 +64,7 @@ config PACKAGE_TURBOACC_INCLUDE_DNSPROXY
 	bool "Include DNSProxy"
 	default n
 
-config PACKAGE_$(PKG_NAME)_INCLUDE_ADGUARDHOME
+config PACKAGE_TURBOACC_INCLUDE_ADGUARDHOME
 	bool "Include AdGuardHome"
 	default n
 endef
