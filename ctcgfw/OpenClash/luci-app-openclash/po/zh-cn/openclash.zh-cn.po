@@ -358,6 +358,9 @@ msgstr "运行后，请等待服务器上线"
 msgid "Redir Port"
 msgstr "流量转发端口"
 
+msgid "TProxy Port"
+msgstr "TProxy 端口"
+
 msgid "SOCKS5 Port"
 msgstr "SOCKS5 代理端口"
 
@@ -2279,6 +2282,12 @@ msgstr "上传:"
 
 msgid "Down:"
 msgstr "下载:"
+
+msgid "Up Total:"
+msgstr "上传总量:"
+
+msgid "Down Total:"
+msgstr "下载总量:"
 
 msgid "Connections:"
 msgstr "活动连接:"
