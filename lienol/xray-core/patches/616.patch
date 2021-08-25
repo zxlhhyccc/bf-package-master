@@ -1,0 +1,2097 @@
+From 730db31cd030d0631bafe6a5580eda035314a459 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Fri, 25 Jun 2021 08:53:34 +0800
+Subject: [PATCH 01/18] Chore: Upgrade dependencies
+
+---
+ go.mod | 16 ++++++++--------
+ go.sum | 40 ++++++++++++++++++++++------------------
+ 2 files changed, 30 insertions(+), 26 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index 4c0228223..86f84c7fa 100644
+--- a/go.mod
++++ b/go.mod
+@@ -4,13 +4,13 @@ go 1.16
+ 
+ require (
+ 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
+-	github.com/golang/mock v1.5.0
++	github.com/golang/mock v1.6.0
+ 	github.com/golang/protobuf v1.5.2
+-	github.com/google/go-cmp v0.5.5
++	github.com/google/go-cmp v0.5.6
+ 	github.com/gorilla/websocket v1.4.2
+-	github.com/lucas-clemente/quic-go v0.20.0
+-	github.com/miekg/dns v1.1.41
+-	github.com/pelletier/go-toml v1.8.1
++	github.com/lucas-clemente/quic-go v0.21.1
++	github.com/miekg/dns v1.1.43
++	github.com/pelletier/go-toml v1.9.3
+ 	github.com/pires/go-proxyproto v0.5.0
+ 	github.com/refraction-networking/utls v0.0.0-20201210053706-2179f286686b
+ 	github.com/seiflotfy/cuckoofilter v0.0.0-20201222105146-bc6005554a0c
+@@ -18,10 +18,10 @@ require (
+ 	github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499
+ 	go.starlark.net v0.0.0-20210312235212-74c10e2c17dc
+ 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
+-	golang.org/x/net v0.0.0-20210330230544-e57232859fb2
++	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
+ 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+-	golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44
+-	google.golang.org/grpc v1.36.1
++	golang.org/x/sys v0.0.0-20210510120138-977fb7262007
++	google.golang.org/grpc v1.38.0
+ 	google.golang.org/protobuf v1.26.0
+ 	h12.io/socks v1.0.2
+ )
+diff --git a/go.sum b/go.sum
+index 2b074e16a..b374293b2 100644
+--- a/go.sum
++++ b/go.sum
+@@ -29,7 +29,7 @@ github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165/go.mod h1:c9O8+fp
+ github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
+ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+ github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+-github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
++github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
+ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+ github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
+ github.com/francoispqt/gojay v1.2.13/go.mod h1:ehT5mTG4ua4581f1++1WLG0vPdaA9HaiDsoyrBGkyDY=
+@@ -47,8 +47,8 @@ github.com/golang/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:tluoj9z5200j
+ github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
+ github.com/golang/mock v1.2.0/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
+ github.com/golang/mock v1.4.4/go.mod h1:l3mdAwkq5BuhzHwde/uurv3sEJeZMXNpwsxVWU71h+4=
+-github.com/golang/mock v1.5.0 h1:jlYHihg//f7RRwuPfptm04yp4s7O6Kw8EZiVYIGcH0g=
+-github.com/golang/mock v1.5.0/go.mod h1:CWnOUgYIOo4TcNZ0wHX3YZCqsaM1I1Jvs6v3mP3KVu8=
++github.com/golang/mock v1.6.0 h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=
++github.com/golang/mock v1.6.0/go.mod h1:p6yTPP+5HYm5mzsMV8JkE6ZKdX+/wYM6Hr+LicevLPs=
+ github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+ github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+ github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+@@ -69,8 +69,9 @@ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
+ github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-cmp v0.5.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+-github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
+ github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
++github.com/google/go-cmp v0.5.6 h1:BKbKCqvP6I+rmFHt06ZmyQtvB8xAkWdhFyr0ZUNZcxQ=
++github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
+ github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
+ github.com/google/martian v2.1.0+incompatible/go.mod h1:9I4somxYTbIHy5NJKHRl3wXiIaQGbYVAs8BPL6v8lEs=
+@@ -96,8 +97,8 @@ github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+ github.com/kr/pty v1.1.3/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+ github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
+ github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
+-github.com/lucas-clemente/quic-go v0.20.0 h1:FSU3YN5VnLafHR27Ejs1r1CYMS7XMyIVDzRewkDLNBw=
+-github.com/lucas-clemente/quic-go v0.20.0/go.mod h1:fZq/HUDIM+mW6X6wtzORjC0E/WDBMKe5Hf9bgjISwLk=
++github.com/lucas-clemente/quic-go v0.21.1 h1:uuhCcu885TE9u/piPYMChI/yqA1lXfaLUEx8uCMxf8w=
++github.com/lucas-clemente/quic-go v0.21.1/go.mod h1:U9kFi5LKbNIlU30dkuM9vxmTxWq4Bvzee/MjBI+07UA=
+ github.com/lunixbochs/vtclean v1.0.0/go.mod h1:pHhQNgMf3btfWnGBVipUOjRYhoOsdGqdm/+2c2E2WMI=
+ github.com/mailru/easyjson v0.0.0-20190312143242-1de009706dbe/go.mod h1:C1wdFJiN94OJF2b5HbByQZoLdCWB1Yqtg26g4irojpc=
+ github.com/marten-seemann/qpack v0.2.1/go.mod h1:F7Gl5L1jIgN1D11ucXefiuJS9UMVP2opoCp2jDKb7wc=
+@@ -105,10 +106,12 @@ github.com/marten-seemann/qtls-go1-15 v0.1.4 h1:RehYMOyRW8hPVEja1KBVsFVNSm35Jj9M
+ github.com/marten-seemann/qtls-go1-15 v0.1.4/go.mod h1:GyFwywLKkRt+6mfU99csTEY1joMZz5vmB1WNZH3P81I=
+ github.com/marten-seemann/qtls-go1-16 v0.1.3 h1:XEZ1xGorVy9u+lJq+WXNE+hiqRYLNvJGYmwfwKQN2gU=
+ github.com/marten-seemann/qtls-go1-16 v0.1.3/go.mod h1:gNpI2Ol+lRS3WwSOtIUUtRwZEQMXjYK+dQSBFbethAk=
++github.com/marten-seemann/qtls-go1-17 v0.1.0-beta.1.2 h1:SficYjyOthSrliKI+EaFuXS6HqSsX3dkY9AqxAAjBjw=
++github.com/marten-seemann/qtls-go1-17 v0.1.0-beta.1.2/go.mod h1:fz4HIxByo+LlWcreM4CZOYNuz3taBQ8rN2X6FqvaWo8=
+ github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
+ github.com/microcosm-cc/bluemonday v1.0.1/go.mod h1:hsXNsILzKxV+sX77C5b8FSuKF00vh2OMYv+xgHpAMF4=
+-github.com/miekg/dns v1.1.41 h1:WMszZWJG0XmzbK9FEmzH2TVcqYzFesusSIB41b8KHxY=
+-github.com/miekg/dns v1.1.41/go.mod h1:p6aan82bvRIyn+zDIv9xYNUpwa73JcSh9BKwknJysuI=
++github.com/miekg/dns v1.1.43 h1:JKfpVSCB84vrAmHzyrsxB5NAr5kLoMXZArPSw7Qlgyg=
++github.com/miekg/dns v1.1.43/go.mod h1:+evo5L0630/F6ca/Z9+GAqzhjGyn8/c+TBaOyfEl0V4=
+ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
+ github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
+ github.com/neelance/astrewrite v0.0.0-20160511093645-99348263ae86/go.mod h1:kHJEU3ofeGjhHklVoIGuVj85JJwZ6kWPaJwCIxgnFmo=
+@@ -123,8 +126,8 @@ github.com/onsi/gomega v1.7.1/go.mod h1:XdKZgCCFLUoM/7CFJVPcG8C1xQ1AJ0vpAezJrB7J
+ github.com/onsi/gomega v1.10.1 h1:o0+MgICZLuZ7xjH7Vx6zS/zcu93/BEp1VwkIW1mEXCE=
+ github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1ybHNo=
+ github.com/openzipkin/zipkin-go v0.1.1/go.mod h1:NtoC/o8u3JlF1lSlyPNswIbeQH9bJTmOf0Erfk+hxe8=
+-github.com/pelletier/go-toml v1.8.1 h1:1Nf83orprkJyknT6h7zbuEGUEjcyVlCxSUGTENmNCRM=
+-github.com/pelletier/go-toml v1.8.1/go.mod h1:T2/BmBdy8dvIRq1a/8aqjN41wvWlN4lrapLU/GW4pbc=
++github.com/pelletier/go-toml v1.9.3 h1:zeC5b1GviRUyKYd6OJPvBU/mcVDVoL1OhT17FCt5dSQ=
++github.com/pelletier/go-toml v1.9.3/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
+ github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2 h1:JhzVVoYvbOACxoUmOs6V/G4D5nPVUW73rKvXxP4XUJc=
+ github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2/go.mod h1:iIss55rKnNBTvrwdmkUpLnDpZoAHvWaiq5+iMmen4AE=
+ github.com/pires/go-proxyproto v0.5.0 h1:A4Jv4ZCaV3AFJeGh5mGwkz4iuWUYMlQ7IoO/GTuSuLo=
+@@ -178,6 +181,7 @@ github.com/viant/assertly v0.4.8/go.mod h1:aGifi++jvCrUaklKEKT0BU95igDNaqkvz+49u
+ github.com/viant/toolbox v0.24.0/go.mod h1:OxMCG57V0PXuIP2HNQrtJf2CjqdmbrOx5EkMILuUhzM=
+ github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499 h1:QHESTXtfgc1ABV+ArlbPVqUx9Ht5I0dDkYhxYoXFxNo=
+ github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499/go.mod h1:5TB2+k58gx4A4g2Nf5miSHNDF6CuAzHKpWBooLAshTs=
++github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
+ go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
+ go.starlark.net v0.0.0-20210312235212-74c10e2c17dc h1:pVkptfeOTFfx+zXZo7HEHN3d5LmhatBFvHdm/f2QnpY=
+ go.starlark.net v0.0.0-20210312235212-74c10e2c17dc/go.mod h1:t3mmBBPzAVvK0L0n1drDmrQsJ8FoIx4INCqVMTr/Zo0=
+@@ -196,7 +200,7 @@ golang.org/x/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:UVdnD1Gm6xHRNCYTk
+ golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
+ golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod h1:wehouNa3lNwaWXcvxsM5YxQ5yQlVC4a0KAMCusXpPoU=
+ golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3/go.mod h1:6SW0HCj/g11FgYtHlgUYUwCkIfeOF89ocIRzGO/8vkc=
+-golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
++golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+@@ -211,8 +215,8 @@ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20200707034311-ab3426394381/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+-golang.org/x/net v0.0.0-20210330230544-e57232859fb2 h1:nGCZOty+lVDsc4H2qPFksI5Se296+V+GhMiL/TzmYNk=
+-golang.org/x/net v0.0.0-20210330230544-e57232859fb2/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
++golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 h1:4nGaVu0QrbjT/AK2PRLuQfQuh6DJve+pELhqTdAj3x0=
++golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20181017192945-9dcd33a902f4/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+@@ -223,7 +227,6 @@ golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c h1:5KslGYwFpkhGh+Q16bwMP3cOontH8FOep7tGV86Y7SQ=
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -240,10 +243,10 @@ golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20200519105757-fe76b779f299/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+-golang.org/x/sys v0.0.0-20201231184435-2d18734c6014/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210303074136-134d130e1a04/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+-golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44 h1:Bli41pIlzTzf3KEY06n+xnzK/BESIg2ze4Pgfh/aI8c=
+ golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
++golang.org/x/sys v0.0.0-20210510120138-977fb7262007 h1:gG67DSER+11cZvqIMb8S8bt0vZtiN6xWYARwirrOSfE=
++golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+@@ -261,6 +264,7 @@ golang.org/x/tools v0.0.0-20190311212946-11955173bddd/go.mod h1:LCzVGOaR6xXOjkQ3
+ golang.org/x/tools v0.0.0-20190425150028-36563e24a262/go.mod h1:RgjU9mgBXZiqYHBnxXauZ1Gv1EHHAz9KjViQ78xBX0Q=
+ golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135/go.mod h1:RgjU9mgBXZiqYHBnxXauZ1Gv1EHHAz9KjViQ78xBX0Q=
+ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
++golang.org/x/tools v0.1.1/go.mod h1:o0xws9oXOQQZyjljx8fwUC0k7L1pTE6eaCbjGeHmOkk=
+ golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+@@ -288,8 +292,8 @@ google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZi
+ google.golang.org/grpc v1.23.0/go.mod h1:Y5yQAOtifL1yxbo5wqy6BxZv8vAUGQwXBOALyacEbxg=
+ google.golang.org/grpc v1.25.1/go.mod h1:c3i+UQWmh7LiEpx4sFZnkU36qjEYZ0imhYfXVyQciAY=
+ google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
+-google.golang.org/grpc v1.36.1 h1:cmUfbeGKnz9+2DD/UYsMQXeqbHZqZDs4eQwW0sFOpBY=
+-google.golang.org/grpc v1.36.1/go.mod h1:qjiiYl8FncCW8feJPdyg3v6XW24KsRHe+dy9BAGRRjU=
++google.golang.org/grpc v1.38.0 h1:/9BgsAsa5nWe26HqOlvlgJnqBuktYOLCgjCPqsa56W0=
++google.golang.org/grpc v1.38.0/go.mod h1:NREThFqKR1f3iQ6oBuvc5LadQuXVGo9rkm5ZGrQdJfM=
+ google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
+ google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
+ google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
+
+From ea07d058d4706577fd27eb96783f3065d2c2d725 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Fri, 25 Jun 2021 08:54:13 +0800
+Subject: [PATCH 02/18] Chore: Add Denpendabot for auto updating
+
+---
+ .github/dependabot.yml | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 .github/dependabot.yml
+
+diff --git a/.github/dependabot.yml b/.github/dependabot.yml
+new file mode 100644
+index 000000000..d85c63734
+--- /dev/null
++++ b/.github/dependabot.yml
+@@ -0,0 +1,17 @@
++# To get started with Dependabot version updates, you'll need to specify which
++# package ecosystems to update and where the package manifests are located.
++# Please see the documentation for all configuration options:
++# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
++
++version: 2
++updates:
++  - package-ecosystem: "gomod"
++    directory: "/"
++    schedule:
++      interval: "daily"
++    open-pull-requests-limit: 10
++
++  - package-ecosystem: "github-actions"
++    directory: "/"
++    schedule:
++      interval: "daily"
+
+From f3e6e98bbf3b4f5cfa7cc94fad8bda4ca1140108 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Fri, 25 Jun 2021 08:59:05 +0800
+Subject: [PATCH 03/18] Add Manual Test
+
+---
+ .github/workflows/test.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+index bd09690e5..331672fdd 100644
+--- a/.github/workflows/test.yml
++++ b/.github/workflows/test.yml
+@@ -1,6 +1,7 @@
+ name: Test
+ 
+ on:
++  workflow_dispatch:
+   push:
+     branches:
+       - main
+
+From cb3ecff6e45064473d2f5fd70ca8ace0f9f99969 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:04:06 +0800
+Subject: [PATCH 04/18] Feat: Add HTTP Web Server
+
+---
+ app/web/client/client.go            | 182 +++++++++++++++
+ app/web/client/errors.generated.go  |   9 +
+ app/web/config/config.pb.go         | 330 ++++++++++++++++++++++++++++
+ app/web/config/config.proto         |  27 +++
+ app/web/errors.generated.go         |   9 +
+ app/web/handler/errors.generated.go |   9 +
+ app/web/handler/inbound.go          |  30 +++
+ app/web/handler/outbound.go         |  29 +++
+ app/web/handler/stats.go            |  75 +++++++
+ app/web/handler/utils.go            |  27 +++
+ app/web/outbound.go                 | 109 +++++++++
+ app/web/router.go                   |  53 +++++
+ app/web/web.go                      |  92 ++++++++
+ 13 files changed, 981 insertions(+)
+ create mode 100644 app/web/client/client.go
+ create mode 100644 app/web/client/errors.generated.go
+ create mode 100644 app/web/config/config.pb.go
+ create mode 100644 app/web/config/config.proto
+ create mode 100644 app/web/errors.generated.go
+ create mode 100644 app/web/handler/errors.generated.go
+ create mode 100644 app/web/handler/inbound.go
+ create mode 100644 app/web/handler/outbound.go
+ create mode 100644 app/web/handler/stats.go
+ create mode 100644 app/web/handler/utils.go
+ create mode 100644 app/web/outbound.go
+ create mode 100644 app/web/router.go
+ create mode 100644 app/web/web.go
+
+diff --git a/app/web/client/client.go b/app/web/client/client.go
+new file mode 100644
+index 000000000..aaae750eb
+--- /dev/null
++++ b/app/web/client/client.go
+@@ -0,0 +1,182 @@
++package client
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++	"log"
++
++	logCmd "github.com/xtls/xray-core/app/log/command"
++	proxymanCmd "github.com/xtls/xray-core/app/proxyman/command"
++	statsCmd "github.com/xtls/xray-core/app/stats/command"
++	"github.com/xtls/xray-core/common/protocol"
++	"github.com/xtls/xray-core/common/serial"
++	"github.com/xtls/xray-core/infra/conf"
++	"github.com/xtls/xray-core/proxy/vmess"
++	"google.golang.org/grpc"
++)
++
++var Client *ServiceClient
++
++type ServiceClient struct {
++	Address     string
++	Port        uint32
++	statClient  statsCmd.StatsServiceClient
++	proxyClient proxymanCmd.HandlerServiceClient
++	logClient   logCmd.LoggerServiceClient
++}
++
++func NewServiceClient(addr string, port uint32) *ServiceClient {
++	if addr == "" {
++		addr = "127.0.0.1"
++	}
++	if port == 0 {
++		return nil
++	}
++	cmdConn, err := grpc.Dial(fmt.Sprintf("%s:%d", addr, port), grpc.WithInsecure())
++	if err != nil {
++		newError(err)
++		return nil
++	}
++
++	svr := ServiceClient{Address: addr, Port: port,
++		statClient:  statsCmd.NewStatsServiceClient(cmdConn),
++		proxyClient: proxymanCmd.NewHandlerServiceClient(cmdConn),
++		logClient:   logCmd.NewLoggerServiceClient(cmdConn),
++	}
++	return &svr
++}
++
++func (h *ServiceClient) QueryStats(pattern string, reset bool) map[string]int64 {
++	sresp, err := h.statClient.QueryStats(context.Background(), &statsCmd.QueryStatsRequest{
++		Pattern: pattern,
++		Reset_:  reset,
++	})
++
++	result := make(map[string]int64)
++	if err != nil {
++		newError("failed to call grpc command: %v", err)
++	} else {
++		// log.Printf("%v", sresp)
++		for _, stat := range sresp.Stat {
++			result[stat.Name] = stat.Value
++		}
++	}
++
++	return result
++}
++
++func (h *ServiceClient) GetStats(name string, reset bool) (string, int64) {
++	sresp, err := h.statClient.GetStats(context.Background(), &statsCmd.GetStatsRequest{
++		Name:   name,
++		Reset_: reset,
++	})
++
++	if err != nil {
++		newError("%v", err)
++		return "", 0
++	}
++
++	return sresp.Stat.Name, sresp.Stat.Value
++}
++
++// AddUser ...
++//   Add a user to an inbound on the fly. The effect is not permentnent.
++func (h *ServiceClient) AddUser(inboundTag string, email string, level uint32, uuid string, alterID uint32) {
++	_, err := h.proxyClient.AlterInbound(context.Background(), &proxymanCmd.AlterInboundRequest{
++		Tag: inboundTag,
++		Operation: serial.ToTypedMessage(&proxymanCmd.AddUserOperation{
++			User: &protocol.User{
++				Level: level,
++				Email: email,
++				Account: serial.ToTypedMessage(&vmess.Account{
++					Id:               uuid,
++					AlterId:          alterID,
++					SecuritySettings: &protocol.SecurityConfig{Type: protocol.SecurityType_AUTO},
++				}),
++			},
++		}),
++	})
++
++	if err != nil {
++		newError("%v", err)
++	}
++}
++
++// RemoveUser ...
++//   Remove a user from an Inbound on the fly. The effect is not permentnent.
++func (h *ServiceClient) RemoveUser(inboundTag string, email string) {
++	_, err := h.proxyClient.AlterInbound(context.Background(), &proxymanCmd.AlterInboundRequest{
++		Tag: inboundTag,
++		Operation: serial.ToTypedMessage(&proxymanCmd.RemoveUserOperation{
++			Email: email,
++		}),
++	})
++
++	if err != nil {
++		newError("%v", err)
++	}
++}
++
++// RestartLogger
++// IDK if it will work :D
++func (h *ServiceClient) RestartLogger() {
++	_, err := h.logClient.RestartLogger(context.Background(), &logCmd.RestartLoggerRequest{})
++	if err != nil {
++		newError("%v", err)
++	}
++}
++
++func (h *ServiceClient) AddInbound(in []byte) {
++	var ins *conf.InboundDetourConfig
++	err := json.Unmarshal(in, &ins)
++	if err != nil {
++		log.Printf("failed to build conf: %s", err)
++	}
++	inbound, err := ins.Build()
++	if err != nil {
++		log.Printf("failed to build conf: %s", err)
++	}
++	_, err = h.proxyClient.AddInbound(context.Background(), &proxymanCmd.AddInboundRequest{
++		Inbound: inbound,
++	})
++	if err != nil {
++		newError("%v", err)
++	}
++}
++
++func (h *ServiceClient) AddOutbound(in []byte) {
++	var ins *conf.OutboundDetourConfig
++	err := json.Unmarshal(in, &ins)
++	if err != nil {
++		log.Printf("failed to build conf: %s", err)
++	}
++	outbound, err := ins.Build()
++	if err != nil {
++		log.Printf("failed to build conf: %s", err)
++	}
++	_, err = h.proxyClient.AddOutbound(context.Background(), &proxymanCmd.AddOutboundRequest{
++		Outbound: outbound,
++	})
++	if err != nil {
++		newError("%v", err)
++	}
++}
++
++func (h *ServiceClient) RemoveInbound(tag string) {
++	_, err := h.proxyClient.RemoveInbound(context.Background(), &proxymanCmd.RemoveInboundRequest{
++		Tag: tag,
++	})
++	if err != nil {
++		newError("%v", err)
++	}
++}
++
++func (h *ServiceClient) RemoveOutbound(tag string) {
++	_, err := h.proxyClient.RemoveOutbound(context.Background(), &proxymanCmd.RemoveOutboundRequest{
++		Tag: tag,
++	})
++	if err != nil {
++		newError("%v", err)
++	}
++}
+diff --git a/app/web/client/errors.generated.go b/app/web/client/errors.generated.go
+new file mode 100644
+index 000000000..1ed950704
+--- /dev/null
++++ b/app/web/client/errors.generated.go
+@@ -0,0 +1,9 @@
++package client
++
++import "github.com/xtls/xray-core/common/errors"
++
++type errPathObjHolder struct{}
++
++func newError(values ...interface{}) *errors.Error {
++	return errors.New(values...).WithPathObj(errPathObjHolder{})
++}
+diff --git a/app/web/config/config.pb.go b/app/web/config/config.pb.go
+new file mode 100644
+index 000000000..b51663915
+--- /dev/null
++++ b/app/web/config/config.pb.go
+@@ -0,0 +1,330 @@
++// Code generated by protoc-gen-go. DO NOT EDIT.
++// versions:
++// 	protoc-gen-go v1.25.0
++// 	protoc        v3.9.2
++// source: config.proto
++
++package config
++
++import (
++	proto "github.com/golang/protobuf/proto"
++	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
++	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
++	reflect "reflect"
++	sync "sync"
++)
++
++const (
++	// Verify that this generated code is sufficiently up-to-date.
++	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
++	// Verify that runtime/protoimpl is sufficiently up-to-date.
++	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
++)
++
++// This is a compile-time assertion that a sufficiently up-to-date version
++// of the legacy proto package is being used.
++const _ = proto.ProtoPackageIsVersion4
++
++// Config is the settings for Web;
++type Config struct {
++	state         protoimpl.MessageState
++	sizeCache     protoimpl.SizeCache
++	unknownFields protoimpl.UnknownFields
++
++	// Tag of the outbound handler that handles Webful API http connections.
++	Tag    string    `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
++	Api    *Api      `protobuf:"bytes,2,opt,name=api,proto3" json:"api,omitempty"`
++	Pprof  bool      `protobuf:"varint,3,opt,name=pprof,proto3" json:"pprof,omitempty"`
++	Static []*Static `protobuf:"bytes,4,rep,name=static,proto3" json:"static,omitempty"`
++}
++
++func (x *Config) Reset() {
++	*x = Config{}
++	if protoimpl.UnsafeEnabled {
++		mi := &file_config_proto_msgTypes[0]
++		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
++		ms.StoreMessageInfo(mi)
++	}
++}
++
++func (x *Config) String() string {
++	return protoimpl.X.MessageStringOf(x)
++}
++
++func (*Config) ProtoMessage() {}
++
++func (x *Config) ProtoReflect() protoreflect.Message {
++	mi := &file_config_proto_msgTypes[0]
++	if protoimpl.UnsafeEnabled && x != nil {
++		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
++		if ms.LoadMessageInfo() == nil {
++			ms.StoreMessageInfo(mi)
++		}
++		return ms
++	}
++	return mi.MessageOf(x)
++}
++
++// Deprecated: Use Config.ProtoReflect.Descriptor instead.
++func (*Config) Descriptor() ([]byte, []int) {
++	return file_config_proto_rawDescGZIP(), []int{0}
++}
++
++func (x *Config) GetTag() string {
++	if x != nil {
++		return x.Tag
++	}
++	return ""
++}
++
++func (x *Config) GetApi() *Api {
++	if x != nil {
++		return x.Api
++	}
++	return nil
++}
++
++func (x *Config) GetPprof() bool {
++	if x != nil {
++		return x.Pprof
++	}
++	return false
++}
++
++func (x *Config) GetStatic() []*Static {
++	if x != nil {
++		return x.Static
++	}
++	return nil
++}
++
++type Api struct {
++	state         protoimpl.MessageState
++	sizeCache     protoimpl.SizeCache
++	unknownFields protoimpl.UnknownFields
++
++	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
++	Port    uint32 `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
++}
++
++func (x *Api) Reset() {
++	*x = Api{}
++	if protoimpl.UnsafeEnabled {
++		mi := &file_config_proto_msgTypes[1]
++		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
++		ms.StoreMessageInfo(mi)
++	}
++}
++
++func (x *Api) String() string {
++	return protoimpl.X.MessageStringOf(x)
++}
++
++func (*Api) ProtoMessage() {}
++
++func (x *Api) ProtoReflect() protoreflect.Message {
++	mi := &file_config_proto_msgTypes[1]
++	if protoimpl.UnsafeEnabled && x != nil {
++		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
++		if ms.LoadMessageInfo() == nil {
++			ms.StoreMessageInfo(mi)
++		}
++		return ms
++	}
++	return mi.MessageOf(x)
++}
++
++// Deprecated: Use Api.ProtoReflect.Descriptor instead.
++func (*Api) Descriptor() ([]byte, []int) {
++	return file_config_proto_rawDescGZIP(), []int{1}
++}
++
++func (x *Api) GetAddress() string {
++	if x != nil {
++		return x.Address
++	}
++	return ""
++}
++
++func (x *Api) GetPort() uint32 {
++	if x != nil {
++		return x.Port
++	}
++	return 0
++}
++
++type Static struct {
++	state         protoimpl.MessageState
++	sizeCache     protoimpl.SizeCache
++	unknownFields protoimpl.UnknownFields
++
++	FilePath string `protobuf:"bytes,1,opt,name=filePath,proto3" json:"filePath,omitempty"`
++	Uri      string `protobuf:"bytes,2,opt,name=uri,proto3" json:"uri,omitempty"`
++}
++
++func (x *Static) Reset() {
++	*x = Static{}
++	if protoimpl.UnsafeEnabled {
++		mi := &file_config_proto_msgTypes[2]
++		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
++		ms.StoreMessageInfo(mi)
++	}
++}
++
++func (x *Static) String() string {
++	return protoimpl.X.MessageStringOf(x)
++}
++
++func (*Static) ProtoMessage() {}
++
++func (x *Static) ProtoReflect() protoreflect.Message {
++	mi := &file_config_proto_msgTypes[2]
++	if protoimpl.UnsafeEnabled && x != nil {
++		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
++		if ms.LoadMessageInfo() == nil {
++			ms.StoreMessageInfo(mi)
++		}
++		return ms
++	}
++	return mi.MessageOf(x)
++}
++
++// Deprecated: Use Static.ProtoReflect.Descriptor instead.
++func (*Static) Descriptor() ([]byte, []int) {
++	return file_config_proto_rawDescGZIP(), []int{2}
++}
++
++func (x *Static) GetFilePath() string {
++	if x != nil {
++		return x.FilePath
++	}
++	return ""
++}
++
++func (x *Static) GetUri() string {
++	if x != nil {
++		return x.Uri
++	}
++	return ""
++}
++
++var File_config_proto protoreflect.FileDescriptor
++
++var file_config_proto_rawDesc = []byte{
++	0x0a, 0x0c, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x13,
++	0x78, 0x72, 0x61, 0x79, 0x2e, 0x61, 0x70, 0x70, 0x2e, 0x77, 0x65, 0x62, 0x2e, 0x63, 0x6f, 0x6e,
++	0x66, 0x69, 0x67, 0x22, 0x91, 0x01, 0x0a, 0x06, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x10,
++	0x0a, 0x03, 0x74, 0x61, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x74, 0x61, 0x67,
++	0x12, 0x2a, 0x0a, 0x03, 0x61, 0x70, 0x69, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e,
++	0x78, 0x72, 0x61, 0x79, 0x2e, 0x61, 0x70, 0x70, 0x2e, 0x77, 0x65, 0x62, 0x2e, 0x63, 0x6f, 0x6e,
++	0x66, 0x69, 0x67, 0x2e, 0x61, 0x70, 0x69, 0x52, 0x03, 0x61, 0x70, 0x69, 0x12, 0x14, 0x0a, 0x05,
++	0x70, 0x70, 0x72, 0x6f, 0x66, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x70, 0x70, 0x72,
++	0x6f, 0x66, 0x12, 0x33, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x69, 0x63, 0x18, 0x04, 0x20, 0x03,
++	0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x78, 0x72, 0x61, 0x79, 0x2e, 0x61, 0x70, 0x70, 0x2e, 0x77, 0x65,
++	0x62, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x69, 0x63, 0x52,
++	0x06, 0x73, 0x74, 0x61, 0x74, 0x69, 0x63, 0x22, 0x33, 0x0a, 0x03, 0x61, 0x70, 0x69, 0x12, 0x18,
++	0x0a, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
++	0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74,
++	0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x22, 0x36, 0x0a, 0x06,
++	0x73, 0x74, 0x61, 0x74, 0x69, 0x63, 0x12, 0x1a, 0x0a, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x50, 0x61,
++	0x74, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x50, 0x61,
++	0x74, 0x68, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x69, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
++	0x03, 0x75, 0x72, 0x69, 0x42, 0x5b, 0x0a, 0x17, 0x63, 0x6f, 0x6d, 0x2e, 0x78, 0x72, 0x61, 0x79,
++	0x2e, 0x61, 0x70, 0x70, 0x2e, 0x77, 0x65, 0x62, 0x2e, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x50,
++	0x01, 0x5a, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x78, 0x74,
++	0x6c, 0x73, 0x2f, 0x78, 0x72, 0x61, 0x79, 0x2d, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x61, 0x70, 0x70,
++	0x2f, 0x77, 0x65, 0x62, 0x2f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0xaa, 0x02, 0x13, 0x58, 0x72,
++	0x61, 0x79, 0x2e, 0x41, 0x70, 0x70, 0x2e, 0x57, 0x65, 0x62, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69,
++	0x67, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
++}
++
++var (
++	file_config_proto_rawDescOnce sync.Once
++	file_config_proto_rawDescData = file_config_proto_rawDesc
++)
++
++func file_config_proto_rawDescGZIP() []byte {
++	file_config_proto_rawDescOnce.Do(func() {
++		file_config_proto_rawDescData = protoimpl.X.CompressGZIP(file_config_proto_rawDescData)
++	})
++	return file_config_proto_rawDescData
++}
++
++var file_config_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
++var file_config_proto_goTypes = []interface{}{
++	(*Config)(nil), // 0: xray.app.web.config.Config
++	(*Api)(nil),    // 1: xray.app.web.config.api
++	(*Static)(nil), // 2: xray.app.web.config.static
++}
++var file_config_proto_depIdxs = []int32{
++	1, // 0: xray.app.web.config.Config.api:type_name -> xray.app.web.config.api
++	2, // 1: xray.app.web.config.Config.static:type_name -> xray.app.web.config.static
++	2, // [2:2] is the sub-list for method output_type
++	2, // [2:2] is the sub-list for method input_type
++	2, // [2:2] is the sub-list for extension type_name
++	2, // [2:2] is the sub-list for extension extendee
++	0, // [0:2] is the sub-list for field type_name
++}
++
++func init() { file_config_proto_init() }
++func file_config_proto_init() {
++	if File_config_proto != nil {
++		return
++	}
++	if !protoimpl.UnsafeEnabled {
++		file_config_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
++			switch v := v.(*Config); i {
++			case 0:
++				return &v.state
++			case 1:
++				return &v.sizeCache
++			case 2:
++				return &v.unknownFields
++			default:
++				return nil
++			}
++		}
++		file_config_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
++			switch v := v.(*Api); i {
++			case 0:
++				return &v.state
++			case 1:
++				return &v.sizeCache
++			case 2:
++				return &v.unknownFields
++			default:
++				return nil
++			}
++		}
++		file_config_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
++			switch v := v.(*Static); i {
++			case 0:
++				return &v.state
++			case 1:
++				return &v.sizeCache
++			case 2:
++				return &v.unknownFields
++			default:
++				return nil
++			}
++		}
++	}
++	type x struct{}
++	out := protoimpl.TypeBuilder{
++		File: protoimpl.DescBuilder{
++			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
++			RawDescriptor: file_config_proto_rawDesc,
++			NumEnums:      0,
++			NumMessages:   3,
++			NumExtensions: 0,
++			NumServices:   0,
++		},
++		GoTypes:           file_config_proto_goTypes,
++		DependencyIndexes: file_config_proto_depIdxs,
++		MessageInfos:      file_config_proto_msgTypes,
++	}.Build()
++	File_config_proto = out.File
++	file_config_proto_rawDesc = nil
++	file_config_proto_goTypes = nil
++	file_config_proto_depIdxs = nil
++}
+diff --git a/app/web/config/config.proto b/app/web/config/config.proto
+new file mode 100644
+index 000000000..bef72c6b5
+--- /dev/null
++++ b/app/web/config/config.proto
+@@ -0,0 +1,27 @@
++syntax = "proto3";
++
++package xray.app.web.config;
++option csharp_namespace = "Xray.App.Web.Config";
++option go_package = "github.com/xtls/xray-core/app/web/config";
++option java_package = "com.xray.app.web.config";
++option java_multiple_files = true;
++
++// Config is the settings for Web;
++message Config {
++    // Tag of the outbound handler that handles Webful API http connections.
++    string tag = 1;
++    api api = 2;
++    bool pprof = 3;
++    repeated static static = 4;
++}
++
++message api {
++    string address = 1;
++    uint32 port = 2;
++}
++
++
++message static {
++    string filePath = 1;
++    string uri = 2;
++}
+diff --git a/app/web/errors.generated.go b/app/web/errors.generated.go
+new file mode 100644
+index 000000000..422540917
+--- /dev/null
++++ b/app/web/errors.generated.go
+@@ -0,0 +1,9 @@
++package web
++
++import "github.com/xtls/xray-core/common/errors"
++
++type errPathObjHolder struct{}
++
++func newError(values ...interface{}) *errors.Error {
++	return errors.New(values...).WithPathObj(errPathObjHolder{})
++}
+diff --git a/app/web/handler/errors.generated.go b/app/web/handler/errors.generated.go
+new file mode 100644
+index 000000000..711efcf10
+--- /dev/null
++++ b/app/web/handler/errors.generated.go
+@@ -0,0 +1,9 @@
++package handler
++
++import "github.com/xtls/xray-core/common/errors"
++
++type errPathObjHolder struct{}
++
++func newError(values ...interface{}) *errors.Error {
++	return errors.New(values...).WithPathObj(errPathObjHolder{})
++}
+diff --git a/app/web/handler/inbound.go b/app/web/handler/inbound.go
+new file mode 100644
+index 000000000..c3ae768a5
+--- /dev/null
++++ b/app/web/handler/inbound.go
+@@ -0,0 +1,30 @@
++package handler
++
++import (
++	"net/http"
++
++	"github.com/julienschmidt/httprouter"
++	"github.com/xtls/xray-core/app/web/client"
++	"github.com/xtls/xray-core/common/log"
++)
++
++//"Content-Type: application/json"
++func AddInboundHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	res, err, _ := Convert(r)
++	if err != nil {
++		newError(err)
++		return
++	}
++	client.Client.AddInbound(res)
++}
++
++func RemoveInboundHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	data := ps.ByName("tag")
++	log.Record(&log.AccessMessage{
++		From:   "Web",
++		To:     "RemoveInboundHandler",
++		Status: log.AccessAccepted,
++		Detour: data,
++	})
++	client.Client.RemoveInbound(data)
++}
+diff --git a/app/web/handler/outbound.go b/app/web/handler/outbound.go
+new file mode 100644
+index 000000000..8193f48e0
+--- /dev/null
++++ b/app/web/handler/outbound.go
+@@ -0,0 +1,29 @@
++package handler
++
++import (
++	"net/http"
++
++	"github.com/julienschmidt/httprouter"
++	"github.com/xtls/xray-core/app/web/client"
++	"github.com/xtls/xray-core/common/log"
++)
++
++func AddOutboundHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	res, err, _ := Convert(r)
++	if err != nil {
++		newError(err)
++		return
++	}
++	client.Client.AddOutbound(res)
++}
++
++func RemoveOutboundHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	data := ps.ByName("tag")
++	log.Record(&log.AccessMessage{
++		From:   "Web",
++		To:     "RemoveOutboundHandler",
++		Status: log.AccessAccepted,
++		Detour: data,
++	})
++	client.Client.RemoveOutbound(data)
++}
+diff --git a/app/web/handler/stats.go b/app/web/handler/stats.go
+new file mode 100644
+index 000000000..70f790a73
+--- /dev/null
++++ b/app/web/handler/stats.go
+@@ -0,0 +1,75 @@
++package handler
++
++import (
++	"bytes"
++	"encoding/json"
++	"fmt"
++	"net/http"
++	"runtime"
++	"time"
++
++	"github.com/julienschmidt/httprouter"
++	statsCmd "github.com/xtls/xray-core/app/stats/command"
++	"github.com/xtls/xray-core/app/web/client"
++)
++
++var boot time.Time
++
++func init() {
++	boot = time.Now()
++}
++
++// Garbage ↓
++func GetSysStatsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	var rtm runtime.MemStats
++	runtime.ReadMemStats(&rtm)
++
++	uptime := time.Since(boot)
++	response := &statsCmd.SysStatsResponse{
++		Uptime:       uint32(uptime.Seconds()),
++		NumGoroutine: uint32(runtime.NumGoroutine()),
++		Alloc:        rtm.Alloc,
++		TotalAlloc:   rtm.TotalAlloc,
++		Sys:          rtm.Sys,
++		Mallocs:      rtm.Mallocs,
++		Frees:        rtm.Frees,
++		LiveObjects:  rtm.Mallocs - rtm.Frees,
++		NumGC:        rtm.NumGC,
++		PauseTotalNs: rtm.PauseTotalNs,
++	}
++	ret, err := json.Marshal(response)
++	if err != nil {
++		newError(err)
++	} else {
++		fmt.Fprintf(w, "%s\n", string(ret))
++	}
++}
++
++func GetStatsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	data := ps.ByName("name")
++	_, value := client.Client.GetStats(data, false)
++	fmt.Fprintf(w, "%s\n", fmt.Sprintf("%v", value))
++}
++
++func QueryStatsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	data := ps.ByName("pattern")
++	pattern := client.Client.QueryStats(data, false)
++	sub := make(map[string]interface{})
++	for key, val := range pattern {
++		sub[key] = val
++	}
++	var stat []map[string]interface{}
++	stat = append(stat, sub)
++
++	buf := new(bytes.Buffer)
++	enc := json.NewEncoder(buf)
++	enc.SetEscapeHTML(false)
++
++	err := enc.Encode(&stat)
++	if err != nil {
++		newError("failed to convert json")
++		return
++	}
++	//working
++	fmt.Fprintf(w, "%s\n", buf.String())
++}
+diff --git a/app/web/handler/utils.go b/app/web/handler/utils.go
+new file mode 100644
+index 000000000..7fdb5cc91
+--- /dev/null
++++ b/app/web/handler/utils.go
+@@ -0,0 +1,27 @@
++package handler
++
++import (
++	"encoding/json"
++	"log"
++	"net/http"
++)
++
++func Convert(r *http.Request) ([]byte, error, map[string]interface{}) {
++	err := r.ParseForm()
++	if err != nil {
++		log.Println(err)
++		return nil, err, nil
++	}
++	decoder := json.NewDecoder(r.Body)
++	var params map[string]interface{}
++	if err := decoder.Decode(&params); err != nil {
++		log.Println(err)
++		return nil, err, nil
++	}
++	res, err := json.Marshal(params)
++	if err != nil {
++		log.Println(err)
++		return nil, err, nil
++	}
++	return res, nil, params
++}
+diff --git a/app/web/outbound.go b/app/web/outbound.go
+new file mode 100644
+index 000000000..37ebd125b
+--- /dev/null
++++ b/app/web/outbound.go
+@@ -0,0 +1,109 @@
++package web
++
++import (
++	"context"
++	"sync"
++
++	"github.com/xtls/xray-core/common"
++	"github.com/xtls/xray-core/common/net"
++	"github.com/xtls/xray-core/common/net/cnc"
++	"github.com/xtls/xray-core/common/signal/done"
++	"github.com/xtls/xray-core/transport"
++)
++
++// OutboundListener is a net.Listener for listening http connections.
++type OutboundListener struct {
++	buffer chan net.Conn
++	done   *done.Instance
++}
++
++func (l *OutboundListener) add(conn net.Conn) {
++	select {
++	case l.buffer <- conn:
++	case <-l.done.Wait():
++		conn.Close()
++	default:
++		conn.Close()
++	}
++}
++
++// Accept implements net.Listener.
++func (l *OutboundListener) Accept() (net.Conn, error) {
++	select {
++	case <-l.done.Wait():
++		return nil, newError("listen closed")
++	case c := <-l.buffer:
++		return c, nil
++	}
++}
++
++// Close implement net.Listener.
++func (l *OutboundListener) Close() error {
++	common.Must(l.done.Close())
++L:
++	for {
++		select {
++		case c := <-l.buffer:
++			c.Close()
++		default:
++			break L
++		}
++	}
++	return nil
++}
++
++// Addr implements net.Listener.
++func (l *OutboundListener) Addr() net.Addr {
++	return &net.TCPAddr{
++		IP:   net.IP{0, 0, 0, 0},
++		Port: 0,
++	}
++}
++
++// Outbound is a outbound.Handler that handles http connections.
++type Outbound struct {
++	tag      string
++	listener *OutboundListener
++	access   sync.RWMutex
++	closed   bool
++}
++
++// Dispatch implements outbound.Handler.
++func (co *Outbound) Dispatch(ctx context.Context, link *transport.Link) {
++	co.access.RLock()
++
++	if co.closed {
++		common.Interrupt(link.Reader)
++		common.Interrupt(link.Writer)
++		co.access.RUnlock()
++		return
++	}
++
++	closeSignal := done.New()
++	c := cnc.NewConnection(cnc.ConnectionInputMulti(link.Writer), cnc.ConnectionOutputMulti(link.Reader), cnc.ConnectionOnClose(closeSignal))
++	co.listener.add(c)
++	co.access.RUnlock()
++	<-closeSignal.Wait()
++}
++
++// Tag implements outbound.Handler.
++func (co *Outbound) Tag() string {
++	return co.tag
++}
++
++// Start implements common.Runnable.
++func (co *Outbound) Start() error {
++	co.access.Lock()
++	co.closed = false
++	co.access.Unlock()
++	return nil
++}
++
++// Close implements common.Closable.
++func (co *Outbound) Close() error {
++	co.access.Lock()
++	defer co.access.Unlock()
++
++	co.closed = true
++	return co.listener.Close()
++}
+diff --git a/app/web/router.go b/app/web/router.go
+new file mode 100644
+index 000000000..9410e05a9
+--- /dev/null
++++ b/app/web/router.go
+@@ -0,0 +1,53 @@
++package web
++
++import (
++	"fmt"
++	"net/http"
++
++	"github.com/julienschmidt/httprouter"
++	"github.com/xtls/xray-core/app/web/client"
++	"github.com/xtls/xray-core/app/web/handler"
++	"github.com/xtls/xray-core/core"
++)
++
++func Default(config *WebHandler) *httprouter.Router {
++	router := httprouter.New()
++
++	router.GET("/api/v1/statssys", handler.GetSysStatsHandler)
++
++	if config.api.port != 0 {
++		client.Client = client.NewServiceClient(config.api.address, config.api.port)
++		router.GET("/api/v1/statsquery", handler.QueryStatsHandler)
++		router.GET("/api/v1/statsquery/:pattern", handler.QueryStatsHandler)
++		router.GET("/api/v1/stats", handler.GetStatsHandler)
++		router.GET("/api/v1/stats/:name", handler.GetStatsHandler)
++		router.DELETE("/api/v1/inbounds/:tag", handler.RemoveInboundHandler)
++		router.POST("/api/v1/inbounds", handler.AddInboundHandler)
++		router.DELETE("/api/v1/outbounds/:tag", handler.RemoveOutboundHandler)
++		router.POST("/api/v1/outbounds", handler.AddOutboundHandler)
++	}
++
++	if config.pprof {
++		router.Handler(http.MethodGet, "/debug/pprof/*item", http.DefaultServeMux)
++	}
++
++	if config.static != nil {
++		for _, s := range config.static {
++			if s.uri == "/" {
++				router.NotFound = http.FileServer(http.Dir(s.filePath))
++			} else {
++				router.ServeFiles(s.uri+"/*filepath", http.Dir(s.filePath))
++			}
++		}
++	} else {
++		router.GET("/", DefaultHandler)
++	}
++
++	return router
++}
++
++func DefaultHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
++	for _, s := range core.VersionStatement() {
++		fmt.Fprintf(w, "%s\n", s)
++	}
++}
+diff --git a/app/web/web.go b/app/web/web.go
+new file mode 100644
+index 000000000..89923062e
+--- /dev/null
++++ b/app/web/web.go
+@@ -0,0 +1,92 @@
++package web
++
++import (
++	"context"
++	"net/http"
++	_ "net/http/pprof"
++
++	"github.com/xtls/xray-core/app/web/config"
++	"github.com/xtls/xray-core/common"
++	"github.com/xtls/xray-core/common/net"
++	"github.com/xtls/xray-core/common/signal/done"
++	"github.com/xtls/xray-core/core"
++	"github.com/xtls/xray-core/features/outbound"
++)
++
++type WebHandler struct {
++	ohm    outbound.Manager
++	tag    string
++	api    Api
++	pprof  bool
++	static []Static
++}
++
++type Api struct {
++	address string
++	port    uint32
++}
++
++type Static struct {
++	filePath string
++	uri      string
++}
++
++// New
++func NewWebHandler(ctx context.Context, config *config.Config) (*WebHandler, error) {
++	c := &WebHandler{
++		tag: config.Tag,
++		api: Api{
++			address: config.Api.Address,
++			port:    config.Api.Port,
++		},
++		pprof: config.Pprof,
++	}
++
++	for _, s := range config.Static {
++		c.static = append(c.static, Static{
++			filePath: s.FilePath,
++			uri:      s.Uri,
++		})
++	}
++
++	common.Must(core.RequireFeatures(ctx, func(om outbound.Manager) {
++		c.ohm = om
++	}))
++	return c, nil
++}
++
++func (r *WebHandler) Type() interface{} {
++	return (*WebHandler)(nil)
++}
++
++func (r *WebHandler) Start() error {
++	listener := &OutboundListener{
++		buffer: make(chan net.Conn, 4),
++		done:   done.New(),
++	}
++
++	go func() {
++		if err := http.Serve(listener, Default(r)); err != nil {
++			newError("failed to start Web server").Base(err).AtError().WriteToLog()
++		}
++	}()
++
++	if err := r.ohm.RemoveHandler(context.Background(), r.tag); err != nil {
++		newError("failed to remove existing handler").WriteToLog()
++	}
++
++	return r.ohm.AddHandler(context.Background(), &Outbound{
++		tag:      r.tag,
++		listener: listener,
++	})
++}
++
++func (r *WebHandler) Close() error {
++	return nil
++}
++
++func init() {
++	common.Must(common.RegisterConfig((*config.Config)(nil), func(ctx context.Context, cfg interface{}) (interface{}, error) {
++		return NewWebHandler(ctx, cfg.(*config.Config))
++	}))
++}
+
+From 34c605f6f0dfc9f847d45a8e2426c1854d745632 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:04:34 +0800
+Subject: [PATCH 05/18] Add Dependencies
+
+---
+ go.mod | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/go.mod b/go.mod
+index 86f84c7fa..09d46f378 100644
+--- a/go.mod
++++ b/go.mod
+@@ -8,6 +8,7 @@ require (
+ 	github.com/golang/protobuf v1.5.2
+ 	github.com/google/go-cmp v0.5.6
+ 	github.com/gorilla/websocket v1.4.2
++	github.com/julienschmidt/httprouter v1.3.0
+ 	github.com/lucas-clemente/quic-go v0.21.1
+ 	github.com/miekg/dns v1.1.43
+ 	github.com/pelletier/go-toml v1.9.3
+
+From 0b099a67a049089be7ab194a0d5500285c343e7a Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:05:19 +0800
+Subject: [PATCH 06/18] Add Dependencies
+
+---
+ go.sum | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/go.sum b/go.sum
+index b374293b2..9b8ed5ab9 100644
+--- a/go.sum
++++ b/go.sum
+@@ -91,6 +91,8 @@ github.com/jellevandenhooff/dkim v0.0.0-20150330215556-f50fe3d243e1/go.mod h1:E0
+ github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
+ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
++github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
++github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
+ github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+
+From e6f2359a0b5ec666891f683f7f4b2e805ee33eba Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:06:17 +0800
+Subject: [PATCH 07/18] Feat: Add HTTP Web Server
+
+---
+ infra/conf/web.go | 62 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 infra/conf/web.go
+
+diff --git a/infra/conf/web.go b/infra/conf/web.go
+new file mode 100644
+index 000000000..babf230dc
+--- /dev/null
++++ b/infra/conf/web.go
+@@ -0,0 +1,62 @@
++package conf
++
++import (
++	"github.com/xtls/xray-core/app/web/config"
++)
++
++type WebConfig struct {
++	Tag    string          `json:"tag"`
++	Api    *ApiConfig      `json:"api"`
++	Pprof  bool            `json:"pprof"`
++	Static []*StaticConfig `json:"static"`
++}
++
++type ApiConfig struct {
++	Address string `json:"address"`
++	Port    uint32 `json:"port"`
++}
++
++type StaticConfig struct {
++	FilePath string `json:"filePath"`
++	Uri      string `json:"uri"`
++}
++
++func (c *StaticConfig) Build() (*config.Static, error) {
++	if c.FilePath == "" {
++		return nil, newError("could not serve nil filepath")
++	}
++
++	if c.Uri == "" {
++		return nil, newError("could not use void as uri")
++	}
++
++	return &config.Static{
++		FilePath: c.FilePath,
++		Uri:      c.Uri,
++	}, nil
++}
++
++func (c *WebConfig) Build() (*config.Config, error) {
++	if c.Tag == "" {
++		return nil, newError("Web tag can't be empty.")
++	}
++
++	config := &config.Config{
++		Tag: c.Tag,
++		Api: &config.Api{
++			Address: c.Api.Address,
++			Port:    c.Api.Port,
++		},
++		Pprof: c.Pprof,
++	}
++
++	for _, static := range c.Static {
++		s, err := static.Build()
++		if err != nil {
++			return nil, newError("failed to build http file server")
++		}
++		config.Static = append(config.Static, s)
++	}
++
++	return config, nil
++}
+
+From 4c275cf88b28660ffedd11a11995b40e96035ba7 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:08:21 +0800
+Subject: [PATCH 08/18] Feat: Add HTTP Web Server
+
+---
+ infra/conf/xray.go | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/infra/conf/xray.go b/infra/conf/xray.go
+index 0b139792e..b333d45e7 100644
+--- a/infra/conf/xray.go
++++ b/infra/conf/xray.go
+@@ -398,6 +398,7 @@ type Config struct {
+ 	Transport       *TransportConfig       `json:"transport"`
+ 	Policy          *PolicyConfig          `json:"policy"`
+ 	API             *APIConfig             `json:"api"`
++	Web             *WebConfig             `json:"web"`
+ 	Stats           *StatsConfig           `json:"stats"`
+ 	Reverse         *ReverseConfig         `json:"reverse"`
+ 	FakeDNS         *FakeDNSConfig         `json:"fakeDns"`
+@@ -447,6 +448,9 @@ func (c *Config) Override(o *Config, fn string) {
+ 	if o.API != nil {
+ 		c.API = o.API
+ 	}
++	if o.Web != nil {
++		c.Web = o.Web
++	}
+ 	if o.Stats != nil {
+ 		c.Stats = o.Stats
+ 	}
+@@ -548,7 +552,13 @@ func (c *Config) Build() (*core.Config, error) {
+ 		}
+ 		config.App = append(config.App, serial.ToTypedMessage(apiConf))
+ 	}
+-
++	if c.Web != nil {
++		WebConf, err := c.Web.Build()
++		if err != nil {
++			return nil, err
++		}
++		config.App = append(config.App, serial.ToTypedMessage(WebConf))
++	}
+ 	if c.Stats != nil {
+ 		statsConf, err := c.Stats.Build()
+ 		if err != nil {
+
+From 045c60e0cae1f171cfbb5fb6ac2739a704b71480 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:09:15 +0800
+Subject: [PATCH 09/18] Feat: Add HTTP Web Server
+
+---
+ main/distro/all/all.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/distro/all/all.go b/main/distro/all/all.go
+index 301987ced..c46dadf74 100644
+--- a/main/distro/all/all.go
++++ b/main/distro/all/all.go
+@@ -22,7 +22,7 @@ import (
+ 	_ "github.com/xtls/xray-core/app/reverse"
+ 	_ "github.com/xtls/xray-core/app/router"
+ 	_ "github.com/xtls/xray-core/app/stats"
+-
++	_ "github.com/xtls/xray-core/app/web"
+ 	// Inbound and outbound proxies.
+ 	_ "github.com/xtls/xray-core/proxy/blackhole"
+ 	_ "github.com/xtls/xray-core/proxy/dns"
+
+From 8f94f71e80fa25ebe1fe9ffec5c4c2c5b0c53d80 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:10:21 +0800
+Subject: [PATCH 10/18] Reverse Commit
+
+---
+ go.mod | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/go.mod b/go.mod
+index 09d46f378..86f84c7fa 100644
+--- a/go.mod
++++ b/go.mod
+@@ -8,7 +8,6 @@ require (
+ 	github.com/golang/protobuf v1.5.2
+ 	github.com/google/go-cmp v0.5.6
+ 	github.com/gorilla/websocket v1.4.2
+-	github.com/julienschmidt/httprouter v1.3.0
+ 	github.com/lucas-clemente/quic-go v0.21.1
+ 	github.com/miekg/dns v1.1.43
+ 	github.com/pelletier/go-toml v1.9.3
+
+From 2418183f90085426ff536e4ca0a6d3ecbc82198b Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 13:10:42 +0800
+Subject: [PATCH 11/18] Reverse Commit
+
+---
+ go.sum | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/go.sum b/go.sum
+index 9b8ed5ab9..b374293b2 100644
+--- a/go.sum
++++ b/go.sum
+@@ -91,8 +91,6 @@ github.com/jellevandenhooff/dkim v0.0.0-20150330215556-f50fe3d243e1/go.mod h1:E0
+ github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
+ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
+-github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
+ github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+ github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+
+From ef489d85b0012d52aa0541c42c85efbbbf57d2f1 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 17:21:26 +0800
+Subject: [PATCH 12/18] Add Denpendencies
+
+---
+ go.mod | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/go.mod b/go.mod
+index 86f84c7fa..09d46f378 100644
+--- a/go.mod
++++ b/go.mod
+@@ -8,6 +8,7 @@ require (
+ 	github.com/golang/protobuf v1.5.2
+ 	github.com/google/go-cmp v0.5.6
+ 	github.com/gorilla/websocket v1.4.2
++	github.com/julienschmidt/httprouter v1.3.0
+ 	github.com/lucas-clemente/quic-go v0.21.1
+ 	github.com/miekg/dns v1.1.43
+ 	github.com/pelletier/go-toml v1.9.3
+
+From d920d8b5fe8ce8b8f5e51b93a21c7866971bdb08 Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 17:22:32 +0800
+Subject: [PATCH 13/18] Update Denpendencies
+
+---
+ go.mod | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/go.mod b/go.mod
+index 09d46f378..a03890bae 100644
+--- a/go.mod
++++ b/go.mod
+@@ -23,6 +23,6 @@ require (
+ 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+ 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007
+ 	google.golang.org/grpc v1.38.0
+-	google.golang.org/protobuf v1.26.0
++	google.golang.org/protobuf v1.27.0
+ 	h12.io/socks v1.0.2
+ )
+
+From 0841b1fca1deffc755efa58061a622e7cd6f023a Mon Sep 17 00:00:00 2001
+From: Allen <73211772+hyt-allen-xu@users.noreply.github.com>
+Date: Mon, 28 Jun 2021 17:24:08 +0800
+Subject: [PATCH 14/18] Update Denpendencies
+
+---
+ go.sum | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/go.sum b/go.sum
+index b374293b2..42cd041bf 100644
+--- a/go.sum
++++ b/go.sum
+@@ -90,6 +90,8 @@ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpO
+ github.com/jellevandenhooff/dkim v0.0.0-20150330215556-f50fe3d243e1/go.mod h1:E0B/fFc00Y+Rasa88328GlI/XbtyysCtTHZS8h7IrBU=
+ github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
+ github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
++github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
++github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+ github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+@@ -304,8 +306,9 @@ google.golang.org/protobuf v1.23.0/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2
+ google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2l/sGQquU=
+ google.golang.org/protobuf v1.25.0/go.mod h1:9JNX74DMeImyA3h4bdi1ymwjUzf21/xIlbajtzgsN7c=
+ google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
+-google.golang.org/protobuf v1.26.0 h1:bxAC2xTBsZGibn2RTntX0oH50xLsqy1OxA9tTL3p/lk=
+ google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
++google.golang.org/protobuf v1.27.0 h1:KhgSLlr/moiqjv0qUsSnLvdUL7NH7PHW8aZGn7Jpjko=
++google.golang.org/protobuf v1.27.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 h1:qIbj1fsPNlZgppZ+VLlY7N33q108Sa+fhmuc+sWQYwY=
+ gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+
+From a208c936bb2161d2e336b68114993b50532f3405 Mon Sep 17 00:00:00 2001
+From: "dependabot[bot]" <49699333+dependabot[bot]@users.noreply.github.com>
+Date: Tue, 29 Jun 2021 08:24:57 +0000
+Subject: [PATCH 15/18] Bump google.golang.org/protobuf from 1.27.0 to 1.27.1
+
+Bumps [google.golang.org/protobuf](https://github.com/protocolbuffers/protobuf-go) from 1.27.0 to 1.27.1.
+- [Release notes](https://github.com/protocolbuffers/protobuf-go/releases)
+- [Changelog](https://github.com/protocolbuffers/protobuf-go/blob/master/release.bash)
+- [Commits](https://github.com/protocolbuffers/protobuf-go/compare/v1.27.0...v1.27.1)
+
+---
+updated-dependencies:
+- dependency-name: google.golang.org/protobuf
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+---
+ go.mod | 2 +-
+ go.sum | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index a03890bae..585d741e9 100644
+--- a/go.mod
++++ b/go.mod
+@@ -23,6 +23,6 @@ require (
+ 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+ 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007
+ 	google.golang.org/grpc v1.38.0
+-	google.golang.org/protobuf v1.27.0
++	google.golang.org/protobuf v1.27.1
+ 	h12.io/socks v1.0.2
+ )
+diff --git a/go.sum b/go.sum
+index 42cd041bf..1c0da6588 100644
+--- a/go.sum
++++ b/go.sum
+@@ -307,8 +307,8 @@ google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod h1:EGpAD
+ google.golang.org/protobuf v1.25.0/go.mod h1:9JNX74DMeImyA3h4bdi1ymwjUzf21/xIlbajtzgsN7c=
+ google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
+ google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
+-google.golang.org/protobuf v1.27.0 h1:KhgSLlr/moiqjv0qUsSnLvdUL7NH7PHW8aZGn7Jpjko=
+-google.golang.org/protobuf v1.27.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
++google.golang.org/protobuf v1.27.1 h1:SnqbnDw1V7RiZcXPx5MEeqPv2s79L9i7BJUlG/+RurQ=
++google.golang.org/protobuf v1.27.1/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 h1:qIbj1fsPNlZgppZ+VLlY7N33q108Sa+fhmuc+sWQYwY=
+ gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+
+From afd5c62b5aed3cf805b01fc8007ae7164536b0f7 Mon Sep 17 00:00:00 2001
+From: "dependabot[bot]" <49699333+dependabot[bot]@users.noreply.github.com>
+Date: Wed, 30 Jun 2021 08:23:33 +0000
+Subject: [PATCH 16/18] Bump google.golang.org/grpc from 1.38.0 to 1.39.0
+
+Bumps [google.golang.org/grpc](https://github.com/grpc/grpc-go) from 1.38.0 to 1.39.0.
+- [Release notes](https://github.com/grpc/grpc-go/releases)
+- [Commits](https://github.com/grpc/grpc-go/compare/v1.38.0...v1.39.0)
+
+---
+updated-dependencies:
+- dependency-name: google.golang.org/grpc
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+---
+ go.mod |  2 +-
+ go.sum | 22 +++++++++++++++++++---
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index 585d741e9..ceecf9577 100644
+--- a/go.mod
++++ b/go.mod
+@@ -22,7 +22,7 @@ require (
+ 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
+ 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+ 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007
+-	google.golang.org/grpc v1.38.0
++	google.golang.org/grpc v1.39.0
+ 	google.golang.org/protobuf v1.27.1
+ 	h12.io/socks v1.0.2
+ )
+diff --git a/go.sum b/go.sum
+index 1c0da6588..daa5d964f 100644
+--- a/go.sum
++++ b/go.sum
+@@ -9,6 +9,7 @@ dmitri.shuralyov.com/state v0.0.0-20180228185332-28bcc343414c/go.mod h1:0PRwlb0D
+ git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999/go.mod h1:fPE2ZNJGynbRyZ4dJvy6G277gSllfV2HJqblrnkyeyg=
+ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+ github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYUyUczH0OGQWaF5ceTx0UBShxjsH6f8oGKYe2c=
++github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
+ github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
+ github.com/bradfitz/go-smtpd v0.0.0-20170404230938-deb6d6237625/go.mod h1:HYsPBTaaSFSlLx/70C2HPIMNZpVV8+vt/A+FMnYP11g=
+ github.com/buger/jsonparser v0.0.0-20181115193947-bf1c66bbce23/go.mod h1:bbYlZJ7hK1yFx9hf58LP0zeX7UjIGs20ufpu3evjr+s=
+@@ -19,7 +20,9 @@ github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWR
+ github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
+ github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
+ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
++github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
+ github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
++github.com/cncf/xds/go v0.0.0-20210312221358-fbca930ec8ed/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
+ github.com/coreos/go-systemd v0.0.0-20181012123002-c6f51f82210d/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
+ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
+@@ -29,7 +32,9 @@ github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165/go.mod h1:c9O8+fp
+ github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
+ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+ github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+-github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
++github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
++github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
++github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0/go.mod h1:hliV/p42l8fGbc6Y9bQ70uLwIvmJyVE5k4iMKlh8wCQ=
+ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+ github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
+ github.com/francoispqt/gojay v1.2.13/go.mod h1:ehT5mTG4ua4581f1++1WLG0vPdaA9HaiDsoyrBGkyDY=
+@@ -52,6 +57,7 @@ github.com/golang/mock v1.6.0/go.mod h1:p6yTPP+5HYm5mzsMV8JkE6ZKdX+/wYM6Hr+Licev
+ github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+ github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
+ github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
++github.com/golang/protobuf v1.3.3/go.mod h1:vzj43D7+SQXF/4pzW/hwtAqwc6iTitCiVSaWz5lYuqw=
+ github.com/golang/protobuf v1.4.0-rc.1/go.mod h1:ceaxUfeHdC40wWswd/P6IGgMaK3YpKi5j83Wpe3EHw8=
+ github.com/golang/protobuf v1.4.0-rc.1.0.20200221234624-67d41d38c208/go.mod h1:xKAWHe0F5eneWXFV3EuXVDTCmh+JuBKY0li0aMyXATA=
+ github.com/golang/protobuf v1.4.0-rc.2/go.mod h1:LlEzMj4AhA7rCAGe4KMBDvJI+AwstrUpVNzEA03Pprs=
+@@ -59,6 +65,7 @@ github.com/golang/protobuf v1.4.0-rc.4.0.20200313231945-b860323f09d0/go.mod h1:W
+ github.com/golang/protobuf v1.4.0/go.mod h1:jodUvKwWbYaEsadDk5Fwe5c77LiNKVO9IDvqG2KuDX0=
+ github.com/golang/protobuf v1.4.1/go.mod h1:U8fpvMrcmy5pZrNK1lt4xCsGvpyWQ/VVv6QDs8UjoX8=
+ github.com/golang/protobuf v1.4.2/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw735rRwI=
++github.com/golang/protobuf v1.4.3/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw735rRwI=
+ github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
+ github.com/golang/protobuf v1.5.2 h1:ROPKBNFfQgOUMifHyP+KYbvpjbdoFNs+aK7DXlji0Tw=
+ github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
+@@ -84,6 +91,7 @@ github.com/gorilla/websocket v1.4.2 h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0U
+ github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
+ github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7/go.mod h1:FecbI9+v66THATjSRHfNgh1IVFe/9kFxbXtjV0ctIMA=
+ github.com/grpc-ecosystem/grpc-gateway v1.5.0/go.mod h1:RSKVYQBd5MCa4OVpNdGskqpgL2+G+NZTnrVHpWWfpdw=
++github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod h1:BDjrQk3hbvj6Nolgz8mAMFbcEtjT1g+wF4CSlocrBnw=
+ github.com/h12w/go-socks5 v0.0.0-20200522160539-76189e178364 h1:5XxdakFhqd9dnXoAZy1Mb2R/DZ6D1e+0bGC/JhucGYI=
+ github.com/h12w/go-socks5 v0.0.0-20200522160539-76189e178364/go.mod h1:eDJQioIyy4Yn3MVivT7rv/39gAJTrA7lgmYr8EW950c=
+ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
+@@ -144,6 +152,7 @@ github.com/prometheus/common v0.0.0-20180801064454-c7de2306084e/go.mod h1:daVV7q
+ github.com/prometheus/procfs v0.0.0-20180725123919-05ee40e3a273/go.mod h1:c3At6R/oaqEKCNdg8wHV1ftS6bRYblBhIjjI8uT2IGk=
+ github.com/refraction-networking/utls v0.0.0-20201210053706-2179f286686b h1:lzo71oHzQEz0fKMSjR0BpVzuh2hOHvJTxnN3Rnikmtg=
+ github.com/refraction-networking/utls v0.0.0-20201210053706-2179f286686b/go.mod h1:tz9gX959MEFfFN5whTIocCLUG57WiILqtdVxI8c6Wj0=
++github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
+ github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
+ github.com/seiflotfy/cuckoofilter v0.0.0-20201222105146-bc6005554a0c h1:pqy40B3MQWYrza7YZXOXgl0Nf0QGFqrOC0BKae1UNAA=
+ github.com/seiflotfy/cuckoofilter v0.0.0-20201222105146-bc6005554a0c/go.mod h1:bR6DqgcAl1zTcOX8/pE2Qkj9XO00eCNqmKb7lXP8EAg=
+@@ -185,6 +194,7 @@ github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499 h1:QHESTXtfgc1ABV+ArlbPVqU
+ github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499/go.mod h1:5TB2+k58gx4A4g2Nf5miSHNDF6CuAzHKpWBooLAshTs=
+ github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
+ go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
++go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
+ go.starlark.net v0.0.0-20210312235212-74c10e2c17dc h1:pVkptfeOTFfx+zXZo7HEHN3d5LmhatBFvHdm/f2QnpY=
+ go.starlark.net v0.0.0-20210312235212-74c10e2c17dc/go.mod h1:t3mmBBPzAVvK0L0n1drDmrQsJ8FoIx4INCqVMTr/Zo0=
+ go4.org v0.0.0-20180809161055-417644f6feb5/go.mod h1:MkTOUMDaeVYJUOUsaDXIhWPZYa1yOyC1qaOBpL57BhE=
+@@ -216,6 +226,7 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20200707034311-ab3426394381/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
++golang.org/x/net v0.0.0-20200822124328-c89045814202/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 h1:4nGaVu0QrbjT/AK2PRLuQfQuh6DJve+pELhqTdAj3x0=
+ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
+@@ -223,6 +234,7 @@ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAG
+ golang.org/x/oauth2 v0.0.0-20181017192945-9dcd33a902f4/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
++golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/perf v0.0.0-20180704124530-6e6d33e29852/go.mod h1:JLpeXjPJfIyPr5TlbXLkXWLhP8nz10XfvxElABhCtcw=
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -285,6 +297,7 @@ google.golang.org/genproto v0.0.0-20181029155118-b69ba1387ce2/go.mod h1:JiN7NxoA
+ google.golang.org/genproto v0.0.0-20181202183823-bd91e49a0898/go.mod h1:7Ep/1NZk928CDR8SjdVbjWNpdIf6nzjE3BTgJDr2Atg=
+ google.golang.org/genproto v0.0.0-20190306203927-b5d61aea6440/go.mod h1:VzzqZJRnGkLBvHegQrXjBqPurQTc5/KpmUdxsrq26oE=
+ google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55/go.mod h1:DMBHOl98Agz4BDEuKkezgsaosCRResVns1a3J2ZsMNc=
++google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884/go.mod h1:55QSHmfGQM9UVYDPBsyGGes0y52j32PQ3BqQfXhyH3c=
+ google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 h1:+kGHl1aib/qcwaRi1CbqBZ1rk19r85MNUf8HaBghugY=
+ google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013/go.mod h1:NbSheEEYHJ7i3ixzK3sjbqSGDJWnxyFXZblF3eUsNvo=
+ google.golang.org/grpc v1.14.0/go.mod h1:yo6s7OP7yaDglbqo1J04qKzAhqBH6lvTonzMVmEdcZw=
+@@ -294,8 +307,10 @@ google.golang.org/grpc v1.19.0/go.mod h1:mqu4LbDTu4XGKhr4mRzUsmM4RtVoemTSY81AxZi
+ google.golang.org/grpc v1.23.0/go.mod h1:Y5yQAOtifL1yxbo5wqy6BxZv8vAUGQwXBOALyacEbxg=
+ google.golang.org/grpc v1.25.1/go.mod h1:c3i+UQWmh7LiEpx4sFZnkU36qjEYZ0imhYfXVyQciAY=
+ google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
+-google.golang.org/grpc v1.38.0 h1:/9BgsAsa5nWe26HqOlvlgJnqBuktYOLCgjCPqsa56W0=
+-google.golang.org/grpc v1.38.0/go.mod h1:NREThFqKR1f3iQ6oBuvc5LadQuXVGo9rkm5ZGrQdJfM=
++google.golang.org/grpc v1.33.1/go.mod h1:fr5YgcSWrqhRRxogOsw7RzIpsmvOZ6IcH4kBYTpR3n0=
++google.golang.org/grpc v1.36.0/go.mod h1:qjiiYl8FncCW8feJPdyg3v6XW24KsRHe+dy9BAGRRjU=
++google.golang.org/grpc v1.39.0 h1:Klz8I9kdtkIN6EpHHUOMLCYhTn/2WAe5a0s1hcBkdTI=
++google.golang.org/grpc v1.39.0/go.mod h1:PImNr+rS9TWYb2O4/emRugxiyHZ5JyHW5F+RPnDzfrE=
+ google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
+ google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N08ah7+eCXa0=
+ google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod h1:cfTl7dwQJ+fmap5saPgwCLgHXTUD7jkjRqWcaiX5VyM=
+@@ -318,6 +333,7 @@ gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 h1:uRGJdciOHaEIrze2W8Q3AKkep
+ gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=
+ gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
++gopkg.in/yaml.v2 v2.2.3/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.2.4/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.3.0 h1:clyUAQHOM3G0M3f5vQj7LuJrETvjVot3Z5el9nffUtU=
+ gopkg.in/yaml.v2 v2.3.0/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+
+From 851a73eca4de085db4e9dbe97e8d7d91210fe38c Mon Sep 17 00:00:00 2001
+From: "dependabot[bot]" <49699333+dependabot[bot]@users.noreply.github.com>
+Date: Mon, 12 Jul 2021 08:21:10 +0000
+Subject: [PATCH 17/18] Bump github.com/pires/go-proxyproto from 0.5.0 to 0.6.0
+
+Bumps [github.com/pires/go-proxyproto](https://github.com/pires/go-proxyproto) from 0.5.0 to 0.6.0.
+- [Release notes](https://github.com/pires/go-proxyproto/releases)
+- [Commits](https://github.com/pires/go-proxyproto/compare/v0.5.0...v0.6.0)
+
+---
+updated-dependencies:
+- dependency-name: github.com/pires/go-proxyproto
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+---
+ go.mod | 2 +-
+ go.sum | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index ceecf9577..3c9371409 100644
+--- a/go.mod
++++ b/go.mod
+@@ -12,7 +12,7 @@ require (
+ 	github.com/lucas-clemente/quic-go v0.21.1
+ 	github.com/miekg/dns v1.1.43
+ 	github.com/pelletier/go-toml v1.9.3
+-	github.com/pires/go-proxyproto v0.5.0
++	github.com/pires/go-proxyproto v0.6.0
+ 	github.com/refraction-networking/utls v0.0.0-20201210053706-2179f286686b
+ 	github.com/seiflotfy/cuckoofilter v0.0.0-20201222105146-bc6005554a0c
+ 	github.com/stretchr/testify v1.7.0
+diff --git a/go.sum b/go.sum
+index daa5d964f..4731346a3 100644
+--- a/go.sum
++++ b/go.sum
+@@ -140,8 +140,8 @@ github.com/pelletier/go-toml v1.9.3 h1:zeC5b1GviRUyKYd6OJPvBU/mcVDVoL1OhT17FCt5d
+ github.com/pelletier/go-toml v1.9.3/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
+ github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2 h1:JhzVVoYvbOACxoUmOs6V/G4D5nPVUW73rKvXxP4XUJc=
+ github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2/go.mod h1:iIss55rKnNBTvrwdmkUpLnDpZoAHvWaiq5+iMmen4AE=
+-github.com/pires/go-proxyproto v0.5.0 h1:A4Jv4ZCaV3AFJeGh5mGwkz4iuWUYMlQ7IoO/GTuSuLo=
+-github.com/pires/go-proxyproto v0.5.0/go.mod h1:Odh9VFOZJCf9G8cLW5o435Xf1J95Jw9Gw5rnCjcwzAY=
++github.com/pires/go-proxyproto v0.6.0 h1:cLJUPnuQdiNf7P/wbeOKmM1khVdaMgTFDLj8h9ZrVYk=
++github.com/pires/go-proxyproto v0.6.0/go.mod h1:Odh9VFOZJCf9G8cLW5o435Xf1J95Jw9Gw5rnCjcwzAY=
+ github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+
+From 366c1b12fc1c3048388872d15e1091bb62f3b5b0 Mon Sep 17 00:00:00 2001
+From: "dependabot[bot]" <49699333+dependabot[bot]@users.noreply.github.com>
+Date: Fri, 16 Jul 2021 08:25:38 +0000
+Subject: [PATCH 18/18] Bump github.com/lucas-clemente/quic-go from 0.21.1 to
+ 0.21.2
+
+Bumps [github.com/lucas-clemente/quic-go](https://github.com/lucas-clemente/quic-go) from 0.21.1 to 0.21.2.
+- [Release notes](https://github.com/lucas-clemente/quic-go/releases)
+- [Changelog](https://github.com/lucas-clemente/quic-go/blob/master/Changelog.md)
+- [Commits](https://github.com/lucas-clemente/quic-go/compare/v0.21.1...v0.21.2)
+
+---
+updated-dependencies:
+- dependency-name: github.com/lucas-clemente/quic-go
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+---
+ go.mod |  4 ++--
+ go.sum | 44 +++++++++++++++++++++++++++++++-------------
+ 2 files changed, 33 insertions(+), 15 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index ceecf9577..58526ecc4 100644
+--- a/go.mod
++++ b/go.mod
+@@ -9,7 +9,7 @@ require (
+ 	github.com/google/go-cmp v0.5.6
+ 	github.com/gorilla/websocket v1.4.2
+ 	github.com/julienschmidt/httprouter v1.3.0
+-	github.com/lucas-clemente/quic-go v0.21.1
++	github.com/lucas-clemente/quic-go v0.21.2
+ 	github.com/miekg/dns v1.1.43
+ 	github.com/pelletier/go-toml v1.9.3
+ 	github.com/pires/go-proxyproto v0.6.0
+@@ -19,7 +19,7 @@ require (
+ 	github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499
+ 	go.starlark.net v0.0.0-20210312235212-74c10e2c17dc
+ 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
+-	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
++	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781
+ 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+ 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007
+ 	google.golang.org/grpc v1.39.0
+diff --git a/go.sum b/go.sum
+index daa5d964f..bd4641ae2 100644
+--- a/go.sum
++++ b/go.sum
+@@ -46,6 +46,8 @@ github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 h1:Mn26/9ZMNWSw9C9ER
+ github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32/go.mod h1:GIjDIg/heH5DOkXY3YJ/wNhfHsQHoXGjl8G8amsYQ1I=
+ github.com/gliderlabs/ssh v0.1.1/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
+ github.com/go-errors/errors v1.0.1/go.mod h1:f4zRHt4oKfwPJE5k8C9vpYG+aDHdBFUsgrm6/TyX73Q=
++github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 h1:p104kn46Q8WdvHunIJ9dAyjPVtrBPhSr3KT2yUst43I=
++github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
+ github.com/gogo/protobuf v1.1.1/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
+ github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
+ github.com/golang/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:tluoj9z5200jBnyusfRPU2LqT6J+DAorxEvtC7LHB+E=
+@@ -107,17 +109,18 @@ github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+ github.com/kr/pty v1.1.3/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
+ github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
+ github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
+-github.com/lucas-clemente/quic-go v0.21.1 h1:uuhCcu885TE9u/piPYMChI/yqA1lXfaLUEx8uCMxf8w=
+-github.com/lucas-clemente/quic-go v0.21.1/go.mod h1:U9kFi5LKbNIlU30dkuM9vxmTxWq4Bvzee/MjBI+07UA=
++github.com/lucas-clemente/quic-go v0.21.2 h1:8LqqL7nBQFDUINadW0fHV/xSaCQJgmJC0Gv+qUnjd78=
++github.com/lucas-clemente/quic-go v0.21.2/go.mod h1:vF5M1XqhBAHgbjKcJOXY3JZz3GP0T3FQhz/uyOUS38Q=
+ github.com/lunixbochs/vtclean v1.0.0/go.mod h1:pHhQNgMf3btfWnGBVipUOjRYhoOsdGqdm/+2c2E2WMI=
+ github.com/mailru/easyjson v0.0.0-20190312143242-1de009706dbe/go.mod h1:C1wdFJiN94OJF2b5HbByQZoLdCWB1Yqtg26g4irojpc=
+ github.com/marten-seemann/qpack v0.2.1/go.mod h1:F7Gl5L1jIgN1D11ucXefiuJS9UMVP2opoCp2jDKb7wc=
+-github.com/marten-seemann/qtls-go1-15 v0.1.4 h1:RehYMOyRW8hPVEja1KBVsFVNSm35Jj9Mvs5yNoZZ28A=
+ github.com/marten-seemann/qtls-go1-15 v0.1.4/go.mod h1:GyFwywLKkRt+6mfU99csTEY1joMZz5vmB1WNZH3P81I=
+-github.com/marten-seemann/qtls-go1-16 v0.1.3 h1:XEZ1xGorVy9u+lJq+WXNE+hiqRYLNvJGYmwfwKQN2gU=
+-github.com/marten-seemann/qtls-go1-16 v0.1.3/go.mod h1:gNpI2Ol+lRS3WwSOtIUUtRwZEQMXjYK+dQSBFbethAk=
+-github.com/marten-seemann/qtls-go1-17 v0.1.0-beta.1.2 h1:SficYjyOthSrliKI+EaFuXS6HqSsX3dkY9AqxAAjBjw=
+-github.com/marten-seemann/qtls-go1-17 v0.1.0-beta.1.2/go.mod h1:fz4HIxByo+LlWcreM4CZOYNuz3taBQ8rN2X6FqvaWo8=
++github.com/marten-seemann/qtls-go1-15 v0.1.5 h1:Ci4EIUN6Rlb+D6GmLdej/bCQ4nPYNtVXQB+xjiXE1nk=
++github.com/marten-seemann/qtls-go1-15 v0.1.5/go.mod h1:GyFwywLKkRt+6mfU99csTEY1joMZz5vmB1WNZH3P81I=
++github.com/marten-seemann/qtls-go1-16 v0.1.4 h1:xbHbOGGhrenVtII6Co8akhLEdrawwB2iHl5yhJRpnco=
++github.com/marten-seemann/qtls-go1-16 v0.1.4/go.mod h1:gNpI2Ol+lRS3WwSOtIUUtRwZEQMXjYK+dQSBFbethAk=
++github.com/marten-seemann/qtls-go1-17 v0.1.0-rc.1 h1:/rpmWuGvceLwwWuaKPdjpR4JJEUH0tq64/I3hvzaNLM=
++github.com/marten-seemann/qtls-go1-17 v0.1.0-rc.1/go.mod h1:fz4HIxByo+LlWcreM4CZOYNuz3taBQ8rN2X6FqvaWo8=
+ github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
+ github.com/microcosm-cc/bluemonday v1.0.1/go.mod h1:hsXNsILzKxV+sX77C5b8FSuKF00vh2OMYv+xgHpAMF4=
+ github.com/miekg/dns v1.1.43 h1:JKfpVSCB84vrAmHzyrsxB5NAr5kLoMXZArPSw7Qlgyg=
+@@ -126,15 +129,19 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJ
+ github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
+ github.com/neelance/astrewrite v0.0.0-20160511093645-99348263ae86/go.mod h1:kHJEU3ofeGjhHklVoIGuVj85JJwZ6kWPaJwCIxgnFmo=
+ github.com/neelance/sourcemap v0.0.0-20151028013722-8c68805598ab/go.mod h1:Qr6/a/Q4r9LP1IltGz7tA7iOK1WonHEYhu1HRBA7ZiM=
+-github.com/nxadm/tail v1.4.4 h1:DQuhQpB1tVlglWS2hLQ5OV6B5r8aGxSrPc5Qo6uTN78=
+ github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
++github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
++github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
+ github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
+ github.com/onsi/ginkgo v1.12.1/go.mod h1:zj2OWP4+oCPe1qIXoGWkgMRwljMUYCdkwsT2108oapk=
+-github.com/onsi/ginkgo v1.14.0 h1:2mOpI4JVVPBN+WQRa0WKH2eXR+Ey+uK4n7Zj0aYpIQA=
+ github.com/onsi/ginkgo v1.14.0/go.mod h1:iSB4RoI2tjJc9BBv4NKIKWKya62Rps+oPG/Lv9klQyY=
++github.com/onsi/ginkgo v1.16.2/go.mod h1:CObGmKUOKaSC0RjmoAK7tKyn4Azo5P2IWuoMnvwxz1E=
++github.com/onsi/ginkgo v1.16.4 h1:29JGrr5oVBm5ulCWet69zQkzWipVXIol6ygQUe/EzNc=
++github.com/onsi/ginkgo v1.16.4/go.mod h1:dX+/inL/fNMqNlz0e9LfyB9TswhZpCVdJM/Z6Vvnwo0=
+ github.com/onsi/gomega v1.7.1/go.mod h1:XdKZgCCFLUoM/7CFJVPcG8C1xQ1AJ0vpAezJrB7JYyY=
+-github.com/onsi/gomega v1.10.1 h1:o0+MgICZLuZ7xjH7Vx6zS/zcu93/BEp1VwkIW1mEXCE=
+ github.com/onsi/gomega v1.10.1/go.mod h1:iN09h71vgCQne3DLsj+A5owkum+a2tYe+TOCB1ybHNo=
++github.com/onsi/gomega v1.13.0 h1:7lLHu94wT9Ij0o6EWWclhu0aOh32VxhkwEJvzuWPeak=
++github.com/onsi/gomega v1.13.0/go.mod h1:lRk9szgn8TxENtWd0Tp4c3wjlRfMTMH27I+3Je41yGY=
+ github.com/openzipkin/zipkin-go v0.1.1/go.mod h1:NtoC/o8u3JlF1lSlyPNswIbeQH9bJTmOf0Erfk+hxe8=
+ github.com/pelletier/go-toml v1.9.3 h1:zeC5b1GviRUyKYd6OJPvBU/mcVDVoL1OhT17FCt5dSQ=
+ github.com/pelletier/go-toml v1.9.3/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
+@@ -192,6 +199,7 @@ github.com/viant/assertly v0.4.8/go.mod h1:aGifi++jvCrUaklKEKT0BU95igDNaqkvz+49u
+ github.com/viant/toolbox v0.24.0/go.mod h1:OxMCG57V0PXuIP2HNQrtJf2CjqdmbrOx5EkMILuUhzM=
+ github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499 h1:QHESTXtfgc1ABV+ArlbPVqUx9Ht5I0dDkYhxYoXFxNo=
+ github.com/xtls/go v0.0.0-20201118062508-3632bf3b7499/go.mod h1:5TB2+k58gx4A4g2Nf5miSHNDF6CuAzHKpWBooLAshTs=
++github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+ github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
+ go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
+ go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
+@@ -212,6 +220,7 @@ golang.org/x/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:UVdnD1Gm6xHRNCYTk
+ golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
+ golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod h1:wehouNa3lNwaWXcvxsM5YxQ5yQlVC4a0KAMCusXpPoU=
+ golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3/go.mod h1:6SW0HCj/g11FgYtHlgUYUwCkIfeOF89ocIRzGO/8vkc=
++golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+ golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+ golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+@@ -227,9 +236,11 @@ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
+ golang.org/x/net v0.0.0-20200707034311-ab3426394381/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
+ golang.org/x/net v0.0.0-20200822124328-c89045814202/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
++golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+-golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 h1:4nGaVu0QrbjT/AK2PRLuQfQuh6DJve+pELhqTdAj3x0=
+ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
++golang.org/x/net v0.0.0-20210428140749-89ef3d95e781 h1:DzZ89McO9/gWPsQXS/FVKAlG02ZjaQ6AlZRBimEYOd0=
++golang.org/x/net v0.0.0-20210428140749-89ef3d95e781/go.mod h1:OJAsFXCWl8Ukc7SiCT/9KSuxbyM7479/AVlXFRxuMCk=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20181017192945-9dcd33a902f4/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+@@ -241,6 +252,7 @@ golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJ
+ golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
++golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c h1:5KslGYwFpkhGh+Q16bwMP3cOontH8FOep7tGV86Y7SQ=
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+@@ -257,16 +269,19 @@ golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7w
+ golang.org/x/sys v0.0.0-20200519105757-fe76b779f299/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
++golang.org/x/sys v0.0.0-20210112080510-489259a85091/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210303074136-134d130e1a04/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
++golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210510120138-977fb7262007 h1:gG67DSER+11cZvqIMb8S8bt0vZtiN6xWYARwirrOSfE=
+ golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+-golang.org/x/text v0.3.3 h1:cokOdA+Jmi5PJGXLlLllQSgYigAEfHXJAERHVMaCc2k=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
++golang.org/x/text v0.3.6 h1:aRYxNxv6iGQlyVaZmk6ZgYEDa+Jg18DxebPSrd6bg1M=
++golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/time v0.0.0-20180412165947-fbb02b2291d2/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/tools v0.0.0-20180828015842-6cd1fcedba52/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+@@ -278,6 +293,8 @@ golang.org/x/tools v0.0.0-20190311212946-11955173bddd/go.mod h1:LCzVGOaR6xXOjkQ3
+ golang.org/x/tools v0.0.0-20190425150028-36563e24a262/go.mod h1:RgjU9mgBXZiqYHBnxXauZ1Gv1EHHAz9KjViQ78xBX0Q=
+ golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135/go.mod h1:RgjU9mgBXZiqYHBnxXauZ1Gv1EHHAz9KjViQ78xBX0Q=
+ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
++golang.org/x/tools v0.0.0-20201224043029-2b0845dc783e/go.mod h1:emZCQorbCU4vsT4fOWvOPXz4eW1wZW4PmDk9uLelYpA=
++golang.org/x/tools v0.1.1 h1:wGiQel/hW0NnEkJUk8lbzkX2gFJU6PFxf1v5OlCfuOs=
+ golang.org/x/tools v0.1.1/go.mod h1:o0xws9oXOQQZyjljx8fwUC0k7L1pTE6eaCbjGeHmOkk=
+ golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+@@ -335,8 +352,9 @@ gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.2.3/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+ gopkg.in/yaml.v2 v2.2.4/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+-gopkg.in/yaml.v2 v2.3.0 h1:clyUAQHOM3G0M3f5vQj7LuJrETvjVot3Z5el9nffUtU=
+ gopkg.in/yaml.v2 v2.3.0/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
++gopkg.in/yaml.v2 v2.4.0 h1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=
++gopkg.in/yaml.v2 v2.4.0/go.mod h1:RDklbk79AGWmwhnvt/jBztapEOGDOx6ZbXqjP6csGnQ=
+ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+ gopkg.in/yaml.v3 v3.0.0-20200605160147-a5ece683394c h1:grhR+C34yXImVGp7EzNk+DTIk+323eIUWOmEevy6bDo=
+ gopkg.in/yaml.v3 v3.0.0-20200605160147-a5ece683394c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

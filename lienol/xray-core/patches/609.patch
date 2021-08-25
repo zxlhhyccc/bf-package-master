@@ -1,0 +1,342 @@
+From 86a8fb5d8442cecdd8d443ed2cde106671e562b5 Mon Sep 17 00:00:00 2001
+From: hmol233 <82594500+hmol233@users.noreply.github.com>
+Date: Fri, 18 Jun 2021 19:28:02 +0800
+Subject: [PATCH] Move `DomainStrategy` & `DialerProxy` to `DialSystem`
+
+Fix https://github.com/XTLS/Xray-core/issues/608
+---
+ app/dns/server.go                           |  3 +-
+ app/dns/udpns.go                            |  3 +-
+ transport/internet/dialer.go                | 95 +++++++++++++++++++++
+ transport/internet/system_dialer.go         | 95 ---------------------
+ transport/internet/system_dialer_context.go | 18 ----
+ 5 files changed, 97 insertions(+), 117 deletions(-)
+ delete mode 100644 transport/internet/system_dialer_context.go
+
+diff --git a/app/dns/server.go b/app/dns/server.go
+index 2004c60f3..57d3f01ba 100644
+--- a/app/dns/server.go
++++ b/app/dns/server.go
+@@ -22,7 +22,6 @@ import (
+ 	"github.com/xtls/xray-core/features"
+ 	"github.com/xtls/xray-core/features/dns"
+ 	"github.com/xtls/xray-core/features/routing"
+-	"github.com/xtls/xray-core/transport/internet"
+ )
+ 
+ // Server is a DNS rely server.
+@@ -307,7 +306,7 @@ func (s *Server) queryIPTimeout(idx int, client Client, domain string, option dn
+ 			Tag: s.tag,
+ 		})
+ 	}
+-	ctx = internet.ContextWithLookupDomain(ctx, domain)
++
+ 	ips, err := client.QueryIP(ctx, domain, option)
+ 	cancel()
+ 
+diff --git a/app/dns/udpns.go b/app/dns/udpns.go
+index 15faa5e29..4f26a773f 100644
+--- a/app/dns/udpns.go
++++ b/app/dns/udpns.go
+@@ -2,7 +2,6 @@ package dns
+ 
+ import (
+ 	"context"
+-	"github.com/xtls/xray-core/transport/internet"
+ 	"strings"
+ 	"sync"
+ 	"sync/atomic"
+@@ -192,7 +191,7 @@ func (s *ClassicNameServer) sendQuery(ctx context.Context, domain string, option
+ 		if inbound := session.InboundFromContext(ctx); inbound != nil {
+ 			udpCtx = session.ContextWithInbound(udpCtx, inbound)
+ 		}
+-		udpCtx = internet.ContextWithLookupDomain(udpCtx, internet.LookupDomainFromContext(ctx))
++
+ 		udpCtx = session.ContextWithContent(udpCtx, &session.Content{
+ 			Protocol: "dns",
+ 		})
+diff --git a/transport/internet/dialer.go b/transport/internet/dialer.go
+index 5c13b7995..68c887521 100644
+--- a/transport/internet/dialer.go
++++ b/transport/internet/dialer.go
+@@ -3,8 +3,15 @@ package internet
+ import (
+ 	"context"
+ 
++	"github.com/xtls/xray-core/common"
++	"github.com/xtls/xray-core/common/dice"
+ 	"github.com/xtls/xray-core/common/net"
++	"github.com/xtls/xray-core/common/net/cnc"
+ 	"github.com/xtls/xray-core/common/session"
++	"github.com/xtls/xray-core/features/dns"
++	"github.com/xtls/xray-core/features/outbound"
++	"github.com/xtls/xray-core/transport"
++	"github.com/xtls/xray-core/transport/pipe"
+ )
+ 
+ // Dialer is the interface for dialing outbound connections.
+@@ -62,11 +69,99 @@ func Dial(ctx context.Context, dest net.Destination, streamSettings *MemoryStrea
+ 	return nil, newError("unknown network ", dest.Network)
+ }
+ 
++var (
++	dnsClient dns.Client
++	obm       outbound.Manager
++)
++
++func lookupIP(domain string, strategy DomainStrategy, localAddr net.Address) ([]net.IP, error) {
++	if dnsClient == nil {
++		return nil, nil
++	}
++
++	var option = dns.IPOption{
++		IPv4Enable: true,
++		IPv6Enable: true,
++		FakeEnable: false,
++	}
++
++	switch {
++	case strategy == DomainStrategy_USE_IP4 || (localAddr != nil && localAddr.Family().IsIPv4()):
++		option = dns.IPOption{
++			IPv4Enable: true,
++			IPv6Enable: false,
++			FakeEnable: false,
++		}
++	case strategy == DomainStrategy_USE_IP6 || (localAddr != nil && localAddr.Family().IsIPv6()):
++		option = dns.IPOption{
++			IPv4Enable: false,
++			IPv6Enable: true,
++			FakeEnable: false,
++		}
++	case strategy == DomainStrategy_AS_IS:
++		return nil, nil
++	}
++
++	return dnsClient.LookupIP(domain, option)
++}
++
++func canLookupIP(ctx context.Context, dst net.Destination, sockopt *SocketConfig) bool {
++	if dst.Address.Family().IsIP() || dnsClient == nil {
++		return false
++	}
++	return sockopt.DomainStrategy != DomainStrategy_AS_IS
++}
++
++func redirect(ctx context.Context, dst net.Destination, obt string) net.Conn {
++	newError("redirecting request " + dst.String() + " to " + obt).WriteToLog(session.ExportIDToError(ctx))
++	h := obm.GetHandler(obt)
++	ctx = session.ContextWithOutbound(ctx, &session.Outbound{dst, nil})
++	if h != nil {
++		ur, uw := pipe.New(pipe.OptionsFromContext(ctx)...)
++		dr, dw := pipe.New(pipe.OptionsFromContext(ctx)...)
++
++		go h.Dispatch(ctx, &transport.Link{ur, dw})
++		nc := cnc.NewConnection(
++			cnc.ConnectionInputMulti(uw),
++			cnc.ConnectionOutputMulti(dr),
++			cnc.ConnectionOnClose(common.ChainedClosable{uw, dw}),
++		)
++		return nc
++	}
++	return nil
++}
++
+ // DialSystem calls system dialer to create a network connection.
+ func DialSystem(ctx context.Context, dest net.Destination, sockopt *SocketConfig) (net.Conn, error) {
+ 	var src net.Address
+ 	if outbound := session.OutboundFromContext(ctx); outbound != nil {
+ 		src = outbound.Gateway
+ 	}
++	if sockopt == nil {
++		return effectiveSystemDialer.Dial(ctx, src, dest, sockopt)
++	}
++
++	if canLookupIP(ctx, dest, sockopt) {
++		ips, err := lookupIP(dest.Address.String(), sockopt.DomainStrategy, src)
++		if err == nil && len(ips) > 0 {
++			dest.Address = net.IPAddress(ips[dice.Roll(len(ips))])
++			newError("replace destination with " + dest.String()).AtInfo().WriteToLog()
++		} else if err != nil {
++			newError("failed to resolve ip").Base(err).AtWarning().WriteToLog()
++		}
++	}
++
++	if obm != nil && len(sockopt.DialerProxy) > 0 {
++		nc := redirect(ctx, dest, sockopt.DialerProxy)
++		if nc != nil {
++			return nc, nil
++		}
++	}
++
+ 	return effectiveSystemDialer.Dial(ctx, src, dest, sockopt)
+ }
++
++func InitSystemDialer(dc dns.Client, om outbound.Manager) {
++	dnsClient = dc
++	obm = om
++}
+diff --git a/transport/internet/system_dialer.go b/transport/internet/system_dialer.go
+index 7256df9ff..8a0fb89a8 100644
+--- a/transport/internet/system_dialer.go
++++ b/transport/internet/system_dialer.go
+@@ -5,29 +5,18 @@ import (
+ 	"syscall"
+ 	"time"
+ 
+-	"github.com/xtls/xray-core/common"
+-	"github.com/xtls/xray-core/common/dice"
+ 	"github.com/xtls/xray-core/common/net"
+-	"github.com/xtls/xray-core/common/net/cnc"
+ 	"github.com/xtls/xray-core/common/session"
+ 	"github.com/xtls/xray-core/features/dns"
+ 	"github.com/xtls/xray-core/features/outbound"
+-	"github.com/xtls/xray-core/transport"
+-	"github.com/xtls/xray-core/transport/pipe"
+ )
+ 
+ var (
+ 	effectiveSystemDialer SystemDialer = &DefaultSystemDialer{}
+ )
+ 
+-// InitSystemDialer: It's private method and you are NOT supposed to use this function.
+-func InitSystemDialer(dc dns.Client, om outbound.Manager) {
+-	effectiveSystemDialer.Init(dc, om)
+-}
+-
+ type SystemDialer interface {
+ 	Dial(ctx context.Context, source net.Address, destination net.Destination, sockopt *SocketConfig) (net.Conn, error)
+-	Init(dc dns.Client, om outbound.Manager)
+ }
+ 
+ type DefaultSystemDialer struct {
+@@ -58,85 +47,8 @@ func hasBindAddr(sockopt *SocketConfig) bool {
+ 	return sockopt != nil && len(sockopt.BindAddress) > 0 && sockopt.BindPort > 0
+ }
+ 
+-func (d *DefaultSystemDialer) lookupIP(domain string, strategy DomainStrategy, localAddr net.Address) ([]net.IP, error) {
+-	if d.dns == nil {
+-		return nil, nil
+-	}
+-
+-	var option = dns.IPOption{
+-		IPv4Enable: true,
+-		IPv6Enable: true,
+-		FakeEnable: false,
+-	}
+-
+-	switch {
+-	case strategy == DomainStrategy_USE_IP4 || (localAddr != nil && localAddr.Family().IsIPv4()):
+-		option = dns.IPOption{
+-			IPv4Enable: true,
+-			IPv6Enable: false,
+-			FakeEnable: false,
+-		}
+-	case strategy == DomainStrategy_USE_IP6 || (localAddr != nil && localAddr.Family().IsIPv6()):
+-		option = dns.IPOption{
+-			IPv4Enable: false,
+-			IPv6Enable: true,
+-			FakeEnable: false,
+-		}
+-	case strategy == DomainStrategy_AS_IS:
+-		return nil, nil
+-	}
+-
+-	return d.dns.LookupIP(domain, option)
+-}
+-
+-func (d *DefaultSystemDialer) canLookupIP(ctx context.Context, dst net.Destination, sockopt *SocketConfig) bool {
+-	if sockopt == nil || dst.Address.Family().IsIP() || d.dns == nil {
+-		return false
+-	}
+-	if dst.Address.Domain() == LookupDomainFromContext(ctx) {
+-		newError("infinite loop detected").AtError().WriteToLog(session.ExportIDToError(ctx))
+-		return false
+-	}
+-	return sockopt.DomainStrategy != DomainStrategy_AS_IS
+-}
+-
+-func (d *DefaultSystemDialer) redirect(ctx context.Context, dst net.Destination, obt string) net.Conn {
+-	newError("redirecting request " + dst.String() + " to " + obt).WriteToLog(session.ExportIDToError(ctx))
+-	h := d.obm.GetHandler(obt)
+-	ctx = session.ContextWithOutbound(ctx, &session.Outbound{dst, nil})
+-	if h != nil {
+-		ur, uw := pipe.New(pipe.OptionsFromContext(ctx)...)
+-		dr, dw := pipe.New(pipe.OptionsFromContext(ctx)...)
+-
+-		go h.Dispatch(ctx, &transport.Link{ur, dw})
+-		nc := cnc.NewConnection(
+-			cnc.ConnectionInputMulti(uw),
+-			cnc.ConnectionOutputMulti(dr),
+-			cnc.ConnectionOnClose(common.ChainedClosable{uw, dw}),
+-		)
+-		return nc
+-	}
+-	return nil
+-}
+-
+ func (d *DefaultSystemDialer) Dial(ctx context.Context, src net.Address, dest net.Destination, sockopt *SocketConfig) (net.Conn, error) {
+ 	newError("dialing to " + dest.String()).AtDebug().WriteToLog()
+-	if d.obm != nil && sockopt != nil && len(sockopt.DialerProxy) > 0 {
+-		nc := d.redirect(ctx, dest, sockopt.DialerProxy)
+-		if nc != nil {
+-			return nc, nil
+-		}
+-	}
+-
+-	if d.canLookupIP(ctx, dest, sockopt) {
+-		ips, err := d.lookupIP(dest.Address.String(), sockopt.DomainStrategy, src)
+-		if err == nil && len(ips) > 0 {
+-			dest.Address = net.IPAddress(ips[dice.Roll(len(ips))])
+-			newError("replace destination with " + dest.String()).AtInfo().WriteToLog()
+-		} else if err != nil {
+-			newError("failed to resolve ip").Base(err).AtWarning().WriteToLog()
+-		}
+-	}
+ 
+ 	if dest.Network == net.Network_UDP && !hasBindAddr(sockopt) {
+ 		srcAddr := resolveSrcAddr(net.Network_UDP, src)
+@@ -192,11 +104,6 @@ func (d *DefaultSystemDialer) Dial(ctx context.Context, src net.Address, dest ne
+ 	return dialer.DialContext(ctx, dest.Network.SystemString(), dest.NetAddr())
+ }
+ 
+-func (d *DefaultSystemDialer) Init(dc dns.Client, om outbound.Manager) {
+-	d.dns = dc
+-	d.obm = om
+-}
+-
+ type PacketConnWrapper struct {
+ 	conn net.PacketConn
+ 	dest net.Addr
+@@ -257,8 +164,6 @@ func WithAdapter(dialer SystemDialerAdapter) SystemDialer {
+ 	}
+ }
+ 
+-func (v *SimpleSystemDialer) Init(_ dns.Client, _ outbound.Manager) {}
+-
+ func (v *SimpleSystemDialer) Dial(ctx context.Context, src net.Address, dest net.Destination, sockopt *SocketConfig) (net.Conn, error) {
+ 	return v.adapter.Dial(dest.Network.SystemString(), dest.NetAddr())
+ }
+diff --git a/transport/internet/system_dialer_context.go b/transport/internet/system_dialer_context.go
+deleted file mode 100644
+index abc6c1046..000000000
+--- a/transport/internet/system_dialer_context.go
++++ /dev/null
+@@ -1,18 +0,0 @@
+-package internet
+-
+-import "context"
+-
+-type systemDialer int
+-
+-const systemDialerKey systemDialer = 0
+-
+-func ContextWithLookupDomain(ctx context.Context, domain string) context.Context {
+-	return context.WithValue(ctx, systemDialerKey, domain)
+-}
+-
+-func LookupDomainFromContext(ctx context.Context) string {
+-	if domain, ok := ctx.Value(systemDialerKey).(string); ok {
+-		return domain
+-	}
+-	return ""
+-}
