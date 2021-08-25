@@ -39,6 +39,8 @@ Shortcut is an in-Linux-kernel IP packet forwarding engine.
 endef
 
 define KernelPackage/shortcut-fe/install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/etc/init.d/shortcut-fe $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./files/usr/bin/sfe_dump $(1)/usr/bin
 endef
@@ -50,7 +52,7 @@ define KernelPackage/shortcut-fe-cm
   DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe
   TITLE:=Kernel driver for SFE
   FILES:=$(PKG_BUILD_DIR)/shortcut-fe-cm.ko
-  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
+  KCONFIG:=CONFIG_NF_CONNTRACK_EVENTS=y
 endef
 
 define KernelPackage/shortcut-fe-cm/Description
