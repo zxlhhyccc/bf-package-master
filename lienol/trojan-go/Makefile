@@ -21,6 +21,9 @@ PKG_MIRROR_HASH:=2e5fb02fb037d918974d74dffe34374653c8593b11a12f3c1cfcaea8b78892c
 #PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 #PKG_MIRROR_HASH:=b808f5069cea458751a111a79ad307589fc5ec274de44467895478cc688e7cec
 
+PKG_LICENSE:=GPL-3.0
+PKG_LICENSE_FILES:=LICENSE
+
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_TROJAN_GO_COMPRESS_GOPROXY \
 	CONFIG_TROJAN_GO_COMPRESS_UPX
@@ -53,9 +56,6 @@ endef
 
 define Package/$(PKG_NAME)/config
 
-menu "Configuration"
-	depends on PACKAGE_$(PKG_NAME)
-
 config TROJAN_GO_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -63,8 +63,6 @@ config TROJAN_GO_COMPRESS_GOPROXY
 config TROJAN_GO_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	default y
-
-endmenu
 
 endef
 
