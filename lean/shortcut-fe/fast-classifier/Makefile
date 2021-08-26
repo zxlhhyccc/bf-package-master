@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=fast-classifier
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 PKG_CONFIG_DEPENDS := CONFIG_IPV6
 
 include $(INCLUDE_DIR)/package.mk
@@ -14,7 +14,7 @@ define KernelPackage/$(PKG_NAME)/Default
   DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe
   TITLE:=Kernel driver for FAST Classifier
   FILES:=$(PKG_BUILD_DIR)/fast-classifier.ko
-  KCONFIG:=CONFIG_NF_CONNTRACK_EVENTS=y CONFIG_NF_CONNTRACK_MARK=y
+  KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y CONFIG_NF_CONNTRACK_MARK=y
   PROVIDES:=$(PKG_NAME)
 endef
 
