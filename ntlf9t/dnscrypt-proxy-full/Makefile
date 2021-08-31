@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnscrypt-proxy-full
-PKG_VERSION:=2.0.45
+PKG_VERSION:=2.1.0
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
@@ -59,7 +59,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	chmod +x $(PKG_BUILD_DIR)/$(PKG_BUILD_DNSCRYPT)/dnscrypt-proxy && upx --lzma --ultra-brute $(PKG_BUILD_DIR)/$(PKG_BUILD_DNSCRYPT)/dnscrypt-proxy
+	chmod +x $(PKG_BUILD_DIR)/$(PKG_BUILD_DNSCRYPT)/dnscrypt-proxy && $(STAGING_DIR_HOST)/bin/upx --lzma --ultra-brute $(PKG_BUILD_DIR)/$(PKG_BUILD_DNSCRYPT)/dnscrypt-proxy
 endef
 
 define Package/$(PKG_NAME)/install
