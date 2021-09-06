@@ -147,7 +147,7 @@ define Package/v2ray-core/conffiles
 /etc/v2ray/
 endef
 
-GEOIP_VER:=202109020025
+GEOIP_VER:=202109060310
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -157,7 +157,7 @@ define Download/geoip
   HASH:=ed94122961f358abede9f1954722039d5a0300b614c77cc27d92618c08b97bb8
 endef
 
-GEOSITE_VER:=20210901054852
+GEOSITE_VER:=20210906031055
 GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 
 define Download/geosite
