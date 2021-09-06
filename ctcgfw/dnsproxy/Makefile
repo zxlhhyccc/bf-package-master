@@ -8,15 +8,15 @@ PKG_NAME:=dnsproxy
 PKG_VERSION:=0.39.4
 PKG_RELEASE:=$(AUTORELESE)
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/AdguardTeam/dnsproxy/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=51ab423880141e6ded073f1d5bec7c9e68c3d54df380e75913dbc87aa264237b
-
-# PKG_SOURCE_PROTO:=git
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://github.com/AdguardTeam/dnsproxy.git
-#PKG_MIRROR_HASH:=b47f8d8ab7f3f484c00872dc358dbc5377a6ecea9734ed782b03d6e62a1898ef
-# PKG_SOURCE_VERSION:=27e903666db63092f55b50de121aced1e86b7c9c
+# PKG_SOURCE_URL:=https://codeload.github.com/AdguardTeam/dnsproxy/tar.gz/v$(PKG_VERSION)?
+# PKG_HASH:=51ab423880141e6ded073f1d5bec7c9e68c3d54df380e75913dbc87aa264237b
+
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://github.com/AdguardTeam/dnsproxy.git
+PKG_SOURCE_VERSION:=849a436268a33e97217604298cfc9e215c57c485
+PKG_MIRROR_HASH:=7e37d97b765d5f8dd4d6e1e41323b7a5e4a242ec912a364620355bd49db30d1e
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=Apache-2.0
