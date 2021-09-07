@@ -1,0 +1,102 @@
+From b5ac6025d710e64b026274b2e5466db473bbac07 Mon Sep 17 00:00:00 2001
+From: Mocking <fanhaiwang0817@gmail.com>
+Date: Wed, 1 Sep 2021 05:57:05 +0800
+Subject: [PATCH] =?UTF-8?q?1.=E8=B0=83=E6=95=B4ConnectionIdle=E9=BB=98?=
+ =?UTF-8?q?=E8=AE=A4=E5=80=BC=E4=B8=BA72000=E7=A7=92=202.=E4=BF=AE?=
+ =?UTF-8?q?=E6=94=B9context.Context=E7=9A=84=E8=B0=83=E7=94=A8=EF=BC=8C?=
+ =?UTF-8?q?=E5=B0=86context.WithCancel=E6=94=B9=E4=B8=BAcontext.WithTimeou?=
+ =?UTF-8?q?t=EF=BC=8C=E8=A7=A3=E5=86=B3=E9=95=BF=E9=93=BE=E6=8E=A5?=
+ =?UTF-8?q?=E8=B6=85=E8=BF=87600=E7=A7=92=E8=B0=83=E7=94=A8=E4=BC=9A?=
+ =?UTF-8?q?=E8=A2=AB=E8=87=AA=E5=8A=A8=E5=88=87=E6=96=AD=E9=97=AE=E9=A2=98?=
+ =?UTF-8?q?=E3=80=82?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ features/policy/policy.go        | 2 +-
+ proxy/socks/client.go            | 3 ++-
+ proxy/socks/server.go            | 3 ++-
+ proxy/vless/inbound/inbound.go   | 6 ++++--
+ proxy/vless/outbound/outbound.go | 3 ++-
+ 5 files changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/features/policy/policy.go b/features/policy/policy.go
+index c3d48e6ac..9082b3ed8 100644
+--- a/features/policy/policy.go
++++ b/features/policy/policy.go
+@@ -120,7 +120,7 @@ func SessionDefault() Session {
+ 			// Align Handshake timeout with nginx client_header_timeout
+ 			// So that this value will not indicate server identity
+ 			Handshake:      time.Second * 60,
+-			ConnectionIdle: time.Second * 300,
++			ConnectionIdle: time.Second * 72000,
+ 			UplinkOnly:     time.Second * 1,
+ 			DownlinkOnly:   time.Second * 1,
+ 		},
+diff --git a/proxy/socks/client.go b/proxy/socks/client.go
+index 77c306b59..ceab9db38 100644
+--- a/proxy/socks/client.go
++++ b/proxy/socks/client.go
+@@ -116,7 +116,8 @@ func (c *Client) Process(ctx context.Context, link *transport.Link, dialer inter
+ 		newError("failed to clear deadline after handshake").Base(err).WriteToLog(session.ExportIDToError(ctx))
+ 	}
+ 
+-	ctx, cancel := context.WithCancel(ctx)
++	//ctx, cancel := context.WithCancel(ctx)
++	ctx, cancel := context.WithTimeout(ctx, p.Timeouts.ConnectionIdle)
+ 	timer := signal.CancelAfterInactivity(ctx, cancel, p.Timeouts.ConnectionIdle)
+ 
+ 	var requestFunc func() error
+diff --git a/proxy/socks/server.go b/proxy/socks/server.go
+index 8aeb568ac..8256e513e 100644
+--- a/proxy/socks/server.go
++++ b/proxy/socks/server.go
+@@ -147,7 +147,8 @@ func (*Server) handleUDP(c io.Reader) error {
+ }
+ 
+ func (s *Server) transport(ctx context.Context, reader io.Reader, writer io.Writer, dest net.Destination, dispatcher routing.Dispatcher, inbound *session.Inbound) error {
+-	ctx, cancel := context.WithCancel(ctx)
++	//ctx, cancel := context.WithCancel(ctx)
++	ctx, cancel := context.WithTimeout(ctx, s.policy().Timeouts.ConnectionIdle)
+ 	timer := signal.CancelAfterInactivity(ctx, cancel, s.policy().Timeouts.ConnectionIdle)
+ 
+ 	if inbound != nil {
+diff --git a/proxy/vless/inbound/inbound.go b/proxy/vless/inbound/inbound.go
+index 73097526d..cd4d3f47f 100644
+--- a/proxy/vless/inbound/inbound.go
++++ b/proxy/vless/inbound/inbound.go
+@@ -312,7 +312,8 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection i
+ 				return newError(`failed to find the default "path" config`).AtWarning()
+ 			}
+ 
+-			ctx, cancel := context.WithCancel(ctx)
++			//ctx, cancel := context.WithCancel(ctx)
++			ctx, cancel := context.WithTimeout(ctx, sessionPolicy.Timeouts.ConnectionIdle)
+ 			timer := signal.CancelAfterInactivity(ctx, cancel, sessionPolicy.Timeouts.ConnectionIdle)
+ 			ctx = policy.ContextWithBufferPolicy(ctx, sessionPolicy.Buffer)
+ 
+@@ -485,7 +486,8 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection i
+ 	}
+ 
+ 	sessionPolicy = h.policyManager.ForLevel(request.User.Level)
+-	ctx, cancel := context.WithCancel(ctx)
++	//ctx, cancel := context.WithCancel(ctx)
++	ctx, cancel := context.WithTimeout(ctx, sessionPolicy.Timeouts.ConnectionIdle)
+ 	timer := signal.CancelAfterInactivity(ctx, cancel, sessionPolicy.Timeouts.ConnectionIdle)
+ 	ctx = policy.ContextWithBufferPolicy(ctx, sessionPolicy.Buffer)
+ 
+diff --git a/proxy/vless/outbound/outbound.go b/proxy/vless/outbound/outbound.go
+index 750a3940a..574a0908e 100644
+--- a/proxy/vless/outbound/outbound.go
++++ b/proxy/vless/outbound/outbound.go
+@@ -172,7 +172,8 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
+ 	}
+ 
+ 	sessionPolicy := h.policyManager.ForLevel(request.User.Level)
+-	ctx, cancel := context.WithCancel(ctx)
++	//ctx, cancel := context.WithCancel(ctx)
++	ctx, cancel := context.WithTimeout(ctx, sessionPolicy.Timeouts.ConnectionIdle)
+ 	timer := signal.CancelAfterInactivity(ctx, cancel, sessionPolicy.Timeouts.ConnectionIdle)
+ 
+ 	clientReader := link.Reader // .(*pipe.Reader)
