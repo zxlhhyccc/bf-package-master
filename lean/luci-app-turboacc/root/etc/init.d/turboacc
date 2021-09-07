@@ -15,6 +15,7 @@ inital_conf(){
 	config_get "sw_flow" "config" "sw_flow" "0"
 	config_get "hw_flow" "config" "hw_flow" "0"
 	config_get "sfe_flow" "config" "sfe_flow" "0"
+	config_get "have_ecm_init" "config" "have_ecm_init" "0"
 	config_get "bbr_cca" "config" "bbr_cca" "0"
 	config_get "fullcone_nat" "config" "fullcone_nat" "0"
 	config_get "free_memory" "config" "free_memory" "0"
