@@ -253,10 +253,6 @@ start(){
 	crontab /etc/crontabs/root
 
 	[ "${sw_flow}" -ne "1" ] && [ "${sfe_flow}" -eq "1" ] && {
-		[ "$(have_ecm_init)" = "1" ] && {
-			/etc/init.d/qca-nss-ecm enabled && /etc/init.d/qca-nss-ecm disable
-			/etc/init.d/qca-nss-ecm start
-		}
 		[ "$(have_ecm_init)" = "0" ] && {
 			/etc/init.d/shortcut-fe enabled && /etc/init.d/shortcut-fe disable
 			/etc/init.d/shortcut-fe start
@@ -330,8 +326,7 @@ stop(){
 	uci commit firewall
 
 	[ "${sfe_flow}" -ne "1" ] && {
-		[ "$(have_ecm_init)" = "1" ] && /etc/init.d/qca-nss-ecm stop 2>"/dev/null"
-		/etc/init.d/shortcut-fe stop 2>"/dev/null"
+		[ "$(have_ecm_init)" = "0" ] && /etc/init.d/shortcut-fe stop 2>"/dev/null"
 	}
 
 	[ "${dns_acc}" -eq "0" ] && rm -f "/tmp/dnsmasq.d/dnsmasq-googlehosts.conf"
