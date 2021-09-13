@@ -8,7 +8,9 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "shairport-sync"}, cbi("shairport-sync"), _("AirPlay 2 Receiver")).dependent = true
+	local page = entry({"admin", "services", "shairport-sync"}, cbi("shairport-sync"), _("AirPlay 2 Receiver"))
+	page.dependent = true
+	page.acl_depends = { "luci-app-airplay2" }
 	
 	entry({"admin","services","shairport-sync","run"},call("act_status")).leaf=true
 
