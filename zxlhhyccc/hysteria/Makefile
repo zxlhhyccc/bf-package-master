@@ -9,9 +9,15 @@ PKG_NAME:=hysteria
 PKG_VERSION:=0.8.5
 PKG_RELEASE:=1
 
+# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+# PKG_SOURCE_URL:=https://codeload.github.com/HyNetwork/hysteria/tar.gz/v$(PKG_VERSION)?
+# PKG_HASH:=8f1945eb36dba8ebc47e3f68af4ba421f65ca119cc0c54d552f59228ee824e89
+
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/HyNetwork/hysteria/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=8f1945eb36dba8ebc47e3f68af4ba421f65ca119cc0c54d552f59228ee824e89
+PKG_SOURCE_URL:=https://github.com/HyNetwork/hysteria.git
+PKG_SOURCE_VERSION:=a9ec37fee852809b4740b184fb1027bfadc2801d
+PKG_MIRROR_HASH:=5e574472bbdc2626eb1cd30356b52f3632a03c2f3522baaf1e6de50f23e03185
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_HYSTERIA_COMPRESS_GOPROXY \
