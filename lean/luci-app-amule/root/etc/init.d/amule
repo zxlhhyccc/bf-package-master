@@ -9,7 +9,7 @@ LIST_SEP="
 "
 
 service_triggers() {
-    procd_add_reload_trigger "amule"
+       procd_add_reload_trigger amule
 }
 
 unregex() {
