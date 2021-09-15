@@ -6,14 +6,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=trojan-go
-PKG_VERSION:=0.10.5
+PKG_VERSION:=0.10.6
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/p4gefau1t/trojan-go.git
-PKG_SOURCE_VERSION:=e28864f61680be89a77b6b5c87760757baa7fc8d
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_MIRROR_HASH:=7454a0e19056442a18cb230f11b8ceba1af040c2c2d4c01ac9b78c9f65a501c0
+PKG_SOURCE_URL:=https://github.com/p4gefau1t/trojan-go.git
+PKG_SOURCE_VERSION:=2dc60f52e79ff8b910e78e444f1e80678e936450
+PKG_MIRROR_HASH:=788db4cba85e007b080ed56ba14caf0b8ec14e311f1dc6aed408ee2adc989a1b
 
 #PKG_SOURCE_PROTO:=git
 #PKG_SOURCE_URL:=https://github.com/frainzy1477/trojan-go.git
