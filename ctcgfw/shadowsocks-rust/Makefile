@@ -11,7 +11,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
-PKG_VERSION:=1.12.0-alpha.2
+PKG_VERSION:=1.12.0-alpha.3
 PKG_RELEASE:=1
 
 PKG_SOURCE_HEADER:=shadowsocks-v$(PKG_VERSION)
@@ -21,16 +21,16 @@ PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-rust/releases/downloa
 
 ifeq ($(ARCH),aarch64)
   PKG_SOURCE:=$(PKG_SOURCE_HEADER).aarch64-$(PKG_SOURCE_BODY).$(PKG_SOURCE_FOOTER)
-  PKG_HASH:=956f232ecffc6d18d44a97359a674a6958dfd30d3e311b72a8dfbf048aca9b75
+  PKG_HASH:=3133a45c9ffe7012041aa7b7d9368cdbf9b4c8f79f9cd35a8962e9f702eb2a6a
 else ifeq ($(ARCH),arm)
   # Referred to golang/golang-values.mk
   ARM_CPU_FEATURES:=$(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE))))
   ifeq ($(ARM_CPU_FEATURES),)
     PKG_SOURCE:=$(PKG_SOURCE_HEADER).arm-$(PKG_SOURCE_BODY)eabi.$(PKG_SOURCE_FOOTER)
-    PKG_HASH:=dba32b6644672a5951a658c07341838f9fe91747b274a3d4c8a08867cde87f6b
+    PKG_HASH:=f9b78debca1ea1af2d3157ae482c0bf3f090029f4cd6a52ed5cb03ae46e194fc
   else ifneq ($(filter $(ARM_CPU_FEATURES),vfp vfpv2),)
     PKG_SOURCE:=$(PKG_SOURCE_HEADER).arm-$(PKG_SOURCE_BODY)eabihf.$(PKG_SOURCE_FOOTER)
-    PKG_HASH:=57b26d6cfda700238aaf06c114ec8597e06376d5457cd01cc263a1ba29e1c2c9
+    PKG_HASH:=46e6281624b172121ca7bde01acdbf82e0257ac84305fe7e52ab2a408ecfa4e9
   #else
   #  PKG_SOURCE:=$(PKG_SOURCE_HEADER).armv7-$(PKG_SOURCE_BODY)eabihf.$(PKG_SOURCE_FOOTER)
   #  PKG_HASH:=b183ca95caefc3c314ba962e7276d1955713a7e07f39c900cc97c3f666707c98
@@ -41,17 +41,17 @@ else ifeq ($(ARCH),i386)
   #  PKG_HASH:=d158446f0cde52d91ef22df3564cee86c7b24b659c9a4d3054b6ec4fe3669a4e
   #else
     PKG_SOURCE:=$(PKG_SOURCE_HEADER).i686-$(PKG_SOURCE_BODY).$(PKG_SOURCE_FOOTER)
-    PKG_HASH:=f71650140a9e79f6370721165e5ee1d2fb0f265265ea85c858f3fdaa4cb3dd09
+    PKG_HASH:=6b2f61fde74d64138dde19226460247720bbd93512ba9efcba02d1a0a75ea2af
   endif
 else ifeq ($(ARCH),mips)
   PKG_SOURCE:=$(PKG_SOURCE_HEADER).mips-$(PKG_SOURCE_BODY).$(PKG_SOURCE_FOOTER)
-  PKG_HASH:=2715282ffe5fc3972ba2b6b075caae79d5e0b4c6cd58214113adca7389f5cd61
+  PKG_HASH:=a6875ea5d584ecae5e9312107fe638d2b93ab3bce4a994e3da8c839cfe844e88
 else ifeq ($(ARCH),mipsel)
   PKG_SOURCE:=$(PKG_SOURCE_HEADER).mipsel-$(PKG_SOURCE_BODY).$(PKG_SOURCE_FOOTER)
-  PKG_HASH:=e6bf3c091b7767226a835dc97dc8925c9c597571bbca09ede2acce96cb1e0cb4
+  PKG_HASH:=105ec863a7acd5891fad53a76b2dac57cc1c9ac32c86e5d9f43df610a827dce6
 else ifeq ($(ARCH),x86_64)
   PKG_SOURCE:=$(PKG_SOURCE_HEADER).x86_64-$(PKG_SOURCE_BODY).$(PKG_SOURCE_FOOTER)
-  PKG_HASH:=f7f6d9e9400e5e11867bcde9e0e803e2f134dbcc204401992ba5b112ad848076
+  PKG_HASH:=e008dd8eec4e92ec4d618c827097c957c0a741a15b02b88ce5ea23ef01c90452
 # Set the default value to make OpenWrt Package Checker happy
 else
   PKG_SOURCE:=dummy
