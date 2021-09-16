@@ -8,7 +8,7 @@ XHR.poll(5, '<%=luci.dispatcher.build_url("admin/nas/amule/status")%>', null,
 			if (data.amuled) {
 				var links = '<em><%:aMule daemon is running.%></em>';
 				if (data.amuleweb) {
-					links += '<input class="cbi-button mar-10" type="button" value="<%:Open aMuleWeb%>" onclick="openwebui();" />';
+					links += '<input class="btn cbi-button mar-10" type="button" value="<%:Open aMuleWeb%>" onclick="openwebui();" />';
 				}
 				tb.innerHTML = links;
 			} else {
