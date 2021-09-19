@@ -18,7 +18,7 @@
     #进入 OpenWrt 源码 package 目录
     cd package
     #克隆插件源码
-    git clone https://github.com/immortalwrt/luci-app-unblockneteasemusic.git
+    git clone https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic.git
     #返回上一层目录
     cd ..
     #配置
@@ -37,22 +37,22 @@
 - ##### 特别说明
 1. 首次使用本插件时，将会在后台下载核心程序，故启动时间可能会稍微长一点
 2. 如需使用网页端，请额外安装 Tampermonkey 插件：[NeteaseMusic UI Unlocker](https://greasyfork.org/zh-CN/scripts/382285-neteasemusic-ui-unlocker)
-3. 推荐在客户端信任 [UnblockNeteaseMusic 证书](https://raw.githubusercontent.com/1715173329/UnblockNeteaseMusic/enhanced/ca.crt)，以便 HTTPS 通讯（若您不放心，也可以[自行签发证书](https://github.com/nondanee/UnblockNeteaseMusic/issues/48#issuecomment-477870013)）
+3. 推荐在客户端信任 [UnblockNeteaseMusic 证书](https://raw.githubusercontent.com/UnblockNeteaseMusic/server/enhanced/ca.crt)，以便 HTTPS 通讯（若您不放心，也可以[自行签发证书](https://github.com/nondanee/UnblockNeteaseMusic/issues/48#issuecomment-477870013)）
 
 ### 效果图
 #### luci界面
-  ![Image text](https://raw.githubusercontent.com/immortalwrt/luci-app-unblockneteasemusic/master/views/view1.jpg)
-  ![Image text](https://raw.githubusercontent.com/immortalwrt/luci-app-unblockneteasemusic/master/views/view2.jpg)
-  ![Image text](https://raw.githubusercontent.com/immortalwrt/luci-app-unblockneteasemusic/master/views/view3.jpg)
+  ![Image text](https://raw.githubusercontent.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic/master/views/view1.jpg)
+  ![Image text](https://raw.githubusercontent.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic/master/views/view2.jpg)
+  ![Image text](https://raw.githubusercontent.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic/master/views/view3.jpg)
 #### UWP 网易云音乐客户端
-  ![Image text](https://raw.githubusercontent.com/immortalwrt/luci-app-unblockneteasemusic/master/views/view4.jpg)
+  ![Image text](https://raw.githubusercontent.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic/master/views/view4.jpg)
 
 ### 协议
-本项目使用 [GPL 3.0](https://github.com/immortalwrt/luci-app-unblockneteasemusic/blob/master/LICENSE) 协议授权<br/>
+本项目使用 [GPL 3.0](https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic/blob/master/LICENSE) 协议授权<br/>
 在遵循此协议的前提下，你可以自由修改和分发
 
 ### 鸣谢
-[UnblockNeteaseMusic](https://github.com/1715173329/UnblockNeteaseMusic)的开发者：[nondanee](https://github.com/nondanee)、[pan93412](https://github.com/pan93412)、[1715173329](https://github.com/1715173329)<br/>
+[UnblockNeteaseMusic](https://github.com/UnblockNeteaseMusic/server)的开发者：[nondanee](https://github.com/nondanee)、[pan93412](https://github.com/pan93412)、[1715173329](https://github.com/1715173329)<br/>
 [luci-app-unblockmusic](https://github.com/maxlicheng/luci-app-unblockmusic)的开发者：[maxlicheng](https://github.com/maxlicheng)<br/>
 [luci-app-unblockmusic（二次修改）](https://github.com/coolsnowwolf/lede/tree/master/package/lean/luci-app-unblockmusic)的开发者：[Lean](https://github.com/coolsnowwolf)<br/>
 IPSet 劫持方式指导：[恩山 692049#125 楼](https://www.right.com.cn/forum/forum.php?mod=viewthread&tid=692049&page=9#pid4104303) [rufengsuixing](https://github.com/rufengsuixing/luci-app-unblockmusic) [binsee](https://github.com/binsee/luci-app-unblockmusic)<br/>
