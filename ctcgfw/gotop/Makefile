@@ -9,12 +9,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gotop
-PKG_VERSION:=4.1.1
+PKG_VERSION:=4.1.2
 PKG_RELEASE:=1
 
+# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+# PKG_SOURCE_URL:=https://codeload.github.com/xxxserxxx/gotop/tar.gz/v$(PKG_VERSION)?
+# PKG_HASH:=314dcfc4b0faa0bb735e5fa84b2406492bf94f7948af43e2b9d2982d69d542ed
+
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/xxxserxxx/gotop/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=314dcfc4b0faa0bb735e5fa84b2406492bf94f7948af43e2b9d2982d69d542ed
+PKG_SOURCE_URL:=https://github.com/xxxserxxx/gotop.git
+PKG_SOURCE_VERSION:=a32a1c05eae8c6612857f1e2e883382d793640e8
+PKG_MIRROR_HASH:=fe9d7227d15e9e60ba8394ff3aafe3a1f79d363652029eeb6f76f0d441789d0f
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILE:=LICENSE
