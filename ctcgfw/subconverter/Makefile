@@ -20,7 +20,7 @@ PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
-PKG_BUILD_DEPENDS:=jpcre2 libcron quickjspp rapidjson
+PKG_BUILD_DEPENDS:=jpcre2 libcron quickjspp rapidjson toml11
 PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -31,7 +31,8 @@ define Package/subconverter
   CATEGORY:=Utilities
   TITLE:=Utility to convert between various subscription format
   URL:=https://github.com/tindy2013/subconverter
-  DEPENDS:=+libatomic +libpthread +libstdcpp +libevent2 +libyaml-cpp +libpcre2 +libcurl +zlib
+  DEPENDS:=+libatomic +libcurl +libevent2 +libpcre2 +libpthread \
+	+libstdcpp +libyaml-cpp +zlib
 endef
 
 define Package/subconverter/description
