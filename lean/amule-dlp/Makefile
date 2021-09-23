@@ -13,9 +13,9 @@ PKG_RELEASE:=7
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/persmule/amule-dlp.git
-PKG_SOURCE_DATE:=2021-01-30
-PKG_SOURCE_VERSION:=HEAD
-PKG_MIRROR_HASH:=skip
+PKG_SOURCE_DATE:=2021-02-20
+PKG_SOURCE_VERSION:=78a95e54e976c612fde6eb49390807df7870f26a
+PKG_MIRROR_HASH:=6c7781b516d3385bf6b7412378d5baba1c7ef96cfa1f4eb61d12f0ea4842598a
 
 PKG_CONFIG_DEPEDS:= CONFIG_AMULE_CRYPTOPP_STATIC_LINKING
 
@@ -47,7 +47,7 @@ define Download/AmuleWebUI
   URL:=https://github.com/MatteoRagni/AmuleWebUI-Reloaded/archive
   URL_FILE:=master.zip
   FILE:=AmuleWebUI.zip
-  HASH:=skip
+  HASH:=8121a1b543c2c8ea51522c3b3836dadbf023897e3e8d36606ca6dbbd8db41d03
 endef
 
 define Build/Prepare
