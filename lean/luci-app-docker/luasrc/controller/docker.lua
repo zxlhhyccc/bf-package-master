@@ -1,7 +1,7 @@
 module("luci.controller.docker", package.seeall)
 
 function index()
-	if not nixio.fs.access("/etc/config/dockerd") then
+	if not nixio.fs.access("/etc/config/docker") then
 		return
 	end
 	
@@ -12,8 +12,8 @@ function index()
 end
 
 function act_status()
-  local e={}
-  e.running=luci.sys.call("pgrep /usr/bin/dockerd >/dev/null")==0
-  luci.http.prepare_content("application/json")
-  luci.http.write_json(e)
+	local e={}
+	e.running=luci.sys.call("pgrep /usr/bin/dockerd >/dev/null")==0
+	luci.http.prepare_content("application/json")
+	luci.http.write_json(e)
 end
