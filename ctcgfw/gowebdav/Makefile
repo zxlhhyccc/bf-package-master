@@ -29,16 +29,12 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/gowebdav
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=File Transfer
-	TITLE:=A simple WebDav server written in Golang.
-	URL:=https://github.com/1715173329/gowebdav
-	DEPENDS:=$(GO_ARCH_DEPENDS)
-endef
-
-define Package/gowebdav/description
-	A simple WebDav server written in Golang.
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=File Transfer
+  TITLE:=A simple WebDav server written in Go
+  URL:=https://github.com/1715173329/gowebdav
+  DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
 define Package/gowebdav/config
@@ -53,7 +49,7 @@ endef
 
 ifeq ($(CONFIG_GOWEBDAV_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
-	export GOPROXY=https://goproxy.io
+	export GOPROXY=https://goproxy.baidu.com
 endif
 
 define Build/Compile
@@ -64,10 +60,7 @@ endif
 endef
 
 define Package/gowebdav/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/gowebdav $(1)/usr/bin/gowebdav
+	$(call GoPackage/Package/Install/Bin,$(1))
 
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) $(CURDIR)/files/gowebdav.config $(1)/etc/config/gowebdav
