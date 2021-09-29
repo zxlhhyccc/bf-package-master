@@ -27,12 +27,12 @@ UNZIP_CMD:=unzip -q -d $(PKG_BUILD_DIR) $(DL_DIR)/$(PKG_SOURCE)
 define Package/libcryptopp
   SECTION:=libs
   CATEGORY:=Libraries
-  TITLE:=Crypto++ is library for creating C++ programs which use cryptographic algorithms
+  TITLE:=Free C++ class library of cryptographic schemes
   URL:=https://packages.debian.org/sid/libcrypto++-dev
   DEPENDS:=+libpthread +libstdcpp
 endef
 
-define Package/package/libcryptopp
+define Package/libcryptopp/description
   Crypto++ is library for creating C++ programs which use cryptographic algorithms.
   The library uses a Pipes & Filters architecture with heavy use of templates and
   abstract base classes.
