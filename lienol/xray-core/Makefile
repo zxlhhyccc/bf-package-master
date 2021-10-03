@@ -7,15 +7,15 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=1ef824c0b4cbe36572354243fbfbd5ec824ff2e8
-PKG_MIRROR_HASH:=27de7140b1b5d1a6741e636e5cb5e3dab86cb236652223f6e8f76923c572d9b9
+PKG_SOURCE_VERSION:=a97d45c93a100bbdc9d42353791fb73b1add1780
+PKG_MIRROR_HASH:=86f8b471ee438026b840d4e9f6c0d893fd78db779e8bd7afb4ee6fc098c7a008
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_CONFIG_DEPENDS:= \
-	#CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
+	CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
 	CONFIG_XRAY_CORE_COMPRESS_GOPROXY \
 	CONFIG_XRAY_CORE_COMPRESS_UPX \
 
@@ -86,9 +86,9 @@ define Package/xray-core/config
 menu "Xray-core Configuration"
 	depends on PACKAGE_xray-core
 
-#config XRAY_CORE_PROVIDE_V2RAY_CORE
-#	bool "Provide V2Ray binary using XRay"
-#	default y
+config XRAY_CORE_PROVIDE_V2RAY_CORE
+	bool "Provide V2Ray binary using XRay"
+	default y
 
 config XRAY_CORE_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
@@ -106,7 +106,7 @@ define Package/xray-core/conffiles
 /usr/share/xray
 endef
 
-GEOIP_VER:=202109262209
+GEOIP_VER:=202110022209
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -114,10 +114,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=3ce752f256d12b79f87c48013e79cdac8dce23179e2123695517e1b09ed5783d
+  HASH:=6f529312eeb8477f66b1828a35844b96f4d831e6f1b361e57a4f4892b733c247
 endef
 
-GEOSITE_VER:=202109262209
+GEOSITE_VER:=202110022209
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -127,7 +127,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=dd5b126eefa8a55013923e77d8e2b31518df5bdaf606e9dfbf3beff92fce3fe7
+  HASH:=dfcadd08257ff83621f9eb3d253c5861e5cec21fae574e1192b53c51f558da07
 endef
 
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
