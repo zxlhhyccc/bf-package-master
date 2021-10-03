@@ -155,7 +155,7 @@ define Package/xray-core/install
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/xray
 ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
-	#$(LN) xray $(1)/usr/bin/v2ray
+	$(LN) xray $(1)/usr/bin/v2ray
 endif
 
 	$(INSTALL_DIR) $(1)/etc/xray/
