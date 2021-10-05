@@ -13,7 +13,7 @@ define Package/luci-app-mosdns
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
 	TITLE:=LuCI Support for mosdns
-	DEPENDS:=+mosdns
+	DEPENDS:=+MosDNS
 endef
 
 define Package/luci-app-mosdns/description
