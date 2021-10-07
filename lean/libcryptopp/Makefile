@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2021 CTCGFW Project-OpenWrt
+# Copyright (C) 2021 ImmortalWrt
 # <https://immortalwrt.org>
 #
 # This is free software, licensed under the GNU General Public License v3.
@@ -9,12 +9,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libcryptopp
-PKG_VERSION:=8.6.0
+PKG_VERSION:=8.5.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=cryptopp$(subst .,,$(PKG_VERSION)).zip
 PKG_SOURCE_URL:=https://www.cryptopp.com/
-PKG_HASH:=20aa413957d9c8ae353ee2f7747bd7ac392f933c60a53e3fd1e41cadbc48d193
+PKG_HASH:=95fc50d59488ebf61a735cce2b2ec2c2561fc682077c7b496273d65a1ed93d9e
 
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
@@ -33,9 +33,9 @@ define Package/libcryptopp
 endef
 
 define Package/libcryptopp/description
-  Crypto++ is library for creating C++ programs which use cryptographic algorithms.
-  The library uses a Pipes & Filters architecture with heavy use of templates and
-  abstract base classes.
+  Crypto++ is library for creating C++ programs which use cryptographic
+  algorithms. The library uses a Pipes & Filters architecture with heavy
+  use of templates and abstract base classes.
 endef
 
 define Build/Prepare
