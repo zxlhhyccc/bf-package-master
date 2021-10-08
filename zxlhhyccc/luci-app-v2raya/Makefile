@@ -1,13 +1,10 @@
-# Copyright (C) 2016 Openwrt.org
-#
-# This is free software, licensed under the Apache License, Version 2.0 .
-#
-
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for v2rayA
 LUCI_DEPENDS:=+v2raya +lua +libuci-lua
 LUCI_PKGARCH:=all
+
+PKG_NAME:=luci-app-v2raya
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
