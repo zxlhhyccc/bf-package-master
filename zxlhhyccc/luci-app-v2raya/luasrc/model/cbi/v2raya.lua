@@ -1,16 +1,31 @@
+require("nixio.fs")
 
 m = Map("v2raya")
 m.title = translate("v2rayA")
-m.description = translate("简易的 v2rayA 开关")
-m:section(SimpleSection).template = "v2raya/v2raya_status"
+m.description = translate("Simple v2rayA switch.")
 
-s = m:section(TypedSection,"v2raya")
+m:section(SimpleSection).template  = "v2raya/v2raya_status"
+
+s = m:section(TypedSection, "v2raya")
+s.addremove = false
 s.anonymous = true
 
-o = s:option(Flag,"enabled")
-o.title = translate("启用")
-o.description = translate("启用后，浏览器输入: 后台IP+:2017，例如:192.168.1.1:2017")
-o.default = 0
+o = s:option(Flag, "enabled", translate("Enable"))
 o.rmempty = false
+
+o = s:option(Value, "port", translate("Port"))
+o.datatype = "port"
+o.placeholder = "2017"
+o.default = "2017"
+o.rmempty = false
+
+o = s:option(Value, "config", translate("v2rayA configuration directory"))
+o.default = '/etc/v2raya'
+
+local e = luci.http.formvalue("cbi.apply")
+if e then
+    io.popen("/etc/init.d/v2raya restart")
+end
+
 
 return m

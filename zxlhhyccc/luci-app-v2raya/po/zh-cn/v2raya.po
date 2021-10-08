@@ -1,0 +1,11 @@
+msgid "v2rayA"
+msgstr "v2rayA"
+
+msgid "Simple v2rayA switch."
+msgstr "简易的 v2rayA 开关."
+
+msgid "Open v2rayA page"
+msgstr "打开 v2rayA 页面"
+
+msgid "v2rayA configuration directory"
+msgstr "v2rayA配置目录"
