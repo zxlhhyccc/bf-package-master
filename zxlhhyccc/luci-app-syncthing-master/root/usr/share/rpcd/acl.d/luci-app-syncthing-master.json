@@ -1,0 +1,11 @@
+{
+	"luci-app-syncthing-master": {
+		"description": "Grant UCI access for luci-app-syncthing-master",
+		"read": {
+			"uci": [ "syncthing" ]
+		},
+		"write": {
+			"uci": [ "syncthing" ]
+		}
+	}
+}
