@@ -1,6 +1,6 @@
 # SPDX-Identifier-License: GPL-3.0-or-later
 #
-# Copyright (C) 2019-2021 ElonH <elonhhuang@gmail.com>
+# Copyright (C) 2019 ElonH <elonhhuang@gmail.com>
 
 include $(TOPDIR)/rules.mk
 
@@ -8,16 +8,9 @@ PKG_NAME:=rclone
 PKG_VERSION:=1.56.2
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/rclone/rclone.git
-PKG_SOURCE_DATE:=2021-10-10
-PKG_SOURCE_VERSION:=19fc1b2a950767f5f75d09e956403313c4111e4e
-PKG_MIRROR_HASH:=11046b19656a8deb408f208defa1b185d9a2c3bde2e14c62825ec1022bf0575c
-
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://codeload.github.com/rclone/rclone/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=c8dc7927d3c27e9897398855013c5e4eb31a76ab45dd4aed7bcf5f0121375286
+PKG_SOURCE_URL:=https://codeload.github.com/rclone/rclone/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=a5b0b7dfe17d9ec74e3a33415eec4331c61d800d8823621e61c6164e8f88c567
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILE:=LICENSE
@@ -41,20 +34,20 @@ GO_PKG_LDFLAGS_X:= \
 	main.BuildHost=openwrt
 
 include $(INCLUDE_DIR)/package.mk
-include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
+include ../../lang/golang/golang-package.mk
 
 define Package/rclone
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=File Transfer
-  TITLE:=rsync for cloud storage.
+  TITLE:=rsync for cloud storage
   URL:=https://rclone.org
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +fuse-utils
 endef
 
 define Package/rclone/description
-  Rclone ("rsync for cloud storage") is a command line program to sync root/usr/bin and
-  directories to and from different cloud storage providers.
+  Rclone ("rsync for cloud storage") is a command line program to sync
+  files and directories to and from different cloud storage providers.
 endef
 
 define Package/rclone/config
@@ -72,6 +65,10 @@ ifeq ($(CONFIG_RCLONE_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
+define Package/rclone/conffiles
+/etc/config/rclone
+endef
+
 # Disable CGO due to ld linker issue
 GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
@@ -80,6 +77,15 @@ define Build/Compile
 ifeq ($(CONFIG_RCLONE_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/rclone
 endif
+endef
+
+define Package/rclone/install
+	$(call GoPackage/Package/Install/Bin,$(1))
+
+	$(INSTALL_DIR) $(1)/etc/config/
+	$(INSTALL_CONF) $(CURDIR)/files/rclone.config $(1)/etc/config/rclone
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) $(CURDIR)/files/rclone.init $(1)/etc/init.d/rclone
 endef
 
 $(eval $(call GoBinPackage,rclone))
