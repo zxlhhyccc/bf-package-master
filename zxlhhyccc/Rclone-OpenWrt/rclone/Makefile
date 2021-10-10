@@ -8,9 +8,16 @@ PKG_NAME:=rclone
 PKG_VERSION:=1.56.2
 PKG_RELEASE:=$(AUTORELEASE)
 
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/rclone/rclone/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=a5b0b7dfe17d9ec74e3a33415eec4331c61d800d8823621e61c6164e8f88c567
+PKG_SOURCE_URL:=https://github.com/rclone/rclone.git
+PKG_SOURCE_DATE:=2021-10-10
+PKG_SOURCE_VERSION:=19fc1b2a950767f5f75d09e956403313c4111e4e
+PKG_MIRROR_HASH:=11046b19656a8deb408f208defa1b185d9a2c3bde2e14c62825ec1022bf0575c
+
+# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+# PKG_SOURCE_URL:=https://codeload.github.com/rclone/rclone/tar.gz/v$(PKG_VERSION)?
+# PKG_HASH:=a5b0b7dfe17d9ec74e3a33415eec4331c61d800d8823621e61c6164e8f88c567
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILE:=LICENSE
@@ -34,7 +41,7 @@ GO_PKG_LDFLAGS_X:= \
 	main.BuildHost=openwrt
 
 include $(INCLUDE_DIR)/package.mk
-include ../../lang/golang/golang-package.mk
+include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/rclone
   SECTION:=net
