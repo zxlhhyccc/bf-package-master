@@ -83,11 +83,6 @@ plugin:
           idle_timeout: 90
         - addr: 'tcp://1.1.1.1'
           idle_timeout: 90
-   - tag: lazy_cache
-     type: cache
-     args:
-        size: 512000
-        lazy_cache_ttl: 31536000
 
   ################ 匹配器插件 #################
 
