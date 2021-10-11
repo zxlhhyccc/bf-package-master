@@ -1,44 +1,52 @@
 log:
-  level: error
+  level: debug
   file: ''
+
 plugin:
+
+  ################# 服务插件 ################
+
+  # 启动服务器的插件
   - tag: main_server
     type: server
     args:
       entry:
-        - _single_flight
-        - _no_ecs
-        - lazy_cache
-        - main_sequence
-      server:
+        - _default_cache  # 启用缓存
+        - main_sequence   # 分流逻辑
+      server:       # 服务器监听地址与协议。
         - protocol: udp
-          addr: '127.0.0.1:5335'
+          addr: 127.0.0.1:5335
         - protocol: tcp
-          addr: '127.0.0.1:5335'
+          addr: 127.0.0.1:5335
+        - protocol: udp
+          addr: '[::1]:5335'
+        - protocol: tcp
+          addr: '[::1]:5335'
+
+  ################# 可执行插件 ################
+
+  # 包含分流的逻辑的插件
   - tag: main_sequence
     type: sequence
     args:
       exec:
-        - if:
-            - query_is_ad_domain
+        - if_and:
+            - '!query_is_local_domain'
+            - _qtype_AAAA           # 如果请求的 AAAA (ipv6) 类型
           exec:
-            - _block_with_nxdomain
+            - _block_with_empty_response  # 用空白应答屏蔽
             - _end
+
         - if:
-            - query_is_local_domain
-            - '!_query_is_common'
+            - query_is_local_domain   # 已知的本地域名
+            - '!_query_is_common'     # 和不常见的请求类型
           exec:
-            - forward_local
-            - _end
-        - if:
-            - query_is_non_local_domain
-          exec:
-            - forward_remote
-        - if:
-            - _qtype_AAAA
-          exec:
-            - _block_with_empty_response
-            - _end
+            - forward_local           # 用本地服务器
+            - if:
+                - response_has_local_ip
+              exec:
+                - _end
+
         - primary:
             - forward_local
             - if:
@@ -48,48 +56,58 @@ plugin:
           secondary:
             - forward_remote
             - if:
-                - _qtype_AAAA
+                - '!response_has_local_ip'
               exec:
-                - _block_with_empty_response
-                - _end
-          fast_fallback: 400
+                - blacklist
+          fast_fallback: 200  # 这里建议设置成 local 服务器正常延时的 2~5 倍。
+                              # 这个延时保证了 local 延时偶尔变高时，其结果不会被 remote 抢答。
+                              # 如果 local 超过这个延时还没响应，可以假设 local 出现了问题。
+                              # 这时用就采用 remote 的应答。
           always_standby: true
+
+
+  # 转发请求至本地服务器的插件
   - tag: forward_local
     type: fast_forward
     args:
       upstream:
-        - addr: 119.29.29.29
-        - addr: 223.5.5.5
+        - addr: '223.5.5.5'
+
+  # 转发请求至远程服务器的插件
   - tag: forward_remote
     type: fast_forward
     args:
       upstream:
-        - addr: 'tls://8.8.4.4'
-          idle_timeout: 60
-        - addr: 'tls://1.0.0.1'
-          idle_timeout: 60
-  - tag: lazy_cache
-    type: cache
-    args:
-      size: 512000
-      lazy_cache_ttl: 31536000
+        - addr: 'tcp://1.1.1.1'
+          idle_timeout: 90
+
+  ################ 匹配器插件 #################
+
+  # 匹配本地域名的插件
   - tag: query_is_local_domain
     type: query_matcher
     args:
       domain:
         - 'ext:./geosite.dat:cn'
+
+  # 匹配非本地域名的插件
   - tag: query_is_non_local_domain
     type: query_matcher
     args:
       domain:
         - 'ext:./geosite.dat:geolocation-!cn'
-  - tag: query_is_ad_domain
-    type: query_matcher
-    args:
-      domain:
-        - 'ext:./geosite.dat:category-ads-all'
+
+  # 匹配本地 IP 的插件
   - tag: response_has_local_ip
     type: response_matcher
     args:
       ip:
         - 'ext:./geoip.dat:cn'
+
+  - tag: blacklist
+    type: 'ipset'
+    args:
+      set_name4: 'blacklist'   # 如果非空，存放 ipv4 地址到这个表。这个表属性 family 需为 `inet`。
+      set_name6: ''   # 如果非空，存放 ipv6 地址到这个表。这个表属性 family 需为 `inet6`。
+      mask4: 24       # 写入 ipv4 地址时使用的掩码。默认: 24。
+      mask6: 32       # 写入 ipv6 地址时使用的掩码。默认: 32。
