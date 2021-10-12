@@ -69,12 +69,15 @@ plugin:
     args:
       upstream:
         - addr: '119.29.29.29'
+        - addr: '223.5.5.5'
 
   # 转发请求至远程服务器的插件
   - tag: forward_remote
     type: fast_forward
     args:
       upstream:
+        - addr: 'tls://8.8.4.4'
+          idle_timeout: 90
         - addr: 'tcp://1.1.1.1'
           idle_timeout: 90
 
