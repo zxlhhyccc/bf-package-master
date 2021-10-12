@@ -1,11 +1,12 @@
 #!/bin/sh
+touch /etc/config/v2raya
 
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@v2raya[-1]
 	add ucitrack v2raya
-	set ucitrack.@v2raya[-1].init=v2raya
+	set ucitrack.@v2raya[-1].exec='/etc/init.d/v2raya restart'
 	commit ucitrack
 EOF
-
-rm -f /tmp/luci-indexcache
+# remove LuCI cache
+rm -f /tmp/luci*
 exit 0

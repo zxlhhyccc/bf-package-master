@@ -7,5 +7,75 @@ msgstr "简易的 v2rayA 开关"
 msgid "Open v2rayA page"
 msgstr "打开 v2rayA 页面"
 
+msgid "GUI access address"
+msgstr "GUI访问地址"
+
+msgid "Use 0.0.0.0:2017 to monitor all access."
+msgstr "使用 0.0.0.0:2017 监听所有访问。"
+
 msgid "v2rayA configuration directory"
 msgstr "v2rayA 配置目录"
+
+msgid "Ipv6 Support"
+msgstr "IPv6 支持"
+
+msgid "Make sure your IPv6 network works fine before you turn it on."
+msgstr "在开启之前确保您的 IPv6 网络工作正常。"
+
+msgid "AUTO"
+msgstr "自动"
+
+msgid "ON"
+msgstr "开启"
+
+msgid "OFF"
+msgstr "关闭"
+
+msgid "Log file"
+msgstr "日志文件"
+
+msgid "Log level"
+msgstr "日志等级"
+
+msgid "Trace"
+msgstr "追踪"
+
+msgid "Debug"
+msgstr "调试"
+
+msgid "Info"
+msgstr "信息"
+
+msgid "Warning"
+msgstr "警告"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Log Keepd Max Days"
+msgstr "日志记录天数"
+
+msgid "Maximum number of days to keep log files."
+msgstr "保留日志文件的最大天数。"
+
+msgid "Disable log color"
+msgstr "禁用日志颜色"
+
+msgid "Log disable timestamp"
+msgstr "禁用日志时间戳"
+
+msgid "Upload certificate"
+msgstr "上传证书"
+
+msgid "Upload"
+msgstr "上传"
+
+msgid "Specify the certification path instead of automatically generating a self-signed certificate."
+msgstr "指定证书路径而不是自动生成自签名证书。"
+
+msgid "No specify upload file."
+msgstr "没有上传证书"
+
+msgid "Upload Certificate Path"
+msgstr "上传的证书路径"
+
