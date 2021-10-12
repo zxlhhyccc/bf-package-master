@@ -13,7 +13,7 @@ define Package/luci-app-mosdns
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
 	TITLE:=LuCI Support for mosdns
-	DEPENDS:=+MosDNS
+	DEPENDS:=+mosdns +mosdns-geodata
 endef
 
 define Package/luci-app-mosdns/description
@@ -42,17 +42,11 @@ define Package/luci-app-mosdns/install
 endef
 
 define Package/luci-app-mosdns/postinst
-#!/bin/sh
-	/etc/init.d/MosDNS enable >/dev/null 2>&1
-exit 0
 endef
 
 define Package/luci-app-mosdns/prerm
 #!/bin/sh
-if [ -z "$${IPKG_INSTROOT}" ]; then
-     /etc/init.d/MosDNS disable
-     /etc/init.d/MosDNS stop
-fi
+/etc/init.d/MosDNS stop
 exit 0
 endef
 

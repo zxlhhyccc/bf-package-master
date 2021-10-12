@@ -1,7 +1,7 @@
 #/cgi-bin/luci/admin/services/MosDNS
 
 msgid "Basic Setting"
-msgstr "基本设置"
+msgstr "基础设置"
 
 msgid "Manual Configuration"
 msgstr "手动配置"
@@ -20,6 +20,9 @@ msgstr "获取数据中..."
 
 msgid "Enable"
 msgstr "启用"
+
+msgid "Enable Redirect"
+msgstr "启用 ssrp DNS 重定向"
 
 msgid "This file is /etc/mosdns/config.yaml."
 msgstr "配置文件位置 /etc/mosdns/config.yaml。"
