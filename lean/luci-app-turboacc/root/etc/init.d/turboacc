@@ -252,10 +252,19 @@ start(){
 	fi
 	crontab /etc/crontabs/root
 
-	[ "${sw_flow}" -ne "1" ] && [ "${sfe_flow}" -eq "1" ] && {
-		[ "$(have_ecm_init)" = "0" ] && {
-			/etc/init.d/shortcut-fe enabled || /etc/init.d/shortcut-fe enable
-			/etc/init.d/shortcut-fe start
+	/etc/init.d/turboacc_fss start
+
+	[ "${sw_flow}" -ne "1" ] && {
+		[ "${sfe_flow}" -eq "1" ] && {
+			[ "$(have_ecm_init)" = "0" ] && {
+				/etc/init.d/shortcut-fe enabled || /etc/init.d/shortcut-fe enable
+				/etc/init.d/shortcut-fe start
+			}
+		}
+		[ "${sfe_flow}" -eq "0" ] && [ -e "/etc/init.d/shortcut-fe" ] && [ "$(have_ecm_init)" = "0" ] && \
+		/etc/init.d/shortcut-fe enabled && {
+			/etc/init.d/shortcut-fe stop 2>"/dev/null"
+			/etc/init.d/shortcut-fe disable
 		}
 	}
 
