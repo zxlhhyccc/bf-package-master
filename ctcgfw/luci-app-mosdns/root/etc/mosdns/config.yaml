@@ -70,6 +70,7 @@ plugin:
       upstream:
         - addr: '119.29.29.29'
         - addr: '223.5.5.5'
+        - addr: '114.114.114.114'
 
   # 转发请求至远程服务器的插件
   - tag: forward_remote
