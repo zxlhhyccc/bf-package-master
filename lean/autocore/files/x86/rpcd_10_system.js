@@ -73,7 +73,7 @@ return baseclass.extend({
 
 		// TODO: This is ugly
 		var projectlink = document.createElement('a');
-		projectlink.append('Project OpenWrt');
+		projectlink.append('OpenWrt');
 		projectlink.href = 'https://github.com/openwrt';
 		projectlink.target = '_blank';
 
