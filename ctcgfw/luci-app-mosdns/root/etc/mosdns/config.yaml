@@ -82,6 +82,13 @@ plugin:
         - addr: 'tcp://1.1.1.1'
           idle_timeout: 90
 
+
+  - tag: lazy_cache
+    type: 'cache'
+    args:
+      size: 10240
+      lazy_cache_ttl: 86400
+      lazy_cache_reply_ttl: 30
   ################ 匹配器插件 #################
 
   # 匹配本地域名的插件
@@ -113,9 +120,3 @@ plugin:
       mask4: 24       # 写入 ipv4 地址时使用的掩码。默认: 24。
       mask6: 32       # 写入 ipv6 地址时使用的掩码。默认: 32。
 
-  - tag: lazy_cache
-    type: 'cache'
-    args:
-      size: 10240
-      lazy_cache_ttl: 1800
-      lazy_cache_reply_ttl: 30
