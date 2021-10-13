@@ -1,5 +1,9 @@
+-- Copyright 2008 Yanira <forum-2008@email.de>
+-- Licensed to the public under the Apache License 2.0.
 
-m = Map("v2raya", translate("v2rayA"), translatef("Simple v2rayA switch."))
+require("nixio.fs")
+
+m = Map("v2raya", translate("Simple v2rayA switch."))
 
 m:section(SimpleSection).template  = "v2raya/v2raya_status"
 
