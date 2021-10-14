@@ -95,6 +95,6 @@ o.default = "/etc/v2raya/cert.crt,/etc/v2raya/cert.key"
 
 
 o.inputstyle = "reload"
-    luci.sys.exec("/etc/init.d/v2raya restart >/dev/null 2>&1 &")
+    luci.sys.exec("/etc/init.d/v2raya start >/dev/null 2>&1 &")
 
 return m
