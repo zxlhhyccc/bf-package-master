@@ -9,7 +9,7 @@ m:section(SimpleSection).template  = "v2raya/v2raya_status"
 
 s = m:section(TypedSection, "v2raya")
 s.anonymous = true
-s.addremove=false
+s.addremove = false
 
 o = s:option(Flag, "enabled", translate("Enabled"))
 o.default = 0
@@ -41,20 +41,26 @@ o:value("warn",translate("Warning"))
 o:value("error",translate("Error"))
 o.default = "Info"
 
-o = s:option(Value, "log_max_days", translate("Log Keepd Max Days"))
-o.description = translate("Maximum number of days to keep log files.")
+o = s:option(ListValue, "log_max_days", translate("Log Keepd Max Days"))
+o.description = translate("Maximum number of days to keep log files  is 3 day.")
 o.datatype = "uinteger"
-o.default = '3'
-o.rmempty=false
-o.optional=false
+o.datatype = "uinteger"
+o:value("1", translate("1"))
+o:value("2", translate("2"))
+o:value("3", translate("3"))
+o.default = 3
+o.rmempty = false
+o.optional = false
 
 o = s:option(Flag, "log_disable_color", translate("Disable log color"))
 o.default = '1'
 o.rmempty = false
+o.optional = false
 
 o = s:option(Flag, "log_disable_timestamp", translate("Log disable timestamp"))
 o.default = '0'
 o.rmempty = false
+o.optional = false
 
 o = s:option(Value, "vless_grpc_inbound_cert_key", translate("Upload certificate"))
 o.description = translate("Specify the certification path instead of automatically generating a self-signed certificate.")

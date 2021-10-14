@@ -55,8 +55,8 @@ msgstr "错误"
 msgid "Log Keepd Max Days"
 msgstr "日志记录天数"
 
-msgid "Maximum number of days to keep log files."
-msgstr "保留日志文件的最大天数。"
+msgid "Maximum number of days to keep log files  is 3 day."
+msgstr "保留日志文件的最大天数为 3 天。"
 
 msgid "Disable log color"
 msgstr "禁用日志颜色"
