@@ -23,7 +23,7 @@ o.rmempty = false
 o = s:option(Value, "config", translate("v2rayA configuration directory"))
 o.rmempty = '/etc/v2raya'
 
-o = s:option(Value, "ipv6_support", translate("Ipv6 Support"))
+o = s:option(ListValue, "ipv6_support", translate("Ipv6 Support"))
 o.description = translate("Make sure your IPv6 network works fine before you turn it on.")
 o:value("auto", translate("AUTO"))
 o:value("on", translate("ON"))
@@ -44,17 +44,17 @@ o.default = "Info"
 o = s:option(Value, "log_max_days", translate("Log Keepd Max Days"))
 o.description = translate("Maximum number of days to keep log files.")
 o.datatype = "uinteger"
-o.default = "3"
+o.default = '3'
+o.rmempty=false
+o.optional=false
 
-o = s:option(Value, "log_disable_color", translate("Disable log color"))
-o.enabled = "true"
-o.disabled = "false"
-o.default = "1"
+o = s:option(Flag, "log_disable_color", translate("Disable log color"))
+o.default = '1'
+o.rmempty = false
 
-o = s:option(Value, "log_disable_timestamp", translate("Log disable timestamp"))
-o.enabled = "true"
-o.disabled = "false"
-o.default = "0"
+o = s:option(Flag, "log_disable_timestamp", translate("Log disable timestamp"))
+o.default = '0'
+o.rmempty = false
 
 o = s:option(Value, "vless_grpc_inbound_cert_key", translate("Upload certificate"))
 o.description = translate("Specify the certification path instead of automatically generating a self-signed certificate.")
@@ -91,6 +91,7 @@ if luci.http.formvalue("upload") then
 end
 
 o = s:option(Value, "vless_grpc_inbound_cert_key", translate("Upload Certificate Path"))
+o.description = translate("This is the path where the certificate resides after the certificate is uploaded.")
 o.default = "/etc/v2raya/cert.crt,/etc/v2raya/cert.key"
 
 
