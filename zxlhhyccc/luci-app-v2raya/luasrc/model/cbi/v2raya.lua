@@ -42,7 +42,7 @@ o:value("error",translate("Error"))
 o.default = "Info"
 
 o = s:option(ListValue, "log_max_days", translate("Log Keepd Max Days"))
-o.description = translate("Maximum number of days to keep log files  is 3 day.")
+o.description = translate("Maximum number of days to keep log files is 3 day.")
 o.datatype = "uinteger"
 o:value("1", translate("1"))
 o:value("2", translate("2"))
