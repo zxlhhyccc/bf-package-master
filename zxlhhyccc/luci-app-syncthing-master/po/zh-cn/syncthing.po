@@ -5,7 +5,7 @@ msgid "Syncthing Synchronization Tool"
 msgstr "Syncthing 存储同步工具"
 
 msgid "Open Syncthing page"
-msgstr "打开储存同步页面"
+msgstr "打开存储同步页面"
 
 msgid "Enabled"
 msgstr "启用"
