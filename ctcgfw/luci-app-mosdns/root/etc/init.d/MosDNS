@@ -31,6 +31,9 @@ restore_setting()
   uci set passwall.@global[0].dns_forward='8.8.8.8'
   uci set passwall.@global[0].dns_cache='1'
   uci commit passwall
+  uci set vssr.@global[0].pdnsd_enable='1'
+  uci commit vssr
+  ipset add blacklist 1.1.1.1 2>&1 ||true
 }
 
 prepare_setting() {
@@ -44,18 +47,26 @@ prepare_setting() {
   uci del passwall.@global[0].dns_forward
   uci del passwall.@global[0].dns_cache
   uci commit passwall
+  uci set vssr.@global[0].pdnsd_enable='0'
+  uci commit vssr
+  ipset del blacklist 1.1.1.1 2>&1 ||true
 }
 
 restart_others() {
   /etc/init.d/dnsmasq reload
-  ps | grep ssrplus | grep -v grep
+  ps | grep ssrplus | grep -v "grep\|ssr-server"
   if [ $? -eq 0 ]; then
     /etc/init.d/shadowsocksr restart
   fi
 
-  ps | grep passwall | grep -v grep
+  ps | grep passwall | grep -v "grep\|haproxy\|_server"
   if [ $? -eq 0 ]; then
     /etc/init.d/passwall restart
+  fi
+
+  ps | grep vssr | grep -v "grep\|ssr-server"
+  if [ $? -eq 0 ]; then
+    /etc/init.d/vssr restart
   fi
 
 }
@@ -118,13 +129,10 @@ stop_service() {
   echo "enabled="$enabled""
 
   config_load "MosDNS"
-  local enabled
-  config_get_bool enabled MosDNS enabled 0
-  if [ "$enabled" -eq 0 ]; then
-    redirect=$(uci -q get MosDNS.MosDNS.redirect)
-    [ "${redirect}" = "1" ] && restore_setting
+    enabled=$(uci -q get MosDNS.MosDNS.enabled)
+    #redirect=$(uci -q get MosDNS.MosDNS.redirect)
+    [ "${enabled}" = "0" ] && restore_setting
     restart_others
     delcron
-  fi
 
 }
