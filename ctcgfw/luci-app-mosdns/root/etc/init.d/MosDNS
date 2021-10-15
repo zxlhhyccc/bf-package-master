@@ -33,6 +33,7 @@ restore_setting()
   uci commit passwall
   uci set vssr.@global[0].pdnsd_enable='1'
   uci commit vssr
+  ipset add blacklist 1.1.1.1 2>&1 ||true
 }
 
 prepare_setting() {
@@ -48,6 +49,7 @@ prepare_setting() {
   uci commit passwall
   uci set vssr.@global[0].pdnsd_enable='0'
   uci commit vssr
+  ipset del blacklist 1.1.1.1 2>&1 ||true
 }
 
 restart_others() {

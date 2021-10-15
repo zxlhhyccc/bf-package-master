@@ -5,7 +5,7 @@ PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
 LUCI_TITLE:=LuCI Support for mosdns
-LUCI_DEPENDS:=+MosDNS
+LUCI_DEPENDS:=+mosdns
 LUCI_PKGARCH:=all
 
 
