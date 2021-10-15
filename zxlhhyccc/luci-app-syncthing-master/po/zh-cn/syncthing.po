@@ -4,11 +4,14 @@ msgstr "Syncthing"
 msgid "Syncthing Synchronization Tool"
 msgstr "Syncthing 存储同步工具"
 
+msgid "Open Syncthing page"
+msgstr "打开储存同步页面"
+
 msgid "GUI access address"
 msgstr "GUI访问地址"
 
-msgid "Use 0.0.0.0 to monitor all access."
-msgstr "使用0.0.0.0监听所有访问。"
+msgid "Use 0.0.0.0:8384 to monitor all access."
+msgstr "使用0.0.0.0:8384监听所有访问。"
 
 msgid "Configuration file directory"
 msgstr "配置文件存储目录"
