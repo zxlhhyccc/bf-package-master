@@ -22,7 +22,6 @@ service_triggers() {
 restore_setting()
 {
   sed -i "/list server/d" /etc/config/dhcp
-  sed -i "/dhcp_option/d" /etc/config/dhcp
   uci set dhcp.@dnsmasq[0].noresolv='0'
   uci commit dhcp
   uci set shadowsocksr.@global[0].pdnsd_enable='1'
@@ -33,7 +32,9 @@ restore_setting()
   uci commit passwall
   uci set vssr.@global[0].pdnsd_enable='1'
   uci commit vssr
-  ipset add blacklist 1.1.1.1 2>&1 ||true
+  ipset -! add blacklist 1.1.1.1 2>&1
+  ipset -! add blacklist 76.76.19.19 2>&1
+  ipset -! add blacklist 208.67.222.222 2>&1
 }
 
 prepare_setting() {
@@ -49,11 +50,14 @@ prepare_setting() {
   uci commit passwall
   uci set vssr.@global[0].pdnsd_enable='0'
   uci commit vssr
-  ipset del blacklist 1.1.1.1 2>&1 ||true
+  ipset -! del blacklist 1.1.1.1 2>&1
+  ipset -! del blacklist 76.76.19.19 2>&1
+  ipset -! del blacklist 208.67.222.222 2>&1
 }
 
 restart_others() {
   /etc/init.d/dnsmasq reload
+
   ssrp="$(uci get shadowsocksr.@global[0].global_server)"
   if [ $ssrp != "nil" ]; then
     /etc/init.d/shadowsocksr restart
