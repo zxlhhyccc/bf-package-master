@@ -1,0 +1,12 @@
+#!/bin/sh 
+
+uci -q batch <<-EOF >/dev/null
+          delete ucitrack.@verysync[-1]
+          add ucitrack verysync
+          set ucitrack.@verysync[-1].init=verysync
+          commit ucitrack
+EOF
+
+/etc/init.d/verysync disable && /etc/init.d/verysync stop
+rm -f /tmp/luci-indexcache
+exit 0

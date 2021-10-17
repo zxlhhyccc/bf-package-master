@@ -1,0 +1,243 @@
+#!/bin/sh /etc/rc.common
+
+
+#START=99
+USE_PROCD=1
+
+enabled=$(uci get verysync.setting.enable)
+dir=$(uci get verysync.setting.device)
+port=$(uci get verysync.setting.port)
+delay=$(uci get verysync.setting.delay)
+dl_mod=$(uci get verysync.setting.dl_mod)
+version_g=$(uci get verysync.setting.version_g)
+version_c=$(uci get verysync.setting.version_c)
+c_url=$(uci get verysync.setting.c_url)
+ROUTEIP=$(uci get network.lan.ipaddr)
+version_d=`curl -k -s http://www.verysync.com/shell/latest|grep v|tr -d v`
+
+if [[ "$dl_mod" == "" ]]; then
+	dl_mod="verysync"
+fi
+
+umask 0000
+
+start_service() {
+	sleep $delay
+	devices=$(uci get verysync.setting.device|awk -F [\/] '{print $3}')
+	#dev="/dev/$devices"
+	#mount_point=`mount | grep "$devices" |awk '{print $1}'|head -n 1`
+	(mount | grep -q "$dev") && {
+		[ $enabled = "1" ] && {
+			[ ! -f "$dir/.verysync/verysync" ] && {
+				get_bin  >/dev/null 2>&1
+			}
+			ln -s "$dir/.verysync/verysync" /usr/bin/verysync
+			mod_fw
+#			service_start /usr/bin/verysync -gui-address :$port -home $dir/verysync/config >/dev/null 2>&1 &
+
+			# os.set
+			procd_open_instance
+			procd_set_param env HOME="$dir/.verysync/config"
+			procd_set_param command /usr/bin/verysync -gui-address :$port -home "$dir/.verysync/config" >/dev/null 2>&1
+			procd_set_param respawn
+			procd_close_instance
+		}
+	}
+}
+
+gen_config() {
+	mkdir "$dir/.verysync"
+	cd "$dir/.verysync"
+	mkdir -p config
+	mkdir -p $dir/verysyncdown
+cat > "$dir/.verysync/config/setting.xml" <<EOF
+<configuration version="26">
+    <gui enabled="true" tls="false">
+        <address>0.0.0.0:$port</address>
+    </gui>
+    <options>
+    	<defaultFolderPath>$dir/verysyncdown</defaultFolderPath>
+    </options>
+</configuration>
+EOF
+}
+
+mod_fw(){
+	num_a=`uci show firewall |grep '=rule' |wc -l`
+	num_b=`uci show firewall |grep '=redirect' |wc -l`
+
+	check_Web=`uci show firewall |grep "name='VerySync Web'"`
+	if [ $? = 1 ]; then
+		uci add firewall rule
+		uci set firewall.@rule[$num_a].enabled='1'
+		uci set firewall.@rule[$num_a].target='ACCEPT'
+		uci set firewall.@rule[$num_a].src='wan'
+		uci set firewall.@rule[$num_a].proto='tcp'
+		uci set firewall.@rule[$num_a].dest_port=$port
+		uci set firewall.@rule[$num_a].name='VerySync Web'
+	fi
+
+	let "num_a = $num_a + 1"
+	check_TCP=`uci show firewall |grep "name='VerySync TCP'"`
+	if [ $? = 1 ]; then
+		uci add firewall rule
+		uci set firewall.@rule[$num_a].enabled='1'
+		uci set firewall.@rule[$num_a].target='ACCEPT'
+		uci set firewall.@rule[$num_a].src='wan'
+		uci set firewall.@rule[$num_a].proto='tcp'
+		uci set firewall.@rule[$num_a].dest_port='22330'
+		uci set firewall.@rule[$num_a].name='VerySync TCP'
+	fi
+
+	let "num_a = $num_a + 1"
+	check_UDP=`uci show firewall |grep "name='VerySync UDP'"`
+	if [ $? = 1 ]; then
+		uci add firewall rule
+		uci set firewall.@rule[$num_a].enabled='1'
+		uci set firewall.@rule[$num_a].target='ACCEPT'
+		uci set firewall.@rule[$num_a].src='wan'
+		uci set firewall.@rule[$num_a].proto='udp'
+		uci set firewall.@rule[$num_a].dest_port='22331'
+		uci set firewall.@rule[$num_a].name='VerySync UDP'
+	fi
+
+	check_VerySync=`uci show firewall |grep "name='VerySync'"`
+	if [ $? = 1 ]; then
+		uci add firewall redirect
+		uci set firewall.@redirect[$num_b].enabled='1'
+		uci set firewall.@redirect[$num_b].target='DNAT'
+		uci set firewall.@redirect[$num_b].src='wan'
+		uci set firewall.@redirect[$num_b].dest='lan'
+		uci set firewall.@redirect[$num_b].proto='tcp'
+		uci set firewall.@redirect[$num_b].src_dport='22330'
+		uci set firewall.@redirect[$num_b].dest_ip="$ROUTEIP"
+		uci set firewall.@redirect[$num_b].dest_port='22330'
+		uci set firewall.@redirect[$num_b].name='VerySync'
+	fi
+	uci commit firewall
+}
+
+del_fw(){
+	rule_c=`uci show firewall |grep 'VerySync Web'|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_c]
+	rule_b=`uci show firewall |grep 'VerySync TCP'|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_c]
+	rule_a=`uci show firewall |grep 'VerySync UDP'|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_c]
+	redirect=`uci show firewall |grep "'VerySync'$"|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@redirect[$redirect]
+	uci commit firewall
+	fw3 restart
+}
+
+get_bin() {
+	mkdir -p /var/filetransfer/ && cd /var/filetransfer
+	get_arch
+	arch="$ARCH-"
+	if [ $dl_mod = "git" ]; then
+		version="$version_g"
+		down_url=https://github.com/verysync/releases/releases/download/v"$version"/verysync-linux-"$ARCH"-v"$version".tar.gz
+	elif  [ $dl_mod = "verysync" ]; then
+		version="$version_d"
+		down_url=http://dl-cn.verysync.com/releases/v"$version"/verysync-linux-"$ARCH"-v"$version".tar.gz
+	else
+		version="$version_c"
+		down_url="$c_url"
+	fi
+	echo "$version" > /etc/verysync_version
+
+	local a=0
+	while [ ! -f verysync-linux-"$ARCH"-*.tar.gz ]; do
+		[ $a = 4 ] && exit
+		/usr/bin/wget -T60 $down_url
+		sleep 2
+		let "a = a + 1"
+		killall -9 pidof openssl
+	done
+
+	file=`find /var/filetransfer -name verysync-linux-"$ARCH"-*.tar.gz`
+	tar -zxvf "$file"
+	rm "$file"
+	if [ ! -d $dir/.verysync ]; then
+		mv verysync-linux-"$ARCH"-* $dir/.verysync
+	else
+		mv verysync-linux-"$ARCH"-*/* $dir/.verysync
+		rm -rf verysync-linux-"$ARCH"-*
+	fi
+	chmod +x $dir/.verysync/verysync
+	gen_config
+}
+
+get_arch() {
+	[ ! -f "$dir/.verysync/verysync" ] && {
+	for a in $(opkg print-architecture | awk '{print $2}'); do
+		case "$a" in
+			all|noarch)
+				;;
+			aarch64_generic|aarch64_armv8-a|arm_arm1176jzf-s_vfp|arm_arm926ej-s|arm_cortex-a5|arm_cortex-a9|arm_fa526|arm_mpcore|arm_mpcore_vfp|arm_xscale|armeb_xscale)
+				ARCH="arm64"
+				;;
+			arm_cortex-a15_neon-vfpv4|arm_cortex-a53_neon-vfpv4|arm_cortex-a7_neon-vfpv4|arm_cortex-a8_vfpv3|arm_cortex-a9_neon|arm_cortex-a9_vfpv3)
+				ARCH="arm"
+				;;
+			i386_pentium|i386_pentium4)
+				ARCH="386"
+				;;
+			ar71xx|mips_24kc|mips_mips32|mips64_octeon)
+				ARCH="mips"
+				;;
+			mipsel_24kc|mipsel_24kec_dsp|mipsel_74kc|mipsel_mips32|mipsel_1004kc_dsp)
+				ARCH="mipsle"
+				;;
+			x86_64)
+				ARCH="amd64"
+				;;
+			powerpc_464fp)
+				ARCH="ppc64"
+				;;
+		esac
+	done
+	}
+	if [[ "$ARCH" == "" ]]; then
+		case `uname -m` in
+			x86_64)
+				arch=amd64
+				;;
+			i686|i386)
+				ARCH="386"
+				;;
+			*"armv7"*|"armv6l")
+				ARCH="arm"
+				;;
+			*"armv8"*|"aarch64")
+				ARCH="arm64"
+				;;
+			*"mips64le"*)
+				ARCH="mips64le"
+				;;
+			*"mips64"*)
+				ARCH="mips64"
+				;;
+			*"mipsle"*)
+				ARCH="mipsle"
+				;;
+			*"mips"*)
+				ARCH="mips"
+				;;
+			*)
+				exit 0
+				;;
+		esac
+	fi
+}
+
+
+
+# get_random_port() {
+# 	local random=`head -n 128 /dev/urandom | tr -dc "0123456789" | head -c5`
+# 	port=`echo $random | sed 's/^0*//g'`
+
+# 	local port=$(( port + 22331 ))
+
+# 	echo $(( port % 65530 ))
+# }

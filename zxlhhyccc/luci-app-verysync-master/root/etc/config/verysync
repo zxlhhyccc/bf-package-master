@@ -1,0 +1,12 @@
+
+config verysync 'setting'
+	option device '/mnt/sda1'
+	option delay '20'
+	option port '8886'
+	option enable '0'
+	option dl_mod 'verysync'
+	option version_d 'latest'
+	option version_g 'latest'
+	option version_c 'latest'
+	option c_url 'http://'
+

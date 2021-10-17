@@ -1,0 +1,6 @@
+#!/bin/sh
+
+curl -k -s http://www.verysync.com/shell/latest |grep v|tr -d v|uniq > /tmp/log/verysync_version&
+
+#
+#curl -k -s https://github.com/verysync/releases/tags |grep -E "..*class..*href..*releases/..*/tag"|sed 's/^..*releases\/..*\/v//g' |sed 's/\">//g' |uniq > /tmp/log/verysync_version &
