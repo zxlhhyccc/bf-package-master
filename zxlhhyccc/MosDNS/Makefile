@@ -67,24 +67,24 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-GEOIP_VER:=202110070028
+GEOIP_VER:=202110140026
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
   URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=28e1b99840aa3d9370de1d6cfe8706191f9432d9d33fbc27e64b0b182d937a03
+  HASH:=88cf4aca8a7d1494d7ced04b05bd2eadff814a3b9e3f521ea9269c68b06ffb00
 endef
 
-GEOSITE_VER:=20211005043132
+GEOSITE_VER:=20211016144834
 GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 
 define Download/geosite
   URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=71bb8ae544b7995c11ac02e5461c8b6317479fa7db2b3065576b0feee669d3a3
+  HASH:=06f3706fb02bdc0e39fce682e0bdf33e90300928ae682d5dccec990c2e22a45f
 endef
 
 define Build/Prepare
