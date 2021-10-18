@@ -7,9 +7,9 @@ function index()
 
 	local page
 	
-	entry({"admin", "service"}, firstchild(), _("Services"), 30).dependent=false                                            
+	entry({"admin", "nas"}, firstchild(), _("NAS"), 30).dependent=false                                            
 
-	page = entry({"admin", "services", "verysync"}, cbi("verysync"), _("微力同步"), 80)
+	page = entry({"admin", "nas", "verysync"}, cbi("verysync"), _("微力同步"), 80)
 	page.i18n = "verysync"
 	page.dependent = true
 end

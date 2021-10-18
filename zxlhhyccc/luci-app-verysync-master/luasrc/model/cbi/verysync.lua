@@ -78,8 +78,6 @@ e.value ="<strong><a target=\"_blank\" href='https://forum.verysync.com/'><font 
 -- e.value ="<strong><a target=\"_blank\" href='https://github.com/verysync/releases/releases'><font color=\"red\">https://github.com/verysync/releases/releases</font></a></strong>"
 
 delay = s:option(Value, "delay", translate("启动前等待时间(秒)"))
-delay:value("5", translate("5"))
-delay:value("10", translate("10"))
 delay:value("20", translate("20"))
 delay:value("40", translate("40"))
 delay:value("60", translate("60"))
@@ -192,13 +190,13 @@ if nixio.fs.access("/etc/config/verysync") then
 end
 e:depends("dl_mod", "custom")
 
-e=s:option(DummyValue,"verysyncweb",translate("打开 verysync Webui"))
+e=s:option(DummyValue,"verysyncweb",translate("Open the verysync Webui"))
 e.rawhtml  = true
 e.value ="<strong><a target=\"_blank\" href='http://"..lanipaddr..":"..verysyncport.."'><font color=\"red\">打开verysync软件控制界面</font></a></strong>"
 
-s:option(Flag, "more", translate("更多选择"))
+s:option(Flag, "more", translate("More Options"))
 
-e = s:option(Button, "del_sync", translate("重置微力"), translate("有时下载的文件不正确，您可以删除它们。<br/> <font color=\"Red\"><strong>仅在多次启动失败时才删除文件。同步成功后一定不能删除！！</strong></font>"))
+e = s:option(Button, "del_sync", translate("重置微力"), translate("Sometims the download files is incorrect, you can delete them.<br/> <font color=\"Red\"><strong>Delete files only when multiple startup failures. When the synchronization is successful, it must not be deleted!!</strong></font>"))
 e.inputtitle = translate("重置微力")
 e.inputstyle = "apply"
 

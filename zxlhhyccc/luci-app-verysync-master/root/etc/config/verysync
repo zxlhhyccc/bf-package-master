@@ -1,7 +1,7 @@
 
 config verysync 'setting'
 	option device '/mnt/sda1'
-	option delay '20'
+	option delay '5'
 	option port '8886'
 	option enable '0'
 	option dl_mod 'verysync'

@@ -81,7 +81,7 @@ GEOSITE_VER:=202110172209
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
 define Download/geosite
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOSITE_VER)/
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
   HASH:=46ff4dca0997caa69b233549bad767a8061751bbb74a8f624124dd1fd428d835
@@ -89,7 +89,7 @@ endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
-ifneq ($(CONFIG_PACKAGE_mosdns-geodata),)
+ifneq ($(CONFIG_PACKAGE_Mosdns-geodata),)
 	$(call Download,geoip)
 	$(call Download,geosite)
 endif

@@ -1,0 +1,9 @@
+msgid "Open the verysync Webui"
+msgstr "打开verysync Webui"
+
+msgid "More Options"
+msgstr "更多选择"
+
+msgid "Sometims the download files is incorrect, you can delete them.<br/> <font color=\"Red\"><strong>Delete files only when multiple startup failures. When the synchronization is successful, it must not be deleted!!</strong></font>"
+msgstr "有时下载的文件不正确，您可以删除它们。<br/> <font color=\"Red\"><strong>仅在多次启动失败时才删除文件。同步成功后一定不能删除！！</strong></font>"
+
