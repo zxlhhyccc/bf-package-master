@@ -71,20 +71,24 @@ GEOIP_VER:=202110140026
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
-  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
+#  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=88cf4aca8a7d1494d7ced04b05bd2eadff814a3b9e3f521ea9269c68b06ffb00
+  HASH:=skip
 endef
 
 GEOSITE_VER:=20211016144834
-GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
+# GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
+GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
 define Download/geosite
-  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
-  URL_FILE:=dlc.dat
+#  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
+#  URL_FILE:=dlc.dat
+  URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=06f3706fb02bdc0e39fce682e0bdf33e90300928ae682d5dccec990c2e22a45f
+  HASH:=skip
 endef
 
 define Build/Prepare
