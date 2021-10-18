@@ -1,3 +1,6 @@
+-- Copyright 2008 Yanira <forum-2008@email.de>
+-- Licensed to the public under the Apache License 2.0.
+
 require("nixio.fs")
 
 m = Map("syncthing", translate("Syncthing Synchronization Tool"))
