@@ -111,10 +111,11 @@ GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
 #  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
+#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
+  https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=bee30fc8157a3acd8f0550d8f5dc63819e6e9f7430be753987ba63e7592c9504
+  HASH:=skip
 endef
 
 GEOSITE_VER:=202110162209
@@ -123,11 +124,12 @@ GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
 define Download/geosite
 #  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOSITE_VER)/
+#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=62011758a3f493ec1d4610262d6ad63ee64b8dc8d94cfe6178d55ac18e3a320a
+  HASH:=skip
 endef
 
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
