@@ -78,6 +78,8 @@ e.value ="<strong><a target=\"_blank\" href='https://forum.verysync.com/'><font 
 -- e.value ="<strong><a target=\"_blank\" href='https://github.com/verysync/releases/releases'><font color=\"red\">https://github.com/verysync/releases/releases</font></a></strong>"
 
 delay = s:option(Value, "delay", translate("启动前等待时间(秒)"))
+delay:value("5", translate("5"))
+delay:value("10", translate("10"))
 delay:value("20", translate("20"))
 delay:value("40", translate("40"))
 delay:value("60", translate("60"))
