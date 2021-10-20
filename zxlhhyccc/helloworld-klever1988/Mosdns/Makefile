@@ -43,12 +43,13 @@ endef
 
 define Package/Mosdns
   $(call Package/Mosdns/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS) +Mosdns-geodata
+  DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
 define Package/Mosdns-geodata
   $(call Package/Mosdns/Default)
   TITLE+= (geodata resources)
+  DEPENDS:=Mosdns
 endef
 
 define Package/Mosdns/config
@@ -66,7 +67,7 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-GEOIP_VER:=202110182210
+GEOIP_VER:=202110192209
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -76,7 +77,7 @@ define Download/geoip
   HASH:=skip
 endef
 
-GEOSITE_VER:=202110182210
+GEOSITE_VER:=202110192209
 # GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
