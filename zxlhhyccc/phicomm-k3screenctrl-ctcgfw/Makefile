@@ -33,7 +33,7 @@ define Package/phicomm-k3screenctrl-ctcgfw
   SECTION:=utils
   CATEGORY:=Utilities
   DEPENDS:=@(TARGET_bcm53xx_DEVICE_phicomm-k3||TARGET_bcm53xx_generic_DEVICE_phicomm_k3) \
-    +@KERNEL_DEVMEM +@BUSYBOX_CONFIG_ARPING +bc +bash +curl +coreutils +coreutils-od +jq
+    +@KERNEL_DEVMEM +@BUSYBOX_CONFIG_ARPING +bc +bash +curl +coreutils +coreutils-od +jq +jsonfilter
   TITLE:=LCD screen controller on PHICOMM K3
   URL:=https://github.com/lwz322/k3screenctrl.git
 endef
