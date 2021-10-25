@@ -78,7 +78,7 @@ return baseclass.extend({
 		projectlink.target = '_blank';
 
 		var corelink = document.createElement('a');
-		corelink.append('OpenWrt Core');
+		corelink.append('Core');
 		corelink.href = 'https://github.com/openwrt/openwrt';
 		corelink.target = '_blank';
 
