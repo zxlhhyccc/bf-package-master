@@ -106,7 +106,7 @@ define Package/xray-core/conffiles
 /usr/share/xray
 endef
 
-GEOIP_VER:=202110232209
+GEOIP_VER:=202110242209
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -118,7 +118,7 @@ define Download/geoip
   HASH:=skip
 endef
 
-GEOSITE_VER:=202110232209
+GEOSITE_VER:=202110242209
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
