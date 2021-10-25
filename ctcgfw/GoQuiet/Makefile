@@ -26,7 +26,6 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_GQ_SERVER_COMPRESS_UPX
 
 GO_PKG:=github.com/cbeuw/GoQuiet
-GO_PKG_BUILD_PKG:=github.com/cbeuw/GoQuiet/cmd/...
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION)
 
@@ -44,49 +43,54 @@ endef
 
 define Package/gq-client
   $(call Package/GoQuiet/template)
-  TITLE+= (client)
+  TITLE+= Client
 endef
 
 define Package/gq-server
   $(call Package/GoQuiet/template)
-  TITLE+= (server)
+  TITLE+= Server
 endef
-
-Package/gq-client/description = $(Package/GoQuiet/description/template)
-Package/gq-server/description = $(Package/GoQuiet/description/template)
 
 define Package/gq-client/config
 config GQ_CLIENT_COMPRESS_UPX
 	bool "Compress executable files with UPX"
-	default y
+	depends on !mips64
+	default y if mips||mipsel
 endef
 
 define Package/gq-server/config
 config GQ_SERVER_COMPRESS_UPX
 	bool "Compress executable files with UPX"
-	default y
+	depends on !mips64
+	default y if mips||mipsel
 endef
 
 GO_PKG_BUILD_VARS += GO111MODULE=auto
 
 define Build/Compile
+	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/gq-client)
+	$(call GoPackage/Build/Configure)
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_GQ_CLIENT_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/gq-client
 endif
+	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/gq-server)
+	$(call GoPackage/Build/Configure)
+	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_GQ_SERVER_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/gq-server
 endif
 endef
 
-define Package/GoQuiet/install/template
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+define Package/gq-client/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(2) $(1)/usr/bin/$(2)
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/gq-client $(1)/usr/bin/
 endef
 
-Package/gq-client/install = $(call Package/GoQuiet/install/template,$(1),gq-client)
-Package/gq-server/install = $(call Package/GoQuiet/install/template,$(1),gq-server)
+define Package/gq-server/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/gq-server $(1)/usr/bin/
+endef
 
 $(eval $(call GoBinPackage,gq-client))
 $(eval $(call GoBinPackage,gq-server))

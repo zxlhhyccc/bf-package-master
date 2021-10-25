@@ -24,9 +24,12 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
+COMPILE_TIME:= $(shell TZ=UTC date '+%Y-%m-%d %H:%M:%S')
 GO_PKG:=github.com/cloudflare/cloudflared
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:=main.VERSION=$(PKG_VERSION)
+GO_PKG_LDFLAGS+= \
+	-X 'main.Version=$(PKG_VERSION)' \
+	-X 'main.BuildTime=$(COMPILE_TIME)'
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -38,7 +41,8 @@ config CLOUDFLARED_COMPRESS_GOPROXY
 
 config CLOUDFLARED_COMPRESS_UPX
 	bool "Compress executable files with UPX"
-	default y
+	depends on !mips64
+	default y if mips||mipsel
 endef
 
 ifeq ($(CONFIG_CLOUDFLARED_COMPRESS_GOPROXY),y)

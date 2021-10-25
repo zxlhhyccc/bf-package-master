@@ -67,13 +67,15 @@ Package/kcptun-server/description = $(Package/kcptun/description/template)
 define Package/kcptun-client/config
 config KCPTUN_CLIENT_COMPRESS_UPX
 	bool "Compress executable files with UPX"
-	default y
+	depends on !mips64
+	default y if mips||mipsel
 endef
 
 define Package/kcptun-server/config
 config KCPTUN_SERVER_COMPRESS_UPX
 	bool "Compress executable files with UPX"
-	default y
+	depends on !mips64
+	default y if mips||mipsel
 endef
 
 GO_PKG_BUILD_VARS += GO111MODULE=auto
