@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mosdns
-PKG_VERSION:=2.0.1
+PKG_VERSION:=2.1.1
 PKG_RELEASE:=$(AUTORELEASE)
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -15,8 +15,8 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/IrineSistiana/mosdns.git
-PKG_SOURCE_VERSION:=810b2da344e2d4f0e15c25a23da27373263ed155
-PKG_MIRROR_HASH:=4741d8dc1fc1547004314f2c284c5236ad72feba7dd35fc0c4a0966cc1083a06
+PKG_SOURCE_VERSION:=546b56f1b589c155b84ec6a09ac6e22e301773fb
+PKG_MIRROR_HASH:=8ae40ed4902e4bbf2e399e567bf7efbb9ba5b95bc690c71d1ef880294697ed63
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -72,24 +72,24 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-GEOIP_VER:=202110210032
+GEOIP_VER:=202110280028
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
   URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=932cd484471f8066c040ab84a04fdd70df6c5cee99545de610e1f337bb696220
+  HASH:=929c0527a1635634a2b9d6a5175a1f4bd064581aa61845d81a4cd4b287ea24fd
 endef
 
-GEOSITE_VER:=20211018134657
+GEOSITE_VER:=20211025125330
 GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 
 define Download/geosite
   URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=60b2388b11f1f9b6e14794fbacdf3bf693e3101e3ec651ce5423d8caceda5497
+  HASH:=9864c667d035acb3f8b005d8e50e7c6ccd23c202c41f33eb292292eed7a4a6ab
 endef
 
 define Build/Prepare
