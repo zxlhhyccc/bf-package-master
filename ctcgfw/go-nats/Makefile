@@ -1,10 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright (C) 2021 ImmortalWrt
-# <https://immortalwrt.org>
-#
-# This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2021 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
@@ -37,15 +33,15 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/go-nats
-	SECTION:=net
-	CATEGORY:=Network
-	TITLE:=A NAT type discovery tool
-	URL:=https://github.com/enobufs/go-nats
-	DEPENDS:=$(GO_ARCH_DEPENDS)
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=A NAT type discovery tool
+  URL:=https://github.com/enobufs/go-nats
+  DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
 define Package/go-nats/description
-	A NAT type discovery tool using STUN written purely in Go.
+  A NAT type discovery tool using STUN.
 endef
 
 define Package/go-nats/config
@@ -61,7 +57,7 @@ endef
 
 ifeq ($(CONFIG_GO_NATS_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
-	export GOPROXY=https://goproxy.io
+	export GOPROXY=https://goproxy.baidu.com
 endif
 
 define Build/Compile

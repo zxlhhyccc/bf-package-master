@@ -27,14 +27,15 @@ define Package/dns2socks
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
-  TITLE:=The utility to resolve DNS requests via a SOCKS5 tunnel.
+  TITLE:=DNS to SOCKS or HTTP proxy
   URL:=http://dns2socks.sourceforge.net/
   MAINTAINER:=ghostmaker
   DEPENDS:=+libpthread
 endef
 
 define Package/dns2socks/description
-  This is a utility to resolve DNS requests via a SOCKS5 tunnel and caches the answers.
+  This is a command line utility to resolve DNS requests via 
+  a SOCKS tunnel like Tor or a HTTP proxy.
 endef
 
 UNZIP_CMD:=unzip -q -d $(PKG_BUILD_DIR) $(DL_DIR)/$(PKG_SOURCE)

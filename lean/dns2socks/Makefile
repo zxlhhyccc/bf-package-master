@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright (C) 2021 ImmortalWrt.org
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dns2socks
@@ -24,7 +28,7 @@ define Package/dns2socks/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
-  TITLE:=The utility to resolve DNS requests via a SOCKS5 tunnel.
+  TITLE:=DNS to SOCKS or HTTP proxy
   URL:=http://dns2socks.sourceforge.net/
   MAINTAINER:=ghostmaker
   DEPENDS:=+libpthread
@@ -35,7 +39,8 @@ define Package/dns2socks
 endef
 
 define Package/dns2socks/description
-  This is a utility to resolve DNS requests via a SOCKS5 tunnel and caches the answers.
+  This is a command line utility to resolve DNS requests via 
+  a SOCKS tunnel like Tor or a HTTP proxy.
 endef
 
 define Build/Prepare
