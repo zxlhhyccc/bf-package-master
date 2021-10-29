@@ -1,6 +1,8 @@
 -- Copyright 2008 Yanira <forum-2008@email.de>
 -- Licensed to the public under the Apache License 2.0.
 
+local uci = luci.model.uci.cursor()
+local m, o, s
 require("nixio.fs")
 
 m = Map("v2raya", translate("Simple v2rayA switch."))
