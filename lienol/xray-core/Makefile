@@ -15,7 +15,7 @@ PKG_LICENSE:=MPL-2.0
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
+	#CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
 	CONFIG_XRAY_CORE_COMPRESS_GOPROXY \
 	CONFIG_XRAY_CORE_COMPRESS_UPX \
 
@@ -86,9 +86,9 @@ define Package/xray-core/config
 menu "Xray-core Configuration"
 	depends on PACKAGE_xray-core
 
-config XRAY_CORE_PROVIDE_V2RAY_CORE
-	bool "Provide V2Ray binary using XRay"
-	default y
+#config XRAY_CORE_PROVIDE_V2RAY_CORE
+#	bool "Provide V2Ray binary using XRay"
+#	default y
 
 config XRAY_CORE_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
@@ -107,7 +107,7 @@ define Package/xray-core/conffiles
 /usr/share/xray
 endef
 
-GEOIP_VER:=202110262210
+GEOIP_VER:=202110282209
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -119,7 +119,7 @@ define Download/geoip
   HASH:=skip
 endef
 
-GEOSITE_VER:=202110262210
+GEOSITE_VER:=202110282209
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -158,7 +158,7 @@ define Package/xray-core/install
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/xray
 ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
-	$(LN) xray $(1)/usr/bin/v2ray
+	#$(LN) xray $(1)/usr/bin/v2ray
 endif
 
 	$(INSTALL_DIR) $(1)/etc/xray/
