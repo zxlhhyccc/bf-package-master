@@ -9,7 +9,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/luci-app-trojan
 	SECTION:=luci
 	CATEGORY:=LuCI
-	SUBMENU:=2. Trojan
+	SUBMENU:=3. Applications
 	TITLE:=LuCI app for Trojan
 	DEPENDS:=+luci-base +wget-ssl +unzip +ip +iptables +bash +ipset +libmbedtls +ca-certificates +iptables-mod-tproxy +pdnsd-alt +curl +dnscrypt-proxy +coreutils +coreutils-base64 +luci-compat
 	PKGARCH:=all
