@@ -20,7 +20,7 @@ autoconf.rmempty = false
 
 s:tab("geo_update", translate("Geodata Update"))
 enable = s:taboption("geo_update", Flag, "geo_auto_update", translate("Enable Auto Database Update"))
-+enable.rmempty = false
+enable.rmempty = false
 
 o = s:taboption("geo_update", ListValue, "geo_update_week_time", translate("Update Time (Every Week)"))
 o:value("*", translate("Every Day"))

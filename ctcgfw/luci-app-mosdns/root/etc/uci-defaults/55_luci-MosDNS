@@ -9,4 +9,3 @@ EOF
 
 rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
 exit 0
-
