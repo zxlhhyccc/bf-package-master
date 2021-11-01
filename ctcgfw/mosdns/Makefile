@@ -72,7 +72,7 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-GEOIP_VER:=202110280028
+GEOIP_VER:=202110311208
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
