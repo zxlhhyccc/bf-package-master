@@ -6,19 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rclone
-PKG_VERSION:=1.56.2
+PKG_VERSION:=1.57.0
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/rclone/rclone.git
-PKG_SOURCE_DATE:=2021-11-01
-PKG_SOURCE_VERSION:=bae5c7c81b86a4042e510a99c134ff8b70ce12b9
-PKG_MIRROR_HASH:=05a3a743bbd2783c7cf9b29702a8fe002cf0f11566cd1ad1dd42517b1f1c3401
-
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://codeload.github.com/rclone/rclone/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=a5b0b7dfe17d9ec74e3a33415eec4331c61d800d8823621e61c6164e8f88c567
+PKG_SOURCE_URL:=https://codeload.github.com/rclone/rclone/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=294f7a6b0874509997d3a9ffae7c74f0c45b687df0ac7d7742f284ad3814fe55
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILE:=LICENSE
@@ -34,6 +27,8 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/rclone/rclone
+GO_PKG_BUILD_PKG:=github.com/rclone/rclone
+
 GO_PKG_EXCLUDES:=test
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
