@@ -27,8 +27,6 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/rclone/rclone
-GO_PKG_BUILD_PKG:=github.com/rclone/rclone
-
 GO_PKG_EXCLUDES:=test
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
@@ -84,8 +82,8 @@ define Package/rclone-config/conffiles
 /etc/config/rclone
 endef
 
-# Disable CGO due to ld linker issue
-GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
+# # Disable CGO due to ld linker issue
+# GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
