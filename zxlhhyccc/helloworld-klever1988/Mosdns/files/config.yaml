@@ -66,8 +66,9 @@ plugin:
     type: fast_forward
     args:
       upstream:
-        - addr: '119.29.29.29'
-        - addr: '223.5.5.5'
+        - addr:  101.226.4.6
+        - addr:  223.5.5.5
+        - addr:  119.29.29.29
 
   # 转发请求至远程服务器的插件
   - tag: forward_remote
