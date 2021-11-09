@@ -2,7 +2,7 @@ diff --git a/src/base/bittorrent/session.cpp b/src/base/bittorrent/session.cpp
 index dec17fafc..ad9db0105 100644
 --- a/src/base/bittorrent/session.cpp
 +++ b/src/base/bittorrent/session.cpp
-@@ -1062,7 +1062,23 @@ void Session::initializeNativeSession()
+@@ -1063,7 +1063,23 @@ void Session::initializeNativeSession()
          | lt::alert::tracker_notification;
      const std::string peerId = lt::generate_fingerprint(PEER_ID, QBT_VERSION_MAJOR, QBT_VERSION_MINOR, QBT_VERSION_BUGFIX, QBT_VERSION_BUILD);
  
@@ -27,7 +27,7 @@ index dec17fafc..ad9db0105 100644
      pack.set_int(lt::settings_pack::alert_mask, alertMask);
      pack.set_str(lt::settings_pack::peer_fingerprint, peerId);
      pack.set_bool(lt::settings_pack::listen_system_port_fallback, false);
-@@ -1071,6 +1087,7 @@ void Session::initializeNativeSession()
+@@ -1072,6 +1088,7 @@ void Session::initializeNativeSession()
      // Speed up exit
      pack.set_int(lt::settings_pack::auto_scrape_interval, 1200); // 20 minutes
      pack.set_int(lt::settings_pack::auto_scrape_min_interval, 900); // 15 minutes
