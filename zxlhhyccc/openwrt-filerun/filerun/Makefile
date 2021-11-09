@@ -1,13 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filerun
-PKG_VERSION:=2021_03_26
-PKG_RELEASE:=20210401
+PKG_VERSION:=2021_06_27
+PKG_RELEASE:=20210628
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://www.filerun.com/download-latest
+PKG_FILE:=$(PKG_NAME)-$(PKG_VERSION).zip
+PKG_URL:=https://www.filerun.com/download-latest
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_HASH:=skip
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_MAINTAINER:=GaryPang <https://github.com/garypang13/openwrt-filerun>
 
 include $(INCLUDE_DIR)/package.mk
