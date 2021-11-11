@@ -8,9 +8,15 @@ PKG_NAME:=trojan-go
 PKG_VERSION:=0.10.6
 PKG_RELEASE:=$(AUTORELEASE)
 
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/p4gefau1t/trojan-go/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=925f02647dda944813f1eab0b71eac98b83eb5964ef5a6f63e89bc7eb4486c1f
+PKG_SOURCE_URL:=https://github.com/p4gefau1t/trojan-go.git
+PKG_SOURCE_VERSION:=2dc60f52e79ff8b910e78e444f1e80678e936450
+PKG_MIRROR_HASH:=788db4cba85e007b080ed56ba14caf0b8ec14e311f1dc6aed408ee2adc989a1b
+
+#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+#PKG_SOURCE_URL:=https://codeload.github.com/p4gefau1t/trojan-go/tar.gz/v$(PKG_VERSION)?
+#PKG_HASH:=925f02647dda944813f1eab0b71eac98b83eb5964ef5a6f63e89bc7eb4486c1f
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
