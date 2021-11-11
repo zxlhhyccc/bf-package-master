@@ -56,15 +56,12 @@ ifneq ($(CONFIG_XRAY_PLUGIN_COMPRESS_GOPROXY),)
 endif
 
 define Package/xray-plugin
-	SECTION:=net
-	CATEGORY:=Network
-	TITLE:=SIP003 plugin for Shadowsocks, based on Xray
-	URL:=https://github.com/teddysun/xray-plugin
-	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-endef
-
-define Package/xray-plugin/description
-	Yet another SIP003 plugin for Shadowsocks, based on Xray.
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Web Servers/Proxies
+  TITLE:=SIP003 plugin for Shadowsocks, based on Xray
+  URL:=https://github.com/teddysun/xray-plugin
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Build/Compile

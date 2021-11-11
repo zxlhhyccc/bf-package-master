@@ -1,10 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright (C) 2014-2018 OpenWrt-dist
 # Copyright (C) 2014-2018 Jian Chang <aa65535@live.com>
-#
-# This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2021 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
@@ -18,7 +15,7 @@ PKG_SOURCE_VERSION:=00616680114011553881760e843b77a3519e8fbf
 PKG_SOURCE_SUBDIR:=ChinaDNS-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
 PKG_SOURCE:=ChinaDNS-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
 
-PKG_LICENSE:=GPLv3
+PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Jian Chang <aa65535@live.com>
 

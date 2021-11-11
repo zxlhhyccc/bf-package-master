@@ -18,7 +18,7 @@ PKG_SOURCE_URL:=https://github.com/txthinking/brook.git
 PKG_SOURCE_VERSION:=f1765ec6822bdd08582c5a14dd9a8418ccb3d7c7
 PKG_MIRROR_HASH:=f21d6efc8e99f67157a7521b777effeefbd5b3293f4a7432e4be0032b00a4348
 
-PKG_MAINTAINER:=CN_SZTL <cnsztl@immortalwrt.org>
+PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
 
