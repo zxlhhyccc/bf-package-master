@@ -149,14 +149,14 @@ define Package/v2ray-core/conffiles
 /etc/v2ray/
 endef
 
-GEOIP_VER:=202111040028
+GEOIP_VER:=202111110028
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
   URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=40599dbaacbd28c80423774c120c41b320cc79f2177568a9ded79fff091bdf34
+  HASH:=65fe79df5edf9f308685ec8d7e9776970ee5c28ee083a78c17deb413991dc4d2
 endef
 
 GEOSITE_VER:=20211107153452
