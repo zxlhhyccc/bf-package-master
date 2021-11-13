@@ -107,7 +107,7 @@ define Package/xray-core/conffiles
 /usr/share/xray
 endef
 
-GEOIP_VER:=202111112210
+GEOIP_VER:=202111122210
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
