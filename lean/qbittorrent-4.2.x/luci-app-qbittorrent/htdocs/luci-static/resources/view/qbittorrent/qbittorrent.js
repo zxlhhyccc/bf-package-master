@@ -6,12 +6,6 @@
 'require uci';
 
 var splitter_html = '<p style="font-size:20px;font-weight:bold;color: DodgerBlue">%s</p>';
-var css = '						\
-	.cbi-value[data-widget="CBI.HiddenValue"] {	\
-		margin-bottom: 0px !important;		\
-		padding: 0px !important;		\
-	}						\
-';
 
 var callServiceList = rpc.declare({
 	object: 'service',
@@ -33,31 +27,22 @@ var callUciGet = rpc.declare({
 	expect: { 'value': '' }
 });
 
-var callGetLanIPAddr = rpc.declare({
-	object: 'network.interface.lan',
-	method: 'status',
-	expect: { 'ipv4-address': [] },
-	filter: function (data) {
-		return data[0]['address'];
-	}
-});
-
 var CBIQBitStatus = form.DummyValue.extend({
 	renderWidget: function() {
 		var extAgrs = ['instances', 'qbittorrent.main'];
 		var label = E('div', {}, E('em', {}, _('Collecting data...')));
-		var btn = E('button', { 'class': 'cbi-button cbi-button-apply' });
+		var btn = E('button', { 'class': 'cbi-button cbi-button-apply' }, _('Start qBittorrent'));
 		var node = E('div', {}, [label, btn]);
 		L.Poll.add(function() {
 			callServiceList('qbittorrent', extAgrs).then(function(res) {
 				if (res.running) {
 					L.dom.content(label, E('em', {}, _('The qBittorrent daemon is running. Click the button below to startup the WebUI.')));
 					btn.textContent = 'PID: %s'.format(res.pid);
-					btn.onclick = onclick_action.bind(this, 'webui');
+					btn.onclick = onclickAction.bind(this, 'webui');
 				} else {
 					L.dom.content(label, E('em', {}, _('The qBittorrent daemon is not running. Click the button below to startup the daemon.')));
 					btn.textContent = _('Start qBittorrent');
-					btn.onclick = onclick_action.bind(this, 'qbt');
+					btn.onclick = onclickAction.bind(this, 'qbt');
 				}
 			});
 		});
@@ -81,60 +66,70 @@ var CBIRandomPort = form.Value.extend({
 	}
 });
 
-function encryptPassword (pwd) {
-	var salt, key;
-	sjcl.misc.hmac512 = function(key) {
-		sjcl.misc.hmac.call(this, key, sjcl.hash.sha512);
-	};
-	sjcl.misc.hmac512.prototype = new sjcl.misc.hmac('');
-	sjcl.misc.hmac512.prototype.constructor = sjcl.misc.hmac512;
+function encryptPassword (pwd, flag) {
+	if (flag) {
+		var salt, key;
+		salt = new Uint8Array(16);
+		asmCrypto.getRandomValues(salt);
+		key = asmCrypto.Pbkdf2HmacSha512(asmCrypto.string_to_bytes(pwd), salt, 100000, 64);
+		return asmCrypto.bytes_to_base64(salt) + ':' + asmCrypto.bytes_to_base64(key);
+	}
+	else {
+		return CryptoJS.enc.Hex.stringify(CryptoJS.MD5(pwd))
+	}
+}
 
-	salt = sjcl.random.randomWords(4);
-	key = sjcl.misc.pbkdf2(pwd, salt, 100000, 64 * 8, sjcl.misc.hmac512);
+function isNonEmpty(section_id, value) {
+	return value ? this.super('validate', [section_id, value]) : _('Expecting: non-empty value');
+}
 
-	return sjcl.codec.base64.fromBits(salt) + ':' + sjcl.codec.base64.fromBits(key);
-};
-
-function onclick_action(target) {
+function onclickAction(target) {
 	if ( target == "webui" ) {
 		Promise.all([
-			callGetLanIPAddr(),
+			callUciGet('qbittorrent', 'main', 'HTTPS__Enabled'),
 			callUciGet('qbittorrent', 'main', 'Port')
-		]).then(function(data) {
-			var ip = data[0], port = data[1] || '8080';
-			window.open('http://' + ip + ':' + port, '_blank');
+		]).then(function(val) {
+			var protocol = val[0] === 'true' ? 'https' : 'http';
+			var host = window.location.host;
+			var port = val[1] || '8080';
+			window.open(protocol + '://' + host + ':' + port, '_blank');
 		});
 	}
 	else {
 		fs.exec('/etc/init.d/qbittorrent', ['start']);
 		L.Poll.queue[0].fn();
 	}
-};
+}
 
 function randomPort() {
 	return Math.floor( Math.random() * (65535 - 1024)) + 1024;
-};
+}
 
 return L.view.extend({
 	load: function() {
+		document.body.append(E([], [
+			E('script', { 'src': L.resource('view/qbittorrent/crypto-js.min.js') }),
+			E('script', { 'src': L.resource('view/qbittorrent/asmcrypto.all.es5.min.js') })
+			])
+		);
 		return fs.exec('/usr/bin/qbittorrent-nox', ['-v'], {'HOME': '/var/run/qbittorrent'}).then(function(res) {
 			fs.exec('/bin/rm', ['-rf', '/var/run/qbittorrent']);
-			return res.stdout.match(/(\d\.)+\d/)[0] || '';
+			return res.stdout ? res.stdout.match(/(\d\.)+\d/)[0] : '';
 		});
 	},
 
-	render: function(v) {
+	render: function(ver) {
 		var m, s, o;
 
 		m = new form.Map('qbittorrent', _('qBittorrent'), '%s %s %s.<br\><b style="color:red">%s</b>'
 			.format(_('A BT/PT downloader base on Qt.'), _('Refer to the'),
 			'<a href="https://github.com/qbittorrent/qBittorrent/wiki/Explanation-of-Options-' +
-			'in-qBittorrent" target="_blank">help</a>', _('Current Version: %s.').format(v)));
+			'in-qBittorrent" target="_blank">help</a>', _('Current Version: %s.').format(ver)));
 
 		s = m.section(form.TypedSection);
 		s.title = _('qBittorrent Status');
 		s.anonymous = true;
-		s.cfgsections = function() { return [ 'status' ] };
+		s.cfgsections = function() { return [ 'status' ] }
 
 		o = s.option(CBIQBitStatus);
 
@@ -148,7 +143,7 @@ return L.view.extend({
 		s.tab('webui', _('WebUI Settings'));
 		s.tab('advanced', _('Advance Settings'));
 
-		o = s.taboption('basic', form.Flag, 'enabled', _('Enabled'));
+		o = s.taboption('basic', form.Flag, 'EnableService', _('Enabled'));
 		o.default = '0';
 
 		o = s.taboption('basic', widgets.UserSelect, 'user', _('Run daemon as user'));
@@ -157,15 +152,15 @@ return L.view.extend({
 		o.placeholder = '50'
 		o.datatype = 'range(1, 99)'
 
-		o = s.taboption('basic', form.Value, 'BinaryPath', _('Customized path'), _('Specify the binary file path for qBittorrent.'));
+		o = s.taboption('basic', form.Value, 'BinaryLocation', _('Customized Location'), _('Specify the binary location of qBittorrent.'));
 
-		o = s.taboption('basic', form.Value, 'profile', _('Parent Path for Profile Folder'),
-			_('Specify the profile path and it is is equivalent to the commandline parameter: <b>--profile [PATH]</b>. The default is /tmp.'));
+		o = s.taboption('basic', form.Value, 'RootProfilePath', _('Root Path of the Profile'),
+			_('Specify the root path of all profiles which is equivalent to the commandline parameter: <b>--profile [PATH]</b>. The default value is /tmp.'));
 		o.default = '/tmp';
 		o.placeholder = '/tmp';
 
-		o = s.taboption('basic', form.Value, 'configuration', _('Profile Folder Suffix'),
-			_('Suffix for profile folder, for example, <b>qBittorrent_[NAME]</b>.'));
+		o = s.taboption('basic', form.Value, 'ConfigurationName', _('The Suffix of the Profile Root Path'),
+			_('Specify the suffix of the profile root path and a new profile root path will be formated as <b>[ROOT_PROFILE_PATH]_[SUFFIX]</b>. This value is empty by default.'));
 
 		o = s.taboption('basic', form.Value, 'Locale', _('Locale Language'),
 			_('The supported language codes can be used to customize the setting.'));
@@ -173,7 +168,7 @@ return L.view.extend({
 		o.value('zh', _('Chinese (zh)'));
 		o.default = 'zh';
 
-		o = s.taboption('basic', form.Flag, 'overwrite', _('Overwrite the settings'),
+		o = s.taboption('basic', form.Flag, 'Overwrite', _('Overwrite the settings'),
 			_('If this option is enabled, the configuration set in WebUI will be replaced by the one in the LuCI.'));
 		o.default = o.disabled;
 
@@ -219,7 +214,7 @@ return L.view.extend({
 
 		o = s.taboption('connection', form.Flag, 'UseRandomPort', _('Use Random Port'),
 			_('Assign a different port randomly every time when qBittorrent starts up,' +
-			' which will voids the self-defined option.'));
+			' which will invalidate the customized options.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
@@ -290,7 +285,7 @@ return L.view.extend({
 		o.disabled = 'false';
 		o.default = o.disabled;
 
-		o = s.taboption('downloads', form.Value, 'SavePath', _('Save Path'));
+		o = s.taboption('downloads', form.Value, 'SavePath', _('Save Path'), _('Specify the path of the downloaded files.'));
 		o.placeholder = '/tmp/download';
 
 		o = s.taboption('downloads', form.Flag, 'TempPathEnabled', _('Enable Temp Path'));
@@ -463,15 +458,44 @@ return L.view.extend({
 
 		o = s.taboption('webui', form.Value, 'Password', _('Password'), _('The login password for WebUI.'));
 		o.password = true;
-
-		if (v && v.split('.')[0] >= 4 && v.split('.')[1] > 1) o = s.taboption('webui', form.HiddenValue, 'Password_PBKDF2');
+		o.formvalue = function(section_id) {
+			var elem = this.getUIElement(section_id);
+			var node = this.map.findElement('id', this.cbid(section_id));
+			var flag = ver.split('.').map(function(res) {return parseInt(res)}) >= [4, 2, 0];
+			if (node && node.getAttribute('data-changed') == 'true')
+				return elem ? encryptPassword(elem.getValue(), flag ) : null;
+			else
+				return elem ? elem.getValue() : null;
+		}
 
 		o = s.taboption('webui', form.Value, 'Address', _('Listening Address'), _('The listening IP address for WebUI.'));
 		o.datatype = 'ipaddr';
+		o.placeholder = '0.0.0.0';
 
 		o = s.taboption('webui', form.Value, 'Port', _('Listening Port'), _('The listening port for WebUI.'));
 		o.datatype = 'port';
 		o.placeholder = '8080';
+
+		o = s.taboption('webui', form.Flag, 'HTTPS__Enabled', _('Enable HTTPS'),
+			_('Encrypt the connections with qbittorrent by SSL/TLS. The web clients must use https'
+			+ ' scheme to access the WebUI.'));
+		o.enabled = 'true';
+		o.disabled = 'false';
+		o.default = o.disabled;
+
+		o = s.taboption('webui', form.Value, 'HTTPS__CertificatePath', _('Path to the Certificate'));
+		o.depends('HTTPS__Enabled', 'true');
+		o.validate = isNonEmpty;
+
+		o = s.taboption('webui', form.Value, 'HTTPS__KeyPath', _('Path to the Key'));
+		o.depends('HTTPS__Enabled', 'true');
+		o.validate = isNonEmpty;
+
+		o = s.taboption('webui', form.Flag, 'ClickjackingProtection', _('Clickjacking Protection'),
+			_('Enable clickjacking protection.'));
+		o.enabled = 'true';
+		o.disabled = 'false';
+		o.default = o.enabled;
 
 		o = s.taboption('webui', form.Flag, 'CSRFProtection', _('CSRF Protection'),
 			_('Enable Cross-Site Request Forgery (CSRF) protection.'));
@@ -479,8 +503,9 @@ return L.view.extend({
 		o.disabled = 'false';
 		o.default = o.disabled;
 
-		o = s.taboption('webui', form.Flag, 'ClickjackingProtection', _('Clickjacking Protection'),
-			_('Enable clickjacking protection.'));
+		o = s.taboption('webui', form.Flag, 'SecureCookie', _('Cookie Secure flag'),
+			_('Enable cookie secure flag (require HTTPS).'));
+		o.depends('HTTPS__Enabled', 'true');
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.enabled;
@@ -491,19 +516,33 @@ return L.view.extend({
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		o = s.taboption('webui', form.Flag, 'LocalHostAuth', _('Local Host Authentication'),
-			_('Force authentication for clients on localhost.'));
-		o.enabled = 'true';
-		o.disabled = 'false';
-		o.default = o.enabled;
+		o = s.taboption('webui', form.Value, 'ServerDomains', _('Server Domains'));
+		o.placeholder = '*';
+		o.depends('HostHeaderValidation', 'true');
 
-		o = s.taboption('webui', form.Flag, 'AuthSubnetWhitelistEnabled', _('Enable Subnet Whitelist'));
+		o = s.taboption('webui', form.Flag, 'LocalHostAuth', _('Bypass Local Host Authentication'),
+			_('Bypass authentication for clients on localhost.'));
+		o.enabled = 'false';
+		o.disabled = 'true';
+		o.default = o.disabled;
+
+		o = s.taboption('webui', form.Flag, 'AuthSubnetWhitelistEnabled',
+			_('Bypass authentication for clients in Whitelisted IP Subnets.'));
 		o.enabled = 'true';
 		o.disabled = 'false';
 		o.default = o.disabled;
 
 		o = s.taboption('webui', form.DynamicList, 'AuthSubnetWhitelist', _('Subnet Whitelist'));
 		o.depends('AuthSubnetWhitelistEnabled', 'true');
+
+		o = s.taboption('webui', form.Flag, 'CustomHTTPHeadersEnabled', _('Add Custom HTTP Headers'));
+		o.enabled = 'true';
+		o.disabled = 'false';
+		o.default = o.disabled;
+
+		o = s.taboption('webui', form.TextValue, 'CustomHTTPHeaders', _('Custom HTTP Headers'));
+		o.depends('CustomHTTPHeadersEnabled', 'true');
+		o.placeholder = _('Header: value pairs, one per line');
 
 		o = s.taboption('advanced', form.Flag, 'AnonymousMode', _('Anonymous Mode'), '%s %s %s.'.format(
 			_('When enabled, qBittorrent will take certain measures to try to mask its identity.'),
@@ -557,22 +596,6 @@ return L.view.extend({
 		o.disabled = 'false';
 		o.default = o.enabled;
 
-		return m.render().then(function(node) {
-			node.appendChild(E('script', { 'src': L.resource('view/qbittorrent/sjcl.js') }));
-			node.appendChild(E('style', { 'type': 'text/css' }, [ css ]));
-			return node;
-		});
-	},
-
-	handleSave: function(ev) {
-		var changed, e, pwd;
-		changed = document.getElementById('cbid.qbittorrent.main.Password').getAttribute('data-changed');
-		if (changed) {
-			pwd = document.getElementById('widget.cbid.qbittorrent.main.Password').value;
-			e = document.getElementById('cbid.qbittorrent.main.Password_PBKDF2');
-
-			if (e) e.value = encryptPassword(pwd);
-		}
-		return this.super('handleSave', ev);
+		return m.render();
 	}
 });

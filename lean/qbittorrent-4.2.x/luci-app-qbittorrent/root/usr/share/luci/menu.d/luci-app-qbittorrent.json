@@ -1,5 +1,5 @@
 {
-	"admin/nas/qbittorrent": {
+	"admin/services/qbittorrent": {
 		"title": "qBittorrent",
 		"order": 90,
 		"action": {

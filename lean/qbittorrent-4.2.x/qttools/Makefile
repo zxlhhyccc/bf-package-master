@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 Openwrt.org
+# Copyright (C) 2019-2021
 #
 # This is free software, licensed under the Apache License, Version 2.0 .
 #
@@ -15,9 +15,7 @@ PKG_RELEASE:=1
 PKG_SOURCE:=$(PKG_NAME)-everywhere-src-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:= \
 		http://download.qt.io/official_releases/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
-		http://master.qt.io/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
-		http://mirrors.tuna.tsinghua.edu.cn/qt/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
-		http://qt.mirror.constant.com/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules
+		http://master.qt.io/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules
 PKG_HASH:=c189d0ce1ff7c739db9a3ace52ac3e24cb8fd6dbf234e49f075249b38f43c1cc
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
@@ -36,8 +34,25 @@ define Package/$(PKG_NAME)
   BUILDONLY:=1
 endef
 
+CONFIGURE_ARGS = \
+	-no-feature-assistant \
+	-no-feature-designer \
+	-no-feature-distancefieldgenerator \
+	-no-feature-kmap2qmap \
+	-no-feature-macdeployqt \
+	-no-feature-makeqpf \
+	-no-feature-pixeltool \
+	-no-feature-qdbus \
+	-no-feature-qev \
+	-no-feature-qtattributionsscanner \
+	-no-feature-qtpaths \
+	-no-feature-qtplugininfo \
+	-no-feature-qtdiag \
+	-no-feature-windeployqt \
+	-no-feature-winrtrunner
+
 define Build/Configure
-	cd $(PKG_BUILD_DIR) && qmake -o Makefile qttools.pro
+	cd $(PKG_BUILD_DIR) && qmake -o Makefile qttools.pro -- $(CONFIGURE_ARGS)
 endef
 
 define Build/Compile

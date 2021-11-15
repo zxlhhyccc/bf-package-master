@@ -8,6 +8,7 @@ NAME=qbittorrent
 PROG=/usr/bin/qbittorrent-nox
 
 QBT_CONF_FILE=/tmp/qBittorrent/config/qBittorrent.conf
+QBT_INSTANCE=""
 
 _info() {
 	logger -p daemon.info -t "$NAME" "$*"
@@ -17,16 +18,16 @@ _err() {
 	logger -p daemon.err -t "$NAME" "$*"
 }
 
-validate_QBT () {
-	uci_validate_section "$NAME" vlmcsd "$1" \
-		'enabled:bool:0' \
-		'overwrite:bool:0' \
+validate_QBT() {
+	uci_validate_section "$NAME" qbittorrent "$1" \
+		'EnableService:bool:0' \
+		'Overwrite:bool:0' \
 		'user:string:root' \
 		'nice:range(-20,19):0' \
 		'MemoryPercent:range(0,99):50' \
-		'BinaryPath:string' \
-		'profile:string:/tmp' \
-		'configuration:string' \
+		'BinaryLocation:string' \
+		'RootProfilePath:string:/tmp' \
+		'ConfigurationName:string' \
 		'DHT:or("true","false"):true' \
 		'Encryption:or("0","1","2"):0' \
 		'LSD:or("true","false"):true' \
@@ -67,11 +68,17 @@ validate_QBT () {
 		'AuthSubnetWhitelistEnabled:or("true","false"):false' \
 		'ClickjackingProtection:or("true","false"):true' \
 		'CSRFProtection:or("true","false"):false' \
+		'CustomHTTPHeadersEnabled:or("true","false"):false' \
+		'CustomHTTPHeaders:string' \
 		'HostHeaderValidation:or("true","false"):true' \
+		'HTTPS__Enabled:or("true","false")' \
+		'HTTPS__CertificatePath:string' \
+		'HTTPS__KeyPath:string' \
 		'LocalHostAuth:or("true","false"):true' \
 		'Password:string' \
-		'Password_PBKDF2:string' \
 		'Port:port:8080' \
+		'SecureCookie:or("true","false"):true' \
+		'ServerDomains:string' \
 		'Username:string' \
 		'UseUPnP:or("true","false")' \
 		'AnonymousMode:or("true","false"):true' \
@@ -102,9 +109,9 @@ validate_QBT () {
 		'SaveTime:string'
 }
 
-sed_options () {
+sed_options() {
 	local Anchor=$1
-	local category=$( echo $2 | sed 's/\s/\\\\/g' )
+	local category="$( echo $2 | sed 's/\s/\\\\/g' )"
 	shift
 	shift
 
@@ -114,29 +121,27 @@ sed_options () {
 
 	local o; local v; local ol
 	for o in "$@"; do
-		v="$( eval echo \$$o | sed 's/[\/\.]/\\&/g' )"
+		v="$( eval echo -E "\$$o" | sed 's/[\/\.]/\\&/g' )"
+
 		[ -n "$category" ] && ol="$category\\\\$o" || ol="$o"
+		ol="$( echo $ol | sed 's/__/\\\\/g')"
 
 		[ -n "$v" ] && {
 			if [ -z "$(grep ^$ol=.* $QBT_CONF_FILE)" ]; then
 				sed -i "/\[$Anchor\]/a $ol=$v" "$QBT_CONF_FILE"
 				#sed -i '/\['"$Anchor"'\]/{$ba;h;d};x;/\['"$Anchor"'\]/{x;/./{$bm;H;d};:m;x;:a;s/$/\n'"$ol=$v"'/;x;H};x' "$QBT_CONF_FILE"
 			else
-				[ "$overwrite" = "1" ] && sed -i "s/$ol=.*/$ol=$v/g" "$QBT_CONF_FILE"
+				[ "$Overwrite" = "1" ] && sed -i "s/$ol=.*/$ol=$v/g" "$QBT_CONF_FILE"
 			fi
 		} || {
-			[ "$overwrite" = "1" ] && sed -i "/$ol=.*/d" "$QBT_CONF_FILE"
+			[ "$Overwrite" = "1" ] && sed -i "/$ol=.*/d" "$QBT_CONF_FILE"
 		}
 	done
 }
 
 config_QBT () {
-	local Password_ha1="";local Age="";local AgeType=""
-	[ -n "$Password" ] && \
-		Password_ha1="@ByteArray($(echo -n $Password|md5sum|grep -oE '[a-z0-9]{32}'))"
-
-	[ -n "$Password_PBKDF2" ] && \
-		Password_PBKDF2="@ByteArray($Password_PBKDF2)"
+	[ "${#Password}" -eq 32 ] && Password_ha1="@ByteArray($Password)"
+	[ "${#Password}" -eq 113 ] && Password_PBKDF2="@ByteArray($Password)"
 
 	[ -n "$SaveTime" ] && {
 		[ -n "$(echo $SaveTime | sed 's/[0-9dmyDMY]//g')" ] && { _err "Error save time setted."; return 1; }
@@ -164,9 +169,10 @@ EOF
 				"AnnounceToAllTiers" "BTProtocol" "CreateTorrentSubfolder" "DisableAutoTMMByDefault" "GlobalMaxSeedingMinutes" \
 				"SeedChokingAlgorithm" "SlowTorrentsDownloadRate" "SlowTorrentsInactivityTimer" "SlowTorrentsUploadRate"
 	sed_options "Preferences" "WebUI" \
-				"Address" "AuthSubnetWhitelistEnabled" "AuthSubnetWhitelist" "CSRFProtection" \
-				"ClickjackingProtection" "HostHeaderValidation" "LocalHostAuth" \
-				"Password_ha1" "Password_PBKDF2" "Port" "Username" "UseUPnP"
+				"Address" "AuthSubnetWhitelistEnabled" "AuthSubnetWhitelist" "CSRFProtection" "ClickjackingProtection" \
+				"CustomHTTPHeadersEnabled" "CustomHTTPHeaders" "HostHeaderValidation" "HTTPS__Enabled" \
+				"HTTPS__CertificatePath" "HTTPS__KeyPath" "LocalHostAuth" "Password_ha1" "Password_PBKDF2" \
+				"Port" "SecureCookie" "ServerDomains" "Username" "UseUPnP"
 	sed_options "Preferences" "Queueing" \
 				"IgnoreSlowTorrents" "MaxActiveDownloads" "MaxActiveTorrents" "MaxActiveUploads" \
 				"QueueingEnabled"
@@ -189,36 +195,40 @@ EOF
 				"Enabled" "Path" "Backup" "DeleteOld" "MaxSizeBytes" "Age" "AgeType"
 }
 
-init_QBT(){
+init_instance(){
 	local section="$1"
-	local instance="${NAME}.${section}"
+	QBT_INSTANCE="${NAME}.${section}"
 
 	validate_QBT "$section" || { _err "Validation failed."; return 1; }
 
-	[ -n "$BinaryPath" ] && PROG="$BinaryPath"
+	[ -n "$BinaryLocation" ] && PROG="$BinaryLocation"
 
-	local running=$(ubus call service list "{'name':'$NAME'}" | jsonfilter -e "@.$NAME.instances['${instance}'].running")
-	[ x"$enabled" = x0 ] && {
-		[ "$running" = "true" ] && {
-			_info "Instance \"${section}\" disabled.";
-			ubus call service delete "{'name':'$NAME','instance':'$instance'}";
-		}
-		return 1;
-	}
+	local running=$(ubus call service list "{'name':'$NAME'}" | jsonfilter -e "@.$NAME.instances['${QBT_INSTANCE}'].running")
+	[ x"$EnableService" = x0 ] && return 0
 
 	local confdir="qBittorrent"
-	[ -n "$configuration" ] && {
-		confdir="qBittorrent_$configuration"
-	}
-
-	[ -d "$profile/$confdir/config" ] || {
-		mkdir -m 0755 -p "$profile/$confdir/config"
-	}
+	[ -n "$ConfigurationName" ] && confdir="qBittorrent_$ConfigurationName"
 
 	[ "$user" != "root" ] && {
 		local group=$(id -nG $user)
-		chmod -R g+w "$profile/$confdir"
-		chown -R "$user:$group" "$profile/$confdir"
+
+		local fullTempPath
+		case $TempPath in
+		/*|~/*)
+			fullTempPath="$TempPath"
+		;;
+		*)
+			fullTempPath="$RootProfilePath/$confdir/$TempPath"
+		;;
+		esac
+
+		for directory in "$RootProfilePath/$confdir" "$RootProfilePath/$confdir/config" "$SavePath" "$fullTempPath" "$FinishedTorrentExportDir" "$TorrentExportDir"; do
+			if [ -n "$directory" ]; then
+				[ -d "$directory" ] || mkdir -m 0755 -p "$directory"
+				chmod -R g+w "$directory"
+				chown -R "$user:$group" "$directory"
+			fi
+		done
 	}
 
 	[ "$AuthSubnetWhitelistEnabled" = true ] && {
@@ -227,7 +237,12 @@ init_QBT(){
 		AuthSubnetWhitelist="@Invalid()"
 	}
 
-	QBT_CONF_FILE="$profile/$confdir/config/qBittorrent.conf"
+
+	[ "$CustomHTTPHeadersEnabled" = true ] && {
+		CustomHTTPHeaders="$( echo -E "$CustomHTTPHeaders" | sed ':tag;N;s/\n/\\n/;b tag')"
+	}
+
+	QBT_CONF_FILE="$RootProfilePath/$confdir/config/qBittorrent.conf"
 	config_QBT
 
 	local MEM
@@ -235,12 +250,12 @@ init_QBT(){
 	local USE
 	[ "$MEM" -gt 1 ] && USE=$((MEM * MemoryPercent * 10))
 
-	procd_open_instance "$instance"
+	procd_open_instance "$QBT_INSTANCE"
 	procd_set_param command "$PROG"
-	procd_append_param command --profile="$profile"
+	procd_append_param command --profile="$RootProfilePath"
 
-	[ -n "$configuration" ] && {
-		procd_append_param command --configuration="$configuration"
+	[ -n "$ConfigurationName" ] && {
+		procd_append_param command --configuration="$ConfigurationName"
 	}
 
 	procd_set_param respawn
@@ -265,14 +280,10 @@ service_triggers()
 
 start_service() {
 	config_load "$NAME"
-	config_foreach init_QBT "$NAME"
+	config_foreach init_instance "$NAME"
 }
 
 reload_service() {
-	restart
-}
-
-restart() {
 	stop
 	sleep 1
 	start

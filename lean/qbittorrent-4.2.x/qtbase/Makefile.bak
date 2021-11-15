@@ -82,8 +82,6 @@ menu "qtbase"
 endmenu
 endef
 
-PKG_CONFIG_DEPENDS = CONFIG_QT5_INCLUDE_ATOMIC
-
 EXTRA_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections -flto
 EXTRA_LDFLAGS += -Wl,--gc-sections,--as-needed
 
