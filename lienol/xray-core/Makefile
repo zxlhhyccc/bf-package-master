@@ -7,8 +7,8 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_VERSION:=c3298c38a0d6f9c66703a6dd565e783778de8b35
-PKG_MIRROR_HASH:=753866ee118a7f3eab00f8a00a86db0c9045d4c756062c6ff1edf4ea6cb6c03c
+PKG_SOURCE_VERSION:=d6ae4e9ba282cfe0575aee6c1d087089d9e34398
+PKG_MIRROR_HASH:=4f740e6238c36224794bfc28ae09ee2bfb132ac7bc943add06ebe6236ac343cf
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0
@@ -107,7 +107,7 @@ define Package/xray-core/conffiles
 /usr/share/xray
 endef
 
-GEOIP_VER:=202111162210
+GEOIP_VER:=202111182210
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -119,7 +119,7 @@ define Download/geoip
   HASH:=skip
 endef
 
-GEOSITE_VER:=202111162210
+GEOSITE_VER:=202111182210
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
