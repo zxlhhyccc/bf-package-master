@@ -42,7 +42,7 @@ else
 	m = Map("verysync", translate("verysync"), "<b><font color=\"red\">" .. translate("微力同步未启动") .. "</font></b>")
 end
 
-s = m:section(NamedSection, "setting", "verysync", translate("Settings"), translate("(微力同步是一款跨平台分布式同步软件。"))
+s = m:section(NamedSection, "setting", "verysync", translate("Settings"), translate("微力同步是一款跨平台分布式同步软件。"))
 s.anonymous = true
 s.addremove = false
 
