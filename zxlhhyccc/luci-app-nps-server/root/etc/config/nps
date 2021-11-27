@@ -1,4 +1,5 @@
 
 config nps
 	option enabled '0'
+	option port '7777'
 

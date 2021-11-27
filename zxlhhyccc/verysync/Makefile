@@ -59,7 +59,8 @@ endef
 define Package/verysync/config
 	config VERYSYNC_COMPRESS_UPX
 		bool "Compress executable files with UPX"
-		default y
+		depends on !mips64
+		default y if mips||mipsel
 endef
 
 define Build/Configure

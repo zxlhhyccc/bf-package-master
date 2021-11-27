@@ -37,6 +37,7 @@ start_service() {
 	if [ "$Enabled" = "1" ];then
 		logger -t FRPC 'Starting Nps service'
 		procd_open_instance
+		append_param_arg "nps" "port" "7777"
     		procd_set_param command /usr/bin/nps
     		procd_set_param respawn
     		procd_set_param stdout 1
