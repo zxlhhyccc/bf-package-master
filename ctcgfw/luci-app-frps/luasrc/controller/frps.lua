@@ -8,7 +8,7 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "frps"}, firstchild(), _("Frps")).dependent = false
+	entry({"admin", "services", "frps"}, firstchild(), _("Frps Server")).dependent = false
 
 	entry({"admin", "services", "frps", "common"}, cbi("frps/common"), _("Settings"), 1)
 	entry({"admin", "services", "frps", "server"}, cbi("frps/server"), _("Server"), 2).leaf = true

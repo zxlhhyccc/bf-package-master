@@ -4,10 +4,10 @@ XHR.poll(5, '<%=url([[admin]], [[services]], [[frp]], [[status]])%>', null,
 		var tb = document.getElementById('frp_status');
 		if (data && tb) {
 			if (data.running) {
-				var links = '<em><b><font color=green><%:The Frp service is running.%></font></b></em>';
+				var links = '<em><b><font color=green> <%:Frpc%>' + data.bin_version + '<%:Service is running.%></font></b></em>';
 				tb.innerHTML = links;
 			} else {
-				tb.innerHTML = '<em><b><font color=red><%:The Frp service is not running.%></font></b></em>';
+				tb.innerHTML = '<em><b><font color=red> <%:Frpc%>' + data.bin_version + '<%:Service is not running.%></font></b></em>';
 			}
 		}
 	}

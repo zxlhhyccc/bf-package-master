@@ -10,11 +10,11 @@ msgstr "基本设置"
 msgid "Nps Conf"
 msgstr "Nps配置"
 
-msgid "RUNNING"
-msgstr "运行中"
+msgid "Service is running."
+msgstr "服务正在运行"
 
-msgid "NOT RUNNING"
-msgstr "未运行"
+msgid "Service is not running."
+msgstr "服务未运行"
 
 msgid "Open Nps page"
 msgstr "打开Nps软件控制界面"

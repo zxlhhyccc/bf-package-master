@@ -5,6 +5,10 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 # msgid "-- default --"
 # msgstr "-- 默认 --"
 
+#: luasrc/controller/frps.lua:11
+msgid "Frps Server"
+msgstr "Frps 服务端"
+
 #: luasrc/model/cbi/frps/common.lua:17
 msgid "Advanced Options"
 msgstr "高级选项"
