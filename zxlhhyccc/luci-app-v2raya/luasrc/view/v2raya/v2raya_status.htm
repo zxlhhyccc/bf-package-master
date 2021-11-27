@@ -5,10 +5,10 @@ XHR.poll(1, '<%=url([[admin]], [[services]], [[v2raya]], [[status]])%>', null,
 
 		if (data && tb) {
 			if (data.running) {
-				var links = '<em><b><font color="green">v2rayA <%:RUNNING%></font></b></em><input class="btn cbi-button mar-10" type="button" value="<%:Open v2rayA page%>" onclick="openwebui();" />';
+				var links = '<em><b><font color=green> <%:v2rayA%>' + data.bin_version + '<%:RUNNING%></font></b></em><input class="btn cbi-button mar-10" type="button" value="<%:Open v2rayA page%>" onclick="openwebui();" />';
 				tb.innerHTML = links;
 			} else {
-				tb.innerHTML = '<em><b><font color="red">v2rayA <%:NOT RUNNING%></font></b></em>';
+				tb.innerHTML = '<em><b><font color=red> <%:v2rayA%>' + data.bin_version + '<%:NOT RUNNING%></font></b></em>';
 			}
 		}
 	}
