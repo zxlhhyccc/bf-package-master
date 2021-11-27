@@ -114,12 +114,12 @@ msgid "Max ports per-client"
 msgstr "单客户端最大端口映射数"
 
 #: luasrc/view/frps/frps_status.htm:9
-msgid "NOT RUNNING"
-msgstr "未运行"
+msgid "Service is not running."
+msgstr "服务未运行"
 
 #: luasrc/view/frps/frps_status.htm:9
-msgid "RUNNING"
-msgstr "运行中"
+msgid "Service is running."
+msgstr "服务正在运行"
 
 #: luasrc/model/cbi/frps/server.lua:40
 msgid "Optional: Note: http port and https port can be same with bind_port"
