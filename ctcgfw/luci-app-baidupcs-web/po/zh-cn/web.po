@@ -27,12 +27,20 @@ msgid "Collecting data..."
 msgstr ""
 
 #: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/view/baidupcs-web/baidupcs-web_status.htm:16
-msgid "NOT RUNNING"
-msgstr ""
+msgid "Service is not running."
+msgstr "服务未运行"
 
 #: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/view/baidupcs-web/baidupcs-web_status.htm:13
-msgid "RUNNING"
-msgstr ""
+msgid "Service is running."
+msgstr "服务正在运行"
+
+#: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/view/baidupcs-web/baidupcs-web_status.htm:16
+# msgid "NOT RUNNING"
+# msgstr ""
+
+#: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/view/baidupcs-web/baidupcs-web_status.htm:13
+# msgid "RUNNING"
+# msgstr ""
 
 #: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/model/cbi/baidupcs-web.lua:29
 msgid "下载目录"
