@@ -13,8 +13,11 @@ msgstr "重定向客户端DNS到dnsmasq"
 msgid "Enable 256-QAM"
 msgstr "启用 256-QAM"
 
-msgid "802.11n 2.4Ghz Only"
-msgstr "只适合 802.11n 2.4Ghz"
+# msgid "802.11n 2.4Ghz Only"
+# msgstr "只适合 802.11n 2.4Ghz"
+
+msgid "Enable 256QAM modulation. May not supported by some hardware!"
+msgstr "启用256QAM调制方式可能不被一些硬件的支持！"
 
 msgid "Enables The 802.11k standard provides information to discover the best available access point"
 msgstr "启用 802.11k 自动寻找发现最佳可用接入点的信息"
