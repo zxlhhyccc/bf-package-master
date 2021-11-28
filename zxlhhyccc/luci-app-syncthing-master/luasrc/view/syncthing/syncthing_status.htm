@@ -4,10 +4,10 @@
 			var tb = document.getElementById('syncthing_status');
 			if (data && tb) {
 				if (data.running) {
-					var links = '<em><b><font color="green">Syncthing <%:RUNNING%></font></b></em><input class="btn cbi-button mar-10" type="button" value="<%:Open Syncthing page%>" onclick="openwebui();" />';
+					var links = '<em><b><font color=green><%:Syncthing%> <%:RUNNING%></font></b></em><input class="btn cbi-button mar-10" type="button" value="<%:Open Syncthing page%>" onclick="openwebui();" />';
 					tb.innerHTML = links;
 				} else {
-					tb.innerHTML = '<em><b><font color="red">Syncthing <%:NOT RUNNING%></font></b></em>';
+					tb.innerHTML = '<em><b><font color=green><%:Syncthing%> <%:NOT RUNNING%></font></b></em>';
 				}
 			}
 		}
