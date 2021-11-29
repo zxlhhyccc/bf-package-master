@@ -1,5 +1,3 @@
-
-
 local sys = require "luci.sys"
 local ifaces = sys.net:devices()
 
@@ -70,5 +68,3 @@ if e then
 end
 
 return m
-
-
