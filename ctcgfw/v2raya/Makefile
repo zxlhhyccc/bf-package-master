@@ -17,8 +17,8 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA.git
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
-PKG_SOURCE_VERSION:=6d668e7f187a4a270c6fd4eeeef142049813b02c
-PKG_MIRROR_HASH:=238995ff4b2c0a76695c0f6e9aebf0680e8759e03c73086ace40afab75e1406a
+PKG_SOURCE_VERSION:=1b46ff3f2ba4d41ce4dce39622a0e5784889edef
+PKG_MIRROR_HASH:=e69d2a6372fd9db94b5800e8ace62284fca2c217b11cdfdf2c401daa73dd50f1
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -98,7 +98,7 @@ endef
 
 define Package/v2raya/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-	$(INSTALL_DIR) $(1)/usr/bin/ $(1)/etc/v2raya/
+	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2rayA $(1)/usr/bin/v2raya
 
 	$(INSTALL_DIR) $(1)/etc/config/
