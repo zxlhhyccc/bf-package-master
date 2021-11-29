@@ -23,6 +23,7 @@ music_source:value("pyncmd", translate("网易云音乐（pyncmd）"))
 music_source:value("qq", translate("QQ音乐"))
 music_source:value("youtube", translate("Youtube音乐"))
 music_source:value("youtubedl", translate("Youtube音乐（youtube-dl）"))
+music_source:value("ytdlp", translate("Youtube音乐（yt-dlp）"))
 music_source:value("ytdownload", translate("Youtube音乐（ytdownload）"))
 music_source.description = translate("自定义模式下，多个音源请用空格隔开")
 music_source.default = "default"
@@ -97,13 +98,13 @@ download_cert.write = function()
 end
 
 function act_download_cert()
-	local t,e
-	t=nixio.open("/usr/share/unblockneteasemusic/core/ca.crt","r")
-	luci.http.header('Content-Disposition','attachment; filename="ca.crt"')
+	local t, e
+	t = nixio.open("/usr/share/unblockneteasemusic/core/ca.crt","r")
+	luci.http.header('Content-Disposition', 'attachment; filename="ca.crt"')
 	luci.http.prepare_content("application/octet-stream")
 	while true do
-		e=t:read(nixio.const.buffersize)
-		if(not e)or(#e==0)then
+		e = t:read(nixio.const.buffersize)
+		if (not e) or (#e == 0) then
 			break
 		else
 			luci.http.write(e)
@@ -195,7 +196,7 @@ acl_rule.sortable = true
 acl_rule.anonymous = true
 acl_rule.addremove = true
 
-acl_ip_addr=acl_rule:option(Value, "ip_addr", translate("IP 地址"))
+acl_ip_addr = acl_rule:option(Value, "ip_addr", translate("IP 地址"))
 acl_ip_addr.width = "40%"
 acl_ip_addr.datatype = "ip4addr"
 acl_ip_addr.placeholder = "0.0.0.0/0"
