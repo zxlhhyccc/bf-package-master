@@ -98,7 +98,7 @@ endef
 
 define Package/v2raya/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-	$(INSTALL_DIR) $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/usr/bin/ $(1)/etc/v2raya/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2rayA $(1)/usr/bin/v2raya
 
 	$(INSTALL_DIR) $(1)/etc/config/
