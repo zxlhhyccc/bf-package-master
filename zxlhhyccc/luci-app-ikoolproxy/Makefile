@@ -8,7 +8,7 @@ PKG_MAINTAINER:=panda-mute <wxuzju@gmail.com>
 
 LUCI_TITLE:=LuCI support for koolproxy
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+ikoolproxy +openssl-util +ipset +dnsmasq-full +@BUSYBOX_CONFIG_DIFF +iptables-mod-nat-extra +wget
+LUCI_DEPENDS:=+ikoolproxy +openssl-util +ipset +dnsmasq-full +@BUSYBOX_CONFIG_DIFF +iptables-mod-nat-extra +wget-ssl
 
 define Package/$(PKG_NAME)/conffiles
 /etc/config/koolproxy
