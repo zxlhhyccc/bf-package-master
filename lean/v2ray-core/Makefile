@@ -149,24 +149,24 @@ define Package/v2ray-core/conffiles
 /etc/v2ray/
 endef
 
-GEOIP_VER:=202111250029
+GEOIP_VER:=202112020029
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
   URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=b52f0320c3dc1a831a6aed45cc05196724b88e47f12d473e05e3966f9779a3ba
+  HASH:=7cc3d27ae1c59062148d4968f8d98eff9038212111e0bb129f46831198a0750b
 endef
 
-GEOSITE_VER:=20211201100328
+GEOSITE_VER:=20211202151304
 GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 
 define Download/geosite
   URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=3d80c8d0213995b08021e6c3058d76980926cdf7d053e758030e66d36a3a0726
+  HASH:=311a82c2671c6ca3112e9b4ad1232b39bb006bcc3597a520f75a463477d07ab2
 endef
 
 ifneq ($(CONFIG_V2RAY_CORE_COMPRESS_GOPROXY)$(CONFIG_V2RAY_CTL_COMPRESS_GOPROXY),)
