@@ -1,13 +1,13 @@
 # Attribution: https://gist.github.com/lenew/9b41ba901c3393047ede0766760f9d55
 
-#Put this source to 'package/kernel/r8125' folder of OpenWRT/LEDE SDK
+#Put this source to 'package/lean/r8125' folder of OpenWRT/LEDE SDK
 #Build(make menuconfig, make defconfig, make)
 
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=r8125
-PKG_VERSION:=9.006.04
+PKG_VERSION:=9.007.01
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
