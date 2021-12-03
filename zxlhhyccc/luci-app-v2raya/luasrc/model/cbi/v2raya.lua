@@ -7,7 +7,7 @@ require("nixio.fs")
 
 m = Map("v2raya")
 m.title = translate("v2rayA")
-m.description = translate("Simple v2rayA switch.")
+m.description = translate("v2rayA is a V2Ray Linux client supporting global transparent proxy, compatible with SS, SSR, Trojan(trojan-go), PingTunnel protocols.")
 
 m:section(SimpleSection).template = "v2raya/v2raya_status"
 
