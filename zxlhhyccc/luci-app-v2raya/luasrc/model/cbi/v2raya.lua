@@ -5,9 +5,11 @@ local uci = luci.model.uci.cursor()
 local m, o, s
 require("nixio.fs")
 
-m = Map("v2raya", translate("Simple v2rayA switch."))
+m = Map("v2raya")
+m.title = translate("v2rayA")
+m.description = translate("Simple v2rayA switch.")
 
-m:section(SimpleSection).template  = "v2raya/v2raya_status"
+m:section(SimpleSection).template = "v2raya/v2raya_status"
 
 s = m:section(TypedSection, "v2raya")
 s.anonymous = true
@@ -100,7 +102,6 @@ end
 o = s:option(Value, "vless_grpc_inbound_cert_key", translate("Upload Certificate Path"))
 o.description = translate("This is the path where the certificate resides after the certificate is uploaded.")
 o.default = "/etc/v2raya/cert.crt,/etc/v2raya/cert.key"
-
 
 o.inputstyle = "reload"
     luci.sys.exec("/etc/init.d/v2raya start >/dev/null 2>&1 &")
