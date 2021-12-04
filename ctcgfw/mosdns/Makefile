@@ -82,14 +82,14 @@ define Download/geoip
   HASH:=7cc3d27ae1c59062148d4968f8d98eff9038212111e0bb129f46831198a0750b
 endef
 
-GEOSITE_VER:=20211202151304
+GEOSITE_VER:=20211203092402
 GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 
 define Download/geosite
   URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
   URL_FILE:=dlc.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=311a82c2671c6ca3112e9b4ad1232b39bb006bcc3597a520f75a463477d07ab2
+  HASH:=d39a595800d57b8fcfa5924db69b9ab3f1f798cbdaf449afcac78d377ca1c501
 endef
 
 define Build/Prepare
