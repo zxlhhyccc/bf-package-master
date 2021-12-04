@@ -55,7 +55,7 @@ define Package/gq-client/config
 config GQ_CLIENT_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
-	default y if mips||mipsel
+	default n
 endef
 
 define Package/gq-server/config
