@@ -37,9 +37,9 @@ else
 end
 
 if running then
-	m = Map("verysync", translate("verysync"), "<b><font color=\"green\">微力同步 正在运行!</font></b>")
+	m = Map("verysync", translate("verysync"), "<b style=\"color:green\">微力同步 正在运行!</b>")
 else
-	m = Map("verysync", translate("verysync"), "<b><font color=\"red\">" .. translate("微力同步 未启动") .. "</font></b>")
+	m = Map("verysync", translate("verysync"), "<b style=\"color:red\">" .. translate("微力同步 未启动") .. "</b>")
 end
 
 s = m:section(NamedSection, "setting", "verysync", translate("Settings"), translate("微力同步是一款跨平台分布式同步软件。"))

@@ -18,7 +18,7 @@ local dsp = require "luci.dispatcher"
 		function(x, json) {
 			if (x && x.status == 200) {
 				if (_status)
-					_status.innerHTML = json.status ? '<em><b><font color=green><%:RUNNING%></font></b></em> <input class="btn cbi-button mar-10" type="button" value="<%:Enter interface%>" onclick="openwebui();" />' : '<em><b><font color=red><%:NOT RUNNING%></font></b></em>';
+					_status.innerHTML = json.status ? '<em><b style=color:green><%:RUNNING%></b></em> <input class="btn cbi-button mar-10" type="button" value="<%:Enter interface%>" onclick="openwebui();" />' : '<em><b style=color:red><%:NOT RUNNING%></b></em>';
 			}
 		});
 		

@@ -5,9 +5,9 @@ XHR.poll(3,'<%=url([[admin]],[[vpn]],[[openvpn-server]],[[run]])%>',null,
 		var tb=document.getElementById('cert_status');
 		if (data && ta && tb){
 			if (data.running){
-				ta.innerHTML='<em><b><font color=green><%:OpenVPN Server RUNNING%></font></b></em>';
+				ta.innerHTML='<em><b style=color:green><%:OpenVPN Server RUNNING%></b></em>';
 			}else{
-				ta.innerHTML='<em><b><font color=red><%:OpenVPN Server NOT RUNNING%></font></b></em>';
+				ta.innerHTML='<em><b style=color:red><%:OpenVPN Server NOT RUNNING%></b></em>';
 			}
 			if (data.cert){
 				tb.innerHTML='<em><b><font color=green><%:Certificate Generated%></font></b></em>';

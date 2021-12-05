@@ -11,9 +11,9 @@ LuCI - Lua Configuration Interface
 require("luci.sys")
 
 if luci.sys.call("ps -w | grep ddnspod |grep -v grep >/dev/null") == 0 then
-	m = Map("dnspod", translate("动态DNSPOD"), "%s - %s" %{translate("DDNSPOD"), translate("<strong><font color=\"green\">运行中</font></strong>")})
+	m = Map("dnspod", translate("动态DNSPOD"), "%s - %s" %{translate("DDNSPOD"), translate("<strong><b style=\"color:green\">运行中</strong></b>")})
 else
-	m = Map("dnspod", translate("动态DNSPOD"), "%s - %s" %{translate("DDNSPOD"), translate("<strong><font color=\"red\">未运行</font></strong>")})
+	m = Map("dnspod", translate("动态DNSPOD"), "%s - %s" %{translate("DDNSPOD"), translate("<strong><b style=\"color:red\">未运行</strong></b>")})
 end
 
 ------------------------------------------------------------

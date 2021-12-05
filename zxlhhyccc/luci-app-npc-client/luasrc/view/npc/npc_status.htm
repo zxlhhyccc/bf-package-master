@@ -4,10 +4,10 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[npc]], [[status]])%>', null,
 		var tb = document.getElementById('npc_status');
 		if (data && tb) {
 			if (data.running) {
-				var links = '<em><b><font color=green><%:Nps%>' + data.bin_version + ' <%:Service is running.%></font></b></em>';
+				var links = '<em><b style=color:green><%:Nps%>' + data.bin_version + ' <%:Service is running.%></b></em>';
 				tb.innerHTML = links;
 			} else {
-				tb.innerHTML = '<em><b><font color=red><%:Nps%>' + data.bin_version + ' <%:Service is not running.%></font></b></em>';
+				tb.innerHTML = '<em><b style=color:red><%:Nps%>' + data.bin_version + ' <%:Service is not running.%></b></em>';
 			}
 		}
 	}

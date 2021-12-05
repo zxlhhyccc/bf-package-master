@@ -5,7 +5,7 @@ XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "smartdns", "stat
 		if (data && tb) {
 			var links = "";
 			if (data.running) {
-				links = '<b><font color=green>SmartDNS - <%:RUNNING%></font></b></em>';
+				links = '<b style=color:green>SmartDNS - <%:RUNNING%></b></em>';
 				if (data.redirect) {
 					if (data.redirect == 1) {
 						if (data.ipv4_works == 0) {
@@ -24,7 +24,7 @@ XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "smartdns", "stat
 					}
 				}
 			} else {
-				links = '<b><font color=red>SmartDNS - <%:NOT RUNNING%></font></b>';
+				links = '<b style=color:red>SmartDNS - <%:NOT RUNNING%></b>';
 			}
 
 			tb.innerHTML = links;

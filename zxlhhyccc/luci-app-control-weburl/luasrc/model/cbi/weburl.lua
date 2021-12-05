@@ -15,13 +15,13 @@ local lucimode=(luci.sys.call("[ $(uci get weburl.@basic[0].lucimode 2>/dev/null
 local button = ""
 local state_msg = ""
 if running and ruleswt then
-state_msg = "<b><font color=\"green\">" .. translate("正常运行") .. "</font></b>"
+state_msg = "<b style=\"color:green\">" .. translate("正常运行") .. "</b>"
 elseif running and not ruleswt then
 state_msg = "<b><font color=\"green\">" .. translate("已运行但规则数量不符，请在终端输入 iptables -L WEBURL 检查") .. "</font></b>"
 elseif not running and ruleswt then
 state_msg = "<b><font color=\"red\">" .. translate("已运行但主链丢失，过滤功能没有生效，请重新运行") .. "</font></b>"
 else
-state_msg = "<b><font color=\"red\">" .. translate("没有运行") .. "</font></b>"
+state_msg = "<b style=\"color:red\">" .. translate("没有运行") .. "</b>"
 end
 a = Map("weburl", translate("网址过滤/关键字过滤/MAC黑名单/时间控制/端口控制"), translate("利用iptables进行数据包过滤以禁止符合设定条件的用户连接互联网的工具软件。" .. button  .. "<br/><br/>" .. translate("运行状态").. " : "  .. state_msg .. "<br />"))
 t = a:section(TypedSection, "basic", translate(""), translate(""))

@@ -1,7 +1,7 @@
 require("luci.sys")
 --mod by wulishui 20200908
 
-m=Map("rebootschedule",translate("Reboot schedule"),translate("<font color=\"green\"><b>让计划任务更加易用的插件，可以使用-表示连续的时间范围，使用,表示不连续的多个时间点，使用*/表示循环执行。可以使用“添加”来添加多条计划任务命令。可使用“--自定义--”来自行添加其它参数。</b></font></br>* 所有时间参数都是指该自然单位中的时间点，而非累积计数，比如月份只能是1～12，日期只能是1～31，星期只能是0～6，小时只能是0～23，分钟只能是0～59，不能使用50天、48小时这种累积计数表示法。</br>* 所有数值可使用-连接表示连续范围，比如星期：1-5 表示星期一至星期五；使用,表示不连续的点，比如星期：1,3,5 表示仅仅星期一、三、五。月份、日期、时间用法雷同。</br>* 如需添加后在“计划任务”中修改的，需要先将“计划任务”中命令行后方的“#By rebootschedule”删除，后将本界面的相关项目的“启用”去掉，否则每次启动会被还原。</br>* <input class=\"cbi-button cbi-button-apply\" type=\"submit\" value=\" "..translate("点击此处查看使用示例").." \" onclick=\"window.open('http://'+window.location.hostname+'/reboothelp.jpg')\"/>"))
+m=Map("rebootschedule",translate("Reboot schedule"),translate("<font color=\"green\"><b>让计划任务更加易用的插件，可以使用-表示连续的时间范围，使用,表示不连续的多个时间点，使用*/表示循环执行。可以使用“添加”来添加多条计划任务命令。可使用“--自定义--”来自行添加其它参数。</b></font></br>* 所有时间参数都是指该自然单位中的时间点，而非累积计数，比如月份只能是1～12，日期只能是1～31，星期只能是0～6，小时只能是0～23，分钟只能是0～59，不能使用50天、48小时这种累积计数表示法。</br>* 所有数值可使用-连接表示连续范围，比如星期：1-5 表示星期一至星期五；使用,表示不连续的点，比如星期：1,3,5 表示仅仅星期一、三、五。月份、日期、时间用法雷同。</br>* 如需添加后在“计划任务”中修改的，需要先将“计划任务”中命令行后方的“#By rebootschedule”删除，后将本界面的相关项目的“启用”去掉，否则每次启动会被还原。</br>* <input class=\"btn cbi-button cbi-button-reload\" type=\"submit\" value=\" "..translate("点击此处查看使用示例").." \" onclick=\"window.open('http://'+window.location.hostname+'/reboothelp.jpg')\"/>"))
 
 s=m:section(TypedSection,"crontab","")
 s.addremove=true

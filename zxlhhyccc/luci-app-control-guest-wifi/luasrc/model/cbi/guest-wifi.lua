@@ -18,37 +18,37 @@ local ul=(luci.sys.call("[ $(uci get guest-wifi.@guest-wifi[0].wifi_up 2>/dev/nu
 local dl=(luci.sys.call("[ $(uci get guest-wifi.@guest-wifi[0].wifi_dn 2>/dev/null) -eq 0 ] 2>/dev/null") == 0)
 
 if limited then
-        state_msg3 = "<b><font color=\"green\">" .. translate(" 限速✓") .. "</font></b>"
+        state_msg3 = "<b style=\"color:green\">" .. translate(" 限速✓") .. "</b>"
 else
-        state_msg3 = "<b><font color=\"red\">" .. translate(" 未限速") .. "</font></b>"
+        state_msg3 = "<b style=\"color:red\">" .. translate(" 未限速") .. "</b>"
 end
 
 if ul and dl then
-        state_msg3 = "<b><font color=\"red\">" .. translate(" 不限速") .. "</font></b>"
+        state_msg3 = "<b style=\"color:red\">" .. translate(" 不限速") .. "</b>"
 end
 
 if wlan then
 if disabled then
-        state_msg2 = "<b><font color=\"red\">" .. translate(" 访客Wifi未打开") .. "</font></b>"
+        state_msg2 = "<b style=\"color:red\">" .. translate(" 访客Wifi未打开") .. "</b>"
 else
-        state_msg2 = "<b><font color=\"green\">" .. translate(" 访客Wifi✓") .. "</font></b>"
+        state_msg2 = "<b style=\"color:green\">" .. translate(" 访客Wifi✓") .. "</b>"
 end
 end
 
 if sltradio then
-        state_msg2 = "<b><font color=\"red\">" .. translate(" 不使用访客Wifi") .. "</font></b>"
+        state_msg2 = "<b style=\"color:red\">" .. translate(" 不使用访客Wifi") .. "</b>"
 end
 
 if not wlan then
-        state_msg2 = "<b><font color=\"red\">" .. translate(" 无Wifi设备") .. "</font></b>"
+        state_msg2 = "<b style=\"color:red\">" .. translate(" 无Wifi设备") .. "</b>"
 end
 
 if running then
-        state_msg = "<b><font color=\"green\">" .. translate(" 配置✓") .. "</font></b>"
+        state_msg = "<b style=\"color:green\">" .. translate(" 配置✓") .. "</b>"
 else
-        state_msg = "<b><font color=\"red\">" .. translate(" 配置未创建") .. "</font></b>"
-        state_msg2 = "<b><font color=\"gray\">" .. translate(" ") .. "</font></b>"
-        state_msg3 = "<b><font color=\"gray\">" .. translate(" ") .. "</font></b>"
+        state_msg = "<b style=\"color:red\">" .. translate(" 配置未创建") .. "</b>"
+        state_msg2 = "<b style=\"color:gray\">" .. translate(" ") .. "</b>"
+        state_msg3 = "<b style=\"color:gray\">" .. translate(" ") .. "</b>"
 end
 
 m = Map("guest-wifi", translate("Guest-network"))
@@ -99,7 +99,7 @@ end
 --
 end
 
-s = m:section(TypedSection, "guest-wifi", translate(""), translate("<b><font color=\"black\">设置</font></b> 下方配置除限速项目（<font color=\"brown\">棕色部分</font>）外，如需修改并且投入使用，则需要先勾选“创建配置”、再修改、然后按“保存并应用”，等候10秒钟后重新打开页面即可看到运行结果。"))
+s = m:section(TypedSection, "guest-wifi", translate(""), translate("<b><font style=\"color:black\">设置</font></b> 下方配置除限速项目（<font style=\"color:brown\">棕色部分</font>）外，如需修改并且投入使用，则需要先勾选“创建配置”、再修改、然后按“保存并应用”，等候10秒钟后重新打开页面即可看到运行结果。"))
 s.anonymous = true 
 s.addremove = false
 
@@ -111,23 +111,23 @@ enable.optional = false
 enable.rmempty = false
 
 
-wifi_up = s:taboption("basic",Value, "wifi_up", translate("总上传限速<br/>（MB/s）"), translate("<font color=\"brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
+wifi_up = s:taboption("basic",Value, "wifi_up", translate("总上传限速<br/>（MB/s）"), translate("<font style=\"color:brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
 wifi_up.default = "0"
 wifi_up.rmempty = true
 
-wifi_dn = s:taboption("basic",Value, "wifi_dn", translate("总下载限速<br/>（MB/s）"), translate("<font color=\"brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
+wifi_dn = s:taboption("basic",Value, "wifi_dn", translate("总下载限速<br/>（MB/s）"), translate("<font style=\"color:brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
 wifi_dn.default = "0"
 wifi_dn.rmempty = true
 
-ip_up = s:taboption("basic",Value, "ip_up", translate("单用户上传<br/>（MB/s）"), translate("<font color=\"brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
+ip_up = s:taboption("basic",Value, "ip_up", translate("单用户上传<br/>（MB/s）"), translate("<font style=\"color:brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
 ip_up.default = "0.1"
 ip_up.rmempty = true
 
-ip_dn = s:taboption("basic",Value, "ip_dn", translate("单用户下载<br/>（MB/s）"), translate("<font color=\"brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
+ip_dn = s:taboption("basic",Value, "ip_dn", translate("单用户下载<br/>（MB/s）"), translate("<font style=\"color:brown\">填0关闭。无须选择“创建配置”修改即可生效。速率如无单位默认为“MB/s”；带K、M、G，为“B/s”；带k、m、g为“b/s”。</font>"))
 ip_dn.default = "0.1"
 ip_dn.rmempty = true
 
-offtimer = s:taboption("basic",Value, "offtimer", translate("临时关闭"), translate("<font color=\"brown\">为“临时关闭Wifi限速”的临时时限，更改后须先按“保存并应用”再按“临时关闭访客Wifi限速”方可生效。</font>"))
+offtimer = s:taboption("basic",Value, "offtimer", translate("临时关闭"), translate("<font style=\"color:brown\">为“临时关闭Wifi限速”的临时时限，更改后须先按“保存并应用”再按“临时关闭访客Wifi限速”方可生效。</font>"))
 offtimer:value("10", translate("10分钟"))
 offtimer:value("30", translate("30分钟"))
 offtimer:value("60", translate("1小时"))
@@ -139,7 +139,7 @@ offtimer:value("1440", translate("24小时"))
 offtimer.default = "30"
 
 if wlan then
-device = s:taboption("basic",ListValue, "device", translate("无线设备"), translate("承载访客wifi的无线网卡，选none则仅配置有线访客网络，无Wifi，或之后将某个无线网卡（<font color=\"red\">需先在br-lan解除原有桥接</font>）桥接到br-guest接口使用。"))
+device = s:taboption("basic",ListValue, "device", translate("无线设备"), translate("承载访客wifi的无线网卡，选none则仅配置有线访客网络，无Wifi，或之后将某个无线网卡（<font style=\"color:red\">需先在br-lan解除原有桥接</font>）桥接到br-guest接口使用。"))
 device:value("radio0", "radio0")
 device:value("radio1", "radio1")
 device:value("radio2", "radio2")
@@ -181,7 +181,7 @@ end
 
 s:tab("advance", translate("Advanced Options"))
 
-e = s:taboption("advance",DynamicList, "ifname", translate("网卡设备"), translate("将<font color=\"red\">空闲未用</font>（否则须<font color=\"red\">先将其解除桥接</font>）的网卡（有线或无线）如eth0、wlan1桥接到访客网络可实现对连接其的用户进行隔离，等同于在接口br-guest的“物理设置”中桥接。"))
+e = s:taboption("advance",DynamicList, "ifname", translate("网卡设备"), translate("将<font style=\"color:red\">空闲未用</font>（否则须<font style=\"color:red\">先将其解除桥接</font>）的网卡（有线或无线）如eth0、wlan1桥接到访客网络可实现对连接其的用户进行隔离，等同于在接口br-guest的“物理设置”中桥接。"))
 for _, iface in ipairs(ifaces) do
 if not ( iface:match("_ifb$")) then
 	if ( iface:match("^eth*") or iface:match("^usb*") or iface:match("^wlan*")) then
