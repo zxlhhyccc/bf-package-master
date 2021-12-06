@@ -149,7 +149,7 @@ define Package/v2ray-core/conffiles
 /etc/v2ray/
 endef
 
-GEOIP_VER:=202112020029
+GEOIP_VER:=202112060252
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
