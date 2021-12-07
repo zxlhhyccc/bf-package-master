@@ -9,17 +9,17 @@ XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "smartdns", "stat
 				if (data.redirect) {
 					if (data.redirect == 1) {
 						if (data.ipv4_works == 0) {
-							links += "<br></br><b><font color=red><%:IPV4 53 Port Redirect Failure%></font></b>"
+							links += "<br></br><b style=color:red><%:IPV4 53 Port Redirect Failure%></b>"
 						}
 						
 						if (data.ipv6_works != 2) {
 							if (data.ipv6_works == 0) {
-								links += "<br></br><b><font color=red><%:IPV6 53 Port Redirect Failure%></font></b>"
+								links += "<br></br><b style=color:red><%:IPV6 53 Port Redirect Failure%></b>"
 							}
 						}
 					} else if (data.redirect == 2) {
 						if (data.dnsmasq_forward == 0) {
-							links += "<br></br><b><font color=red><%:Dnsmasq Forwared To Smartdns Failure%></font></b>"
+							links += "<br></br><b style=color:red><%:Dnsmasq Forwared To Smartdns Failure%></b>"
 						}
 					}
 				}

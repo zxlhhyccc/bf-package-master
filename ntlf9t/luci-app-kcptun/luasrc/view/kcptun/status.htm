@@ -56,18 +56,18 @@ local luci_version = kcp.get_luci_version()
         <%- if client_version == "" then -%>
         <em><%:Invalid Client File.%></em>
         <% else -%>
-        <%=pcdata(client_version)%>
+        <b><%=pcdata(client_version)%></b>
         <%- end %>
-        <a href="https://github.com/xtaci/kcptun/releases/latest" target="_blank"><%:Get latest%></a>
-        <a href="https://github.com/kuoruan/openwrt-kcptun/releases/latest" target="_blank"><%:Get latest%> (ipk)</a>
+        <a href="https://github.com/xtaci/kcptun/releases/latest" target="_blank"><b style=color:blue><%:Get latest%></b></a>
+        <a href="https://github.com/kuoruan/openwrt-kcptun/releases/latest" target="_blank"><b style=color:blue><%:Get latest%> (ipk)</b></a>
       </div>
     </div>
     <% if luci_version ~= "" then -%>
     <div class="kcptun-status-item">
       <div class="kcptun-status-item-title"><%:LuCI Version%></div>
       <div class="kcptun-status-item-value">
-        <%=pcdata(luci_version)%>
-        <a href="https://github.com/kuoruan/luci-app-kcptun/releases/latest" target="_blank"><%:Get latest%></a>
+        <b><%=pcdata(luci_version)%></b>
+        <a href="https://github.com/kuoruan/luci-app-kcptun/releases/latest" target="_blank"><b style=color:blue><%:Get latest%></b></a>
       </div>
     </div>
     <% end -%>
@@ -80,7 +80,7 @@ local luci_version = kcp.get_luci_version()
       if (x.status !== 200 || !json) return;
       var clientStatusElm = document.getElementById('_kcptun-client_status');
       if (clientStatusElm) {
-        clientStatusElm.innerHTML = json.client ? '<%:Running%>' : '<%:Not Running%>';
+        clientStatusElm.innerHTML = json.client ? '<b style=color:green><%:Running%></b>' : '<b style=color:red><%:Not Running%></b>';
       }
     }
   );
