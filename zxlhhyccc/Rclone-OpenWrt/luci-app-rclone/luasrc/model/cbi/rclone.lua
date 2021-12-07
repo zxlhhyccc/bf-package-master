@@ -26,10 +26,10 @@ else
 end
 
 if running then
-    state_msg = '<b><font color="green">' .. translate('rclone running') .. '</font></b>'
+    state_msg = '<b style=\"color:green\">' .. translate('rclone running') .. '</b>'
     address_msg = translate('rclone address') .. ' : http://' .. trip .. ':' .. trport .. '<br/> <br/>'
 else
-    state_msg = '<b><font color="red">' .. translate('rclone not run') .. '</font></b>'
+    state_msg = '<b style=\"color:red\">' .. translate('rclone not run') .. '</b>'
     address_msg = ''
 end
 
