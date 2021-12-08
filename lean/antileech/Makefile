@@ -31,7 +31,7 @@ define Package/antileech
   CATEGORY:=Network
   TITLE:=AntiLeech for aMule
   URL:=https://github.com/persmule/amule-dlp.antiLeech
-  DEPENDS:=+libc +libwxbase
+  DEPENDS:=+amule +libc +libwxbase
 endef
 
 define Package/antileech/description

@@ -6,13 +6,13 @@ XHR.poll(5, '<%=luci.dispatcher.build_url("admin/nas/amule/status")%>', null,
 		var btn_tmpl = '<input class="btn cbi-button cbi-button-apply" id="btn_startstop" style="font-size: 100%;" value="PID: NUMBER"type="button" onclick="onclick_startstop(this.id)">'
 		if (data && tb) {
 			if (data.amuled) {
-				var links = '<em><b style=color:green><%:aMule daemon is running.%></b></em>';
+				var links = '<em><%:aMule daemon is running.%></em>';
 				if (data.amuleweb) {
-					links += '<input class="btn cbi-button mar-10" type="button" value="<%:Open aMuleWeb%>" onclick="openwebui();" />';
+					links += '<input class="cbi-button mar-10" type="button" value="<%:Open aMuleWeb%>" onclick="openwebui();" />';
 				}
 				tb.innerHTML = links;
 			} else {
-				tb.innerHTML = '<em><b style=color:red><%:aMule daemon is not running.%></b></em>';
+				tb.innerHTML = '<em><%:aMule daemon is not running.%></em>';
 			}
 			
 			if (data.amuled_pid == "0") {
