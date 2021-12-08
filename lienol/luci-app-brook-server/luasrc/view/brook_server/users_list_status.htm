@@ -14,7 +14,7 @@ local dsp = require "luci.dispatcher"
 			},
 			function(x, result) {
 				brook_users_status[result.index].setAttribute("style","font-weight:bold;");
-				brook_users_status[result.index].setAttribute("color",result.status ? "green":"red");
+				brook_users_status[result.index].setAttribute("style",result.status ? "color:green":"color:red");
 				brook_users_status[result.index].innerHTML = (result.status ? '✓' : 'X');
 			}
 		);
