@@ -17,8 +17,8 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA.git
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
-PKG_SOURCE_VERSION:=e30bcf046cbbef5516c50c8adecf19131c2227fc
-PKG_MIRROR_HASH:=42414160d4bff58923121b67147bfc65aac1e656bd27814bc4367beca4db5c83
+PKG_SOURCE_VERSION:=366ef30071dc8cc73cd8768f6a0a58fa1b9533ff
+PKG_MIRROR_HASH:=13fa1a8bade0f15938f5168f5010158eb2680f208a7e93cd7cf6a9a24abf2994
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -33,6 +33,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/v2rayA/v2rayA
+GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=$(GO_PKG)/conf.Version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
@@ -62,11 +63,6 @@ define Package/v2raya/description
   compatible with SS, SSR, Trojan(trojan-go), PingTunnel protocols.
 endef
 
-define Package/v2raya/conffiles
-/etc/v2raya/
-/etc/config/v2raya
-endef
-
 define Package/v2raya/config
 config V2RAYA_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
@@ -82,6 +78,11 @@ ifneq ($(CONFIG_V2RAYA_COMPRESS_GOPROXY),)
 	export GO111MODULE=on
 	export GOPROXY=https://goproxy.baidu.com
 endif
+
+define Package/v2raya/conffiles
+/etc/v2raya/
+/etc/config/v2raya
+endef
 
 define Build/Compile
 	( \
