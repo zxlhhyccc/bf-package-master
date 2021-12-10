@@ -75,10 +75,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/geoip/releases/latest/download
   URL_FILE:=geoip-only-cn-private.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=skip
+  HASH:=2fe4fe63e142c55d84b9e82be2c8ecc054e557ea9838571544d1714987bd4876
 endef
 
-GEOSITE_VER:=202112082210
+GEOSITE_VER:=202112092210
 # GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -86,7 +86,7 @@ define Download/geosite
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=skip
+  HASH:=9e82699cbd2e8667dd3c95c5e6452599779db24b2c6fb410beb31e97814eec08
 endef
 
 define Build/Prepare
