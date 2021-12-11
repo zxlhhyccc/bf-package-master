@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=go-aliyundrive-webdav
-PKG_VERSION:=1.0.20
+PKG_VERSION:=1.0.22
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/LinkLeong/go-aliyundrive-webdav/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=ce7108eca5c6d4dacfc32d5c3daf2a3465ad48cfe0c09f08c7eb77045d1c1b3c
+PKG_HASH:=ad4360932a08abc6ec91576debc5d014221e73e1cb4c8fb763bed45666301cda
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILE:=LICENSE
