@@ -78,7 +78,7 @@ define Download/geoip
   HASH:=2fe4fe63e142c55d84b9e82be2c8ecc054e557ea9838571544d1714987bd4876
 endef
 
-GEOSITE_VER:=202112102210
+GEOSITE_VER:=202112112210
 # GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -86,7 +86,7 @@ define Download/geosite
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=ac2029c81ac9d430cb2608bf857a915d86a6d201bd2d236602d2f591dd8ea466
+  HASH:=ecd81f31dd876ac09ecba80162c37cc2a7913211e1d9c7fb7bcf3ebb89c7a9f5
 endef
 
 define Build/Prepare
