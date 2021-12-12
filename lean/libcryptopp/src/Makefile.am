@@ -204,7 +204,7 @@ libcryptopp_la_DEPENDENCIES += $(libothers_la_OBJECTS)
 
 ## Man, did Autotools fuck this up royally...
 ## https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -release 8.5.0 -version-info 8:5
+libcryptopp_la_LDFLAGS = $(AM_LDFLAGS) -release 8.3.0 -version-info 8:3
 
 ## Source files with special needs
 libcryptlib_la_SOURCES = cryptlib.cpp
