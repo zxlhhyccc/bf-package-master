@@ -5,14 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=Mosdns
-PKG_VERSION:=2.1.2
+PKG_VERSION:=2.2.0
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=Mosdns-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/IrineSistiana/mosdns.git
-PKG_SOURCE_VERSION:=60bad9d6620f26230f9fb3d79431e54a64ca22aa
-PKG_MIRROR_HASH:=652bdd3896870699b59087d80dde8db34978edd9d770cb982de63029b22b3d6d
+PKG_SOURCE_VERSION:=fcf1703d6bb7bb2a85dbcbe10aeccf99ba1c4f20
+PKG_MIRROR_HASH:=f12c695cc87ac8345b26ab6f3159b0e927bfbde01d285db60b8d4400e5dda5a6
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -86,7 +86,7 @@ define Download/geosite
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=ecd81f31dd876ac09ecba80162c37cc2a7913211e1d9c7fb7bcf3ebb89c7a9f5
+  HASH:=5bf02046b506296e07f68ff39b2750360f924b273586016fcc9905a3e18ef462
 endef
 
 define Build/Prepare
