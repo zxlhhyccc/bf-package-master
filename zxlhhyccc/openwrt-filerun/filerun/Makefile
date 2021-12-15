@@ -18,16 +18,16 @@ define Package/filerun
 	CATEGORY:=Network
 	TITLE:=Filerun
 	PKGARCH:=all
-	DEPENDS:=@x86_64 +luci-ssl-nginx +php7 +php7-mod-filter +php7-fpm +php7-mod-ctype +php7-mod-dom +php7-mod-fileinfo +php7-mod-session +php7-mod-curl +php7-mod-gd +php7-mod-json \
-	+php7-mod-mbstring +php7-mod-opcache +php7-mod-sockets +php7-mod-pdo-mysql +php7-mod-mysqli +php7-mod-exif +php7-mod-xml \
-	+php7-mod-openssl +php7-mod-zip +mariadb-common +mariadb-server-base +mariadb-server +mariadb-client-base +mariadb-client \
+	DEPENDS:=@x86_64 +luci-ssl-nginx +php8 +php8-mod-filter +php8-fpm +php8-mod-ctype +php8-mod-dom +php8-mod-fileinfo +php8-mod-session +php8-mod-curl +php8-mod-gd \
+	+php8-mod-mbstring +php8-mod-opcache +php8-mod-sockets +php8-mod-pdo-mysql +php8-mod-mysqli +php8-mod-exif +php8-mod-xml \
+	+php8-mod-openssl +php8-mod-zip +mariadb-common +mariadb-server-base +mariadb-server +mariadb-client-base +mariadb-client \
 	+@BUILD_PATENTED +ffmpeg +libx264 +imagemagick
 endef
 
 define Package/filerun/conffiles
 /etc/config/filerun
 /etc/nginx/conf.d/filerun.conf
-/etc/php7/custom.ini
+/etc/php8/custom.ini
 /etc/mysql/conf.d/custom.cnf	
 endef
 
@@ -49,11 +49,11 @@ define Package/filerun/extra_provides
 endef
 
 define Package/filerun/install
-	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d $(1)/etc/nginx/conf.d $(1)/etc/php7 $(1)/etc/mysql/conf.d
+	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d $(1)/etc/nginx/conf.d $(1)/etc/php8 $(1)/etc/mysql/conf.d
 	$(INSTALL_CONF) ./files/filerun.config $(1)/etc/config/filerun
 	$(INSTALL_BIN) ./files/filerun.init $(1)/etc/init.d/filerun
 	$(INSTALL_DATA) ./files/filerun_nginx.conf $(1)/etc/nginx/conf.d/filerun.conf
-	$(INSTALL_DATA) ./files/custom_php.ini $(1)/etc/php7/custom.ini
+	$(INSTALL_DATA) ./files/custom_php.ini $(1)/etc/php8/custom.ini
 	$(INSTALL_DATA) ./files/custom_mysql.ini $(1)/etc/mysql/conf.d/custom.cnf
 	$(INSTALL_DIR) $(1)/www/filerun
 	$(CP) \
