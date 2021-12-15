@@ -5,14 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=Mosdns
-PKG_VERSION:=2.2.0
+PKG_VERSION:=2.2.1
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=Mosdns-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/IrineSistiana/mosdns.git
-PKG_SOURCE_VERSION:=8ea52e1ee0877af93d13426b7b6a784c08f91fb1
-PKG_MIRROR_HASH:=aa76291ed7908555adeb20fdf6019b5b200aaa758554665116185a18b767684b
+PKG_SOURCE_VERSION:=ec1c08b70299b25a9652ac0c18ea540bab6a50ef
+PKG_MIRROR_HASH:=19226149009ace0f66e10761055912f6cd340bb1c1421680d2d64011f785700c
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -75,10 +75,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/geoip/releases/latest/download
   URL_FILE:=geoip-only-cn-private.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=2fe4fe63e142c55d84b9e82be2c8ecc054e557ea9838571544d1714987bd4876
+  HASH:=skip
 endef
 
-GEOSITE_VER:=202112132209
+GEOSITE_VER:=202112142210
 # GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -86,7 +86,7 @@ define Download/geosite
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=e04375b57c54b064d000004f07662764f0cbc5e7fea10cb2daf579e20aadab92
+  HASH:=skip
 endef
 
 define Build/Prepare

@@ -5,14 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=MosDNS
-PKG_VERSION:=2.2.0
+PKG_VERSION:=2.2.1
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=MosDNS-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/IrineSistiana/mosdns.git
-PKG_SOURCE_VERSION:=8ea52e1ee0877af93d13426b7b6a784c08f91fb1
-PKG_MIRROR_HASH:=0b88422f637b60381a20b2baede3bcbfb043bae36154ecda466897746a5b66a8
+PKG_SOURCE_VERSION:=ec1c08b70299b25a9652ac0c18ea540bab6a50ef
+PKG_MIRROR_HASH:=eeae0453931ac31e0195455a67e1e9b4101aeceeac00e2f90bf26e6177359e57
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -68,7 +68,7 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-GEOIP_VER:=202112132209
+GEOIP_VER:=202112142210
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
@@ -77,10 +77,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
   URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=4068ba444626659d091a71f7e4afa5b00b05f5e29fee0cf7e8f76ddd1ceb2b1d
+  HASH:=skip
 endef
 
-GEOSITE_VER:=202112132209
+GEOSITE_VER:=202112142210
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -91,7 +91,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=e04375b57c54b064d000004f07662764f0cbc5e7fea10cb2daf579e20aadab92
+  HASH:=skip
 endef
 
 define Build/Prepare
