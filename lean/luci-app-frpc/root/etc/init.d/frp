@@ -172,7 +172,7 @@ start() {
 
 	config_load "frp"
 	local enabled server_addr server_port time privilege_token token user
- tcp_mux enable_cpool tls_enable bin_path time ver url
+	local tcp_mux enable_cpool tls_enable bin_path time ver url
 	local pool_count log_level log_max_days login_fail_exit http_proxy protocol admin_port admin_user admin_pwd
 
 	config_get_bool enabled common enabled 1
