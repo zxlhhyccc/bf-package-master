@@ -30,7 +30,7 @@ npc_header() {
 
 	npc_write_bool compress $1
 	npc_write_bool crypt $1
-	nps_write_bool auto_reconnection $1
+	npc_write_bool auto_reconnection $1
 
 	Log_level=$log_level
 	Enabled=$enabled
