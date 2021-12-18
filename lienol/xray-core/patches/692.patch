@@ -38,7 +38,7 @@ diff --git a/proxy/socks/client.go b/proxy/socks/client.go
 index 77c306b59..ceab9db38 100644
 --- a/proxy/socks/client.go
 +++ b/proxy/socks/client.go
-@@ -152,7 +152,8 @@ func (c *Client) Process(ctx context.Context, link *transport.Link, dialer inter
+@@ -151,7 +151,8 @@ func (c *Client) Process(ctx context.Context, link *transport.Link, dialer inter
  		newError("failed to clear deadline after handshake").Base(err).WriteToLog(session.ExportIDToError(ctx))
  	}
  
@@ -52,7 +52,7 @@ diff --git a/proxy/socks/server.go b/proxy/socks/server.go
 index 8aeb568ac..8256e513e 100644
 --- a/proxy/socks/server.go
 +++ b/proxy/socks/server.go
-@@ -148,7 +148,8 @@ func (*Server) handleUDP(c io.Reader) error {
+@@ -147,7 +147,8 @@ func (*Server) handleUDP(c io.Reader) error {
  }
  
  func (s *Server) transport(ctx context.Context, reader io.Reader, writer io.Writer, dest net.Destination, dispatcher routing.Dispatcher, inbound *session.Inbound) error {
@@ -66,7 +66,7 @@ diff --git a/proxy/vless/inbound/inbound.go b/proxy/vless/inbound/inbound.go
 index 73097526d..cd4d3f47f 100644
 --- a/proxy/vless/inbound/inbound.go
 +++ b/proxy/vless/inbound/inbound.go
-@@ -311,7 +311,8 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection i
+@@ -310,7 +310,8 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection i
  				return newError(`failed to find the default "path" config`).AtWarning()
  			}
  
@@ -76,7 +76,7 @@ index 73097526d..cd4d3f47f 100644
  			timer := signal.CancelAfterInactivity(ctx, cancel, sessionPolicy.Timeouts.ConnectionIdle)
  			ctx = policy.ContextWithBufferPolicy(ctx, sessionPolicy.Buffer)
  
-@@ -484,7 +485,8 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection i
+@@ -483,7 +484,8 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection i
  	}
  
  	sessionPolicy = h.policyManager.ForLevel(request.User.Level)
@@ -90,7 +90,7 @@ diff --git a/proxy/vless/outbound/outbound.go b/proxy/vless/outbound/outbound.go
 index 750a3940a..574a0908e 100644
 --- a/proxy/vless/outbound/outbound.go
 +++ b/proxy/vless/outbound/outbound.go
-@@ -172,7 +172,8 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
+@@ -171,7 +171,8 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
  	}
  
  	sessionPolicy := h.policyManager.ForLevel(request.User.Level)
