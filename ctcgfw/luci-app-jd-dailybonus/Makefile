@@ -6,7 +6,7 @@ PKG_RELEASE:=20211016
 
 LUCI_TITLE:=Luci for JD dailybonus Script
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+node +wget +lua +libuci-lua
+LUCI_DEPENDS:=+node +wget-ssl +lua +libuci-lua
 
 define Package/$(PKG_NAME)/conffiles
 /etc/config/jd-dailybonus
