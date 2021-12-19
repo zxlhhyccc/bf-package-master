@@ -37,13 +37,23 @@ GO_PKG_LDFLAGS_X:=main.version=v$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/mosdns
+define Package/mosdns/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
   TITLE:=A plug-in DNS forwarder/splitter
   URL:=https://github.com/IrineSistiana/mosdns
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+endef
+
+define Package/mosdns
+  $(call Package/mosdns/Default)
+  DEPENDS:=$(GO_ARCH_DEPENDS)
+endef
+
+define Package/mosdns-geodata
+  $(call Package/mosdns/Default)
+  TITLE+= (geodata resources)
+  DEPENDS:=mosdns
 endef
 
 define Package/mosdns/config
@@ -62,6 +72,34 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
+GEOIP_VER:=202112160030
+GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
+
+define Download/geoip
+  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
+  URL_FILE:=geoip.dat
+  FILE:=$(GEOIP_FILE)
+  HASH:=2c2aa036268a1a3e24d7f74bbd103ca7d822c289476f103a91def1dd04e58e6b
+endef
+
+GEOSITE_VER:=20211216170356
+GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
+
+define Download/geosite
+  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
+  URL_FILE:=dlc.dat
+  FILE:=$(GEOSITE_FILE)
+  HASH:=472ece1865bd0a502cbe21d6930df73dd0d55da5c7e6953e586856013d2a3efb
+endef
+
+define Build/Prepare
+	$(call Build/Prepare/Default)
+ifneq ($(CONFIG_PACKAGE_mosdns-geodata),)
+	$(call Download,geoip)
+	$(call Download,geosite)
+endif
+endef
+
 # GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
 define Build/Compile
@@ -79,6 +117,12 @@ define Package/mosdns/install
 	$(INSTALL_DATA) ./files/config.yaml $(1)/etc/mosdns/config.yaml
 endef
 
+define Package/mosdns-geodata/install
+	$(INSTALL_DIR) $(1)/etc/mosdns
+	$(INSTALL_DATA) $(DL_DIR)/$(GEOIP_FILE) $(1)/etc/mosdns/geoip.dat
+	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_FILE) $(1)/etc/mosdns/geosite.dat
+endef
+
 define Package/mosdns/postinst
 #!/bin/sh
 
@@ -92,3 +136,4 @@ endef
 
 $(eval $(call GoBinPackage,mosdns))
 $(eval $(call BuildPackage,mosdns))
+$(eval $(call BuildPackage,mosdns-geodata))
