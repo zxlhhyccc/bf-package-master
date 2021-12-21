@@ -13,6 +13,8 @@ enable = s:taboption("basic",Flag,"enabled",translate("Enable"))
 enable.rmempty = false
 
 server = s:taboption("basic",Value,"server_addr",translate("Server"))
+server.datatype="host"
+server.optional=false
 server.rmempty = false
 
 port = s:taboption("basic",Value,"server_port",translate("Port"))
@@ -25,6 +27,12 @@ protocol = s:taboption("basic",ListValue,"protocol",translate("Protocol Type"))
 protocol.default = "tcp"
 protocol:value("tcp",translate("TCP Protocol"))
 protocol:value("kcp",translate("KCP Protocol"))
+
+auto_reconnection = s:taboption("basic",ListValue,"auto_reconnection",translate("Auto Reconnection"))
+auto_reconnection.description = translate("Auto reconnect to the server when the connection is down.")
+auto_reconnection.default = "true"
+auto_reconnection:value("true",translate("True"))
+auto_reconnection:value("false",translate("False"))
 
 vkey = s:taboption("basic",Value,"vkey",translate("vkey"))
 vkey.optional = false
@@ -39,16 +47,15 @@ crypt = s:taboption("basic",Flag,"crypt",translate("Enable Encryption"),translat
 crypt.default = "1"
 crypt.rmempty = false
 
-auto_reconnection = s:taboption("basic",Flag,"auto_reconnection",translate("Enable AutoReconnection"),translate("Auto reconnect to the server when the connection is down."))
-auto_reconnection.default = "1"
-auto_reconnection.rmempty = false
-
 log_level = s:taboption("basic",ListValue,"log_level",translate("Log Level"))
 log_level:value(0,"Emergency")
+log_level:value(1,"Alert")
 log_level:value(2,"Critical")
 log_level:value(3,"Error")
 log_level:value(4,"Warning")
+log_level:value(5,"Notice")
+log_level:value(6,"Info")
 log_level:value(7,"Debug")
-log_level.default = "4"
+log_level.default="3"
 
 return m

@@ -1,5 +1,5 @@
 msgid "Nps Client"
-msgstr "Nps 内网穿透"
+msgstr "Nps 客户端"
 
 msgid "Nps is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."
 msgstr "Nps 是一种快速反向代理，可帮助您将 NAT 或防火墙后面的本地服务器公开到 Internet。"
@@ -11,13 +11,13 @@ msgid "vkey"
 msgstr "密钥(vkey)"
 
 msgid "Enable Compression"
-msgstr "使用压缩传输"
+msgstr "压缩传输"
 
 msgid "Enable Encryption"
-msgstr "使用加密传输"
+msgstr "加密传输"
 
-msgid "Enable AutoReconnection"
-msgstr "开启断线自动重连"
+msgid "Auto Reconnection"
+msgstr "自动重连"
 
 msgid "The contents will be compressed to speed up the traffic forwarding speed, but this will consume some additional cpu resources."
 msgstr "压缩传输内容，加快流量转发速度，会额外消耗 CPU 资源。"
@@ -47,7 +47,7 @@ msgid "Protocol Type"
 msgstr "协议类型"
 
 msgid "Server"
-msgstr "服务端地址"
+msgstr "服务器"
 
 msgid "TCP Protocol"
 msgstr "TCP"

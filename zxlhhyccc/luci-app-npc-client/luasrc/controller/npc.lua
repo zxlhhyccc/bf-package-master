@@ -1,15 +1,15 @@
 module("luci.controller.npc",package.seeall)
 
 function index()
-	if not nixio.fs.access("/etc/config/npc")then
+	if not nixio.fs.access("/etc/config/npc") then
 		return
 	end
 
 	local e
-	e=entry({"admin","services","npc"},cbi("npc"),_("Nps Client"))
-	e.i18n="npc"
-	e.dependent=true
-	entry({"admin","services","npc","status"},call("act_status")).leaf=true
+	e=entry({"admin","services","npc"},cbi("npc"),_("Nps Client"),100)
+	e.i18n = "npc"
+	e.dependent = true
+	entry({"admin","services","npc","status"},call("act_status")).leaf = true
 end
 
 function act_status()

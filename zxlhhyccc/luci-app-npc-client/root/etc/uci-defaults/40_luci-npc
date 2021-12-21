@@ -3,7 +3,7 @@
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@npc[-1]
 	add ucitrack npc
-	set ucitrack.@npc[-1].init=Npc
+	set ucitrack.@npc[-1].init=npc
 	commit ucitrack
 EOF
 

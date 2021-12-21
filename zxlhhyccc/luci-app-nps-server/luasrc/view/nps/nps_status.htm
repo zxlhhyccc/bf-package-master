@@ -14,7 +14,7 @@ XHR.poll(3, '<%=url([[admin]], [[services]], [[nps]], [[status]])%>', null,
 );
 
 function openwebui(){
-	var url = window.location.host+":<%=luci.sys.exec("uci -q get nps.@nps[0].port"):gsub("^%s*(.-)%s*$", "%1")%>";
+	var url = window.location.host+":<%=luci.sys.exec("uci -q get nps.config.web_port"):gsub("^%s*(.-)%s*$", "%1")%>";
 	window.open('http://'+url,'target','');
 };
 //]]>
@@ -25,4 +25,3 @@ function openwebui(){
 		<em><%:Collecting data...%></em>
 	</p>
 </fieldset>
-
