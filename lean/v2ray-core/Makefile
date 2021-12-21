@@ -15,8 +15,9 @@ PKG_SOURCE_DATE:=2021-11-06
 PKG_SOURCE_VERSION:=17a6ba892bfb04e1f17bbdee2293a4db74078e78
 PKG_MIRROR_HASH:=aec15440134e3b7cd6dfbdee187a1a622c75e710a7df4fd7c61a429d85ea66ab
 
-#PKG_SOURCE_URL:=https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$(PKG_VERSION)?
-#PKG_HASH:=44538779d3fb887511b35f93be46d04f4b16e30a1b3121d958145f559e110b7f
+# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+# PKG_SOURCE_URL:=https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$(PKG_VERSION)?
+# PKG_HASH:=d9973bafd3020f60a51fa3495b24ab417b08b3c8f9539a3748d00da6c68d0103
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -169,9 +170,6 @@ define Package/v2ray-core/install
 	$(INSTALL_CONF) $(CURDIR)/files/v2ray.conf $(1)/etc/config/v2ray
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) $(CURDIR)/files/v2ray.init $(1)/etc/init.d/v2ray
-
-	$(INSTALL_DIR) $(1)/etc/capabilities/
-	$(INSTALL_DATA) $(CURDIR)/files/v2ray.capabilities $(1)/etc/capabilities/v2ray.json
 endef
 
 define Package/v2ray-ctl/install
