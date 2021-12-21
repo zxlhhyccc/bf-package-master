@@ -1,0 +1,35 @@
+<%#
+ Copyright 2019 Xingwang Liao <kuoruan@gmail.com>
+ Licensed to the public under the MIT License.
+-%>
+
+<%
+local dsp = require "luci.dispatcher"
+-%>
+
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<p id="frpc_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>
+
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=dsp.build_url("admin/services/frpc/status")%>', null,
+		function (x, data) {
+			if (x.status !== 200 || !data) {
+				return;
+			}
+
+			var frpcStatusElm = document.getElementById('frpc_status');
+			frpcStatusElm.innerHTML = data.running
+				? '<em><b style=color:green><%:Frpc%> <%:Running%></b></em><input class="btn cbi-button mar-10" type="button" value="<%:Open Web Interface%>" onclick="openwebui();" />'
+				: '<em><b style=color:red><%:Frpc%> <%:Not Running%></b></em>';
+		}
+	);
+
+function openwebui(){
+	var url = window.location.host+":<%=luci.sys.exec("uci -q get frpc.main.admin_port"):gsub("^%s*(.-)%s*$", "%1")%>";
+	window.open('http://'+url,'target','');
+};	
+//]]></script>
