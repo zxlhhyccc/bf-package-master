@@ -30,7 +30,7 @@ msgid "Basic Setting"
 msgstr "基本设置"
 
 msgid "Web Setting"
-msgstr "Web设置"
+msgstr "面板选项"
 
 msgid "Proxy"
 msgstr "代理设置"
@@ -57,16 +57,16 @@ msgid "Boot mode"
 msgstr "运行模式"
 
 msgid "Web access address"
-msgstr "Web 访问地址"
+msgstr "面板访问地址"
 
 msgid "Web Username"
-msgstr "Web 用户名"
+msgstr "面板登录用户名"
 
 msgid "Web Password"
-msgstr "Web 密码"
+msgstr "面板登录密码"
 
 msgid "Web Port"
-msgstr "Web 端口"
+msgstr "面板绑定端口"
 
 msgid "ip limit switch"
 msgstr "是否限制ip访问，true或false或忽略"
