@@ -1,0 +1,35 @@
+<%#
+ Copyright 2020 lwz322 <lwz322@qq.com>
+ Licensed to the public under the MIT License.
+-%>
+
+<%
+local dsp = require "luci.dispatcher"
+-%>
+
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
+<fieldset class="cbi-section">
+	<p id="frps_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>
+
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=dsp.build_url("admin/services/frps/status")%>', null,
+		function (x, data) {
+			if (x.status !== 200 || !data) {
+				return;
+			}
+
+			var frpsStatusElm = document.getElementById('frps_status');
+			frpsStatusElm.innerHTML = data.running
+				? '<em><b style=color:green><%:Frps%> <%:Running%></b></em><input class="btn cbi-button mar-10" type="button" value="<%:Open Web Interface%>" onclick="openwebui();" />'
+				: '<em><b style=color:red><%:Frps%> <%:Not Running%></b></em>';
+		}
+	);
+
+function openwebui(){
+	var url = window.location.host+":<%=luci.sys.exec("uci -q get frps.main.dashboard_port"):gsub("^%s*(.-)%s*$", "%1")%>";
+	window.open('http://'+url,'target','');
+};
+//]]></script>
