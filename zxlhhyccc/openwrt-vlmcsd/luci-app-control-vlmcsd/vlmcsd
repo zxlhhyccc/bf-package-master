@@ -2,15 +2,12 @@
 START=90
 STOP=10
 
-load_vlmcsd_config() {
 A="uci -q get vlmcsd.@vlmcsd[0]"
 B=$($A.enabled)
 C=$($A.auto)
 D=$($A.conf)
 E=$($A.log)
 F=$($A.port) || F=1688
-}
-
 G=/usr/bin/vlmcsd
 J=/var/vlmcsd.log
 K=/etc/crontabs/root
@@ -71,7 +68,6 @@ del_cron(){
 }
 
 start(){
-	load_vlmcsd_config
 	if [ $B = 0 ];then
 		echo "KMS Server is Disabled"
 		exit 1
@@ -94,7 +90,6 @@ start(){
 }
 
 stop(){
-	load_vlmcsd_config
 	echo "Stop KMS Server"
 	kill -9 $(pgrep $G) 2>/dev/null
 	[ $B = 0 ] && del_cron
