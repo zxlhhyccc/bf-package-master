@@ -78,7 +78,7 @@ define Download/geoip
   HASH:=skip
 endef
 
-GEOSITE_VER:=202112272210
+GEOSITE_VER:=202112282210
 # GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
@@ -97,7 +97,7 @@ ifneq ($(CONFIG_PACKAGE_Mosdns-geodata),)
 endif
 endef
 
-# GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
+GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
