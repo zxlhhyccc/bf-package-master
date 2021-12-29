@@ -5,19 +5,16 @@
 START=99
 STOP=10
 
-load_config() {
 enable="$(uci get ssocksd.@ssocksd[0].enable)"
 bind_addr="$(uci get ssocksd.@ssocksd[0].bind_addr)"
 listen_port="$(uci get ssocksd.@ssocksd[0].listen_port)"
 username="$(uci get ssocksd.@ssocksd[0].username)"
 password="$(uci get ssocksd.@ssocksd[0].password)"
 lan_addr="$(uci get network.lan.ipaddr)"
-}
 
 start()
 {
 	stop
-	load_config
 	[ "${enable}" -eq "0" ] && exit 0
 
 	mkdir -p "/tmp/"

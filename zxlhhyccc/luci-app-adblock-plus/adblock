@@ -1,7 +1,6 @@
 #!/bin/sh /etc/rc.common
 START=99
 STOP=10
-
 A=0
 B=0
 CRON_FILE=/etc/crontabs/root
@@ -12,13 +11,10 @@ P=/usr/share/adblock
 T=/tmp/adblock
 STATUS=Y
 TAG="_ADBLOCK_RULE_"
-
-load_config() {
 FWI=$(uci -q get firewall.adblock.path)
 enable=$(uci -q get adblock.@adblock[0].enable)
 flash=$(uci -q get adblock.@adblock[0].flash)
 url=$(uci -q get adblock.@adblock[0].url)
-}
 
 get_config(){
 	config_get_bool cron_mode $1 cron_mode 1
@@ -191,7 +187,6 @@ stop(){
 }
 
 restart(){
-	load_config
 	if [ $enable = 1 ];then
 		STATUS=N
 		stop

@@ -10,7 +10,10 @@
 START=99
 
 CONFIG=webrestriction
+
+load_limit_config() {
 limit_type=$(uci -q get webrestriction.@basic[0].limit_type)
+}
 
 uci_get_by_type() {
 	local index=0
@@ -52,7 +55,7 @@ add_rule(){
 }
 
 start(){
-	
+	load_limit_config
 	! load_config && exit 0
 	[ "`iptables -L FORWARD|grep -c WEB_RESTRICTION`" -gt 0 ] && exit 0;
 	iptables -P FORWARD DROP
