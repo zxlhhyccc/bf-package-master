@@ -16,8 +16,8 @@ lan_addr="$(uci get network.lan.ipaddr)"
 
 start()
 {
-	stop
 	load_config
+	stop
 	[ "${enable}" -eq "0" ] && exit 0
 
 	mkdir -p "/tmp/"
