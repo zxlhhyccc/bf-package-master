@@ -6,7 +6,7 @@ PKG_RELEASE:=5
 
 LUCI_TITLE:=LuCI Support for mosdns
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+mosdns +jsonfilter +bash
+LUCI_DEPENDS:=+MosDNS +jsonfilter +bash
 
 define Package/$(PKG_NAME)/conffiles
 /etc/mosdns/config.yaml
