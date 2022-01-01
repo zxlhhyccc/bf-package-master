@@ -4,15 +4,15 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=Mosdns
+PKG_NAME:=MosDNS
 PKG_VERSION:=2.2.2
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE:=Mosdns-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=MosDNS-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/IrineSistiana/mosdns.git
 PKG_SOURCE_VERSION:=492ec7f400a321a54ce812038eff749c80e75106
-PKG_MIRROR_HASH:=48e1cb1ca7550d89cf19e364569b766d8ed4bac6c15ede82262bbf5a897f0a5e
+PKG_MIRROR_HASH:=3b1b855dbea94a4d9c3609b50b57d9414f07c8ca86930639d44173d79097ada6
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -33,7 +33,7 @@ GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/Mosdns/Default
+define Package/MosDNS/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
@@ -41,18 +41,18 @@ define Package/Mosdns/Default
   URL:=https://github.com/IrineSistiana/mosdns
 endef
 
-define Package/Mosdns
-  $(call Package/Mosdns/Default)
+define Package/MosDNS
+  $(call Package/MosDNS/Default)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
-define Package/Mosdns-geodata
-  $(call Package/Mosdns/Default)
+define Package/MosDNS-geodata
+  $(call Package/MosDNS/Default)
   TITLE+= (geodata resources)
-  DEPENDS:=Mosdns
+  DEPENDS:=MosDNS
 endef
 
-define Package/Mosdns/config
+define Package/MosDNS/config
 config MOSDNS_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -68,22 +68,27 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-GEOIP_VER:=202112300050
+GEOIP_VER:=202201010556
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 
 define Download/geoip
-  URL:=https://github.com/Loyalsoldier/geoip/releases/latest/download
-  URL_FILE:=geoip-only-cn-private.dat
+#  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
+#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
+  URL_FILE:=geoip.dat
   FILE:=$(GEOIP_FILE)
   HASH:=skip
 endef
 
 GEOSITE_VER:=202201010556
-# GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
+#GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 
 define Download/geosite
+#  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
+#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
   URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
+#  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
   HASH:=skip
@@ -91,13 +96,13 @@ endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
-ifneq ($(CONFIG_PACKAGE_Mosdns-geodata),)
+ifneq ($(CONFIG_PACKAGE_MosDNS-geodata),)
 	$(call Download,geoip)
 	$(call Download,geosite)
 endif
 endef
 
-GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
+# GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
@@ -106,18 +111,16 @@ ifneq ($(CONFIG_MOSDNS_COMPRESS_UPX),)
 endif
 endef
 
-define Package/Mosdns/install
+define Package/MosDNS/install
 	$(call GoPackage/Package/Install/Bin,$(1))
-	$(INSTALL_DIR) $(1)/etc/mosdns
-	$(INSTALL_DATA) ./files/config.yaml $(1)/etc/mosdns/config.yaml
 endef
 
-define Package/Mosdns-geodata/install
+define Package/MosDNS-geodata/install
 	$(INSTALL_DIR) $(1)/etc/mosdns
 	$(INSTALL_DATA) $(DL_DIR)/$(GEOIP_FILE) $(1)/etc/mosdns/geoip.dat
 	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_FILE) $(1)/etc/mosdns/geosite.dat
 endef
 
-$(eval $(call GoBinPackage,Mosdns))
-$(eval $(call BuildPackage,Mosdns))
-$(eval $(call BuildPackage,Mosdns-geodata))
+$(eval $(call GoBinPackage,MosDNS))
+$(eval $(call BuildPackage,MosDNS))
+$(eval $(call BuildPackage,MosDNS-geodata))

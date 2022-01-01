@@ -33,23 +33,13 @@ GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/MosDNS/Default
+define Package/MosDNS
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
   TITLE:=A plug-in DNS forwarder/splitter
   URL:=https://github.com/IrineSistiana/mosdns
-endef
-
-define Package/MosDNS
-  $(call Package/MosDNS/Default)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-endef
-
-define Package/MosDNS-geodata
-  $(call Package/MosDNS/Default)
-  TITLE+= (geodata resources)
-  DEPENDS:=MosDNS
 endef
 
 define Package/MosDNS/config
@@ -68,41 +58,7 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-GEOIP_VER:=202112282210
-GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
-
-define Download/geoip
-#  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
-#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
-  URL_FILE:=geoip.dat
-  FILE:=$(GEOIP_FILE)
-  HASH:=skip
-endef
-
-GEOSITE_VER:=202112282210
-#GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
-GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
-
-define Download/geosite
-#  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
-#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
-#  URL_FILE:=dlc.dat
-  URL_FILE:=geosite.dat
-  FILE:=$(GEOSITE_FILE)
-  HASH:=skip
-endef
-
-define Build/Prepare
-	$(call Build/Prepare/Default)
-ifneq ($(CONFIG_PACKAGE_MosDNS-geodata),)
-	$(call Download,geoip)
-	$(call Download,geosite)
-endif
-endef
-
-# GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
+GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
@@ -115,12 +71,5 @@ define Package/MosDNS/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 endef
 
-define Package/MosDNS-geodata/install
-	$(INSTALL_DIR) $(1)/etc/mosdns
-	$(INSTALL_DATA) $(DL_DIR)/$(GEOIP_FILE) $(1)/etc/mosdns/geoip.dat
-	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_FILE) $(1)/etc/mosdns/geosite.dat
-endef
-
 $(eval $(call GoBinPackage,MosDNS))
 $(eval $(call BuildPackage,MosDNS))
-$(eval $(call BuildPackage,MosDNS-geodata))
