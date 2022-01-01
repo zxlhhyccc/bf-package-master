@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-ssr-plus
+PKG_NAME:=luci-app-ssr-plus-mosdns
 PKG_VERSION:=184
 PKG_RELEASE:=10
 
@@ -111,8 +111,8 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Xray
 	default y if aarch64||arm||i386||x86_64
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns
-	bool "Include mosdns"
-	default y
+	bool "Include Mosdns"
+	default n
 endef
 
 define Package/$(PKG_NAME)/conffiles
