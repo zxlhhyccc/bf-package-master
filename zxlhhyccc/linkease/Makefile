@@ -14,7 +14,7 @@ PKG_VERSION:=0.5.3
 PKG_RELEASE:=2
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://fw.koolcenter.com/binary/LinkEase/LinuxStorage/
-PKG_HASH:=skip
+PKG_HASH:=ff11f1ab6e3d7fa40cbdd2eab1410d91e6c079e42fccded51ff8e96d34e6c0a4
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 
