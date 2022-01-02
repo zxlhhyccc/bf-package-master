@@ -1,0 +1,6 @@
+msgid "Verysync Synchronization Tool"
+msgstr "Verysync 微力同步工具"
+
+msgid "Open the verysync Webui"
+msgstr "打开verysync Webui"
+

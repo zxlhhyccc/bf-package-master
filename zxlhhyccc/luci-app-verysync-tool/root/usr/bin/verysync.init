@@ -1,0 +1,119 @@
+#!/bin/sh /etc/rc.common
+
+
+START=99
+USE_PROCD=1
+
+enabled=$(uci get verysync.setting.enable)
+dir=$(uci get verysync.setting.device)
+port=$(uci get verysync.setting.port)
+delay=$(uci get verysync.setting.delay)
+dl_mod=$(uci get verysync.setting.dl_mod)
+ROUTEIP=$(uci get network.lan.ipaddr)
+
+umask 0000
+
+start_service() {
+	sleep $delay
+	devices=$(uci get verysync.setting.device|awk -F [\/] '{print $3}')
+	#dev="/dev/$devices"
+	#mount_point=`mount | grep "$devices" |awk '{print $1}'|head -n 1`
+	(mount | grep -q "$dev") && {
+		[ $enabled = "1" ] && {
+			mkdir "$dir"
+			mod_fw
+#			service_start /usr/bin/verysync -gui-address :$port -home /etc/verysync >/dev/null 2>&1 &
+
+			# os.set
+			procd_open_instance
+			procd_set_param env HOME="$dir"
+			procd_set_param command $dl_mod -gui-address :$port -home "$dir" >/dev/null 2>&1
+			procd_set_param respawn
+			procd_close_instance
+		}
+	}
+}
+
+
+mod_fw(){
+	num_a=`uci show firewall |grep '=rule' |wc -l`
+	num_b=`uci show firewall |grep '=redirect' |wc -l`
+
+	check_Web=`uci show firewall |grep "name='VerySync Web'"`
+	if [ $? = 1 ]; then
+		uci add firewall rule
+		uci set firewall.@rule[$num_a].enabled='1'
+		uci set firewall.@rule[$num_a].target='ACCEPT'
+		uci set firewall.@rule[$num_a].src='wan'
+		uci set firewall.@rule[$num_a].proto='tcp'
+		uci set firewall.@rule[$num_a].dest_port=$port
+		uci set firewall.@rule[$num_a].name='VerySync Web'
+	fi
+
+	let "num_a = $num_a + 1"
+	check_TCP=`uci show firewall |grep "name='VerySync TCP'"`
+	if [ $? = 1 ]; then
+		uci add firewall rule
+		uci set firewall.@rule[$num_a].enabled='1'
+		uci set firewall.@rule[$num_a].target='ACCEPT'
+		uci set firewall.@rule[$num_a].src='wan'
+		uci set firewall.@rule[$num_a].proto='tcp'
+		uci set firewall.@rule[$num_a].dest_port='22330'
+		uci set firewall.@rule[$num_a].name='VerySync TCP'
+	fi
+
+	let "num_a = $num_a + 1"
+	check_UDP=`uci show firewall |grep "name='VerySync UDP'"`
+	if [ $? = 1 ]; then
+		uci add firewall rule
+		uci set firewall.@rule[$num_a].enabled='1'
+		uci set firewall.@rule[$num_a].target='ACCEPT'
+		uci set firewall.@rule[$num_a].src='wan'
+		uci set firewall.@rule[$num_a].proto='udp'
+		uci set firewall.@rule[$num_a].dest_port='22331'
+		uci set firewall.@rule[$num_a].name='VerySync UDP'
+	fi
+
+	check_VerySync=`uci show firewall |grep "name='VerySync'"`
+	if [ $? = 1 ]; then
+		uci add firewall redirect
+		uci set firewall.@redirect[$num_b].enabled='1'
+		uci set firewall.@redirect[$num_b].target='DNAT'
+		uci set firewall.@redirect[$num_b].src='wan'
+		uci set firewall.@redirect[$num_b].dest='lan'
+		uci set firewall.@redirect[$num_b].proto='tcp'
+		uci set firewall.@redirect[$num_b].src_dport='22330'
+		uci set firewall.@redirect[$num_b].dest_ip="$ROUTEIP"
+		uci set firewall.@redirect[$num_b].dest_port='22330'
+		uci set firewall.@redirect[$num_b].name='VerySync'
+	fi
+	uci commit firewall
+}
+
+del_fw(){
+	rule_c=`uci show firewall |grep 'VerySync Web'|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_c]
+	rule_b=`uci show firewall |grep 'VerySync TCP'|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_b]
+	rule_a=`uci show firewall |grep 'VerySync UDP'|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@rule[$rule_a]
+	redirect=`uci show firewall |grep "'VerySync'$"|grep -o "[0-9]*[0-9]"`
+	uci del firewall.@redirect[$redirect]
+	uci commit firewall
+	fw3 restart
+}
+
+service_triggers() {
+	procd_add_reload_trigger "verysync"
+}
+
+stop_service() {
+	killall -q -9 verysync >/dev/null 2>&1
+	del_fw
+}
+
+reload_service() {
+	stop
+	start
+}
+

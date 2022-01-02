@@ -1,0 +1,8 @@
+
+config verysync 'setting'
+	option enable '0'
+	option delay '0'
+	option port '8886'
+	option dl_mod '/usr/bin/verysync'
+	option device '/etc/verysync'
+
