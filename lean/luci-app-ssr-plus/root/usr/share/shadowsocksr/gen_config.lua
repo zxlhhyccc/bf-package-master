@@ -15,7 +15,6 @@ function vmess_vless()
 				users = {
 					{
 						id = server.vmess_id,
-						alterId = (server.v2ray_protocol == "vmess" or not server.v2ray_protocol) and tonumber(server.alter_id) or nil,
 						security = (server.v2ray_protocol == "vmess" or not server.v2ray_protocol) and server.security or nil,
 						encryption = (server.v2ray_protocol == "vless") and server.vless_encryption or nil,
 						flow = (server.xtls == '1') and (server.vless_flow and server.vless_flow or "xtls-rprx-splice") or nil
@@ -100,7 +99,7 @@ local Xray = {
 		port = tonumber(local_port),
 		protocol = "dokodemo-door",
 		settings = {network = proto, followRedirect = true},
-		sniffing = {enabled = true, destOverride = {"http", "tls"}}
+		sniffing = {enabled = false, destOverride = {"http", "tls"}}
 	} or nil,
 	-- 开启 socks 代理
 	inboundDetour = (proto:find("tcp") and socks_port ~= "0") and {
