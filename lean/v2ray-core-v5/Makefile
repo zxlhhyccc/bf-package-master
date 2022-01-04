@@ -86,19 +86,19 @@ endef
 define Package/v2ray-ctl-v5/description
   $(call Package/v2ray-v5/description)
 
-  This includes configuration tool for v2ray-core.
+  This includes configuration tool for v2ray-core-v5.
 endef
 
 define Package/v2ray-v5-example/description
   $(call Package/v2ray-v5/description)
 
-  This includes example configuration files for v2ray-core.
+  This includes example configuration files for v2ray-core-v5.
 endef
 
 define Package/v2ray-v5-extra/description
   $(call Package/v2ray-v5/description)
 
-  This includes extra resources for v2ray-core.
+  This includes extra resources for v2ray-core-v5.
 endef
 
 define Package/v2ray-core-v5/config
