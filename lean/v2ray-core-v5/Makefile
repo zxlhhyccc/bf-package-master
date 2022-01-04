@@ -11,9 +11,9 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2fly/v2ray-core.git
-PKG_SOURCE_DATE:=2022-01-02
-PKG_SOURCE_VERSION:=4b03da7400e0a79ccc9faa5703e6d707004162df
-PKG_MIRROR_HASH:=8879b3e1d6c4f4f608f5fe982464937090f657d7caab426dfe1ba46631fac915
+PKG_SOURCE_DATE:=2022-01-03
+PKG_SOURCE_VERSION:=a9bf783ad750ab8d75ce1454821eceb131f884d0
+PKG_MIRROR_HASH:=c7d45ded33a3a383a170be83a945373eb7dd51d3bec28436cd84780f097a4824
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/v2fly/v2ray-core/tar.gz/v$(PKG_VERSION)?
@@ -144,7 +144,7 @@ endif
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 	mv $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
-ifneq ($(CONFIG_V2RAY_CORE_COMPRESS_UPX),)
+ifneq ($(CONFIG_V2RAY_CORE-V5_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray
 endif
 
@@ -152,7 +152,7 @@ ifneq ($(CONFIG_PACKAGE_v2ray-ctl-v5),)
 	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/infra/control/main)
 	$(call GoPackage/Build/Compile)
 	mv $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
-ifneq ($(CONFIG_V2RAY_CTL_COMPRESS_UPX),)
+ifneq ($(CONFIG_V2RAY_CTL-V5_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 endif
 endif
