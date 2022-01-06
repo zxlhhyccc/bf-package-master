@@ -98,13 +98,13 @@ download_cert.write = function()
 end
 
 function act_download_cert()
-	local t, e
-	t = nixio.open("/usr/share/unblockneteasemusic/core/ca.crt","r")
-	luci.http.header('Content-Disposition', 'attachment; filename="ca.crt"')
+	local t,e
+	t=nixio.open("/usr/share/unblockneteasemusic/core/ca.crt","r")
+	luci.http.header('Content-Disposition','attachment; filename="ca.crt"')
 	luci.http.prepare_content("application/octet-stream")
 	while true do
-		e = t:read(nixio.const.buffersize)
-		if (not e) or (#e == 0) then
+		e=t:read(nixio.const.buffersize)
+		if(not e)or(#e==0)then
 			break
 		else
 			luci.http.write(e)
@@ -139,6 +139,12 @@ endpoint_url.default = "https://music.163.com"
 endpoint_url.placeholder = "https://music.163.com"
 endpoint_url.datatype = "string"
 endpoint_url:depends("advanced_mode", 1)
+
+cnrelay = s:option(Value, "cnrelay", translate("UNM API 服务器"))
+cnrelay.description = translate("使用 UnblockNeteaseMusic 中继桥（API）以获取音源信息")
+cnrelay.placeholder = "http(s)://host:port"
+cnrelay.datatype = "string"
+cnrelay:depends("advanced_mode", 1)
 
 hijack = s:option(ListValue, "hijack_ways", translate("劫持方法"))
 hijack:value("dont_hijack", translate("不开启劫持"))
