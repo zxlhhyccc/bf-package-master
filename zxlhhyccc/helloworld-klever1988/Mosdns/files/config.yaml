@@ -76,13 +76,13 @@ plugin:
     args:
       upstream:
         - addr: 'tcp://1.1.1.1'
-          idle_timeout: 90
+          idle_timeout: 10
           max_conns: 10
         - addr: 'tcp://76.76.19.19'
-          idle_timeout: 90
+          idle_timeout: 10
           max_conns: 10
         - addr: 'tcp://208.67.222.222'
-          idle_timeout: 90
+          idle_timeout: 10
           max_conns: 10
 
   - tag: lazy_cache
