@@ -14,32 +14,31 @@
   <a href="https://github.com/jerrykuku/luci-app-vssr/pulls">
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="">
   </a>
-  
+
   <a href="https://github.com/jerrykuku/luci-app-vssr/issues/new">
     <img src="https://img.shields.io/badge/Issues-welcome-brightgreen.svg">
   </a>
-  
+
   <a href="https://github.com/jerrykuku/luci-app-vssr/releases">
     <img src="https://img.shields.io/badge/release-v1.22-blue.svg?">
   </a>
-  
+
   <a href="https://github.com/jerrykuku/luci-app-vssr/releases">
     <img src="https://img.shields.io/github/downloads/jerrykuku/luci-app-vssr/total">
   </a>
-  
+
   <a href="https://t.me/PIN1Group">
     <img src="https://img.shields.io/badge/Contact-telegram-blue">
   </a>
 </div>
-
 
 <b><br>支持全部类型的节点分流</b>  
 目前只适配最新版 argon主题 （其他主题下应该也可以用 但显示应该不会很完美）  
 目前Lean最新版本的openwrt 已经可以直接拉取源码到 package/lean 下直接进行勾选并编译。  
 
 
-### 更新日志 2021-03-22  v1.22-1
-- FIX: 修复Vless 链接无法导入的问题（由于目前链接样本依然不够，如果可能请在issues里向我提供更多的样本）。
+### 更新日志 2022-01-08  v1.23
+- FIX: 增强订阅节点时旗帜匹配的准确性。
 
 
 详情见[具体日志](./relnotes.txt)。 
@@ -70,7 +69,42 @@ make menuconfig
 make -j1 V=s
 ```
 
+### 问题解决
+
+使用lede最新源码编译失败，报错缺少依赖：
+
+```
+satisfy_dependencies_for: Cannot satisfy the following dependencies for luci-app-vssr:
+- shadowsocksr-libev-ssr-local
+- shadowsocksr-libev-ssr-redir
+- shadowsocksr-libev-ssr-check
+- xray-core
+- xray-plugin
+- shadowsocksr-libev-ssr-server
+opkg_install_cmd: Cannot install package luci-app-vssr.
+```
+
+原因是lede缺少软件源，解决办法，清除缓存重新下载编译：
+
+```
+# 1.清除缓存
+rm -rf tmp
+
+# 2.feeds.conf文件添加源
+src-git helloworld https://github.com/fw876/helloworld
+src-git passwall https://github.com/xiaorouji/openwrt-passwall
+
+# 3.重新执行升级安装下载编译等操作
+./scripts/feeds update -a
+./scripts/feeds install -a
+make -j8 download V=s
+make -j1 V=s
+```
+
+或者也可以完全删除lede，重新git并修改feeds.conf（比较耗时）
+
 ### 感谢
+
 https://github.com/coolsnowwolf/lede
 
 ### 我的其它项目

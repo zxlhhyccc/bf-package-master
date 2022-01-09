@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cxxopts
-PKG_VERSION:=2.2.1
+PKG_VERSION:=3.0.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/jarro2783/cxxopts/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=984aa3c8917d649b14d7f6277104ce38dd142ce378a9198ec926f03302399681
+PKG_HASH:=36f41fa2a46b3c1466613b63f3fa73dc24d912bc90d667147f1e43215a8c6d00
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -32,7 +32,7 @@ CMAKE_OPTIONS+= -DCXXOPTS_ENABLE_INSTALL=ON \
 define Package/cxxopts
   SECTION:=lib
   CATEGORY:=Libraries
-  URL:=https://github.com/jarro2783/cxxopts
+  URL:=https:/github.com/jarro2783/cxxopts
   TITLE:=Lightweight C++ command line option parser
   DEPENDS:=+libc
   BUILDONLY:=1
