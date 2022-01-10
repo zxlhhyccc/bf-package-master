@@ -3,8 +3,8 @@
 START=96
 STOP=10
 
-load_config() {
 lan_addr="$(uci -q get network.lan.ipaddr)"
+
 enable="$(uci -q get unblockneteasemusic.@unblockneteasemusic[0].enable)"
 http_port="$(uci -q get unblockneteasemusic.@unblockneteasemusic[0].http_port)"
 https_port="$(uci -q get unblockneteasemusic.@unblockneteasemusic[0].https_port)"
@@ -15,8 +15,6 @@ endpoint="$(uci -q get unblockneteasemusic.@unblockneteasemusic[0].endpoint_enab
 force_best_quality="$(uci -q get unblockneteasemusic.@unblockneteasemusic[0].force_best_quality)"
 search_limit="$(uci -q get unblockneteasemusic.@unblockneteasemusic[0].search_limit)"
 auto_update="$(uci -q get unblockneteasemusic.@unblockneteasemusic[0].auto_update)"
-}
-
 extFile="/usr/share/UnblockNeteaseMusic/extFile.txt"
 serverCrt="/usr/share/UnblockNeteaseMusic/server.crt"
 serverKey="/usr/share/UnblockNeteaseMusic/server.key"
@@ -26,7 +24,6 @@ caKey="/usr/share/UnblockNeteaseMusic/ca.key"
 logFile="/tmp/unblockneteasemusic.log"
 exArgs=" "
 set_ipset() {
-	load_config
 	if [ "${set_type}" = "start" ]; then
 		mkdir -p "/tmp/dnsmasq.d"
 		rm -f "/tmp/dnsmasq.d/dnsmasq-unblockneteasemusic.conf"
@@ -106,7 +103,6 @@ set_ipset() {
 }
 
 set_hosts() {
-	load_config
 	if [ "${set_type}" = "start" ]; then
 		mkdir -p "/tmp/dnsmasq.d"
 		rm -f "/tmp/dnsmasq.d/dnsmasq-unblockneteasemusic.conf"
@@ -142,7 +138,6 @@ subjectAltName=DNS:music.163.com,DNS:*.music.163.com" >"${extFile}"
 	rm -f "${extFile}"
 }
 start() {
-	load_config
 	stop >>"${logFile}" 2>&1
 	[ "${enable}" -ne "1" ] && exit 0
 	curl www.baidu.com >/dev/null 2>&1
