@@ -397,7 +397,7 @@ CLEANFILES = adhoc.cpp
 ## TestPrograms/ is included in the tarball but not installed.
 ## https://www.gnu.org/software/automake/manual/html_node/Data.html
 
-# Create with 'ls TestData/*.dat'. These files get installed.
+# Create with 'ls TestVectors/*.dat'. These files get installed.
 testdata_FILES = \
     TestData/3desval.dat     TestData/fhmqv160.dat  TestData/rc2val.dat \
     TestData/3wayval.dat     TestData/fhmqv256.dat  TestData/rc5val.dat \
