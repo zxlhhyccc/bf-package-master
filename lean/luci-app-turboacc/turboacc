@@ -213,18 +213,6 @@ start_dnsproxy() {
 	echo "DNSProxy: Start DNS Caching"
 }
 
-start_adg() {
-	if [ ! -d "/var/etc/AdGuardHome" ];  then
-	mkdir -p "/var/etc/AdGuardHome"
-		ln -s "/etc/AdGuardHome/AdGuardHome.yaml" "/var/etc/AdGuardHome/AdGuardHome.yaml"
-	else
-		ln -s "/etc/AdGuardHome/*" "/var/etc/AdGuardHome/"
-	fi
-
-	AdGuardHome -c "/var/etc/AdGuardHome/AdGuardHome.yaml" -w "/var/etc/AdGuardHome" -h "${lan_addr}" -p "3001" --no-check-update 2>&1 &
-	echo "AdGuardHome: Start DNS Caching"
-}
-
 stop_dnscache() {
 	killall -9 "AdGuardHome"
 	killall -9 "dnscache"
@@ -316,7 +304,14 @@ start(){
 		elif [ "${dns_caching_mode}" = "3" ];  then
 			start_dnsproxy
 		elif [ "${dns_caching_mode}" = "4" ];  then
-			start_adg
+			if [ ! -d "/var/etc/AdGuardHome/" ];  then
+			mkdir -p "/var/etc/AdGuardHome"
+				ln -s "/etc/AdGuardHome/AdGuardHome.yaml" "/var/etc/AdGuardHome/AdGuardHome.yaml"
+			else
+				ln -s "/etc/AdGuardHome/*" "/var/etc/AdGuardHome/"
+			fi
+			AdGuardHome -c "/var/etc/AdGuardHome/AdGuardHome.yaml" -w "/var/etc/AdGuardHome" -h "${lan_addr}" -p "3001" --no-check-update 2>&1 &
+		fi
 
 		change_dns
 		/usr/share/dnscache/dnscache-while.sh > "/var/log/dnscache.file" 2>&1 &
