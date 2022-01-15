@@ -317,6 +317,7 @@ start(){
 			start_dnsproxy
 		elif [ "${dns_caching_mode}" = "4" ];  then
 			start_adg
+		fi
 
 		change_dns
 		/usr/share/dnscache/dnscache-while.sh > "/var/log/dnscache.file" 2>&1 &
