@@ -17,12 +17,12 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=shortcut-fe-simulated-driver
 PKG_RELEASE:=1
-PKG_CONFIG_DEPENDS := CONFIG_IPV6
 
 PKG_SOURCE_URL:=https://source.codeaurora.org/quic/qsdk/oss/lklm/shortcut-fe
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2021-03-17
 PKG_SOURCE_VERSION:=697977d8d0ccf0ab596e5692d08608a75dd7f33d
+PKG_MIRROR_HASH:=659fa82a431e15af797a6c7069faeee02810453ad8b576c51c29f95a1761a045
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -31,14 +31,16 @@ define KernelPackage/shortcut-fe-drv
   CATEGORY:=Kernel modules
   SUBMENU:=Network Support
   DEPENDS:=@TARGET_ipq806x||TARGET_ipq807x +kmod-shortcut-fe
-  KCONFIG:=CONFIG_NET_CLS_ACT=y \
-   	    CONFIG_XFRM=y
+  KCONFIG:= \
+	   CONFIG_NET_CLS_ACT=y \
+	   CONFIG_XFRM=y
   TITLE:=Simulated sfe driver for ECM
   FILES:=$(PKG_BUILD_DIR)/simulated-driver/shortcut-fe-drv.ko
 endef
 
 define KernelPackage/shortcut-fe-drv/Description
-Simulated sfe driver which act as an adapter to convert message between a connection manager and the SFE core engine.
+Simulated sfe driver which act as an adapter to convert message
+between a connection manager and the SFE core engine.
 endef
 
 define Build/Compile
@@ -46,8 +48,7 @@ define Build/Compile
 		$(KERNEL_MAKE_FLAGS) \
 		$(PKG_MAKE_FLAGS) \
 		M="$(PKG_BUILD_DIR)/simulated-driver" \
-		$(if $(CONFIG_IPV6),EXTRA_CFLAGS+="-DSFE_SUPPORT_IPV6" SFE_SUPPORT_IPV6=y,) \
-		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
+		EXTRA_CFLAGS="-DSFE_SUPPORT_IPV6" \
 		modules
 endef
 
