@@ -87,7 +87,7 @@ o.write = function()
 end
 
 o.inputstyle = "reload"
-    SYS.exec("/etc/init.d/verysync restart >/dev/null 2>&1 &")
+    SYS.exec("/etc/init.d/verysync start >/dev/null 2>&1 &")
 
 
 return m
