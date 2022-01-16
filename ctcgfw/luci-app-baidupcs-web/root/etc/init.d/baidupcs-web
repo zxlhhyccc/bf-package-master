@@ -15,7 +15,6 @@ max_parallel="$(uci -q get baidupcs-web.config.max_parallel || echo '8')"
 
 start() {
 	load_config
-	stop
 	[ "$enabled" == "1" ] || exit 0
 	mkdir -p "${download_dir}"
 	baidupcs-web config set                         \
