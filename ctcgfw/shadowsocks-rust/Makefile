@@ -68,7 +68,8 @@ define Package/shadowsocks-rust/Default
   define Package/shadowsocks-rust-$(1)/config
     config SHADOWSOCKS_RUST_$(1)_COMPRESS_UPX
       bool "Compress $(1) with UPX"
-      default y
+      depends on !mips64
+      default n
   endef
 
   define Package/shadowsocks-rust-$(1)/install
