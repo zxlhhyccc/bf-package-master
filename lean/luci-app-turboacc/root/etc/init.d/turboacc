@@ -226,8 +226,8 @@ start_adg() {
 }
 
 stop_dnscache() {
-	kill $(pidof AdGuardHome) >/dev/null 2>&1 || kill -9 $(ps | grep AdGuardHome | grep -v "grep" | awk '{print $1}') >/dev/null 2>&1
-	kill $(pidof dnscache) >/dev/null 2>&1 || kill -9 $(ps | grep dnscache | grep -v "grep" | awk '{print $1}') >/dev/null 2>&1
+	killall -9 $(pidof AdGuardHome) >/dev/null 2>&1 || kill -9 $(ps | grep AdGuardHome | grep -v "grep" | awk '{print $1}') >/dev/null 2>&1
+	killall -9 $(pidof dnscache) >/dev/null 2>&1 || kill -9 $(ps | grep dnscache | grep -v "grep" | awk '{print $1}') >/dev/null 2>&1
 	kill -9 $(ps | grep dnscache-while.sh | grep -v "grep" | awk '{print $1}')
 	rm -rf "/var/dnscache" "/var/run/dnscache" "/var/etc/AdGuardHome"
 	echo "Stop DNS Caching"
