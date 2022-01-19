@@ -1,0 +1,19 @@
+{
+	"luci-app-qbittorrent": {
+		"description": "Grant access to LuCI app qBittorrent",
+		"read": {
+			"ubus": {
+				"service": [ "list" ],
+				"luci": [ "setInitAction" ]
+			},
+			"file": {
+				"/etc/passwd": [ "read" ],
+				"/usr/bin/qbittorrent-nox": [ "exec" ]
+			},
+			"uci": [ "qbittorrent" ]
+		},
+		"write": {
+			"uci": [ "qbittorrent" ]
+		}
+	}
+}
