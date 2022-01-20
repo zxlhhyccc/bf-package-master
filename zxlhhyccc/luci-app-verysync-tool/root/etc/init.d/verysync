@@ -3,6 +3,8 @@
 
 START=99
 
+PROG="/usr/bin/verysync.init"
+
 load_config() {
 enabled=$(uci get verysync.setting.enable)
 delay=$(uci get verysync.setting.delay)
@@ -10,18 +12,18 @@ delay=$(uci get verysync.setting.delay)
 
 start() {
 	load_config
-	[ "$enabled" = "1" ] && /usr/bin/verysync.init start
+	[ "$enabled" = "1" ] && $PROG start
 }
 
 stop() {
 	load_config
-	[ "$enabled" = "0" ] && /usr/bin/verysync.init stop
+	[ "$enabled" = "0" ] && $PROG stop
 }
 
 restart() {
-	stop        
-	sleep 2     
-	start       
+	stop
+	sleep 2
+	start
 }
 
 boot() {

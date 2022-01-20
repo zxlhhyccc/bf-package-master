@@ -86,9 +86,6 @@ o.write = function()
 	luci.http.redirect("https://forum.verysync.com/")
 end
 
-o.inputstyle = "reload"
-    SYS.exec("/etc/init.d/verysync start >/dev/null 2>&1 &")
-
 
 return m
 
