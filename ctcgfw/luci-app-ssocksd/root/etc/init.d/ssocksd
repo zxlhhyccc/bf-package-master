@@ -3,40 +3,31 @@
 # https://github.com/immortalwrt
 
 START=99
-STOP=10
+
+PROG="/usr/bin/ssocksd.init"
 
 load_config() {
-enable="$(uci -q get ssocksd.@ssocksd[0].enable)"
-bind_addr="$(uci -q get ssocksd.@ssocksd[0].bind_addr)"
-listen_port="$(uci -q get ssocksd.@ssocksd[0].listen_port)"
-username="$(uci -q get ssocksd.@ssocksd[0].username)"
-password="$(uci -q get ssocksd.@ssocksd[0].password)"
-lan_addr="$(uci -q get network.lan.ipaddr)"
+enable=$(uci get ssocksd.@ssocksd[0].enable)
 }
 
-start()
-{
+start() {
 	load_config
-	[ "${enable}" -eq "0" ] && exit 0
-
-	mkdir -p "/tmp/"
-	mkdir -p "/var/etc/"
-	[ "${bind_addr}" == "lan" ] && bind_address="${lan_addr}" || bind_address="0.0.0.0"
-	if [ -n "${username}" ] && [ -n "${password}" ]; then
-		rm -f /etc/config/ssocksd-authorization
-		echo "${username}:${password}" > /etc/config/ssocksd-authorization
-		auth_arg="--auth /etc/config/ssocksd-authorization"
-	fi
-	/usr/bin/ssocksd --port "${listen_port}" --bind "${bind_address}" ${auth_arg} >/dev/null 2>&1 &
-	iptables -I INPUT -p tcp --dport "${listen_port}" -j ACCEPT
-	cat <<-EOF > "/var/etc/ssocksd.include"
-iptables -I INPUT -p tcp --dport "${listen_port}" -j ACCEPT
-	EOF
+	[ "$enable" = "1" ] && $PROG start
 }
 
-stop()
-{
-	killall -9 ssocksd >/dev/null 2>&1
-	rm -f "/etc/config/ssocksd-authorization"
-	rm -f "/var/etc/ssocksd.include"
+stop() {
+	load_config
+	[ "$enable" = "0" ] && $PROG stop
+}
+
+restart() {
+	stop
+	sleep 2
+	start
+}
+
+boot() {
+	[ "$enabled" = "1" ] && {
+		start
+	}
 }

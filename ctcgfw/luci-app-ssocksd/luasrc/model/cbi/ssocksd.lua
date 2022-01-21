@@ -42,7 +42,5 @@ password.default = "password"
 password.datatype = "string"
 password.password = true
 
-s.inputstyle = "reload"
-    luci.sys.exec("/etc/init.d/ssocksd start >/dev/null 2>&1 &")
 
 return mp

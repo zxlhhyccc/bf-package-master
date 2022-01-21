@@ -9,15 +9,16 @@ function index()
 		return
 	end
 	local page
+
 	page = entry({"admin", "vpn", "ssocksd"}, cbi("ssocksd"), _("sSocksd Server"), 100)
 	page.i18n = "ssocksd"
 	page.dependent = true
-	entry({"admin", "vpn", "ssocksd", "status"},call("act_status")).leaf=true
+	entry({"admin", "vpn", "ssocksd", "status"},call("act_status")).leaf = true
 end
 
 function act_status()
 	local e={}
-	e.running=luci.sys.call("ps |grep ssocksd |grep -v grep >/dev/null")==0
+	e.running=luci.sys.call("pgrep ssocksd > /dev/null") == 0
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end
