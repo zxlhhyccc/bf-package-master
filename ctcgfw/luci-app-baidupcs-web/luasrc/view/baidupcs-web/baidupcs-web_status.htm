@@ -10,10 +10,10 @@ XHR.poll(3, '<%=url([[admin]], [[nas]], [[baidupcs-web]], [[status]])%>', null,
 
 		if (data && tb) {
 			if (data.running) {
-				var links = '<em><b style=color:green><%:BaiduPCS-Web%>' + data.bin_version + ' <%:Service is running.%></b></em><input class="btn cbi-button mar-10" type="button" value="<%:打开管理页面%>" onclick="openwebui();" />';
+				var links = '<em><b style=color:green><%:BaiduPCS-Web%>' + data.bin_version + ' <%:RUNNING%></b></em><input class="btn cbi-button mar-10" type="button" value="<%:打开 BaiduPCS-Web 管理页面%>" onclick="openwebui();" />';
 				tb.innerHTML = links;
 			} else {
-				tb.innerHTML = '<em><b style=color:red><%:BaiduPCS-Web%>' + data.bin_version + ' <%:Service is not running.%></b></em>';
+				tb.innerHTML = '<em><b style=color:red><%:BaiduPCS-Web%>' + data.bin_version + ' <%:NOT RUNNING%></b></em>';
 			}
 		}
 	}

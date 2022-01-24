@@ -17,11 +17,11 @@ msgstr "Nps 服务端"
 msgid "Nps is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."
 msgstr "Nps 是一种快速反向代理，可帮助您将 NAT 或防火墙后面的本地服务器公开到 Internet。"
 
-msgid "Service is not running."
-msgstr "服务未运行"
+msgid "NOT RUNNING"
+msgstr "未运行"
 
-msgid "Service is running."
-msgstr "服务正在运行"
+msgid "RUNNING"
+msgstr "运行中"
 
 msgid "Open Nps page"
 msgstr "打开Nps软件控制界面"

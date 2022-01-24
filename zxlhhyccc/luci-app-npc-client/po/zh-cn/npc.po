@@ -28,11 +28,11 @@ msgstr "加密传输 npc 与 nps 之间的通信内容，会有效防止流量�
 msgid "Auto reconnect to the server when the connection is down."
 msgstr "连接断开时自动重新连接到服务器。"
 
-msgid "Service is running."
-msgstr "服务正在运行"
+msgid "RUNNING"
+msgstr "运行中"
 
-msgid "Service is not running."
-msgstr "服务未运行"
+msgid "NOT RUNNING"
+msgstr "未运行"
 
 # msgid "The Nps service is running."
 # msgstr "Nps 运行中"
