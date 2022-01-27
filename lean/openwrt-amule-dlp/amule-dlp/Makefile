@@ -33,7 +33,7 @@ define Package/amule-dlp
   CATEGORY:=Network
   TITLE:=A multi-platform eMule-like ed2k client
   URL:=http://www.amule.org/
-  DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libupnp +libbfd +antileech \
+  DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libupnp +libbfd +ca-certificates +antileech \
 	$(ICONV_DEPENDS) $(INTL_DEPENDS) +!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
 endef
 
@@ -47,7 +47,7 @@ define Download/AmuleWebUI
   URL:=https://github.com/MatteoRagni/AmuleWebUI-Reloaded/archive
   URL_FILE:=master.zip
   FILE:=AmuleWebUI.zip
-  HASH:=skip
+  HASH:=8121a1b543c2c8ea51522c3b3836dadbf023897e3e8d36606ca6dbbd8db41d03
 endef
 
 define Build/Prepare
@@ -111,6 +111,8 @@ define Package/amule-dlp/install
 	$(INSTALL_DIR) $(1)/usr/share
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/amule-dlp $(1)/usr/share/
 	$(CP) $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-master $(1)/usr/share/amule-dlp/webserver/AmuleWebUI-Reloaded
+	$(INSTALL_DIR) $(1)/usr/share/amule
+	$(LN) $(1)/usr/share/amule-dlp/webserver $(1)/usr/share/amule/webserver
 endef
 
 $(eval $(call Download,AmuleWebUI))
