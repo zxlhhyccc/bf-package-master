@@ -6,3 +6,9 @@ web控制页面访问慢的原因发现了，是网页调用谷歌公共库导�
 web控制页面访问慢的原因发现了，是网页调用谷歌公共库导致的（感谢qianyufengfei）
 修改  /opt/share/amule/webserver/AmuleWebUI-Reloaded/中的php文件，
 含有 ajax.googleapis.com，用 ajax.lug.ustc.edu.cn 替换就好了
+
+
+cd /usr/share/amule/webserver/AmuleWebUI-Reloaded
+grep "ajax.googleapis.com"  ./*.php
+sed -i s/"ajax.googleapis.com"/"ajax.lug.ustc.edu.cn"/g  ./*.php
+grep "ajax.googleapis.com"  ./*.php
