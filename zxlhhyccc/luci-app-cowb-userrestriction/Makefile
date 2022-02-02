@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-cowb-userrestriction
-PKG_VERSION:=v22.1.9-1443
+PKG_VERSION:=v22.1.9-1443-1
 PKG_RELEASE:=1
 LUCI_TITLE:=LuCI support for UserRestriction
 LUCI_DEPENDS:=+libc
