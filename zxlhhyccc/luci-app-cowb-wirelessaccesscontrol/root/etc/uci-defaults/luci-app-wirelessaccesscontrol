@@ -1,0 +1,12 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@wirelessaccesscontrol[-1]
+	add ucitrack wirelessaccesscontrol
+	set ucitrack.@wirelessaccesscontrol[-1].init=wirelessaccesscontrol
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+rm -rf /tmp/luci-modulecache
+exit 0

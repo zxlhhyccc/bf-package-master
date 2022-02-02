@@ -1,0 +1,11 @@
+{
+	"luci-app-cowb-wirelessaccesscontrol": {
+		"description": "Grant UCI access for luci-app-cowb-wirelessaccesscontrol",
+		"read": {
+			"uci": [ "wirelessaccesscontrol" ]
+		},
+		"write": {
+			"uci": [ "wirelessaccesscontrol" ]
+		}
+	}
+}

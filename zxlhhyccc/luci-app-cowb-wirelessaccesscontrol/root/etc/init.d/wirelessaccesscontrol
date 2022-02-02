@@ -1,0 +1,41 @@
+#!/bin/sh /etc/rc.common
+# Author wulishui , 20211121 , <wulishui@gmail.com>
+
+START=78
+
+add_list() {
+uci set wireless.$i.macfilter="$macfilter"
+for n in $ens
+do
+ macaddr=$(uci get wirelessaccesscontrol.@macbind[$n].macaddr 2>/dev/null)
+ uci add_list wireless.$i.maclist="$macaddr"
+done
+}
+
+add_iface() {
+wifi_iface=`uci get wirelessaccesscontrol.@basic[0].wifi_iface 2>/dev/null` || return
+echo "$wifi_iface" |grep -q 'all' && wifi_iface=`uci show wireless |grep 'wifi-iface' |awk -F '[.=]' '{print $2}'`
+macfilter=`uci get wirelessaccesscontrol.@basic[0].macfilter 2>/dev/null`
+for i in $wifi_iface
+do
+ [ "$(uci get wireless.$i.mode)" = "ap" ] && add_list
+done
+uci commit wireless
+}
+
+start(){
+[ -s /etc/config/wireless ] || exit
+md5n=`cat /etc/config/wirelessaccesscontrol |md5sum |awk '{print $1}'`
+md5o=`cat /etc/wirelessaccesscontrol 2>/dev/null`
+[ "$md5n" = "$md5o" ] && exit
+sed -i '/option macfilter/d' /etc/config/wireless
+sed -i '/list maclist/d' /etc/config/wireless
+enabled=`uci get wirelessaccesscontrol.@basic[0].enabled 2>/dev/null`
+if [ "$enabled" == 1 ]; then
+ ens=`uci show wirelessaccesscontrol |grep "enable='1'" |grep -o '\[[0-9]*\]' |grep -o '[0-9]*' |awk NF`
+ [ -n "$ens" ] && add_iface
+fi
+echo "$md5n" > /etc/wirelessaccesscontrol
+wifi reload
+}
+

@@ -1,0 +1,6 @@
+msgid "wirelessaccesscontrol"
+msgstr "无线接入控制"
+
+msgid "Wireless access control"
+msgstr "无线接入控制"
+
