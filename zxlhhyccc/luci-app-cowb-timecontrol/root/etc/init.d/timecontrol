@@ -1,0 +1,66 @@
+#!/bin/sh /etc/rc.common
+# wulishui at 20220106 , <wulishui@gmail.com>
+
+START=98
+USE_PROCD=1
+
+add_rules() {
+for i in $ens
+do
+ ipaddr=$(uci get timecontrol.@user[$i].ipaddr 2>/dev/null) && {
+ timeon=$(uci get timecontrol.@user[$i].timeon 2>/dev/null) || timeon="00:00"
+ timeoff=$(uci get timecontrol.@user[$i].timeoff 2>/dev/null) || timeoff="00:00"
+ daysofweek=$(uci get timecontrol.@user[$i].daysofweek 2>/dev/null |tr ' ' ',')
+ enabledtime=$(uci get timecontrol.@user[$i].enabledtime 2>/dev/null) || enabledtime="0"
+ disabledtime=$(uci get timecontrol.@user[$i].disabledtime 2>/dev/null) || disabledtime="0"
+ macaddr=`echo "$ipaddr" |egrep -o "([A-Fa-f0-9]{2}[:-]){5}[A-Fa-f0-9]{2}"`
+ [ -n "$macaddr" ] && { addr="-m mac --mac-source ${macaddr}" ; host="$macaddr" ; } || { addr="-s ${ipaddr}" ; host="$ipaddr" ; }
+ [ "$timeon" = "$timeoff" ] && TIME="" || TIME="--timestart ${timeon} --timestop ${timeoff}"
+ [ -z "$daysofweek" -o "$daysofweek" = "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday" ] && WEEK="" || WEEK="--weekdays ${daysofweek}"
+ [ -n "$TIME" -o -n "$WEEK" ] && TME="-m time --kerneltz ${TIME} ${WEEK}" || TME=""
+ iptables -w -t nat -A TIMECONTROL ${TME} ${addr} -g TIMECONTROLUSR
+ iptables -w -t nat -A TIMECONTROL ${addr} -j DNAT --to-destination 127.0.0.1
+ daysofweek=`echo "$daysofweek" |sed 's/Monday/1/g;s/Tuesday/2/g;s/Wednesday/3/g;s/Thursday/4/g;s/Friday/5/g;s/Saturday/6/g;s/Sunday/0/g'`
+ echo "${host} ${enabledtime} ${disabledtime} ${timeon} ${timeoff} ${daysofweek}" >> /var/log/timecontrolusers
+ }
+done
+}
+
+start_instance() {
+ procd_open_instance
+ procd_set_param command /usr/bin/timecontrold
+ procd_set_param respawn
+ procd_set_param stderr 1
+ procd_close_instance
+}
+
+start_service(){
+stop_service
+enabled=`uci get timecontrol.@basic[0].enabled 2>/dev/null`
+if [ "$enabled" == 1 ]; then
+ ens=`uci show timecontrol | grep "enable='1'" | grep -o '\[[0-9]*\]' | grep -o '[0-9]*' | awk NF`
+ [ -n "$ens" ] && {
+ iptables -w -t nat -N TIMECONTROL
+ iptables -w -t nat -N TIMECONTROLUSR
+ iptables -w -t nat -I PREROUTING -j TIMECONTROL
+ add_rules
+ start_instance
+ }
+fi
+}
+
+service_triggers() {
+ procd_add_reload_trigger 'timecontrol'
+}
+
+stop_service(){
+ kill -9 $(busybox ps -w | grep 'timecontrold_process' | grep -v 'grep' | awk '{print $1}') >/dev/null 2>&1
+ cat /dev/null > /var/log/timecontrolusers
+ cat /dev/null > /var/log/timecontrolprog
+ iptables -w -t nat -D PREROUTING -j TIMECONTROL 2>/dev/null
+ iptables -w -t nat -F TIMECONTROL 2>/dev/null
+ iptables -w -t nat -F TIMECONTROLUSR 2>/dev/null
+ iptables -w -t nat -X TIMECONTROL 2>/dev/null
+ iptables -w -t nat -X TIMECONTROLUSR 2>/dev/null
+}
+

@@ -1,0 +1,48 @@
+#!/bin/bash
+# Author wulishui <wulishui@gmail.com> , all rights reserved . 
+
+rule_ipt() {
+ WEEK_DAY=$(date +%w) ; cut -d ' ' -f 6 <<< "$line" |grep -q "$WEEK_DAY" || return
+ timeon=`cut -d ' ' -f 4 <<< "$line"` ; [ -n "$timeon" ] || return
+ timeoff=`cut -d ' ' -f 5 <<< "$line"` ; [ -n "$timeoff" ] || return
+ time=`date +%H:%M`
+ [ "$timeon" = "$timeoff" ] || { 
+	[[ "$timeon" < "$timeoff" ]] && { [[ "$time" > "$timeon" ]] && [[ "$time" < "$timeoff" ]] || return ; }
+	[[ "$timeon" > "$timeoff" ]] && { [[ "$time" < "$timeon" ]] && [[ "$time" > "$timeoff" ]] || return ; }
+ }
+ enabledtime=`cut -d ' ' -f 2 <<< "$line"` ; [ "$enabledtime" -gt 0 ] || return
+ disabledtime=`cut -d ' ' -f 3 <<< "$line"` ; [ "$disabledtime" -gt 0 ] || return
+ ipaddr=`cut -d ' ' -f 1 <<< "$line"`
+ macaddr=`echo "$ipaddr" |egrep -im1 -o "([A-Fa-f0-9]{2}[:-]){5}[A-Fa-f0-9]{2}"` && { ipaddr=`grep -im1 "$macaddr" <<< "$ipmacs" |cut -d ' ' -f 1` ; [ -n "$ipaddr" ] || return ; }
+ [ -n "$macaddr" ] && { addr="-m mac --mac-source ${macaddr}" ; host="$macaddr" ; } || { ipaddr=`echo "$ipaddr" |egrep -m1 -o "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"` || return ; addr="-s ${ipaddr}" ; host="$ipaddr" ; }
+ grep -iq "^${host}$" /var/log/timecontrolprog && return
+ arping ${ipaddr} -I br-lan -f -w 1 |grep -q '[0-9.]*ms' || return
+ /usr/bin/timecontrold_process "$host" "$enabledtime" "$disabledtime" 2>/dev/null &
+}
+
+chk_index() {
+ N=1
+ iptlst=`iptables -w -t nat -L PREROUTING`
+ grep -q '^SWOBL' <<< "$iptlst" && N=$((N+1))
+ grep -q '^domainfilter' <<< "$iptlst" && N=$((N+1))
+ INDEX0=`tail +3 <<< "$iptlst" |sed -n -e '/^TIMECONTROL/=' |tail -1`
+ [ "$INDEX0" == "$N" ] && return
+ iptables -w -t nat -D PREROUTING -j TIMECONTROL 2>/dev/null
+ iptables -w -t nat -I PREROUTING -j TIMECONTROL 2>/dev/null
+}
+
+rule_user() {
+ [ -s /var/log/timecontrolusers ] || return
+ ipmacs=`ipneigh |grep 'lladdr' |grep '^[1-9]'`
+ while read line ; do rule_ipt ; done < /var/log/timecontrolusers
+}
+
+touch /var/log/timecontrolprog
+while :
+do
+ rule_user
+ sleep 15
+ chk_index
+ sleep 15
+done
+

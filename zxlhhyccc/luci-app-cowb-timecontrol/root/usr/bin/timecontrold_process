@@ -1,0 +1,17 @@
+#!/bin/sh
+# Author wulishui <wulishui@gmail.com> , all rights reserved . 
+
+host="$1"
+enabledtime="$2"
+disabledtime="$3"
+[ -n "$host" -a -n "$enabledtime" -a -n "$disabledtime" ] || exit
+
+echo "$host" |egrep -qi "([A-Fa-f0-9]{2}[:-]){5}[A-Fa-f0-9]{2}" && addr="-m mac --mac-source ${host}" || addr="-s ${host}"
+
+echo "$host" >> /var/log/timecontrolprog
+sleep $((enabledtime*60))
+iptables -w -t nat -A TIMECONTROLUSR $addr -j DNAT --to-destination 127.0.0.1 2>/dev/null
+sleep $((disabledtime*60))
+iptables -w -t nat -D TIMECONTROLUSR $addr -j DNAT --to-destination 127.0.0.1 2>/dev/null
+sed -i '/^'"$host"'$/d' /var/log/timecontrolprog
+

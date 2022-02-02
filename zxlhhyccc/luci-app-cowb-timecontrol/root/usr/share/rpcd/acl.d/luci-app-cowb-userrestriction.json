@@ -1,0 +1,11 @@
+{
+	"luci-app-cowb-timecontrol": {
+		"description": "Grant UCI access for luci-app-cowb-timecontrol",
+		"read": {
+			"uci": [ "timecontrol" ]
+		},
+		"write": {
+			"uci": [ "timecontrol" ]
+		}
+	}
+}
