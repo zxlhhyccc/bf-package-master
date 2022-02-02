@@ -1,0 +1,11 @@
+{
+	"luci-app-cowb-userrestriction": {
+		"description": "Grant UCI access for luci-app-cowb-userrestriction",
+		"read": {
+			"uci": [ "userrestriction" ]
+		},
+		"write": {
+			"uci": [ "userrestriction" ]
+		}
+	}
+}

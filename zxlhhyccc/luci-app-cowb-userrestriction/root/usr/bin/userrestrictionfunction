@@ -1,0 +1,66 @@
+#!/bin/sh
+. /usr/bin/cowbfunction
+
+case "$1" in
+
+"start")
+[ -s /etc/crontabs/root ] || crondrst=1
+sed -i '/userrestriction/d' /etc/crontabs/root 2>/dev/null
+time=`uci get userrestriction.@basic[0].pausetime 2>/dev/null`
+[ -z "$time" -o "$time" == 0 ] && time=60
+get_sec ; [ -z "$ADT" ] && exit 0
+time_cur=`date -d "$(date "+%Y-%m-%d %H:%M:%S")" +%s`
+time_new=`expr "$time_cur" + "$ADT"`
+add_crond=`date -d @"$time_new"  "+%M %H"`
+pausestoptime=`echo "$add_crond"|awk '{print $2":"$1}'`
+echo ""$pausestoptime"" > /tmp/log/time_stop_userrestriction
+echo ""$add_crond" * * * /usr/bin/userrestrictionfunction stop" >> /etc/crontabs/root 2>/dev/null
+/etc/init.d/userrestriction restart
+[ "$crondrst" == 1 ] && /etc/init.d/cron restart 2>/dev/null
+;;
+
+"stop")
+sed -i '/userrestriction/d' /etc/crontabs/root 2>/dev/null
+rm -f /tmp/log/time_stop_userrestriction 2>/dev/null
+/etc/init.d/userrestriction restart
+;;
+
+"add")
+cp -f /etc/config/userrestriction /etc/userrestriction
+listfile=`cat $(uci get userrestriction.@basic[0].listfile 2>/dev/null)  2>/dev/null |grep -v '^[#!/]' | egrep -o "([A-Fa-f0-9]{2}[:-]){5}[A-Fa-f0-9]{2}"|sed 's/-/:/g'` || exit 0
+[ -n "$listfile" ] || exit 0
+echo "$listfile" |while read line
+do
+cat>>/tmp/log/userrestrictionadd<<EOF
+config macbind
+	option macaddr '$line'
+	option daysofweek 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'
+
+EOF
+done
+cat /tmp/log/userrestrictionadd 2>/dev/null >> /etc/config/userrestriction
+rm -f /tmp/log/userrestrictionadd 2>/dev/null
+;;
+
+"clr")
+cp -f /etc/config/userrestriction /etc/userrestriction
+awk 'BEGIN {RS = "\n\n+";ORS = "\n\n"} /'option.keyword'/ {print $0}' /etc/config/userrestriction 2>/dev/null > /tmp/userrestriction
+awk 'BEGIN {RS = "\n\n+";ORS = "\n\n"} /'option.IP'/ {print $0}' /etc/config/userrestriction 2>/dev/null >> /tmp/userrestriction
+sum=`grep -c 'config macbind' /etc/config/userrestriction`
+ for i in $(seq 1 $sum)
+ do
+   uci del userrestriction.@macbind[]
+ done
+uci commit userrestriction
+cat /tmp/userrestriction 2>/dev/null >> /etc/config/userrestriction
+rm -f /tmp/userrestriction 2>/dev/null
+;;
+
+"restore")
+[ -s /etc/userrestriction ] && cat /etc/userrestriction 2>/dev/null > /etc/config/userrestriction
+;;
+
+esac
+
+
+

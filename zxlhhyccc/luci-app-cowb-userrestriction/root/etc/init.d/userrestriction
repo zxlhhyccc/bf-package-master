@@ -1,0 +1,127 @@
+#!/bin/sh /etc/rc.common
+# Author wulishui 20200202->20210813
+
+START=92
+USE_PROCD=1
+
+start_instance() {
+	procd_open_instance
+	procd_set_param command /etc/userrestriction.sh
+	procd_set_param respawn
+	procd_set_param stderr 1
+	procd_close_instance
+}
+
+add_op_white() {
+[ "$pausemode" != 1 ] || return
+ for i in $(seq 0 $((summac-1)))
+ do
+ enable=$(uci get userrestriction.@macbind[$i].enable 2>/dev/null)
+ if [ "$enable" == 1 ]; then
+  interface=$(uci get userrestriction.@macbind[$i].interface 2>/dev/null) && IFE="-i ${interface}" || IFE=""
+  keyword=$(uci get userrestriction.@macbind[$i].keyword 2>/dev/null) && STG="-m string --string ${keyword} --algo ${algos}" || STG=""
+  macaddr=$(uci get userrestriction.@macbind[$i].macaddr 2>/dev/null) && MAC="-m mac --mac-source ${macaddr}" || MAC=""
+  ip=$(uci get userrestriction.@macbind[$i].IP 2>/dev/null) && IPC="-s ${ip}" || IPC=""
+  iprange=$(echo "$ip"|grep '-') && {
+   ip=$(echo "$ip"|awk -F '[.-]' '{if ($5=="") print $1"."$2"."$3"."$4 ; else if ($8=="" && $4<$5) print $1"."$2"."$3"."$4"-"$1"."$2"."$3"."$5 ; else if ($8=="" && $4>$5) print $1"."$2"."$3"."$5"-"$1"."$2"."$3"."$4 ; else if ($8>$4) print $1"."$2"."$3"."$4"-"$1"."$2"."$3"."$8 ; else if ($8<$4) print $1"."$2"."$3"."$8"-"$1"."$2"."$3"."$4  }'|awk -F '[.-]' '{if ($8=="") print $1"."$2"."$3"."$4 ; else if ($8<255) print $1"."$2"."$3"."$4"-"$1"."$2"."$3"."$8 ; else if ($8>254) print $1"."$2"."$3"."$4"-"$1"."$2"."$3".""254"}')
+   IPC="-m iprange --src-range ${ip}"
+    }
+  timestart=$(uci get userrestriction.@macbind[$i].start_time 2>/dev/null)
+  timestop=$(uci get userrestriction.@macbind[$i].stop_time 2>/dev/null)
+  [ -z "$timestart" -o -z "$timestop" -o "$timestart" = "$timestop" ] && TIME="" || TIME="--timestart ${timestart} --timestop ${timestop}"
+  week_days=$(uci get userrestriction.@macbind[$i].daysofweek|sed 's/ /,/g' 2>/dev/null)
+  [ -z "$week_days" -o "$week_days" = "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday" ] && WEEK="" || WEEK="--weekdays ${week_days}"
+  [ -n "$TIME" -o -n "$WEEK" ] && TME="-m time --kerneltz ${TIME} ${WEEK}" || TME=""
+  if [ -n "$STG" -a x"$keyword" = "x!" ] && [ -n "$MAC" -o -n "$IPC" -o -n "$IFE" ]; then
+    iptables  -w -I userrestriction ${TME} ${IFE} ${MAC} ${IPC} -m comment --comment "userrestriction" -j ${OP} 2>/dev/null || logger "userrestriction 规则 ：${TME} ${IFE} ${MAC} ${IPC} 添加失败！！！"
+    ip6tables -w -I userrestriction ${TME} ${IFE} ${MAC} -m comment --comment "userrestriction" -j ${OP} 2>/dev/null
+  elif [ -z "$STG" ] && [ -n "$MAC" -o -n "$IPC" -o -n "$TME" -o -n "$IFE" ]; then
+    iptables  -w -A userrestriction ${TME} ${IFE} ${MAC} ${IPC} -m comment --comment "userrestriction" -j ${JP} 2>/dev/null || logger "userrestriction 规则 ：${TME} ${IFE} ${MAC} ${IPC} 添加失败！！！"
+    ip6tables -w -A userrestriction ${TME} ${IFE} ${MAC} -m comment --comment "userrestriction" -j ${JP} 2>/dev/null
+  fi
+  unset STG ; unset IFE ; unset MAC ; unset IPC ; unset TME
+ fi
+ done
+}
+
+add_url_str() {
+ for i in $enablednum
+ do
+  interface=$(uci get userrestriction.@macbind[$i].interface 2>/dev/null) && IFE="-i ${interface}" || IFE=""
+  keyword=$(uci get userrestriction.@macbind[$i].keyword 2>/dev/null) && STG="-m string --string ${keyword} --algo ${algos}" || STG=""
+  macaddr=$(uci get userrestriction.@macbind[$i].macaddr 2>/dev/null) && MAC="-m mac --mac-source ${macaddr}" || MAC=""
+  ip=$(uci get userrestriction.@macbind[$i].IP 2>/dev/null) && IPC="-s ${ip}" || IPC=""
+  iprange=$(echo "$ip"|grep '-') && {
+   ip=$(echo "$ip"|awk -F '[.-]' '{if ($5=="") print $1"."$2"."$3"."$4 ; else if ($8=="" && $4<$5) print $1"."$2"."$3"."$4"-"$1"."$2"."$3"."$5 ; else if ($8=="" && $4>$5) print $1"."$2"."$3"."$5"-"$1"."$2"."$3"."$4 ; else if ($8>$4) print $1"."$2"."$3"."$4"-"$1"."$2"."$3"."$8 ; else if ($8<$4) print $1"."$2"."$3"."$8"-"$1"."$2"."$3"."$4  }'|awk -F '[.-]' '{if ($8=="") print $1"."$2"."$3"."$4 ; else if ($8<255) print $1"."$2"."$3"."$4"-"$1"."$2"."$3"."$8 ; else if ($8>254) print $1"."$2"."$3"."$4"-"$1"."$2"."$3".""254"}')
+   IPC="-m iprange --src-range ${ip}"
+    }
+  timestart=$(uci get userrestriction.@macbind[$i].start_time 2>/dev/null)
+  timestop=$(uci get userrestriction.@macbind[$i].stop_time 2>/dev/null)
+  [ -z "$timestart" -o -z "$timestop" -o "$timestart" = "$timestop" ] && TIME="" || TIME="--timestart ${timestart} --timestop ${timestop}"
+  week_days=$(uci get userrestriction.@macbind[$i].daysofweek|sed 's/ /,/g' 2>/dev/null)
+  [ -z "$week_days" -o "$week_days" = "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday" ] && WEEK="" || WEEK="--weekdays ${week_days}"
+  [ -n "$TIME" -o -n "$WEEK" ] && TME="-m time --kerneltz ${TIME} ${WEEK}" || TME=""
+  if [ -n "$STG" -a -n "$keyword" ]; then
+    iptables  -w -I userrestriction ${TME} ${IFE} ${MAC} ${IPC} ${STG} -m comment --comment "userrestriction" -j DROP 2>/dev/null || logger "userrestriction 规则 ：${TME} ${IFE} ${MAC} ${IPC} ${STG} 添加失败！！！"
+    ip6tables -w -I userrestriction ${TME} ${IFE} ${MAC} ${STG} -m comment --comment "userrestriction" -j DROP 2>/dev/null
+  fi
+  unset STG IFE MAC IPC TME
+ done
+}
+
+start_service() {
+[ -f /var/lock/userrestriction ] && exit
+iptables -w -C FORWARD -j userrestriction 2>/dev/null && stop_service
+enabled=`uci get userrestriction.@basic[0].enabled 2>/dev/null`
+[ "$enabled" == 1 ] && enablednum=`uci show userrestriction | grep "enable='1'" | grep -o '\[[0-9]*\]' | grep -o '[0-9]*' | awk NF`
+if [ -n "$enablednum" ]; then
+ touch /var/lock/userrestriction
+ iptables  -w -N userrestriction 2>/dev/null || iptables  -w -F userrestriction 2>/dev/null
+ ip6tables -w -N userrestriction 2>/dev/null || ip6tables -w -F userrestriction 2>/dev/null
+ iptables  -w -C FORWARD -j userrestriction 2>/dev/null || iptables  -w -I FORWARD -j userrestriction 2>/dev/null
+ ip6tables -w -C FORWARD -j userrestriction 2>/dev/null || ip6tables -w -I FORWARD -j userrestriction 2>/dev/null
+
+ pausetime=`grep 'userrestrictionfunction stop' /etc/crontabs/root` && echo "$pausetime" |awk '{print $2":"$1}' > /tmp/log/time_stop_userrestriction
+ [ -s /tmp/log/time_stop_userrestriction ] && pausemode=1 || pausemode=0
+
+ algos=$(uci get userrestriction.@basic[0].algos 2>/dev/null) || algos="kmp"
+ limit_type=$(uci get userrestriction.@basic[0].limit_type 2>/dev/null)
+ [ "$limit_type" = "blacklist" ] && JP=REJECT && OP=RETURN
+ [ "$limit_type" = "whitelist" ] && JP=RETURN && OP=REJECT
+
+ summac=$(cat /etc/config/userrestriction|grep -c 'macbind')
+ add_op_white
+ add_url_str
+
+ if [ "$pausemode" != 1 ] && [ "$limit_type" = "whitelist" -a "$(iptables -L userrestriction 2>/dev/null|grep -c '^RETURN')" -gt 0 ]; then
+  iptables  -w -A userrestriction -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN 2>/dev/null
+  ip6tables -w -A userrestriction -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN 2>/dev/null
+  iptables  -w -A userrestriction -j REJECT 2>/dev/null
+  ip6tables -w -A userrestriction -j REJECT 2>/dev/null
+ fi
+
+ [ "$pausemode" != 1 ] && start_instance
+ rm -f /var/lock/userrestriction 2>/dev/null
+fi
+}
+
+service_triggers() {
+	procd_add_reload_trigger 'userrestriction'
+}
+
+stop_service() {
+#kill -9 $(busybox ps -w | grep 'userrestriction.sh'| grep -v 'grep' | awk '{print $1}') >/dev/null 2>&1
+iptables  -w -F userrestriction 2>/dev/null
+ip6tables -w -F userrestriction 2>/dev/null
+iptables  -w -D FORWARD -j userrestriction 2>/dev/null
+ip6tables -w -D FORWARD -j userrestriction 2>/dev/null
+iptables  -w -X userrestriction 2>/dev/null
+ip6tables -w -X userrestriction 2>/dev/null
+}
+
+restart() {
+stop
+start
+}
+
+

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@userrestriction[-1]
+	add ucitrack userrestriction
+	set ucitrack.@userrestriction[-1].init=userrestriction
+	commit ucitrack
+EOF
+
+uci delete firewall.userrestriction
+uci set firewall.userrestriction=include
+uci set firewall.userrestriction.type=script
+uci set firewall.userrestriction.path=/etc/webrlistfile.include
+uci commit firewall
+
+rm -f /tmp/luci-indexcache
+exit 0
