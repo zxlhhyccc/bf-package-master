@@ -64,7 +64,7 @@ o = s:option(Flag, "log_disable_timestamp", translate("Log disable timestamp"))
 o.default = '0'
 o.rmempty = false
 o.optional = false
---[[
+
 o = s:option(Value, "vless_grpc_inbound_cert_key", translate("Upload certificate"))
 o.description = translate("Specify the certification path instead of automatically generating a self-signed certificate.")
 o.template = "v2raya/v2raya_certupload"
@@ -102,7 +102,7 @@ end
 o = s:option(Value, "vless_grpc_inbound_cert_key", translate("Upload Certificate Path"))
 o.description = translate("This is the path where the certificate resides after the certificate is uploaded.")
 o.default = "/etc/v2raya/cert.crt,/etc/v2raya/cert.key"
-]]--
+
 o.inputstyle = "reload"
     luci.sys.exec("/etc/init.d/v2raya start >/dev/null 2>&1 &")
 
