@@ -10,7 +10,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/v2rayA/v2rayA/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=0f6faeb297279dba138c2afc8525f090f965a0141a4f9d071165ea8500921a55
+# PKG_HASH:=d949246aa9fe80aa9cb8fb4d80cb470f508bb44d4ac23e84e28e3b9abd30b67c
 # PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
 
 PKG_SOURCE_PROTO:=git
@@ -76,7 +76,7 @@ endef
 
 ifneq ($(CONFIG_V2RAYA_COMPRESS_GOPROXY),)
 	export GO111MODULE=on
-	export GOPROXY=https://goproxy.baidu.com
+	export GOPROXY=https://goproxy.bj.bcebos.com
 endif
 
 define Package/v2raya/conffiles
