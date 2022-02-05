@@ -64,7 +64,7 @@ define Package/v2raya-v5/description
 endef
 
 define Package/v2raya-v5/config
-config V2RAYA_COMPRESS_GOPROXY
+config V2RAYA-V5_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
 
