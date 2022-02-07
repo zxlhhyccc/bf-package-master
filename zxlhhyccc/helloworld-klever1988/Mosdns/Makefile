@@ -19,8 +19,8 @@ PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_MOSDNS_COMPRESS_GOPROXY \
-	CONFIG_MOSDNS_COMPRESS_UPX
+	CONFIG_Mosdns_COMPRESS_GOPROXY \
+	CONFIG_Mosdns_COMPRESS_UPX
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
@@ -39,25 +39,21 @@ define Package/Mosdns
   SUBMENU:=IP Addresses and Names
   TITLE:=A plug-in DNS forwarder/splitter
   URL:=https://github.com/IrineSistiana/mosdns
-endef
-
-define Package/Mosdns
-  $(call Package/Mosdns/Default)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/Mosdns/config
-config MOSDNS_COMPRESS_GOPROXY
+config Mosdns_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
 
-config MOSDNS_COMPRESS_UPX
+config Mosdns_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
 	default n
 endef
 
-ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
+ifeq ($(CONFIG_Mosdns_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
 	export GOPROXY=https://goproxy.baidu.com
 endif
@@ -66,7 +62,7 @@ GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLE
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-ifneq ($(CONFIG_MOSDNS_COMPRESS_UPX),)
+ifneq ($(CONFIG_Mosdns_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/mosdns
 endif
 endef
