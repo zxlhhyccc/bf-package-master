@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-openclash
-PKG_VERSION:=0.44.21
+PKG_VERSION:=0.44.25
 PKG_RELEASE:=beta
 PKG_MAINTAINER:=vernesong <https://github.com/vernesong/OpenClash>
 
@@ -90,6 +90,7 @@ define Package/$(PKG_NAME)/postrm
 	rm -rf /tmp/openclash_servers_fake_filter.conf >/dev/null 2>&1
 	rm -rf /tmp/dler* >/dev/null 2>&1
 	rm -rf /tmp/etc/openclash >/dev/null 2>&1
+	rm -rf /tmp/openclash_edit_file_name >/dev/null 2>&1
 	uci -q delete firewall.openclash
 	uci -q commit firewall
 	uci -q delete ucitrack.@openclash[-1]

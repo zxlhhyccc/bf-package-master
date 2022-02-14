@@ -2356,6 +2356,7 @@ stop()
       rm -rf /tmp/openclash.change >/dev/null 2>&1
       rm -rf /tmp/openclash_debug.log >/dev/null 2>&1
       rm -rf /tmp/etc/openclash >/dev/null 2>&1
+      rm -rf /tmp/openclash_edit_file_name >/dev/null 2>&1
       del_lock
       LOG_OUT "OpenClash Already Stop!"
       sleep 3
@@ -2393,4 +2394,15 @@ reload()
       SLOG_CLEAN
       del_lock
    fi
+}
+
+boot()
+{
+	delay_start=$(uci -q get openclash.config.delay_start || echo 0)
+	enable=$(uci -q get openclash.config.enable)
+	if [ "$delay_start" -gt 0 ] && [ "$enable" == "1" ]; then
+		LOG_OUT "Enable Delay Start, OpenClash Will Start After【$delay_start】Secends..."
+		sleep "$delay_start"
+	fi
+	restart
 }
