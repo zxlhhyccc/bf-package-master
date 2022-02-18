@@ -24,20 +24,22 @@ plugin:
       exec:
         - if:
             - query_is_ad_domain
+            - qtype65
           exec:
             - _block_with_nxdomain
-            - _end
+            - _return
         - if:
+            - query_is_whitelist_domain
             - query_is_local_domain
             - '!_query_is_common'
           exec:
             - forward_local
-            - _end
+            - _return
         - if:
             - query_is_non_local_domain
           exec:
             - forward_remote
-            - _end
+            - _return
         - primary:
             - forward_local
             - if:
@@ -53,18 +55,21 @@ plugin:
     type:                  fast_forward
     args:
       upstream:
-        - addr:            ${{ ./dns0.sh }}
-        - addr:            ${{ ./dns1.sh }}
+        - addr:            ${{ ./dns.sh 0 }}
+        - addr:            ${{ ./dns.sh 1 }}
 
+  - tag: query_is_whitelist_domain
+    type: query_matcher
+    args:
+      domain:
+        - 'ext:./whitelist.txt'
 
   - tag:                   forward_remote
     type:                  fast_forward
     args:
       upstream:
         - addr:            'tls://8.8.4.4'
-          idle_timeout:    10
         - addr:            'tls://9.9.9.9'
-          idle_timeout:    10
 
   - tag:                   lazy_cache
     type:                  cache
@@ -95,3 +100,8 @@ plugin:
     args:
       domain:
         - 'ext:./serverlist.txt'
+
+  - tag: qtype65
+    type: query_matcher
+    args:
+      qtype: [65]

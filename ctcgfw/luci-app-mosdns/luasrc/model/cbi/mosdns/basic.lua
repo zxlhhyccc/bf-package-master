@@ -42,7 +42,7 @@ set_config.inputtitle = translate("Apply")
 set_config.inputstyle = "reload"
 set_config.description = translate("This will make the necessary adjustments to other plug-in settings.")
 set_config.write = function()
-  luci.sys.exec("/etc/mosdns/set.sh >/dev/null 2>&1 &")
+  luci.sys.exec("/etc/mosdns/set.sh &> /dev/null &")
 end
 set_config:depends( "configfile", "./def_config.yaml")
 
@@ -51,7 +51,7 @@ unset_config.inputtitle = translate("Apply")
 unset_config.inputstyle = "reload"
 unset_config.description = translate("This will revert the adjustments.")
 unset_config.write = function()
-  luci.sys.exec("/etc/mosdns/unset.sh >/dev/null 2>&1 &")
+  luci.sys.exec("/etc/mosdns/set.sh unset &> /dev/null &")
 end
 
 config = s:option(TextValue, "manual-config")
@@ -67,6 +67,21 @@ end
 function config.write(self, section, value)
   value = value:gsub("\r\n?", "\n")
   nixio.fs.writefile("/etc/mosdns/cus_config.yaml", value)
+end
+
+config = s:option(TextValue, "whitelist")
+config.description = translate("<font color=\"ff0000\"><strong>ADblock whitelist.")
+config.template = "cbi/tvalue"
+config.rows = 25
+config:depends( "configfile", "./def_config.yaml")
+
+function config.cfgvalue(self, section)
+  return nixio.fs.readfile("/etc/mosdns/whitelist.txt")
+end
+
+function config.write(self, section, value)
+  value = value:gsub("\r\n?", "\n")
+  nixio.fs.writefile("/etc/mosdns/whitelist.txt", value)
 end
 
 return m
