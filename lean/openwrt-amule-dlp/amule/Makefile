@@ -39,6 +39,19 @@ config AMULE_CRYPTOPP_STATIC_LINKING
 	default n
 endef
 
+define Download/AmuleWebUI
+  URL:=https://github.com/MatteoRagni/AmuleWebUI-Reloaded/archive
+  URL_FILE:=master.zip
+  FILE:=AmuleWebUI.zip
+  HASH:=8121a1b543c2c8ea51522c3b3836dadbf023897e3e8d36606ca6dbbd8db41d03
+endef
+
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	unzip $(DL_DIR)/AmuleWebUI.zip -d $(PKG_BUILD_DIR)
+
+endef
+
 TARGET_LDFLAGS+= -liconv
 
 CONFIGURE_ARGS+= \
@@ -93,6 +106,8 @@ define Package/amule/install
 
 	$(INSTALL_DIR) $(1)/usr/share
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/amule $(1)/usr/share/
+	$(CP) $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-master $(1)/usr/share/amule/webserver/AmuleWebUI-Reloaded
 endef
 
+$(eval $(call Download,AmuleWebUI))
 $(eval $(call BuildPackage,amule))
