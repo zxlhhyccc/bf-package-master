@@ -1,21 +1,16 @@
+# SDPX-License-Identifier: GPL-3.0-only
 #
-# Copyright (C) 2007-2021 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2021-2022 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=aMule-DLP
+PKG_NAME:=amule
 PKG_VERSION:=2.3.3
-PKG_RELEASE:=16
+PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/persmule/amule-dlp.git
-PKG_SOURCE_DATE:=2021-01-30
-PKG_SOURCE_VERSION:=78a95e54e976c612fde6eb49390807df7870f26a
-PKG_MIRROR_HASH:=6c7781b516d3385bf6b7412378d5baba1c7ef96cfa1f4eb61d12f0ea4842598a
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/amule-project/amule/tar.gz/$(PKG_VERSION)?
+PKG_HASH:=934f79d4dab41c2d1caea31d6c6e10337c409ba5bb8bd6fac6c63e924e82c9b8
 
 PKG_CONFIG_DEPEDS:= CONFIG_AMULE_CRYPTOPP_STATIC_LINKING
 
@@ -27,33 +22,21 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
-define Package/amule-dlp
+define Package/amule
   SUBMENU:=P2P
   SECTION:=net
   CATEGORY:=Network
   TITLE:=A multi-platform eMule-like ed2k client
   URL:=http://www.amule.org/
-  DEPENDS:=+libpng +libpthread +libncurses +libreadline +libwxbase +libupnp +libbfd +ca-certificates +antileech \
-	$(ICONV_DEPENDS) $(INTL_DEPENDS) +!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
+  DEPENDS:=+antileech +libpng +libpthread +libncurses +libreadline +libwxbase \
+	+libupnp +libbfd $(ICONV_DEPENDS) $(INTL_DEPENDS) \
+	+!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
 endef
 
-define Package/amule-dlp/config
-	config AMULE_CRYPTOPP_STATIC_LINKING
-		bool "Link libcryptopp statically"
-		default n
-endef
-
-define Download/AmuleWebUI
-  URL:=https://github.com/MatteoRagni/AmuleWebUI-Reloaded/archive
-  URL_FILE:=master.zip
-  FILE:=AmuleWebUI.zip
-  HASH:=8121a1b543c2c8ea51522c3b3836dadbf023897e3e8d36606ca6dbbd8db41d03
-endef
-
-define Build/Prepare
-	$(call Build/Prepare/Default)
-	unzip $(DL_DIR)/AmuleWebUI.zip -d $(PKG_BUILD_DIR)
-	
+define Package/amule/config
+config AMULE_CRYPTOPP_STATIC_LINKING
+	bool "Link libcryptopp statically"
+	default n
 endef
 
 TARGET_LDFLAGS+= -liconv
@@ -61,9 +44,8 @@ TARGET_LDFLAGS+= -liconv
 CONFIGURE_ARGS+= \
 	--disable-static \
 	--disable-rpath \
-	--with-gnu-ld \
 	--disable-ccache \
-	--enable-optimize \
+	--disable-optimize \
 	--disable-profile \
 	--disable-monolithic \
 	--enable-amule-daemon \
@@ -75,11 +57,13 @@ CONFIGURE_ARGS+= \
 	--disable-ed2k \
 	--disable-alc \
 	--disable-alcc \
+	--disable-debug \
 	--disable-fileview \
 	--disable-plasmamule \
 	--without-wxdebug \
 	--enable-dlp \
 	--enable-upnp \
+	--with-gnu-ld \
 	--with-zlib="$(STAGING_DIR)/usr" \
 	--with-gdlib-prefix="$(STAGING_DIR)/usr" \
 	--with-libpng-prefix="$(STAGING_DIR)/usr" \
@@ -88,8 +72,7 @@ CONFIGURE_ARGS+= \
 	--with-libiconv-prefix="$(ICONV_PREFIX)" \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
 	--with-libupnp-prefix="$(STAGING_DIR)/usr" \
-	--without-x \
-	--disable-debug 
+	--without-x
 
 MAKE_FLAGS += HOSTCC="$(HOSTCC)"
 
@@ -102,19 +85,14 @@ ifeq ($(CONFIG_AMULE_CRYPTOPP_STATIC_LINKING),y)
 endif
 endef
 
-define Package/amule-dlp/install
+define Package/amule/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/amulecmd $(1)/usr/bin/amulecmd
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/amuled $(1)/usr/bin/amuled
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/amuleweb $(1)/usr/bin/amuleweb
 
-#	$(INSTALL_DIR) $(1)/usr/share
-#	$(CP) $(PKG_INSTALL_DIR)/usr/share/amule-dlp $(1)/usr/share/
-#	$(CP) $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-master $(1)/usr/share/amule-dlp/webserver/AmuleWebUI-Reloaded
-	$(INSTALL_DIR) $(1)/usr/share/amule
-	$(CP) $(PKG_INSTALL_DIR)/usr/share/amule-dlp/webserver $(1)/usr/share/amule/
-	$(CP) $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-master $(1)/usr/share/amule/webserver/AmuleWebUI-Reloaded
+	$(INSTALL_DIR) $(1)/usr/share
+	$(CP) $(PKG_INSTALL_DIR)/usr/share/amule $(1)/usr/share/
 endef
 
-$(eval $(call Download,AmuleWebUI))
-$(eval $(call BuildPackage,amule-dlp))
+$(eval $(call BuildPackage,amule))
