@@ -20,11 +20,11 @@ local function frps_version()
 		fs.chmod(file, 755)
 	end
 
-	local version = util.trim(sys.exec("%s -v 2>/dev/null" % file))
+	local version = "<b><font style=\"color:green\">"..util.trim(sys.exec("%s -v 2>/dev/null" % file)).."</font></b>"
 	if version == "" then
 		return "<em style=\"color: red;\">%s</em>" % translate("Can't get client version")
 	end
-	return translatef("Version: %s", version)
+	return "<b><font style=\"color:red\">"..translatef("Version: %s", version).."</font></b>"
 end
 
 m = Map("frps", "%s - %s" % { translate("Frps"), translate("Common Settings") },
