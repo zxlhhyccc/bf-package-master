@@ -49,7 +49,7 @@ endef
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	unzip $(DL_DIR)/AmuleWebUI.zip -d $(PKG_BUILD_DIR)
-
+	sed -i s/"ajax.googleapis.com"/"ajax.lug.ustc.edu.cn"/g  $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-master/*.php
 endef
 
 TARGET_LDFLAGS+= -liconv
@@ -58,7 +58,7 @@ CONFIGURE_ARGS+= \
 	--disable-static \
 	--disable-rpath \
 	--disable-ccache \
-	--disable-optimize \
+	--enable-optimize \
 	--disable-profile \
 	--disable-monolithic \
 	--enable-amule-daemon \
@@ -72,6 +72,7 @@ CONFIGURE_ARGS+= \
 	--disable-alcc \
 	--disable-debug \
 	--disable-fileview \
+	--enable-mmap \
 	--disable-plasmamule \
 	--without-wxdebug \
 	--enable-dlp \
