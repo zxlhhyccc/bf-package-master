@@ -1,0 +1,13 @@
+diff --git a/configure.ac b/configure.ac
+index 0c81b4a..0dffb18 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -25,7 +25,7 @@
+ #
+ 
+ AC_INIT([aMule], [2.3.3], [admin@amule.org])
+-AM_INIT_AUTOMAKE
++AM_INIT_AUTOMAKE(subdir-objects)
+ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
+ 
+ AC_PREREQ(2.62)

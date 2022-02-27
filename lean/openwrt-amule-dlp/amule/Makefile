@@ -29,7 +29,7 @@ define Package/amule
   TITLE:=A multi-platform eMule-like ed2k client
   URL:=http://www.amule.org/
   DEPENDS:=+antileech +libpng +libpthread +libncurses +libreadline +libwxbase \
-	+libupnp +libbfd $(ICONV_DEPENDS) $(INTL_DEPENDS) \
+	+libupnp +libbfd +libintl $(ICONV_DEPENDS) $(INTL_DEPENDS) \
 	+!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
 endef
 
@@ -77,6 +77,7 @@ CONFIGURE_ARGS+= \
 	--without-wxdebug \
 	--enable-dlp \
 	--enable-upnp \
+	--without-gnu-malloc \
 	--with-gnu-ld \
 	--with-zlib="$(STAGING_DIR)/usr" \
 	--with-gdlib-prefix="$(STAGING_DIR)/usr" \

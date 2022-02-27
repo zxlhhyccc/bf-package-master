@@ -67,6 +67,7 @@ CONFIGURE_ARGS+= \
 	--disable-compat22 \
 	--disable-compat24 \
 	--enable-intl \
+	--enable-ipv6 \
 	--disable-backtrace \
 	--enable-exceptions \
 	--disable-sound \
