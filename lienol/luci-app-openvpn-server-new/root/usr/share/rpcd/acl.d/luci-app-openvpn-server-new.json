@@ -1,0 +1,11 @@
+{
+	"luci-app-openvpn-server-new": {
+		"description": "Grant UCI access for luci-app-openvpn-server-new",
+		"read": {
+			"uci": [ "luci-app-openvpn-server" ]
+		},
+		"write": {
+			"uci": [ "luci-app-openvpn-server" ]
+		}
+	}
+}
