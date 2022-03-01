@@ -41,7 +41,8 @@ define Package/ip6tables-mod-fullconenat
   SECTION:=net
   CATEGORY:=Network
   TITLE:=FULLCONENAT ip6tables extension
-  DEPENDS:=+ip6tables +kmod-nf-nat6 +kmod-ipt-fullconenat
+#  DEPENDS:=+ip6tables +kmod-nf-nat6 +kmod-ipt-fullconenat
+  DEPENDS:=+ip6tables-legacy +kmod-nf-nat6 +kmod-ipt-fullconenat
   MAINTAINER:=Chion Tang <tech@chionlab.moe>
 endef
 
