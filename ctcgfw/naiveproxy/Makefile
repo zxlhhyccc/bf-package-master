@@ -42,7 +42,7 @@ define Package/naiveproxy
   SUBMENU:=Web Servers/Proxies
   URL:=https://github.com/klzgrad/naiveproxy
   TITLE:=Make a fortune quietly
-  DEPENDS:=@!(arc||(arm&&TARGET_gemini)||armeb||mips||mips64||powerpc) +libatomic
+  DEPENDS:=@!(arc||armeb||mips||mips64||powerpc||TARGET_gemini) +libatomic
 endef
 
 define Package/naiveproxy/description
@@ -79,7 +79,8 @@ endef
 PGO_VER:=4844-1645865283-f109af6d624d1eac542865359a5743a7256bac10
 PGO_FILE:=chrome-linux-$(PGO_VER).profdata
 define Download/PGO_PROF
-	URL:=https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles
+	URL:=https://storage.googleapis.com.cnpmjs.org/chromium-optimization-profiles/pgo_profiles \
+	     https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles
 	URL_FILE:=$(PGO_FILE)
 	FILE:=$(PGO_FILE)
 	HASH:=1ab36777082237f59b2b1be2f66279cd58767539393059644c0ec2968373c619
@@ -118,9 +119,16 @@ define Build/Compile
 	+$(NINJA) -C "$(PKG_BUILD_DIR)/src/out/Release" naive
 endef
 
+define Package/naiveproxy/conffiles
+/etc/config/naiveproxy
+endef
+
 define Package/naiveproxy/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/out/Release/naive $(1)/usr/bin/naive
+	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
+	$(INSTALL_CONF) $(CURDIR)/files/naiveproxy.config $(1)/etc/config/naiveproxy
+	$(INSTALL_BIN) $(CURDIR)/files/naiveproxy.init $(1)/etc/init.d/naiveproxy
 endef
 
 $(eval $(call Download,CLANG))
