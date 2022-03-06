@@ -20,7 +20,7 @@ define Package/filerun
 	PKGARCH:=all
 	DEPENDS:=@x86_64 +luci-ssl-nginx +php8 +php8-mod-filter +php8-fpm +php8-mod-ctype +php8-mod-dom +php8-mod-fileinfo +php8-mod-session +php8-mod-curl +php8-mod-gd \
 	+php8-mod-mbstring +php8-mod-opcache +php8-mod-sockets +php8-mod-pdo-mysql +php8-mod-mysqli +php8-mod-exif +php8-mod-xml \
-	+php8-mod-openssl +php8-mod-zip +mariadb-common +mariadb-server-base +mariadb-server +mariadb-client-base +mariadb-client \
+	+php8-mod-openssl +php8-mod-zip +mariadb-server-base +mariadb-server +mariadb-client \
 	+@BUILD_PATENTED +ffmpeg +libx264 +imagemagick
 endef
 
