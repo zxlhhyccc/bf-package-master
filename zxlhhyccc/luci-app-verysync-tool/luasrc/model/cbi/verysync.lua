@@ -20,7 +20,7 @@ local lanipaddr = uci:get("network", "lan", "ipaddr") or "192.168.1.1"
 local verysyncport = uci:get("verysync", "setting", "port") or "88"
 
 local verysync_bin="/usr/bin/verysync"
-	verysync_version=SYS.exec(verysync_bin.." --version  2>/dev/null | grep -m 1 -E 'v[0-9]+[.][0-9.]+' -o|grep v|tr -d v")
+	verysync_version="<b><font style=\"color:red\">"..SYS.exec(verysync_bin.." --version  2>/dev/null | grep -m 1 -E 'v[0-9]+[.][0-9.]+' -o|grep v|tr -d v").."</font></b>"
 
 m = Map("verysync")
 m.title = translate("Verysync Synchronization Tool")
