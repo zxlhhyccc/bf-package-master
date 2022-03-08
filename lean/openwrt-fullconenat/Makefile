@@ -19,6 +19,7 @@ PKG_MIRROR_HASH:=00d749235271dee194dcd23c22e6e85207ea90192a62a110b2af0b4e4de1971
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=LICENSE
+PKG_MAINTAINER:=Chion Tang <tech@chinolab.moe>
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -28,12 +29,6 @@ define Package/iptables-mod-fullconenat
   CATEGORY:=Network
   TITLE:=FULLCONENAT iptables extension
   DEPENDS:=+iptables +kmod-ipt-fullconenat
-  MAINTAINER:=Chion Tang <tech@chionlab.moe>
-endef
-
-define Package/iptables-mod-fullconenat/install
-	$(INSTALL_DIR) $(1)/usr/lib/iptables
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libipt_FULLCONENAT.so $(1)/usr/lib/iptables
 endef
 
 define Package/ip6tables-mod-fullconenat
@@ -42,20 +37,13 @@ define Package/ip6tables-mod-fullconenat
   CATEGORY:=Network
   TITLE:=FULLCONENAT ip6tables extension
 #  DEPENDS:=+ip6tables +kmod-nf-nat6 +kmod-ipt-fullconenat
-  DEPENDS:=+ip6tables-legacy +kmod-nf-nat6 +kmod-ipt-fullconenat
-  MAINTAINER:=Chion Tang <tech@chionlab.moe>
-endef
-
-define Package/ip6tables-mod-fullconenat/install
-	$(INSTALL_DIR) $(1)/usr/lib/iptables
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libip6t_FULLCONENAT.so $(1)/usr/lib/iptables
+  DEPENDS:=ip6tables +kmod-nf-nat6 +kmod-ipt-fullconenat +ip6tables-mod-nat
 endef
 
 define KernelPackage/ipt-fullconenat
   SUBMENU:=Netfilter Extensions
   TITLE:=FULLCONENAT netfilter module
   DEPENDS:=+kmod-nf-ipt +kmod-nf-nat
-  MAINTAINER:=Chion Tang <tech@chionlab.moe>
   KCONFIG:=  \
 	CONFIG_NF_CONNTRACK_EVENTS=y \
 	CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
@@ -77,6 +65,16 @@ define Build/Compile
         EXTRA_CFLAGS="$(BUILDFLAGS)" \
         modules
 	$(call Build/Compile/Default)
+endef
+
+define Package/iptables-mod-fullconenat/install
+	$(INSTALL_DIR) $(1)/usr/lib/iptables
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libipt_FULLCONENAT.so $(1)/usr/lib/iptables
+endef
+
+define Package/ip6tables-mod-fullconenat/install
+	$(INSTALL_DIR) $(1)/usr/lib/iptables
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libip6t_FULLCONENAT.so $(1)/usr/lib/iptables
 endef
 
 $(eval $(call BuildPackage,iptables-mod-fullconenat))
