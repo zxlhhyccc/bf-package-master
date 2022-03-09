@@ -6,7 +6,7 @@ function index()
 local page = entry({"admin", "services", "AdGuardHome"},alias("admin", "services", "AdGuardHome", "base"),_("AdGuard Home"))
 page.order = 11
 page.dependent = true
-page.acl_depends = { "luci-app-control-adguardhome" }
+page.acl_depends = { "luci-app-adguardhome" }
     entry({"admin", "services", "AdGuardHome", "base"}, cbi("AdGuardHome/base"),  _("Base Setting"), 1).leaf = true
     entry({"admin", "services", "AdGuardHome", "log"}, form("AdGuardHome/log"), _("Log"), 2).leaf = true
     entry({"admin", "services", "AdGuardHome", "manual"}, cbi("AdGuardHome/manual"), _("Manual Config"), 3).leaf = true
@@ -70,10 +70,9 @@ function do_update()
 	else
 		arg=""
 	end
-	if fs.access("/var/run/update_core") then
-		if arg=="force" then
+	if arg=="force" then
 			luci.sys.exec("kill $(pgrep /usr/share/AdGuardHome/update_core.sh) ; sh /usr/share/AdGuardHome/update_core.sh "..arg.." >/tmp/AdGuardHome_update.log 2>&1 &")
-		end
+
 	else
 		luci.sys.exec("sh /usr/share/AdGuardHome/update_core.sh "..arg.." >/tmp/AdGuardHome_update.log 2>&1 &")
 	end

@@ -279,18 +279,18 @@ end
 fs.writefile("/var/run/lucilogpos","0")
 function m.on_commit(map)
 	if (fs.access("/var/run/AdGserverdis")) then
-		io.popen("/etc/init.d/AdGuardHome restart &")
+		io.popen("/etc/init.d/AdGuardHome reload &")
 		return
 	end
 	local ucitracktest=uci:get("AdGuardHome","AdGuardHome","ucitracktest")
 	if ucitracktest=="1" then
 		return
 	elseif ucitracktest=="0" then
-		io.popen("/etc/init.d/AdGuardHome restart &")
+		io.popen("/etc/init.d/AdGuardHome reload &")
 	else
 		if (fs.access("/var/run/AdGlucitest")) then
 			uci:set("AdGuardHome","AdGuardHome","ucitracktest","0")
-			io.popen("/etc/init.d/AdGuardHome restart &")
+			io.popen("/etc/init.d/AdGuardHome reload &")
 		else
 			fs.writefile("/var/run/AdGlucitest","")
 			if (ucitracktest=="2") then
