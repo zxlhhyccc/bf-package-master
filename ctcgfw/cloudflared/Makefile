@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cloudflared
-PKG_VERSION:=2022.3.0
+PKG_VERSION:=2022.3.1
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/cloudflare/cloudflared/tar.gz/$(PKG_VERSION)?
-PKG_HASH:=619426d20457e3f40b3e604d528d645df123042d6f9edcf6fc98d00433f3d094
+PKG_HASH:=e3459bc83d9749d89d93e6ab2dcbc51872568d1fb144d7ab7d3656b29785e364
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -56,10 +56,17 @@ define Package/cloudflared
 endef
 
 define Package/cloudflared/description
-  Contains the command-line client for Argo Tunnel, a tunneling daemon
-  that proxies any local webserver through the Cloudflare network.
-  Extensive documentation can be found in the Argo Tunnel section of
-  the Cloudflare Docs.
+  Contains the command-line client for Cloudflare Tunnel, a tunneling
+  daemon that proxies traffic from the Cloudflare network to your origins.
+
+  This daemon sits between Cloudflare network and your origin (e.g. a
+  webserver). Cloudflare attracts client requests and sends them to you
+  via this daemon, without requiring you to poke holes on your firewall
+  --- your origin can remain as closed as possible.
+endef
+
+define Package/cloudflared/conffiles
+/root/.cloudflared/
 endef
 
 define Build/Compile
