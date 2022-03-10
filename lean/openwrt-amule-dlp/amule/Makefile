@@ -8,9 +8,15 @@ PKG_NAME:=amule
 PKG_VERSION:=2.3.3
 PKG_RELEASE:=$(AUTORELEASE)
 
+# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+# PKG_SOURCE_URL:=https://codeload.github.com/amule-project/amule/tar.gz/$(PKG_VERSION)?
+# PKG_HASH:=934f79d4dab41c2d1caea31d6c6e10337c409ba5bb8bd6fac6c63e924e82c9b8
+
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/amule-project/amule/tar.gz/$(PKG_VERSION)?
-PKG_HASH:=934f79d4dab41c2d1caea31d6c6e10337c409ba5bb8bd6fac6c63e924e82c9b8
+PKG_SOURCE_URL:=https://github.com/amule-project/amule.git
+PKG_SOURCE_VERSION:=e26d06a6eeaf37c716a88a47890cb85b931a0538
+PKG_MIRROR_HASH:=69a2a2eaa74fb87ab6da5223bae21113bcf7ab105f0e59fe793730ad716d9246
 
 PKG_CONFIG_DEPEDS:= CONFIG_AMULE_CRYPTOPP_STATIC_LINKING
 
