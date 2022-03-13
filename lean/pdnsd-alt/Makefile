@@ -28,9 +28,9 @@ define Package/pdnsd-alt
   DEPENDS:=+libpthread
 endef
 
-define Package/$(PKG_NAME)/conffiles	
-/etc/pdnsd.conf	
-endef
+# define Package/$(PKG_NAME)/conffiles	
+# /etc/pdnsd.conf	
+# endef
 
 define Package/pdnsd-alt/description
   pdnsd, is an IPv6 capable proxy DNS server with permanent caching (the cache
@@ -55,8 +55,8 @@ define Package/pdnsd-alt/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/pdnsd $(1)/usr/sbin/pdnsd
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/pdnsd-ctl $(1)/usr/sbin/pdnsd-ctl
 
-	$(INSTALL_DIR) $(1)/etc
-	$(INSTALL_CONF) $(PKG_INSTALL_DIR)/etc/pdnsd.conf.sample $(1)/etc/pdnsd.conf
+	#$(INSTALL_DIR) $(1)/etc
+	#$(INSTALL_CONF) $(PKG_INSTALL_DIR)/etc/pdnsd.conf.sample $(1)/etc/pdnsd.conf
 	#$(INSTALL_DIR) $(1)/etc/init.d
 	#$(INSTALL_BIN) ./files/pdnsd.init $(1)/etc/init.d/pdnsd
 endef
