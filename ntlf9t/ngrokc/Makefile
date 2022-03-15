@@ -1,32 +1,33 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ngrokc
-PKG_VERSION:=1.54
-PKG_RELEASE:=1
+PKG_VERSION:=1.55
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/dosgo/ngrok-c.git
-PKG_SOURCE_VERSION:=5ecd4e03d04ac538051fe8f1b0deaca500dc7185
-PKG_MIRROR_HASH:=6bb27003b9357e9edd07b3b869e150ad506b253f3469fbbbae1fcece630afeb2
+PKG_SOURCE_DATE:=2021-09-01
+PKG_SOURCE_VERSION:=5da550284ed5bec7fa843c574e52b840e918fa4c
+PKG_MIRROR_HASH:=3b62878222f93d267b69a6e8542a381d1ab7aeda9457d3bb3a86cccb8b8feb0b
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
+PKG_BUILD_PARALLEL:=1
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/ngrokc
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=Web Servers/Proxies
-	TITLE:=Secure tunnels to localhost(C++ port)
-	URL:=https://github.com/dosgo/ngrok-c
-	DEPENDS:=+libc +libpthread +libopenssl +libstdcpp
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Web Servers/Proxies
+  TITLE:=Secure tunnels to localhost (C++ port)
+  URL:=https://github.com/dosgo/ngrok-c
+  DEPENDS:=+libc +libpthread +libopenssl +libstdcpp +zlib
 endef
 
 define Build/Prepare
-	$(call Build/Prepare/Default,)
+	$(call Build/Prepare/Default)
 	$(CP) $(PKG_BUILD_DIR)/Makefile.openssl $(PKG_BUILD_DIR)/Makefile
 endef
 
