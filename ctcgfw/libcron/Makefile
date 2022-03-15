@@ -11,8 +11,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/PerMalmberg/libcron.git
 PKG_SOURCE_DATE:=2021-12-20
 PKG_SOURCE_VERSION:=5c8de082c16fb0a6dfa3902aa30ec0b9063705de
-PKG_MIRROR_HASH:=19b213f4ef0a9d0a71012d0b86d2c19674f85aa8608b1eef23324a662072da98
-PKG_VERSION:=1.3.0-$(call version_abbrev,$(PKG_SOURCE_VERSION))
+PKG_MIRROR_HASH:=80e1454bec33a46c5a37e01392a4e6e1b8c242bfef446903c5da3c5c2e7b9565
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -29,12 +28,19 @@ define Package/libcron
   CATEGORY:=Libraries
   URL:=https://github.com/PerMalmberg/libcron
   TITLE:=A C++ scheduling library using cron formatting
-  BUILDONLY:=1
+  DEPENDS:=+libstdcpp
 endef
 
 define Package/libcron/description
   Libcron offers an easy to use API to add callbacks with corresponding
   cron-formatted strings.
+endef
+
+CMAKE_OPTIONS+= -DBUILD_SHARED_LIBS=ON
+
+define Package/libcron/install
+	$(INSTALL_DIR) $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/liblibcron.so $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libcron))
