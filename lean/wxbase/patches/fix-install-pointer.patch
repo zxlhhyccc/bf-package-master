@@ -1,5 +1,3 @@
-diff --git a/wx-config.in b/wx-config.in
-index b185bbb..0a9a341 100755
 --- a/wx-config.in
 +++ b/wx-config.in
 @@ -971,7 +971,7 @@ fi
