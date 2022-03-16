@@ -1,8 +1,6 @@
-diff --git a/src/libs/common/FileFunctions.cpp b/src/libs/common/FileFunctions.cpp
-index 4db0d1237..96d195537 100644
 --- a/src/libs/common/FileFunctions.cpp
 +++ b/src/libs/common/FileFunctions.cpp
-@@ -136,28 +136,30 @@ static bool UnpackZipFile(const wxString& file, const wxChar* files[])
+@@ -136,28 +136,30 @@ static bool UnpackZipFile(const wxString
  {
  	wxTempFile target(file);
  	CSmartPtr<wxZipEntry> entry;

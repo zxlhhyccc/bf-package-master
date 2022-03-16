@@ -1,6 +1,6 @@
 --- a/configure.ac
 +++ b/configure.ac
-@@ -91,6 +91,14 @@ MULE_IF_ENABLED([static], [MULE_APPEND([
+@@ -87,6 +87,14 @@ MULE_IF_ENABLED([static], [MULE_APPEND([
  KDE_CONFIG_OPTIONS
  QT_CONFIG_OPTIONS
  
@@ -15,7 +15,7 @@
  # Default is yes, because they're most likely compatible.
  # However, this is only used when cross-compiling.
  AC_ARG_WITH(
-@@ -451,6 +459,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x
+@@ -447,6 +455,8 @@ AM_CONDITIONAL(NEED_CORESERVICES, test x
  AM_CONDITIONAL(COMPILE_NLS, test x$USE_NLS = xyes)
  AM_CONDITIONAL(INSTALL_SKINS, test MULE_IS_ENABLED_ANY([monolithic, amule-gui]))
  AM_CONDITIONAL(PLASMAMULE, test MULE_IS_ENABLED([plasmamule]))

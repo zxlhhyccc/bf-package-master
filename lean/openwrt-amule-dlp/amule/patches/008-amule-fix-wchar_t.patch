@@ -1,5 +1,3 @@
-diff --git a/src/LibSocketAsio.cpp b/src/LibSocketAsio.cpp
-index 5f8b026..f889a45 100644
 --- a/src/LibSocketAsio.cpp
 +++ b/src/LibSocketAsio.cpp
 @@ -25,6 +25,8 @@
@@ -20,8 +18,6 @@ index 5f8b026..f889a45 100644
  #include <common/Format.h>	// Needed for CFormat
  #include "Logger.h"
  #include "GuiEvents.h"
-diff --git a/src/UPnPBase.cpp b/src/UPnPBase.cpp
-index 7e75084..a56bf71 100644
 --- a/src/UPnPBase.cpp
 +++ b/src/UPnPBase.cpp
 @@ -27,13 +27,13 @@
@@ -39,8 +35,6 @@ index 7e75084..a56bf71 100644
  
  #include <algorithm>		// For transform()
  
-diff --git a/src/UPnPBase.h b/src/UPnPBase.h
-index 7554d66..ba553a1 100644
 --- a/src/UPnPBase.h
 +++ b/src/UPnPBase.h
 @@ -29,11 +29,11 @@
@@ -56,8 +50,6 @@ index 7554d66..ba553a1 100644
  
  #include <common/SmartPtr.h>		// Needed for CSmartPtr
  
-diff --git a/src/UPnPCompatibility.h b/src/UPnPCompatibility.h
-index ce247c5..93508f2 100644
 --- a/src/UPnPCompatibility.h
 +++ b/src/UPnPCompatibility.h
 @@ -27,6 +27,8 @@

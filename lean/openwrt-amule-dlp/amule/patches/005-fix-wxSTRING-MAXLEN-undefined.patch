@@ -1,5 +1,3 @@
-diff --git a/src/CString_wx.h b/src/CString_wx.h
-index a596f79..39d6cf1 100644
 --- a/src/CString_wx.h
 +++ b/src/CString_wx.h
 @@ -52,7 +52,11 @@ class CString : public wxString{

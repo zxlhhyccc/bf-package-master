@@ -1,5 +1,3 @@
-diff --git a/src/DLP.cpp b/src/DLP.cpp
-index 885cbf3..d6277ae 100644
 --- a/src/DLP.cpp
 +++ b/src/DLP.cpp
 @@ -64,6 +64,7 @@ bool DLP::DLPCheck(CUpDownClient* c){
