@@ -3,6 +3,9 @@
 
 require("nixio.fs")
 
+local syncthing_bin = "export HOME='/root';/usr/bin/syncthing"
+	syncthing_version="<b><font style=\"color:red\">"..luci.sys.exec(syncthing_bin.." --version | awk '{print $2}' |grep v|tr -d v 2>/dev/null").."</font></b>"
+
 m = Map("syncthing", translate("Syncthing Synchronization Tool"))
 
 m:section(SimpleSection).template  = "syncthing/syncthing_status"
@@ -14,6 +17,10 @@ s.anonymous = true
 o = s:option(Flag, "enabled", translate("Enabled"))
 o.default = 0
 o.rmempty = false
+
+o = s:option(DummyValue,"syncthing_version",translate("Syncthing Version"))
+o.rawhtml  = true
+o.value = syncthing_version
 
 gui_address = s:option(Value, "gui_address", translate("GUI access address"))
 gui_address.description = translate("Use 0.0.0.0:8384 to monitor all access.")

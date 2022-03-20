@@ -10,6 +10,9 @@ msgstr "打开存储同步页面"
 msgid "Enabled"
 msgstr "启用"
 
+msgid "Syncthing Version"
+msgstr "Syncthing 版本"
+
 msgid "GUI access address"
 msgstr "GUI访问地址"
 
