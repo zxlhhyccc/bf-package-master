@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-ssr-plus-mosdns
-PKG_VERSION:=184
-PKG_RELEASE:=10
+PKG_NAME:=luci-app-ssr-plus
+PKG_VERSION:=185
+PKG_RELEASE:=2
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
@@ -112,7 +112,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Xray
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns
 	bool "Include Mosdns"
-	default n
+	default y
 endef
 
 define Package/$(PKG_NAME)/conffiles
