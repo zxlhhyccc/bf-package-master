@@ -75,11 +75,11 @@ plugin:
     type: fast_forward
     args:
       upstream:
+        - addr: 'tcp://1.1.1.1'
+          idle_timeout: 10
         - addr: 'tcp://198.153.194.1'
           idle_timeout: 10
         - addr: 'tcp://199.85.127.10'
-          idle_timeout: 10
-        - addr: 'tcp://76.76.19.19'
           idle_timeout: 10
 
   - tag: lazy_cache
