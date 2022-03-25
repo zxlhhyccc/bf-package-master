@@ -98,6 +98,8 @@ endif
 TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed -flto
 
+CMAKE_SHARED_LDFLAGS:=$(filter-out -Wl$(comma)-Bsymbolic-functions,$(CMAKE_SHARED_LDFLAGS))
+
 CMAKE_HOST_OPTIONS += \
 	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.19 \
 	-DCMAKE_STAGING_PREFIX=$(STAGING_DIR_HOSTPKG) \
@@ -226,6 +228,7 @@ define DefineQtbasePlugin
 endef
 
 $(eval $(call DefineQtbasePlugin,sqldrivers,sql-sqlite,qsqlite,core sql,+libpcre2-16 +zlib))
+$(eval $(call DefineQtbasePlugin,tls,network-tlsbackend-openssl,qopensslbackend,core network,+libopenssl +libpcre2-16 +zlib))
 
 $(foreach lib,$(QTBASE_LIBS),$(eval $(call BuildPackage,libqt6$(lib))))
 $(eval $(call HostBuild))
