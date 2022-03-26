@@ -159,7 +159,7 @@ CMAKE_OPTIONS += \
 	-DFEATURE_xcb_xlib=OFF \
 	-DFEATURE_xkbcommon=OFF \
 	\
-	-DINPUT_openssl=runtime \
+	-DINPUT_openssl=linked \
 	-DFEATURE_libproxy=OFF \
 	-DFEATURE_gssapi=OFF \
 	\
