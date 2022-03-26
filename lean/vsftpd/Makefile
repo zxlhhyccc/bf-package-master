@@ -35,16 +35,11 @@ endef
 define Package/vsftpd/config
 config VSFTPD_USE_UCI_SCRIPTS
 	bool "Uses UCI scripts"
-	depends on PACKAGE_vsftpd
+	depends on PACKAGE_vsftpd||PACKAGE_vsftpd-tls
 	default y
 endef
-	
-define Package/vsftpd-tls/config
-config VSFTPD_TLS_USE_UCI_SCRIPTS
-	bool "Uses UCI scripts(TLS)"
-	depends on PACKAGE_vsftpd-tls
-	default y
-endef
+
+Package/vsftpd-tls/config=$(Package/vsftpd/config)
 
 define Package/vsftpd
 $(call Package/vsftpd/Default)
@@ -101,7 +96,6 @@ ifeq ($(BUILD_VARIANT),tls)
 endif
 
 ifeq ($(CONFIG_VSFTPD_USE_UCI_SCRIPTS),y)
-else ifeq ($(CONFIG_VSFTPD_TLS_USE_UCI_SCRIPTS),y)
 define Package/vsftpd/install
 $(call Package/vsftpd/install/default, $(1))
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -122,7 +116,7 @@ define Package/vsftpd/install
 $(call Package/vsftpd/install/default, $(1))
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_CONF) ./files/$(PKG_NAME).conf $(1)/etc/$(PKG_NAME).conf
+	$(INSTALL_BIN) ./files/$(PKG_NAME).conf $(1)/etc/$(PKG_NAME).conf
 	$(INSTALL_BIN) ./files/$(PKG_NAME).init $(1)/etc/init.d/$(PKG_NAME)
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vsftpd $(1)/usr/sbin	
 endef
