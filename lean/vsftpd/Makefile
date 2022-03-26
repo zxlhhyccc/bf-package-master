@@ -38,6 +38,13 @@ config VSFTPD_USE_UCI_SCRIPTS
 	depends on PACKAGE_vsftpd
 	default y
 endef
+	
+define Package/vsftpd-tls/config
+config VSFTPD_TLS_USE_UCI_SCRIPTS
+	bool "Uses UCI scripts(TLS)"
+	depends on PACKAGE_vsftpd-tls
+	default y
+endef
 
 define Package/vsftpd
 $(call Package/vsftpd/Default)
@@ -94,6 +101,7 @@ ifeq ($(BUILD_VARIANT),tls)
 endif
 
 ifeq ($(CONFIG_VSFTPD_USE_UCI_SCRIPTS),y)
+else ifeq ($(CONFIG_VSFTPD_TLS_USE_UCI_SCRIPTS),y)
 define Package/vsftpd/install
 $(call Package/vsftpd/install/default, $(1))
 	$(INSTALL_DIR) $(1)/etc/init.d
