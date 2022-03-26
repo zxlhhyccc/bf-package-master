@@ -1,6 +1,6 @@
 --- a/easyrsa3/easyrsa
 +++ b/easyrsa3/easyrsa
-@@ -607,7 +607,7 @@
+@@ -648,7 +648,7 @@ current CA keypair. If you intended to s
  
  	# Default CN only when not in global EASYRSA_BATCH mode:
  	# shellcheck disable=SC2015
