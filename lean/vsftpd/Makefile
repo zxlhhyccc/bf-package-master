@@ -27,8 +27,16 @@ define Package/vsftpd/Default
   CATEGORY:=Network
   TITLE:=Fast and secure FTP server
   URL:=https://security.appspot.com/vsftpd.html
+  DEPENDS=+libuci 
 endef
 
+
+define Package/vsftpd/config
+config VSFTPD_USE_UCI_SCRIPTS
+	bool "Uses UCI scripts"
+	depends on PACKAGE_vsftpd
+	default y
+endef
 
 define Package/vsftpd
 $(call Package/vsftpd/Default)
@@ -84,7 +92,14 @@ ifeq ($(BUILD_VARIANT),tls)
  endef
 endif
 
+ifeq ($(CONFIG_VSFTPD_USE_UCI_SCRIPTS),y)
 define Package/vsftpd/install
+$(call Package/vsftpd/install/default, $(1))
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_DIR) $(1)/etc/config
+ifdef CONFIG_PACKAGE_libpam
+	$(INSTALL_DIR) $(1)/etc/pam.d
+endif
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME) $(1)/usr/sbin/
 	$(INSTALL_BIN) ./files/$(PKG_NAME)_wrapper $(1)/usr/sbin/
@@ -98,6 +113,16 @@ define Package/vsftpd/install
 	$(INSTALL_BIN) ./files/$(PKG_NAME)-uci.init $(1)/etc/init.d/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/vsftpd
 endef
+else
+define Package/vsftpd/install
+$(call Package/vsftpd/install/default, $(1))
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_CONF) ./files/vsftpd.conf $(1)/etc/vsftpd.conf
+	$(INSTALL_BIN) ./files/vsftpd.init $(1)/etc/init.d/vsftpd
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vsftpd $(1)/usr/sbin	
+endef
+endif
 
 Package/vsftpd-tls/install=$(Package/vsftpd/install)
 
