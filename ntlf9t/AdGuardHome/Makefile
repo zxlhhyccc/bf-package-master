@@ -32,11 +32,13 @@ GO_PKG:=github.com/AdguardTeam/AdGuardHome
 # GO_PKG_EXCLUDES:=internal/dhcpd/standalone
 GO_PKG_BUILD_PKG:=github.com/AdguardTeam/AdGuardHome
 
+AGH_BUILD_TIME:=$(shell date -d @$(SOURCE_DATE_EPOCH) +%FT%TZ%z)
 AGH_VERSION_PKG:=github.com/AdguardTeam/AdGuardHome/internal/version
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(AGH_VERSION_PKG).channel=release \
-	$(AGH_VERSION_PKG).version=v$(PKG_VERSION) \
+	$(AGH_VERSION_PKG).version=$(PKG_SOURCE_VERSION) \
+	$(AGH_VERSION_PKG).buildtime=$(AGH_BUILD_TIME) \
 	$(AGH_VERSION_PKG).goarm=$(GO_ARM) \
 	$(AGH_VERSION_PKG).gomips=$(GO_MIPS)
 
@@ -58,7 +60,7 @@ define Package/AdGuardHome
 endef
 
 define Package/AdGuardHome/conffiles
-etc/AdGuardHome/AdGuardHome.yaml
+/etc/AdGuardHome/AdGuardHome.yaml
 endef
 
 define Package/AdGuardHome/description
