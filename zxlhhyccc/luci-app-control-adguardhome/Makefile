@@ -4,11 +4,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-control-adguardhome
+PKG_VERSION:=1.8
+PKG_RELEASE:=12
 PKG_MAINTAINER:=<https://github.com/rufengsuixing/luci-app-adguardhome>
 
 LUCI_TITLE:=LuCI app for AdGuardHome
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+ca-certs +curl +wget-ssl +PACKAGE_$(PKG_NAME)_INCLUDE_binary:AdGuardHome
+LUCI_DEPENDS:=+ca-certs +curl +wget-ssl +PACKAGE_$(PKG_NAME)_INCLUDE_binary:adguardhome
 LUCI_DESCRIPTION:=LuCI support for AdGuardHome
 
 
