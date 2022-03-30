@@ -54,15 +54,15 @@ config_download()
 {
 if [ -n "$subscribe_url_param" ]; then
    if [ -n "$c_address" ]; then
-      curl -sL --connect-timeout 5 -m 30 --speed-time 5 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' "$c_address""$subscribe_url_param" -o "$CFG_FILE" >/dev/null 2>&1
+      curl -sL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' "$c_address""$subscribe_url_param" -o "$CFG_FILE" >/dev/null 2>&1
    else
-      curl -sL --connect-timeout 5 -m 30 --speed-time 5 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' https://api.dler.io/sub"$subscribe_url_param" -o "$CFG_FILE" >/dev/null 2>&1
+      curl -sL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' https://api.dler.io/sub"$subscribe_url_param" -o "$CFG_FILE" >/dev/null 2>&1
       if [ "$?" -ne 0 ]; then
-         curl -sL --connect-timeout 5 -m 30 --speed-time 5 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' https://subconverter.herokuapp.com/sub"$subscribe_url_param" -o "$CFG_FILE" >/dev/null 2>&1
+         curl -sL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' https://subconverter.herokuapp.com/sub"$subscribe_url_param" -o "$CFG_FILE" >/dev/null 2>&1
       fi
    fi
 else
-   curl -sL --connect-timeout 5 -m 30 --speed-time 5 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' "$subscribe_url" -o "$CFG_FILE" >/dev/null 2>&1
+   curl -sL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 -H 'User-Agent: Clash' "$subscribe_url" -o "$CFG_FILE" >/dev/null 2>&1
 fi
 }
 
@@ -462,7 +462,10 @@ sub_info_get()
    if [ "$sub_convert" -eq 0 ]; then
       subscribe_url=$address
    elif [ "$sub_convert" -eq 1 ] && [ -n "$template" ]; then
-      subscribe_url=$(urlencode "$address")
+      while read line
+      do
+      	subscribe_url=$([ -n "$subscribe_url" ] && echo "$subscribe_url|")$(urlencode "$line")
+      done < <(echo "$address")
       if [ "$template" != "0" ]; then
          template_path=$(grep "^$template," /usr/share/openclash/res/sub_ini.list |awk -F ',' '{print $3}' 2>/dev/null)
       else
