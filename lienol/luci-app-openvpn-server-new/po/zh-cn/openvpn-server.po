@@ -82,6 +82,9 @@ msgstr "点击后请稍等片刻..."
 msgid "Online Users"
 msgstr "在线用户"
 
+msgid "Logs"
+msgstr "日志"
+
 msgid "Login Time"
 msgstr "登录时间"
 
