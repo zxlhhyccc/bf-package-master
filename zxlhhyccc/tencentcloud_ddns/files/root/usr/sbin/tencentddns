@@ -24,7 +24,8 @@ intelnetip() {
 		tmp_ip=`curl -sL --connect-timeout 3 14.215.150.17:6666`
 	fi
 	if [ "Z$tmp_ip" == "Z" ]; then
-		tmp_ip=`curl -sL --connect-timeout 3 myip.ipip.net/s`
+		# tmp_ip=`curl -sL --connect-timeout 3 myip.ipip.net/s`
+		tmp_ip=`curl -sL --connect-timeout 3 whatismyip.akamai.com`
 	fi
 	echo -n $tmp_ip
 }
@@ -95,7 +96,8 @@ query_recordid() {
 }
 
 update_record() {
-        send_request "Record.Modify" "domain=$main_dm&sub_domain=$sub_dm&record_id=$1&record_type=A&record_line=%e9%bb%98%e8%ae%a4&value=$ip"
+        # send_request "Record.Modify" "domain=$main_dm&sub_domain=$sub_dm&record_id=$1&record_type=A&record_line=%e9%bb%98%e8%ae%a4&value=$ip"
+        send_request "Record.Ddns" "domain=$main_dm&sub_domain=$sub_dm&record_id=$1&record_type=A&record_line=%e9%bb%98%e8%ae%a4&value=$ip"
 }
 
 add_record() {

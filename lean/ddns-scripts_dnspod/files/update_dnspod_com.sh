@@ -74,7 +74,8 @@ dnspod_transfer() {
 		__C=1
 			;;
 		3)
-		__B="$__CMDBASE '$__POST1&record_id=$__RECID&ttl=$__TTL' ${__URLBASE}Record.Modify"
+		# __B="$__CMDBASE '$__POST1&record_id=$__RECID&ttl=$__TTL' ${__URLBASE}Record.Modify"
+		__B="$__CMDBASE '$__POST1&record_id=$__RECID&ttl=$__TTL' ${__URLBASE}Record.Ddns"
 		__C=1
 			;;
 	esac
