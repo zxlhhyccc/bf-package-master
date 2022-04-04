@@ -25,17 +25,13 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_V2RAY_CORE-V5_COMPRESS_GOPROXY \
-	CONFIG_V2RAY_CORE-V5_COMPRESS_UPX \
-	CONFIG_V2RAY_CTL-V5_COMPRESS_GOPROXY \
-	CONFIG_V2RAY_CTL-V5_COMPRESS_UPX
+	CONFIG_V2RAY_CORE-V5_COMPRESS_UPX
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/v2fly/v2ray-core/v5
-GO_PKG_BUILD_PKG:=github.com/v2fly/v2ray-core/v5/main
-GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG).build=OpenWrt \
 	$(GO_PKG).version=$(PKG_VERSION)
@@ -53,11 +49,6 @@ endef
 define Package/v2ray-core-v5
   $(call Package/v2ray-v5/template)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-endef
-
-define Package/v2ray-ctl-v5
-  $(call Package/v2ray-v5/template)
-  DEPENDS:=v2ray-core-v5
 endef
 
 define Package/v2ray-v5-example
@@ -81,12 +72,6 @@ endef
 
 define Package/v2ray-core-v5/description
   $(call Package/v2ray-v5/description)
-endef
-
-define Package/v2ray-ctl-v5/description
-  $(call Package/v2ray-v5/description)
-
-  This includes configuration tool for v2ray-core-v5.
 endef
 
 define Package/v2ray-v5-example/description
@@ -116,52 +101,27 @@ config V2RAY_CORE-V5_COMPRESS_UPX
 endmenu
 endef
 
-define Package/v2ray-ctl-v5/config
-menu "v2ray-ctl-v5 Configuration"
-	depends on PACKAGE_v2ray-ctl-v5
-
-config V2RAY_CTL-V5_COMPRESS_GOPROXY
-	bool "Compiling with GOPROXY proxy"
-	default n
-
-config V2RAY_CTL-V5_COMPRESS_UPX
-	bool "Compress executable files with UPX"
-	depends on !mips64
-	default n
-endmenu
-endef
-
 define Package/v2ray-core-v5/conffiles
 /etc/config/v2ray
 /etc/v2ray/
 endef
 
-ifneq ($(CONFIG_V2RAY_CORE-V5_COMPRESS_GOPROXY)$(CONFIG_V2RAY_CTL-V5_COMPRESS_GOPROXY),)
+ifneq ($(CONFIG_V2RAY_CORE-V5_COMPRESS_GOPROXY),)
 	export GO111MODULE=on
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-	mv $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
 ifneq ($(CONFIG_V2RAY_CORE-V5_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray
-endif
-
-ifneq ($(CONFIG_PACKAGE_v2ray-ctl-v5),)
-	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/infra/control/main)
-	$(call GoPackage/Build/Compile)
-	mv $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
-ifneq ($(CONFIG_V2RAY_CTL-V5_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ctl
-endif
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main
 endif
 endef
 
 define Package/v2ray-core-v5/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ray $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/v2ray
 
 	$(INSTALL_DIR) $(1)/etc/v2ray/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/release/config/config.json $(1)/etc/v2ray/
@@ -170,13 +130,6 @@ define Package/v2ray-core-v5/install
 	$(INSTALL_CONF) $(CURDIR)/files/v2ray.conf $(1)/etc/config/v2ray
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) $(CURDIR)/files/v2ray.init $(1)/etc/init.d/v2ray
-endef
-
-define Package/v2ray-ctl-v5/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-
-	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/v2ctl $(1)/usr/bin/
 endef
 
 define Package/v2ray-v5-example/install
@@ -191,6 +144,5 @@ define Package/v2ray-v5-extra/install
 endef
 
 $(eval $(call BuildPackage,v2ray-core-v5))
-$(eval $(call BuildPackage,v2ray-ctl-v5))
 $(eval $(call BuildPackage,v2ray-v5-example))
 $(eval $(call BuildPackage,v2ray-v5-extra))
