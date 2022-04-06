@@ -9,8 +9,6 @@ Subject: [PATCH] fix block ad,add web traffic logs
  processor/processor.go | 55 +++++++++++++++++++++++++++++++++---------
  3 files changed, 45 insertions(+), 12 deletions(-)
 
-diff --git a/app.go b/app.go
-index 73a6070..1018d75 100644
 --- a/app.go
 +++ b/app.go
 @@ -45,6 +45,7 @@ func main() {
@@ -21,8 +19,6 @@ index 73a6070..1018d75 100644
  		if host.InitHosts() == nil {
  			//go func() {
  			//	//	// terminal: $ go tool pprof -http=:8081 http://localhost:6060/debug/pprof/heap
-diff --git a/config/config.go b/config/config.go
-index 6c07873..a653cdf 100644
 --- a/config/config.go
 +++ b/config/config.go
 @@ -31,6 +31,7 @@ var (
@@ -33,8 +29,6 @@ index 6c07873..a653cdf 100644
  )
  
  func ValidParams() bool {
-diff --git a/processor/processor.go b/processor/processor.go
-index 8d09dbf..d07b9d3 100644
 --- a/processor/processor.go
 +++ b/processor/processor.go
 @@ -6,14 +6,6 @@ import (
@@ -68,7 +62,7 @@ index 8d09dbf..d07b9d3 100644
  )
  
  var (
-@@ -188,6 +189,9 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+@@ -188,6 +189,9 @@ func RequestAfter(request *http.Request,
  			if ok {
  				code = codeN.String()
  			}
@@ -78,7 +72,7 @@ index 8d09dbf..d07b9d3 100644
  			if strings.EqualFold(netease.Path, "/api/osx/version") {
  				modified = disableUpdate(netease)
  			} else if strings.Contains(netease.Path, "/usertool/sound/") {
-@@ -197,9 +201,24 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+@@ -197,9 +201,24 @@ func RequestAfter(request *http.Request,
  				for key, resp := range netease.JsonBody {
  					if strings.Contains(key, "/usertool/sound/") {
  						modified = unblockSoundEffects(resp.(map[string]interface{}))
@@ -104,7 +98,7 @@ index 8d09dbf..d07b9d3 100644
  					}
  				}
  			} else if !netease.Web && (code == "401" || code == "512") && strings.Contains(netease.Path, "manipulate") {
-@@ -220,7 +239,9 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+@@ -220,7 +239,9 @@ func RequestAfter(request *http.Request,
  				// log.Println("NeedRepackage")
  				modifiedJson, _ := json.Marshal(netease.JsonBody)
  				// log.Println(netease)
@@ -115,7 +109,7 @@ index 8d09dbf..d07b9d3 100644
  				if netease.Encrypted {
  					modifiedJson = crypto.AesEncryptECB(modifiedJson, []byte(aeskey))
  				}
-@@ -258,14 +279,24 @@ func disableUpdate(netease *Netease) bool {
+@@ -258,14 +279,24 @@ func disableUpdate(netease *Netease) boo
  			if len(value.(common.SliceType)) > 0 {
  				modified = true
  				jsonBody["updateFiles"] = make(common.SliceType, 0)

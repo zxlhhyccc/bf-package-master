@@ -7,11 +7,9 @@ Subject: [PATCH] fix(processor): avoid unnecessary decryption
  processor/processor.go | 8 ++++++--
  1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/processor/processor.go b/processor/processor.go
-index 8d09dbf..011571b 100644
 --- a/processor/processor.go
 +++ b/processor/processor.go
-@@ -177,9 +177,13 @@ func RequestAfter(request *http.Request, response *http.Response, netease *Netea
+@@ -178,9 +178,13 @@ func RequestAfter(request *http.Request,
  			if netease.Forward {
  				aeskey = linuxApiKey
  			}
