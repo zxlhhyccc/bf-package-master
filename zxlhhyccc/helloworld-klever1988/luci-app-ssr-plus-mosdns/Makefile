@@ -2,9 +2,10 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-ssr-plus-mosdns
 PKG_VERSION:=185
-PKG_RELEASE:=2
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_CONFIG_DEPENDS:= \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNSProxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks \
@@ -28,6 +29,7 @@ LUCI_DEPENDS:= \
 	+coreutils +coreutils-base64 +dns2socks +dnsmasq-full +ipset +kmod-ipt-nat \
 	+ip-full +iptables-mod-tproxy +lua +libuci-lua +microsocks +pdnsd-alt \
 	+tcping +resolveip +shadowsocksr-libev-ssr-check +uclient-fetch \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_DNSProxy:dnsproxy \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks:ipt2socks \
@@ -48,6 +50,10 @@ LUCI_DEPENDS:= \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns:Mosdns
 
 define Package/$(PKG_NAME)/config
+config PACKAGE_$(PKG_NAME)_INCLUDE_DNSProxy
+	bool "Include DNSProxy"
+	default n
+
 config PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun
 	bool "Include Kcptun"
 	default n
