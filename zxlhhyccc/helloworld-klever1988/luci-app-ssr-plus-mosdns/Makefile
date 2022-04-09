@@ -47,7 +47,6 @@ LUCI_DEPENDS:= \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Plugin:v2ray-plugin \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:curl \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns:Mosdns
 
 define Package/$(PKG_NAME)/config
