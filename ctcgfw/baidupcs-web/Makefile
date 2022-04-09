@@ -40,11 +40,11 @@ define Package/baidupcs-web
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
-define Package/$(PKG_NAME)/description
+define Package/baidupcs-web/description
 BaiduPCS-Web is a web controller for BaiduPCS-Go
 endef
 
-define Package/$(PKG_NAME)/config
+define Package/baidupcs-web/config
 config BAIDUPCS_WEB_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -72,7 +72,7 @@ ifeq ($(CONFIG_BAIDUPCS_WEB_COMPRESS_UPX),y)
 endif
 endef
 
-define Package/$(PKG_NAME)/install
+define Package/baidupcs-web/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/BaiduPCS-Go $(1)/usr/bin/baidupcs-web
