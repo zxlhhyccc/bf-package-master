@@ -8,7 +8,6 @@ Subject: [PATCH] fix block ad,add web traffic logs
  config/config.go       |  1 +
  processor/processor.go | 55 +++++++++++++++++++++++++++++++++---------
  3 files changed, 45 insertions(+), 12 deletions(-)
-
 --- a/app.go
 +++ b/app.go
 @@ -45,6 +45,7 @@ func main() {

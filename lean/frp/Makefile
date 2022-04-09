@@ -1,8 +1,7 @@
 #
-# Copyright (C) 2019 Xingwang Liao
+# Copyright (C) 2015-2016 OpenWrt.org
 #
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
+# This is free software, licensed under the GNU General Public License v3.
 #
 
 include $(TOPDIR)/rules.mk
