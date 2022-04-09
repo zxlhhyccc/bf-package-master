@@ -28,7 +28,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_FILEBROWSER_COMPRESS_UPX
 
 GO_PKG:=github.com/filebrowser/filebrowser
-GO_PKG_LDFLAGS:=-s -w
+# GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/v2/version.CommitSHA=$(PKG_SOURCE_VERSION) \
 	$(GO_PKG)/v2/version.Version=$(PKG_VERSION)
@@ -68,25 +68,25 @@ export GOPROXY=https://goproxy.io
 endif
 
 define Build/Compile
-( \
-  cd $(PKG_BUILD_DIR)/frontend ; \
-  npm ci; \
-  npm run lint ; \
-  npm run build ; \
-  popd ; \
-  $(call GoPackage/Build/Compile) ; \
-)
+	( \
+		pushd "$(PKG_BUILD_DIR)/frontend" ; \
+		npm ci; \
+		npm run lint ; \
+		npm run build ; \
+		$(call GoPackage/Build/Compile) ; \
+	)
 ifeq ($(CONFIG_FILEBROWSER_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/filebrowser
 endif
 endef
 
 define Package/filebrowser/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-	$(INSTALL_DIR) $(1)/etc/config/ $(1)/etc/init.d/ $(1)/usr/bin/
+	$(call GoPackage/Package/Install/Bin,$(1))
+
+	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) $(CURDIR)/files/filebrowser.config $(1)/etc/config/filebrowser
+	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(CURDIR)/files/filebrowser.init $(1)/etc/init.d/filebrowser
-	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/filebrowser $(1)/usr/bin/filebrowser
 endef
 
 $(eval $(call GoBinPackage,filebrowser))

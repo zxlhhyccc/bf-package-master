@@ -25,7 +25,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=go-aliyun-webdav
-GO_PKG_LDFLAGS:=-s -w
+# GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.Version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
@@ -37,7 +37,7 @@ define Package/go-aliyundrive-webdav
   SUBMENU:=File Transfer
   TITLE:=A WebDav server for AliyunDrive
   URL:=https://github.com/LinkLeong/go-aliyundrive-webdav
-  DEPENDS:=$(GO_ARCH_DEPENDS)
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/go-aliyundrive-webdav/config

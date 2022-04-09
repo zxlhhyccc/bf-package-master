@@ -35,7 +35,7 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/rclone/rclone
 GO_PKG_EXCLUDES:=test
-GO_PKG_LDFLAGS:=-s -w
+# GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	github.com/rclone/rclone/fs.Version=v$(PKG_VERSION) \
 	main.Version=v$(PKG_VERSION) \

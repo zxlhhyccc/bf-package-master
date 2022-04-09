@@ -26,7 +26,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_CLOUDREVE_COMPRESS_UPX
 
 GO_PKG:=github.com/cloudreve/Cloudreve/v3
-GO_PKG_LDFLAGS:=-s -w
+# GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/pkg/conf.BackendVersion=$(PKG_VERSION) \
 	$(GO_PKG)/pkg/conf.LastCommit=$(PKG_VERSION)
@@ -41,6 +41,11 @@ define Package/cloudreve
   TITLE:=A project helps you build your own cloud in minutes
   URL:=https://cloudreve.org
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+endef
+
+define Package/cloudreve/description
+  Self-deployed file management and sharing system, supports multiple
+  storage providers.
 endef
 
 define Package/cloudreve/config
@@ -77,6 +82,7 @@ endef
 
 define Package/cloudreve/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/Cloudreve $(1)/usr/bin/cloudreve
 endef

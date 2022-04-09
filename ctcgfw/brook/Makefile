@@ -31,8 +31,8 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_BROOK_COMPRESS_UPX
 
 GO_PKG:=github.com/txthinking/brook
-GO_PKG_BUILD_PKG:=github.com/txthinking/brook/cli/brook
-GO_PKG_LDFLAGS:=-s -w
+GO_PKG_BUILD_PKG:=$(GO_PKG)/cli/brook
+# GO_PKG_LDFLAGS:=-s -w
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
