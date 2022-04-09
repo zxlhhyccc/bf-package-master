@@ -2234,8 +2234,8 @@ msgstr "错误：设置自定义规则失败，"
 msgid "Error: Set BT/P2P DIRECT Rules Failed,"
 msgstr "错误：设置仅代理命中规则流量（BT/P2P直连）失败，"
 
-msgid "Error: Set 198.18.0.1/16 REJECT Rule Failed,"
-msgstr "错误：设置198.18.0.1/16（REJECT）规则失败，"
+msgid "Error: Set Loop Protect Rules Failed,"
+msgstr "错误：设置防回环规则失败，"
 
 msgid "Error: Set lhie1 Rules Failed,"
 msgstr "错误：设置第三方规则（lhie1）失败，"
@@ -2749,3 +2749,18 @@ msgstr "仅支持规则（Rule）模式，其他模式默认分流，禁用后�
 
 msgid "Error: Set Router Self Proxy Rule Failed,"
 msgstr "错误：修改路由自身代理规则失败，"
+
+msgid "Error: Streaming Unlock Now Disabled, Need Start From Luci Page, Exiting..."
+msgstr "错误：流媒体解锁处于禁用状态，请在LUCI界面启用，退出..."
+
+msgid "Error: Streaming Unlock Has No Parameter of Type, Exiting..."
+msgstr "错误：流媒体解锁没有指定需要检测的流媒体类型，退出..."
+
+msgid "Error: Streaming Unlock Could not Work Because of Router-Self Proxy Disabled, Exiting..."
+msgstr "错误：因为禁用了代理路由器自身流量，流媒体解锁无法工作，退出..."
+
+msgid "Error: Multiple Scripts Running, Exiting..."
+msgstr "错误：多个脚本运行中，退出..."
+
+msgid "Error: Streaming DNS Prefetch Could not Work Because of Router-Self Proxy Disabled, Exiting..."
+msgstr "错误：因为禁用了代理路由器自身流量，预解析无法工作，退出..."
