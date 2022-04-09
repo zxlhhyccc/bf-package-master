@@ -19,7 +19,7 @@ PKG_MIRROR_HASH:=00d749235271dee194dcd23c22e6e85207ea90192a62a110b2af0b4e4de1971
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Chion Tang <tech@chinolab.moe>
+PKG_MAINTAINER:=Chion Tang <tech@chionlab.moe>
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -58,12 +58,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	+$(MAKE) $(PKG_JOBS) -C "$(LINUX_DIR)" \
-        CROSS_COMPILE="$(TARGET_CROSS)" \
-        ARCH="$(LINUX_KARCH)" \
-        M="$(PKG_BUILD_DIR)" \
-        EXTRA_CFLAGS="$(BUILDFLAGS)" \
-        modules
+	+$(KERNEL_MAKE) M="$(PKG_BUILD_DIR)" modules
 	$(call Build/Compile/Default)
 endef
 
