@@ -27,6 +27,8 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_V2RAYA-V5_COMPRESS_GOPROXY \
 	CONFIG_V2RAYA-V5_COMPRESS_UPX \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 
 PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
 PKG_BUILD_PARALLEL:=1
@@ -56,7 +58,9 @@ define Package/v2raya-v5
     +iptables-mod-filter \
     +iptables-mod-tproxy \
     +kmod-ipt-nat6 \
-    +v2ray-core-v5
+    +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray-core-v5 \
+    +PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core:curl \
+    +PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core:sagernet-core
   URL:=https://v2raya.org
 endef
 
@@ -66,6 +70,8 @@ define Package/v2raya-v5/description
 endef
 
 define Package/v2raya-v5/config
+menu "Configuration"
+
 config V2RAYA-V5_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -74,6 +80,15 @@ config V2RAYA-V5_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
 	default n
+endmenu
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
+	bool "Include V2ray"
+	default y if aarch64||arm||i386||x86_64
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
+	bool "Include SagerNet core (An enhanced edition of v2ray-core)"
+	default y if aarch64||arm||i386||x86_64
 endef
 
 ifneq ($(CONFIG_V2RAYA-V5_COMPRESS_GOPROXY),)
