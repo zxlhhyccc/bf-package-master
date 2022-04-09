@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gotop
 PKG_VERSION:=4.1.3
-PKG_RELEASE:=1
+PKG_RELEASE:=$(AUTORELEASE)
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/xxxserxxx/gotop/tar.gz/v$(PKG_VERSION)?
@@ -20,7 +20,7 @@ PKG_MIRROR_HASH:=2966483ed3d0d4fb16bace1adad12e1a6276e1deec59f75521728abff9bf8b4
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILE:=LICENSE
-PKG_MAINTAINER:=CN_SZTL <cnsztl@immortalwrt.org>
+PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_GOTOP_COMPRESS_GOPROXY \
@@ -31,7 +31,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/xxxserxxx/gotop
-GO_PKG_LDFLAGS:=-s -w
+# GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.Version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
