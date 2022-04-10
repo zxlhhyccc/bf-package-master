@@ -1,0 +1,60 @@
+--- a/go.mod
++++ b/go.mod
+@@ -1,6 +1,6 @@
+ module github.com/txthinking/brook
+ 
+-go 1.16
++go 1.18
+ 
+ require (
+ 	github.com/gorilla/mux v1.8.0
+@@ -9,8 +9,6 @@ require (
+ 	github.com/miekg/dns v1.1.43
+ 	github.com/patrickmn/go-cache v2.1.0+incompatible
+ 	github.com/tdewolff/minify v2.3.6+incompatible
+-	github.com/tdewolff/parse v2.3.4+incompatible // indirect
+-	github.com/tdewolff/test v1.0.6 // indirect
+ 	github.com/txthinking/crypto v0.0.0-20210716135230-de9624a415a4
+ 	github.com/txthinking/runnergroup v0.0.0-20210608031112-152c7c4432bf
+ 	github.com/txthinking/socks5 v0.0.0-20211121111206-e03c1217a50b
+@@ -20,3 +18,14 @@ require (
+ 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871
+ 	golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+ )
++
++require (
++	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
++	github.com/russross/blackfriday/v2 v2.0.1 // indirect
++	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
++	github.com/tdewolff/parse v2.3.4+incompatible // indirect
++	github.com/tdewolff/test v1.0.6 // indirect
++	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
++	golang.org/x/text v0.3.6 // indirect
++	rsc.io/qr v0.2.0 // indirect
++)
+--- a/go.sum
++++ b/go.sum
+@@ -27,8 +27,6 @@ github.com/txthinking/crypto v0.0.0-2021
+ github.com/txthinking/crypto v0.0.0-20210716135230-de9624a415a4/go.mod h1:zHo3SEOo2aSacDyz0YJ3GL5GbZrc5nyp8LWTkzVHv6g=
+ github.com/txthinking/runnergroup v0.0.0-20210608031112-152c7c4432bf h1:7PflaKRtU4np/epFxRXlFhlzLXZzKFrH5/I4so5Ove0=
+ github.com/txthinking/runnergroup v0.0.0-20210608031112-152c7c4432bf/go.mod h1:CLUSJbazqETbaR+i0YAhXBICV9TrKH93pziccMhmhpM=
+-github.com/txthinking/socks5 v0.0.0-20211119145022-870fa1380069 h1:+o0XGR2srhl4PxXKbbdWaAj5yFQKc4VDP5wzuRHpO7w=
+-github.com/txthinking/socks5 v0.0.0-20211119145022-870fa1380069/go.mod h1:7NloQcrxaZYKURWph5HLxVDlIwMHJXCPkeWPtpftsIg=
+ github.com/txthinking/socks5 v0.0.0-20211121111206-e03c1217a50b h1:6J/38A0Xmdnjacfie0Udams7OP/GdoExyTipKwuQWjY=
+ github.com/txthinking/socks5 v0.0.0-20211121111206-e03c1217a50b/go.mod h1:7NloQcrxaZYKURWph5HLxVDlIwMHJXCPkeWPtpftsIg=
+ github.com/txthinking/x v0.0.0-20210326105829-476fab902fbe h1:gMWxZxBFRAXqoGkwkYlPX2zvyyKNWJpxOxCrjqJkm5A=
+@@ -41,14 +39,12 @@ golang.org/x/crypto v0.0.0-2021061621353
+ golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 h1:/pEO3GD/ABYAjuakUS6xSEmmlyVS4kxBNkeA9tLJiTI=
+ golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
+-golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+ golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4 h1:DZshvxDdVoeKIbudAdFEKi+f70l51luSy/7b76ibTY0=
+ golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c h1:5KslGYwFpkhGh+Q16bwMP3cOontH8FOep7tGV86Y7SQ=
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210303074136-134d130e1a04/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+-golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 h1:SrN+KX8Art/Sf4HNj6Zcz06G7VEz+7w9tdXTPOZ7+l4=
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
