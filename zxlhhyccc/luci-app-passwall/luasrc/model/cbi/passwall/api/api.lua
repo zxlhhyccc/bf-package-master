@@ -333,7 +333,7 @@ end
 
 function get_v2ray_version(file)
     if file == nil then file = get_v2ray_path() end
-    local cmd = "-version | awk '{print $2}' | sed -n 1P"
+    local cmd = "version | awk '{print $2}' | sed -n 1P"
     return get_bin_version_cache(file, cmd)
 end
 
