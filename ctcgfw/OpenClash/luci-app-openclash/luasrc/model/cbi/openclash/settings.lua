@@ -10,6 +10,7 @@ local json = require "luci.jsonc"
 
 font_green = [[<b style=color:green>]]
 font_red = [[<b style=color:red>]]
+font_blue = [[<b style=color:blue>]]
 font_off = [[</b>]]
 bold_on  = [[<strong>]]
 bold_off = [[</strong>]]
@@ -37,12 +38,26 @@ s:tab("rules", translate("Rules Setting"))
 end
 s:tab("dashboard", translate("Dashboard Settings"))
 s:tab("rules_update", translate("Rules Update"))
-s:tab("geo_update", translate("GEOIP Update"))
+s:tab("geo_update", translate("GEO Update"))
 s:tab("chnr_update", translate("Chnroute Update"))
 s:tab("auto_restart", translate("Auto Restart"))
 s:tab("version_update", translate("Version Update"))
 s:tab("debug", translate("Debug Logs"))
 s:tab("dlercloud", translate("Dler Cloud"))
+
+o = s:taboption("op_mode", Flag, "enable_meta_core", font_blue..bold_on..translate("Enable Meta Core")..bold_off..font_off)
+o.description = font_blue..bold_on..translate("Some Premium Core Features are Unavailable, For Other More Useful Functions Go Wiki:")..bold_off..font_off.." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://clashmeta.gitbook.io/meta/\")'>https://clashmeta.gitbook.io/meta/</a>"
+o.default = 0
+
+o = s:taboption("op_mode", Flag, "enable_meta_sniffer", font_blue..bold_on..translate("Enable Sniffer")..bold_off..font_off)
+o.description = font_blue..bold_on..translate("Sniffer Will Prevent Domain Name Proxy and DNS Hijack Failure")..bold_off..font_off
+o.default = 1
+o:depends("enable_meta_core", "1")
+
+o = s:taboption("op_mode", Flag, "enable_meta_sniffer_force", translate("Force Sniffer"))
+o.description = font_blue..bold_on..translate("Override All Dns Query")..bold_off..font_off
+o.default = 0
+o:depends("enable_meta_sniffer", "1")
 
 o = s:taboption("op_mode", ListValue, "en_mode", font_red..bold_on..translate("Select Mode")..bold_off..font_off)
 o.description = translate("Select Mode For OpenClash Work, Try Flush DNS Cache If Network Error")
@@ -869,6 +884,45 @@ o.write = function()
   m.uci:set("openclash", "config", "enable", 1)
   m.uci:commit("openclash")
   SYS.call("/usr/share/openclash/openclash_ipdb.sh >/dev/null 2>&1 &")
+  HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
+end
+
+o = s:taboption("geo_update", Flag, "geosite_auto_update", translate("Auto Update"))
+o.description = translate("Auto Update GeoSite Database")
+o.default = 0
+
+o = s:taboption("geo_update", ListValue, "geosite_update_week_time", translate("Update Time (Every Week)"))
+o:value("*", translate("Every Day"))
+o:value("1", translate("Every Monday"))
+o:value("2", translate("Every Tuesday"))
+o:value("3", translate("Every Wednesday"))
+o:value("4", translate("Every Thursday"))
+o:value("5", translate("Every Friday"))
+o:value("6", translate("Every Saturday"))
+o:value("0", translate("Every Sunday"))
+o.default = "1"
+
+o = s:taboption("geo_update", ListValue, "geosite_update_day_time", translate("Update time (every day)"))
+for t = 0,23 do
+o:value(t, t..":00")
+end
+o.default = "0"
+
+o = s:taboption("geo_update", Value, "geosite_custom_url")
+o.title = translate("Custom GeoSite URL")
+o.rmempty = false
+o.description = translate("Custom GeoSite Data URL, Click Button Below To Refresh After Edit")
+o:value("https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat", translate("Loyalsoldier-Version")..translate("(Default)"))
+o.default = "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat"
+
+o = s:taboption("geo_update", Button, translate("GEOIP Update")) 
+o.title = translate("Update GeoSite Database")
+o.inputtitle = translate("Check And Update")
+o.inputstyle = "reload"
+o.write = function()
+  m.uci:set("openclash", "config", "enable", 1)
+  m.uci:commit("openclash")
+  SYS.call("/usr/share/openclash/openclash_geosite.sh >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
 
