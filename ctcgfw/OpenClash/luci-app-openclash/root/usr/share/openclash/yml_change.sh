@@ -31,6 +31,12 @@ else
    sniffer_force="true"
 fi
 
+if [ "${23}" != "1" ]; then
+   enable_geoip_dat="false"
+else
+   enable_geoip_dat="true"
+fi
+
 if [ "$(ruby_read "$5" "['external-controller']")" != "$controller_address:$3" ]; then
    uci set openclash.config.config_reload=0
 fi
@@ -59,6 +65,17 @@ begin
    Value['secret']='$2';
    Value['bind-address']='*';
    Value['external-ui']='/usr/share/openclash/dashboard';
+if ${21} == 1 then
+   Value['geodata-mode']=$enable_geoip_dat;
+   Value['geodata-loader']='${24}';
+else
+   if Value.key?('geodata-mode') then
+      Value.delete('geodata-mode')
+   end
+   if Value.key?('geodata-loader') then
+      Value.delete('geodata-loader')
+   end
+end
 if not Value.key?('dns') then
    Value_1={'dns'=>{'enable'=>true}}
    Value['dns']=Value_1['dns']
@@ -88,13 +105,13 @@ end;
 Value['dns']['listen']='0.0.0.0:${13}'
 if ${21} == 1 then
    Value_sniffer={'sniffer'=>{'enable'=>true}};
-   Value['dns']['sniffer']=Value_sniffer['sniffer'];
-   Value['dns']['sniffer']['force']=$sniffer_force
+   Value['sniffer']=Value_sniffer['sniffer'];
+   Value['sniffer']['force']=$sniffer_force
    Value_sniffer={'sniffing'=>['tls']}
-   Value['dns']['sniffer'].merge!(Value_sniffer)
+   Value['sniffer'].merge!(Value_sniffer)
 else
-   if Value['dns'].key?('sniffer') then
-      Value['dns'].delete('sniffer')
+   if Value.key?('sniffer') then
+      Value.delete('sniffer')
    end
 end;
 Value_2={'tun'=>{'enable'=>true}};
