@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-tun
-PKG_VERSION:=2022.03.21
+PKG_VERSION:=2022.04.11
 PKG_RELEASE:=
 
 ifeq ($(ARCH),mipsel)
@@ -60,7 +60,7 @@ openclash-tun is a cross-platform proxy software
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz ] && wget https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz
+	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz ] && wget https://raw.githubusercontent.com/vernesong/OpenClash/dev/core-lateset/premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz
 	gzip -d -k -f -c $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz > $(PKG_BUILD_DIR)/clash-tun
 	chmod +x $(PKG_BUILD_DIR)/clash-tun
 endef
