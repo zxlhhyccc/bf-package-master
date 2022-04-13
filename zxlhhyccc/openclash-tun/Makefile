@@ -35,7 +35,7 @@ ifeq ($(BOARD),kirkwood)
 	OPENCLASH_TUN_ARCH:=armv5
 endif
 ifeq ($(ARCH),aarch64)
-	OPENCLASH_TUN_ARCH:=arm64
+	OPENCLASH_TUN_ARCH:=armv8
 endif
 
 PKG_LICENSE:=Apache-2.0
