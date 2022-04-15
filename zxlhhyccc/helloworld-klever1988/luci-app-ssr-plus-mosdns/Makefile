@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-ssr-plus-mosdns
 PKG_VERSION:=185
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=2
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
@@ -111,7 +111,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Plugin
 	default n
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns
-	bool "Include Mosdns"
+	bool "Include mosdns"
 	default y
 endef
 
