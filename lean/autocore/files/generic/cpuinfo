@@ -11,7 +11,7 @@ cpu_arch="$(awk -F ': ' '/model name/ {print $2}' "$CPUINFO_PATH" | head -n1)"
 
 case "$DISTRIB_TARGET" in
 "x86"/*)
-	cpu_cores="$(grep "core id" "$CPUINFO_PATH" | sort -u | wc -l)C $(grep -c "processor" "$CPUINFO_PATH")T" ;;
+	cpu_cores="$(grep "core id" "$CPUINFO_PATH" | sort -u | wc -l)Core $(grep -c "processor" "$CPUINFO_PATH")Thread" ;;
 *)
 	cpu_cores="$(grep -c "processor" "$CPUINFO_PATH")" ;;
 esac
