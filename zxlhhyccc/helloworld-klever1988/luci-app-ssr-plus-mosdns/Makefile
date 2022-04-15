@@ -111,7 +111,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Plugin
 	default n
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns
-	bool "Include mosdns"
+	bool "Include Mosdns"
 	default y
 endef
 
