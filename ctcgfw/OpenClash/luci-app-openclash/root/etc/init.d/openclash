@@ -440,24 +440,14 @@ sys_dns_append()
       pppoe_iface=$(/usr/share/openclash/openclash_get_network.lua "pppoe")
       if [ -z "$dhcp_iface" ] && [ -z "$pppoe_iface" ]; then
          if [ -n "$wan_dns" ]; then
-            if [ -z "$(grep "^ \{0,\}nameserver:$" /tmp/yaml_config.namedns.yaml 2>/dev/null)" ]; then
-               echo "  nameserver:" >/tmp/yaml_config.namedns.yaml
-            fi
             for i in $wan_dns; do
                echo "    - \"$i\"" >>/tmp/yaml_config.namedns.yaml
             done
          fi
          if [ -n "$wan6_dns" ] && [ "$2" = 1 ]; then
-            if [ -z "$(grep "^ \{0,\}nameserver:$" /tmp/yaml_config.namedns.yaml 2>/dev/null)" ]; then
-               echo "  nameserver:" >/tmp/yaml_config.namedns.yaml
-            fi
             for i in $wan6_dns; do
                echo "    - \"[${i}]:53\"" >>/tmp/yaml_config.namedns.yaml
             done
-         fi
-      else
-         if [ -z "$(grep "^ \{0,\}nameserver:$" /tmp/yaml_config.namedns.yaml 2>/dev/null)" ]; then
-            echo "  nameserver:" >/tmp/yaml_config.namedns.yaml
          fi
          if [ -n "$wan_gate" ]; then
             for i in $wan_gate; do
@@ -469,12 +459,37 @@ sys_dns_append()
                echo "    - \"[${i}]:53\"" >>/tmp/yaml_config.namedns.yaml
             done
          fi
-         for i in $dhcp_iface; do
-            echo "    - dhcp://\"$i\"" >>/tmp/yaml_config.namedns.yaml
-         done
-         for i in $pppoe_iface; do
-            echo "    - dhcp://\"$i\"" >>/tmp/yaml_config.namedns.yaml
-         done
+      else
+         if [ -n "$dhcp_iface" ]; then
+            for i in $dhcp_iface; do
+               echo "    - dhcp://\"$i\"" >>/tmp/yaml_config.namedns.yaml
+            done
+            if [ -n "$wan_gate" ]; then
+               for i in $wan_gate; do
+                   echo "    - \"$i\"" >>/tmp/yaml_config.namedns.yaml
+               done
+            fi
+            if [ -n "$wan6_gate" ] && [ "$2" = 1 ]; then
+               for i in $wan6_gate; do
+                  echo "    - \"[${i}]:53\"" >>/tmp/yaml_config.namedns.yaml
+               done
+            fi
+         fi
+         if [ -n "$pppoe_iface" ]; then
+            if [ -n "$wan_dns" ]; then
+		           for i in $wan_dns; do
+		              echo "    - \"$i\"" >>/tmp/yaml_config.namedns.yaml
+		           done
+		       fi
+		       if [ -n "$wan6_dns" ] && [ "$2" = 1 ]; then
+		          for i in $wan6_dns; do
+		             echo "    - \"[${i}]:53\"" >>/tmp/yaml_config.namedns.yaml
+		          done
+		       fi
+         fi
+      fi
+      if [ -f "/tmp/yaml_config.namedns.yaml" ] && [ -z "$(grep "^ \{0,\}nameserver:$" /tmp/yaml_config.namedns.yaml 2>/dev/null)" ]; then
+         sed -i '1i\  nameserver:'  "/tmp/yaml_config.namedns.yaml"
       fi
    fi
 }
@@ -1173,7 +1188,7 @@ yml_other_rules_get()
 check_run_quick()
 {
    quick_start=true
-   check_file="$RAW_CONFIG_FILE /etc/openclash/custom/openclash_custom_domain_dns.list /etc/openclash/custom/openclash_custom_domain_dns_policy.list /etc/openclash/custom/openclash_custom_fake_filter.list /etc/openclash/custom/openclash_custom_fallback_filter.yaml /etc/openclash/custom/openclash_custom_hosts.list /etc/openclash/custom/openclash_custom_rules.list /etc/openclash/custom/openclash_custom_rules_2.list $dev_core_path $tun_core_path $meta_core_path $ipdb_path $geosite_path $geoip_path $chnr_path $chnr6_path /usr/share/openclash/res/ConnersHua.yaml /usr/share/openclash/res/ConnersHua_return.yaml /usr/share/openclash/res/lhie1.yaml /usr/share/openclash/res/openclash_version /tmp/openclash_fake_filter.list"
+   check_file="$RAW_CONFIG_FILE /etc/openclash/custom/openclash_custom_domain_dns.list /etc/openclash/custom/openclash_custom_domain_dns_policy.list /etc/openclash/custom/openclash_custom_fake_filter.list /etc/openclash/custom/openclash_custom_fallback_filter.yaml /etc/openclash/custom/openclash_custom_hosts.list /etc/openclash/custom/openclash_custom_rules.list /etc/openclash/custom/openclash_custom_rules_2.list $dev_core_path $tun_core_path $meta_core_path $ipdb_path $geosite_path $geoip_path $chnr_path $chnr6_path /usr/share/openclash/res/ConnersHua.yaml /usr/share/openclash/res/ConnersHua_return.yaml /usr/share/openclash/res/lhie1.yaml /usr/share/openclash/res/openclash_version /tmp/openclash_fake_filter.list /etc/openclash/custom/openclash_force_sniffing_domain.list /etc/openclash/custom/openclash_sniffing_domain_filter.list"
 	 if [ ! -f "$CONFIG_FILE" ] || [ ! -f "/tmp/openclash_config.tmp" ] || [ ! -f "/tmp/openclash.change" ]; then
 	    quick_start=false
 	    return
