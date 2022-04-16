@@ -92,6 +92,13 @@ ifneq ($(CONFIG_SAGERNET_CORE_COMPRESS_GOPROXY),)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
+define Build/Compile
+	$(call GoPackage/Build/Compile)
+ifneq ($(CONFIG_SAGERNET_CORE_COMPRESS_UPX),)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main
+endif
+endef
+
 define Package/sagernet-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin/
