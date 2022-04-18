@@ -5,13 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cloudreve
-PKG_VERSION:=3.4.2
+PKG_VERSION:=3.4.3
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/cloudreve/Cloudreve.git
-PKG_SOURCE_VERSION:=$(PKG_VERSION)
-PKG_MIRROR_HASH:=7ceda70ae80582df46e0f110ad5d21c825aadcd75441be3e39c714e0c7d3ba19
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/cloudreve/Cloudreve/tar.gz/$(PKG_VERSION)?
+PKG_HASH:=da72526422a9d82cb1e824d159a7d670a7e5353032b6e5666799877ccb1d4fc8
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
