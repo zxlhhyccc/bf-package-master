@@ -26,7 +26,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_CLOUDREVE_COMPRESS_UPX
 
 GO_PKG:=github.com/cloudreve/Cloudreve/v3
-# GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/pkg/conf.BackendVersion=$(PKG_VERSION) \
 	$(GO_PKG)/pkg/conf.LastCommit=$(PKG_VERSION)

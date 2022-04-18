@@ -28,7 +28,7 @@ GO_PKG:=github.com/syncthing/syncthing
 GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/syncthing
 GO_PKG_INSTALL_EXTRA:=^gui/
 
-#GO_PKG_LDFLAGS:= -s -w
+GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
 	github.com/syncthing/syncthing/lib/build.Version=v$(PKG_VERSION) \
 	github.com/syncthing/syncthing/lib/build.Stamp=$(SOURCE_DATE_EPOCH) \

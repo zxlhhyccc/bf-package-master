@@ -28,7 +28,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_FILEBROWSER_COMPRESS_UPX
 
 GO_PKG:=github.com/filebrowser/filebrowser
-# GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/v2/version.CommitSHA=$(PKG_SOURCE_VERSION) \
 	$(GO_PKG)/v2/version.Version=$(PKG_VERSION)
