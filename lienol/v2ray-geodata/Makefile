@@ -25,7 +25,7 @@ define Download/geoip
   HASH:=skip
 endef
 
-GEOSITE_VER:=202204162210
+GEOSITE_VER:=202204182212
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 define Download/geosite
