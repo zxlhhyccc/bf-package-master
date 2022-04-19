@@ -2837,9 +2837,6 @@ msgstr "*启用流量（域名）探测"
 msgid "Sniffer Will Prevent Domain Name Proxy and DNS Hijack Failure"
 msgstr "流量（域名）探测能有效防止域名分流异常和DNS劫持失败"
 
-msgid "Force Sniffing"
-msgstr "强制流量（域名）探测"
-
 msgid "Override All Dns Query"
 msgstr "启用后将尽可能的覆盖DNS查询到的域名"
 
@@ -2920,3 +2917,12 @@ msgstr "列表中的域名将会使用探测（嗅探）的结果进行连接"
 
 msgid "Will Disable Sniffing If Domains in The List"
 msgstr "列表中的域名将不会使用探测（嗅探）的结果进行连接"
+
+msgid "Custom Sniffer Settings"
+msgstr "自定义流量探测（嗅探）设置"
+
+msgid "Custom The Force and Skip Sniffing Doamin Lists"
+msgstr "自定义强制和忽略流量探测（嗅探）的域名列表"
+
+msgid "Warning: Only TUN Core Support Script Mode, Switch To The Rule Mode!"
+msgstr "警告：仅 TUN 内核支持 Script 模式，已切换为 Rule 模式！"
