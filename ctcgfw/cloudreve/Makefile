@@ -21,13 +21,18 @@ PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_CLOUDREVE_COMPRESS_GOPROXY \
+	CONFIG_CLOUDREVE_COMPRESS_UPX
+
 GO_PKG:=github.com/cloudreve/Cloudreve/v3
+GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/pkg/conf.BackendVersion=$(PKG_VERSION) \
 	$(GO_PKG)/pkg/conf.LastCommit=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
-include ../../lang/golang/golang-package.mk
+include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/cloudreve
   SECTION:=net
@@ -43,6 +48,22 @@ define Package/cloudreve/description
   storage providers.
 endef
 
+define Package/cloudreve/config
+config CLOUDREVE_COMPRESS_GOPROXY
+	bool "Compiling with GOPROXY proxy"
+	default n
+
+config CLOUDREVE_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	depends on !mips64
+	default n
+endef
+
+ifeq ($(CONFIG_CLOUDREVE_COMPRESS_GOPROXY),y)
+	export GO111MODULE=on
+	export GOPROXY=https://goproxy.baidu.com
+endif
+
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR)/assets ; \
@@ -51,6 +72,9 @@ define Build/Compile
 		popd ; \
 		$(call GoPackage/Build/Compile) ; \
 	)
+ifeq ($(CONFIG_CLOUDREVE_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/Cloudreve
+endif
 endef
 
 define Package/cloudreve/install
