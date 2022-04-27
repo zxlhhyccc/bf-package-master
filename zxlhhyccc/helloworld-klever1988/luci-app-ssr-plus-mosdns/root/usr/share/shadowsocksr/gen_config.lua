@@ -40,6 +40,10 @@ function trojan_shadowsocks()
 			}
 		}
 	}
+
+	if not outbound_settings.plugin then
+		server.v2ray_protocol = "shadowsocks_ring"
+	end
 end
 function socks_http()
 	outbound_settings = {
