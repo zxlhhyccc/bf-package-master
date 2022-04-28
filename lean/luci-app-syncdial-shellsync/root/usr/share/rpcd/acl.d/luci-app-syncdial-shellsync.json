@@ -1,0 +1,11 @@
+{
+	"luci-app-syncdial-shellsync": {
+		"description": "Grant UCI access for luci-app-syncdial-shellsync",
+		"read": {
+			"uci": [ "syncdial" ]
+		},
+		"write": {
+			"uci": [ "syncdial" ]
+		}
+	}
+}
