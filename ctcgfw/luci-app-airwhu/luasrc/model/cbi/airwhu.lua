@@ -38,7 +38,7 @@ pw = s:option(Value, "Password", translate("Password"))
 pw.password = true
 pw.rmempty = false
 
-wan_dev = luci.sys.exec("uci get network.wan.ifname")
+wan_dev = luci.sys.exec("uci get network.wan.device")
 wan_dev = string.sub(wan_dev,1,string.len(wan_dev)-1)
 ifname = s:option(ListValue, "ifname", translate("Interfaces"))
 ifname:value(wan_dev)
