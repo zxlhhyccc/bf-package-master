@@ -42,7 +42,9 @@ function trojan_shadowsocks()
 	}
 
 	if (server.v2ray_protocol == "shadowsocks") and (not outbound_settings.plugin) then
-		server.v2ray_protocol = "shadowsocks_ring"
+		server.v2ray_protocol = "shadowsocks_sing"
+	elseif (server.v2ray_protocol == "trojan") and (server.transport == "tcp") and (not server.xtls) then
+		server.v2ray_protocol = "trojan_sing"
 	end
 end
 function socks_http()

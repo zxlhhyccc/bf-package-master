@@ -104,7 +104,7 @@ local securitys = {
 }
 
 local flows = {
-	-- xlts
+	-- xtls
 	"xtls-rprx-origin",
 	"xtls-rprx-origin-udp443",
 	"xtls-rprx-direct",
@@ -511,15 +511,15 @@ o:depends({type = "v2ray", v2ray_protocol = "http", xtls = false})
 o:depends("type", "trojan")
 
 -- XTLS
-if is_finded("xray") then
-	o = s:option(Flag, "xtls", translate("XTLS"))
-	o.rmempty = true
-	o.default = "0"
-	o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "tcp", tls = false})
-	o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "kcp", tls = false})
-	o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "tcp", tls = false})
-	o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "kcp", tls = false})
-end
+-- if is_finded("xray") then
+o = s:option(Flag, "xtls", translate("XTLS"))
+o.rmempty = true
+o.default = "0"
+o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "tcp", tls = false})
+o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "kcp", tls = false})
+o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "tcp", tls = false})
+o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "kcp", tls = false})
+-- end
 
 -- Flow
 o = s:option(Value, "vless_flow", translate("Flow"))
