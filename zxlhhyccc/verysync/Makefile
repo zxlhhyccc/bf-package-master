@@ -35,7 +35,8 @@ PKG_VERSION:=2.13.2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-linux-$(PKG_ARCH_VERYSYNC)-v$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://dl.verysync.com/releases/v$(PKG_VERSION)/
+PKG_SOURCE_URL:=http://dl.verysync.com/releases/v$(PKG_VERSION)/ \
+		http://dl-cn.verysync.com/releases/v$(PKG_VERSION)/
 PKG_HASH:=skip
 
 PKG_CONFIG_DEPENDS:= \
