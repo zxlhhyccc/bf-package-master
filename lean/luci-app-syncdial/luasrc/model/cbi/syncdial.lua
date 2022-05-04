@@ -7,7 +7,7 @@ local t = e:read("*a")
 e:close()
 m = Map("syncdial")
 m.title = translate("多线多拨")
-translate("使用macvlan驱动创建多个虚拟WAN口，支持并发多拨 <br />当前在线接口数量：")..t)
+m.description = translate("使用macvlan驱动创建多个虚拟WAN口，支持并发多拨 <br />当前在线接口数量：")..t
 
 s = m:section(TypedSection,"syncdial",translate(" "))
 s.anonymous = true
