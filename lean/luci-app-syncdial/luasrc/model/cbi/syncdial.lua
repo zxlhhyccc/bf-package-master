@@ -38,6 +38,7 @@ o.default = 1
 
 o = s:option(Flag,"bindwan","绑定物理接口")
 o.rmempty = false
+
 o = s:option(Value,"wanselect2",translate("选择第二个外网接口"),translate("<font style=\"color:red\">指定要多拨的第二个外网接口，如wan2</font>"))
 luci.tools.webadmin.cbi_add_networks(o)
 o.optional = false

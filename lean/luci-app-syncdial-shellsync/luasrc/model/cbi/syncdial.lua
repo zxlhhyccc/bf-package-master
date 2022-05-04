@@ -15,6 +15,7 @@ end
 
 s = m:section(TypedSection,"syncdial",translate(" "))
 s.anonymous = true
+
 o = s:option(Flag,"enabled","启用")
 o.rmempty = false
 

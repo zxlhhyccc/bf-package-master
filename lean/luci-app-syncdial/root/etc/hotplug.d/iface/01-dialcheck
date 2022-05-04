@@ -1,5 +1,5 @@
 #!/bin/sh
-[ "$ACTION" = "ifdown" ] &&	pppconnectcheck &
+[ "$ACTION" = "ifdown" ] && pppconnectcheck &
 
 wanselect=$(uci get syncdial.config.wanselect)
 [ "$(uci get syncdial.config.dial_type)" = "2" ] && {
