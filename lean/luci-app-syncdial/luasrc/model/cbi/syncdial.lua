@@ -27,7 +27,8 @@ o = s:option(Value,"wanselect",translate("选择外网接口"),translate("指定
 luci.tools.webadmin.cbi_add_networks(o)
 o.optional = false
 o.rmempty = false
-o = s:option(Flag,"ipv6","启用ipv6")
+
+o = s:option(Flag,"ipv6","启用虚拟接口 IPV6")
 o.rmempty = false
 
 o = s:option(Value,"wannum","虚拟WAN接口数量")

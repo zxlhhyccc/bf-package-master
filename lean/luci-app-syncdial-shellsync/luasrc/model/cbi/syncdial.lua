@@ -68,7 +68,7 @@ o.optional = false
 o.default = 2
 o:depends("dial_type","2")
 
-o = s:option(Flag,"enablev6","启用虚拟接口 ipv6")
+o = s:option(Flag,"enablev6","启用虚拟接口 IPV6")
 o.rmempty = false
 o.default = 1
 
