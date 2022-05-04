@@ -6,7 +6,7 @@ if nixio.fs.access("/usr/share/adbyby/dnsmasq.adblock") then
 ad_count = tonumber(SYS.exec("cat /usr/share/adbyby/dnsmasq.adblock | wc -l"))
 end
 
-local ad_count = 0
+local rule_count = 0
 if nixio.fs.access("/usr/share/adbyby/rules/") then
 rule_count = tonumber(SYS.exec("/usr/share/adbyby/rule-count '/usr/share/adbyby/rules/'"))
 end
