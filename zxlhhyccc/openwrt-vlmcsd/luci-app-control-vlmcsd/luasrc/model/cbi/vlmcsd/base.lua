@@ -12,7 +12,7 @@ o.default = 1
 o.rmempty = false
 
 o = s:option(Flag,"auto")
-o.title=translate("Auto activate")
+o.title = translate("Auto activate")
 o.default = 1
 o.rmempty = false
 
