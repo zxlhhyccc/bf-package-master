@@ -492,10 +492,12 @@ o.rmempty = true
 
 o = s:option(Value, "peer_pubkey", translate("Peer public key"))
 o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
+o.password = true
 o.rmempty = true
 
 o = s:option(Value, "preshared_key", translate("Pre-shared key"))
 o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
+o.password = true
 o.rmempty = true
 
 -- [[ TLS ]]--
