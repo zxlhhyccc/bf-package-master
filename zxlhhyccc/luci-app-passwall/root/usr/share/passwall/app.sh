@@ -1129,6 +1129,11 @@ start_dns() {
 			run_v2ray ${_v2ray_args}
 		}
 	;;
+	dns2tcp)
+		use_tcp_node_resolve_dns=1
+		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
+		echolog "  - 域名解析：dns2tcp + 使用(TCP节点)解析域名..."
+	;;
 	pdnsd)
 		use_tcp_node_resolve_dns=1
 		gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}"
@@ -1486,7 +1491,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
 gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
 DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
 [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
-DNS_MODE=$(config_t_get global dns_mode pdnsd)
+DNS_MODE=$(config_t_get global dns_mode dns2tcp) || $(config_t_get global dns_mode pdnsd)
 DNS_CACHE=$(config_t_get global dns_cache 0)
 REMOTE_DNS=$(config_t_get global remote_dns 1.1.1.1:53 | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')
 CHINADNS_NG=$(config_t_get global chinadns_ng 0)
