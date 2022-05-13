@@ -12,7 +12,7 @@ function index()
 
 	entry({"admin", "nas"}, firstchild(), "NAS", 44).dependent = false
 
-	entry({"admin", "nas", "filebrowser"}, cbi("filebrowser/settings"), _("File Browser"), 2)
+	local page = entry({"admin", "nas", "filebrowser"}, cbi("filebrowser/settings"), _("File Browser"), 2)
 	page.dependent = true
 	page.acl_depends = { "luci-app-control-filebrowser" }
 
