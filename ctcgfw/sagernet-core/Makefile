@@ -5,13 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sagernet-core
+PKG_VERSION:=5.0.13
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/SagerNet/v2ray-core.git
-PKG_SOURCE_DATE:=2022-05-08
-PKG_SOURCE_VERSION:=543d0dff7106049e6c03b283474d2c49ffb63cdd
-PKG_MIRROR_HASH:=9f96f1f60857dcfc3d6ce8cf62581d51a5bcd74fc87799d58be89c1b2c463c6e
+PKG_SOURCE_DATE:=2022-05-13
+PKG_SOURCE_VERSION:=5d37fe9cd1c385610f5d26db4f7cd454871c288a
+PKG_MIRROR_HASH:=25d8b08fc6b1075a0f6b4163284289f58d550a17d6aaa3ad847ef1120b6e6336
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -29,7 +31,8 @@ GO_PKG:=github.com/v2fly/v2ray-core/v5
 GO_PKG_BUILD_PKG:=$(GO_PKG)/main
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG).build=OpenWrt
+	$(GO_PKG).build=OpenWrt \
+	$(GO_PKG).version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
