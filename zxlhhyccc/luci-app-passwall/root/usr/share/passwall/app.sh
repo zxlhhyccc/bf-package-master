@@ -1129,21 +1129,27 @@ start_dns() {
 			run_v2ray ${_v2ray_args}
 		}
 	;;
+	pdnsd)
+		use_tcp_node_resolve_dns=1
+		gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
+		ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
+		echolog "  - 域名解析：pdnsd + 使用(TCP节点)解析域名..."
+	;;
 	dns2tcp)
 		use_tcp_node_resolve_dns=1
 		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
 		echolog "  - 域名解析：dns2tcp + 使用(TCP节点)解析域名..."
 	;;
-	pdnsd)
-		use_tcp_node_resolve_dns=1
-		gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}"
-		ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
-		echolog "  - 域名解析：pdnsd + 使用(TCP节点)解析域名..."
-	;;
 	udp)
 		use_udp_node_resolve_dns=1
-		TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
-		echolog "  - 域名解析：使用UDP协议请求DNS（$TUN_DNS）..."
+		if [ -f "$(first_type pdnsd)" ];then
+			gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
+ 			ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
+			echolog "  - 域名解析：pdnsd + 使用(UDP节点)解析域名..."
+		else
+ 			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
+			echolog "  - 域名解析：使用UDP协议请求DNS（$TUN_DNS）..."
+		fi
 	;;
 	esac
 
@@ -1197,10 +1203,13 @@ gen_pdnsd_config() {
 	local listen_port=${1}
 	local up_dns=${2}
 	local cache=${3}
+	local dns_mode=${4}
 	local pdnsd_dir=${TMP_PATH}/pdnsd
 	local perm_cache=2048
 	local _cache="on"
 	local query_method="tcp_only"
+	[ "$dns_mode" == "udp" ] && query_method="udp_only"
+
 	local reject_ipv6_dns=
 	[ "${cache}" = "0" ] && _cache="off" && perm_cache=0
 
@@ -1491,7 +1500,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
 gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
 DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
 [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
-DNS_MODE=$(config_t_get global dns_mode dns2tcp) || $(config_t_get global dns_mode pdnsd)
+DNS_MODE=$(config_t_get global dns_mode pdnsd)
 DNS_CACHE=$(config_t_get global dns_cache 0)
 REMOTE_DNS=$(config_t_get global remote_dns 1.1.1.1:53 | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')
 CHINADNS_NG=$(config_t_get global chinadns_ng 0)

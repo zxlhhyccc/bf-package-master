@@ -190,11 +190,11 @@ o.default = "0"
 dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
 dns_mode.rmempty = false
 dns_mode:reset_values()
-if api.is_finded("dns2tcp") then
-    dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
-end
 if api.is_finded("pdnsd") then
     dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
+end
+if api.is_finded("dns2tcp") then
+    dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
 end
 if api.is_finded("dns2socks") then
     dns_mode:value("dns2socks", "dns2socks")
@@ -246,8 +246,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
 o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
 o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
 o:depends({dns_mode = "dns2socks"})
-o:depends({dns_mode = "dns2tcp"})
 o:depends({dns_mode = "pdnsd"})
+o:depends({dns_mode = "dns2tcp"})
 o:depends({dns_mode = "udp"})
 o:depends({v2ray_dns_mode = "tcp"})
 
@@ -277,6 +277,7 @@ o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
 o.default = "1"
 o:depends({dns_mode = "dns2socks"})
 o:depends({dns_mode = "pdnsd"})
+o:depends({dns_mode = "udp"})
 o:depends({dns_mode = "v2ray", v2ray_dns_mode = "tcp"})
 o:depends({dns_mode = "v2ray", v2ray_dns_mode = "doh"})
 o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
@@ -288,8 +289,8 @@ if has_chnlist and api.is_finded("chinadns-ng") then
     o.default = "0"
     if api.is_finded("smartdns") then
         o:depends({dns_shunt = "dnsmasq", dns_mode = "dns2socks"})
-        o:depends({dns_shunt = "dnsmasq", dns_mode = "dns2tcp"})
         o:depends({dns_shunt = "dnsmasq", dns_mode = "pdnsd"})
+        o:depends({dns_shunt = "dnsmasq", dns_mode = "dns2tcp"})
         o:depends({dns_shunt = "dnsmasq", dns_mode = "v2ray", v2ray_dns_mode = "tcp"})
         o:depends({dns_shunt = "dnsmasq", dns_mode = "v2ray", v2ray_dns_mode = "doh"})
         o:depends({dns_shunt = "dnsmasq", dns_mode = "xray", v2ray_dns_mode = "tcp"})
@@ -297,8 +298,8 @@ if has_chnlist and api.is_finded("chinadns-ng") then
         o:depends({dns_shunt = "dnsmasq", dns_mode = "udp"})
     else
         o:depends({dns_mode = "dns2socks"})
-        o:depends({dns_mode = "dns2tcp"})
         o:depends({dns_mode = "pdnsd"})
+        o:depends({dns_mode = "dns2tcp"})
         o:depends({dns_mode = "v2ray", v2ray_dns_mode = "tcp"})
         o:depends({dns_mode = "v2ray", v2ray_dns_mode = "doh"})
         o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
