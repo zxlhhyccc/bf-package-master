@@ -1,105 +1,88 @@
-#
-# Copyright (C) 2019 Xingwang Liao
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
-
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=kcptun
 PKG_VERSION:=20210922
-PKG_RELEASE:=1
+PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+#PKG_SOURCE_URL:=https://codeload.github.com/xtaci/kcptun/tar.gz/v${PKG_VERSION}?
+#PKG_SOURCE_DATE:=2021-09-22
+#PKG_HASH:=f6a08f0fe75fa85d15f9c0c28182c69a5ad909229b4c230a8cbe38f91ba2d038
 PKG_SOURCE_URL:=https://github.com/xtaci/kcptun.git
 PKG_SOURCE_VERSION:=b63eeb63010701c6f613693bacb51b71d805c5a3
 PKG_MIRROR_HASH:=c8f12136d57a95aab70630ce946fcaae81172bf6b9cc21a63eaef63853a245c1
 
+PKG_MAINTAINER:=Dengfeng Liu <liudf0716@gmail.com>, Chao Liu <expiron18@gmail.com>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE.md
-PKG_MAINTAINER:=Xingwang Liao <kuoruan@gmail.com>
+
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_KCPTUN_$(1)_COMPRESS_GOPROXY \
+	CONFIG_KCPTUN_$(1)_COMPRESS_UPX
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-PKG_CONFIG_DEPENDS:= \
-	CONFIG_KCPTUN_CLIENT_CORE_COMPRESS_UPX \
-	CONFIG_KCPTUN_SERVER_CORE_COMPRESS_UPX
-
 GO_PKG:=github.com/xtaci/kcptun
 
-GO_PKG_LDFLAGS:=-s -w -X 'main.VERSION=$(PKG_VERSION)-$(PKG_RELEASE) for OpenWrt'
-
-# Can't use GO_PKG_LDFLAGS_X to define X args with space
+GO_PKG_LDFLAGS:=-s -w -X 'main.VERSION=$(PKG_VERSION)'
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/kcptun/template
-  SECTION:=net
-  CATEGORY:=Network
-  TITLE:=Simple UDP Tunnel Based On KCP client server
-  DEPENDS:=$(GO_ARCH_DEPENDS)
-  URL:=https://github.com/xtaci/kcptun
-  SUBMENU:=Web Servers/Proxies
+define Package/kcptun/Default
+  define Package/kcptun-$(1)
+    SECTION:=net
+    CATEGORY:=Network
+    SUBMENU:=Web Servers/Proxies
+    TITLE:=KCP-based Secure Tunnel $(1)
+    DEPENDS:=$(GO_ARCH_DEPENDS)
+    URL:=https://github.com/xtaci/kcptun
+  endef
+
+  define Package/kcptun-$(1)/description
+    kcptun is a Stable & Secure Tunnel Based On KCP with N:M Multiplexing.
+This package only contains kcptun $(1).
+  endef
+
+  define Package/kcptun-$(1)/config
+    config KCPTUN_$(1)_COMPRESS_GOPROXY
+      bool "Compiling with GOPROXY proxy"
+      default n
+
+    config KCPTUN_$(1)_COMPRESS_UPX
+      bool "Compress $(1) with UPX"
+      depends on !mips64
+      default n
+  endef
+
+  ifneq ($(CONFIG_KCPTUN_$(1)_COMPRESS_GOPROXY),)
+      export GO111MODULE=on
+      export GOPROXY=https://goproxy.baidu.com
+  endif
+
+  define Package/kcptun-$(1)/install
+		$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))
+
+		$$(INSTALL_DIR) $$(1)/usr/bin
+		$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/$(1) $$(1)/usr/bin/kcptun-$(1)
+  endef
 endef
 
-define Package/kcptun-client
-  $(call Package/kcptun/template)
-  TITLE+= (client)
-endef
-
-define Package/kcptun-server
-  $(call Package/kcptun/template)
-  TITLE+= (server)
-endef
-
-define Package/kcptun/description
-  A Stable & Secure Tunnel Based On KCP with N:M Multiplexing.
-endef
-
-Package/kcptun-client/description = $(Package/kcptun/description/template)
-Package/kcptun-server/description = $(Package/kcptun/description/template)
-
-define Package/kcptun-client/config
-config KCPTUN_CLIENT_COMPRESS_UPX
-	bool "Compress executable files with UPX"
-	depends on !mips64
-	default n
-endef
-
-define Package/kcptun-server/config
-config KCPTUN_SERVER_COMPRESS_UPX
-	bool "Compress executable files with UPX"
-	depends on !mips64
-	default n
-endef
-
-GO_PKG_BUILD_VARS += GO111MODULE=auto
+KCPTUN_COMPONENTS:=server client
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-ifeq ($(CONFIG_KCPTUN_CLIENT_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/client
-endif
-ifeq ($(CONFIG_KCPTUN_SERVER_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/server
-endif
+$(foreach component,$(KCPTUN_COMPONENTS),
+  ifneq ($(CONFIG_KCPTUN_$(component)_COMPRESS_UPX),)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
+  endif
+)
 endef
 
-define Package/kcptun/install/template
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(2) $(1)/usr/bin/kcptun-$(2)
-endef
-
-Package/kcptun-client/install = $(call Package/kcptun/install/template,$(1),client)
-Package/kcptun-server/install = $(call Package/kcptun/install/template,$(1),server)
-
-$(eval $(call GoBinPackage,kcptun-client))
-$(eval $(call GoBinPackage,kcptun-server))
-$(eval $(call BuildPackage,kcptun-client))
-$(eval $(call BuildPackage,kcptun-server))
+$(foreach component,$(KCPTUN_COMPONENTS), \
+  $(eval $(call Package/kcptun/Default,$(component))) \
+  $(eval $(call GoBinPackage,kcptun-$(component))) \
+  $(eval $(call BuildPackage,kcptun-$(component))) \
+)

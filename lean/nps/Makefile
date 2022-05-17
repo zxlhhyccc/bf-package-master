@@ -18,7 +18,9 @@ PKG_SOURCE_URL:=https://github.com/ehang-io/nps.git
 PKG_SOURCE_VERSION:=ab648d6f0c618c690a7a79948a7ebd686e1cdafc
 PKG_MIRROR_HASH:=dd752514cdd8e052ca5c502de1dbd932c1502ac20471f967d7cf1671eedcf077
 
-PKG_CONFIG_DEPENDS+=CONFIG_NPS_$(1)_COMPRESS_UPX
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_NPS_$(1)_COMPRESS_GOPROXY \
+	CONFIG_NPS_$(1)_COMPRESS_UPX
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILE:=LICENSE
@@ -53,11 +55,20 @@ define nps/templates
   endef
 
   define Package/$(1)/config
+    config NPS_$(1)_COMPRESS_GOPROXY
+      bool "Compiling with GOPROXY proxy"
+      default n
+
     config NPS_$(1)_COMPRESS_UPX
       bool "Compress $(1) with UPX"
       depends on !mips64
       default n
   endef
+
+  ifneq ($(CONFIG_NPS_$(1)_COMPRESS_GOPROXY),)
+      export GO111MODULE=on
+      export GOPROXY=https://goproxy.baidu.com
+  endif
 
   define Package/$(1)/install
 	$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))

@@ -16,7 +16,9 @@ PKG_SOURCE_URL:=https://github.com/fatedier/frp.git
 PKG_SOURCE_VERSION:=eb1e19a8212061e56a43ce798a231cd64cce989d
 PKG_MIRROR_HASH:=ea0f763e4a21a3d663374f4d4b3537f7cf4205eccf36e96fa8b4e55a3c1aa235
 
-PKG_CONFIG_DEPENDS+=CONFIG_FRP_$(1)_COMPRESS_UPX
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_FRP_$(1)_COMPRESS_GOPROXY \
+	CONFIG_FRP_$(1)_COMPRESS_UPX
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -53,11 +55,20 @@ define frp/templates
   endef
 
   define Package/$(1)/config
+    config FRP_$(1)_COMPRESS_GOPROXY
+      bool "Compiling with GOPROXY proxy"
+      default n
+
     config FRP_$(1)_COMPRESS_UPX
       bool "Compress $(1) with UPX"
       depends on !mips64
       default n
   endef
+
+  ifneq ($(CONFIG_FRP_$(1)_COMPRESS_GOPROXY),)
+      export GO111MODULE=on
+      export GOPROXY=https://goproxy.baidu.com
+  endif
 
   define Package/$(1)/install
 	$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))
