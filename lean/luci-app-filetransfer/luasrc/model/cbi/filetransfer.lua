@@ -6,19 +6,24 @@ ful.reset = false
 ful.submit = false
 
 sul = ful:section(SimpleSection, "", translate("Upload file to '/tmp/upload/'"))
+
 fu = sul:option(FileUpload, "")
-fu.template = "filetransfe/other_upload"
+fu.template = "filetransfer/other_upload"
+
 um = sul:option(DummyValue, "", nil)
-um.template = "filetransfe/other_dvalue"
+um.template = "filetransfer/other_dvalue"
 
 fdl = SimpleForm("download", translate("Download"), nil)
 fdl.reset = false
 fdl.submit = false
+
 sdl = fdl:section(SimpleSection, "", translate("Download file"))
+
 fd = sdl:option(FileUpload, "")
-fd.template = "filetransfe/other_download"
+fd.template = "filetransfer/other_download"
+
 dm = sdl:option(DummyValue, "", nil)
-dm.template = "filetransfe/other_dvalue"
+dm.template = "filetransfer/other_dvalue"
 
 function Download()
 	local sPath, sFile, fd, block
@@ -86,16 +91,6 @@ elseif luci.http.formvalue("download") then
 	Download()
 end
 
-local function getSizeStr(size)
-	local i = 0
-	local byteUnits = {' kB', ' MB', ' GB', ' TB'}
-	repeat
-		size = size / 1024
-		i = i + 1
-	until(size <= 1024)
-    return string.format("%.1f", size) .. byteUnits[i]
-end
-
 local inits, attr = {}
 for i, f in ipairs(fs.glob("/tmp/upload/*")) do
 	attr = fs.stat(f)
@@ -104,7 +99,7 @@ for i, f in ipairs(fs.glob("/tmp/upload/*")) do
 		inits[i].name = fs.basename(f)
 		inits[i].mtime = os.date("%Y-%m-%d %H:%M:%S", attr.mtime)
 		inits[i].modestr = attr.modestr
-		inits[i].size = getSizeStr(attr.size)
+		inits[i].size = tostring(attr.size)
 		inits[i].remove = 0
 		inits[i].install = false
 	end
@@ -117,7 +112,7 @@ form.submit = false
 tb = form:section(Table, inits)
 nm = tb:option(DummyValue, "name", translate("File name"))
 mt = tb:option(DummyValue, "mtime", translate("Modify time"))
-ms = tb:option(DummyValue, "modestr", translate("Attributes"))
+ms = tb:option(DummyValue, "modestr", translate("Mode string"))
 sz = tb:option(DummyValue, "size", translate("Size"))
 btnrm = tb:option(Button, "remove", translate("Remove"))
 btnrm.render = function(self, section, scope)
@@ -138,7 +133,7 @@ function IsIpkFile(name)
 end
 
 btnis = tb:option(Button, "install", translate("Install"))
-btnis.template = "filetransfe/other_button"
+btnis.template = "filetransfer/other_button"
 btnis.render = function(self, section, scope)
 	if not inits[section] then return false end
 	if IsIpkFile(inits[section].name) then

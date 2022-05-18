@@ -28,17 +28,17 @@ msgstr "文件传输"
 msgid "Install"
 msgstr "安装"
 
-msgid "Attributes"
-msgstr "属性"
+msgid "Mode string"
+msgstr "模式字符串"
 
 msgid "Modify time"
 msgstr "修改时间"
 
 msgid "No specify upload file."
-msgstr "未指定上传文件。"
+msgstr "未指定上传文件"
 
 msgid "Path on Route:"
-msgstr "路由根目录："
+msgstr "路由上目录"
 
 msgid "Remove"
 msgstr "移除"
