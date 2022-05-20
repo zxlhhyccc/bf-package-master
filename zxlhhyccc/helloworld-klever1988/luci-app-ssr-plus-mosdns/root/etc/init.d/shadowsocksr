@@ -890,7 +890,7 @@ boot() {
 stop() {
 	unlock
 	set_lock
-	stop_mosdns
+	[ "$(uci_get_by_type global run_mode)" == "dyn" ] && stop_mosdns
 	/usr/bin/ssr-rules -f
 	local srulecount=$(iptables -L | grep SSR-SERVER-RULE | wc -l)
 	if [ $srulecount -gt 0 ]; then
