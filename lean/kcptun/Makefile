@@ -4,6 +4,7 @@ PKG_NAME:=kcptun
 PKG_VERSION:=20210922
 PKG_RELEASE:=$(AUTORELEASE)
 
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 #PKG_SOURCE_URL:=https://codeload.github.com/xtaci/kcptun/tar.gz/v${PKG_VERSION}?
 #PKG_SOURCE_DATE:=2021-09-22
