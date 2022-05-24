@@ -1,0 +1,406 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright (C) 2020-2022 honwen <https://github.com/honwen>
+#
+# This is free software, licensed under the GNU General Public License v3.
+# See /LICENSE for more information.
+#
+
+START=90
+STOP=15
+
+NAME=xray
+EXTRA_COMMANDS="rules watchdog"
+CRON_FILE=/etc/crontabs/root
+WATCHDOG_ENDPOINT='accounts.gstatic.com'
+
+DNSMASQDIR=$(sed -n 's+conf-dir=++p' /var/etc/dnsmasq.conf.* 2>/dev/null)
+[ "V$DNSMASQDIR" = "V" ] && DNSMASQDIR=/var/dnsmasq.d
+
+uci_get_by_name() {
+	local ret=$(uci get $NAME.$1.$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+uci_get_by_type() {
+	local ret=$(uci get $NAME.@$1[0].$2 2>/dev/null)
+	echo ${ret:=$3}
+}
+
+uci_bool_by_name() {
+	case "$(uci_get_by_name $1 $2)" in
+	1 | on | true | yes | enabled) return 0 ;;
+	esac
+	return 1
+}
+
+uci_bool_by_type() {
+	case "$(uci_get_by_type $1 $2)" in
+	1 | on | true | yes | enabled) return 0 ;;
+	esac
+	return 1
+}
+
+validate_server() {
+	[ "$(uci get $NAME.$1 2>/dev/null)" = "servers" ]
+}
+
+has_valid_server() {
+	for server in $@; do
+		validate_server $server && return 0
+	done
+	return 1
+}
+
+get_arg_udp() {
+	local server=$(uci_get_by_type transparent_proxy udp_relay_server)
+	[ "$server" = "same" ] || validate_server $server && echo "-u"
+}
+
+get_arg_out() {
+	case "$(uci_get_by_type access_control self_proxy 1)" in
+	1) echo "-o" ;;
+	2) echo "-O" ;;
+	esac
+}
+
+get_arg_tnd() {
+	uci_bool_by_type $1 no_delay && echo "--no-delay"
+}
+
+get_server_ips() {
+	echo $(uci_get_by_name $1 server)
+}
+
+get_lan_hosts() {
+	uci_bool_by_name $1 enable &&
+		echo "$(uci_get_by_name $1 type),$(uci_get_by_name $1 host)"
+}
+
+xray_pre() {
+	DNSconf=$DNSMASQDIR/xray-servers.conf
+	tmpDNSconf=$DNSMASQDIR/xray.conf
+	echo "all-servers" >$tmpDNSconf
+	config_load $NAME
+	for server in $(config_foreach get_server_ips servers); do
+		cat <<-EOF >>$tmpDNSconf
+			ipset=/${server}/xray_spec_dst_bp
+			server=/${server}/223.5.5.5
+			server=/${server}/119.29.29.29
+			server=/${server}/114.114.114.114
+			server=/${server}/80.80.80.80
+			server=/${server}/208.67.222.222#443
+			server=/${server}/208.67.220.220#5353
+		EOF
+	done
+
+	sort -u $tmpDNSconf | sed '/\/\//d; /\/127.0.0.1\//d' >$DNSconf
+	rm -f $tmpDNSconf
+
+	echo "server=/${WATCHDOG_ENDPOINT}/127.0.0.1#$(uci_get_by_type port_forward local_port 5300)" >>$DNSconf
+	[ -x /etc/init.d/dnsmasq-extra ] || {
+		echo "server=/${WATCHDOG_ENDPOINT}/208.67.222.222#443" >>$DNSconf
+		echo "server=/${WATCHDOG_ENDPOINT}/114.114.115.115" >>$DNSconf
+		echo "server=/${WATCHDOG_ENDPOINT}/80.80.80.80" >>$DNSconf
+	}
+
+	cat <<-EOF >>$DNSconf
+		server=/t.cn/223.5.5.5
+		server=/t.cn/119.29.29.29
+		server=/t.cn/114.114.114.114
+	EOF
+
+	/etc/init.d/dnsmasq restart >/dev/null 2>&1
+	# wait-for-dns, timeout 10s
+	for _ in $(seq 10); do if ping -4 -q -c 1 -s 0 -W 1 -w 1 t.cn >/dev/null 2>&1; then break; fi; done
+}
+
+start_rules() {
+	config_load $NAME
+	/usr/bin/${NAME}-rules \
+		-s "$(config_foreach get_server_ips servers)" \
+		-l "$(uci_get_by_type transparent_proxy local_port 1234)" \
+		-B "$(uci_get_by_type access_control wan_bp_list)" \
+		-b "$(uci_get_by_type access_control wan_bp_ips)" \
+		-W "$(uci_get_by_type access_control wan_fw_list)" \
+		-w "$(uci_get_by_type access_control wan_fw_ips)" \
+		-I "$(uci_get_by_type access_control lan_ifaces)" \
+		-d "$(uci_get_by_type access_control lan_target)" \
+		-a "$(config_foreach get_lan_hosts lan_hosts)" \
+		-e "$(uci_get_by_type access_control ipt_ext)" \
+		$(get_arg_out) $(get_arg_udp)
+}
+
+rules() {
+	pgrep -f /usr/bin/${NAME} >/dev/null || return 0
+	start_rules || /usr/bin/${NAME}-rules -f
+}
+
+gen_config_inbound_redir() {
+	command -v xray >/dev/null 2>&1 || return 0
+	uci_bool_by_type 'transparent_proxy' 'enable' && cat <<-EOF
+		    {
+		      "protocol": "dokodemo-door",
+		      "port": $(uci_get_by_type transparent_proxy local_port),
+		      "address": "0.0.0.0",
+		      "settings": {
+		        "network": "tcp,udp",
+		        "followRedirect": true
+		      }
+		    },
+	EOF
+}
+
+gen_config_inbound_http() {
+	command -v xray >/dev/null 2>&1 || return 0
+	uci_bool_by_type 'http_proxy' 'enable' && cat <<-EOF
+		    {
+		      "protocol": "http",
+		      "port": $(uci_get_by_type http_proxy local_port),
+		      "address": "0.0.0.0"
+		    },
+	EOF
+}
+
+gen_config_inbound_socks5() {
+	command -v xray >/dev/null 2>&1 || return 0
+	uci_bool_by_type 'socks5_proxy' 'enable' && cat <<-EOF
+		    {
+		      "protocol": "socks",
+		      "port": $(uci_get_by_type socks5_proxy local_port),
+		      "address": "0.0.0.0",
+		      "settings": {
+		        "udp": true
+		      }
+		    },
+	EOF
+}
+
+gen_config_inbound_tunnel() {
+	command -v xray >/dev/null 2>&1 || return 0
+	uci_bool_by_type 'port_forward' 'enable' && cat <<-EOF
+		    {
+		      "protocol": "dokodemo-door",
+		      "port": $(uci_get_by_type port_forward local_port),
+		      "address": "0.0.0.0",
+		      "settings": {
+		        "address": "$(uci_get_by_type port_forward destination | sed 's+:.*++g')",
+		        "port": $(uci_get_by_type port_forward destination | sed 's+.*:++g'),
+		        "network": "tcp,udp"
+		      }
+		    },
+	EOF
+}
+
+gen_config_inbounds() {
+	cat <<-EOF | sed 's+,    +,\n    +g;s+},__$+}+g'
+		  "inbounds": [
+				$(gen_config_inbound_redir)$(gen_config_inbound_http)$(gen_config_inbound_socks5)$(gen_config_inbound_tunnel)__
+		  ],
+	EOF
+}
+
+gen_stream_setting_key() {
+	network=$1
+	security=$2
+	echo $network >/var/run/network
+	echo $security >/var/run/security
+	if [ "V${network}" = "Vquic" ]; then
+		echo -e "\"quicSettings\": {},\n        \"${security}Settings\""
+	else
+		echo "\"${security}Settings\""
+	fi
+}
+
+gen_xtls_flow() {
+	local security=$(uci_get_by_name $1 security | sed 's+-.*++g')
+	local flow=$(uci_get_by_name $1 security | sed 's+.*-++g')
+	[ "V${flow}" == 'Vxtls' ] && flow='splice'
+	if [ "V${security}" == 'Vxtls' ]; then
+		echo -e "\n                \"flow\": \"xtls-rprx-${flow}\","
+	fi
+}
+
+gen_server_config() {
+	local network='tcp'
+	local security=$(uci_get_by_name $1 security | sed 's+-.*++g')
+	[ "V${security}" = "Vquic" ] && {
+		sysctl -w net.core.rmem_max=250000 >/dev/null
+		network='quic'
+		security='tls'
+	}
+	validate_server $1 && {
+		serverName=$(uci_get_by_name $1 server_name)
+		[ "V$serverName" = "V" ] && serverName=$(uci_get_by_name $1 server)
+		cat <<-EOF
+			    {
+			      "protocol": "$(uci_get_by_name $1 protocol)",
+			      "settings": {
+			        "vnext": [
+			          {
+			            "address": "$(uci_get_by_name $1 server)",
+			            "port": $(uci_get_by_name $1 server_port),
+			            "users": [
+			              {
+			                "id": "$(uci_get_by_name $1 id)",$(gen_xtls_flow $1)
+			                "encryption": "none",
+			                "level": 0
+			              }
+			            ]
+			          }
+			        ]
+			      },
+			      "streamSettings": {
+			        "network": "${network}",
+			        "security": "${security}",
+			        $(gen_stream_setting_key ${network} ${security}): {
+			          "serverName": "${serverName}"
+			        }
+			      }
+			    },
+		EOF
+	}
+}
+
+gen_config_outbounds() {
+	cat <<-EOF | sed 's+,    +,\n    +g;s+},__$+}+g'
+		  "outbounds": [
+					$(for server in $(uci_get_by_type general server); do gen_server_config $server; done)__
+		  ],
+	EOF
+}
+
+gen_config_file() {
+	local config_file=/var/etc/$NAME.json
+	cat <<-EOF >$config_file
+		{
+			$(gen_config_inbounds)
+			$(gen_config_outbounds)
+		  "log": {
+		    "loglevel": "warning"
+		  }
+		}
+	EOF
+	echo $config_file
+}
+
+xray_daemon() {
+	command -v xray >/dev/null 2>&1 || return 0
+	(/usr/bin/${NAME} -c $(gen_config_file) >/var/log/xray.log 2>&1) &
+	for _ in $(seq 10); do if pgrep -f /usr/bin/${NAME} >/dev/null; then break; else sleep 1; fi; done
+	pgrep -f /usr/bin/${NAME} >/dev/null
+}
+
+start() {
+	pgrep -f /usr/bin/${NAME} >/dev/null && return 0
+	uci_bool_by_type 'transparent_proxy' 'enable' ||
+		uci_bool_by_type 'port_forward' 'enable' ||
+		uci_bool_by_type 'http_proxy' 'enable' ||
+		uci_bool_by_type 'socks5_proxy' 'enable' ||
+		return 0
+
+	mkdir -p /var/run /var/etc $DNSMASQDIR
+	has_valid_server $(uci_get_by_type general server) && {
+		xray_pre
+		xray_daemon
+	}
+	uci_bool_by_type 'transparent_proxy' 'enable' && {
+		rules
+		add_cron
+	}
+}
+
+boot() {
+	echo 'exit 0' >/var/etc/$NAME.include
+	local delay=$(uci_get_by_type general startup_delay 0)
+	(sleep $delay && start >/dev/null 2>&1) &
+	return 0
+}
+
+kill_all() {
+	kill -9 $(pgrep -f $@) >/dev/null 2>&1
+}
+
+stop() {
+	/usr/bin/${NAME}-rules -f
+	kill_all /usr/bin/${NAME}
+	rm -f $DNSMASQDIR/xray.conf $DNSMASQDIR/xray-servers.conf 2>/dev/null
+	del_cron
+}
+
+add_cron() {
+	sed -i '/xray_watchdog/d' $CRON_FILE
+	echo '0   */3   * * *  rm -f /var/log/xray_watchdog.log 2>&1' >>$CRON_FILE
+	echo '*    *    * * * /etc/init.d/xray watchdog >> /var/log/xray_watchdog.log 2>&1' >>$CRON_FILE
+	/etc/init.d/cron restart
+}
+
+del_cron() {
+	sed -i '/xray_watchdog/d' $CRON_FILE
+	/etc/init.d/cron restart
+}
+
+watchdog() {
+	command -v xray >/dev/null 2>&1 || return 1
+	has_valid_server $(uci_get_by_type general server) && uci_bool_by_type 'transparent_proxy' 'enable' || return 1
+
+	LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
+	pgrep -f "/var/etc/$NAME.json" >/dev/null 2>&1 || {
+		echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
+		stop >/dev/null 2>&1
+		start >/dev/null 2>&1
+		return 0
+	}
+
+	cat_connect() {
+		target="$1"
+		retry=${2:-1}
+		timeout=5
+		[ $retry -lt 1 ] && return 1
+		ret_code=$(curl -s --connect-timeout $timeout "$target" -w %{http_code} -o /dev/null | tail -n1)
+		# echo -n "[ $retry $ret_code ] "
+		[ "x$ret_code" = "x200" -o "x$ret_code" = "x204" ] && return 0 || sleep 1 && cat_connect $target $((retry - 1))
+	}
+
+	TRPORT=$(uci_get_by_type transparent_proxy local_port 1234)
+	GOOGLE=$(ping -4 -q -c 1 -s 0 -W 1 -w 1 ${WATCHDOG_ENDPOINT} 2>/dev/null | sed '1{s/[^(]*(//;s/).*//;q}')
+	DNSPOD=119.29.29.98 #DNSPOD HTTPDNS (Inside GFW)
+
+	if [ "Z$GOOGLE" = "Z" ]; then
+		iptables -t nat -I OUTPUT -p tcp -d $DNSPOD -j RETURN
+		cat_connect "http://${DNSPOD}/d"
+		if [ "Z$?" = "Z0" ]; then
+			echo "[${LOGTIME}] Problem-DNS decteted, restarting ${NAME}..."
+			[ -x /etc/init.d/dnsmasq-extra ] && /etc/init.d/dnsmasq-extra restart || /etc/init.d/dnsmasq restart
+			stop >/dev/null 2>&1
+			start >/dev/null 2>&1
+		else
+			echo '['$LOGTIME'] Network Problem. Do nothing.'
+		fi
+		iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN
+		return 0
+	fi
+
+	iptables -t nat -I OUTPUT -p tcp -d $GOOGLE -j REDIRECT --to-port $TRPORT
+	iptables -t nat -I OUTPUT -p tcp -d $DNSPOD -j RETURN
+	cat_connect "http://${GOOGLE}/generate_204" 3
+	if [ "Z$?" = "Z0" ]; then
+		echo "[${LOGTIME}] ${NAME} No Problem."
+	else
+		# cat_connect "http://wifi.vivo.com.cn/generate_204"
+		# cat_connect "http://www.qualcomm.cn/generate_204"
+		cat_connect "http://${DNSPOD}/d"
+		if [ "Z$?" = "Z0" ]; then
+			echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
+			[ -x /etc/init.d/haproxy-tcp ] && /etc/init.d/haproxy-tcp restart
+			stop >/dev/null 2>&1
+			start >/dev/null 2>&1
+		else
+			echo '['$LOGTIME'] Network Problem. Do nothing.'
+		fi
+	fi
+
+	iptables -t nat -D OUTPUT -p tcp -d $GOOGLE -j REDIRECT --to-port $TRPORT
+	iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN
+	return 0
+}

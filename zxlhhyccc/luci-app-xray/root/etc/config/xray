@@ -1,0 +1,26 @@
+
+config general
+	option startup_delay '0'
+	list server 'nil'
+
+config transparent_proxy
+	option enable '1'
+	option local_port '1234'
+
+config http_proxy
+	option enable '0'
+
+config socks5_proxy
+	option enable '0'
+
+config port_forward
+	option enable '0'
+
+config servers
+	option alias 'sample-xtls'
+	option server '127.0.0.1'
+	option server_port '443'
+	option server_name 'xray.example.com'
+
+config access_control
+	option self_proxy '1'

@@ -1,0 +1,27 @@
+#!/bin/sh
+uci get xray.@general[-1] >/dev/null 2>&1 || \
+	uci add xray general >/dev/null 2>&1
+uci get xray.@transparent_proxy[-1] >/dev/null 2>&1 || \
+	uci add xray transparent_proxy >/dev/null 2>&1
+uci get xray.@http_proxy[-1] >/dev/null 2>&1 || \
+	uci add xray http_proxy >/dev/null 2>&1
+uci get xray.@socks5_proxy[-1] >/dev/null 2>&1 || \
+	uci add xray socks5_proxy >/dev/null 2>&1
+uci get xray.@port_forward[-1] >/dev/null 2>&1 || \
+	uci add xray port_forward >/dev/null 2>&1
+uci get xray.@access_control[-1] >/dev/null 2>&1 || \
+	uci add xray access_control >/dev/null 2>&1
+uci commit xray
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@xray[-1]
+	add ucitrack xray
+	set ucitrack.@xray[-1].init=xray
+	commit ucitrack
+	delete firewall.xray
+	set firewall.xray=include
+	set firewall.xray.type=script
+	set firewall.xray.path=/var/etc/xray.include
+	set firewall.xray.reload=1
+	commit firewall
+EOF
+exit 0
