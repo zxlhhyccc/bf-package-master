@@ -7,4 +7,6 @@ uci -q batch <<-EOF >/dev/null
 	commit ucitrack
 EOF
 
+grep -q "mt762" "/etc/openwrt_release" || { uci -q set turboacc.config.hw_flow=0; uci -q commit turboacc; }
+
 exit 0
