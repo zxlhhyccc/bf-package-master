@@ -1,0 +1,4 @@
+
+config npsvip
+	option enabled '0'
+

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@npsvip[-1]
+	add ucitrack npsvip
+	set ucitrack.@npsvip[-1].init=npsvip
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

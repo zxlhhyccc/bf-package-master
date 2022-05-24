@@ -1,0 +1,15 @@
+{
+	"luci-app-npsvip": {
+		"description": "luci-app-npsvip by 你好多多DIY",
+		"read": {
+			"cgi-io": [ "exec" ],
+			"uci": [ "npsvip" ]
+		},
+		"write": {
+			"file": {
+				"/usr/bin/npsvip": [ "exec" ]
+			},
+			"uci": [ "npsvip" ]
+		}
+	}
+}
