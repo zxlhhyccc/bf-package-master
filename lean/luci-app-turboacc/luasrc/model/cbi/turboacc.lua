@@ -31,6 +31,12 @@ sfe_flow.description = translate("Shortcut-FE based offloading for routing/NAT")
 sfe_flow:depends("sw_flow", 0)
 end
 
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/xt_FULLCONENAT.ko") then
+fullcone_nat = s:option(Flag, "fullcone_nat", translate("FullCone NAT"))
+fullcone_nat.default = 0
+fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
+end 
+
 bbr_cca = s:option(ListValue, "bbr_cca", translate("BBR CCA"))
 bbr_cca:value("0", translate("CUBIC"))
 if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_bbr.ko") then
