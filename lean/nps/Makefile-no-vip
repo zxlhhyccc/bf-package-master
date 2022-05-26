@@ -19,7 +19,6 @@ PKG_SOURCE_VERSION:=ab648d6f0c618c690a7a79948a7ebd686e1cdafc
 PKG_MIRROR_HASH:=dd752514cdd8e052ca5c502de1dbd932c1502ac20471f967d7cf1671eedcf077
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_NPS_$(1)_PROVIDE_NPSVIP \
 	CONFIG_NPS_$(1)_COMPRESS_GOPROXY \
 	CONFIG_NPS_$(1)_COMPRESS_UPX
 
@@ -46,7 +45,6 @@ define nps/templates
     TITLE:=A intranet penetration proxy server ($(1))
     DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
     URL:=https://ehang-io.github.io/nps
-    PROVIDES:=$(1)vip
   endef
 
   define Package/$(1)/description
@@ -57,10 +55,6 @@ define nps/templates
   endef
 
   define Package/$(1)/config
-    config NPS_$(1)_PROVIDE_NPSVIP
-      bool "Provide NPSvip binary using NPS"
-      default n 
- 
     config NPS_$(1)_COMPRESS_GOPROXY
       bool "Compiling with GOPROXY proxy"
       default n
@@ -81,9 +75,6 @@ define nps/templates
 
 	$$(INSTALL_DIR) $$(1)/usr/bin
 	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/$(1) $$(1)/usr/bin/
-  ifneq ($(CONFIG_NPS_$(1)_PROVIDE_NPSVIP),)
-	$$(LN) npc $$(1)/usr/bin/npsvip
-  endif
   endef
 endef
 
