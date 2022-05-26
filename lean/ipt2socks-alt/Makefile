@@ -32,9 +32,9 @@ define Package/ipt2socks/description
   Utility for converting iptables (redirect/tproxy) to socks5.
 endef
 
-TARGET_CFLAGS+= $(FPIC) -flto
+TARGET_CFLAGS+= $(FPIC) -flto -pthread
 MAKE_FLAGS+= \
-	CFLAGS="-std=c99 $(TARGET_CFLAGS)" \
+	CFLAGS="-std=c99 -pthread $(TARGET_CFLAGS)" \
 	EVCFLAGS="$(TARGET_CFLAGS)"
 
 define Package/ipt2socks-alt/install

@@ -36,7 +36,7 @@ endef
 
 TARGET_CFLAGS+= $(FPIC) -flto
 MAKE_FLAGS+= \
-	CFLAGS="-std=c99 $(TARGET_CFLAGS)" \
+	CFLAGS="-std=c99 -pthread $(TARGET_CFLAGS)" \
 	EVCFLAGS="$(TARGET_CFLAGS)"
 
 define Package/ipt2socks/install
