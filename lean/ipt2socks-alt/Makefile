@@ -26,6 +26,7 @@ define Package/ipt2socks-alt
 	CATEGORY:=Network
 	TITLE:=Convert iptables to socks5
 	URL:=https://github.com/zfl9/ipt2socks
+	DEPENDS:=+libpthread
 endef
 
 define Package/ipt2socks/description
