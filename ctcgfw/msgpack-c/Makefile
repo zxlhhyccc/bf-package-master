@@ -4,13 +4,13 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=msgpack-c
-PKG_VERSION:=4.0.0
+PKG_NAME:=msgpack-cpp
+PKG_VERSION:=4.1.1
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/msgpack/msgpack-c/tar.gz/c-$(PKG_VERSION)?
-PKG_HASH:=656ebe4566845e7bda9c097b625ba59ac72ddfd45df6017172d46d9ac7365aa3
+PKG_SOURCE_URL:=https://codeload.github.com/msgpack/msgpack-c/tar.gz/cpp-$(PKG_VERSION)?
+PKG_HASH:=221cc539e77f5ca02f4f0bbb1edafa9ca8c08de7ba8072d7baf2139930d99182
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-c-$(PKG_VERSION)
 
 PKG_LICENSE:=BSL-1.0
