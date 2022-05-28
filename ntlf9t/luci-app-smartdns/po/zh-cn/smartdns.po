@@ -11,16 +11,31 @@ msgid "SmartDNS Server"
 msgstr "SmartDNS 服务器"
 
 msgid "SmartDNS is a local high-performance DNS server, supports finding fastest IP, supports ad filtering, and supports avoiding DNS poisoning."
-msgstr "SmartDNS是一个本地高性能DNS服务器，支持避免域名污染，支持返回最快IP，支持广告过滤。"
+msgstr "SmartDNS是一个本地高性能DNS服务器，支持返回最快IP，支持广告过滤。"
 
 msgid "Custom Settings"
 msgstr "自定义设置"
+
+msgid "General Settings"
+msgstr "基本设置"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Advanced Settings"
+msgstr "高级设置"
+
+msgid "RUNNING"
+msgstr "运行中"
+
+msgid "NOT RUNNING"
+msgstr "未运行"
 
 msgid "Generate Coredump"
 msgstr "生成coredump"
 
 msgid "Generate Coredump file when smartdns crash, coredump file is located at /tmp/smartdns.xxx.core."
-msgstr "当smartdns异常时生成coredump文件，coredump文件在/tmp/smartdns.xxx.core。"
+msgstr "当smartdns异常时生成coredump文件，coredump文件在/tmp/smartdns.xxx.core."
 
 msgid "Server Name"
 msgstr "服务器名称"
@@ -107,13 +122,19 @@ msgid "Domain TTL Min"
 msgstr "域名TTL最小值"
 
 msgid "Minimum TTL for all domain result."
-msgstr "设置所有域名的TTL最小值。"
+msgstr "设置所有域名的TTL最小值"
 
 msgid "Domain TTL Max"
 msgstr "域名TTL最大值"
 
 msgid "Maximum TTL for all domain result."
-msgstr "设置所有域名的TTL最大值。"
+msgstr "设置所有域名的TTL最大值"
+
+msgid "Domain Reply TTL Max"
+msgstr "域名应答TTL最大值"
+
+msgid "Maximum Reply TTL for all domain result."
+msgstr "设置返回给客户端的TTL最大值"
 
 msgid "Update China list And Advertising Data"
 msgstr "自动更新国内域名和广告数据库"
