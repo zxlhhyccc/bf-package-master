@@ -42,7 +42,7 @@ else
 		if version=="" then version="core error" end
 		uci:set("AdGuardHome","AdGuardHome","version",version)
 		uci:set("AdGuardHome","AdGuardHome","binmtime",testtime)
-		uci:commit("AdGuardHome")
+		uci:save("AdGuardHome")
 	end
 	e=version..e
 end
