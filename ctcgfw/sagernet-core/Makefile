@@ -13,6 +13,7 @@ PKG_SOURCE_PROTO:=git
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/SagerNet/v2ray-core.git
 PKG_SOURCE_DATE:=2022-06-01
+PKG_SOURCE_VERSION:=d769d0c71a603d0dc237ba0965832f824ac1f229
 PKG_MIRROR_HASH:=b2f2780187371d899ce4cb1ca4a35f86bac0fde69bd0cbf37d5bba5d1096e4be
 PKG_VERSION:=$(BASE_VERSION)-$(PKG_SOURCE_DATE)-$(call version_abbrev,$(PKG_SOURCE_VERSION))
 
@@ -30,7 +31,6 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/v2fly/v2ray-core/v5
 GO_PKG_BUILD_PKG:=$(GO_PKG)/main
-GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG).build=OpenWrt \
 	$(GO_PKG).version=$(BASE_VERSION)
@@ -42,7 +42,6 @@ define Package/sagernet/template
   TITLE:=An enhanced v2ray edition for SagerNet
   SECTION:=net
   CATEGORY:=Network
-  SUBMENU:=Web Servers/Proxies
   URL:=https://sagernet.org
 endef
 
@@ -108,7 +107,7 @@ define Package/sagernet-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/v2ray
-	#$(LN) v2ray $(1)/usr/bin/xray
+	$(LN) v2ray $(1)/usr/bin/xray
 endef
 
 define Package/sagernet-extra/install
