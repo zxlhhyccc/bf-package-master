@@ -91,6 +91,7 @@ ipset_r() {
 	router)
 		ipset list ss_spec_wan_ac > /dev/null || ipset create ss_spec_wan_ac hash:net
 		ipset -! -R <<-EOF || return 1
+			#create ss_spec_wan_ac hash:net
 			$(gen_spec_iplist | sed -e "s/^/add ss_spec_wan_ac /")
 		EOF
 		$IPT -A SS_SPEC_WAN_AC -m set --match-set ss_spec_wan_ac dst -j RETURN
@@ -191,6 +192,7 @@ ac_rule() {
 	fi
 	ipset list ss_spec_lan_ac > /dev/null || ipset create ss_spec_lan_ac hash:net
 	ipset -! -R <<-EOF || return 1
+		#create ss_spec_lan_ac hash:net
 		$(for ip in ${LAN_AC_IP:1}; do echo "add ss_spec_lan_ac $ip"; done)
 	EOF
 	if [ -z "$Interface" ]; then
@@ -210,6 +212,7 @@ ac_rule() {
 	2)
 		ipset list ssr_gen_router > /dev/null || ipset create ssr_gen_router hash:net
 		ipset -! -R <<-EOF || return 1
+			#create ssr_gen_router hash:net
 			$(gen_spec_iplist | sed -e "s/^/add ssr_gen_router /")
 		EOF
 		$IPT -N SS_SPEC_ROUTER && \
@@ -244,12 +247,16 @@ tp_rule() {
 	router)
 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set ss_spec_wan_ac dst -j RETURN
 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set china dst -j RETURN
+		#$ipt -A SS_SPEC_TPROXY -p udp --dport 443 -j DROP
+		#$ipt -A SS_SPEC_TPROXY -p udp --dport 80 -j DROP
 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set gmlan src -m set ! --match-set china dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
 		$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set ! --match-set ss_spec_wan_ac dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
 		;;
 	gfw)
 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set china dst -j RETURN
 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set blacklist dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+		#$ipt -A SS_SPEC_TPROXY -p udp --dport 443 -j DROP
+		#$ipt -A SS_SPEC_TPROXY -p udp --dport 80 -j DROP
 		$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set --match-set gfwlist dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set gmlan src -m set ! --match-set china dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
 		;;

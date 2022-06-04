@@ -492,11 +492,11 @@ o.rmempty = true
 
 o = s:option(Value, "private_key", translate("Private key"))
 o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
+o.password = true
 o.rmempty = true
 
 o = s:option(Value, "peer_pubkey", translate("Peer public key"))
 o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
-o.password = true
 o.rmempty = true
 
 o = s:option(Value, "preshared_key", translate("Pre-shared key"))
@@ -517,15 +517,15 @@ o:depends({type = "v2ray", v2ray_protocol = "http", xtls = false})
 o:depends("type", "trojan")
 
 -- XTLS
--- if is_finded("xray") then
-o = s:option(Flag, "xtls", translate("XTLS"))
-o.rmempty = true
-o.default = "0"
-o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "tcp", tls = false})
-o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "kcp", tls = false})
-o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "tcp", tls = false})
-o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "kcp", tls = false})
--- end
+if is_finded("xray") then
+	o = s:option(Flag, "xtls", translate("XTLS"))
+	o.rmempty = true
+	o.default = "0"
+	o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "tcp", tls = false})
+	o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "kcp", tls = false})
+	o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "tcp", tls = false})
+	o:depends({type = "v2ray", v2ray_protocol = "trojan", transport = "kcp", tls = false})
+end
 
 -- Flow
 o = s:option(Value, "vless_flow", translate("Flow"))
