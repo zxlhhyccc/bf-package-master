@@ -425,7 +425,7 @@ msgid "Custom DNS Server format as IP:PORT (default: 8.8.4.4:53)"
 msgstr "格式为 IP:PORT (默认: 8.8.4.4:53)"
 
 msgid "Use Pdnsd tcp query and cache"
-msgstr "使用PDNSD TCP查询并缓存"
+msgstr "使用 PDNSD TCP查询并缓存"
 
 msgid "Use DNS2SOCKS query and cache"
 msgstr "使用 DNS2SOCKS 查询并缓存"
