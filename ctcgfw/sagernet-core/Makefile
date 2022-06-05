@@ -12,9 +12,9 @@ PKG_RELEASE:=$(AUTORELEASE)
 PKG_SOURCE_PROTO:=git
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/SagerNet/v2ray-core.git
-PKG_SOURCE_DATE:=2022-06-01
-PKG_SOURCE_VERSION:=d769d0c71a603d0dc237ba0965832f824ac1f229
-PKG_MIRROR_HASH:=98dde5463dea2a3d6d378e3718a3602af302aa8cee19c15e4deeb483d1e609f8
+PKG_SOURCE_DATE:=2022-06-05
+PKG_SOURCE_VERSION:=3853bd929f8d9acf6b2138127c7250ca217336bc
+PKG_MIRROR_HASH:=23ec480ed265dc53b3510754acdd8d7bc2f9a9241e19f17cf11447d269f403b9
 PKG_VERSION:=$(BASE_VERSION)-$(PKG_SOURCE_DATE)-$(call version_abbrev,$(PKG_SOURCE_VERSION))
 
 PKG_LICENSE:=GPL-3.0-or-later
@@ -51,7 +51,7 @@ endef
 define Package/sagernet-core
   $(call Package/sagernet/template)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-  CONFLICTS:=v2ray-core xray-core
+  CONFLICTS:=(v2ray-core || xray-core)
 endef
 
 define Package/sagernet-extra
