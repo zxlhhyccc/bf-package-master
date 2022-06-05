@@ -1,11 +1,15 @@
-local ucursor = require"luci.model.uci".cursor()
+local ucursor = require "luci.model.uci".cursor()
 local json = require "luci.jsonc"
+local has_sagercore = luci.model.ipkg.installed("sagernet-core")
+
 local server_section = arg[1]
 local proto = arg[2]
 local local_port = arg[3] or "0"
 local socks_port = arg[4] or "0"
+
 local server = ucursor:get_all("shadowsocksr", server_section)
 local outbound_settings = nil
+
 function vmess_vless()
 	outbound_settings = {
 		vnext = {
@@ -22,7 +26,7 @@ function vmess_vless()
 				}
 			}
 		},
-		packetEncoding = server.packet_encoding or "xudp"
+		packetEncoding = has_sagercore and (server.packet_encoding or "xudp") or nil,
 	}
 end
 function trojan_shadowsocks()
@@ -208,7 +212,7 @@ local Xray = {
 			-- mux
 			enabled = true,
 			concurrency = tonumber(server.concurrency),
-			packetEncoding = (server.v2ray_protocol == "vmess" or server.v2ray_protocol == "vless") and (server.packet_encoding or "xudp") or nil
+			packetEncoding = (has_sagercore and (server.v2ray_protocol == "vmess" or server.v2ray_protocol == "vless")) and (server.packet_encoding or "xudp") or nil
 		} or nil
 	} or nil
 }

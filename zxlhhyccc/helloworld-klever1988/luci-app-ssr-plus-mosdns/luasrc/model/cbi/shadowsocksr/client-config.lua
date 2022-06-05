@@ -1,14 +1,21 @@
 -- Copyright (C) 2017 yushi studio <ywb94@qq.com> github.com/ywb94
 -- Licensed to the public under the GNU General Public License v3.
+
 require "nixio.fs"
-require "luci.sys"
 require "luci.http"
-local m, s, o, kcp_enable
+require "luci.sys"
+require "luci.model.ipkg"
+
+local m, s, o
 local sid = arg[1]
 local uuid = luci.sys.exec("cat /proc/sys/kernel/random/uuid")
 
-function is_finded(e)
+local function is_finded(e)
 	return luci.sys.exec('type -t -p "%s"' % e) ~= "" and true or false
+end
+
+local function is_installed(e)
+	return luci.model.ipkg.installed(e)
 end
 
 local server_table = {}
@@ -89,7 +96,7 @@ local protocol = {
 	"auth_chain_f"
 }
 
-obfs = {
+local obfs = {
 	-- ssr
 	"plain",
 	"http_simple",
@@ -175,7 +182,9 @@ o:value("vless", translate("VLESS"))
 o:value("vmess", translate("VMess"))
 o:value("trojan", translate("Trojan"))
 o:value("shadowsocks", translate("Shadowsocks"))
-o:value("wireguard", translate("WireGuard"))
+if is_installed("sagernet-core") then
+	o:value("wireguard", translate("WireGuard"))
+end
 o:value("socks", translate("Socks"))
 o:value("http", translate("HTTP"))
 o:depends("type", "v2ray")
@@ -253,7 +262,7 @@ o:value("none", translate("None"))
 if is_finded("obfs-local") then
 	o:value("obfs-local", translate("obfs-local"))
 end
-if is_finded("v2ray-plugin") or is_finded("v2ray") then
+if is_finded("v2ray-plugin") or is_installed("sagernet-core") then
 	o:value("v2ray-plugin", translate("v2ray-plugin"))
 end
 if is_finded("xray-plugin") then
@@ -639,14 +648,16 @@ o:depends("type", "ssr")
 o:depends("type", "ss")
 o:depends("type", "trojan")
 
-o = s:option(ListValue, "packet_encoding", translate("Packet Encoding"))
-o:value("none", translate("disabled"))
-o:value("packet", translate("packet (v2ray-core v5+)"))
-o:value("xudp", translate("xudp (Xray-core)"))
-o.default = "xudp"
-o.rmempty = true
-o:depends({type = "v2ray", v2ray_protocol = "vless"})
-o:depends({type = "v2ray", v2ray_protocol = "vmess"})
+if is_installed("sagernet-core") then
+	o = s:option(ListValue, "packet_encoding", translate("Packet Encoding"))
+	o:value("none", translate("disabled"))
+	o:value("packet", translate("packet (v2ray-core v5+)"))
+	o:value("xudp", translate("xudp (Xray-core)"))
+	o.default = "xudp"
+	o.rmempty = true
+	o:depends({type = "v2ray", v2ray_protocol = "vless"})
+	o:depends({type = "v2ray", v2ray_protocol = "vmess"})
+end
 
 o = s:option(Flag, "switch_enable", translate("Enable Auto Switch"))
 o.rmempty = false
@@ -658,11 +669,11 @@ o.default = 1234
 o.rmempty = false
 
 if is_finded("kcptun-client") then
-	kcp_enable = s:option(Flag, "kcp_enable", translate("KcpTun Enable"))
-	kcp_enable.rmempty = true
-	kcp_enable.default = "0"
-	kcp_enable:depends("type", "ssr")
-	kcp_enable:depends("type", "ss")
+	o = s:option(Flag, "kcp_enable", translate("KcpTun Enable"))
+	o.rmempty = true
+	o.default = "0"
+	o:depends("type", "ssr")
+	o:depends("type", "ss")
 
 	o = s:option(Value, "kcp_port", translate("KcpTun Port"))
 	o.datatype = "port"

@@ -1,8 +1,10 @@
 -- Copyright (C) 2017 yushi studio <ywb94@qq.com> github.com/ywb94
 -- Copyright (C) 2018 lean <coolsnowwolf@gmail.com> github.com/coolsnowwolf
 -- Licensed to the public under the GNU General Public License v3.
-local m, s, sec, o, kcp_enable
+
+local m, s, sec, o
 local uci = luci.model.uci.cursor()
+
 m = Map("shadowsocksr", translate("ShadowSocksR Plus+ Settings"), translate("<h3>Support SS/SSR/V2RAY/XRAY/TROJAN/NAIVEPROXY/SOCKS5/TUN etc.</h3>"))
 
 m:section(SimpleSection).template = "shadowsocksr/status"
