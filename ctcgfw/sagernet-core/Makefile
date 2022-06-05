@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sagernet-core
 #PKG_VERSION:=5.0.14
-BASE_VERSION:=5.0.12
+BASE_VERSION:=5.0.14
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
@@ -14,7 +14,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/SagerNet/v2ray-core.git
 PKG_SOURCE_DATE:=2022-06-01
 PKG_SOURCE_VERSION:=d769d0c71a603d0dc237ba0965832f824ac1f229
-PKG_MIRROR_HASH:=b2f2780187371d899ce4cb1ca4a35f86bac0fde69bd0cbf37d5bba5d1096e4be
+PKG_MIRROR_HASH:=98dde5463dea2a3d6d378e3718a3602af302aa8cee19c15e4deeb483d1e609f8
 PKG_VERSION:=$(BASE_VERSION)-$(PKG_SOURCE_DATE)-$(call version_abbrev,$(PKG_SOURCE_VERSION))
 
 PKG_LICENSE:=GPL-3.0-or-later
@@ -22,6 +22,7 @@ PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_CONFIG_DEPENDS:= \
+	CONFIG_SAGERNET_CORE_PROVIDE_XRAY \
 	CONFIG_SAGERNET_CORE_COMPRESS_GOPROXY \
 	CONFIG_SAGERNET_CORE_COMPRESS_UPX
 
@@ -31,6 +32,7 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/v2fly/v2ray-core/v5
 GO_PKG_BUILD_PKG:=$(GO_PKG)/main
+GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG).build=OpenWrt \
 	$(GO_PKG).version=$(BASE_VERSION)
@@ -42,6 +44,7 @@ define Package/sagernet/template
   TITLE:=An enhanced v2ray edition for SagerNet
   SECTION:=net
   CATEGORY:=Network
+  SUBMENU:=Web Servers/Proxies
   URL:=https://sagernet.org
 endef
 
@@ -80,6 +83,10 @@ define Package/sagernet-core/config
 menu "sagernet-core Configuration"
 	depends on PACKAGE_sagernet-core
 
+config SAGERNET_CORE_PROVIDE_XRAY
+      bool "Provide Xray binary using Sagernet-core"
+      default n 
+
 config SAGERNET_CORE_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -107,7 +114,9 @@ define Package/sagernet-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/v2ray
+ifneq ($(CONFIG_SAGERNET_CORE_PROVIDE_XRAY),)
 	$(LN) v2ray $(1)/usr/bin/xray
+endif
 endef
 
 define Package/sagernet-extra/install
