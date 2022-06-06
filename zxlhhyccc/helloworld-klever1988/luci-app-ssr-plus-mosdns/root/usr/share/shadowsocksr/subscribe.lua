@@ -9,6 +9,7 @@ require "nixio"
 require "luci.util"
 require "luci.sys"
 require "luci.jsonc"
+require "luci.model.ipkg"
 -- these global functions are accessed all the time by the event handler
 -- so caching them is worth the effort
 local tinsert = table.insert
@@ -25,7 +26,7 @@ local switch = ucic:get_first(name, 'server_subscribe', 'switch', '1')
 local subscribe_url = ucic:get_first(name, 'server_subscribe', 'subscribe_url', {})
 local filter_words = ucic:get_first(name, 'server_subscribe', 'filter_words', '过期时间/剩余流量')
 local save_words = ucic:get_first(name, 'server_subscribe', 'save_words', '')
-local packet_encoding = ucic:get_first(name, 'global', 'default_packet_encoding', 'xudp')
+local packet_encoding = luci.model.ipkg.installed("sagernet-core") and ucic:get_first(name, 'global', 'default_packet_encoding', 'xudp') or nil
 local v2_ss = luci.sys.exec('type -t -p ss-redir sslocal') ~= "" and "ss" or "v2ray"
 local v2_tj = luci.sys.exec('type -t -p trojan') ~= "" and "trojan" or "v2ray"
 local log = function(...)

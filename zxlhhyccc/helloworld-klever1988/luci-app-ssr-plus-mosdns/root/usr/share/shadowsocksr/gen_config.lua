@@ -1,6 +1,7 @@
+#!/usr/bin/lua
+
 local ucursor = require "luci.model.uci".cursor()
 local json = require "luci.jsonc"
-local has_sagercore = luci.model.ipkg.installed("sagernet-core")
 
 local server_section = arg[1]
 local proto = arg[2]
@@ -26,7 +27,7 @@ function vmess_vless()
 				}
 			}
 		},
-		packetEncoding = has_sagercore and (server.packet_encoding or "xudp") or nil,
+		packetEncoding = server.packet_encoding or nil
 	}
 end
 function trojan_shadowsocks()
@@ -39,6 +40,7 @@ function trojan_shadowsocks()
 				port = tonumber(server.server_port),
 				password = server.password,
 				method = (server.v2ray_protocol == "shadowsocks") and server.encrypt_method_ss or nil,
+				uot = (server.v2ray_protocol == "shadowsocks") and server.uot or nil,
 				ivCheck = (server.v2ray_protocol == "shadowsocks") and (server.ivCheck == '1') or nil,
 				flow = (server.v2ray_protocol == "trojan") and (server.xtls == '1') and (server.vless_flow and server.vless_flow or "xtls-rprx-splice") or nil
 			}
@@ -125,7 +127,7 @@ local Xray = {
 		port = tonumber(local_port),
 		protocol = "dokodemo-door",
 		settings = {network = proto, followRedirect = true},
-		sniffing = {enabled = false, destOverride = {"http", "tls"}}
+		sniffing = {enabled = true, destOverride = {"http", "tls"}}
 	} or nil,
 	-- 开启 socks 代理
 	inboundDetour = (proto:find("tcp") and socks_port ~= "0") and {
@@ -212,7 +214,7 @@ local Xray = {
 			-- mux
 			enabled = true,
 			concurrency = tonumber(server.concurrency),
-			packetEncoding = (has_sagercore and (server.v2ray_protocol == "vmess" or server.v2ray_protocol == "vless")) and (server.packet_encoding or "xudp") or nil
+			packetEncoding = (server.v2ray_protocol == "vmess" or server.v2ray_protocol == "vless") and server.packet_encoding or nil
 		} or nil
 	} or nil
 }

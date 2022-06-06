@@ -2,8 +2,8 @@
 -- Licensed to the public under the GNU General Public License v3.
 
 require "nixio.fs"
-require "luci.http"
 require "luci.sys"
+require "luci.http"
 require "luci.model.ipkg"
 
 local m, s, o
@@ -250,6 +250,12 @@ end
 o.rmempty = true
 o:depends("type", "ss")
 o:depends({type = "v2ray", v2ray_protocol = "shadowsocks"})
+
+o = s:option(Flag, "uot", translate("UDP over TCP"))
+o.description = translate("Enable the SUoT protocol, requires server support.")
+o.rmempty = true
+o:depends({type = "v2ray", v2ray_protocol = "shadowsocks"})
+o.default = "0"
 
 o = s:option(Flag, "ivCheck", translate("Bloom Filter"))
 o.rmempty = true
@@ -650,7 +656,7 @@ o:depends("type", "trojan")
 
 if is_installed("sagernet-core") then
 	o = s:option(ListValue, "packet_encoding", translate("Packet Encoding"))
-	o:value("none", translate("disabled"))
+	o:value("none", translate("none"))
 	o:value("packet", translate("packet (v2ray-core v5+)"))
 	o:value("xudp", translate("xudp (Xray-core)"))
 	o.default = "xudp"
