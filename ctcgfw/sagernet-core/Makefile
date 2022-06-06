@@ -51,7 +51,7 @@ endef
 define Package/sagernet-core
   $(call Package/sagernet/template)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-  CONFLICTS:=(v2ray-core || xray-core)
+  CONFLICTS:=v2ray-core xray-core
 endef
 
 define Package/sagernet-extra

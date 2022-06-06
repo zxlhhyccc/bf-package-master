@@ -6,7 +6,6 @@ local m, s, sec, o
 local uci = luci.model.uci.cursor()
 
 m = Map("shadowsocksr", translate("ShadowSocksR Plus+ Settings"), translate("<h3>Support SS/SSR/V2RAY/XRAY/TROJAN/NAIVEPROXY/SOCKS5/TUN etc.</h3>"))
-
 m:section(SimpleSection).template = "shadowsocksr/status"
 
 local server_table = {}
@@ -86,10 +85,10 @@ o:value("2", translate("Only Common Ports"))
 o.default = 1
 
 o = s:option(ListValue, "pdnsd_enable", translate("Resolve Dns Mode"))
-o:value("1", translate("Use DNS2TCP query and cache"))
+o:value("1", translate("Use DNS2TCP query"))
 o:value("2", translate("Use DNS2SOCKS query and cache"))
 if nixio.fs.access('/usr/sbin/pdnsd') then
-	o:value("3", translate("Use Pdnsd tcp query and cach"))
+	o:value("3", translate("Use Pdnsd tcp query and cache"))
 end
 o:value("0", translate("Use Local DNS Service listen port 5335"))
 o.default = 1
