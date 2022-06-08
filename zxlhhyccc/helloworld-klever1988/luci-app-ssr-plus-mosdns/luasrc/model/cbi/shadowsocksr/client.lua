@@ -86,7 +86,7 @@ o:value("2", translate("Only Common Ports"))
 o.default = 1
 
 o = s:option(ListValue, "pdnsd_enable", translate("Resolve Dns Mode"))
-o:value("1", translate("Use DNS2TCP query and cache"))
+o:value("1", translate("Use DNS2TCP query"))
 o:value("2", translate("Use DNS2SOCKS query and cache"))
 if nixio.fs.access('/usr/sbin/pdnsd') then
 	o:value("3", translate("Use Pdnsd tcp query and cache"))

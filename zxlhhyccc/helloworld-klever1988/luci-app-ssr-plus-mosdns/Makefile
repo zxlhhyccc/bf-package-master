@@ -2,10 +2,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-ssr-plus-mosdns
 PKG_VERSION:=186
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD \
@@ -27,9 +28,10 @@ LUCI_PKGARCH:=all
 LUCI_DEPENDS:= \
 	@(PACKAGE_libustream-mbedtls||PACKAGE_libustream-openssl||PACKAGE_libustream-wolfssl) \
 	+coreutils +coreutils-base64 +dns2socks +dns2tcp +dnsmasq-full +ipset +kmod-ipt-nat \
-	+ip-full +iptables +iptables-mod-tproxy +lua +libuci-lua +luci-lib-ipkg +microsocks \
-	+tcping +resolveip +shadowsocksr-libev-ssr-check +uclient-fetch \
+	+ip-full +iptables +iptables-mod-tproxy +lua +libuci-lua +microsocks +tcping \
+	+resolveip +shadowsocksr-libev-ssr-check +uclient-fetch \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks:ipt2socks \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD:pdnsd-alt \
@@ -50,8 +52,18 @@ LUCI_DEPENDS:= \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns:Mosdns
 
 define Package/$(PKG_NAME)/config
+select PACKAGE_luci-lib-ipkg if PACKAGE_$(PKG_NAME)
+
 config PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun
 	bool "Include Kcptun"
+	default n
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria
+	bool "Include Hysteria"
+	default n
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
+	bool "Include ipt2socks"
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
@@ -59,13 +71,8 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
 	depends on !(arc||armeb||mips||mips64||powerpc||TARGET_gemini)
 	default n
 
-config PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
-	bool "Include ipt2socks"
-	default n
-
 config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
 	bool "Include PDNSD"
-	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2
 	bool "Include Redsocks2"
@@ -77,7 +84,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
 	bool "Include Shadowsocks Libev Client"
-	default y if i386||x86_64||arm
+	default y if arm
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server
 	bool "Include Shadowsocks Libev Server"
@@ -117,7 +124,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Plugin
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns
-	bool "Include Mosdns"
+	bool "Include mosdns"
 	default y
 endef
 
