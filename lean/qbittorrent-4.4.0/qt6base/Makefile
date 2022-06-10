@@ -44,7 +44,7 @@ define Package/libQt6/Default
   SUBMENU:=Qt6
   TITLE:=Qt6
   URL:=http://qt-project.org
-  DEPENDS:=@!arc +libatomic +libstdcpp +zlib
+  DEPENDS:=@!arc +libatomic +libdouble-conversion +libstdcpp +zlib
 endef
 
 define Package/libQt6
@@ -55,9 +55,10 @@ endef
 define Package/libQt6/install
 endef
 
+TARGET_CFLAGS+= -I$(STAGING_DIR)/usr/include/libdrm
 ifdef CONFIG_USE_GLIBC
   ifeq ($(ARCH),x86_64)
-    TARGET_LDFLAGS += -Wl,--sysroot=$(TOOLCHAIN_DIR)
+    TARGET_LDFLAGS+= -Wl,--sysroot=$(TOOLCHAIN_DIR)
   endif
 endif
 
@@ -82,7 +83,7 @@ CMAKE_OPTIONS+= \
 	-DQT_QMAKE_TARGET_MKSPEC=devices/linux-generic-g++ \
 	-DQT_BUILD_EXAMPLES=OFF \
 	-DQT_BUILD_TESTS=OFF \
-	-DQT_BUILD_TOOLS_WHEN_CROSSCOMPILING=OFF \
+	-DQT_BUILD_TOOLS_WHEN_CROSSCOMPILING=ON \
 	-DINPUT_opengl=no \
 	-DFEATURE_optimize_full=ON \
 	-DFEATURE_system_zlib=ON \
@@ -164,7 +165,7 @@ endef
 $(eval $(call DefineQt6Package,Concurrent,Core,))
 $(eval $(call DefineQt6Package,Core,,+libpcre2-16))
 $(eval $(call DefineQt6Package,DBus,Core,))
-$(eval $(call DefineQt6Package,Gui,DBus,+libfreetype))
+$(eval $(call DefineQt6Package,Gui,DBus,+libdrm +libfreetype))
 $(eval $(call DefineQt6Package,Network,Core,+libopenssl +krb5-libs))
 $(eval $(call DefineQt6Package,PrintSupport,Widgets,))
 $(eval $(call DefineQt6Package,Sql,Core,+libsqlite3))
