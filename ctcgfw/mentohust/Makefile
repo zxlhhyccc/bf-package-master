@@ -1,18 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #
 # Copyright (C) 2014-2015 KyleRicardo
-#
-# Copyright (C) 2021 ImmortalWrt
-# <https://immortalwrt.org>
-#
-# This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2021-2022 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mentohust
 PKG_VERSION:=0.3.1
-PKG_RELEASE:=3
+PKG_RELEASE:=$(AUTORELASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk.git
@@ -21,27 +16,30 @@ PKG_SOURCE_VERSION:=d1a8a3a77275c89884d0fa1e95fd404287431f13
 PKG_MIRROR_HASH:=a85e36397b11d0cdd8d24523f0379e75ac56b091d42323c5ae5ac4081453098c
 
 PKG_BUILD_PARALLEL:=1
-
 MAKE_PATH:=src
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/mentohust
-	SECTION:=net
-	CATEGORY:=Network
-	TITLE:=A Ruijie Client Daemon
-	URL:=https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk
-	SUBMENU:=Campus Network
-	DEPENDS:=+libpcap
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Campus Network
+  TITLE:=A Ruijie Client Daemon
+  URL:=https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk
+  DEPENDS:=+libpcap
 endef
 
 define Package/mentohust/description
-	A Ruijie Client Daemon, most usually used in China collages.
+  A Ruijie Client Daemon, most usually used in Chinese universities.
 endef
 
 define Package/mentohust/conffiles
 /etc/mentohust.conf
 endef
+
+ifdef CONFIG_USE_GLIBC
+  TARGET_LDFLAGS+= -ldl
+endif
 
 define Package/mentohust/install
 	$(INSTALL_DIR) $(1)/usr/sbin
