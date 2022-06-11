@@ -2,6 +2,7 @@
 --N2N VPN(V2) configuration page. Made by 981213
 --
 ]] --
+
 local fs = require "nixio.fs"
 
 function get_mask(v)
@@ -98,8 +99,8 @@ subnet = s:option(Value, "subnet", translate("DHCP Subnet"))
 subnet.optional = false
 
 -- Static route
-s = m:section(TypedSection, "route", translate("N2N routes"),
-              translate("Static route for n2n interface"))
+s = m:section(TypedSection, "route", translate("N2N routes"))
+s.description = translate("Static route for n2n interface")
 s.anonymous = true
 s.addremove = true
 s.template = "cbi/tblsection"
