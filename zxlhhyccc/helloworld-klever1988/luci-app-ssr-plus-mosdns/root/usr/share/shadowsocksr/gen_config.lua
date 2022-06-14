@@ -59,6 +59,7 @@ if (server.v2ray_protocol == "shadowsocks") and (server.mux ~= "1") and (not (ou
 end
 function socks_http()
 	outbound_settings = {
+		version = server.socks_ver or nil,
 		servers = {
 			{
 				address = server.server,
