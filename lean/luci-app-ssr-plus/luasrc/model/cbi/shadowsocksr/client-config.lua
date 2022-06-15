@@ -273,7 +273,7 @@ o.default = "1"
 -- Shadowsocks Plugin
 o = s:option(Value, "plugin", translate("Obfs"))
 o:value("none", translate("None"))
-if is_finded("obfs-local") or is_installed("sagernet-core")
+if is_finded("obfs-local") or is_installed("sagernet-core") then
 	o:value("obfs-local", translate("obfs-local"))
 end
 if is_finded("v2ray-plugin") or is_installed("sagernet-core") then
