@@ -93,8 +93,8 @@ define Package/sagernet-extra/description
 endef
 
 LIBCORE_NAME:=LibSagerNetCore
-LIBCORE_DATE:=2022-06-10
-LIBCORE_VERSION:=9ef7ab1de7604ab959222d4de8ab6152a402e432
+LIBCORE_DATE:=2022-06-16
+LIBCORE_VERSION:=8d38e10c33d86f2b7131c5f7273ae099f642354e
 LIBCORE_FILE:=$(LIBCORE_NAME)-$(LIBCORE_DATE)-$(call version_abbrev,$(LIBCORE_VERSION)).tar.xz
 define Download/libcore
 	PROTO:=git
@@ -102,7 +102,7 @@ define Download/libcore
 	VERSION:=$(LIBCORE_VERSION)
 	FILE:=$(LIBCORE_FILE)
 	SUBDIR:=$(LIBCORE_NAME)
-	MIRROR_HASH:=9420189c45d5fbe682acee1da0b8f727cc5ea8c847ceeff5b026cd71ce60cf0f
+	MIRROR_HASH:=ab95d5203d22152f686ddcdc5d0d4d4361ee3506cf24c34d556694c4d10ad730
 endef
 
 define Build/Prepare
