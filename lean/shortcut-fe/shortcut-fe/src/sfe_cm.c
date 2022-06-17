@@ -505,7 +505,6 @@ static unsigned int sfe_cm_post_routing(struct sk_buff *skb, int is_v4)
 	net = nf_ct_net(ct);
 	tn = nf_tcp_pernet(net);
 	if ((tn&&tn->tcp_no_window_check)
-	if ((net&&net->ct.sysctl_no_window_check)
 #else
 	if (nf_ct_tcp_no_window_check
 #endif
