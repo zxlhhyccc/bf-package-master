@@ -121,5 +121,6 @@ define Package/v2raya/install
 	$(INSTALL_BIN) $(CURDIR)/files/v2raya.init $(1)/etc/init.d/v2raya
 endef
 
+$(eval $(call Download,v2raya-web))
 $(eval $(call GoBinPackage,v2raya))
 $(eval $(call BuildPackage,v2raya))
