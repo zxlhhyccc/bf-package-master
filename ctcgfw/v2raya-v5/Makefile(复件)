@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA-v5
-PKG_VERSION:=1.5.8.1
+PKG_VERSION:=1.5.7
 PKG_RELEASE:=$(AUTORELEASE)
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -17,8 +17,8 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA.git
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
-PKG_SOURCE_VERSION:=aea88e2436d3e7c086f87b080532c3004010d1c6
-PKG_MIRROR_HASH:=af9ae4e1037612cdeabb2915cbe7212dac9f64291e7edd24a90002a4e122ed61
+PKG_SOURCE_VERSION:=9996e5c26b26e0213295b8af7ff18b34cc705556
+PKG_MIRROR_HASH:=efc50625de9c25713669071f97c118cd2d2ef3ce896cb575e5a8adb693aa2228
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -30,7 +30,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 
-PKG_BUILD_DEPENDS:=golang/host
+PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
@@ -101,25 +101,14 @@ define Package/v2raya-v5/conffiles
 /etc/config/v2raya
 endef
 
-WEB_FILE:=v2raya-web-$(PKG_VERSION).tar.gz
-define Download/v2raya-web
-	URL:=https://codeload.github.com/v2rayA/v2raya-web/tar.gz/v$(PKG_VERSION)?
-	URL_FILE:=$(WEB_FILE)
-	FILE:=$(WEB_FILE)
-	HASH:=b13beac91d75c64af4ca6d7365716968702ce1be3f0c3e94d26e01daa07f223b
-endef
-
-define Build/Prepare
-	$(call Build/Prepare/Default)
-
-	( \
-		mkdir -p $(PKG_BUILD_DIR)/server/router/web ; \
-		gzip -dc $(DL_DIR)/$(WEB_FILE) | $(HOST_TAR) -C $(PKG_BUILD_DIR)/server/router/web $(TAR_OPTIONS) ; \
-	)
-endef
-
 define Build/Compile
-	$(call GoPackage/Build/Compile)
+	( \
+		pushd $(PKG_BUILD_DIR)/../gui ; \
+		yarn ; \
+		OUTPUT_DIR=../service/server/router/web yarn build ; \
+		popd ; \
+		$(call GoPackage/Build/Compile) ; \
+	)
 ifneq ($(CONFIG_V2RAYA-V5_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2rayA
 endif
@@ -136,6 +125,5 @@ define Package/v2raya-v5/install
 	$(INSTALL_BIN) $(CURDIR)/files/v2raya.init $(1)/etc/init.d/v2raya
 endef
 
-$(eval $(call Download,v2raya-web))
 $(eval $(call GoBinPackage,v2raya-v5))
 $(eval $(call BuildPackage,v2raya-v5))

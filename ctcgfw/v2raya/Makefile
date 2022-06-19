@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA
-PKG_VERSION:=1.5.7
+PKG_VERSION:=1.5.8.1
 PKG_RELEASE:=$(AUTORELEASE)
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -17,8 +17,8 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA.git
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
-PKG_SOURCE_VERSION:=4b99407ed63d81d45fd5d3a439c277d8fbcd63c7
-PKG_MIRROR_HASH:=24670dcfac07e90b89064a4b6f592b9aa3a7d4b992285555b1013c93904802c6
+PKG_SOURCE_VERSION:=df6bc7ff01536c2c9c66f1eeab05ebc5a00700be
+PKG_MIRROR_HASH:=e03b363964a0f803413cc9d1bab595fb85f0fdacea888ec82a2cffc1c828c941
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -28,7 +28,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_V2RAYA_COMPRESS_GOPROXY \
 	CONFIG_V2RAYA_COMPRESS_UPX \
 
-PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
+PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
@@ -86,14 +86,25 @@ define Package/v2raya/conffiles
 /etc/config/v2raya
 endef
 
-define Build/Compile
+WEB_FILE:=v2raya-web-$(PKG_VERSION).tar.gz
+define Download/v2raya-web
+	URL:=https://codeload.github.com/v2rayA/v2raya-web/tar.gz/v$(PKG_VERSION)?
+	URL_FILE:=$(WEB_FILE)
+	FILE:=$(WEB_FILE)
+	HASH:=b13beac91d75c64af4ca6d7365716968702ce1be3f0c3e94d26e01daa07f223b
+endef
+
+define Build/Prepare
+	$(call Build/Prepare/Default)
+
 	( \
-		pushd $(PKG_BUILD_DIR)/../gui ; \
-		yarn ; \
-		OUTPUT_DIR=../service/server/router/web yarn build ; \
-		popd ; \
-		$(call GoPackage/Build/Compile) ; \
+		mkdir -p $(PKG_BUILD_DIR)/server/router/web ; \
+		gzip -dc $(DL_DIR)/$(WEB_FILE) | $(HOST_TAR) -C $(PKG_BUILD_DIR)/server/router/web $(TAR_OPTIONS) ; \
 	)
+endef
+
+define Build/Compile
+	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_V2RAYA_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2rayA
 endif
