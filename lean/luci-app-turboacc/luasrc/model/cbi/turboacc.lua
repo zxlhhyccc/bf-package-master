@@ -14,14 +14,22 @@ if nixio.fs.access("/lib/modules/" .. kernel_version .. "/xt_FLOWOFFLOAD.ko") th
 sw_flow = s:option(Flag, "sw_flow", translate("Software flow offloading"))
 sw_flow.default = 0
 sw_flow.description = translate("Software based offloading for routing/NAT")
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/mtkhnat.ko") then
+sw_flow:depends("hw_flow", 0)
+else
 sw_flow:depends("sfe_flow", 0)
+end
 end
 
 if luci.sys.call("cat /etc/openwrt_release | grep -q mt762") == 0 then
 hw_flow = s:option(Flag, "hw_flow", translate("Hardware flow offloading"))
 hw_flow.default = 0
 hw_flow.description = translate("Requires hardware NAT support. Implemented at least for mt762x")
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/mtkhnat.ko") then
+hw_flow:depends("sw_flow", 0)
+else
 hw_flow:depends("sw_flow", 1)
+end
 end
 
 if nixio.fs.access("/lib/modules/" .. kernel_version .. "/shortcut-fe-cm.ko") then
@@ -35,7 +43,7 @@ if nixio.fs.access("/lib/modules/" .. kernel_version .. "/xt_FULLCONENAT.ko") th
 fullcone_nat = s:option(Flag, "fullcone_nat", translate("FullCone NAT"))
 fullcone_nat.default = 0
 fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
-end 
+end
 
 bbr_cca = s:option(ListValue, "bbr_cca", translate("BBR CCA"))
 bbr_cca:value("0", translate("CUBIC"))
