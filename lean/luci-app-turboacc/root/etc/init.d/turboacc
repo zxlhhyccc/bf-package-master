@@ -273,8 +273,13 @@ start(){
 		lsmod | grep -q mtkhnat || modprobe mtkhnat
 	}
 
-	[ "${sw_flow}" -ne "1" ] && [ "${sfe_flow}" -eq "1" ] && {
-		/etc/init.d/shortcut-fe start
+	[ "${sw_flow}" -ne "1" ] && {
+		[ "${sfe_flow}" -eq "1" ] && {
+			/etc/init.d/shortcut-fe start
+		}
+		[ "${sfe_flow}" -eq "0" ] && [ -e "/etc/init.d/shortcut-fe" ] && {
+			/etc/init.d/shortcut-fe stop 2>"/dev/null"
+		}
 	}
 
 	if [ $bbr_cca = "bbr" ];  then
