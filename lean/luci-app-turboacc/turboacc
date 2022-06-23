@@ -244,7 +244,6 @@ change_dns() {
 
 revert_dns() {
 	#[ -e "/var/run/dnscache/.dns-changed" ] || return 1
-	[ -e "/var/run/dnscache/.dns-changed" ] && return 1
 
 	uci -q del_list dhcp.@dnsmasq[0].server="127.0.0.1#5333"
 	uci set dhcp.@dnsmasq[0].resolvfile="/tmp/resolv.conf.d/resolv.conf.auto"
@@ -270,20 +269,16 @@ start(){
 	fi
 	crontab /etc/crontabs/root
 
-	/etc/init.d/turboacc_fss start
-
 	[ "${sw_flow}" -eq "0" ] && [ "${hw_flow}" -eq "1" ] && {
 		lsmod | grep -q mtkhnat || modprobe mtkhnat
 	}
 
 	[ "${sw_flow}" -ne "1" ] && {
 		[ "${sfe_flow}" -eq "1" ] && {
-			[ "$(have_ecm_init)" = "0" ] && {
 				/etc/init.d/shortcut-fe enabled || /etc/init.d/shortcut-fe enable
 				/etc/init.d/shortcut-fe start
-			}
 		}
-		[ "${sfe_flow}" -eq "0" ] && [ -e "/etc/init.d/shortcut-fe" ] && [ "$(have_ecm_init)" = "0" ] && \
+		[ "${sfe_flow}" -eq "0" ] && [ -e "/etc/init.d/shortcut-fe" ] && \
 		/etc/init.d/shortcut-fe enabled && {
 			/etc/init.d/shortcut-fe stop 2>"/dev/null"
 			/etc/init.d/shortcut-fe disable
@@ -310,7 +305,7 @@ start(){
 
 	[ "${dns_acc}" -eq "1" ] && {
 	mkdir -p "/tmp/dnsmasq.d"
-	wget-ssl -q -t "20" -T "5" "https://fastly.jsdelivr.net/gh/googlehosts/hosts@master/hosts-files/dnsmasq.conf" -O "/tmp/dnsmasq.d/dnsmasq-googlehosts.conf" &
+	wget-ssl -q -t "20" -T "5" "https://cdn.jsdelivr.net/gh/googlehosts/hosts@master/hosts-files/dnsmasq.conf" -O "/tmp/dnsmasq.d/dnsmasq-googlehosts.conf" &
 	}
 
 	if [ "${dns_caching}" -eq "1" ];  then
@@ -356,11 +351,8 @@ stop(){
 		lsmod | grep -q mtkhnat && rmmod mtkhnat
 	}
 
-	[ "${sfe_flow}" -ne "1" ] && {
-		[ -e "/etc/init.d/shortcut-fe" ] && [ "$(have_ecm_init)" = "0" ] && {
-			/etc/init.d/shortcut-fe stop 2>"/dev/null"
-			/etc/init.d/shortcut-fe enabled && /etc/init.d/shortcut-fe disable
-		}
+	[ "${sfe_flow}" -eq "1" ] || {
+		/etc/init.d/shortcut-fe stop 2>"/dev/null"
 	}
 
 	[ "${dns_acc}" -eq "0" ] && rm -f "/tmp/dnsmasq.d/dnsmasq-googlehosts.conf"
@@ -386,18 +378,13 @@ restart(){
 	/etc/init.d/firewall restart >"/dev/null" 2>&1
 }
 
-have_ecm_init() {
-	[ -d "/etc/init.d/qca-nss-ecm" ] && echo 1 && return
-	echo 0
-}
-
 check_status(){
 	case "$1" in
 	"fastpath")
 		if [ "$(cat "/sys/module/xt_FLOWOFFLOAD/refcnt" 2>"/dev/null" || echo 0)" -ne "0" ]; then
 			echo -n "Flow Offloading"
 			exit 0
-		elif [ "$(cat "/sys/module/xt_FLOWOFFLOAD/refcnt" 2>"/dev/null" || echo 0)" -eq "0" ] && \
+		elif [ "$(cat "/sys/module/xt_FLOWOFFLOAD/refcnt" 2>"/dev/null")" -eq "0" ] && \
 		    [ -e /sys/kernel/debug/hnat/hnat_version ]; then
 			echo -n "MediaTek HWNAT"
 			exit 0
