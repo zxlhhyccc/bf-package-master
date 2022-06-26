@@ -20,7 +20,7 @@ PKG_LICENSE:=GPL-2.0+
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:qbittorrent:qbittorrent
 
-PKG_BUILD_DEPENDS:=qt6tools/host boost
+PKG_BUILD_DEPENDS:=qttools/host boost
 
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
@@ -33,9 +33,8 @@ define Package/qbittorrent
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=BitTorrent
-  DEPENDS:=+USE_GLIBC:librt +USE_GLIBC:libpthread +libc +libgcc +libstdcpp \
-	+libtorrent-rasterbar +libopenssl +libQt6Core +libQt6Network +qt6-plugin-libqopensslbackend \
-	+libQt6Sql +qt6-plugin-libqsqlite +libQt6Xml +zlib
+  DEPENDS:=+libgcc +libstdcpp +libtorrent-rasterbar +libopenssl +libqt6core +libqt6network \
+	+libqt6network-tlsbackend-openssl +libqt6sql +libqt6sql-sqlite +libqt6xml +zlib
   TITLE:=bittorrent client programmed in C++ / Qt
   URL:=https://www.qbittorrent.org/
   PROVIDES:=qBittorrent
@@ -59,6 +58,11 @@ CMAKE_OPTIONS += \
 	-DVERBOSE_CONFIGURE=ON \
 	-DQT_ADDITIONAL_PACKAGES_PREFIX_PATH=$(STAGING_DIR_HOSTPKG)
 
+# The pentium-mmx with lto will build failed on qt6
+ifeq ($(findstring pentium-mmx,$(CONFIG_CPU_TYPE)),)
+  CMAKE_OPTIONS += -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
+endif
+
 # The pcre2 is compiled with support for mips16
 ifdef CONFIG_USE_MIPS16
   TARGET_CFLAGS += -minterlink-mips16
@@ -69,16 +73,8 @@ ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS += -ldl -lrt -lpthread
 endif
 
-TARGET_CFLAGS += -ffunction-sections -fdata-sections -flto
-TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed -flto
-
-# The pentium-mmx with lto will build failed on qt6
-ifeq ($(ARCH),i386)
-  ifneq ($(findstring pentium-mmx,$(CONFIG_CPU_TYPE)),)
-    TARGET_CFLAGS := $(filter-out -flto,$(TARGET_CFLAGS))
-    TARGET_LDFLAGS := $(filter-out -flto,$(TARGET_LDFLAGS))
-  endif
-endif
+TARGET_CFLAGS += -ffunction-sections -fdata-sections
+TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
 define Package/qbittorrent/conffiles
 /etc/config/qbittorrent

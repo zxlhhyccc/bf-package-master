@@ -1,8 +1,6 @@
-diff --git a/src/corelib/plugin/qelfparser_p.cpp b/src/corelib/plugin/qelfparser_p.cpp
-index def1e249..e6e2a084 100644
 --- a/src/corelib/plugin/qelfparser_p.cpp
 +++ b/src/corelib/plugin/qelfparser_p.cpp
-@@ -408,7 +408,9 @@ Q_DECL_UNUSED Q_DECL_COLD_FUNCTION static QDebug &operator<<(QDebug &d, ElfHeade
+@@ -408,7 +408,9 @@ Q_DECL_UNUSED Q_DECL_COLD_FUNCTION stati
      // list definitely not exhaustive!
      case EM_NONE:       d << ", no machine"; break;
      case EM_ARM:        d << ", ARM"; break;
