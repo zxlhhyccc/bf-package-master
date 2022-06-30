@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash
 PKG_VERSION:=v1.11.0
-PKG_RELEASE:=
+PKG_RELEASE:=1-gfc5c9b9
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_ARCH:=mipsle-softfloat
@@ -40,7 +40,7 @@ endif
 
 PKG_LICENSE:=Apache-2.0
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)-$(PKG_RELEASE)
 # PKG_SOURCE:=clash-linux-$(OPENCLASH_ARCH).tar.gz
 # PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/Clash/
 PKG_HASH:=skip
