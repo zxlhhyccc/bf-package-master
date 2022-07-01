@@ -10,9 +10,9 @@ XHR.poll(3,'<%=url([[admin]],[[vpn]],[[openvpn-server]],[[run]])%>',null,
 				ta.innerHTML='<em><b style=color:red><%:OpenVPN Server NOT RUNNING%></b></em>';
 			}
 			if (data.cert){
-				tb.innerHTML='<em><b><font color=green><%:Certificate Generated%></font></b></em>';
+				tb.innerHTML='<em><b><font style=color:green><%:Certificate Generated%></font></b></em>';
 			}else{
-				tb.innerHTML='<em><b><font color=red><%:Certificate Not Generated%></font></b></em>';
+				tb.innerHTML='<em><b><font style=color:red><%:Certificate Not Generated%></font></b></em>';
 			}
 		}
 	}
