@@ -152,14 +152,14 @@ o.write=function()
 end
 
 o=s:option(Button,"gencert",translate("Generate certificate"))
-o.description=translate("<font style=color:red>Generate certificate before running for the first time<br/>After modifying the certificate option, you need to regenerate the certificate to take effect<br/>The certificate may take a long time to generate<br/>After the certificate is generated, the VPN service needs to be restarted to take effect</font>")
+o.description=translate("<font style=\"color:red\">Generate certificate before running for the first time<br/>After modifying the certificate option, you need to regenerate the certificate to take effect<br/>The certificate may take a long time to generate<br/>After the certificate is generated, the VPN service needs to be restarted to take effect</font>")
 o.inputstyle="apply"
 function o.write(self,section)
 	luci.sys.call("/usr/share/openvpn/openvpncert.sh &> /dev/null &")
 end
 
 o=s:option(Button,"delcert",translate("Delete certificate"))
-o.description=translate("<font style=color:red>Delete the certificate,proceed with caution!</font>")
+o.description=translate("<font style=\"color:red\">Delete the certificate,proceed with caution!</font>")
 o.inputstyle="reload"
 function o.write(self,section)
 	luci.sys.call("rm -f /etc/openvpn/ca.crt /etc/openvpn/client.* /etc/openvpn/server.* /etc/openvpn/dh.pem")

@@ -166,14 +166,14 @@ msgstr "如果你使用的是iOS设备,你可以使用Telegram或者邮件发送
 msgid "Generate certificate"
 msgstr "生成证书"
 
-msgid "<font style=color:red>Generate certificate before running for the first time<br/>After modifying the certificate option, you need to regenerate the certificate to take effect<br/>The certificate may take a long time to generate<br/>After the certificate is generated, the VPN service needs to be restarted to take effect</font>"
-msgstr "<font style=color:red>首次运行前需要生成证书<br/>修改证书选项以后需要重新生成证书才会生效<br/>生成证书可能会需要很长时间<br/>生成证书以后需要重启VPN服务才会生效</font>"
+msgid "<font style=\"color:red\">Generate certificate before running for the first time<br/>After modifying the certificate option, you need to regenerate the certificate to take effect<br/>The certificate may take a long time to generate<br/>After the certificate is generated, the VPN service needs to be restarted to take effect</font>"
+msgstr "<font style=\"color:red\">首次运行前需要生成证书<br/>修改证书选项以后需要重新生成证书才会生效<br/>生成证书可能会需要很长时间<br/>生成证书以后需要重启VPN服务才会生效</font>"
 
 msgid "Delete certificate"
 msgstr "删除证书"
 
-msgid "<font style=color:red>Delete the certificate,proceed with caution!</font>"
-msgstr "<font style=color:red>删除证书，谨慎操作！</font>"
+msgid "<font style=\"color:red\">Delete the certificate,proceed with caution!</font>"
+msgstr "<font style=\"color:red\">删除证书，谨慎操作！</font>"
 
 msgid "Client configuration"
 msgstr "客户端配置"
