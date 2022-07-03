@@ -86,7 +86,7 @@ v4config() {
 	sed -i "s,logfile,$(uci -q get mosdns.mosdns.logfile),g" /etc/mosdns/def_config.yaml
 	sed -i "s,remotedns1,$(uci -q get mosdns.mosdns.remote_dns1),g" /etc/mosdns/def_config.yaml
 	sed -i "s,remotedns2,$(uci -q get mosdns.mosdns.remote_dns2),g" /etc/mosdns/def_config.yaml
-	sed -i "s,remotedns2,$(uci -q get mosdns.mosdns.remote_dns3),g" /etc/mosdns/def_config.yaml
+	sed -i "s,remotedns3,$(uci -q get mosdns.mosdns.remote_dns3),g" /etc/mosdns/def_config.yaml
 	sed -i "s,localdns1,$(bash /etc/mosdns/dns.sh 0),g" /etc/mosdns/def_config.yaml
 	sed -i "s,localdns2,$(bash /etc/mosdns/dns.sh 1),g" /etc/mosdns/def_config.yaml
 	sed -i "s,localdns3,$(bash /etc/mosdns/dns.sh 2),g" /etc/mosdns/def_config.yaml
@@ -124,7 +124,7 @@ start_service() {
 		restore_setting
 		prepare_setting
 		if [ "$(uci -q get mosdns.mosdns.redirect)" -eq 1 ] && [ "$(uci -q get shadowsocksr.@global[0].run_mode)" != gfw ]; then
-			cat /dev/null > /etc/ssrplus/gfw_list.conf
+			#cat /dev/null > /etc/ssrplus/gfw_list.conf
 			sed -i '/update.lua/d' /usr/share/shadowsocksr/ssrplusupdate.sh
 			sed -i '/bin\/sh/a\/usr/bin/lua /usr/share/shadowsocksr/update.lua ad_data' /usr/share/shadowsocksr/ssrplusupdate.sh
 			sed -i '/bin\/sh/a\/usr/bin/lua /usr/share/shadowsocksr/update.lua nfip_data' /usr/share/shadowsocksr/ssrplusupdate.sh
