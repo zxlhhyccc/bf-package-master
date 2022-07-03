@@ -55,10 +55,10 @@ stop_forward_dnsmasq()
 {
 	local OLD_PORT="$1"
 	addr="127.0.0.1#$OLD_PORT"
-	OLD_SERVER="$(uci get dhcp.@dnsmasq[0].server 2>/dev/null)"
-	if ! echo "$OLD_SERVER" | grep "^$addr" >/dev/null 2>&1; then
-		return
-	fi
+	#OLD_SERVER="$(uci get dhcp.@dnsmasq[0].server 2>/dev/null)"
+	#if ! echo "$OLD_SERVER" | grep "^$addr" >/dev/null 2>&1; then
+	#	return
+	#fi
 
 	uci del_list dhcp.@dnsmasq[0].server="$addr" 2>/dev/null
 	addrlist="$(uci get dhcp.@dnsmasq[0].server 2>/dev/null)"
