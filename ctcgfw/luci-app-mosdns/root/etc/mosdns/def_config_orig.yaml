@@ -111,6 +111,7 @@ plugins:
       upstream:
         - addr:            localdns1
         - addr:            localdns2
+        - addr:            localdns3
 
   - tag:                   "forward_remote"
     type:                  fast_forward
@@ -118,6 +119,7 @@ plugins:
       upstream:
         - addr:            remotedns1
         - addr:            remotedns2
+        - addr:            remotedns3
 
   - tag:                   main_sequence
     type:                  sequence

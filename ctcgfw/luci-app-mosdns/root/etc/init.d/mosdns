@@ -86,8 +86,10 @@ v4config() {
 	sed -i "s,logfile,$(uci -q get mosdns.mosdns.logfile),g" /etc/mosdns/def_config.yaml
 	sed -i "s,remotedns1,$(uci -q get mosdns.mosdns.remote_dns1),g" /etc/mosdns/def_config.yaml
 	sed -i "s,remotedns2,$(uci -q get mosdns.mosdns.remote_dns2),g" /etc/mosdns/def_config.yaml
+	sed -i "s,remotedns2,$(uci -q get mosdns.mosdns.remote_dns3),g" /etc/mosdns/def_config.yaml
 	sed -i "s,localdns1,$(bash /etc/mosdns/dns.sh 0),g" /etc/mosdns/def_config.yaml
 	sed -i "s,localdns2,$(bash /etc/mosdns/dns.sh 1),g" /etc/mosdns/def_config.yaml
+	sed -i "s,localdns3,$(bash /etc/mosdns/dns.sh 2),g" /etc/mosdns/def_config.yaml
 }
 
 start_service() {
