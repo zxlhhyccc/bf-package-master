@@ -27,12 +27,12 @@ plugins:
 
   # ipset 写入应答 IP 到系统 ipset
   - tag: blacklist
-    type: ipset
+    type: 'ipset'
     args:
-      set_name4: 'blacklist'
-      set_name6: ''
-      mask4: 24
-      mask6: 32
+      set_name4: 'blacklist'   # 如果非空，存放 ipv4 地址到这个表。这个表属性 family 需为 `inet`。
+      set_name6: ''   # 如果非空，存放 ipv6 地址到这个表。这个表属性 family 需为 `inet6`。
+      mask4: 24       # 写入 ipv4 地址时使用的掩码。默认: 24。
+      mask6: 32       # 写入 ipv6 地址时使用的掩码。默认: 32。
 
   # 转发至本地服务器的插件
   - tag: forward_local
@@ -96,9 +96,6 @@ plugins:
         - lazy_cache
         - _no_ecs
 
-        # ipset 写入应答 IP 到系统 ipset
-        - blacklist
-
         # 屏蔽广告域名
         - if: query_is_ad_domain
           exec:
@@ -144,6 +141,9 @@ plugins:
           # 这时用就采用 remote 的应答。单位: 毫秒。
           fast_fallback: 200
           always_standby: true
+
+        # ipset 写入应答 IP 到系统 ipset
+        - blacklist
 
 servers:
   - exec: main_sequence
