@@ -3,7 +3,7 @@
 WORKDIR="/usr/share/v2ray"
 TEMPDIR="/tmp/MosDNSupdatelist"
 
-DOWNLOAD_LINK_GEOIP="https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip-only-cn-private.dat"
+DOWNLOAD_LINK_GEOIP="https://github.com/Loyalsoldier/geoip/releases/latest/download/geoip-only-cn-private.dat"
 # DOWNLOAD_LINK_GEOIP="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat"
 DOWNLOAD_LINK_GEOSITE="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
 
