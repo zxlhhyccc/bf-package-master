@@ -853,7 +853,8 @@ start_rules() {
 
 start_mosdns(){
 	killall -q -9 mosdns
-	/usr/bin/mosdns -dir /etc/mosdns/ -c ./config.yaml >/dev/null 2>&1 &
+	/usr/bin/mosdns start -c config.yaml -d /etc/mosdns >/dev/null 2>&1 &
+	cat /dev/null > /etc/ssrplus/gfw_list.conf
 	addr="127.0.0.1#5335"
 	OLD_SERVER="$(uci get dhcp.@dnsmasq[0].server 2>/dev/null)"
 	if echo "$OLD_SERVER" | grep "^$addr" >/dev/null 2>&1; then
