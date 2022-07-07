@@ -107,20 +107,16 @@ plugins:
           exec:
             - forward_local
             - modify_ttl
-            - if: response_has_local_ip
-              exec:
-                - _return
+            - _return
 
         # 已知的非本地域名用远程服务器解析,优先 IPv4
         - if: query_is_non_local_domain
           exec:
             - _prefer_ipv4
             - forward_remote
-            - modify_ttl
             - remote_ipset
-            - if: "! response_has_local_ip"
-              exec:
-                - _return
+            - modify_ttl
+            - _return
 
           # 剩下的未知域名用 IP 分流。
           # 这里借助了 `fallback` 工作机制。分流原理请参考 `fallback`
