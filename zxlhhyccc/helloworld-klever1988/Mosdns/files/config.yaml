@@ -116,8 +116,8 @@ plugins:
           exec:
             - _prefer_ipv4
             - forward_remote
-            - remote_ipset
             - modify_ttl
+            - remote_ipset
             - if: "! response_has_local_ip"
               exec:
                 - _return
@@ -140,7 +140,7 @@ plugins:
           # 这个延时保证了 local 延时偶尔变高时，其结果不会被 remote 抢答。
           # 如果 local 超过这个延时还没响应，可以假设 local 出现了问题。
           # 这时用就采用 remote 的应答。单位: 毫秒。
-          fast_fallback: 200
+          fast_fallback: 500
           always_standby: true
 
 servers:
