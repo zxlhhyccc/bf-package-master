@@ -1,7 +1,29 @@
+diff --git a/luasrc/view/bypass/certupload.htm b/luasrc/view/bypass/certupload.htm
+index 40a26e4..552eed7 100644
+--- a/luasrc/view/bypass/certupload.htm
++++ b/luasrc/view/bypass/certupload.htm
+@@ -1,4 +1,4 @@
+ <%+cbi/valueheader%>
+ 	<input class="cbi-input-file" style="width: 400px" type="file" id="ulfile" name="ulfile"/>
+-	<input type="submit" class="cbi-button cbi-input-apply" name="upload" value="<%:Upload%>"/>
++	<input type="submit" class="btn cbi-button cbi-input-apply" name="upload" value="<%:Upload%>"/>
+ <%+cbi/valuefooter%>
 diff --git a/luasrc/view/bypass/check.htm b/luasrc/view/bypass/check.htm
-index 4e4e7c5..ea2d1a7 100644
+index 4e4e7c5..479e1ca 100644
 --- a/luasrc/view/bypass/check.htm
 +++ b/luasrc/view/bypass/check.htm
+@@ -13,9 +13,9 @@
+ 			if (s)
+ 			{
+ 				if (rv.ret=="0")
+-				s.innerHTML="<font color='green'>"+"<%:Connect OK%>"+"</font>";
++				s.innerHTML="<font style=color:green>"+"<%:Connect OK%>"+"</font>";
+ 				else
+-				s.innerHTML="<font color='red'>"+"<%:Connect Error%>"+"</font>";
++				s.innerHTML="<font style=color:red>"+"<%:Connect Error%>"+"</font>";
+ 			}
+ 				btn.disabled=false;
+ 				btn.value='<%:Check Connect%>';
 @@ -24,7 +24,7 @@
  		return false;
  	}
@@ -39,6 +61,89 @@ index 3c17502..b844b93 100644
 -</div>
 \ No newline at end of file
 +</div>
+diff --git a/luasrc/view/bypass/ssrurl.htm b/luasrc/view/bypass/ssrurl.htm
+index 95d6393..3187692 100644
+--- a/luasrc/view/bypass/ssrurl.htm
++++ b/luasrc/view/bypass/ssrurl.htm
+@@ -69,9 +69,9 @@ function export_ssr_url(btn, urlname, sid) {
+ 	textarea.select();
+ 	try {
+ 		document.execCommand("copy"); // Security exception may be thrown by some browsers.
+-		s.innerHTML = "<font color='green'><%:Copy SSR to clipboard successfully.%></font>";
++		s.innerHTML = "<font style=color:green><%:Copy SSR to clipboard successfully.%></font>";
+ 	} catch (ex) {
+-		s.innerHTML = "<font color='red'><%:Unable to copy SSR to clipboard.%></font>";
++		s.innerHTML = "<font style=color:red><%:Unable to copy SSR to clipboard.%></font>";
+ 	} finally {
+ 		document.body.removeChild(textarea);
+ 	}
+@@ -83,7 +83,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 		if (!s) return false;
+ 		var ssrurl = prompt("<%:Paste sharing link here%>", "");
+ 		if (ssrurl == null || ssrurl == "") {
+-			s.innerHTML = "<font color='red'><%:User cancelled.%></font>";
++			s.innerHTML = "<font style=color:red><%:User cancelled.%></font>";
+ 			return false;
+ 		}
+ 		s.innerHTML = "";
+@@ -137,7 +137,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 				if (param != undefined) {
+ 					document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
+ 				}
+-				s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
++				s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
+ 			} else {
+ 				var sstr = b64decsafe(url0);
+ 				document.getElementsByName('cbid.bypass.' + sid + '.type')[0].value = ssu[0];
+@@ -152,7 +152,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 				if (param != undefined) {
+ 					document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
+ 				}
+-				s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
++				s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
+ 			}
+ 			return false;
+ 		case "ssr":
+@@ -185,7 +185,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 			document.getElementsByName('cbid.bypass.' + sid + '.protocol_param')[0].value = dictvalue(pdict, 'protoparam');
+ 			var rem = pdict['remarks'];
+ 			if (typeof (rem) != 'undefined' && rem != '' && rem.length > 0) document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = b64decutf8safe(rem);
+-			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
++			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
+ 			return false;
+ 		case "trojan":
+ 			var url0, param = "";
+@@ -224,7 +224,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 			if (param != undefined) {
+ 				document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
+ 			}
+-			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
++			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
+ 			return false;
+ 		case "vmess":
+ 			var sstr = b64DecodeUnicode(ssu[1]);
+@@ -276,7 +276,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 			}
+ 			document.getElementsByName('cbid.bypass.' + sid + '.mux')[0].checked = true;
+ 			document.getElementsByName('cbid.bypass.' + sid + '.mux')[0].dispatchEvent(event);
+-			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
++			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
+ 			return false;
+ 		case "vless":
+ 			var url0, param = "";
+@@ -352,10 +352,10 @@ function import_ssr_url(btn, urlname, sid) {
+ 			if (param != undefined) {
+ 				document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
+ 			}
+-			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
++			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
+ 			return false;
+ 		default:
+-			s.innerHTML = "<font color='red'><%:Invalid format.%></font>";
++			s.innerHTML = "<font style=color:red><%:Invalid format.%></font>";
+ 			return false;
+ 		}
+ 	}
 diff --git a/luasrc/view/bypass/status.htm b/luasrc/view/bypass/status.htm
 index 08ffbfa..4a63a0f 100644
 --- a/luasrc/view/bypass/status.htm
@@ -64,22 +169,6 @@ index 43ff2f6..8b5d823 100644
 +<input type="button" class="btn cbi-button cbi-input-apply" value="<%:Update All Subscribe Severs%> " onclick="return subscribe(this,'<%=self.option%>')" />
  <!-- <span id="<%=self.option%>-status"><em><%=self.value%></em></span> -->
  <%+cbi/valuefooter%>
-diff --git a/luasrc/view/bypass/trojan_go_version.htm b/luasrc/view/bypass/trojan_go_version.htm
-index 75bd990..c0b08f3 100644
---- a/luasrc/view/bypass/trojan_go_version.htm
-+++ b/luasrc/view/bypass/trojan_go_version.htm
-@@ -165,8 +165,8 @@ local trojan_go_version = require "luci.model.cbi.bypass.api".get_trojan_go_vers
- 	<div class="cbi-value-field">
- 		<div class="cbi-value-description">
- 			<span>【 <%=trojan_go_version%> 】</span>
--			<input class="cbi-button cbi-input-apply" type="button" id="_trojan-check_btn" onclick="onBtnClick_trojan(this);" value="<%:Check update%>" />
-+			<input class="btn cbi-button cbi-input-apply" type="button" id="_trojan-check_btn" onclick="onBtnClick_trojan(this);" value="<%:Check update%>" />
- 			<span id="_trojan-check_btn-detail"></span>
- 		</div>
- 	</div>
--</div>
-\ No newline at end of file
-+</div>
 diff --git a/luasrc/view/bypass/xray_version.htm b/luasrc/view/bypass/xray_version.htm
 index 608ba47..42e5612 100644
 --- a/luasrc/view/bypass/xray_version.htm
