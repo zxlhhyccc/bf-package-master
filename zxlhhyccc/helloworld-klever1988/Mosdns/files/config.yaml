@@ -116,8 +116,8 @@ plugins:
           exec:
             - _prefer_ipv4
             - forward_remote
-            - modify_ttl
             - remote_ipset
+            - modify_ttl
             - if: "! response_has_local_ip"
               exec:
                 - _return
