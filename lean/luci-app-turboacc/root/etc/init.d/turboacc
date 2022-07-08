@@ -254,6 +254,19 @@ revert_dns() {
 	rm -f "/var/run/dnscache/.dns-changed"
 }
 
+load_sfe() {
+	local kernel_version=$(uname -r)
+
+	[ -e "/lib/modules/$kernel_version/shortcut-fe-cm.ko" ] && modprobe shortcut-fe-cm && echo 1 && return
+
+	[ -e "/lib/modules/$kernel_version/fast-classifier.ko" ] && modprobe fast-classifier
+}
+
+unload_sfe() {
+	[ -d /sys/module/shortcut_fe_cm ] && rmmod shortcut_fe_cm 
+	[ -d /sys/module/fast_classifier ] && rmmod fast_classifier
+}
+
 start(){
 	inital_conf
 
@@ -277,7 +290,7 @@ start(){
 	}
 
 	[ "${sw_flow}" -ne "1" ] && [ "${sfe_flow}" -eq "1" ] && {
-		/etc/init.d/shortcut-fe start
+		load_sfe
 	}
 
 	if [ $bbr_cca = "bbr" ];  then
@@ -346,9 +359,7 @@ stop(){
 		lsmod | grep -q mtkhnat && rmmod mtkhnat
 	}
 
-	[ "${sfe_flow}" -eq "1" ] || {
-		/etc/init.d/shortcut-fe stop 2>"/dev/null"
-	}
+	unload_sfe
 
 	[ "${dns_acc}" -eq "0" ] && rm -f "/tmp/dnsmasq.d/dnsmasq-googlehosts.conf"
 
@@ -394,9 +405,8 @@ check_status(){
 		elif [ -d /sys/kernel/debug/ecm/ecm_sfe_ipv4 ]; then
 			echo -n "QCA-ECM-SFE"
 			exit 0
-		#elif [ -e /sys/sfe_ipv4/debug_dev ]; then
-		elif lsmod | grep -q "shortcut_fe_cm"; then
-			echo -n "Shortcut-FE"
+		elif [ -n "$(lsmod | grep shortcut_fe_cm)" ]; then
+			echo -n "Shortcut-FE ECM"
 			exit 0
 		else
 			exit 1

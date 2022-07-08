@@ -75,13 +75,17 @@ dns_acc.default = 0
 dns_acc.rmempty = false
 dns_acc.description = translate("Using optimized DNS records for GoogleHosts (Don't use under Clash Fake-IP mode)")
 
+if nixio.fs.access("/usr/sbin/pdnsd") or nixio.fs.access("/usr/bin/dnsforwarder") or nixio.fs.access("/usr/bin/dnsproxy") or nixio.fs.access("/usr/bin/AdGuardHome") then
 dns_caching = s:option(Flag, "dns_caching", translate("DNS Caching"))
 dns_caching.default = 0
 dns_caching.rmempty = false
 dns_caching.description = translate("Enable DNS Caching and anti ISP DNS pollution")
+end
 
 dns_caching_mode = s:option(ListValue, "dns_caching_mode", translate("Resolve DNS Mode"), translate("DNS Program, Using AdGuardHome login username/password: AdGuardHome/AdGuardHome"))
+if nixio.fs.access("/usr/sbin/pdnsd") then
 dns_caching_mode:value("1", translate("Using PDNSD to query and cache"))
+end
 if nixio.fs.access("/usr/bin/dnsforwarder") then
 dns_caching_mode:value("2", translate("Using DNSForwarder to query and cache"))
 end
