@@ -17,6 +17,8 @@ plugins:
     args:
       size: 200000
       lazy_cache_ttl: 259200
+      lazy_cache_reply_ttl: 30
+      cache_everything: false
 
   # 修改应答 ttl
   - tag: 'modify_ttl'
@@ -76,6 +78,8 @@ plugins:
     args:
       ip:
         - 'provider:geoip:cn'
+      cname:
+        - 'provider:geosite:cn'
 
   # 匹配广告域名的插件
   - tag: query_is_ad_domain
