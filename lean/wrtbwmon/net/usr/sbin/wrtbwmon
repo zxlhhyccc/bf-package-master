@@ -52,6 +52,17 @@ checkWAN()
     [ -z "$wan" ] && echo "Warning: failed to detect WAN interface."
 }
 
+checkIptIfMissing()
+{
+    iptables-save | grep 'RRDIPT_INPUT' >/dev/null 2>&1; CHK1=$?
+    iptables-save | grep 'RRDIPT_OUTPUT' >/dev/null 2>&1; CHK2=$?
+    iptables-save | grep 'RRDIPT_FORWARD' >/dev/null 2>&1; CHK3=$?
+    if [ "$CHK1" != "0" ] || [ "$CHK2" != "0" ] || [ "$CHK3" != "0" ]
+    then
+        /etc/init.d/wrtbwmon restart
+    fi
+}
+
 lookup()
 {
     MAC=$1
@@ -88,12 +99,12 @@ detectIF()
     fi
 
     if [ -n "$uci" -a -x "$uci" ]; then
-	IF=`$uci get network.${1}.device 2>/dev/null`
+	IF=`$uci get network.${1}.ifname 2>/dev/null`
 	[ $? -eq 0 -a -n "$IF" ] && echo $IF && return
     fi
 
     if [ -n "$nvram" -a -x "$nvram" ]; then
-	IF=`$nvram get ${1}_device 2>/dev/null`
+	IF=`$nvram get ${1}_ifname 2>/dev/null`
 	[ $? -eq 0 -a -n "$IF" ] && echo $IF && return
     fi
 }
@@ -181,6 +192,7 @@ update()
     #!@todo could let readDB.awk handle this; that would place header
     #!info in fewer places
     createDbIfMissing
+    checkIptIfMissing
     
     checkDB
     checkWAN

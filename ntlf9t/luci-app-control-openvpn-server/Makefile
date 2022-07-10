@@ -19,6 +19,10 @@ define Package/$(PKG_NAME)/description
 	LuCI support for OpenVPN Server.
 endef
 
+define Package/$(PKG_NAME)/conffiles
+/etc/config/wrtbwmon
+endef
+
 define Build/Prepare
 	$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.zh-cn.lmo,$(notdir $(po)));)

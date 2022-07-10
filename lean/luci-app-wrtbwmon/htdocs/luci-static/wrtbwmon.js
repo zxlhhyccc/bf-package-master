@@ -19,7 +19,7 @@ var wrt = {
     var oldDate, oldValues = [];
 
     // find base path
-    var re = /(.*?admin\/nlbw\/[^/]+)/;
+    var re = /(.*?admin\/status\/[^/]+)/;
     var basePath = window.location.pathname.match(re)[1];
 
     //----------------------
@@ -48,7 +48,7 @@ var wrt = {
      * @returns {string}
      */
     function dateToString(date) {
-        return date.toString().substring(0, 24);
+        return date.toLocaleString();
     }
 
     /**
@@ -85,8 +85,14 @@ var wrt = {
     function createTH(content, opts) {
         opts = opts || {};
         var res = '<th';
+        if (opts.left) {
+            res += ' align="left"';
+        }
         if (opts.right) {
             res += ' align="right"';
+        }
+        if (opts.center) {
+            res += ' align="center"';
         }
         if (opts.title) {
             res += ' title="' + opts.title + '"';
@@ -111,6 +117,9 @@ var wrt = {
         var res = '<td';
         if (opts.right) {
             res += ' align="right"';
+        }
+        if (opts.center) {
+            res += ' align="center"';
         }
         if (opts.title) {
             res += ' title="' + opts.title + '"';
@@ -260,8 +269,8 @@ var wrt = {
             createTD(getSize(data[3]), {right: true}),
             createTD(getSize(data[4]), {right: true}),
             createTD(getSize(data[5]), {right: true}),
-            createTD(getDateString(data[6])),
-            createTD(getDateString(data[7]))
+            createTD(getDateString(data[6]), {center: true}),
+            createTD(getDateString(data[7]), {center: true})
         ];
 
         // display row data
@@ -282,11 +291,11 @@ var wrt = {
     function getDisplayData(data, totals) {
         var result =
             createTH('客户端', {id: 'thClient'}) +
-            createTH('下载带宽', {id: 'thDownload'}) +
-            createTH('上传带宽', {id: 'thUpload'}) +
-            createTH('总下载流量', {id: 'thTotalDown'}) +
-            createTH('总上传流量', {id: 'thTotalUp'}) +
-            createTH('流量合计', {id: 'thTotal'}) +
+            createTH('下行速率', {id: 'thDownload', right: true}) +
+            createTH('上行速率', {id: 'thUpload', right: true}) +
+            createTH('总下载流量', {id: 'thTotalDown', right: true}) +
+            createTH('总上传流量', {id: 'thTotalUp', right: true}) +
+            createTH('累计流量', {id: 'thTotal', right: true}) +
             createTH('首次上线时间', {id: 'thFirstSeen'}) +
             createTH('最后上线时间', {id: 'thLastSeen'});
         result = createTR(result);
@@ -329,11 +338,15 @@ var wrt = {
                         hostTotals[j] += data[i][1][j];
                     }
                 }
-                var hostTotalRow = createTH(data[curHost][1][0] + '<br/> (host total)', {title: data[curHost][1][1]});
+                var hostTotalRow = createTH(data[curHost][1][0] + '<br/> (同名客户端合并)', {title: data[curHost][1][1], left: true});
                 for (var m = 3; m < hostTotals.length; m++) {
                     var t = hostTotals[m];
                     hostTotalRow += createTD(getSize(t) + (m < 5 ? '/s' : ''), {right: true});
                 }
+                //__时间占位符__
+                hostTotalRow += createTD("-", {center: true});
+                hostTotalRow += createTD("-", {center: true});
+                
                 hostTotalRow = createTR(hostTotalRow);
                 data.splice(insertAt, 0, [hostTotalRow, hostTotals]);
             }
@@ -463,7 +476,7 @@ var wrt = {
         });
 
         document.getElementById('resetDatabase').addEventListener('click', function () {
-            if (confirm('This will delete the database file. Are you sure?')) {
+            if (confirm('本操作将删除并重置数据库文件，是否继续？')) {
                 var ajax = new XMLHttpRequest();
                 ajax.onreadystatechange = function () {
                     // noinspection EqualityComparisonWithCoercionJS
@@ -519,7 +532,7 @@ var wrt = {
      * @param start
      */
     function updateSeconds(start) {
-        setUpdateMessage('倒数 <b><font color="blue">' + start + '</font></b> 秒后刷新.');
+        setUpdateMessage('倒数 <b><font style=color:blue>' + start + '</b> 秒后更新。');
         if (start > 0) {
             wrt.updateTimeout = window.setTimeout(function () {
                 updateSeconds(start - 1);
@@ -544,7 +557,7 @@ var wrt = {
                 if (ajax.responseText == "1") {
                     cb();
                 } else {
-                    alert("wrtbwmon is not installed!");
+                    alert("wrtbwmon 未安装！");
                 }
             }
         };

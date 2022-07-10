@@ -1,10 +1,10 @@
-m = Map("wrtbwmon")
-m.title = translate("Details")
+local m = Map("wrtbwmon", "流量统计 - 配置")
 
-s = m:section(NamedSection, "general", "wrtbwmon", translate("General settings"))
+local s = m:section(NamedSection, "general", "wrtbwmon", "通用设置")
 
-o = s:option(Flag, "persist", translate("Persist database"))
-o.description = translate("Check this to persist the database file")
+local o = s:option(Flag, "persist", "写入数据库到硬盘",
+    "启用本项可将统计数据保存至 /etc/config 目录， "
+    .. "即使固件更新后依然可以保留原有数据。")
 o.rmempty = false
 
 function o.write(self, section, value)
