@@ -88,12 +88,12 @@ detectIF()
     fi
 
     if [ -n "$uci" -a -x "$uci" ]; then
-	IF=`$uci get network.${1}.ifname 2>/dev/null`
+	IF=`$uci get network.${1}.device 2>/dev/null`
 	[ $? -eq 0 -a -n "$IF" ] && echo $IF && return
     fi
 
     if [ -n "$nvram" -a -x "$nvram" ]; then
-	IF=`$nvram get ${1}_ifname 2>/dev/null`
+	IF=`$nvram get ${1}_device 2>/dev/null`
 	[ $? -eq 0 -a -n "$IF" ] && echo $IF && return
     fi
 }
