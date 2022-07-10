@@ -243,8 +243,7 @@ change_dns() {
 }
 
 revert_dns() {
-	#[ -e "/var/run/dnscache/.dns-changed" ] || return 1
-	[ -e "/var/run/dnscache/.dns-changed" ] && return 1
+	[ -e "/var/run/dnscache/.dns-changed" ] || return 1
 
 	uci -q del_list dhcp.@dnsmasq[0].server="127.0.0.1#5333"
 	uci set dhcp.@dnsmasq[0].resolvfile="/tmp/resolv.conf.d/resolv.conf.auto"
@@ -363,8 +362,8 @@ stop(){
 
 	[ "${dns_acc}" -eq "0" ] && rm -f "/tmp/dnsmasq.d/dnsmasq-googlehosts.conf"
 
-	stop_dnscache
 	revert_dns
+	stop_dnscache
 
 	if [ "${restart_utils}" = "true" ]; then
 		echo "DNSMASQ revert"
