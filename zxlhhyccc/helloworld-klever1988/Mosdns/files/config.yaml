@@ -41,8 +41,8 @@ plugins:
     type: fast_forward
     args:
       upstream:
-        - addr:   119.29.29.29
         - addr:   101.226.4.6
+        - addr:   119.29.29.29
         - addr:   223.5.5.5
           trusted: true # 是否是可信服务器
 
@@ -52,8 +52,11 @@ plugins:
     args:
       upstream:
         - addr:   tcp://1.1.1.1
-        - addr:   tcp://198.153.194.1
-        - addr:   tcp://199.85.127.10
+          enable_pipeline: true
+        - addr:   tcp://8.8.4.4
+          enable_pipeline: true
+        - addr:   tcp://208.67.222.222
+          enable_pipeline: true
           trusted: true # 是否是可信服务器
 
   # 匹配本地域名的插件
