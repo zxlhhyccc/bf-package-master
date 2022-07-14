@@ -44,6 +44,7 @@ plugins:
         - addr: 'https://dns.google/dns-query'
           dial_addr: '8.8.8.8:443'
         - addr: 'tls://8.8.4.4'
+          enable_pipeline: true
           trusted: true
       
   - tag: "cloudflare"
@@ -53,6 +54,7 @@ plugins:
         - addr: 'tls://1.0.0.1'
         - addr: "https://cloudflare-dns.com/dns-query"
           dial_addr: '1.1.1.1:443'
+          enable_pipeline: true
           trusted: true
 
   - tag: "opendns"
@@ -61,6 +63,7 @@ plugins:
       upstream:
         - addr: "https://doh.opendns.com/dns-query"
           dial_addr: '146.112.41.2'
+          enable_pipeline: true
           trusted: true
   - tag: "quad9"
     type: fast_forward
@@ -68,9 +71,11 @@ plugins:
       upstream:
         - addr: "https://dns10.quad9.net/dns-query" # 服务器地址
           dial_addr: 9.9.9.10
+          enable_pipeline: true
           trusted: true # 是否是可信服务器
         - addr: "https://dns10.quad9.net/dns-query" # 服务器地址
           dial_addr: 149.112.112.10
+          enable_pipeline: true
           trusted: true # 是否是可信服务器
   # doq 备用
   - tag: adguard
