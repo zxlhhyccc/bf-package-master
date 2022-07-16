@@ -1,0 +1,24 @@
+diff --git a/libip6t_FULLCONENAT.c b/libip6t_FULLCONENAT.c
+index 0cdc1a5..4f6ac3f 100644
+--- a/libip6t_FULLCONENAT.c
++++ b/libip6t_FULLCONENAT.c
+@@ -214,6 +214,7 @@ static struct xtables_target fullconenat_tg_reg = {
+ 	.x6_options	= FULLCONENAT_opts,
+ };
+ 
++#define _init __attribute__((constructor)) _INIT
+ void _init(void)
+ {
+ 	xtables_register_target(&fullconenat_tg_reg);
+diff --git a/libipt_FULLCONENAT.c b/libipt_FULLCONENAT.c
+index e2c314a..2f9e7a5 100644
+--- a/libipt_FULLCONENAT.c
++++ b/libipt_FULLCONENAT.c
+@@ -235,6 +235,7 @@ static struct xtables_target fullconenat_tg_reg = {
+ 	.x6_options	= FULLCONENAT_opts,
+ };
+ 
++#define _init __attribute__((constructor)) _INIT
+ void _init(void)
+ {
+ 	xtables_register_target(&fullconenat_tg_reg);
