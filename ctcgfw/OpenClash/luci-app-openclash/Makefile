@@ -20,7 +20,7 @@ define Package/$(PKG_NAME)
 	TITLE:=LuCI support for clash
 	PKGARCH:=all
 	DEPENDS:=+iptables +dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
-	+iptables-mod-tproxy +iptables-mod-extra +libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +luci-base
+	+iptables-mod-tproxy +iptables-mod-extra +libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip +luci-base
 	MAINTAINER:=vernesong
 endef
 
@@ -71,6 +71,8 @@ define Package/$(PKG_NAME)/preinst
 	if [ -f "/etc/config/openclash" ]; then
 		cp -f "/etc/config/openclash" "/tmp/openclash.bak" >/dev/null 2>&1
 		cp -rf "/etc/openclash" "/tmp/openclash" >/dev/null 2>&1
+		cp -rf "/usr/share/openclash/ui/yacd" "/tmp/openclash_yacd" >/dev/null 2>&1
+		cp -rf "/usr/share/openclash/ui/dashboard" "/tmp/openclash_dashboard" >/dev/null 2>&1
 	fi
 	exit 0
 endef
@@ -84,6 +86,8 @@ define Package/$(PKG_NAME)/prerm
 	uci -q commit openclash
 	cp -f "/etc/config/openclash" "/tmp/openclash.bak" >/dev/null 2>&1
 	cp -rf "/etc/openclash" "/tmp/openclash" >/dev/null 2>&1
+	cp -rf "/usr/share/openclash/ui/yacd" "/tmp/openclash_yacd" >/dev/null 2>&1
+	cp -rf "/usr/share/openclash/ui/dashboard" "/tmp/openclash_dashboard" >/dev/null 2>&1
 	exit 0
 endef
 
