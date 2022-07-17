@@ -57,7 +57,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE_CM
 	bool "Include Shortcut-FE ECM"
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_OFFLOADING=n
 	default y if !(TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x||TARGET_rockchip)
-	
+
 config PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE
 	bool "Include Shortcut-FE"
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_OFFLOADING=n
@@ -82,7 +82,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMI
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMIO
 	bool "Include BBR CCA TSUNAMIO"
 	default n
-	
+
 config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
 	bool "Include Pdnsd"
 	default y
