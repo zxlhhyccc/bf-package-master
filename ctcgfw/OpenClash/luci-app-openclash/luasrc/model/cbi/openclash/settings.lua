@@ -248,6 +248,10 @@ o = s:taboption("dns", Flag, "append_wan_dns", font_red..bold_on..translate("App
 o.description = font_red..bold_on..translate("Append The Upstream Assigned DNS And Gateway IP To The Nameserver")..bold_off..font_off
 o.default = 1
 
+o = s:taboption("dns", Flag, "append_default_dns", translate("Append Default DNS"))
+o.description = translate("Automatically Append Compliant DNS to default-nameserver")
+o.default = 1
+
 if op_mode == "fake-ip" then
 o = s:taboption("dns", Flag, "store_fakeip", font_red..bold_on..translate("Persistence Fake-IP")..bold_off..font_off)
 o.description = font_red..bold_on..translate("Cache Fake-IP DNS Resolution Records To File, Improve The Response Speed After Startup")..bold_off..font_off
@@ -726,6 +730,11 @@ o:depends("stream_auto_select", "1")
 o = s:taboption("stream_enhance", Flag, "stream_auto_select_expand_group", font_red..bold_on..translate("Expand Group")..bold_off..font_off)
 o.description = translate("Automatically Expand The Group When Selected")
 o.default = 0
+o:depends("stream_auto_select", "1")
+
+o = s:taboption("stream_enhance", Flag, "stream_auto_select_close_con", translate("Close Old Connections"))
+o.description = translate("Automatically Close Old Connections When New Unlock Node Selected")
+o.default = 1
 o:depends("stream_auto_select", "1")
 
 --Netflix
