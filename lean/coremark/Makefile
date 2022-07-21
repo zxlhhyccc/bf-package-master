@@ -57,7 +57,8 @@ define Package/coremark/config
 	config COREMARK_NUMBER_OF_THREADS
 		int "Number of threads"
 		depends on COREMARK_ENABLE_MULTITHREADING
-		default 16
+		default 128 if i386||x86_64
+		default 8
 		help
 			Number of threads to run in parallel
 endef
