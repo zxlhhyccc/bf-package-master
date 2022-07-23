@@ -94,6 +94,11 @@ add_wizard() {
 			uci set network.wan.password="${wan_pppoe_pass}"
 			uci set network.wan.keepalive='5 5'
 			}
+			config_get wan_dns "$cfg" wan_dns
+			test -n "${wan_dns}" && {
+				uci set network.wan.peerdns='0'
+				uci set network.wan.dns="${wan_dns}"
+			}
 		;;
 		siderouter)
 			config_get lan_gateway "$cfg" lan_gateway

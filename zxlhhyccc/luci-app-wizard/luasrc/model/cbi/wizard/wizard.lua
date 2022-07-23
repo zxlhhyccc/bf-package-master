@@ -87,7 +87,7 @@ e.datatype = "ip4addr"
 
 e = s:taboption("wansetup", DynamicList, "wan_dns", translate("Use custom Wan DNS"))
 e:depends({wan_proto="dhcp"})
-
+e:depends({wan_proto="pppoe"})
 e:depends({wan_proto="static"})
 e.datatype = "ip4addr"
 e.cast = "string"
