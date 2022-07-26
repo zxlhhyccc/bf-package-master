@@ -390,10 +390,10 @@ restart(){
 	/etc/init.d/firewall restart >"/dev/null" 2>&1
 }
 
-have_ecm_init() {
-	[ -d "/etc/init.d/qca-nss-ecm" ] && echo 1 && return
-	echo 0
-}
+#have_ecm_init() {
+#	[ -d "/etc/init.d/qca-nss-ecm" ] && echo 1 && return
+#	echo 0
+#}
 
 check_status(){
 	case "$1" in
