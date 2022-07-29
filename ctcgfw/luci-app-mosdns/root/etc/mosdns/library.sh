@@ -1,11 +1,9 @@
 #!/bin/bash
 bakdns() {
 	if [ "$1" == "0" ]; then
-		echo "101.226.4.6"
-	elif [ "$1" == "1" ]; then
-		echo "223.5.5.5"
-	elif [ "$1" == "2" ]; then
 		echo "119.29.29.29"
+	elif [ "$1" == "1" ]; then
+		echo "101.226.4.6"
 	fi
 }
 
