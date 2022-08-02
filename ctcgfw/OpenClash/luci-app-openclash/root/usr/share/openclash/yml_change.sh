@@ -214,7 +214,7 @@ yml_dns_get()
    fi
 
    if [ "$specific_group" != "Disable" ] && [ -n "$specific_group" ] && [ "$enable_meta_core" = "1" ]; then
-      group_check=$(ruby -ryaml -rYAML -I "/usr/share/openclash/res" -E UTF-8 -e "
+      group_check=$(ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
       begin
          Thread.new{
             Value = YAML.load_file('$2');
@@ -279,11 +279,16 @@ yml_dns_get()
             echo "  nameserver:" >/tmp/yaml_config.namedns.yaml
          fi
          echo "    - \"$dns_type$dns_address\"" >>/tmp/yaml_config.namedns.yaml
-      else
+      elif [ "$group" = "fallback" ]; then
          if [ -z "$(grep "^ \{0,\}fallback:$" /tmp/yaml_config.falldns.yaml 2>/dev/null)" ]; then
             echo "  fallback:" >/tmp/yaml_config.falldns.yaml
          fi
          echo "    - \"$dns_type$dns_address\"" >>/tmp/yaml_config.falldns.yaml
+      elif [ "$group" = "default" ]; then
+         if [ -z "$(grep "^ \{0,\}default-nameserver:$" /tmp/yaml_config.defaultdns.yaml 2>/dev/null)" ]; then
+            echo "  default-nameserver:" >/tmp/yaml_config.defaultdns.yaml
+         fi
+         echo "    - \"$dns_type$dns_address\"" >>/tmp/yaml_config.defaultdns.yaml
       fi
    else
       return
@@ -294,7 +299,7 @@ config_load "openclash"
 config_foreach yml_auth_get "authentication"
 yml_dns_custom "$enable_custom_dns" "$5" "$append_wan_dns" "${16}"
 
-ruby -ryaml -rYAML -I "/usr/share/openclash/res" -E UTF-8 -e "
+ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
 begin
    Value = YAML.load_file('$5');
 rescue Exception => e
@@ -513,6 +518,16 @@ end;
 #default-nameserver
 begin
 Thread.new{
+   if '$enable_custom_dns' == '1' then
+      if File::exist?('/tmp/yaml_config.defaultdns.yaml') then
+         Value_1 = YAML.load_file('/tmp/yaml_config.defaultdns.yaml');
+         if Value['dns'].has_key?('default-nameserver') then
+            Value['dns']['default-nameserver'] = Value['dns']['default-nameserver'] | Value_1['default-nameserver'];
+         else
+            Value['dns']['default-nameserver'] = Value_1['default-nameserver'].uniq;
+         end;
+      end;
+   end;
    if ${28} == 1 then
       if ${20} == 1 then
          reg = /(^https:\/\/|^tls:\/\/|^quic:\/\/)?((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?/;
