@@ -16,13 +16,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=smartdns
-PKG_VERSION:=RC3.2022.37
+PKG_VERSION:=1.2022.08.06-1602
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=6588c9822fca247c94ec16f659baecf723c55b24
-PKG_MIRROR_HASH:=1f197f681e21668e251f6e776c04b1164e3f21fc79fda3abc0eb7423787e8b19
+PKG_SOURCE_VERSION:=5a2559f0648198c290bb8839b9f6a0adab8ebcdc
+PKG_MIRROR_HASH:=c4959b1c659750afe695b616c69d2153a9155c4158767dbab1cba0e5ce32bfb0
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -56,6 +56,55 @@ define Package/smartdns/conffiles
 /etc/smartdns/anti-ad-smartdns.conf
 /etc/smartdns/smartdns-domains.china.conf
 /etc/smartdns/custom.conf
+endef
+
+define Package/smartdns/postinst
+#!/bin/sh
+#
+# Copyright (C) 2018-2020 Ruilin Peng (Nick) <pymumu@gmail.com>.
+#
+# smartdns is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# smartdns is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+chmod +x /usr/sbin/smartdns
+chmod +x /etc/init.d/smartdns
+mkdir -p /var/etc/smartdns/
+
+/etc/init.d/smartdns enable
+exit 0
+endef
+
+define Package/smartdns/prerm
+#!/bin/sh
+#
+# Copyright (C) 2018-2020 Ruilin Peng (Nick) <pymumu@gmail.com>.
+#
+# smartdns is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# smartdns is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+rm /var/etc/smartdns.conf -f
+rm /var/etc/smartdns/smartdns.conf -f
+exit 0
 endef
 
 define Package/smartdns/install
