@@ -25,6 +25,14 @@ else
     trip = '[ip]'
 end
 
+if type(trip) == 'table' then
+    require('luci.ip')
+    trip = trip[1]
+    trip = luci.ip.new(trip)
+    trip = trip:host()
+    trip = trip:string()
+end
+
 if running then
     state_msg = '<b style=\"color:green\">' .. translate('rclone running') .. '</b>'
     address_msg = translate('rclone address') .. ' : http://' .. trip .. ':' .. trport .. '<br/> <br/>'
