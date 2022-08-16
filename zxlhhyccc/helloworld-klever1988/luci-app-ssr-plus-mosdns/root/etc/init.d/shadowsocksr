@@ -880,7 +880,9 @@ start_mosdns(){
 }
 stop_mosdns(){
 	killall -q -9 mosdns
+	[ -e "/etc/ssrplus/gfw_list.conf.back" ] && {
 	mv /etc/ssrplus/gfw_list.conf.back /etc/ssrplus/gfw_list.conf
+	}
 	addr="127.0.0.1#5335"
 	uci del_list dhcp.@dnsmasq[0].server="$addr" 2>/dev/null
 	addrlist="$(uci get dhcp.@dnsmasq[0].server 2>/dev/null)"
