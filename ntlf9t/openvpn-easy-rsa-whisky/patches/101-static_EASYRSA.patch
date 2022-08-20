@@ -1,7 +1,6 @@
 --- a/easyrsa3/easyrsa
 +++ b/easyrsa3/easyrsa
-@@ -3697,11 +3697,11 @@ vars_setup() {
- 	# Removed for basic sanity - To re-enable provide a REASON
+@@ -3358,9 +3358,9 @@
  	#prog_file2="$(which -- "$prog_file" 2>/dev/null)" && prog_file="$prog_file2"
  	#prog_file2="$(readlink -f "$prog_file" 2>/dev/null)" && prog_file="$prog_file2"
 -	prog_dir="${prog_file%/*}"
@@ -13,13 +12,10 @@
 +	prog_vars="/etc/easy-rsa/vars"
  
  	# set up PKI path vars - Top preference
- 	pki_vars="${EASYRSA_PKI:-$PWD/pki}/vars"
-@@ -3860,7 +3860,7 @@ Move your vars file to your PKI folder,
- 	# Set defaults, preferring existing env-vars if present
+@@ -3521,5 +3521,5 @@
  	set_var EASYRSA					"$PWD"
  	set_var EASYRSA_OPENSSL			openssl
 -	set_var EASYRSA_PKI				"$EASYRSA/pki"
 +	set_var EASYRSA_PKI				"/tmp/easyrsa3/pki"
  	set_var EASYRSA_DN				cn_only
  	set_var EASYRSA_REQ_COUNTRY		"US"
- 	set_var EASYRSA_REQ_PROVINCE	"California"
