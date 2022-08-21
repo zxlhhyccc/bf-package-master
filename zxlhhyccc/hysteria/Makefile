@@ -27,7 +27,7 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=github.com/tobyxdd/hysteria
+GO_PKG:=github.com/HyNetwork/hysteria
 GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
