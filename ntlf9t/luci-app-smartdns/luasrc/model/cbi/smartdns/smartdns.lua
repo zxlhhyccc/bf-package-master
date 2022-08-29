@@ -105,6 +105,16 @@ o.rempty      = false
 o = s:taboption("settings", Value, "cache_size", translate("Cache Size"), translate("DNS domain result cache size"))
 o.rempty      = true
 
+---- cache-size
+o = s:taboption("settings", Flag, "resolve_local_hostnames", translate("Resolve Local Hostnames"), translate("Resolve local hostnames by reading Dnsmasq lease file"))
+o.rmempty     = false
+o.default     = o.enabled
+
+---- Force HTTPS SOA
+o = s:taboption("settings", Flag, "force_https_soa", translate("Force HTTPS SOA"), translate("Force HTTPS SOA."))
+o.rmempty     = false
+o.default     = o.disabled
+
 ---- rr-ttl
 o = s:taboption("settings", Value, "rr_ttl", translate("Domain TTL"), translate("TTL for all domain result."))
 o.rempty      = true
