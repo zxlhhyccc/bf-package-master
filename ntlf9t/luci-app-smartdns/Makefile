@@ -7,7 +7,7 @@ LUCI_DEPENDS:=+luci-compat +libc +smartdns
 LUCI_PKGARCH:=all
 
 PKG_NAME:=luci-app-smartdns
-PKG_VERSION:=1.2022.08.06-1602
+PKG_VERSION:=1.2022.08.28-1734
 PKG_RELEASE:=1
 
 include $(TOPDIR)/feeds/luci/luci.mk
