@@ -10,7 +10,7 @@ index 2bf799e..e5b88fc 100644
  SERVICE_PID_FILE="/var/run/smartdns.pid"
  SMARTDNS_CONF_DIR="/etc/smartdns"
  SMARTDNS_VAR_CONF_DIR="/var/etc/smartdns"
-@@ -359,6 +360,11 @@ load_service()
+@@ -364,6 +365,11 @@ load_service()
  	uci add_list smartdns.@smartdns[0].old_enabled="$enabled" 2>/dev/null
  	uci commit smartdns
  
