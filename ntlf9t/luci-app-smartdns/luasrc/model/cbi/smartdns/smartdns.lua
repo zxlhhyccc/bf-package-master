@@ -35,8 +35,8 @@ s:tab("custom", translate("Custom Settings"))
 
 ---- Eanble
 o = s:taboption("settings", Flag, "enabled", translate("Enable"), translate("Enable or disable smartdns server"))
-o.default     = o.disabled
 o.rempty      = false
+o.default     = o.disabled
 
 ---- server name
 o = s:taboption("settings", Value, "server_name", translate("Server Name"), translate("Smartdns server name"))
@@ -46,8 +46,8 @@ o.rempty      = false
 
 ---- Port
 o = s:taboption("settings", Value, "port", translate("Local Port"), translate("Smartdns local server port"))
-o.placeholder = 6053
-o.default     = 6053
+o.placeholder = 53
+o.default     = 53
 o.datatype    = "port"
 o.rempty      = false
 
