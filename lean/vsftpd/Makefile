@@ -70,6 +70,8 @@ else
 endif
 
 TARGET_CFLAGS += -D_GNU_SOURCE -include fcntl.h
+TARGET_CFLAGS += -ffunction-sections -fdata-sections -flto
+TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed,--no-undefined,--no-allow-shlib-undefined
 
 ifeq ($(BUILD_VARIANT),notls)
  define Build/Compile
