@@ -1,5 +1,5 @@
 diff --git a/package/openwrt/files/etc/init.d/smartdns b/package/openwrt/files/etc/init.d/smartdns
-index 2bf799e..e5b88fc 100644
+index 9bfb3bf..41f3ca5 100644
 --- a/package/openwrt/files/etc/init.d/smartdns
 +++ b/package/openwrt/files/etc/init.d/smartdns
 @@ -21,6 +21,7 @@ USE_PROCD=1
@@ -10,8 +10,8 @@ index 2bf799e..e5b88fc 100644
  SERVICE_PID_FILE="/var/run/smartdns.pid"
  SMARTDNS_CONF_DIR="/etc/smartdns"
  SMARTDNS_VAR_CONF_DIR="/var/etc/smartdns"
-@@ -364,6 +365,11 @@ load_service()
- 	uci add_list smartdns.@smartdns[0].old_enabled="$enabled" 2>/dev/null
+@@ -391,6 +392,11 @@ load_service()
+ 	uci -q set smartdns.@smartdns[0].old_port="$SMARTDNS_PORT"
  	uci commit smartdns
  
 +	config_get gfw_smartdns "$section" "gfw_smartdns" "0"
@@ -21,4 +21,4 @@ index 2bf799e..e5b88fc 100644
 +
  	[ "$enabled" -gt 0 ] || return 1
  
- 	if [ "$redirect" = "redirect" ]; then
+ 	[ "$auto_set_dnsmasq" = "1" ] && auto_set_dnsmasq "$SMARTDNS_PORT" "$old_port"

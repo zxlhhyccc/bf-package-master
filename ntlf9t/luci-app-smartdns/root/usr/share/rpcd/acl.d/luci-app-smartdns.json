@@ -1,11 +1,21 @@
 {
 	"luci-app-smartdns": {
-	"description": "Grant UCI access for luci-app-smartdns",
-	"read": {
-		"uci": [ "smartdns" ]
+		"description": "Grant access to LuCI app smartdns",
+		"read": {
+			"file": {
+				"/etc/smartdns/*": [ "read" ],
+				"/usr/sbin/smartdns": [ "exec" ]
+			},
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "smartdns" ]
 		},
-	"write": {
-		"uci": [ "smartdns" ]
+		"write": {
+			"file": {
+				"/etc/smartdns/*": [ "write" ]
+			},
+			"uci": [ "smartdns" ]
 		}
 	}
-} 
+}
