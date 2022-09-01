@@ -594,18 +594,18 @@ do_run_file()
          /usr/share/openclash/openclash_chnroute.sh
       fi
       if [ -n "$FW4" ]; then
-         if [ -z "$(cat "$chnr_path" | grep "define china_ip_route")" ] || [ -z "$(cat "$chnr6_path" grep "define china_ip6_route")" ]; then
+         if [ -z "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -z "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
             LOG_OUT "Tip: Detected that the Chnroute Cidr List Format is wrong, Ready to Reformat..."
             /usr/share/openclash/openclash_chnroute.sh
-            if [ -z "$(cat "$chnr_path" | grep "define china_ip_route")" ] || [ -z "$(cat "$chnr6_path" grep "define china_ip6_route")" ]; then
+            if [ -z "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -z "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
                start_fail
             fi
          fi
       else
-         if [ -n "$(cat "$chnr_path" | grep "define china_ip_route")" ] || [ -n "$(cat "$chnr6_path" grep "define china_ip6_route")" ]; then
+         if [ -n "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -n "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
             LOG_OUT "Tip: Detected that the Chnroute Cidr List Format is wrong, Ready to Reformat..."
             /usr/share/openclash/openclash_chnroute.sh
-            if [ -n "$(cat "$chnr_path" | grep "define china_ip_route")" ] || [ -n "$(cat "$chnr6_path" grep "define china_ip6_route")" ]; then
+            if [ -n "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -n "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
                start_fail
             fi
          fi
@@ -1625,7 +1625,7 @@ if [ -n "$FW4" ]; then
       nft 'add rule inet fw4 openclash_mangle_v6 ip6 daddr @wan_ac_black_ipv6s counter return' 2>/dev/null
 
       if [ "$en_mode" == "redir-host" ]; then
-         nft 'add rule inet fw4 openclash_mangle_v6 meta nfproto {ipv6} dport != @common_ports counter return' 2>/dev/null
+         nft 'add rule inet fw4 openclash_mangle_v6 meta nfproto {ipv6} th dport != @common_ports counter return' 2>/dev/null
          nft 'add rule inet fw4 openclash_mangle_v6 ip6 saddr @lan_ac_black_ipv6s counter return' 2>/dev/null
          nft 'add rule inet fw4 openclash_mangle_v6 ether saddr @lan_ac_black_macs counter return' 2>/dev/null
          nft 'add rule inet fw4 openclash_mangle_v6 ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
