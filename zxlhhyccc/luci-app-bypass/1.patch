@@ -62,7 +62,7 @@ index 3c17502..b844b93 100644
 \ No newline at end of file
 +</div>
 diff --git a/luasrc/view/bypass/ssrurl.htm b/luasrc/view/bypass/ssrurl.htm
-index 95d6393..3187692 100644
+index 18acdfe..ba147fb 100644
 --- a/luasrc/view/bypass/ssrurl.htm
 +++ b/luasrc/view/bypass/ssrurl.htm
 @@ -69,9 +69,9 @@ function export_ssr_url(btn, urlname, sid) {
@@ -86,7 +86,7 @@ index 95d6393..3187692 100644
  			return false;
  		}
  		s.innerHTML = "";
-@@ -137,7 +137,7 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -164,7 +164,7 @@ function import_ssr_url(btn, urlname, sid) {
  				if (param != undefined) {
  					document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
  				}
@@ -95,7 +95,7 @@ index 95d6393..3187692 100644
  			} else {
  				var sstr = b64decsafe(url0);
  				document.getElementsByName('cbid.bypass.' + sid + '.type')[0].value = ssu[0];
-@@ -152,7 +152,7 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -179,7 +179,7 @@ function import_ssr_url(btn, urlname, sid) {
  				if (param != undefined) {
  					document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
  				}
@@ -104,7 +104,7 @@ index 95d6393..3187692 100644
  			}
  			return false;
  		case "ssr":
-@@ -185,7 +185,7 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -212,7 +212,7 @@ function import_ssr_url(btn, urlname, sid) {
  			document.getElementsByName('cbid.bypass.' + sid + '.protocol_param')[0].value = dictvalue(pdict, 'protoparam');
  			var rem = pdict['remarks'];
  			if (typeof (rem) != 'undefined' && rem != '' && rem.length > 0) document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = b64decutf8safe(rem);
@@ -113,7 +113,7 @@ index 95d6393..3187692 100644
  			return false;
  		case "trojan":
  			var url0, param = "";
-@@ -224,7 +224,7 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -251,7 +251,7 @@ function import_ssr_url(btn, urlname, sid) {
  			if (param != undefined) {
  				document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
  			}
@@ -122,7 +122,7 @@ index 95d6393..3187692 100644
  			return false;
  		case "vmess":
  			var sstr = b64DecodeUnicode(ssu[1]);
-@@ -276,7 +276,7 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -303,7 +303,7 @@ function import_ssr_url(btn, urlname, sid) {
  			}
  			document.getElementsByName('cbid.bypass.' + sid + '.mux')[0].checked = true;
  			document.getElementsByName('cbid.bypass.' + sid + '.mux')[0].dispatchEvent(event);
@@ -130,10 +130,10 @@ index 95d6393..3187692 100644
 +			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
  			return false;
  		case "vless":
- 			var url0, param = "";
-@@ -352,10 +352,10 @@ function import_ssr_url(btn, urlname, sid) {
- 			if (param != undefined) {
- 				document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
+ 			try {
+@@ -366,10 +366,10 @@ function import_ssr_url(btn, urlname, sid) {
+ 				}
+ 				break;
  			}
 -			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
 +			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
