@@ -5,9 +5,9 @@ XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "smartdns", "stat
 		if (data && tb) {
 			var links = "";
 			if (data.running) {
-				links = '<em><b><font style=color:green>SmartDNS - <%:RUNNING%></font></b></em>';
+				links = '<b><font style=color:green>SmartDNS - <%:RUNNING%></font></b></em>';
 			} else {
-				links = '<em><b><font style=color:red>SmartDNS - <%:NOT RUNNING%></font></b></em>';
+				links = '<b><font style=color:red>SmartDNS - <%:NOT RUNNING%></font></b>';
 			}
 
 			tb.innerHTML = links;
