@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=autosamba
 PKG_VERSION:=1
-PKG_RELEASE:=12
+PKG_RELEASE:=13
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -29,8 +29,8 @@ define Build/Compile
 endef
 
 define Package/autosamba/install
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/block
-	$(INSTALL_BIN) ./files/20-smb $(1)/etc/hotplug.d/block/20-smb
+	# $(INSTALL_DIR) $(1)/etc/hotplug.d/block
+	# $(INSTALL_BIN) ./files/20-smb $(1)/etc/hotplug.d/block/20-smb
 endef
 
 $(eval $(call BuildPackage,autosamba))
