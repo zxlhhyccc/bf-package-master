@@ -23,8 +23,10 @@ case "$DISTRIB_TARGET" in
 	cpu_freq="$(nvram get clkfreq | awk -F ',' '{print $1}')MHz" ;;
 "mvebu"/*)
 	cpu_freq="$(awk -F ': ' '/BogoMIPS/ {print $2}' "$CPUINFO_PATH" | head -n1)MHz" ;;
+"ipq807x"/*)
+	cpu_freq="$(mhz | awk -F 'cpu_MHz=' '{printf("%.fMHz",$2)}')" ;;
 "x86"/*)
-	cpu_freq="$(awk -F ': ' '/MHz/ {print $2}' "$CPUINFO_PATH" | head -n1)MHz"
+	cpu_freq="$(awk -F ': ' '/MHz/ {print $2}' "$CPUINFO_PATH" | head -n1)MHz" ;;
 	;;
 *)
 	[ ! -e "$CPUFREQ_PATH/policy0/cpuinfo_cur_freq" ] || \
