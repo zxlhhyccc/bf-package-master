@@ -1,21 +1,18 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright (C) 2021 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2021-2022 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=BitSrunLoginGo
-PKG_VERSION:=2.7
-PKG_RELEASE:=1
+PKG_VERSION:=3.2
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Mmx233/BitSrunLoginGo/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=77a8a6eccdb7fb91b2837ae1226ea304646ca83763808b2e710600222c375f1d
+PKG_HASH:=5b5c8db5869be4ccadb81938b86c33362e170f119145d0fe3493f03f53a7eedd
 
-PKG_LICENSE:=AGPL-3.0
+PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_CONFIG_DEPENDS:= \
@@ -32,7 +29,16 @@ GO_PKG_LDFLAGS:=-s -w
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/BitSrunLoginGo/config
+define Package/bitsrunlogin-go
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Campus Network
+  TITLE:=Bit Srun auto login tool
+  URL:=https://github.com/Mmx233/BitSrunLoginGo
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+endef
+
+define Package/bitsrunlogin-go/config
 config BITSRUNLOGIN_GO_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -48,21 +54,27 @@ ifeq ($(CONFIG_BITSRUNLOGIN_GO_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-define Package/BitSrunLoginGo
-  SECTION:=net
-  CATEGORY:=Network
-  SUBMENU:=Campus Network
-  TITLE:=Bit Srun auto login tool
-  URL:=https://github.com/Mmx233/BitSrunLoginGo
-  DEPENDS:=$(GO_ARCH_DEPENDS)
+define Package/bitsrunlogin-go/conffiles
+/etc/config/bitsrunlogin-go
 endef
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_BITSRUNLOGIN_GO_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/BitSrunLoginGo
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/bitsrunlogin-go
 endif
 endef
 
-$(eval $(call GoBinPackage,BitSrunLoginGo))
-$(eval $(call BuildPackage,BitSrunLoginGo))
+define Package/bitsrunlogin-go/install
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+
+	$(INSTALL_DIR) $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/BitSrunLoginGo $(1)/usr/bin/bitsrunlogin-go
+
+	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
+	$(INSTALL_CONF) $(CURDIR)/files/bitsrunlogin-go.config $(1)/etc/config/bitsrunlogin-go
+	$(INSTALL_BIN) $(CURDIR)/files/bitsrunlogin-go.init $(1)/etc/init.d/bitsrunlogin-go
+endef
+
+$(eval $(call GoBinPackage,bitsrunlogin-go))
+$(eval $(call BuildPackage,bitsrunlogin-go))
