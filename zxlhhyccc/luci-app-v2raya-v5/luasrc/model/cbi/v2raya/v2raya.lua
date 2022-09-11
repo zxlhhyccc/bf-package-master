@@ -9,14 +9,14 @@ local v2raya_bin = "/usr/bin/v2raya"
 	v2raya_version="<b><font style=\"color:red\">"..luci.sys.exec(v2raya_bin.." --version  2>/dev/null").."</font></b>"
 
 m = Map("v2raya")
-m.title = translate("v2rayA")
+m.title = translate("v2rayA Client")
 m.description = translate("v2rayA is a V2Ray Linux client supporting global transparent proxy, compatible with SS, SSR, Trojan(trojan-go), PingTunnel protocols.")
 
 m:section(SimpleSection).template = "v2raya/v2raya_status"
 
 s = m:section(TypedSection, "v2raya")
-s.anonymous = true
 s.addremove = false
+s.anonymous = true
 
 o = s:option(Flag, "enabled", translate("Enabled"))
 o.default = 0
