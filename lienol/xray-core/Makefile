@@ -44,7 +44,7 @@ endef
 define Package/xray-core
   $(call Package/xray/template)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-  #PROVIDES:=v2ray-core
+#  PROVIDES:=v2ray-core
 endef
 
 define Package/xray-example
@@ -109,9 +109,9 @@ define Package/xray-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/xray
-ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
+#ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
 	#$(LN) xray $(1)/usr/bin/v2ray
-endif
+#endif
 
 	$(INSTALL_DIR) $(1)/etc/xray/
 	$(INSTALL_DATA) $(CURDIR)/files/config.json.example $(1)/etc/xray/
