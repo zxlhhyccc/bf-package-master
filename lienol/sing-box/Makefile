@@ -6,16 +6,23 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sing-box
-PKG_VERSION:=1.0.4
+PKG_VERSION:=1.1-beta6
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=bf477345e54166c6226ef864f602ac048a26a13f9628d80f837a2084c777187a
+PKG_HASH:=6cadde3259f79401327bb9fafa4aa6d50a73d1d9680dbc126beea932e2c3be73
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_SING-BOX_COMPRESS_GOPROXY \
-	CONFIG_SING-BOX_COMPRESS_UPX
+	CONFIG_SING_BOX_COMPRESS_GOPROXY \
+	CONFIG_SING_BOX_COMPRESS_UPX \
+	CONFIG_SING_BOX_BUILD_ACME \
+	CONFIG_SING_BOX_BUILD_ECH \
+	CONFIG_SING_BOX_BUILD_GVISOR \
+	CONFIG_SING_BOX_BUILD_QUIC \
+	CONFIG_SING_BOX_BUILD_SHADOWSOCKSR \
+	CONFIG_SING_BOX_BUILD_UTLS \
+	CONFIG_SING_BOX_BUILD_WIREGUARD
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -25,9 +32,9 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/sagernet/sing-box
-GO_PKG_LDFLAGS:=-s -w -buildid=
 GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/sing-box
-GO_PKG_LDFLAGS_X:=main.appVersion=v$(PKG_VERSION)
+GO_PKG_LDFLAGS:=-s -w 
+GO_PKG_LDFLAGS_X:=$(GO_PKG)/constant.Version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -38,27 +45,85 @@ define Package/sing-box
   SUBMENU:=Web Servers/Proxies
   TITLE:=The universal proxy platform.
   URL:=https://sing-box.sagernet.org
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +SING_BOX_BUILD_GVISOR:kmod-tun
 endef
 
 define Package/sing-box/config
-config SING-BOX_COMPRESS_GOPROXY
+
+menu "sing-box Configuration"
+	depends on PACKAGE_sing-box
+
+    config SING_BOX_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
 
-config SING-BOX_COMPRESS_UPX
+    config SING_BOX_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
 	default n
+  endmenu
+
+if PACKAGE_sing-box
+    config SING_BOX_BUILD_ACME
+    bool "Build with ACME TLS certificate issuer support"
+    default n
+
+    config SING_BOX_BUILD_ECH
+    bool "Build with TLS ECH extension support"
+    default y
+
+    config SING_BOX_BUILD_GVISOR
+    bool "Build with gVisor support"
+    default y
+
+    config SING_BOX_BUILD_QUIC
+    bool "Build with QUIC support"
+    default y
+    help
+      Required by HTTP3 DNS transports, Naive inbound,
+      Hysteria inbound / outbound, and v2ray QUIC transport.
+
+    config SING_BOX_BUILD_SHADOWSOCKSR
+    bool "Build with ShadowsockR support"
+    default n
+
+    config SING_BOX_BUILD_UTLS
+    bool "Build with uTLS support"
+    default n
+
+    config SING_BOX_BUILD_WIREGUARD
+    bool "Build with WireGuard support"
+    default n
+  endif
 endef
 
-ifeq ($(CONFIG_SING-BOX_COMPRESS_GOPROXY),y)
+ifneq ($(CONFIG_SING_BOX_BUILD_ACME),)
+  GO_PKG_TAGS+=with_acme
+endif
+ifneq ($(CONFIG_SING_BOX_BUILD_ECH),)
+  GO_PKG_TAGS+=with_ech
+endif
+ifneq ($(CONFIG_SING_BOX_BUILD_GVISOR),)
+  GO_PKG_TAGS+=gvisor
+endif
+ifneq ($(CONFIG_SING_BOX_BUILD_QUIC),)
+  GO_PKG_TAGS+=with_quic
+endif
+ifneq ($(CONFIG_SING_BOX_BUILD_SHADOWSOCKSR),)
+  GO_PKG_TAGS+=with_shadowsocksr
+endif
+ifneq ($(CONFIG_SING_BOX_BUILD_UTLS),)
+  GO_PKG_TAGS+=with_utls
+endif
+ifneq ($(CONFIG_SING_BOX_BUILD_WIREGUARD),)
+  GO_PKG_TAGS+=with_wireguard
+endif
+GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip $(GO_PKG_TAGS)))
+
+ifeq ($(CONFIG_SING_BOX_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
 	export GOPROXY=https://goproxy.baidu.com
 endif
-
-GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
-GO_PKG_TAGS:=with_quic,with_grpc,with_wireguard
 
 define Package/$(PKG_NAME)/conffiles
 /etc/sing-box/config.json
@@ -66,7 +131,7 @@ endef
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-ifneq ($(CONFIG_SING-BOX_COMPRESS_UPX),)
+ifneq ($(CONFIG_SING_BOX_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/sing-box
 endif
 endef
