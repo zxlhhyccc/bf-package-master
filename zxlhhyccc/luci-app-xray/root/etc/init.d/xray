@@ -10,7 +10,7 @@ START=90
 STOP=15
 
 NAME=xray
-EXTRA_COMMANDS="rules watchdog"
+EXTRA_COMMANDS="rules healthcheck"
 CRON_FILE=/etc/crontabs/root
 WATCHDOG_ENDPOINT='accounts.gstatic.com'
 
@@ -39,6 +39,10 @@ uci_bool_by_type() {
 	1 | on | true | yes | enabled) return 0 ;;
 	esac
 	return 1
+}
+
+random_id() {
+	/usr/bin/${NAME} uuid | sed 's+-.*++g'
 }
 
 validate_server() {
@@ -77,14 +81,23 @@ get_lan_hosts() {
 		echo "$(uci_get_by_name $1 type),$(uci_get_by_name $1 host)"
 }
 
-xray_pre() {
+xray_cleandns() {
+	uci_bool_by_type general no_dns_injection && return 0
+
+	rm -f $DNSMASQDIR/ss.conf $DNSMASQDIR/ss-servers.conf 2>/dev/null
+}
+
+xray_injectdns() {
+	uci_bool_by_type general no_dns_injection && return 0
+
 	DNSconf=$DNSMASQDIR/xray-servers.conf
 	tmpDNSconf=$DNSMASQDIR/xray.conf
 	echo "all-servers" >$tmpDNSconf
 	config_load $NAME
-	for server in $(config_foreach get_server_ips servers); do
+	for server in $(config_foreach get_server_ips servers | sort -u); do
 		cat <<-EOF >>$tmpDNSconf
 			ipset=/${server}/xray_spec_dst_bp
+			server=/${server}/#
 			server=/${server}/223.5.5.5
 			server=/${server}/119.29.29.29
 			server=/${server}/114.114.114.114
@@ -94,6 +107,8 @@ xray_pre() {
 		EOF
 	done
 
+	(grep -q 'no-resolv' /etc/dnsmasq.conf /etc/dnsmasq.d/* /var/dnsmasq.d/* /var/etc/dnsmasq.conf.* 2 >/dev/null) &&
+		sed "/\/#$/d" -i $tmpDNSconf
 	sort -u $tmpDNSconf | sed '/\/\//d; /\/127.0.0.1\//d' >$DNSconf
 	rm -f $tmpDNSconf
 
@@ -118,7 +133,7 @@ xray_pre() {
 start_rules() {
 	config_load $NAME
 	/usr/bin/${NAME}-rules \
-		-s "$(config_foreach get_server_ips servers)" \
+		-s "$(config_foreach get_server_ips servers | sort -u)" \
 		-l "$(uci_get_by_type transparent_proxy local_port 1234)" \
 		-B "$(uci_get_by_type access_control wan_bp_list)" \
 		-b "$(uci_get_by_type access_control wan_bp_ips)" \
@@ -221,9 +236,9 @@ gen_xtls_flow() {
 	fi
 }
 
-gen_server_config() {
+gen_server_vless_config() {
 	local network='tcp'
-	local security=$(uci_get_by_name $1 security | sed 's+-.*++g')
+	local security=$(uci_get_by_name $1 security 'tls' | sed 's+-.*++g')
 	[ "V${security}" = "Vquic" ] && {
 		sysctl -w net.core.rmem_max=250000 >/dev/null
 		network='quic'
@@ -234,6 +249,7 @@ gen_server_config() {
 		[ "V$serverName" = "V" ] && serverName=$(uci_get_by_name $1 server)
 		cat <<-EOF
 			    {
+			      "tag": "dummy-$(random_id)",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {
 			        "vnext": [
@@ -262,6 +278,90 @@ gen_server_config() {
 	}
 }
 
+gen_server_trojan_config() {
+	local network='tcp'
+	local security=$(uci_get_by_name $1 security 'tls' | sed 's+-.*++g')
+	[ "V${security}" = "Vquic" ] && {
+		sysctl -w net.core.rmem_max=250000 >/dev/null
+		network='quic'
+		security='tls'
+	}
+	validate_server $1 && {
+		serverName=$(uci_get_by_name $1 server_name)
+		[ "V$serverName" = "V" ] && serverName=$(uci_get_by_name $1 server)
+		cat <<-EOF
+			    {
+			      "tag": "dummy-$(random_id)",
+			      "protocol": "$(uci_get_by_name $1 protocol)",
+			      "settings": {
+			        "servers": [
+			          {
+			            "address": "$(uci_get_by_name $1 server)",
+			            "port": $(uci_get_by_name $1 server_port),
+			            "password": "$(uci_get_by_name $1 id)",
+			            "level": 0
+			          }
+			        ]
+			      },
+			      "streamSettings": {
+			        "network": "${network}",
+			        "security": "${security}",
+			        $(gen_stream_setting_key ${network} ${security}): {
+			          "serverName": "${serverName}"
+			        }
+			      }
+			    },
+		EOF
+	}
+}
+
+gen_server_shadowsocks_config() {
+	validate_server $1 && {
+		cat <<-EOF
+			    {
+			      "tag": "dummy-$(random_id)",
+			      "protocol": "$(uci_get_by_name $1 protocol)",
+			      "settings": {$(get_plugin_config $1)
+			        "servers": [
+			          {
+			            "address": "$(uci_get_by_name $1 server)",
+			            "port": $(uci_get_by_name $1 server_port),
+			            "password": "$(uci_get_by_name $1 id)",
+			            "method": "$(uci_get_by_name $1 security)"
+			          }
+			        ]
+			      }
+			    },
+		EOF
+	}
+}
+
+get_plugin_config() {
+	local plugin=$(which $(uci_get_by_name $1 plugin))
+	local plugin_opts=$(uci_get_by_name $1 plugin_opts)
+	if [ -n "$plugin" ]; then
+		echo $plugin >>/var/run/xray-plugin
+		echo -e "\n        \"plugin\": \"$plugin\","
+		if [ -n "$plugin_opts" ]; then
+			echo "        \"pluginOpts\": \"$plugin_opts\","
+		fi
+	fi
+}
+
+gen_server_config() {
+	local protocol=$(uci_get_by_name $1 protocol)
+	if [ "V${protocol}" = "Vvless" ]; then
+		gen_server_vless_config $1
+	elif [ "V${protocol}" = "Vtrojan" ]; then
+		gen_server_trojan_config $1
+	elif [ "V${protocol}" = "Vshadowsocks" ]; then
+		gen_server_shadowsocks_config $1
+	else
+		echo "# Err: protocol[$protocol] not supported!"
+		exit 1
+	fi
+}
+
 gen_config_outbounds() {
 	cat <<-EOF | sed 's+,    +,\n    +g;s+},__$+}+g'
 		  "outbounds": [
@@ -272,10 +372,31 @@ gen_config_outbounds() {
 
 gen_config_file() {
 	local config_file=/var/etc/$NAME.json
+	local balancer_name="balancer-$(random_id)"
 	cat <<-EOF >$config_file
 		{
 			$(gen_config_inbounds)
 			$(gen_config_outbounds)
+		  "routing": {
+		    "domainStrategy": "AsIs",
+		    "domainMatcher": "mph",
+		    "rules": [{
+		      "type": "field",
+		      "network": "tcp,udp",
+		      "balancerTag": "${balancer_name}"
+		    }],
+		    "balancers": [{
+		      "tag": "${balancer_name}",
+		      "selector": ["dummy"],
+		      "strategy": {
+		      "type": "$(uci_get_by_type general strategy leastPing)"
+		      }
+		    }]
+		  },
+		  "observatory": {
+		    "subjectSelector": [ "outbound" ],
+		    "probeURL": "http://${WATCHDOG_ENDPOINT}/generate_204"
+		  },
 		  "log": {
 		    "loglevel": "warning"
 		  }
@@ -286,7 +407,7 @@ gen_config_file() {
 
 xray_daemon() {
 	command -v xray >/dev/null 2>&1 || return 0
-	(/usr/bin/${NAME} -c $(gen_config_file) >/var/log/xray.log 2>&1) &
+	(/usr/bin/${NAME} run -c $(gen_config_file) >/var/log/xray.log 2>&1) &
 	for _ in $(seq 10); do if pgrep -f /usr/bin/${NAME} >/dev/null; then break; else sleep 1; fi; done
 	pgrep -f /usr/bin/${NAME} >/dev/null
 }
@@ -301,7 +422,7 @@ start() {
 
 	mkdir -p /var/run /var/etc $DNSMASQDIR
 	has_valid_server $(uci_get_by_type general server) && {
-		xray_pre
+		xray_injectdns
 		xray_daemon
 	}
 	uci_bool_by_type 'transparent_proxy' 'enable' && {
@@ -324,25 +445,36 @@ kill_all() {
 stop() {
 	/usr/bin/${NAME}-rules -f
 	kill_all /usr/bin/${NAME}
-	rm -f $DNSMASQDIR/xray.conf $DNSMASQDIR/xray-servers.conf 2>/dev/null
+	if [ -f /var/run/xray-plugin ]; then
+		kill_all $(sort -u /var/run/xray-plugin)
+		rm -f /var/run/xray-plugin
+	fi
+	xray_cleandns
 	del_cron
 }
 
 add_cron() {
-	sed -i '/xray_watchdog/d' $CRON_FILE
-	echo '0   */3   * * *  rm -f /var/log/xray_watchdog.log 2>&1' >>$CRON_FILE
-	echo '*    *    * * * /etc/init.d/xray watchdog >> /var/log/xray_watchdog.log 2>&1' >>$CRON_FILE
+	[ -f $CRON_FILE ] || return 0
+	uci_bool_by_type transparent_proxy no_healthcheck && return 0
+
+	sed -i '/xray_healthcheck/d' $CRON_FILE
+	echo '0   */3   * * *  rm -f /var/log/xray_healthcheck.log 2>&1' >>$CRON_FILE
+	echo '*    *    * * * /etc/init.d/xray healthcheck >> /var/log/xray_healthcheck.log 2>&1' >>$CRON_FILE
 	/etc/init.d/cron restart
 }
 
 del_cron() {
-	sed -i '/xray_watchdog/d' $CRON_FILE
+	[ -f $CRON_FILE ] || return 0
+	uci_bool_by_type transparent_proxy no_healthcheck && return 0
+
+	sed -i '/xray_healthcheck/d' $CRON_FILE
 	/etc/init.d/cron restart
 }
 
-watchdog() {
+healthcheck() {
 	command -v xray >/dev/null 2>&1 || return 1
 	has_valid_server $(uci_get_by_type general server) && uci_bool_by_type 'transparent_proxy' 'enable' || return 1
+	uci_bool_by_type transparent_proxy no_healthcheck && return 0
 
 	LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 	pgrep -f "/var/etc/$NAME.json" >/dev/null 2>&1 || {

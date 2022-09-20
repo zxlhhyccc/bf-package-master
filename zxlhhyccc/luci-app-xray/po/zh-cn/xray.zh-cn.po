@@ -13,6 +13,9 @@ msgstr "别名"
 msgid "Alias(optional)"
 msgstr "别名(可选)"
 
+msgid "Balancer Strategy"
+msgstr "均衡器策略"
+
 msgid "Bypassed IP List"
 msgstr "被忽略IP列表"
 
@@ -36,6 +39,12 @@ msgstr "直接密钥"
 
 msgid "Disable"
 msgstr "停用"
+
+msgid "Disable DNS Auto-Injection"
+msgstr "停用DNS自动注入"
+
+msgid "Disable HealthCheck"
+msgstr "停用健康检查"
 
 msgid "Edit Server"
 msgstr "编辑服务器"

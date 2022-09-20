@@ -6,6 +6,10 @@ local m, s, o
 local xray = "xray"
 local uci = luci.model.uci.cursor()
 local servers = {}
+local strategy = {
+	"random",
+	"leastPing",
+}
 
 local function has_bin(name)
 	return luci.sys.call("command -v %s >/dev/null" %{name}) == 0
@@ -64,6 +68,14 @@ for _, s in ipairs(servers) do o:value(s.name, s.alias) end
 o.default = "nil"
 o.rmempty = false
 
+o = s:option(Value, "strategy", translate("Balancer Strategy"))
+for _, v in ipairs(strategy) do o:value(v, v:upper()) end
+o.default = 'leastPing'
+o.rmempty = false
+
+o = s:option(Flag, "no_dns_injection", translate("Disable DNS Auto-Injection"))
+o.rmempty = false
+
 -- [[ Transparent Proxy ]]--
 s = m:section(TypedSection, "transparent_proxy", translate("Transparent Proxy"))
 s.anonymous = true
@@ -75,6 +87,9 @@ o = s:option(Value, "local_port", translate("Local Port"))
 o.datatype = "port"
 o.default = 1234
 o:depends('enable', '1')
+
+o = s:option(Flag, "no_healthcheck", translate("Disable HealthCheck"))
+o.rmempty = false
 
 -- [[ HTTP Proxy ]]--
 s = m:section(TypedSection, "http_proxy", translate("HTTP Proxy"))
