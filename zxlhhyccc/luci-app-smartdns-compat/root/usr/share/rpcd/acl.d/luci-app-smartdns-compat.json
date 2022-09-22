@@ -1,0 +1,21 @@
+{
+	"luci-app-smartdns-compat": {
+		"description": "Grant access to LuCI app smartdns-compat",
+		"read": {
+			"file": {
+				"/etc/smartdns/*": [ "read" ],
+				"/usr/sbin/smartdns": [ "exec" ]
+			},
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": [ "smartdns" ]
+		},
+		"write": {
+			"file": {
+				"/etc/smartdns/*": [ "write" ]
+			},
+			"uci": [ "smartdns" ]
+		}
+	}
+}
