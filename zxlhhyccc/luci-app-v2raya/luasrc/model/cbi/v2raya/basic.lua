@@ -127,7 +127,14 @@ o = s:taboption("log", Value, "log", translate("Logs"))
 o.template = "v2raya/v2raya_log"
 --[[o.rows = 50]]--
 
+m.apply_on_parse = true
+m.on_after_apply = function(self,map)
+	luci.sys.call("/etc/init.d/v2raya restart")
+end
+
+--[[
 o.inputstyle = "reload"
     luci.sys.exec("/etc/init.d/v2raya start >/dev/null 2>&1 &")
+]]--
 
 return m

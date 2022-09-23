@@ -1,12 +1,50 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for v2rayA
-LUCI_DEPENDS:=+v2raya
 LUCI_PKGARCH:=all
 
 PKG_NAME:=luci-app-v2raya
 PKG_VERSION:=1.1
 PKG_RELEASE:=2
+
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2raya-v5 \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Xray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
+
+LUCI_DEPENDS:= \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_V2raya-v5:v2raya-v5 \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_V2raya:v2raya \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray-core \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray-core \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core:sagernet-core
+
+define Package/$(PKG_NAME)/config
+select PACKAGE_luci-lib-ipkg if PACKAGE_$(PKG_NAME)
+choice
+	prompt "V2ray-core Selection"
+	default PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
+
+	config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
+	bool "V2ray-core"
+
+	config PACKAGE_$(PKG_NAME)_INCLUDE_Xray
+	bool "Xray-core"
+
+	config PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
+	bool "SagerNet-core (An enhanced edition of v2ray-core)"
+endchoice
+
+	config PACKAGE_$(PKG_NAME)_INCLUDE_V2raya-v5
+	bool "Include V2raya-v5"
+	default y
+
+	config PACKAGE_$(PKG_NAME)_INCLUDE_V2raya
+	bool "Include V2raya"
+	default n
+endef
 
 PKG_MAINTAINER:=zxlhhyccc <zxlhhy@gmail.com>
 
