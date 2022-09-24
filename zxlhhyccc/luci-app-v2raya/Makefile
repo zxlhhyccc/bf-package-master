@@ -1,20 +1,22 @@
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for v2rayA
-LUCI_PKGARCH:=all
-
 PKG_NAME:=luci-app-v2raya
 PKG_VERSION:=1.1
-PKG_RELEASE:=2
+PKG_RELEASE:=3
+
+PKG_MAINTAINER:=zxlhhyccc <zxlhhy@gmail.com>
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2raya-v5 \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2raya \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NONE_V2RAY \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Xray \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 
-LUCI_DEPENDS:= \
+LUCI_TITLE:=LuCI support for v2rayA
+LUCI_PKGARCH:=all
+LUCI_DEPENDS:=+luci-compat \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2raya-v5:v2raya-v5 \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2raya:v2raya \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray-core \
@@ -26,6 +28,10 @@ select PACKAGE_luci-lib-ipkg if PACKAGE_$(PKG_NAME)
 choice
 	prompt "V2ray-core Selection"
 	default PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
+	default PACKAGE_$(PKG_NAME)_INCLUDE_NONE_V2RAY
+
+	config PACKAGE_$(PKG_NAME)_INCLUDE_NONE_V2RAY
+	bool "None"
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
 	bool "V2ray-core"
@@ -36,7 +42,6 @@ choice
 	config PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 	bool "SagerNet-core (An enhanced edition of v2ray-core)"
 endchoice
-
 	config PACKAGE_$(PKG_NAME)_INCLUDE_V2raya-v5
 	bool "Include V2raya-v5"
 	default y
@@ -46,7 +51,36 @@ endchoice
 	default n
 endef
 
-PKG_MAINTAINER:=zxlhhyccc <zxlhhy@gmail.com>
+define Package/$(PKG_NAME)/conffiles
+/etc/config/v2raya
+/etc/v2raya/
+endef
+
+define Package/luci-app-v2raya/postinst
+#!/bin/sh
+	/etc/init.d/v2raya enable >/dev/null 2>&1
+	enable=$$(uci get v2raya.config.enabled 2>/dev/null)
+	if [ "$$enable" == "1" ]; then
+		/etc/init.d/v2raya reload
+	fi
+	rm -f /tmp/luci-indexcache
+	rm -f /tmp/luci-modulecache/*
+exit 0
+endef
+
+define Package/luci-app-v2raya/prerm
+#!/bin/sh
+
+if [ -z "$${IPKG_INSTROOT}" ]; then
+     /etc/init.d/v2raya disable
+     /etc/init.d/v2raya stop
+uci -q batch <<-EOF >/dev/null 2>&1
+	delete ucitrack.@v2raya[-1]
+	commit ucitrack
+EOF
+fi
+exit 0
+endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
