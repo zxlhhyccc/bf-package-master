@@ -7,7 +7,7 @@ function index()
 
 	local page = entry({"admin", "services", "v2raya"}, alias("admin", "services", "v2raya", "basic"), _("v2rayA"), 30)
 	page.dependent = true
-	page.acl_depends = { "luci-app-v2raya" }
+	page.acl_depends = { "luci-app-v2raya-compat" }
 
 	entry({"admin", "services", "v2raya", "basic"}, cbi("v2raya/basic")).leaf = true
 	entry({"admin", "services", "v2raya", "log"}, cbi("v2raya/log")).leaf = true

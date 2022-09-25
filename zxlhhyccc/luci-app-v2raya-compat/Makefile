@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-v2raya
+PKG_NAME:=luci-app-v2raya-compat
 PKG_VERSION:=1.1
 PKG_RELEASE:=3
 
@@ -56,7 +56,7 @@ define Package/$(PKG_NAME)/conffiles
 /etc/v2raya/
 endef
 
-define Package/luci-app-v2raya/postinst
+define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 	/etc/init.d/v2raya enable >/dev/null 2>&1
 	enable=$$(uci get v2raya.config.enabled 2>/dev/null)
@@ -68,7 +68,7 @@ define Package/luci-app-v2raya/postinst
 exit 0
 endef
 
-define Package/luci-app-v2raya/prerm
+define Package/$(PKG_NAME)/prerm
 #!/bin/sh
 
 if [ -z "$${IPKG_INSTROOT}" ]; then
