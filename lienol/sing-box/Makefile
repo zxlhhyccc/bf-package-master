@@ -47,7 +47,7 @@ define Package/$(PKG_NAME)
   SUBMENU:=Web Servers/Proxies
   TITLE:=The universal proxy platform.
   URL:=https://sing-box.sagernet.org
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +kmod-tun
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +CONFIG_TAG_$(PKG_NAME)_GVISOR:kmod-tun
 endef
 
 GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
