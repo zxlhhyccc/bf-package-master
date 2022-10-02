@@ -2,49 +2,21 @@
 
 mkdir -p /tmp/smartdns/
 
-#wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf  -nv -O /tmp/smartdns/china.conf 
-#wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf -nv -O /tmp/smartdns/apple.conf
-#wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf -nv -O /tmp/smartdns/google.conf
+wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf  -nv -O /tmp/smartdns/china.conf 
+wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf -nv -O /tmp/smartdns/apple.conf
+wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf -nv -O /tmp/smartdns/google.conf
+wget --no-check-certificate https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-smartdns.conf -nv -O /tmp/smartdns/anti-ad-smartdns.conf
 #合并
-#cat /tmp/smartdns/apple.conf >> /tmp/smartdns/china.conf 2>/dev/null
-#cat /tmp/smartdns/google.conf >> /tmp/smartdns/china.conf 2>/dev/null
+cat /tmp/smartdns/apple.conf >> /tmp/smartdns/china.conf 2>/dev/null
+cat /tmp/smartdns/google.conf >> /tmp/smartdns/china.conf 2>/dev/null
 
 #删除不符合规则的域名
-#sed -i "s/^server=\/\(.*\)\/[^\/]*$/nameserver \/\1\/china/g;/^nameserver/!d" /tmp/smartdns/china.conf 2>/dev/null
+sed -i "s/^server=\/\(.*\)\/[^\/]*$/nameserver \/\1\/china/g;/^nameserver/!d" /tmp/smartdns/china.conf 2>/dev/null
 
-#mv -f /tmp/smartdns/china.conf  /etc/smartdns/smartdns-domains.china.conf
-#mv -f /tmp/smartdns/anti-ad-smartdns.conf  /etc/smartdns/anti-ad-smartdns.conf
-
-wget --no-check-certificate https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-smartdns.conf -nv -O /tmp/smartdns/anti-ad-smartdns.conf
+mv -f /tmp/smartdns/china.conf  /etc/smartdns/smartdns-domains.china.conf
+mv -f /tmp/smartdns/anti-ad-smartdns.conf  /etc/smartdns/anti-ad-smartdns.conf
 
 rm -rf /tmp/smartdns/
-
-# Update China Domain
-# source: https://raw.githubusercontent.com/huifukejian/test/master/update-china-list.sh
-
-# China Domain Download Link
-#URL="https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf"
-URL="https://dragonuniform.sg/cnlist.php"
-
-# DNS Server Group
-PROXYDNS_NAME="china"
-
-# Smartdns Config File Path
-CONFIG_FLODER="/etc/smartdns"
-CONFIG_FILE="cnlist.conf"
-
-INPUT_FILE=$(mktemp)
-OUTPUT_FILE="$CONFIG_FLODER/$CONFIG_FILE"
-
-if [ "$1" != "" ]; then
-	PROXYDNS_NAME="$1"
-fi
-
-wget -O $INPUT_FILE $URL 
- 
-sed -i "s/^server=\/\(.*\)\/[^\/]*$/nameserver \/\1\/$PROXYDNS_NAME/g;/^nameserver/!d" $INPUT_FILE 2>/dev/null
-
-mv -f $INPUT_FILE $OUTPUT_FILE
 
 # GFWlist Download Link
 URL="https://cokebar.github.io/gfwlist2dnsmasq/gfwlist_domain.txt"

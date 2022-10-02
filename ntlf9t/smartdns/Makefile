@@ -21,8 +21,8 @@ PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=ccb47ef3276e4dbdb31267ab2574578cb734925b
-PKG_MIRROR_HASH:=61e8882f8f275b1ba03e8fcdef7f4cd61f1dddbbbd446c4e36c1b2e7bebdf677
+PKG_SOURCE_VERSION:=eeaadcf313a9713895898719a20d9799a0ea78b3
+PKG_MIRROR_HASH:=a0aacb4bf073a0c0665a4700fea18510748cffb1f449f43dc643f6d8a794bc31
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -60,21 +60,6 @@ endef
 
 define Package/smartdns/postinst
 #!/bin/sh
-#
-# Copyright (C) 2018-2020 Ruilin Peng (Nick) <pymumu@gmail.com>.
-#
-# smartdns is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# smartdns is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 chmod +x /usr/sbin/smartdns
 chmod +x /etc/init.d/smartdns
@@ -86,21 +71,6 @@ endef
 
 define Package/smartdns/prerm
 #!/bin/sh
-#
-# Copyright (C) 2018-2020 Ruilin Peng (Nick) <pymumu@gmail.com>.
-#
-# smartdns is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# smartdns is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 rm /var/etc/smartdns.conf -f
 rm /var/etc/smartdns/smartdns.conf -f
@@ -116,9 +86,12 @@ define Package/smartdns/install
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/custom.conf $(1)/etc/smartdns/custom.conf-opkg
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/files/etc/config/smartdns $(1)/etc/config/smartdns-opkg
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/anti-ad-smartdns.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
-	$(INSTALL_CONF) $(CURDIR)/conf/smartdns-domains.china.conf $(1)/etc/smartdns/smartdns-domains.china.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/gfwlist.conf $(1)/etc/smartdns/gfwlist.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/whitelist-chnroute.conf $(1)/etc/smartdns/whitelist-chnroute.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/blacklist-chnroute.conf $(1)/etc/smartdns/blacklist-chnroute.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/anti-ad-smartdns.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/cnlist.conf $(1)/etc/smartdns/cnlist.conf
 	$(INSTALL_BIN) $(CURDIR)/conf/update-china-list.sh $(1)/usr/share/smartdns/update-china-list.sh
 endef
 
