@@ -483,11 +483,11 @@ msgstr "类型"
 msgid "udp"
 msgstr "udp"
 
-msgid "Update China list And Advertising Data"
-msgstr "自动更新国内域名和广告数据库"
+msgid "Periodically Update China list And Advertising Database And black and white list"
+msgstr "定时更新国内域名和广告数据库及黑白名单"
 
-msgid "If you need to use the Chinese domain name file and Advertising data, Remove the # sign before 'conf-file' in the custom settings."
-msgstr "国内域名和去广告数据库，如需使用请在自定义设置中去除 conf-file 前面的 # 号。"
+msgid "China list And deadvertising database and black and white list, If you need to use, please remove the # in front of conf-file in the custom Settings."
+msgstr "国内域名和去广告数据库及黑白名单，如需使用请在自定义设置中去除 conf-file 前面的 # 号。"
 
 #~ msgid "IPV4 53 Port Redirect Failure"
 #~ msgstr "IPV4 53端口重定向失败"

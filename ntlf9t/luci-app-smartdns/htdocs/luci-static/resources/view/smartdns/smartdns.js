@@ -222,8 +222,8 @@ return view.extend({
 		o.rempty = true;
 
 		// Update china list(GFW);
-		o = s.taboption("settings", form.Flag, "gfw_smartdns", _("Update China list And Advertising Data"),
-			_("If you need to use the Chinese domain name file and Advertising data, Remove the # sign before 'conf-file' in the custom settings."));
+		o = s.taboption("settings", form.Flag, "gfw_smartdns", _("Periodically Update China list And Advertising Database And black and white list"),
+			_("China list And deadvertising database and black and white list, If you need to use, please remove the # in front of conf-file in the custom Settings."));
 		o.rmempty = false;
 		o.default = o.disabled;
 
