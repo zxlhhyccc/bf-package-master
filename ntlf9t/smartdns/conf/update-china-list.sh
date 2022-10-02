@@ -1,6 +1,6 @@
 #/bin/sh
 
-mkdir -p /tmp/smartdns/
+#mkdir -p /tmp/smartdns/
 
 #wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf  -nv -O /tmp/smartdns/china.conf 
 #wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf -nv -O /tmp/smartdns/apple.conf
@@ -15,9 +15,26 @@ mkdir -p /tmp/smartdns/
 #mv -f /tmp/smartdns/china.conf  /etc/smartdns/smartdns-domains.china.conf
 #mv -f /tmp/smartdns/anti-ad-smartdns.conf  /etc/smartdns/anti-ad-smartdns.conf
 
-wget --no-check-certificate https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-smartdns.conf -nv -O /tmp/smartdns/anti-ad-smartdns.conf
+#wget --no-check-certificate https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-smartdns.conf -nv -O /tmp/smartdns/anti-ad-smartdns.conf
 
-rm -rf /tmp/smartdns/
+#rm -rf /tmp/smartdns/
+
+# Anti-ad Download Link
+URL="https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-smartdns.conf"
+
+# Smartdns Config File Path
+CONFIG_FLODER="/etc/smartdns"
+CONFIG_FILE="anti-ad-smartdns.conf"
+
+INPUT_FILE=$(mktemp)
+OUTPUT_FILE="$CONFIG_FLODER/$CONFIG_FILE"
+
+wget -O $INPUT_FILE $URL
+echo "Download successful, updating..."
+
+mkdir -p $CONFIG_FLODER
+
+mv -f $INPUT_FILE $OUTPUT_FILE
 
 # Update China Domain
 # source: https://raw.githubusercontent.com/huifukejian/test/master/update-china-list.sh
@@ -41,7 +58,10 @@ if [ "$1" != "" ]; then
 fi
 
 wget -O $INPUT_FILE $URL 
- 
+echo "Download successful, updating..."
+
+mkdir -p $CONFIG_FLODER
+
 sed -i "s/^server=\/\(.*\)\/[^\/]*$/nameserver \/\1\/$PROXYDNS_NAME/g;/^nameserver/!d" $INPUT_FILE 2>/dev/null
 
 mv -f $INPUT_FILE $OUTPUT_FILE
