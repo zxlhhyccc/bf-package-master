@@ -83,6 +83,8 @@ define Package/$(PKG_NAME)/config
     config TAG_$(PKG_NAME)_GRPC
       bool "Build with standard gRPC support"
       default n
+    help
+      Standard gRPC has good compatibility but poor performance.
 
     config TAG_$(PKG_NAME)_QUIC
       bool "Build with QUIC support"
@@ -106,34 +108,35 @@ define Package/$(PKG_NAME)/config
   endmenu
 endef
 
+PKG_BUILD_TAGS:=
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_ACME),)
-  GO_PKG_TAGS+=with_acme
+  PKG_BUILD_TAGS+=with_acme
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_CLASH_API),)
-  GO_PKG_TAGS+=with_clash_api
+  PKG_BUILD_TAGS+=with_clash_api
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_ECH),)
-  GO_PKG_TAGS+=with_ech
+  PKG_BUILD_TAGS+=with_ech
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_GVISOR),)
-  GO_PKG_TAGS+=gvisor
+  PKG_BUILD_TAGS+=with_gvisor
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_GRPC),)
-  GO_PKG_TAGS+=with_grpc
+  PKG_BUILD_TAGS+=with_grpc
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_QUIC),)
-  GO_PKG_TAGS+=with_quic
+  PKG_BUILD_TAGS+=with_quic
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_SHADOWSOCKSR),)
-  GO_PKG_TAGS+=with_shadowsocksr
+  PKG_BUILD_TAGS+=with_shadowsocksr
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_UTLS),)
-  GO_PKG_TAGS+=with_utls
+  PKG_BUILD_TAGS+=with_utls
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_WIREGUARD),)
-  GO_PKG_TAGS+=with_wireguard
+  PKG_BUILD_TAGS+=with_wireguard
 endif
-GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip $(GO_PKG_TAGS)))
+GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip $(PKG_BUILD_TAGS)))
 
 ifeq ($(CONFIG_SING_BOX_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
