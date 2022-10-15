@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for Netdata
-LUCI_DEPENDS:=+netdata +luci-compat
+LUCI_DEPENDS:=+netdata
 LUCI_PKGARCH:=all
 
 PKG_NAME:=luci-app-netdata
-PKG_VERSION:=1.0
-PKG_RELEASE:=20220523
+PKG_VERSION:=1.1
+PKG_RELEASE:=20221013
 
 define Build/Compile
 endef
