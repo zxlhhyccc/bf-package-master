@@ -20,7 +20,7 @@
 #rm -rf /tmp/smartdns/
 
 # Anti-ad Download Link
-URL="https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-smartdns.conf"
+URL="https://github.com/privacy-protection-tools/anti-AD/raw/master/anti-ad-smartdns.conf"
 
 # Smartdns Config File Path
 CONFIG_FLODER="/etc/smartdns"
@@ -39,9 +39,36 @@ mv -f $INPUT_FILE $OUTPUT_FILE
 # Update China Domain
 # source: https://raw.githubusercontent.com/huifukejian/test/master/update-china-list.sh
 
-# China Domain Download Link
-#URL="https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf"
-URL="https://dragonuniform.sg/cnlist.php"
+# 1、China Domain Download Link
+##URL="https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf"
+#URL="https://dragonuniform.sg/cnlist.php"
+
+## DNS Server Group
+#PROXYDNS_NAME="china"
+
+## Smartdns Config File Path
+#CONFIG_FLODER="/etc/smartdns"
+#CONFIG_FILE="cnlist.conf"
+
+#INPUT_FILE=$(mktemp)
+#OUTPUT_FILE="$CONFIG_FLODER/$CONFIG_FILE"
+
+#if [ "$1" != "" ]; then
+#	PROXYDNS_NAME="$1"
+#fi
+
+#wget -O $INPUT_FILE $URL 
+#echo "Download successful, updating..."
+
+#mkdir -p $CONFIG_FLODER
+
+#sed -i "s/^server=\/\(.*\)\/[^\/]*$/nameserver \/\1\/$PROXYDNS_NAME/g;/^nameserver/!d" $INPUT_FILE 2>/dev/null
+
+#mv -f $INPUT_FILE $OUTPUT_FILE
+
+# Update China Domain
+# 2、China Domain Download Link
+URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/direct-list.txt"
 
 # DNS Server Group
 PROXYDNS_NAME="china"
@@ -58,19 +85,27 @@ if [ "$1" != "" ]; then
 fi
 
 wget -O $INPUT_FILE $URL 
-echo "Download successful, updating..."
+if [ $? -eq 0 ]
+then
+	echo "Download successful, updating..."
+	sed -i "/^$/d;s/\r//g;s/^[ ]*$//g;/^#/d;/regexp:/d;s/full://g" $INPUT_FILE
+	mkdir -p $CONFIG_FLODER
+	cat /dev/null > $OUTPUT_FILE
 
-mkdir -p $CONFIG_FLODER
+	cat $INPUT_FILE | while read line
+	do
+		echo "nameserver /$line/$PROXYDNS_NAME" >> $OUTPUT_FILE
+	done
+fi
 
-sed -i "s/^server=\/\(.*\)\/[^\/]*$/nameserver \/\1\/$PROXYDNS_NAME/g;/^nameserver/!d" $INPUT_FILE 2>/dev/null
-
-mv -f $INPUT_FILE $OUTPUT_FILE
+rm $INPUT_FILE
 
 # GFWlist Download Link
-URL="https://cokebar.github.io/gfwlist2dnsmasq/gfwlist_domain.txt"
+#URL="https://cokebar.github.io/gfwlist2dnsmasq/gfwlist_domain.txt"
+URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/gfw.txt"  # 也可使用gfw.txt
 
 # DNS Server Group
-PROXYDNS_NAME="china"
+PROXYDNS_NAME="fq_dns"
 
 # Smartdns Config File Path
 CONFIG_FLODER="/etc/smartdns"
