@@ -11,15 +11,15 @@ start_service() {
 	config_load "$CONF"
 
 	local enabled
-	config_get enabled "enabled" "enabled" "0"
-	[ "$enabled" -eq "0" ] && exit 1
+	config_get_bool enabled "enabled" "enabled" "0"
+	[ "$enabled" -eq "1" ] || return 1
 
 	local confdir
 	local conffiles
 	local datadir
 	local dialer
 	local format
-	local fullcone
+#	local fullcone
 
 	config_get confdir "config" "confdir"
 	config_get conffiles "config" "conffiles"
@@ -39,7 +39,7 @@ start_service() {
 	}
 	[ -n "$format" ] && procd_append_param command -format "$format"
 	[ -n "$dialer" ] && procd_set_param env XRAY_BROWSER_DIALER="$dialer"
-	[ "$fullcone" -eq "0" ] && procd_set_param env XRAY_CONE_DISABLED="true"
+#	[ "$fullcone" -eq "0" ] && procd_set_param env XRAY_CONE_DISABLED="true"
 	procd_set_param env XRAY_LOCATION_ASSET="$datadir"
 	procd_set_param file $conffiles
 

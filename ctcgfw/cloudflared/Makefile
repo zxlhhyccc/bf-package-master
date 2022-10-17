@@ -31,6 +31,25 @@ GO_PKG_LDFLAGS_X:=main.Version=$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
+define Package/cloudflared
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Web Servers/Proxies
+  TITLE:=Cloudflare Tunnel client
+  URL:=https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+endef
+
+define Package/cloudflared/description
+  Contains the command-line client for Cloudflare Tunnel, a tunneling
+  daemon that proxies traffic from the Cloudflare network to your origins.
+
+  This daemon sits between Cloudflare network and your origin (e.g. a
+  webserver). Cloudflare attracts client requests and sends them to you
+  via this daemon, without requiring you to poke holes on your firewall
+  --- your origin can remain as closed as possible.
+endef
+
 define Package/cloudflared/config
 config CLOUDFLARED_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
@@ -47,26 +66,9 @@ ifeq ($(CONFIG_CLOUDFLARED_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-define Package/cloudflared
-  SECTION:=net
-  CATEGORY:=Network
-  TITLE:=Argo Tunnel client
-  URL:=https://developers.cloudflare.com/argo-tunnel/
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-endef
-
-define Package/cloudflared/description
-  Contains the command-line client for Cloudflare Tunnel, a tunneling
-  daemon that proxies traffic from the Cloudflare network to your origins.
-
-  This daemon sits between Cloudflare network and your origin (e.g. a
-  webserver). Cloudflare attracts client requests and sends them to you
-  via this daemon, without requiring you to poke holes on your firewall
-  --- your origin can remain as closed as possible.
-endef
-
 define Package/cloudflared/conffiles
-/root/.cloudflared/
+/etc/config/cloudflared
+/etc/cloudflared/
 endef
 
 define Build/Compile
@@ -74,6 +76,17 @@ define Build/Compile
 ifeq ($(CONFIG_CLOUDFLARED_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/cloudflared
 endif
+endef
+
+define Package/cloudflared/install
+	$(call GoPackage/Package/Install/Bin,$(1))
+
+	$(INSTALL_DIR) $(1)/etc/cloudflared/
+	$(INSTALL_CONF) $(CURDIR)/files/sample_config.yml $(1)/etc/cloudflared/config.yml
+	$(INSTALL_DIR) $(1)/etc/config/
+	$(INSTALL_CONF) $(CURDIR)/files/cloudflared.config $(1)/etc/config/cloudflared
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) $(CURDIR)/files/cloudflared.init $(1)/etc/init.d/cloudflared
 endef
 
 $(eval $(call GoBinPackage,cloudflared))
