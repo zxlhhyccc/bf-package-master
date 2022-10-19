@@ -15,7 +15,7 @@ PKG_LICENSE:=MPL-2.0
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_CONFIG_DEPENDS:= \
-	#CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
+	CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
 	CONFIG_XRAY_CORE_COMPRESS_GOPROXY \
 	CONFIG_XRAY_CORE_COMPRESS_UPX \
 
@@ -45,6 +45,7 @@ define Package/xray-core
   $(call Package/xray/template)
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 #  PROVIDES:=v2ray-core
+  CONFLICTS:=v2ray-core
 endef
 
 define Package/xray-example
@@ -73,9 +74,9 @@ define Package/xray-core/config
 menu "Xray-core Configuration"
 	depends on PACKAGE_xray-core
 
-#config XRAY_CORE_PROVIDE_V2RAY_CORE
-#	bool "Provide V2Ray binary using XRay"
-#	default y
+config XRAY_CORE_PROVIDE_V2RAY_CORE
+	bool "Provide V2Ray binary using XRay"
+	default y
 
 config XRAY_CORE_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
@@ -109,9 +110,9 @@ define Package/xray-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/xray
-#ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
-	#$(LN) xray $(1)/usr/bin/v2ray
-#endif
+ifneq ($(CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE),)
+	$(LN) xray $(1)/usr/bin/v2ray
+endif
 
 	$(INSTALL_DIR) $(1)/etc/xray/
 	$(INSTALL_DATA) $(CURDIR)/files/config.json.example $(1)/etc/xray/
@@ -121,8 +122,8 @@ define Package/xray-core/install
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) $(CURDIR)/files/xray.init $(1)/etc/init.d/xray
 
-	#$(INSTALL_DIR) $(1)/etc/capabilities/
-	#$(INSTALL_DATA) $(CURDIR)/files/xray.capabilities $(1)/etc/capabilities/xray.json
+	$(INSTALL_DIR) $(1)/etc/capabilities/
+	$(INSTALL_DATA) $(CURDIR)/files/xray.capabilities $(1)/etc/capabilities/xray.json
 endef
 
 define Package/xray-example/install
