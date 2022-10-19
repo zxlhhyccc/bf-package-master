@@ -27,7 +27,8 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_V2RAYA-V5_COMPRESS_GOPROXY \
 	CONFIG_V2RAYA-V5_COMPRESS_UPX \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Core \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Xray_Core \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 
 PKG_BUILD_DEPENDS:=golang/host
@@ -58,7 +59,8 @@ define Package/v2raya-v5
     +iptables-mod-filter \
     +iptables-mod-tproxy \
     +kmod-ipt-nat6 \
-    +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray-core-v5 \
+    +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Core:v2ray-core-v5 \
+    +PACKAGE_$(PKG_NAME)_INCLUDE_Xray_Core:xray-core \
     +PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core:curl \
     +PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core:sagernet-core
   URL:=https://v2raya.org
@@ -82,13 +84,17 @@ config V2RAYA-V5_COMPRESS_UPX
 	default n
 endmenu
 
-config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
-	bool "Include V2ray"
+config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Core
+	bool "Include V2ray core"
+	default n if aarch64||arm||i386||x86_64
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_Xray_Core
+	bool "Include Xray core"
 	default y if aarch64||arm||i386||x86_64
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 	bool "Include SagerNet core (An enhanced edition of v2ray-core)"
-	default y if aarch64||arm||i386||x86_64
+	default n if aarch64||arm||i386||x86_64
 endef
 
 ifneq ($(CONFIG_V2RAYA-V5_COMPRESS_GOPROXY),)
