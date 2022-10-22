@@ -22,12 +22,6 @@ start() {
 	uci set network.@globals[0].packet_steering="1"
 	uci commit network
 
-	#a=$(grep "model name" "/proc/cpuinfo" | head -n1 | awk -F ': ' '{print $2}' | xargs)
-	#a=$(cat /proc/cpuinfo | grep "model name" | cut -f2 -d: | head -n1 | awk '{print $3}')
-
-	#mkdir -p /tmp/sysinfo
-	#echo $a > /tmp/sysinfo/model
-
 	for i in $(ip address | awk -F ': ' '/eth[0-9]+/ {print $2}' | xargs)
 	do
 		{
