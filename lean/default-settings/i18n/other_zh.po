@@ -70,12 +70,6 @@ msgstr "数据包引导"
 msgid "Enable packet steering across all CPUs. May help or hinder network speed."
 msgstr "启用所有CPU的数据包控制。 可能有助于或阻碍网络速度。"
 
-msgid "Disable IPv6 DNS forwards"
-msgstr "禁止解析 IPv6 DNS 记录"
-
-msgid "Filter IPv6(AAAA) DNS Query Name Resolve"
-msgstr "过滤掉 IPv6(AAAA) ，只返回 IPv4 DNS 域名记录"
-
 msgid "Minimum TTL to send to clients"
 msgstr "客户端缓存的最小 DNS TTL"
 

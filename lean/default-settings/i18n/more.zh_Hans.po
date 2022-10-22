@@ -1054,6 +1054,12 @@ msgstr "禁止解析 IPv6 DNS 记录"
 msgid "Filter IPv6(AAAA) DNS Query Name Resolve"
 msgstr "过滤掉 IPv6(AAAA) ，只返回 IPv4 DNS 域名记录"
 
+msgid "Disable IPv4 DNS forwards"
+msgstr "禁止解析 IPv4 DNS 记录"
+
+msgid "Filter IPv4(A) DNS Query Name Resolve"
+msgstr "过滤掉 IPv4(A) ，只返回 IPv6 DNS 域名记录"
+
 msgid "Disable HTTPS DNS Type forwards"
 msgstr "禁止解析 HTTPS 类型的记录"
 
