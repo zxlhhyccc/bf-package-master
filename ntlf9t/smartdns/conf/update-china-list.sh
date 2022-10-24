@@ -105,7 +105,7 @@ rm $INPUT_FILE
 URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/gfw.txt"  # 也可使用gfw.txt
 
 # DNS Server Group
-PROXYDNS_NAME="fq_dns"
+PROXYDNS_NAME="oversea"
 
 # Smartdns Config File Path
 CONFIG_FLODER="/etc/smartdns"
