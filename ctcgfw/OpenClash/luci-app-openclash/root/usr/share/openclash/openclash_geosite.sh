@@ -28,10 +28,8 @@
    LOG_OUT "Start Downloading GeoSite Database..."
    if [ -z "$GEOSITE_CUSTOM_URL" ]; then
       if [ "$github_address_mod" != "0" ]; then
-         if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ]; then
-            curl -SsL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat -o /tmp/GeoSite.dat 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/GeoSite.dat" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
-         elif [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ]; then
-            curl -SsL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 https://fastly.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat -o /tmp/GeoSite.dat 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/GeoSite.dat" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
+         if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
+            curl -SsL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 "$github_address_mod"gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat -o /tmp/GeoSite.dat 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/GeoSite.dat" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
          elif [ "$github_address_mod" == "https://raw.fastgit.org/" ]; then
             curl -SsL --connect-timeout 5 -m 30 --speed-time 15 --speed-limit 1 --retry 2 https://raw.fastgit.org/Loyalsoldier/v2ray-rules-dat/release/geosite.dat -o /tmp/GeoSite.dat 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/GeoSite.dat" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
          else
@@ -55,7 +53,7 @@
          mv /tmp/GeoSite.dat "$geosite_path" >/dev/null 2>&1
          LOG_OUT "GeoSite Database Update Successful!"
          sleep 3
-         [ "$(unify_ps_prevent)" -eq 0 ] && /etc/init.d/openclash restart >/dev/null 2>&1 &
+         [ "$(unify_ps_prevent)" -eq 0 ] && [ "$(find /tmp/lock/ |grep -v "openclash.lock" |grep -c "openclash")" -le 1 ] && /etc/init.d/openclash restart >/dev/null 2>&1 &
       else
          LOG_OUT "Updated GeoSite Database No Change, Do Nothing..."
          sleep 3
