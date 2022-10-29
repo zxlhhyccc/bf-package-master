@@ -223,9 +223,8 @@ start_dns() {
 			pdnsd_enable_flag=2
 			;;
 		3)
-		local dnsstr="$(uci_get_by_type global tunnel_forward 8.8.4.4:53)"
-		local dns_server=$(echo "$dnsstr" | awk -F ':' '{print $1}')
-		local dnsport=$(echo "$dnsstr" | awk -F ':' '{print $2}')
+		local dns_server=$(echo "$dnsserver" | awk -F ':' '{print $1}')
+		local dnsport=$(echo "$dnsserver" | awk -F ':' '{print $2}')
 			start_pdnsd $dns_server $dnsport
 			pdnsd_enable_flag=3
 			;;
