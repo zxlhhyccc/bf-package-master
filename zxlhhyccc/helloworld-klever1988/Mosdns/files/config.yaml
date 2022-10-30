@@ -15,20 +15,11 @@ plugins:
   - tag: lazy_cache
     type: cache
     args:
-      size: 200000
-      lazy_cache_ttl: 259200
-      lazy_cache_reply_ttl: 30
-      cache_everything: false
-
-  # 修改应答 ttl
-  - tag: 'modify_ttl'
-    type: 'ttl'
-    args:
-      minimal_ttl: 300
-      maximum_ttl: 3600
+      size: 10240
+      lazy_cache_ttl: 86400
 
   # ipset 写入应答 IP 到系统 ipset
-  - tag: remote_ipset
+  - tag: blacklist
     type: 'ipset'
     args:
       set_name4: 'blacklist'   # 如果非空，存放 ipv4 地址到这个表。这个表属性 family 需为 `inet`。
@@ -52,11 +43,8 @@ plugins:
     args:
       upstream:
         - addr:   tcp://1.1.1.1
-          enable_pipeline: true
-        - addr:   tcp://8.8.4.4
-          enable_pipeline: true
+        - addr:   tcp://76.76.19.19
         - addr:   tcp://208.67.222.222
-          enable_pipeline: true
           trusted: true # 是否是可信服务器
 
   # 匹配本地域名的插件
@@ -81,8 +69,6 @@ plugins:
     args:
       ip:
         - 'provider:geoip:cn'
-      cname:
-        - 'provider:geosite:cn'
 
   # 匹配广告域名的插件
   - tag: query_is_ad_domain
@@ -98,10 +84,8 @@ plugins:
     type: sequence
     args:
       exec:
-        # 缓存
-        - _misc_optm
         - lazy_cache
-        - _no_ecs
+        #- _no_ecs
 
         # 屏蔽广告域名
         - if: query_is_ad_domain
@@ -109,45 +93,22 @@ plugins:
             - _new_nxdomain_response
             - _return
 
-        # 已知的本地域名用本地服务器解析
-        - if: query_is_local_domain
-          exec:
-            - forward_local
-            - modify_ttl
-            - if: response_has_local_ip
-              exec:
-                - _return
-
-        # 已知的非本地域名用远程服务器解析,优先 IPv4
-        - if: query_is_non_local_domain
-          exec:
-            - _prefer_ipv4
-            - forward_remote
-            - modify_ttl
-            - remote_ipset
-            - if: "! response_has_local_ip"
-              exec:
-                - _return
-
-          # 剩下的未知域名用 IP 分流。
-          # 这里借助了 `fallback` 工作机制。分流原理请参考 `fallback`
-          # 的工作流程。
-          # primary 从本地服务器获取应答，丢弃非本地 IP 的结果。
         - primary:
             - forward_local
-            - if: "(! response_has_local_ip) && [_response_valid_answer]"
+            - if: "response_has_local_ip"
+              exec:
+                - _return
+            - if: "!response_has_local_ip"
               exec:
                 - _drop_response
-          # secondary 从远程服务器获取应答,优先 IPv4。
           secondary:
+            - _no_ecs
             - _prefer_ipv4
             - forward_remote
-            - modify_ttl
-          # 这里建议设置成 local 服务器正常延时的 2~5 倍。
-          # 这个延时保证了 local 延时偶尔变高时，其结果不会被 remote 抢答。
-          # 如果 local 超过这个延时还没响应，可以假设 local 出现了问题。
-          # 这时用就采用 remote 的应答。单位: 毫秒。
-          fast_fallback: 500
+            - if: "!response_has_local_ip"
+              exec:
+                - blacklist
+          fast_fallback: 150
           always_standby: true
 
 servers:
