@@ -52,29 +52,12 @@ endef
 define Package/smartdns/conffiles
 /etc/config/smartdns
 /etc/smartdns/address.conf
-/etc/smartdns/blacklist-ip.conf
 /etc/smartdns/anti-ad-smartdns.conf
-/etc/smartdns/smartdns-domains.china.conf
+/etc/smartdns/blacklist-chnroute.conf
+/etc/smartdns/blacklist-ip.conf
 /etc/smartdns/custom.conf
-endef
-
-define Package/smartdns/postinst
-#!/bin/sh
-
-chmod +x /usr/sbin/smartdns
-chmod +x /etc/init.d/smartdns
-mkdir -p /var/etc/smartdns/
-
-/etc/init.d/smartdns enable
-exit 0
-endef
-
-define Package/smartdns/prerm
-#!/bin/sh
-
-rm /var/etc/smartdns.conf -f
-rm /var/etc/smartdns/smartdns.conf -f
-exit 0
+/etc/smartdns/smartdns-domains.china.conf
+/etc/smartdns/whitelist-chnroute.conf
 endef
 
 define Package/smartdns/install
@@ -91,6 +74,7 @@ define Package/smartdns/install
 	$(INSTALL_CONF) $(CURDIR)/conf/whitelist-chnroute.conf $(1)/etc/smartdns/whitelist-chnroute.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/blacklist-chnroute.conf $(1)/etc/smartdns/blacklist-chnroute.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/anti-ad-smartdns.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/smartdns-domains.china.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/cnlist.conf $(1)/etc/smartdns/cnlist.conf
 	$(INSTALL_BIN) $(CURDIR)/conf/update-china-list.sh $(1)/usr/share/smartdns/update-china-list.sh
 endef
