@@ -374,5 +374,13 @@ o.write = function()
 	luci.http.redirect("https://pymumu.github.io/smartdns/#donate")
 end
 
+o = s:option(Button, "Restart")
+o.title = translate("Restart Service")
+o.inputtitle = translate("Restart")
+o.inputstyle = "apply"
+o.write = function()
+	luci.sys.call("/etc/init.d/smartdns restart")
+end
+
 return m
 

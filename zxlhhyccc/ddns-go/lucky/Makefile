@@ -41,7 +41,7 @@ define Package/lucky
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +libc +libpthread
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +libc:libgcc +libpthread:libgcc
   URL:=https://github.com/gdy666/lucky.git
 endef
 
