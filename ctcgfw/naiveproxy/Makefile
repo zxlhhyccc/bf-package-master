@@ -83,6 +83,22 @@ define Download/PGO_PROF
 	HASH:=7ac8186cec385515c6164dbfe05b05e4c6c2b25b5733e2d6b2c932670b2bd6cf
 endef
 
+# define Build/Prepare
+#	$(call Build/Prepare/Default)
+#
+#	( \
+#		pushd $(PKG_BUILD_DIR)/src ; \
+#		mkdir -p "chrome/build/pgo_profiles" ; \
+#		$(CP) "$(DL_DIR)/$(PGO_FILE)" "chrome/build/pgo_profiles" ; \
+#		mkdir -p "third_party/llvm-build/Release+Asserts" ; \
+#		$(TAR) -xzf "$(DL_DIR)/$(CLANG_FILE)" -C "third_party/llvm-build/Release+Asserts" ; \
+#		echo -e "llvmorg-$(CLANG_VER)" > "third_party/llvm-build/Release+Asserts/cr_build_revision" ; \
+#		mkdir -p "gn/out" ; \
+#		unzip -o "$(DL_DIR)/$(GN_FILE)" -d "gn/out" ; \
+#		popd ; \
+#	)
+# endef
+
 define Build/Prepare
 	$(call Build/Prepare/Default)
 
@@ -93,11 +109,20 @@ define Build/Prepare
 		mkdir -p "third_party/llvm-build/Release+Asserts" ; \
 		$(TAR) -xzf "$(DL_DIR)/$(CLANG_FILE)" -C "third_party/llvm-build/Release+Asserts" ; \
 		echo -e "llvmorg-$(CLANG_VER)" > "third_party/llvm-build/Release+Asserts/cr_build_revision" ; \
-#		mkdir -p "gn/out" ; \
-#		unzip -o "$(DL_DIR)/$(GN_FILE)" -d "gn/out" ; \
 		popd ; \
 	)
 endef
+
+# define Build/Configure
+#	( \
+#		pushd "$(PKG_BUILD_DIR)/src" ; \
+#		. ../init_env.sh "$(ARCH)" $(CPU_TYPE) $(CPU_SUBTYPE) "$(TOOLCHAIN_DIR)" ; \
+#		export naive_flags+=" $$$${naive_ccache_flags}" ; \
+#		mkdir -p "out" ; \
+#		./gn/out/gn gen "out/Release" --args="$$$${naive_flags}" --script-executable="$(PYTHON)" ; \
+#		popd ; \
+#	)
+# endef
 
 define Build/Configure
 	( \
@@ -105,7 +130,6 @@ define Build/Configure
 		. ../init_env.sh "$(ARCH)" $(CPU_TYPE) $(CPU_SUBTYPE) "$(TOOLCHAIN_DIR)" ; \
 		export naive_flags+=" $$$${naive_ccache_flags}" ; \
 		mkdir -p "out" ; \
-#		./gn/out/gn gen "out/Release" --args="$$$${naive_flags}" --script-executable="$(PYTHON)" ; \
 		gn gen "out/Release" --args="$$$${naive_flags}" --script-executable="$(PYTHON)" ; \
 		popd ; \
 	)

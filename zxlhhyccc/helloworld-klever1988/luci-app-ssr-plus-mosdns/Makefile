@@ -27,7 +27,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_mosdns
 
 LUCI_TITLE:=SS/SSR/V2Ray/Trojan/NaiveProxy/Socks5/Tun LuCI interface
 LUCI_PKGARCH:=all
@@ -60,7 +60,7 @@ LUCI_DEPENDS:= \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-redir \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns:Mosdns
+	+PACKAGE_$(PKG_NAME)_INCLUDE_mosdns:mosdns-ssrp
 
 define Package/$(PKG_NAME)/config
 select PACKAGE_luci-lib-ipkg if PACKAGE_$(PKG_NAME)
@@ -168,8 +168,8 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
 	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
 	default n
 
-config PACKAGE_$(PKG_NAME)_INCLUDE_Mosdns
-	bool "Include Mosdns"
+config PACKAGE_$(PKG_NAME)_INCLUDE_mosdns
+	bool "Include mosdns-ssrp"
 	default y
 endef
 

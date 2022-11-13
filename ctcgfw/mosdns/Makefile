@@ -37,12 +37,30 @@ GO_PKG_LDFLAGS_X:=main.version=v$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/mosdns
+define Package/mosdns/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
   TITLE:=A plug-in DNS forwarder/splitter
   URL:=https://github.com/IrineSistiana/mosdns
+endef
+
+define Package/mosdns
+  $(call Package/mosdns/Default)
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+endef
+
+define Package/mosdns-neo
+  $(call Package/mosdns/Default)
+  PROVIDES:=mosdns
+  VARIANT:=neo
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+endef
+
+define Package/mosdns-ssrp
+  $(call Package/mosdns/Default)
+  PROVIDES:=mosdns
+  VARIANT:=ssrp
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
@@ -61,6 +79,10 @@ ifeq ($(CONFIG_MOSDNS_COMPRESS_GOPROXY),y)
 	export GO111MODULE=on
 	export GOPROXY=https://goproxy.baidu.com
 endif
+
+define Build/Prepare
+	$(call Build/Prepare/Default)
+endef
 
 # GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
@@ -81,6 +103,17 @@ define Package/mosdns/install
 	$(INSTALL_DATA) ./files/config.yaml $(1)/etc/mosdns/config.yaml
 endef
 
+define Package/mosdns-neo/install
+	$(call GoPackage/Package/Install/Bin,$(1))
+endef
+
+define Package/mosdns-ssrp/install
+	$(call GoPackage/Package/Install/Bin,$(1))
+
+	$(INSTALL_DIR) $(1)/etc/mosdns
+	$(INSTALL_DATA) ./ssrp-files/config.yaml $(1)/etc/mosdns/config.yaml
+endef
+
 define Package/mosdns/postinst
 #!/bin/sh
 
@@ -94,3 +127,5 @@ endef
 
 $(eval $(call GoBinPackage,mosdns))
 $(eval $(call BuildPackage,mosdns))
+$(eval $(call BuildPackage,mosdns-neo))
+$(eval $(call BuildPackage,mosdns-ssrp))
