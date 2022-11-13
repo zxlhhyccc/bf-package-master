@@ -14,7 +14,7 @@ function index()
 
 	local page = entry({"admin", "nas", "filebrowser"}, cbi("filebrowser/settings"), _("File Browser"), 2)
 	page.dependent = true
-	page.acl_depends = { "luci-app-control-filebrowser" }
+	page.acl_depends = { "luci-app-filebrowser-neo" }
 
 	entry({"admin", "nas", "filebrowser", "check"}, call("action_check")).leaf = true
 	entry({"admin", "nas", "filebrowser", "download"}, call("action_download")).leaf = true

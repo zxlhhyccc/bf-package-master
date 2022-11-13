@@ -8,10 +8,10 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for FileBrowser
-LUCI_DEPENDS:=+control-filebrowser +luci-compat
+LUCI_DEPENDS:=+filebrowser-neo +luci-lua-runtime
 LUCI_PKGARCH:=all
 
-PKG_NAME:=luci-app-control-filebrowser
+PKG_NAME:=luci-app-filebrowser-neo
 PKG_VERSION:=0.0.3
 PKG_RELEASE:=1
 

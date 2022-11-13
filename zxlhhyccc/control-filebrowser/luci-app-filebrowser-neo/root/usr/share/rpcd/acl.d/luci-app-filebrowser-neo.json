@@ -1,0 +1,11 @@
+{
+	"luci-app-filebrowser-neo": {
+		"description": "Grant UCI access for luci-app-filebrowser-neo",
+		"read": {
+			"uci": [ "filebrowser" ]
+		},
+		"write": {
+			"uci": [ "filebrowser" ]
+		}
+	}
+}

@@ -52,15 +52,11 @@ endef
 
 define Package/mosdns-neo
   $(call Package/mosdns/Default)
-  PROVIDES:=mosdns
-  VARIANT:=neo
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/mosdns-ssrp
   $(call Package/mosdns/Default)
-  PROVIDES:=mosdns
-  VARIANT:=ssrp
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
