@@ -1048,17 +1048,20 @@ msgstr "警告：当前系统没有包括两个分区!"
 msgid "Warning: This system does not support powering off!"
 msgstr "警告：本系统不支持软关机!"
 
-msgid "Disable IPv6 DNS forwards"
-msgstr "禁止解析 IPv6 DNS 记录"
+msgid "Filter IPv6 AAAA records"
+msgstr "过滤 IPv6 AAAA 记录"
 
-msgid "Filter IPv6(AAAA) DNS Query Name Resolve"
-msgstr "过滤掉 IPv6(AAAA) ，只返回 IPv4 DNS 域名记录"
+msgid "Remove IPv6 addresses from the results and only return IPv4 addresses."
+msgstr "从结果中删除 IPv6 地址，只返回 IPv4 地址。"
 
-msgid "Disable IPv4 DNS forwards"
-msgstr "禁止解析 IPv4 DNS 记录"
+msgid "Can be useful if ISP has IPv6 nameservers but does not provide IPv6 routing."
+msgstr "如果 ISP 有 IPv6 域名服务器但不提供 IPv6 路由，这可能很有用。"
 
-msgid "Filter IPv4(A) DNS Query Name Resolve"
-msgstr "过滤掉 IPv4(A) ，只返回 IPv6 DNS 域名记录"
+msgid "Filter IPv4 A records"
+msgstr "过滤 IPv4 A 记录"
+
+msgid "Remove IPv4 addresses from the results and only return IPv6 addresses."
+msgstr "从结果中删除 IPv4 地址，只返回 IPv6 地址。"
 
 msgid "Disable HTTPS DNS Type forwards"
 msgstr "禁止解析 HTTPS 类型的记录"
