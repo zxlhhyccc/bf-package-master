@@ -30,7 +30,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/gdy666/lucky
-GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS:=-ldflags="-s -w"
 GO_PKG_LDFLAGS_X:=main.Version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
@@ -41,7 +41,7 @@ define Package/lucky
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +libc:libgcc +libpthread:libgcc
+  DEPENDS:=$(GO_ARCH_DEPENDS)
   URL:=https://github.com/gdy666/lucky.git
 endef
 
@@ -65,6 +65,11 @@ ifeq ($(CONFIG_LUCKY_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
+define Package/$(PKG_NAME)/extra_provides
+    echo 'libc.so.6'; \
+    echo 'libpthread.so.0';
+endef
+
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 if [ -z "$${IPKG_INSTROOT}" ]; then
@@ -75,7 +80,7 @@ endef
 define Build/Compile
 ( \
   pushd $(PKG_BUILD_DIR) ; \
-  go build -v -tags "adminweb nomsgpack" -ldflags="-s -w" ; \
+  go build -v -tags "adminweb nomsgpack" $(GO_PKG_LDFLAGS) ; \
   popd ; \
 )
 ifneq ($(CONFIG_LUCKY_COMPRESS_UPX),)
@@ -88,7 +93,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lucky $(1)/usr/bin/lucky
 	$(INSTALL_BIN) ./files/lucky.init $(1)/etc/init.d/lucky
 	$(INSTALL_BIN) ./files/luci-lucky.uci-default $(1)/etc/uci-defaults/luci-lucky
-	$(INSTALL_DATA) ./files/lucky-default.conf $(1)/etc/lucky/lucky-default.conf
+	$(INSTALL_DATA) ./files/lucky-default.conf $(1)/etc/lucky/lucky.conf
 endef
 
 $(eval $(call GoBinPackage,lucky))
