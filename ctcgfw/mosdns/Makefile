@@ -43,21 +43,19 @@ define Package/mosdns/Default
   SUBMENU:=IP Addresses and Names
   TITLE:=A plug-in DNS forwarder/splitter
   URL:=https://github.com/IrineSistiana/mosdns
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/mosdns
   $(call Package/mosdns/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/mosdns-neo
   $(call Package/mosdns/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/mosdns-ssrp
   $(call Package/mosdns/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/mosdns/config

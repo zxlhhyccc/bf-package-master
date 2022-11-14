@@ -39,14 +39,37 @@ GO_PKG_TAGS:=noupgrade
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/syncthing
-  TITLE:=Continuous file synchronization program
-  URL:=https://syncthing.net
-  DEPENDS:=$(GO_ARCH_DEPENDS)
+define Package/syncthing/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=File Transfer
+  TITLE:=Continuous file synchronization program
+  DEPENDS:=$(GO_ARCH_DEPENDS)
+  URL:=https://syncthing.net
   USERID:=syncthing=499:syncthing=499
+endef
+
+define Package/syncthing/Default/description
+		Syncthing replaces proprietary sync and cloud services with something
+		open, trustworthy and decentralized. Your data is your data alone and
+		you deserve to choose where it is stored, if it is shared with some
+		third party and how it's transmitted over the Internet.
+endef
+
+define Package/syncthing/description
+$(call Package/syncthing/Default/description)
+endef
+
+define Package/syncthing-master/description
+$(call Package/syncthing/Default/description)
+endef
+
+define Package/syncthing
+  $(call Package/syncthing/Default)
+endef
+
+define Package/syncthing-master
+  $(call Package/syncthing/Default)
 endef
 
 define Package/syncthing/conffiles
@@ -54,11 +77,8 @@ define Package/syncthing/conffiles
 /etc/syncthing
 endef
 
-define Package/syncthing/description
-		Syncthing replaces proprietary sync and cloud services with something
-		open, trustworthy and decentralized. Your data is your data alone and
-		you deserve to choose where it is stored, if it is shared with some
-		third party and how it's transmitted over the Internet.
+define Package/syncthing-master/conffiles
+$(call Package/syncthing/conffiles)
 endef
 
 define Package/syncthing/config
@@ -77,6 +97,10 @@ export GO111MODULE=on
 export GOPROXY=https://goproxy.io
 endif
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+endef
+
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_SYNCTHING_COMPRESS_UPX),y)
@@ -90,5 +114,12 @@ define Package/syncthing/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/syncthing $(1)/usr/bin/syncthing
 endef
 
+define Package/syncthing-master/install
+	$(call GoPackage/Package/Install/Bin,$(1))
+
+	$(CP) ./files/* $(1)/
+endef
+
 $(eval $(call GoBinPackage,syncthing))
 $(eval $(call BuildPackage,syncthing))
+$(eval $(call BuildPackage,syncthing-master))

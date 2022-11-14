@@ -40,24 +40,31 @@ define Package/filebrowser/Default
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=Web File Browser
+  DEPENDS:=$(GO_ARCH_DEPENDS)
   URL:=https://github.com/filebrowser/filebrowser
 endef
 
-define Package/filebrowser/description
+define Package/filebrowser/Default/description
   filebrowser provides a file managing interface within a specified directory
   and it can be used to upload, delete, preview, rename and edit your files.
   It allows the creation of multiple users and each user can have its own directory.
   It can be used as a standalone app or as a middleware.
 endef
 
+define Package/filebrowser/description
+$(call Package/filebrowser/Default/description)
+endef
+
+define Package/filebrowser-neo/description
+$(call Package/filebrowser/Default/description)
+endef
+
 define Package/filebrowser
   $(call Package/filebrowser/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
 define Package/filebrowser-neo
   $(call Package/filebrowser/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
 define Package/filebrowser/config
