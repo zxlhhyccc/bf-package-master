@@ -1,13 +1,14 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright (C) 2015-2016 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v3.
+# Copyright (C) 2021-2022  sirpdboy  <herboy2008@gmail.com>
+# 
+# This is free software, licensed under the Apache License, Version 2.0 .
 #
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lucky
-PKG_VERSION:=1.6.0
+PKG_VERSION:=1.6.1
 PKG_RELEASE:=1
 
 ifeq ($(ARCH),mipsel)
@@ -38,7 +39,9 @@ ifeq ($(ARCH),aarch64)
 	LUCKY_ARCH:=arm64
 endif
 
-PKG_LICENSE:=Apache-2.0
+PKG_LICENSE:=GPL-3.0-only
+PKG_LICENSE_FILES:=LICENSE
+PKG_MAINTAINER:=Sirpdboy <herboy2008@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_HASH:=skip
@@ -54,7 +57,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-Main functions of Lucky: dynamic domain name ddns-go service, socat,frp 
+  Main functions of Lucky: dynamic domain name ddns-go service, socat,reverse proxy ,wake on lan
 endef
 
 define Package/$(PKG_NAME)/postinst
