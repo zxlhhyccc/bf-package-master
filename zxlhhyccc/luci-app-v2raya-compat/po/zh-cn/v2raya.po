@@ -1,3 +1,6 @@
+msgid "Setting"
+msgstr "设置"
+
 msgid "Basic Setting"
 msgstr "基本设置"
 
@@ -6,6 +9,9 @@ msgstr "v2rayA 客户端"
 
 msgid "v2rayA is a V2Ray Linux client supporting global transparent proxy, compatible with SS, SSR, Trojan(trojan-go), PingTunnel protocols."
 msgstr "v2rayA 是一个支持全局透明代理的 V2Ray Linux 客户端，同时兼容 SS、SSR、Trojan(trojan-go)、PingTunnel 协议"
+
+msgid "Running Status"
+msgstr "运行状态"
 
 msgid "NOT RUNNING"
 msgstr "未运行"

@@ -1,8 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright (C) 2022 ImmortalWrt.org
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-v2raya-compat
-PKG_VERSION:=1.1
-PKG_RELEASE:=3
+PKG_VERSION:=1.2.0
+PKG_RELEASE:=1
 
 PKG_MAINTAINER:=zxlhhyccc <zxlhhy@gmail.com>
 
@@ -11,6 +15,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2raya \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NONE_V2RAY \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_V5 \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Xray \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core
 
@@ -20,6 +25,7 @@ LUCI_DEPENDS:=+luci-compat \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2raya-v5:v2raya-v5 \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2raya:v2raya \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray-core \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_V5:v2ray-core-v5 \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray-core \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_SagerNet_Core:sagernet-core
 
@@ -35,6 +41,9 @@ choice
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
 	bool "V2ray-core"
+
+	config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_V5
+	bool "V2ray-core-v5"
 
 	config PACKAGE_$(PKG_NAME)_INCLUDE_Xray
 	bool "Xray-core"
