@@ -165,11 +165,11 @@ local has_xray = api.is_finded("xray")
 			var v_port = opt.get("port");
 			var v_method = opt.get("ss_rust_encrypt_method");
 			var v_password = opt.get("password");
-
+			
 			url = btoa(v_method.value + ":" + v_password.value) + "@" +
 				v_server.value + ":" +
 				v_port.value + "/?";
-
+			
 			var params = "";
 			var v_plugin = opt.get("ss_plugin").value;
 			if (v_plugin && v_plugin != "none") {
@@ -876,7 +876,7 @@ local has_xray = api.is_finded("xray")
 					opt.set('tls', true);
 					opt.set('xtls',true);
 					opt.set('flow', queryParam.flow || "xtls-rprx-direct");
-					opt.set('tls_serverName', queryParam.sni || '');					
+					opt.set('tls_serverName', queryParam.sni || '');
 					opt.set('tls_allowInsecure', true);
 					if (queryParam.allowinsecure === '0') {
 						opt.set('tls_allowInsecure', false);
