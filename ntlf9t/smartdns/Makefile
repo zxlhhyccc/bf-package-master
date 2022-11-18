@@ -79,4 +79,30 @@ define Package/smartdns/install
 	$(INSTALL_BIN) $(CURDIR)/conf/update-china-list.sh $(1)/usr/share/smartdns/update-china-list.sh
 endef
 
+define Package/smartdns/postinst
+#!/bin/sh
+	/etc/init.d/smartdns enable >/dev/null 2>&1
+	enable=$$(uci get smartdns.@smartdns[0].enabled 2>/dev/null)
+	if [ "$$enable" == "1" ]; then
+		/etc/init.d/smartdns reload
+	fi
+	rm -f /tmp/luci-indexcache
+	rm -f /tmp/luci-modulecache/*
+exit 0
+endef
+
+define Package/smartdns/prerm
+#!/bin/sh
+
+if [ -z "$${IPKG_INSTROOT}" ]; then
+     /etc/init.d/smartdns disable
+     /etc/init.d/smartdns stop
+uci -q batch <<-EOF >/dev/null 2>&1
+	delete ucitrack.@v2raya[-1]
+	commit ucitrack
+EOF
+fi
+exit 0
+endef
+
 $(eval $(call BuildPackage,smartdns))
