@@ -28,7 +28,7 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/dnsforwarder
+define Package/dnsforwarder/Default
   SECTION:=net
   CATEGORY:=Network
   TITLE:=A simple DNS forwarder
@@ -36,9 +36,25 @@ define Package/dnsforwarder
   DEPENDS:=+coreutils +coreutils-base64 +dnsmasq-full +libpthread +wget-ssl
 endef
 
-define Package/dnsforwarder/description
+define Package/dnsforwarder/Default/description
   Forwarding queries to customized domains (and their subdomains) to specified servers
   over a specified protocol (UDP or TCP). non-standard ports are supported.
+endef
+
+define Package/dnsforwarder/description
+$(call Package/dnsforwarder/Default/description)
+endef
+
+define Package/dnsforwarder-acc/description
+$(call Package/dnsforwarder/Default/description)
+endef
+
+define Package/dnsforwarder
+  $(call Package/dnsforwarder/Default)
+endef
+
+define Package/dnsforwarder-acc
+  $(call Package/dnsforwarder/Default)
 endef
 
 CONFIGURE_ARGS+= --enable-downloader=wget
@@ -58,4 +74,20 @@ define Package/dnsforwarder/install
 	$(INSTALL_BIN) files/usr/share/dnsforwarder/gfwlist.sh $(1)/usr/share/dnsforwarder/gfwlist.sh
 endef
 
+define Package/dnsforwarder-acc/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/dnsforwarder $(1)/usr/bin/dnsforwarder
+
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) acc-files/etc/config/dnsforwarder $(1)/etc/config/dnsforwarder
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) acc-files/etc/init.d/dnsforwarder $(1)/etc/init.d/dnsforwarder
+
+	$(INSTALL_DIR) $(1)/etc/dnsforwarder
+	$(INSTALL_CONF) acc-files/etc/dnsforwarder/gfw.txt $(1)/etc/dnsforwarder/gfw.txt
+	$(INSTALL_DIR) $(1)/usr/share/dnsforwarder
+	$(INSTALL_BIN) acc-files/usr/share/dnsforwarder/gfwlist.sh $(1)/usr/share/dnsforwarder/gfwlist.sh
+endef
+
 $(eval $(call BuildPackage,dnsforwarder))
+$(eval $(call BuildPackage,dnsforwarder-acc))
