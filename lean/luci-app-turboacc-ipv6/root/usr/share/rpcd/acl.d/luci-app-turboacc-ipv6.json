@@ -1,0 +1,11 @@
+{
+	"luci-app-turboacc-ipv6": {
+		"description": "Grant UCI access for luci-app-turboacc-ipv6",
+		"read": {
+			"uci": [ "turboacc" ]
+		},
+		"write": {
+			"uci": [ "turboacc" ]
+		}
+	}
+}
