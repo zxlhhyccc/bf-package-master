@@ -21,8 +21,8 @@ PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=324aa2d77d3a39f74c8f32140d5bfc77337311e0
-PKG_MIRROR_HASH:=98549cd357f427f5741fde9ebd43215bdf479df072a04e05959d002da652400f
+PKG_SOURCE_VERSION:=b9429e04d2be2fdd8a096fcf92c65606bea7395c
+PKG_MIRROR_HASH:=5686d347928c7732284d297a5bf4cb0941f1f9626d54c7f8fc6c9a4230470de8
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -98,7 +98,7 @@ if [ -z "$${IPKG_INSTROOT}" ]; then
      /etc/init.d/smartdns disable
      /etc/init.d/smartdns stop
 uci -q batch <<-EOF >/dev/null 2>&1
-	delete ucitrack.@v2raya[-1]
+	delete ucitrack.@smartdns[-1]
 	commit ucitrack
 EOF
 fi
