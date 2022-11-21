@@ -60,7 +60,6 @@ define Package/$(PKG_NAME)/description
   Main functions of Lucky: dynamic domain name ddns-go service, socat,reverse proxy ,wake on lan
 endef
 
-
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 if [ -z "$${IPKG_INSTROOT}" ]; then
