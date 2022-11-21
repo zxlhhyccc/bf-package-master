@@ -61,7 +61,7 @@ endef
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_BITSRUNLOGIN_GO_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/bitsrunlogin-go
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/BitSrunLoginGo
 endif
 endef
 
