@@ -15,7 +15,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/HyNetwork/hysteria.git
+PKG_SOURCE_URL:=https://github.com/apernet/hysteria.git
 PKG_SOURCE_VERSION:=c7a87b2c43869ac2aaf1c4449aabfe2ba3805084
 PKG_MIRROR_HASH:=5adff874c8aab3e60e1e7592333318fbdcc72b33bd508acab5ae3ba64823a809
 
@@ -42,7 +42,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=Web Servers/Proxies
 	DEPENDS:=$$(GO_ARCH_DEPENDS)
 	TITLE:=Hysteria is a feature-packed network utility optimized for networks of poor quality (e.g. satellite connections, congested public Wi-Fi, connecting from China to servers abroad)
-	URL:=https://github.com/HyNetwork/hysteria
+	URL:=https://github.com/apernet/hysteria
 endef
 
 define Package/$(PKG_NAME)/config
