@@ -26,7 +26,7 @@ inital_conf(){
 	#[ -e "/lib/modules/$(uname -r)/mtkhnat.ko" ] && { sw_flow="0"; hw_flow="1"; }
 	[ ! -e "/lib/modules/$(uname -r)/mtkhnat.ko" ] && hw_flow="0";
 	[ ! -e "/lib/modules/$(uname -r)/xt_FLOWOFFLOAD.ko" ] && { sw_flow="0"; hw_flow="0"; }
-	[ ! -e "/lib/modules/$(uname -r)/xt_FULLCONENAT.ko" ] && fullcone_nat="0"
+	#[ ! -e "/lib/modules/$(uname -r)/xt_FULLCONENAT.ko" ] && fullcone_nat="0"
 
 	if [ $bbr_cca = "bbr" ];  then
 		[ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] && bbr_cca="0"
@@ -423,8 +423,13 @@ check_status(){
 		fi
 		;;
 	"fullconenat")
-		[ "$(cat "/sys/module/xt_FULLCONENAT/refcnt" 2>"/dev/null" || echo 0)" -ne "0" ] && \
-			exit 0 || exit 1
+		#[ "$(cat "/sys/module/xt_FULLCONENAT/refcnt" 2>"/dev/null" || echo 0)" -ne "0" ] && \
+		#	exit 0 || exit 1
+		if [ -z "$(iptables -t nat -L zone_wan_postrouting | grep -i fullcone)" ]; then
+			exit 1
+		else
+			exit 0
+		fi
 		;;
 	"bbr")
 		if [ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbr" ]; then
