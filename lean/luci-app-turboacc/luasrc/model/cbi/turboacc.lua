@@ -47,7 +47,6 @@ fullcone_nat:value("0", translate("Disable"))
 fullcone_nat:value("1", translate("Compatible Mode"))
 fullcone_nat:value("2", translate("High Performing Mode"))
 fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
-end
 
 bbr_cca = s:option(ListValue, "bbr_cca", translate("BBR CCA"))
 bbr_cca:value("0", translate("CUBIC"))
