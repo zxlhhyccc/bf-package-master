@@ -17,10 +17,11 @@
 
 </div>
 <script type="text/javascript">
-        document.getElementById("v2raya").src = window.location.protocol + "//" + window.location.hostname + ":<%=v2rayaHttpPort%>";
- 		document.getElementById("v2raya").height = document.documentElement.clientHeight;
+        var v2rayaAdminURL = ""+ window.location.protocol + "//" + window.location.hostname + ":<%=v2rayaHttpPort%>";
+        document.getElementById("v2raya").src = v2rayaAdminURL
+          		document.getElementById("v2raya").height = document.documentElement.clientHeight;
         window.onresize = function(){
-            document.getElementById("v2raya").height = document.documentElement.clientHeight;
+          		document.getElementById("v2raya").height = document.documentElement.clientHeight;
         }
 </script>
 <%+footer%>

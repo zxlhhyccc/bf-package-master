@@ -8,11 +8,7 @@
   local v2rayaHttpPort = luci.model.uci.cursor():get("v2raya", "config", "address"):match(":[0-9]+"):gsub(":", "");
 -%>
 
-
 <script type="text/javascript">//<![CDATA[
-
-var v2rayaAdminURL = ""+ window.location.protocol + "//" + window.location.hostname +":"+ `<%=v2rayaHttpPort%>`;
-
 
 	XHR.poll(3, '<%=url([[admin]], [[services]], [[v2raya]], [[status]])%>', null,
 		function(x, data) {
@@ -21,8 +17,9 @@ var v2rayaAdminURL = ""+ window.location.protocol + "//" + window.location.hostn
 			{
 				if (data.running)
 				{
-					tb.innerHTML = '<em><b style=\"color:green\"> <%:v2rayA%> <%:RUNNING%></b></em>';
-					tb.innerHTML +='<br/><br/>' + ' <b > <%:Click the new page to open v2rayA%> : <a href="' +v2rayaAdminURL+'"'+' target="_blank">' + v2rayaAdminURL + ' </a></b><br/>'
+				var v2rayaAdminURL = ""+ window.location.protocol + "//" + window.location.hostname +":"+ `<%=v2rayaHttpPort%>`;
+					tb.innerHTML = '<em><b style=\"color:green\"> <%:v2rayA%> <%:RUNNING%></b></em>'
+					+ '<br/><br/>' + ' <b > <%:Click the new page to open v2rayA%> : <a href="' +v2rayaAdminURL+'"'+' target="_blank">' + v2rayaAdminURL + ' </a></b><br/>'
 				}
 				else
 				{
