@@ -2,15 +2,9 @@
 
 local m, s ,o
 
-font_green = [[<b style=color:green>]]
-font_red = [[<b style=color:red>]]
-font_off = [[</b>]]
-bold_on  = [[<strong>]]
-bold_off = [[</strong>]]
-
 m = Map("ddnsgo")
 m.title = translate("DDNS-GO")
-m.description = translate("DDNS-GO automatically obtains your public IPv4 or IPv6 address and resolves it to the corresponding domain name service.")..bold_on..translate("</br>For specific usage, see:")..bold_off..font_green..translate("<a href=\'https://github.com/sirpdboy/luci-app-ddns-go.git' target=\'_blank\'>GitHub @sirpdboy/luci-app-ddns-go </a>")..font_off
+m.description = translate("DDNS-GO automatically obtains your public IPv4 or IPv6 address and resolves it to the corresponding domain name service.")..translate("</br>For specific usage, see:")..translate("<a href=\'https://github.com/sirpdboy/luci-app-ddns-go.git' target=\'_blank\'>GitHub @sirpdboy/luci-app-ddns-go </a>")
 
 m:section(SimpleSection).template = "ddnsgo_status"
 
@@ -23,7 +17,7 @@ o.default = 0
 
 o = s:option(Value, "port",translate("Set the DDNS-TO access port"))
 o.datatype = "uinteger"
-o.default = 9876
+o.default=9876
 
 m.apply_on_parse = true
 m.on_after_apply = function(self,map)
