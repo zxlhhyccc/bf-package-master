@@ -11,8 +11,8 @@ function index()
 	page.dependent = true
 	page.acl_depends = { "luci-app-v2raya-compat" }
 
-	entry({"admin", "services", "v2raya", "v2raya"}, template("v2raya/v2raya"), _("v2rayA Client"), 10).leaf = true
-	entry({"admin", "services", "v2raya", "setting"}, cbi("v2raya/basic"), _("Setting"), 20).leaf = true
+	entry({"admin", "services", "v2raya", "setting"}, cbi("v2raya/basic"), _("Setting"), 10).leaf = true
+	entry({"admin", "services", "v2raya", "v2raya"}, template("v2raya/v2raya"), _("v2rayA Client"), 20).leaf = true
 	entry({"admin", "services", "v2raya", "log"}, cbi("v2raya/log")).leaf = true
 	entry({"admin", "services", "v2raya", "get_log"}, call("get_log")).leaf = true
 	entry({"admin", "services", "v2raya", "clear_log"}, call("clear_log")).leaf = true

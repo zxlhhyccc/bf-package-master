@@ -121,3 +121,6 @@ msgstr "这里是上传证书后证书所在的路径。"
 
 msgid "Logs"
 msgstr "日志"
+
+msgid "Click the new page to open v2rayA"
+msgstr "点击新页面打开v2rayA"

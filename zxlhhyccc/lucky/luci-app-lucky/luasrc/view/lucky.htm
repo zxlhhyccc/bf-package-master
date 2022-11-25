@@ -1,5 +1,5 @@
 <%#
- Copyright 2021-2022 sirpdboy Wich <sirpdboy@qq.com>
+ Copyright 2021-2022 sirpdboy Wich <herboy2008@gmail.com>
  https://github.com/sirpdboy/luci-app-lucky
  Licensed to the public under the Apache License 2.0.
 -%>
@@ -22,8 +22,7 @@
 
 
        var luckyAdminURL = ""+ window.location.protocol + "//" + window.location.hostname +":"+ `<%=luckyHttpPort%>`+`<%=safeURL%>`;
-        console.log(luckyAdminURL);
-        
+
          document.getElementById("lucky").src = luckyAdminURL
           		document.getElementById("lucky").height = document.documentElement.clientHeight;
         window.onresize = function(){
