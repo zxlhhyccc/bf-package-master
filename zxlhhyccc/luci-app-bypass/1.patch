@@ -62,7 +62,7 @@ index 3c17502..b844b93 100644
 \ No newline at end of file
 +</div>
 diff --git a/luasrc/view/bypass/ssrurl.htm b/luasrc/view/bypass/ssrurl.htm
-index 18acdfe..ba147fb 100644
+index 0f2c7e3..306de30 100644
 --- a/luasrc/view/bypass/ssrurl.htm
 +++ b/luasrc/view/bypass/ssrurl.htm
 @@ -69,9 +69,9 @@ function export_ssr_url(btn, urlname, sid) {
@@ -86,6 +86,15 @@ index 18acdfe..ba147fb 100644
  			return false;
  		}
  		s.innerHTML = "";
+@@ -118,7 +118,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 			document.getElementsByName('cbid.bypass.' + sid + '.insecure')[0].checked = (params.get("insecure") === "1");
+ 			document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = url.hash ? decodeURIComponent(url.hash.slice(1)) : "";
+ 
+-			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
++			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
+ 			return false;
+ 		case "ss":
+ 			var url0, param = "";
 @@ -164,7 +164,7 @@ function import_ssr_url(btn, urlname, sid) {
  				if (param != undefined) {
  					document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
@@ -112,17 +121,17 @@ index 18acdfe..ba147fb 100644
 +			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
  			return false;
  		case "trojan":
- 			var url0, param = "";
-@@ -251,7 +251,7 @@ function import_ssr_url(btn, urlname, sid) {
- 			if (param != undefined) {
- 				document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = decodeURI(param);
- 			}
+ 			try {
+@@ -234,7 +234,7 @@ function import_ssr_url(btn, urlname, sid) {
+ 			document.getElementsByName('cbid.bypass.' + sid + '.tls')[0].dispatchEvent(event);
+ 			document.getElementsByName('cbid.bypass.' + sid + '.tls_host')[0].value = url.searchParams.get("sni");
+ 
 -			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
 +			s.innerHTML = "<font style=color:green><%:Import configuration information successfully.%></font>";
  			return false;
  		case "vmess":
  			var sstr = b64DecodeUnicode(ssu[1]);
-@@ -303,7 +303,7 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -286,7 +286,7 @@ function import_ssr_url(btn, urlname, sid) {
  			}
  			document.getElementsByName('cbid.bypass.' + sid + '.mux')[0].checked = true;
  			document.getElementsByName('cbid.bypass.' + sid + '.mux')[0].dispatchEvent(event);
@@ -131,7 +140,7 @@ index 18acdfe..ba147fb 100644
  			return false;
  		case "vless":
  			try {
-@@ -366,10 +366,10 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -349,10 +349,10 @@ function import_ssr_url(btn, urlname, sid) {
  				}
  				break;
  			}
