@@ -19,7 +19,7 @@ var wrt = {
     var oldDate, oldValues = [];
 
     // find base path
-    var re = /(.*?admin\/status\/[^/]+)/;
+    var re = /(.*?admin\/network\/[^/]+)/;
     var basePath = window.location.pathname.match(re)[1];
 
     //----------------------
