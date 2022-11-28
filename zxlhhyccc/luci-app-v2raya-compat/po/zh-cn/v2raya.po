@@ -7,8 +7,12 @@ msgstr "基本设置"
 msgid "v2rayA Client"
 msgstr "v2rayA 客户端"
 
-msgid "v2rayA is a V2Ray Linux client supporting global transparent proxy, compatible with SS, SSR, Trojan(trojan-go), PingTunnel protocols."
-msgstr "v2rayA 是一个支持全局透明代理的 V2Ray Linux 客户端，同时兼容 SS、SSR、Trojan(trojan-go)、PingTunnel 协议"
+msgid ""
+"v2rayA is a V2Ray Linux client supporting global transparent proxy, "
+"compatible with SS, SSR, Trojan(trojan-go), PingTunnel protocols."
+msgstr ""
+"v2rayA 是一个易用而强大的，跨平台的 V2Ray 客户端，支持 SS、SSR、"
+"Trojan（trojan-go）、PingTunnel 协议。"
 
 msgid "Running Status"
 msgstr "运行状态"
@@ -28,20 +32,23 @@ msgstr "v2rayA 版本"
 msgid "Open v2rayA page"
 msgstr "打开 v2rayA 页面"
 
-msgid "GUI access address"
-msgstr "GUI访问地址"
+msgid "Listening address"
+msgstr "监听地址"
 
 msgid "Use 0.0.0.0:2017 to monitor all access."
 msgstr "使用 0.0.0.0:2017 监听所有访问。"
 
-msgid "v2rayA configuration directory"
-msgstr "v2rayA 配置目录"
+msgid "Configuration"
+msgstr "配置"
 
-msgid "Ipv6 Support"
+msgid "Configuration directory."
+msgstr "配置文件目录。"
+
+msgid "IPv6 support"
 msgstr "IPv6 支持"
 
 msgid "Make sure your IPv6 network works fine before you turn it on."
-msgstr "在开启之前确保您的 IPv6 网络工作正常。"
+msgstr "开启前，请确保您的 IPv6 网络工作正常。"
 
 msgid "AUTO"
 msgstr "自动"
@@ -52,8 +59,8 @@ msgstr "开启"
 msgid "OFF"
 msgstr "关闭"
 
-msgid "Log file"
-msgstr "日志文件"
+msgid "Log file path"
+msgstr "日志文件路径"
 
 msgid "Log level"
 msgstr "日志等级"
@@ -73,16 +80,16 @@ msgstr "警告"
 msgid "Error"
 msgstr "错误"
 
-msgid "Log Keepd Max Days"
-msgstr "日志记录天数"
+msgid "Max log retention period"
+msgstr "最长日志保留时间"
 
-msgid "Maximum number of days to keep log files is 3 day."
-msgstr "保留日志文件的最大天数为 3 天。"
+msgid "Maximum number of days to keep log files."
+msgstr "保留日志文件的最长天数。"
 
-msgid "Disable log color"
-msgstr "禁用日志颜色"
+msgid "Disable log color output"
+msgstr "禁用日志彩色输出"
 
-msgid "Log disable timestamp"
+msgid "Disable log timestamp"
 msgstr "禁用日志时间戳"
 
 msgid "v2ray binary path"
