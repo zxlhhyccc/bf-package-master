@@ -10,7 +10,7 @@ s = m:section(TypedSection, "turboacc", "")
 s.addremove = false
 s.anonymous = true
 
-if nixio.fs.access("/lib/modules/" .. kernel_version .. "/xt_FLOWOFFLOAD.ko") then
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/xt_FLOWOFFLOAD.ko") or nixio.fs.access("/lib/modules/" .. kernel_version .. "/nft_flow_offload.ko") then
 sw_flow = s:option(Flag, "sw_flow", translate("Software flow offloading"))
 sw_flow.default = 0
 sw_flow.description = translate("Software based offloading for routing/NAT")
@@ -41,12 +41,14 @@ sfe_flow.description = translate("Shortcut-FE based offloading for routing/NAT")
 sfe_flow:depends("sw_flow", 0)
 end
 
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/xt_FULLCONENAT.ko") or nixio.fs.access("/lib/modules/" .. kernel_version .. "/nft_fullcone.ko") then
 fullcone_nat = s:option(ListValue, "fullcone_nat", translate("FullCone NAT"))
 fullcone_nat.default = 0
 fullcone_nat:value("0", translate("Disable"))
 fullcone_nat:value("1", translate("Compatible Mode"))
 fullcone_nat:value("2", translate("High Performing Mode"))
 fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
+end
 
 bbr_cca = s:option(ListValue, "bbr_cca", translate("BBR CCA"))
 bbr_cca:value("0", translate("CUBIC"))
@@ -109,3 +111,4 @@ dns_caching_dns:depends("dns_caching_mode", 2)
 dns_caching_dns:depends("dns_caching_mode", 3)
 
 return m
+
