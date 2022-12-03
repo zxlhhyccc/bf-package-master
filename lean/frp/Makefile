@@ -1,9 +1,3 @@
-#
-# Copyright (C) 2015-2016 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v3.
-#
-
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=frp
@@ -20,38 +14,53 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_FRP_$(1)_COMPRESS_GOPROXY \
 	CONFIG_FRP_$(1)_COMPRESS_UPX
 
+PKG_MAINTAINER:=Richard Yu <yurichard3839@gmail.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Xingwang Liao <kuoruan@gmail.com>
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/fatedier/frp
-GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/...
+GO_PKG_BUILD_PKG:=github.com/fatedier/frp/cmd/...
 
 GO_PKG_LDFLAGS:=-s -w
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define frp/templates
+define Package/frp/install
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+
+	$(INSTALL_DIR) $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(2) $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/etc/frp/$(2).d/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/conf/$(2)_full.ini $(1)/etc/frp/$(2).d/
+	$(INSTALL_DIR) $(1)/etc/config/
+	$(INSTALL_CONF) ./files/$(2).config $(1)/etc/config/$(2)
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) ./files/$(2).init $(1)/etc/init.d/$(2)
+
+	if [ -r ./files/$(2).uci-defaults ]; then \
+		$(INSTALL_DIR) $(1)/etc/uci-defaults; \
+		$(INSTALL_DATA) ./files/$(2).uci-defaults $(1)/etc/uci-defaults/$(2); \
+	fi
+endef
+
+define Package/frp/template
   define Package/$(1)
     SECTION:=net
     CATEGORY:=Network
     SUBMENU:=Web Servers/Proxies
-    TITLE:=A fast reverse proxy ($(1))
-    DEPENDS:=$$(GO_ARCH_DEPENDS)
+    TITLE:=$(1) - fast reverse proxy $(2)
     URL:=https://github.com/fatedier/frp
+    DEPENDS:=$(GO_ARCH_DEPENDS)
   endef
 
   define Package/$(1)/description
-  frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall
-  to the internet. As of now, it supports tcp & udp, as well as http and https protocols,
-  where requests can be forwarded to internal services by domain name.
-
-  This package contains the $(1).
+    $(1) is a fast reverse proxy $(2) to help you expose a local server behind
+    a NAT or firewall to the internet.
   endef
 
   define Package/$(1)/config
@@ -70,11 +79,12 @@ define frp/templates
       export GOPROXY=https://goproxy.baidu.com
   endif
 
-  define Package/$(1)/install
-	$$(call GoPackage/Package/Install/Bin,$$(PKG_INSTALL_DIR))
+  define Package/$(1)/conffiles
+/etc/config/$(1)
+  endef
 
-	$$(INSTALL_DIR) $$(1)/usr/bin
-	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/$(1) $$(1)/usr/bin/
+  define Package/$(1)/install
+    $(call Package/frp/install,$$(1),$(1))
   endef
 endef
 
@@ -89,8 +99,7 @@ $(foreach component,$(FRP_COMPONENTS),
 )
 endef
 
-$(foreach component,$(FRP_COMPONENTS), \
-  $(eval $(call frp/templates,$(component))) \
-  $(eval $(call GoBinPackage,$(component))) \
-  $(eval $(call BuildPackage,$(component))) \
-)
+$(eval $(call Package/frp/template,frpc,client))
+$(eval $(call Package/frp/template,frps,server))
+$(eval $(call BuildPackage,frpc))
+$(eval $(call BuildPackage,frps))
