@@ -14,7 +14,7 @@ m.description = translate("v2rayA is a V2Ray Linux client supporting global tran
 
 m:section(SimpleSection).template = "v2raya/v2raya_status"
 
-s = m:section(TypedSection, "v2raya")
+s = m:section(NamedSection, "config", "v2raya")
 s:tab("settings", translate("Basic Setting"))
 s:tab("log", translate("Logs"))
 s.addremove = false
@@ -133,10 +133,12 @@ o = s:taboption("log", Value, "log", translate("Logs"))
 o.template = "v2raya/v2raya_log"
 o.rows = 50
 
+--[[
 m.apply_on_parse = true
 m.on_after_apply = function(self,map)
 	luci.sys.call("/etc/init.d/v2raya restart")
 end
+]]--
 
 --[[
 o.inputstyle = "reload"
