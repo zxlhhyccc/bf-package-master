@@ -173,7 +173,8 @@ return view.extend({
 	render: function() {
 		var m, s, o;
 
-		m = new form.Map('frpc', _('frp Client'));
+		m = new form.Map('frpc', _('frp Client'),
+			_('Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.'));
 
 		s = m.section(form.NamedSection, '_status');
 		s.anonymous = true;
@@ -185,9 +186,8 @@ return view.extend({
 				});
 			});
 
-			return E('div', { class: 'cbi-section' }, [
-				E('div', { id: 'service_status' },
-					_('Collecting data ...'))
+			return E('div', { class: 'cbi-section', id: 'status_bar' }, [
+					E('p', { id: 'service_status' }, _('Collecting data...'))
 			]);
 		}
 
