@@ -1,56 +1,54 @@
+## OAF(Open App Filter)  
+OAF is a parental control plug-in based on OpenWrt, which supports app filtering for games, videos, chats, downloads, such as Tiktok, Youtube, Telegram,etc.,and support self-defined app rules, you can lean more and download firmware by visiting [www.openappfilter.com](http://www.openappfilter.com) .
+### Preparation
+- Prepare a router that supports openwrt  
+There are already many routers that support the openwrt system, you can choose a simple one for installation,[See which devices support](https://openwrt.org).  
+- Install the openwrt system on your router  
+The openwrt install tutorial can be found through the [forum](https://forum.openwrt.org).  
+### How to compile OAF  
+1. Prepare OpenWrt source or SDK and compile successfully   
+#### general steps  
+```
+   git clone https://github.com/openwrt/openwrt
+   cd openwrt
+   ./scripts/feeds update -a
+   ./scripts/feeds install -a
+   make defconfig
+   make V=s
+```   
+2. Download OAF source code  
+git clone https://github.com/destan19/OpenAppFilter.git package/OpenAppFilter    
+3. Open the compile configuration   
+```
+     echo "CONFIG_PACKAGE_luci-app-oaf=y" >>.config  
+     make defconfig  
+```
+4. Begin compile  
+- Compile OAF separately  
+```
+     make package/luci-app-oaf/compile V=s  
+```
+- Compile the entire firmware  
+```
+     make V=s  
+```
+### How to install OAF  
+If you can't compile it yourself, you can install it directly into the released OpenWrt version  
+1. Install an officially released version of openwrt  
+Note that it must be the official release version,may cause failure if other versions are used, because OAF depend on the kernel version.  
+It is best to download through the following official address  
+https://downloads.openwrt.org/releases   
+2. Download OAF zip file  
+Find the corresponding OAF zip file on the release page and download it, note that the plug-in version and the system version must be consistent.  
+3. Install OAF ipks  
+Unzip thie OAF package and then install ipks in order  
+- kmod-oaf  
+- appfilter   
+- luci-compat(if the luci version is 2.0, openwrt 19.07+)   
+- luci-app-oaf    
+- luci-i18n-oaf-zh-cn(Chinese Language Pack, optional)  
 
-## OpenAppFilter功能简介
-
-OpenAppFilter模块基于数据流深度识别技术，实现对单个app进行管控的功能，并支持上网记录统计
-
-### 主要使用场景
-	- 家长对小孩上网行为进行管控，限制小孩玩游戏等
-	- 限制员工使用某些app， 如视频、招聘、购物、游戏、常用网站等
-	- 记录终端的上网记录，实时了解当前app使用情况，比如xxx正在访问抖音
-	
-### 插件截图
-#### 1
-![main1](https://github.com/destan19/images/blob/master/oaf/main1.png)
+### Notice
+If there is no version you need, you need to compile and generate it yourself, and I will release more architecture ipks later.
 
 
-#### 2
-![main2](https://github.com/destan19/images/blob/master/oaf/main2.png)
-
-### 支持app列表(只列主流)
- - 游戏
-   王者荣耀 英雄联盟 欢乐斗地主 梦幻西游 明日之后 ...
- - 音乐
- - 购物
-   淘宝 京东 唯品会 拼多多 苏宁易购
- - 聊天
-	QQ 微信 钉钉 
- - 招聘
- - 视频
-   抖音小视频 斗鱼直播 腾讯视频 爱奇艺 火山小视频 YY 微视 虎牙直播 快手 小红书 ...
-
-## 编译说明
-1. 下载OpenWrt源码，并完成编译(OpenWrt公众号有相关教程）
-> git clone https://github.com/coolsnowwolf/lede.git  
-> 或 https://github.com/openwrt/openwrt.git  
-2. 下载应用过滤源码放到OpenWrt的package 目录
-> cd package  
-git clone https://github.com/destan19/OpenAppFilter.git  
-cd -
-3. make menuconfig, 在luci app中选上luci oaf app模块并保存 
-4. make V=s 编译出带应用过滤功能的OpenWrt固件 
-
-### 备注 
-在lede中编译，需要去除加速模块，可以直接删除或者make menuconfig不编译加速模块  
- rm package/lean/luci-app-flowoffload -fr   
- rm package/lean/shortcut-fe/ -fr   
- rm package/lean/luci-app-sfe/ -fr   
-
-## 存在的问题
-- 该模块只工作在路由模式， 旁路模式、桥模式不生效  
-- 存在小概率误判的情况，特别是同一个公司的app，比如淘宝、支付宝等，如果需要过滤，建议相似的app全部勾选  
-- 暂不兼容OpenWrt主干的luci，如果报错，请使用老一点的版本（OpenWrt18.06或lean 的lede源码）  
-## 技术支持
-
-- 微信公众号: OpenWrt (获取应用过滤最新固件和OpenWrt教程)
-
-- 技术交流QQ群（1000人）: 943396288
