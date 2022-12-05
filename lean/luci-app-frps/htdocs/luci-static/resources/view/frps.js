@@ -127,7 +127,7 @@ return view.extend({
 		var m, s, o;
 
 		m = new form.Map('frps', _('frp Server'),
-			_('Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.'));
+			_('Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet,it supports TCP and UDP, as well as HTTP and HTTPS protocols.'));
 
 		s = m.section(form.NamedSection, '_status');
 		s.anonymous = true;

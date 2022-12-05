@@ -484,11 +484,12 @@ msgstr ""
 msgid "frp Client"
 msgstr "frp 客户端"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc.js:177
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:177
 msgid ""
 "Frp is a fast reverse proxy to help you expose a local server behind a NAT "
-"or firewall to the internet."
-msgstr "Frp 是一个可用于内网穿透的高性能的反向代理应用。"
+"or firewall to the internet,it supports TCP and UDP, as well "
+"as HTTP and HTTPS protocols."
+msgstr "Frp 是一个可用于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议。"
 
 #~ msgid "Name can not be \"common\""
 #~ msgstr "名称不能\"common\""
