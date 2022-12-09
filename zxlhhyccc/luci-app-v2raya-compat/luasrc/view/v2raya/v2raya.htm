@@ -5,7 +5,7 @@
 -%>
 
 <%
-  local v2rayaHttpPort = luci.model.uci.cursor():get("v2raya", "config", "address"):match(":[0-9]+"):gsub(":", "");
+  local v2rayaHttpPort = luci.model.uci.cursor():get('v2raya', 'config', 'address'):match(":[0-9]+"):gsub(":", "");
 -%>
 
 <%+header%>
