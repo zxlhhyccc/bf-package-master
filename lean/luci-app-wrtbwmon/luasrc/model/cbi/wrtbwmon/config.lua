@@ -1,4 +1,4 @@
-local m = Map("wrtbwmon", "流量统计 - 配置")
+local m = Map("wrtbwmon", "实时流量统计 - 配置")
 
 local s = m:section(NamedSection, "general", "wrtbwmon", "通用设置")
 

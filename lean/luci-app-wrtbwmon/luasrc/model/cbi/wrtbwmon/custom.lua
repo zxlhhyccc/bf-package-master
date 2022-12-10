@@ -3,7 +3,7 @@ local USER_FILE_PATH = "/etc/wrtbwmon.user"
 local fs = require "nixio.fs"
 
 local f = SimpleForm("wrtbwmon", 
-    "流量统计 - 自定义", 
+    "实时流量统计 - 自定义", 
     "本配置可根据 MAC 地址自定义客户端的备注名，"
     .. "每一行格式必须按照此格式配置: \"00:aa:bb:cc:ee:ff，客户端的备注名\"。")
 
