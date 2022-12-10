@@ -55,7 +55,7 @@ msgid ""
 "value is 0."
 msgstr ""
 "AdminPort 用于指定管理服务器要侦听的端口。如果此值为0，则不会启动管理服务器。"
-"<br />默认情况下，此值为7400。"
+"<br />默认情况下，此值为0。"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:33
 msgid ""
