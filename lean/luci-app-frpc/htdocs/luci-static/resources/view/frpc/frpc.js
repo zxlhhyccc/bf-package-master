@@ -3,6 +3,7 @@
 'require ui';
 'require form';
 'require rpc';
+'require uci';
 'require tools.widgets as widgets';
 
 //	[Widget, Option, Title, Description, {Param: 'Value'}],
@@ -27,7 +28,7 @@ var commonConf = [
 	[form.Flag, 'disable_log_color', _('Disable log color'), _('DisableLogColor disables log colors when LogWay == "console" when set to true.'), {datatype: 'bool', default: 'false'}],
 	[form.Value, 'token', _('Token'), _('Token specifies the authorization token used to create keys to be sent to the server. The server must have a matching token for authorization to succeed. <br />By default, this value is "".')],
 	[form.Value, 'admin_addr', _('Admin address'), _('AdminAddr specifies the address that the admin server binds to.<br />By default, this value is "127.0.0.1".'), {datatype: 'ipaddr'}],
-	[form.Value, 'admin_port', _('Admin port'), _('AdminPort specifies the port for the admin server to listen on. If this value is 0, the admin server will not be started.<br />By default, this value is 0.'), {datatype: 'port'}],
+	[form.Value, 'admin_port', _('Admin port'), _('AdminPort specifies the port for the admin server to listen on. If this value is 0, the admin server will not be started.<br />By default, this value is 7400.'), {datatype: 'port'}],
 	[form.Value, 'admin_user', _('Admin user'), _('AdminUser specifies the username that the admin server will use for login.<br />By default, this value is "admin".')],
 	[form.Value, 'admin_pwd', _('Admin password'), _('AdminPwd specifies the password that the admin server will use for login.<br />By default, this value is "admin".'), {password: true}],
 	[form.Value, 'assets_dir', _('Assets dir'), _('AssetsDir specifies the local directory that the admin server will load resources from. If this value is "", assets will be loaded from the bundled executable using statik.<br />By default, this value is "".')],
@@ -156,12 +157,14 @@ function getServiceStatus() {
 	});
 }
 
-function renderStatus(isRunning) {
+function renderStatus(isRunning, port) {
 	var renderHTML = "";
 	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
 
 	if (isRunning) {
-		renderHTML += String.format(spanTemp, 'green', _("frp Client"), _("RUNNING"));
+		var button = String.format('&#160; <a class="btn cbi-button" href="%s:%s" target="_blank" rel="noreferrer noopener">%s</a>',
+			window.location.origin, port, _('Open Web Interface'));
+		renderHTML += String.format(spanTemp, 'green', _("frp Client"), _("RUNNING")) + button;
 	} else {
 		renderHTML += String.format(spanTemp, 'red', _("frp Client"), _("NOT RUNNING"));
 	}
@@ -170,8 +173,15 @@ function renderStatus(isRunning) {
 }
 
 return view.extend({
-	render: function() {
+	load: function() {
+		return Promise.all([
+			uci.load('frpc')
+		]);
+	},
+
+	render: function(data) {
 		var m, s, o;
+		var webport = (uci.get(data[0], 'common', 'admin_port'));
 
 		m = new form.Map('frpc', _('frp Client'),
 			_('Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet,it supports TCP and UDP, as well as HTTP and HTTPS protocols.'));
@@ -181,8 +191,8 @@ return view.extend({
 		s.render = function (section_id) {
 			L.Poll.add(function () {
 				return L.resolveDefault(getServiceStatus()).then(function(res) {
-					var view = document.getElementById("service_status");
-					view.innerHTML = renderStatus(res);
+					var view = document.getElementById('service_status');
+					view.innerHTML = renderStatus(res, webport);
 				});
 			});
 
