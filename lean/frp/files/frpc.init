@@ -35,7 +35,7 @@ _err() {
 	echo "$*" >&2
 	logger -p daemon.err -t "$NAME" "$*"
 }
-		
+
 config_cb() {
 	[ $# -eq 0 ] && return
 
