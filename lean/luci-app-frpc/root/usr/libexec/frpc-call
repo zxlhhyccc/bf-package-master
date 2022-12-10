@@ -1,0 +1,14 @@
+#!/bin/sh
+
+NAME=frpc
+
+action=$1
+shift
+
+case "$action" in
+	tail)
+		log_file="$(uci -q get $NAME.common.log_file)"
+		tail -n 50 "${log_file:-/var/log/frpc.log}"
+	;;
+esac
+

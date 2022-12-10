@@ -6,11 +6,36 @@ USE_PROCD=1
 NAME=frpc
 PROG=/usr/bin/$NAME
 
+make_dir() {
+	local d
+	for d in "$@"; do
+		if [ ! -d "$d" ]; then
+			mkdir -p "$d" 2>/dev/null || return 1
+		fi
+	done
+
+	return 0
+}
+
+log_dir() {
+	config_get log_file "common" "log_file" ""
+	log_file="${log_file:-"/var/log/frpc.log"}"
+	
+	local log_dir
+	log_dir="$(dirname "${log_file}")"
+
+	[ -s ${log_file} ] || {
+		[ -d "$log_dir" ] || {
+			make_dir "$log_dir" || return 1
+		}
+	}
+}
+
 _err() {
 	echo "$*" >&2
 	logger -p daemon.err -t "$NAME" "$*"
 }
-
+		
 config_cb() {
 	[ $# -eq 0 ] && return
 
@@ -49,6 +74,8 @@ start_service() {
 	> "$conf_file"
 	config_load "$NAME"
 
+	log_dir
+
 	local enabled
 		config_get_bool enabled "common" 'enabled' '0'
 		[ "$enabled" = "1" ] || return 1
@@ -86,3 +113,4 @@ reload_service() {
 	stop
 	start
 }
+

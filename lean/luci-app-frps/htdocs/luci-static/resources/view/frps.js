@@ -16,7 +16,7 @@ var startupConf = [
 ];
 
 var commonConf = [
-	[form.Flag, 'enabled', _('Enable')],
+	[form.Flag, 'enabled', _('Enable'), {rmempty: false}],
 	[form.Value, 'bind_addr', _('Bind address'), _('BindAddr specifies the address that the server binds to.<br />By default, this value is "0.0.0.0".'), {datatype: 'ipaddr'}],
 	[form.Value, 'bind_port', _('Bind port'), _('BindPort specifies the port that the server listens on.<br />By default, this value is 7000.'), {datatype: 'port'}],
 	[form.Value, 'bind_udp_port', _('UDP bind port'), _('BindUdpPort specifies the UDP port that the server listens on. If this value is 0, the server will not listen for UDP connections.<br />By default, this value is 0'), {datatype: 'port'}],

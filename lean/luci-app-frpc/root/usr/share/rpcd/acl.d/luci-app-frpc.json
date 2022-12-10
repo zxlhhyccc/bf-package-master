@@ -4,7 +4,10 @@
 		"read": {
 			"file": {
 				"/etc/passwd": ["read"],
-				"/etc/group": ["read"]
+				"/etc/group": ["read"],
+				"/sbin/logread": [ "exec" ],
+				"/usr/bin/frpc": [ "exec" ],
+				"/usr/libexec/frpc-call": [ "exec" ]
 			},
 			"ubus": {
 				"service": [ "list" ]
@@ -16,3 +19,4 @@
 		}
 	}
 }
+

@@ -1,12 +1,30 @@
 {
 	"admin/services/frpc": {
 		"title": "frp Client",
+		"order": 30,
 		"action": {
-			"type": "view",
-			"path": "frpc"
+			"type": "alias",
+			"path": "admin/services/frpc/frpc"
 		},
 		"depends": {
-			"acl": [ "luci-app-frpc" ]
+			"acl": [ "luci-app-frpc" ],
+			"uci": { "frpc": true }
+		}
+	},
+	"admin/services/frpc/frpc": {
+		"title": "Configuration",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "frpc/frpc"
+		}
+	},
+	"admin/services/frpc/logread": {
+		"title": "Logs",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "frpc/logread"
 		}
 	}
 }
