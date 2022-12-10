@@ -28,7 +28,7 @@ define KernelPackage/r8168
   CONFLICTS:=kmod-r8169
 endef
 
-define Package/r8168/description
+define KernelPackage/r8168/description
   This package contains a driver for Realtek r8168 chipsets.
 endef
 
