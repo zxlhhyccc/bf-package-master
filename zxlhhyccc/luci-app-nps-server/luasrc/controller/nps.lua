@@ -9,7 +9,8 @@ function index()
 	page.dependent = true
 	page.acl_depends = { "luci-app-nps-server" }
 
-	entry({"admin", "services", "nps", "setting"}, cbi("nps/nps_server")).leaf = true
+	entry({"admin", "services", "nps", "setting"}, cbi("nps/nps_server"), _("Setting"), 10).leaf = true
+	entry({"admin", "services", "nps", "nps"}, template("nps/nps_server"), _("Nps Server Setting"), 20).leaf = true
 	entry({"admin","services","nps","status"}, call("act_status")).leaf = true
 end
 
@@ -20,4 +21,3 @@ function act_status()
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end
-

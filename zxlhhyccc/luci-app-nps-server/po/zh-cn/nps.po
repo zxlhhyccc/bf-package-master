@@ -77,3 +77,5 @@ msgstr "公共密码，客户端可以使用该密码连接到服务器"
 msgid "Web API unauthenticated IP address(the len of auth_crypt_key must be 16)"
 msgstr "Web API未经认证的IP地址（auth_crypt_key的len必须是16）"
 
+msgid "Click the new page to open Nps"
+msgstr "点击新页面打开 Nps"
