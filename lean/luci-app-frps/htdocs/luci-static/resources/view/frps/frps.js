@@ -2,6 +2,7 @@
 'require view';
 'require form';
 'require rpc';
+'require uci';
 'require tools.widgets as widgets';
 
 //	[Widget, Option, Title, Description, {Param: 'Value'}],
@@ -109,12 +110,14 @@ function getServiceStatus() {
 	});
 }
 
-function renderStatus(isRunning) {
+function renderStatus(isRunning, port) {
 	var renderHTML = "";
 	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
 
 	if (isRunning) {
-		renderHTML += String.format(spanTemp, 'green', _("frp Server"), _("RUNNING"));
+		var button = String.format('&#160;<a class="btn cbi-button" href="%s:%s" target="_blank" rel="noreferrer noopener">%s</a>',
+			window.location.origin, port, _('Open Web Interface'));
+		renderHTML += String.format(spanTemp, 'green', _("frp Server"), _("RUNNING")) + button;
 	} else {
 		renderHTML += String.format(spanTemp, 'red', _("frp Server"), _("NOT RUNNING"));
 	}
@@ -123,8 +126,15 @@ function renderStatus(isRunning) {
 }
 
 return view.extend({
-	render: function() {
+	load: function() {
+		return Promise.all([
+			uci.load('frps')
+		]);
+	},
+
+	render: function(data) {
 		var m, s, o;
+		var webport = (uci.get(data[0], 'common', 'dashboard_port'));
 
 		m = new form.Map('frps', _('frp Server'),
 			_('Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet,it supports TCP and UDP, as well as HTTP and HTTPS protocols.'));
@@ -134,8 +144,8 @@ return view.extend({
 		s.render = function (section_id) {
 			L.Poll.add(function () {
 				return L.resolveDefault(getServiceStatus()).then(function(res) {
-					var view = document.getElementById("service_status");
-					view.innerHTML = renderStatus(res);
+					var view = document.getElementById('service_status');
+					view.innerHTML = renderStatus(res, webport);
 				});
 			});
 

@@ -1,12 +1,30 @@
 {
 	"admin/services/frps": {
 		"title": "frp Server",
+		"order": 30,
 		"action": {
-			"type": "view",
-			"path": "frps"
+			"type": "alias",
+			"path": "admin/services/frps/frps"
 		},
 		"depends": {
-			"acl": [ "luci-app-frps" ]
+			"acl": [ "luci-app-frps" ],
+			"uci": { "frps": true }
+		}
+	},
+	"admin/services/frps/frps": {
+		"title": "Configuration",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "frps/frps"
+		}
+	},
+	"admin/services/frps/logread": {
+		"title": "Logs",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "frps/logread"
 		}
 	}
 }
