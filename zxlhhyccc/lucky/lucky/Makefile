@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=lucky
 PKG_VERSION:=1.7.4
 PKG_RELEASE:=1
-PKGARCH:=all
+PKGARCH:=all 
 
 ifeq ($(ARCH),mipsel)
 	LUCKY_ARCH:=mipsle_softfloat
@@ -42,7 +42,7 @@ endif
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Sirpdboy <herboy2008@gmail.com>
+PKG_MAINTAINER:=GDY666 <gdy666@foxmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_HASH:=skip
