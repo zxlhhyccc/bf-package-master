@@ -20,7 +20,8 @@ define Package/$(PKG_NAME)/description
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/config/wrtbwmon
+/etc/openvpn/
+/etc/config/openvpn
 endef
 
 define Build/Prepare
@@ -30,17 +31,13 @@ endef
 
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
-[ -n "${IPKG_INSTROOT}" ] || {
+[ -n "$${IPKG_INSTROOT}" ] || {
 	(. /etc/uci-defaults/openvpn) && rm -f /etc/uci-defaults/openvpn
 	exit 0
 }
 endef
 
 define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/conffiles
-/etc/openvpn/
 endef
 
 define Package/$(PKG_NAME)/install
