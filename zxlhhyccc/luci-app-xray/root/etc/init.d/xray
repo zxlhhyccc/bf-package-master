@@ -42,7 +42,13 @@ uci_bool_by_type() {
 }
 
 random_id() {
-	/usr/bin/${NAME} uuid | sed 's+-.*++g'
+	/usr/bin/${NAME} uuid | cut -c1-4
+}
+
+random_port() {
+	offset=$(/usr/bin/${NAME} uuid | tr -d '[a-zA-Z-]' | cut -c1-3)
+	[ "V${offset}" = "V" ] && offset=1
+	echo $((offset + 12000))
 }
 
 validate_server() {
@@ -218,8 +224,10 @@ gen_config_inbounds() {
 gen_stream_setting_key() {
 	network=$1
 	security=$2
-	echo $network >/var/run/network
-	echo $security >/var/run/security
+	ws_path=$3
+	if [ "V${ws_path}" != "V" ]; then
+		echo -en "\"wsSettings\": { \"path\": \"${ws_path}\" },\n        "
+	fi
 	if [ "V${network}" = "Vquic" ]; then
 		echo -e "\"quicSettings\": {},\n        \"${security}Settings\""
 	else
@@ -238,18 +246,29 @@ gen_xtls_flow() {
 
 gen_server_vless_config() {
 	local network='tcp'
-	local security=$(uci_get_by_name $1 security 'tls' | sed 's+-.*++g')
+	local security=$(uci_get_by_name $1 security 'tls')
+	if echo $security | grep -q 'vision'; then
+		security='tls'
+	else
+		security=$(echo $security | sed 's+-.*++g')
+	fi
 	[ "V${security}" = "Vquic" ] && {
 		sysctl -w net.core.rmem_max=250000 >/dev/null
 		network='quic'
 		security='tls'
+	}
+	[ "V${security}" = "Vwss" ] && {
+		sysctl -w net.core.rmem_max=250000 >/dev/null
+		network='ws'
+		security='tls'
+		ws_path=$(uci_get_by_name $1 ws_path '/')
 	}
 	validate_server $1 && {
 		serverName=$(uci_get_by_name $1 server_name)
 		[ "V$serverName" = "V" ] && serverName=$(uci_get_by_name $1 server)
 		cat <<-EOF
 			    {
-			      "tag": "dummy-$(random_id)",
+			      "tag": "OutB-vless-[$(uci_get_by_name $1 server)-${network}-${security}]-$(random_id)",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {
 			        "vnext": [
@@ -269,7 +288,7 @@ gen_server_vless_config() {
 			      "streamSettings": {
 			        "network": "${network}",
 			        "security": "${security}",
-			        $(gen_stream_setting_key ${network} ${security}): {
+			        $(gen_stream_setting_key ${network} ${security} $(uci_get_by_name $1 ws_path)): {
 			          "serverName": "${serverName}"
 			        }
 			      }
@@ -291,7 +310,7 @@ gen_server_trojan_config() {
 		[ "V$serverName" = "V" ] && serverName=$(uci_get_by_name $1 server)
 		cat <<-EOF
 			    {
-			      "tag": "dummy-$(random_id)",
+			      "tag": "OutB-trojan-[${serverName}]-$(random_id)",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {
 			        "servers": [
@@ -319,7 +338,7 @@ gen_server_shadowsocks_config() {
 	validate_server $1 && {
 		cat <<-EOF
 			    {
-			      "tag": "dummy-$(random_id)",
+			      "tag": "OutB-ss-[$(uci_get_by_name $1 server)]-$(random_id)",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {$(get_plugin_config $1)
 			        "servers": [
@@ -327,7 +346,40 @@ gen_server_shadowsocks_config() {
 			            "address": "$(uci_get_by_name $1 server)",
 			            "port": $(uci_get_by_name $1 server_port),
 			            "password": "$(uci_get_by_name $1 id)",
-			            "method": "$(uci_get_by_name $1 security)"
+			            "method": "$(uci_get_by_name $1 method)"
+			          }
+			        ]
+			      }
+			    },
+		EOF
+	}
+}
+
+gen_server_socks_config() {
+	validate_server $1 && {
+		local plugin=$(uci_get_by_name $1 plugin)
+		local plugin_opts=$(uci_get_by_name $1 plugin_opts)
+		local server_port=$(uci_get_by_name $1 server_port)
+		if [ "V$server_port" = "V_RANDDOM_" ]; then
+			server_port=$(random_port)
+			[ "V$server_port" = "V" ] && server_port=12000
+		fi
+		if [ "V$plugin" != "V" ]; then
+			plugin=$(which $plugin)
+			echo $plugin >>/var/run/xray-plugin
+			echo "${plugin} ${plugin_opts} >/var/log/xray.$1.log 2>&1 &" |
+				sed "s+_RANDDOM_+${server_port}+g" >>/var/run/xray-plugin.daemon.sh
+			chmod a+x /var/run/xray-plugin.daemon.sh
+		fi
+		cat <<-EOF
+			    {
+			      "tag": "OutB-socks-[$(basename ${plugin})]-$(random_id)",
+			      "protocol": "$(uci_get_by_name $1 protocol)",
+			      "settings": {
+			        "servers": [
+			          {
+			            "address": "$(uci_get_by_name $1 server)",
+			            "port": ${server_port}
 			          }
 			        ]
 			      }
@@ -337,10 +389,15 @@ gen_server_shadowsocks_config() {
 }
 
 get_plugin_config() {
-	local plugin=$(which $(uci_get_by_name $1 plugin))
+	local plugin=$(uci_get_by_name $1 plugin)
 	local plugin_opts=$(uci_get_by_name $1 plugin_opts)
-	if [ -n "$plugin" ]; then
-		echo $plugin >>/var/run/xray-plugin
+	if [ "V$plugin" != "V" ]; then
+		if [ "V$plugin" = "Vv2ray-plugin" -o "V$plugin" = "Vxray-plugin" ]; then
+			plugin="v2ray-plugin"
+		else
+			plugin=$(which $plugin)
+			echo $plugin >>/var/run/xray-plugin
+		fi
 		echo -e "\n        \"plugin\": \"$plugin\","
 		if [ -n "$plugin_opts" ]; then
 			echo "        \"pluginOpts\": \"$plugin_opts\","
@@ -350,7 +407,9 @@ get_plugin_config() {
 
 gen_server_config() {
 	local protocol=$(uci_get_by_name $1 protocol)
-	if [ "V${protocol}" = "Vvless" ]; then
+	if [ "V${protocol}" = "Vsocks" ]; then
+		gen_server_socks_config $1
+	elif [ "V${protocol}" = "Vvless" ]; then
 		gen_server_vless_config $1
 	elif [ "V${protocol}" = "Vtrojan" ]; then
 		gen_server_trojan_config $1
@@ -378,8 +437,6 @@ gen_config_file() {
 			$(gen_config_inbounds)
 			$(gen_config_outbounds)
 		  "routing": {
-		    "domainStrategy": "AsIs",
-		    "domainMatcher": "mph",
 		    "rules": [{
 		      "type": "field",
 		      "network": "tcp,udp",
@@ -387,15 +444,16 @@ gen_config_file() {
 		    }],
 		    "balancers": [{
 		      "tag": "${balancer_name}",
-		      "selector": ["dummy"],
+		      "selector": ["OutB"],
 		      "strategy": {
-		      "type": "$(uci_get_by_type general strategy leastPing)"
+		      "type": "$(uci_get_by_type general strategy leastLoad)"
 		      }
 		    }]
 		  },
 		  "observatory": {
-		    "subjectSelector": [ "outbound" ],
-		    "probeURL": "http://${WATCHDOG_ENDPOINT}/generate_204"
+		    "subjectSelector": [ "OutB" ],
+		    "probeURL": "http://${WATCHDOG_ENDPOINT}/generate_204",
+		    "probeInterval": "9s"
 		  },
 		  "log": {
 		    "loglevel": "warning"
@@ -407,7 +465,18 @@ gen_config_file() {
 
 xray_daemon() {
 	command -v xray >/dev/null 2>&1 || return 0
-	(/usr/bin/${NAME} run -c $(gen_config_file) >/var/log/xray.log 2>&1) &
+	if [ -e /proc/sys/fs/nr_open ] && [ -e /proc/sys/fs/file-max ]; then
+		[ $(cat /proc/sys/fs/nr_open) -lt 1048576 ] && echo 1048576 >/proc/sys/fs/nr_open   # 1048576=2^31
+		[ $(cat /proc/sys/fs/file-max) -lt 2097152 ] && echo 2097152 >/proc/sys/fs/file-max # 2097152=2^32
+		limit=$(cat /proc/sys/fs/nr_open)
+	else
+		limit=65535
+	fi
+	while (! ulimit -SHn $limit) && [ $limit -gt 1024 ]; do limit=$((limit / 2)); done
+	ulimit -SHn $limit
+	config_file=$(gen_config_file)
+	/var/run/xray-plugin.daemon.sh 2>/dev/null
+	(/usr/bin/${NAME} run -c ${config_file} >/var/log/xray.log 2>&1) &
 	for _ in $(seq 10); do if pgrep -f /usr/bin/${NAME} >/dev/null; then break; else sleep 1; fi; done
 	pgrep -f /usr/bin/${NAME} >/dev/null
 }
@@ -439,7 +508,9 @@ boot() {
 }
 
 kill_all() {
-	kill -9 $(pgrep -f $@) >/dev/null 2>&1
+	for it in $@; do
+		kill -9 $(pgrep -f $it) >/dev/null 2>&1
+	done
 }
 
 stop() {
@@ -447,8 +518,9 @@ stop() {
 	kill_all /usr/bin/${NAME}
 	if [ -f /var/run/xray-plugin ]; then
 		kill_all $(sort -u /var/run/xray-plugin)
-		rm -f /var/run/xray-plugin
+		rm -f /var/run/xray-plugin*
 	fi
+	rm -rf /var/log/xray*.log
 	xray_cleandns
 	del_cron
 }
@@ -478,6 +550,12 @@ healthcheck() {
 
 	LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 	pgrep -f "/var/etc/$NAME.json" >/dev/null 2>&1 || {
+		echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
+		stop >/dev/null 2>&1
+		start >/dev/null 2>&1
+		return 0
+	}
+	iptables -n -t nat -L PREROUTING | grep -q '_SPEC_LAN_DG' || {
 		echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
 		stop >/dev/null 2>&1
 		start >/dev/null 2>&1

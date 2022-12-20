@@ -9,6 +9,7 @@ local servers = {}
 local strategy = {
 	"random",
 	"leastPing",
+	"leastLoad",
 }
 
 local function has_bin(name)
