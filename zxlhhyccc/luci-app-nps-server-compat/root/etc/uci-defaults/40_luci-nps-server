@@ -1,0 +1,11 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@nps-server[-1]
+	add ucitrack nps-server
+	set ucitrack.@nps[-1].init=nps-server
+	commit ucitrack
+EOF
+
+rm -f /tmp/luci-indexcache
+exit 0

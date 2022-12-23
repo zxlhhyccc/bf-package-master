@@ -16,9 +16,9 @@
 				"/etc/v2raya/grpc_certificate.crt": [ "write" ],
 				"/etc/v2raya/grpc_private.key": [ "write" ]
 			},
-			"ubus": {
+			/*"ubus": {
 				"luci": [ "setInitAction" ]
-			},
+			},*/
 			"uci": [ "v2raya" ]
 		}
 	}
