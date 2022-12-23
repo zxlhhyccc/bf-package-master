@@ -1,0 +1,14 @@
+{
+	"admin/services/nps-server": {
+		"title": "Nps Server Setting",
+		"order": 50,
+		"action": {
+			"type": "view",
+			"path": "nps-server/nps-server"
+		},
+		"depends": {
+			"acl": [ "luci-app-nps-server" ],
+			"uci": { "nps-server": true }
+		}
+	}
+}

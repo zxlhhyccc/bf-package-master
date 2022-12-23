@@ -1,0 +1,111 @@
+# zh_CN translation for nps.
+# Copyright (C) 2015 Yoyodyne, Inc. (msgids)
+# This file is distributed under the same license as the gettext package.
+#
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2015-09-01 09:53中国标准时间\n"
+"Last-Translator: mujw <mujw@gmail.com>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Nps Server Setting"
+msgstr "Nps 服务端"
+
+msgid "Nps is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet."
+msgstr "Nps 是一种快速反向代理，可帮助您将 NAT 或防火墙后面的本地服务器公开到 Internet。"
+
+msgid "NOT RUNNING"
+msgstr "未运行"
+
+msgid "RUNNING"
+msgstr "运行中"
+
+msgid "Open Nps page"
+msgstr "打开Nps软件控制界面"
+
+msgid "Basic Setting"
+msgstr "基本设置"
+
+msgid "Web Setting"
+msgstr "面板选项"
+
+msgid "NpsProxy"
+msgstr "代理设置"
+
+msgid "Server"
+msgstr "服务器"
+
+msgid "Server Domain/IP"
+msgstr "填入服务器域名或IP地址"
+
+msgid "Bridge"
+msgstr "桥接"
+
+msgid "Auth Key"
+msgstr "认证秘钥"
+
+msgid "Enabled"
+msgstr "启用"
+
+msgid "Log Level"
+msgstr "日志等级"
+
+msgid "Log Path"
+msgstr "日志路径"
+
+msgid "Boot mode"
+msgstr "运行模式"
+
+msgid "Web access address"
+msgstr "面板访问地址"
+
+msgid "Web Username"
+msgstr "面板登录用户名"
+
+msgid "Web Password"
+msgstr "面板登录密码"
+
+msgid "Web Port"
+msgstr "面板绑定端口"
+
+msgid "ip limit switch"
+msgstr "是否限制ip访问，true或false或忽略"
+
+msgid "Public password, which clients can use to connect to the server"
+msgstr "公共密码，客户端可以使用该密码连接到服务器"
+
+msgid "Web API unauthenticated IP address(the len of auth_crypt_key must be 16)"
+msgstr "Web API未经认证的IP地址（auth_crypt_key的len必须是16）"
+
+msgid "Click the new page to open Nps"
+msgstr "点击新页面打开 Nps"
+
+msgid "Open Web Interface"
+msgstr "打开 Web 界面"
+
+msgid "Emergency"
+msgstr "紧急"
+
+msgid "Alert"
+msgstr "提醒"
+
+msgid "Critical"
+msgstr "致命错误"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Warning"
+msgstr "警告"
+
+msgid "Notice"
+msgstr "注意"
+
+msgid "Info"
+msgstr "信息"
+
+msgid "Debug"
+msgstr "调试"

@@ -1,0 +1,14 @@
+{
+	"admin/services/nps-client": {
+		"title": "Nps Client",
+		"order": 50,
+		"action": {
+			"type": "view",
+			"path": "nps-client/nps-client"
+		},
+		"depends": {
+			"acl": [ "luci-app-nps-client" ],
+			"uci": { "nps-client": true }
+		}
+	}
+}

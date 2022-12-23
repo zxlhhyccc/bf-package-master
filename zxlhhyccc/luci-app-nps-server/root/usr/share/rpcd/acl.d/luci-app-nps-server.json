@@ -1,0 +1,14 @@
+{
+	"luci-app-nps-server": {
+		"description": "Grant access to LuCI app nps-server",
+		"read": {
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": ["nps-server"]
+		},
+		"write": {
+			"uci": ["nps-server"]
+		}
+	}
+}
