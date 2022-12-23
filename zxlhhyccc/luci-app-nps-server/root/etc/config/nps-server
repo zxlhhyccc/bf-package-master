@@ -17,8 +17,4 @@ config nps-server 'config'
 	option public_vkey '123'
 	option auth_key 'test'
 	option auth_crypt_key '1234567812345678'
-	
-	
-	
-	
 
