@@ -1,7 +1,7 @@
 {
 	"admin/services/nps-client": {
 		"title": "Nps Client",
-		"order": 50,
+		"order": 60,
 		"action": {
 			"type": "view",
 			"path": "nps-client/nps-client"

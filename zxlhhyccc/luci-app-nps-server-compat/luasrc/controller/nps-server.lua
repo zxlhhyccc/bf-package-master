@@ -5,7 +5,7 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "services", "nps-server"}, alias("admin", "services", "nps-server", "setting"), _("Nps Server Setting"), 100)
+	local page = entry({"admin", "services", "nps-server"}, alias("admin", "services", "nps-server", "setting"), _("Nps Server Setting"), 60)
 	page.dependent = true
 	page.acl_depends = { "luci-app-nps-server-compat" }
 
