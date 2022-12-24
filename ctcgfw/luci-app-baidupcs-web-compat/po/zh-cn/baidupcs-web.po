@@ -28,7 +28,10 @@ msgstr "打开 BaiduPCS-Web 管理页面"
 
 #: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/view/baidupcs-web/baidupcs-web_status.htm:36
 msgid "Collecting data..."
-msgstr ""
+msgstr "收集数据中..."
+
+msgid "Running Status"
+msgstr "运行状态"
 
 #: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/view/baidupcs-web/baidupcs-web_status.htm:16
 msgid "NOT RUNNING"
@@ -83,5 +86,5 @@ msgid "最大并发连接数"
 msgstr ""
 
 #: /mnt/A/openwrt-latest/package/ctcgfw/luci-app-baidupcs-web/luasrc/model/cbi/baidupcs-web.lua:23
-msgid "网页端口"
+msgid "监听端口"
 msgstr ""

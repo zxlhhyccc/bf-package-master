@@ -20,7 +20,7 @@ s.anonymous = true
 enable = s:option(Flag, "enabled", translate("启用"))
 enable.rmempty = false
 
-o = s:option(Value, "port", translate("网页端口"))
+o = s:option(Value, "port", translate("监听端口"))
 o.datatype = "port"
 o.placeholder = "5299"
 o.default = "5299"

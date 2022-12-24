@@ -7,9 +7,9 @@ function index()
 
 	local page = entry({"admin", "nas", "baidupcs-web"}, alias("admin",  "nas", "baidupcs-web", "baidupcs-web"), _("BaiduPCS Web"), 300)
 	page.dependent = true
-	page.acl_depends = { "luci-app-baidupcs-web" }
+	page.acl_depends = { "luci-app-baidupcs-web-compat" }
 
-	entry({"admin", "nas", "baidupcs-web", "baidupcs-web"}, cbi("baidupcs-web/baidupcs-web"), _("BaiduPCS Web"), 300).leaf = true
+	entry({"admin", "nas", "baidupcs-web", "baidupcs-web"}, cbi("baidupcs-web/baidupcs-web")).leaf = true
 	entry({"admin", "nas", "baidupcs-web", "status"}, call("act_status")).leaf = true
 end
 
