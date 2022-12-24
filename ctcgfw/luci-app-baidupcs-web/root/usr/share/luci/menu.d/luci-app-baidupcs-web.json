@@ -1,0 +1,14 @@
+{
+	"admin/nas/baidupcs-web": {
+		"title": "BaiduPCS Web",
+		"order": 50,
+		"action": {
+			"type": "view",
+			"path": "baidupcs-web/baidupcs-web"
+		},
+		"depends": {
+			"acl": [ "luci-app-baidupcs-web" ],
+			"uci": { "baidupcs-web": true }
+		}
+	}
+}

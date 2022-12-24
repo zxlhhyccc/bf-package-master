@@ -1,0 +1,14 @@
+{
+	"luci-app-baidupcs-web": {
+		"description": "Grant access to LuCI app baidupcs-web",
+		"read": {
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": ["baidupcs-web"]
+		},
+		"write": {
+			"uci": ["baidupcs-web"]
+		}
+	}
+}
