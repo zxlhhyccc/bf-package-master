@@ -1,0 +1,11 @@
+{
+	"luci-app-baidupcs-web-compat": {
+		"description": "Grant UCI access for luci-app-baidupcs-web-compat",
+		"read": {
+			"uci": [ "baidupcs-web" ]
+		},
+		"write": {
+			"uci": [ "baidupcs-web" ]
+		}
+	}
+}

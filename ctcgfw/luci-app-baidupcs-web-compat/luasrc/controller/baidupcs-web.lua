@@ -5,11 +5,11 @@ function index()
 		return
 	end
 
-	local page = entry({"admin", "nas", "baidupcs-web"}, cbi("baidupcs-web"), _("BaiduPCS Web"))
-	page.order = 300
+	local page = entry({"admin", "nas", "baidupcs-web"}, alias("admin",  "nas", "baidupcs-web", "baidupcs-web"), _("BaiduPCS Web"), 300)
 	page.dependent = true
 	page.acl_depends = { "luci-app-baidupcs-web" }
 
+	entry({"admin", "nas", "baidupcs-web", "baidupcs-web"}, cbi("baidupcs-web/baidupcs-web"), _("BaiduPCS Web"), 300).leaf = true
 	entry({"admin", "nas", "baidupcs-web", "status"}, call("act_status")).leaf = true
 end
 
@@ -21,3 +21,4 @@ function act_status()
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
 end
+
