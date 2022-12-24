@@ -1,0 +1,14 @@
+{
+	"admin/vpn/ssocksd": {
+		"title": "sSocksd Server",
+		"order": 50,
+		"action": {
+			"type": "view",
+			"path": "ssocksd/ssocksd"
+		},
+		"depends": {
+			"acl": [ "luci-app-ssocksd" ],
+			"uci": { "ssocksd": true }
+		}
+	}
+}

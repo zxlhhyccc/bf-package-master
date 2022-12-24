@@ -1,0 +1,14 @@
+{
+	"luci-app-ssocksd": {
+		"description": "Grant access to LuCI app ssocksd",
+		"read": {
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"uci": ["ssocksd"]
+		},
+		"write": {
+			"uci": ["ssocksd"]
+		}
+	}
+}
