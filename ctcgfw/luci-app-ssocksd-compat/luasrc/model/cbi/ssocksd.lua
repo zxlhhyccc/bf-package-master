@@ -8,8 +8,8 @@ mp.description = translate("sSocksd Server is a simple, small, and easy-to-use S
 mp:section(SimpleSection).template = "ssocksd/ssocksd_status"
 
 s = mp:section(TypedSection, "ssocksd")
-s.anonymous=true
-s.addremove=false
+s.anonymous = true
+s.addremove = false
 
 enable = s:option(Flag, "enable", translate("Enable"))
 enable.default = 0
@@ -41,6 +41,5 @@ password.placeholder = "Password"
 password.default = "password"
 password.datatype = "string"
 password.password = true
-
 
 return mp

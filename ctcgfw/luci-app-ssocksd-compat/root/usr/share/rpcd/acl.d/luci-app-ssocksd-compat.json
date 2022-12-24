@@ -1,0 +1,11 @@
+{
+	"luci-app-ssocksd-compat": {
+		"description": "Grant UCI access for luci-app-ssocksd-compat",
+		"read": {
+			"uci": [ "ssocksd" ]
+		},
+		"write": {
+			"uci": [ "ssocksd" ]
+		}
+	}
+}

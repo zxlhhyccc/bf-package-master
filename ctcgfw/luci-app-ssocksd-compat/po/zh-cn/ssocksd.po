@@ -5,7 +5,7 @@ msgid "Base Setting"
 msgstr "基本设置"
 
 msgid "sSocksd Server"
-msgstr "sSocks服务端"
+msgstr "sSocks 服务端"
 
 msgid "sSocksd Server is a simple, small, and easy-to-use Socks5 server program, but supports TCP on IPv4 only."
 msgstr "sSocks服务端是一个简单、小巧且易于使用的Socks5服务器程序，但它仅支持IPv4上的TCP协议。"
