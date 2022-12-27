@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2022 ImmortalWrt.org
 
@@ -10,10 +10,7 @@ PKG_VERSION:=1.038.02
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-# PKG_SOURCE_URL:=https://github.com/umarizulkifli/r8101/raw/main/
-PKG_SOURCE_URL:=https://sources.immortalwrt.org \
-		https://sources.cdn.immortalwrt.org \
-		https://mirror.immortalwrt.org/sources
+PKG_SOURCE_URL:=@IMMORTALWRT
 PKG_HASH:=4141ebda97e277b5807a98b4090d7884d4463ac7a048676c72cb648ae4e8ae9e
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
