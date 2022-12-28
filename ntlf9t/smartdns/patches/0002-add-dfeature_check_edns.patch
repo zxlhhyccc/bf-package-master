@@ -1,6 +1,6 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -27,6 +27,7 @@ override CFLAGS += -DBASE_FILE_NAME='"$(notdir $<)"'
+@@ -28,6 +28,7 @@ override CFLAGS += $(EXTRA_CFLAGS)
  ifdef VER
  override CFLAGS += -DSMARTDNS_VERION='"$(VER)"'
  endif
@@ -10,7 +10,7 @@
  override CXXFLAGS +=-Iinclude
 --- a/src/dns_server.c
 +++ b/src/dns_server.c
-@@ -4222,7 +4222,7 @@ static int _dns_server_do_query(struct dns_request *request, int skip_notify_eve
+@@ -4379,7 +4379,7 @@ static int _dns_server_do_query(struct dns_request *request, int skip_notify_eve
  		}
  	}
  
