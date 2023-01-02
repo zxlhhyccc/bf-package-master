@@ -1,21 +1,42 @@
 --- a/easyrsa3/easyrsa
 +++ b/easyrsa3/easyrsa
-@@ -3358,9 +3358,9 @@
+@@ -4212,7 +4212,7 @@ vars_setup() {
+ 	# Removed for basic sanity - To re-enable provide a REASON
  	#prog_file2="$(which -- "$prog_file" 2>/dev/null)" && prog_file="$prog_file2"
  	#prog_file2="$(readlink -f "$prog_file" 2>/dev/null)" && prog_file="$prog_file2"
 -	prog_dir="${prog_file%/*}"
 +	prog_dir="/etc/easy-rsa"
- 	if [ "$prog_dir" = . ]; then prog_in_pwd=1; else unset -v prog_in_pwd; fi
+ 	if [ "$prog_dir" = . ] || [ "$prog_dir" = "$PWD" ]; then
+ 		prog_in_pwd=1
+ 	else
+@@ -4220,7 +4220,7 @@ vars_setup() {
+ 	fi
  
  	# Program dir vars - This location is least wanted.
 -	prog_vars="${prog_dir}/vars"
 +	prog_vars="/etc/easy-rsa/vars"
  
  	# set up PKI path vars - Top preference
-@@ -3521,5 +3521,5 @@
+ 	pki_vars="${EASYRSA_PKI:-$PWD/pki}/vars"
+@@ -4363,7 +4363,7 @@ Sourcing the vars file and building certificates will probably fail ..'
+ 	# Set defaults, preferring existing env-vars if present
  	set_var EASYRSA					"$PWD"
  	set_var EASYRSA_OPENSSL			openssl
 -	set_var EASYRSA_PKI				"$EASYRSA/pki"
 +	set_var EASYRSA_PKI				"/tmp/easyrsa3/pki"
  	set_var EASYRSA_DN				cn_only
  	set_var EASYRSA_REQ_COUNTRY		"US"
+ 	set_var EASYRSA_REQ_PROVINCE	"California"
+--- a/easyrsa3/openssl-easyrsa.cnf
++++ b/easyrsa3/openssl-easyrsa.cnf
+@@ -101,8 +101,8 @@ emailAddress			= Email Address
+ emailAddress_default		= $ENV::EASYRSA_REQ_EMAIL
+ emailAddress_max		= 64
+ 
+-serialNumber		= Serial-number (eg, device serial-number)
+-serialNumber_default	= $ENV::EASYRSA_REQ_SERIAL
++#serialNumber		= Serial-number (eg, device serial-number)
++#serialNumber_default	= $ENV::EASYRSA_REQ_SERIAL
+ 
+ ####################################################################
+ # Easy-RSA cert extension handling
