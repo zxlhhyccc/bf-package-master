@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-gowebdav
+PKG_NAME:=luci-app-gowebdav-compat
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
