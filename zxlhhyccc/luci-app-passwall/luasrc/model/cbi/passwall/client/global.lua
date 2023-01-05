@@ -276,6 +276,7 @@ if has_chnlist and api.is_finded("chinadns-ng") then
     o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, but will increase the memory."))
     o.default = "0"
 	o:depends({dns_mode = "dns2socks"})
+	o:depends({dns_mode = "pdnsd"})
 	o:depends({dns_mode = "dns2tcp"})
 	o:depends({dns_mode = "v2ray", v2ray_dns_mode = "tcp"})
 	o:depends({dns_mode = "v2ray", v2ray_dns_mode = "doh"})
