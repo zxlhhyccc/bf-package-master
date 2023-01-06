@@ -29,11 +29,11 @@ GO_PKG_INSTALL_EXTRA:=^gui/
 
 GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
-	github.com/syncthing/syncthing/lib/build.Version=v$(PKG_VERSION) \
-	github.com/syncthing/syncthing/lib/build.Stamp=$(SOURCE_DATE_EPOCH) \
-	github.com/syncthing/syncthing/lib/build.User=openwrt \
-	github.com/syncthing/syncthing/lib/build.Host=openwrt \
-	github.com/syncthing/syncthing/lib/build.Tags=noupgrade
+	$(GO_PKG)/lib/build.Version=v$(PKG_VERSION) \
+	$(GO_PKG)/lib/build.Stamp=$(SOURCE_DATE_EPOCH) \
+	$(GO_PKG)/lib/build.User=openwrt \
+	$(GO_PKG)/lib/build.Host=openwrt \
+	$(GO_PKG)/lib/build.Tags=noupgrade
 GO_PKG_TAGS:=noupgrade
 
 include $(INCLUDE_DIR)/package.mk
