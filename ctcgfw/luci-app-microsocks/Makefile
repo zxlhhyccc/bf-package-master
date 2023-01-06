@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for MicroSocks
-LUCI_DEPENDS:=+microsocks
+LUCI_DEPENDS:=+microsocks-neo
 LUCI_PKGARCH:=all
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
