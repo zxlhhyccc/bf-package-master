@@ -4,11 +4,14 @@
 
 START=70
 USE_PROCD=1
-LOGFILE="/tmp/npc.log"
-conf="/etc/conf/npsvip.conf"
+CONF="/etc/nihaodd/npc/npsvip.conf"
 
 header() {
 	config_get enabled $1 enabled
+
+	if [ -z "$(grep '/etc/nihaodd/' /etc/sysupgrade.conf)" ];then
+		echo "/etc/nihaodd/" >> /etc/sysupgrade.conf
+	fi
 }
 
 start_service() {
@@ -16,8 +19,10 @@ start_service() {
 	config_foreach header
 
 	if [ "$enabled" = "1" ];then
-	procd_open_instance
-    	procd_set_param command /usr/bin/npsvip -config=$conf
+		checknpc
+		procd_open_instance
+    	procd_set_param command /usr/bin/npsvip
+    	procd_append_param command -config=$CONF
     	procd_set_param respawn
     	procd_set_param stdout 1
     	procd_set_param stderr 1
@@ -25,11 +30,20 @@ start_service() {
 	fi
 }
 
-triggers_service() {
+service_triggers() {
 	procd_add_reload_trigger "npsvip"
 }
 
-restart_service() {
+service_relod() {
+	stop
+	start
+}
+
+service_stop() {
+	stop
+}
+
+service_restart() {
 	stop
 	start
 }

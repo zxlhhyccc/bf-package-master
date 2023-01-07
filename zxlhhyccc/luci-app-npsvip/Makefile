@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-npsvip
 PKG_VERSION:=1.0
-PKG_RELEASE:=0
+PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -17,7 +17,7 @@ define Package/luci-app-npsvip
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
 	TITLE:=LuCI support for Npc
-	DEPENDS:=+libc
+	DEPENDS:=
 	MAINTAINER:=panda-mute <wxuzju@gmail.com>
 endef
 
@@ -68,12 +68,10 @@ endif
 endef
 
 define Package/luci-app-npsvip/postinst
-#!/bin/sh
-if [ -z "$${IPKG_INSTROOT}" ]; then
-	( . /etc/uci-defaults/luci-npsvip ) && rm -f /etc/uci-defaults/luci-npsvip
-	rm -f /tmp/luci-indexcache
-fi
-exit 0
+[ -n "$${IPKG_INSTROOT}" ] || {
+	(. /etc/uci-defaults/luci-npsvip) && rm -f /etc/uci-defaults/luci-npsvip
+	exit 0
+}
 endef
 
 $(eval $(call BuildPackage,luci-app-npsvip))
