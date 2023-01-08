@@ -21,8 +21,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=3b680f94553f79508ba22de91af02809501213b0
-PKG_MIRROR_HASH:=35d7ddf881be53102f722f4e54ea002903d4370ca9789be509a5793e1732c456
+PKG_SOURCE_VERSION:=5392857539a40ab4fb2b43034b8284af1db85d93
+PKG_MIRROR_HASH:=95c06648f2fc6fa499d9866f1157019c80e0a014536f749a39e7c539a3e76855
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -52,6 +52,8 @@ endef
 define Package/smartdns/conffiles
 /etc/config/smartdns
 /etc/smartdns/address.conf
+/etc/smartdns/domain-block.list
+/etc/smartdns/domain-forwarding.list
 /etc/smartdns/anti-ad-smartdns.conf
 /etc/smartdns/blacklist-chnroute.conf
 /etc/smartdns/blacklist-ip.conf
@@ -65,6 +67,8 @@ define Package/smartdns/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/smartdns $(1)/usr/sbin/smartdns
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/package/openwrt/files/etc/init.d/smartdns $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/address.conf $(1)/etc/smartdns/address.conf
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/domain-block.list $(1)/etc/smartdns/domain-block.list
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/domain-forwarding.list $(1)/etc/smartdns/domain-forwarding.list
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/blacklist-ip.conf $(1)/etc/smartdns/blacklist-ip.conf
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/custom.conf $(1)/etc/smartdns/custom.conf-opkg
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/files/etc/config/smartdns $(1)/etc/config/smartdns-opkg
