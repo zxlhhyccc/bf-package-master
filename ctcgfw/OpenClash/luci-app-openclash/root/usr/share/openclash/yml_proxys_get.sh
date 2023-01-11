@@ -508,6 +508,15 @@ do
                system(skip_cert_verify)
             end
          end
+         if Value['proxies'][$count]['plugin'].to_s == 'shadow-tls' then
+            mode = '${uci_set}obfs=' + Value['proxies'][$count]['plugin'].to_s
+            system(mode)
+            #password
+            if Value['proxies'][$count]['plugin-opts'].key?('password') then
+               obfs_password = '${uci_set}obfs_password=\"' + Value['proxies'][$count]['plugin-opts']['password'].to_s + '\"'
+               system(obfs_password)
+            end
+         end;
       end
       }.join
    end;
@@ -1349,7 +1358,6 @@ fi
 uci set openclash.config.servers_if_update=0
 wait
 uci commit openclash
-/usr/share/openclash/cfg_servers_address_fake_filter.sh
 LOG_OUT "Config File【$CONFIG_NAME】Read Successful!"
 sleep 3
 SLOG_CLEAN
