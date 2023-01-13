@@ -65,13 +65,13 @@ define Download/CLANG
 	HASH:=5ae35f85e0d32136795c6b223bf64263d46678dd4a24fea4e9039e58a32670de
 endef
 
-# GN_VER:=b9c6c19be95a3863e02f00f1fe403b2502e345b6
+# GN_VER:=1c4151ff5c1d6fbf7fa800b8d4bb34d3abc03a41
 # GN_FILE:=gn-git_revision-$(GN_VER).zip
-# define Download/GN_TOOL
+#define Download/GN_TOOL
 #	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+
 #	URL_FILE:=git_revision:$(GN_VER)
 #	FILE:=$(GN_FILE)
-#	HASH:=74707aafd30bc4c725e4d251568883e46bc2f92c8e41a6ab62e99c29ac2f6778
+#	HASH:=7195291488d08f3a10e85b85d8c4816e077015f1c5f196f770003a97aa42caf8
 # endef
 
 PGO_VER:=5414-1672766927-26b17aa1745606599e619feccfe46371e879e7c4
