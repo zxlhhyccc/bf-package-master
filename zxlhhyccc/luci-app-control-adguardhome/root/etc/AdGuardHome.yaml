@@ -8,6 +8,7 @@ auth_attempts: 5
 block_auth_min: 15
 http_proxy: ""
 language: zh-cn
+rlimit_nofile: 0
 debug_pprof: false
 web_session_ttl: 720
 dns:
@@ -17,14 +18,14 @@ dns:
   statistics_interval: 1
   querylog_enabled: true
   querylog_file_enabled: true
-  querylog_interval: 6h
+  querylog_interval: 1
   querylog_size_memory: 1000
   anonymize_client_ip: false
   protection_enabled: true
   blocking_mode: default
   blocking_ipv4: ""
   blocking_ipv6: ""
-  blocked_response_ttl: 60
+  blocked_response_ttl: 10
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   ratelimit: 0
@@ -49,13 +50,13 @@ dns:
   - 127.0.0.0/8
   - ::1/128
   cache_size: 4194304
-  cache_ttl_min: 60
-  cache_ttl_max: 86400
-  cache_optimistic: false
+  cache_ttl_min: 0
+  cache_ttl_max: 0
+  cache_optimistic: true
   bogus_nxdomain: []
-  aaaa_disabled: true
-  enable_dnssec: true
-  edns_client_subnet: true
+  aaaa_disabled: false
+  enable_dnssec: false
+  edns_client_subnet: false
   max_goroutines: 300
   ipset: []
   filtering_enabled: true
@@ -94,10 +95,6 @@ filters:
   url: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt
   name: AdGuard DNS filter
   id: 1228750870
-- enabled: true
-  url: https://anti-ad.net/easylist.txt
-  name: 'CHN: anti-AD'
-  id: 1228750871
 - enabled: true
   url: http://sub.adtchrome.com/adt-chinalist-easylist.txt
   name: 广告终结者使用的拦截规则，基于ChinaList+EasyList修正维护
@@ -221,8 +218,23 @@ user_rules:
 - '@@||jd.com^important'
 - '@@||flyme.cn^$important'
 - '@@||meizu.com^$important'
+- '@@||wl.jd.com^$important'
 - '@@||flydigi.com^'
 - '@@||pv.sohu.com^$important'
+- /googleads.$~script,domain=~googleads.github.io
+- /pagead/lvz?
+- '||google.com/pagead/'
+- '||static.doubleclick.net^$domain=youtube.com'
+- '||youtube.com/get_midroll_'
+- '||5hz.org^'
+- '@@||000714.xyz^'
+- '@@||blueskyxn.com^'
+- '||topnewsfeeds.net^'
+- '||nbryb.com^'
+- '||superbdolly.com^'
+- '||salutationcheerlessdemote.com^'
+- '||buildingdoodlesquare.com^'
+- '||colonistnobilityheroic.com^'
 dhcp:
   enabled: false
   interface_name: ""
@@ -247,8 +259,4 @@ log_max_size: 100
 log_max_age: 3
 log_file: ""
 verbose: false
-os:
-  group: ""
-  user: ""
-  rlimit_nofile: 0
 schema_version: 10
