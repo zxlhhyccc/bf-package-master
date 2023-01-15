@@ -1,0 +1,11 @@
+{
+	"luci-app-cpufreq-compat": {
+		"description": "Grant UCI access for luci-app-cpufreq-compat",
+		"read": {
+			"uci": [ "cpufreq" ]
+		},
+		"write": {
+			"uci": [ "cpufreq" ]
+		}
+	}
+}
