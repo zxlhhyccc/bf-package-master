@@ -21,8 +21,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=ee4816da5c66619c4210f7fda6245adf4c1c7ee8
-PKG_MIRROR_HASH:=fb4661291e79450f51a70f9b988c7452710acd1599529de48fef42c7dda0b29c
+PKG_SOURCE_VERSION:=1f40577ef0d67308ea42f7150990ae611c12d4d4
+PKG_MIRROR_HASH:=80b8690dbebd614b76d44809767a943e14e6a0f9f513c3e20a02da83830806ae
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -64,6 +64,7 @@ endef
 
 define Package/smartdns/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/config $(1)/etc/init.d $(1)/etc/smartdns $(1)/usr/share/smartdns
+	$(INSTALL_DIR) $(1)/etc/smartdns/conf.d $(1)/etc/smartdns/domain-set
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/smartdns $(1)/usr/sbin/smartdns
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/package/openwrt/files/etc/init.d/smartdns $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/address.conf $(1)/etc/smartdns/address.conf
