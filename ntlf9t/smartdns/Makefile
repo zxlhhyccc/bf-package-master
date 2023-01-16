@@ -45,19 +45,19 @@ endef
 
 define Package/smartdns/description
 SmartDNS is a local DNS server which accepts DNS query requests from local network clients,
-get DNS query results from multiple upstream DNS servers concurrently, and returns the fastest IP to clients.
+gets DNS query results from multiple upstream DNS servers concurrently, and returns the fastest IP to clients.
 Unlike dnsmasq's all-servers, smartdns returns the fastest IP. 
 endef
 
 define Package/smartdns/conffiles
 /etc/config/smartdns
 /etc/smartdns/address.conf
+/etc/smartdns/blacklist-ip.conf
+/etc/smartdns/custom.conf
 /etc/smartdns/domain-block.list
 /etc/smartdns/domain-forwarding.list
 /etc/smartdns/anti-ad-smartdns.conf
 /etc/smartdns/blacklist-chnroute.conf
-/etc/smartdns/blacklist-ip.conf
-/etc/smartdns/custom.conf
 /etc/smartdns/smartdns-domains.china.conf
 /etc/smartdns/whitelist-chnroute.conf
 endef
@@ -82,32 +82,6 @@ define Package/smartdns/install
 	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/smartdns-domains.china.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/cnlist.conf $(1)/etc/smartdns/cnlist.conf
 	$(INSTALL_BIN) $(CURDIR)/conf/update-china-list.sh $(1)/usr/share/smartdns/update-china-list.sh
-endef
-
-define Package/smartdns/postinst
-#!/bin/sh
-	/etc/init.d/smartdns enable >/dev/null 2>&1
-	enable=$$(uci get smartdns.@smartdns[0].enabled 2>/dev/null)
-	if [ "$$enable" == "1" ]; then
-		/etc/init.d/smartdns reload
-	fi
-	rm -f /tmp/luci-indexcache
-	rm -f /tmp/luci-modulecache/*
-exit 0
-endef
-
-define Package/smartdns/prerm
-#!/bin/sh
-
-if [ -z "$${IPKG_INSTROOT}" ]; then
-     /etc/init.d/smartdns disable
-     /etc/init.d/smartdns stop
-uci -q batch <<-EOF >/dev/null 2>&1
-	delete ucitrack.@smartdns[-1]
-	commit ucitrack
-EOF
-fi
-exit 0
 endef
 
 $(eval $(call BuildPackage,smartdns))
