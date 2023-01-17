@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lucky
-PKG_VERSION:=1.7.5
-PKG_RELEASE:=4
+PKG_VERSION:=1.7.17
+PKG_RELEASE:=1
 
 ifeq ($(ARCH),mipsel)
 	LUCKY_ARCH:=mipsle_softfloat
