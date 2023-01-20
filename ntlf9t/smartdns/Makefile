@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018-2022 Ruilin Peng (Nick) <pymumu@gmail.com>.
+# Copyright (C) 2018-2023 Ruilin Peng (Nick) <pymumu@gmail.com>.
 #
 # smartdns is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=1f40577ef0d67308ea42f7150990ae611c12d4d4
-PKG_MIRROR_HASH:=80b8690dbebd614b76d44809767a943e14e6a0f9f513c3e20a02da83830806ae
+PKG_SOURCE_VERSION:=13d028df0dfdd422f9306b616fd65b47483ac9a1
+PKG_MIRROR_HASH:=5f4aba1bca7fb2f295e29436b3cf98e46719f1a40746e54fedaeea4718d8d457
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
