@@ -372,7 +372,7 @@ yml_other_rules_get()
 check_run_quick()
 {
    quick_start=true
-   check_file="$(echo $RAW_CONFIG_FILE | tr " " "?") /etc/openclash/custom/openclash_custom_domain_dns.list /etc/openclash/custom/openclash_custom_domain_dns_policy.list /etc/openclash/custom/openclash_custom_fake_filter.list /etc/openclash/custom/openclash_custom_fallback_filter.yaml /etc/openclash/custom/openclash_custom_hosts.list /etc/openclash/custom/openclash_custom_rules.list /etc/openclash/custom/openclash_custom_rules_2.list $dev_core_path $tun_core_path $meta_core_path $ipdb_path $geosite_path $geoip_path $chnr_path $chnr6_path /usr/share/openclash/res/ConnersHua.yaml /usr/share/openclash/res/ConnersHua_return.yaml /usr/share/openclash/res/lhie1.yaml /etc/openclash/custom/openclash_force_sniffing_domain.yaml /etc/openclash/custom/openclash_sniffing_domain_filter.yaml /etc/openclash/custom/openclash_sniffing_port_filter.yaml /etc/openclash/custom/openclash_custom_localnetwork_ipv4.list /etc/openclash/custom/openclash_custom_localnetwork_ipv6.list /etc/openclash/custom/openclash_custom_chnroute_pass.list /etc/openclash/custom/openclash_custom_chnroute6_pass.list $cndomain_path"
+   check_file="$(echo $RAW_CONFIG_FILE | tr " " "?") /etc/openclash/custom/openclash_custom_domain_dns.list /etc/openclash/custom/openclash_custom_domain_dns_policy.list /etc/openclash/custom/openclash_custom_fake_filter.list /etc/openclash/custom/openclash_custom_fallback_filter.yaml /etc/openclash/custom/openclash_custom_hosts.list /etc/openclash/custom/openclash_custom_rules.list /etc/openclash/custom/openclash_custom_rules_2.list $dev_core_path $tun_core_path $meta_core_path $ipdb_path $geosite_path $geoip_path $chnr_path $chnr6_path /usr/share/openclash/res/ConnersHua.yaml /usr/share/openclash/res/ConnersHua_return.yaml /usr/share/openclash/res/lhie1.yaml /etc/openclash/custom/openclash_force_sniffing_domain.yaml /etc/openclash/custom/openclash_sniffing_domain_filter.yaml /etc/openclash/custom/openclash_sniffing_ports_filter.yaml /etc/openclash/custom/openclash_custom_localnetwork_ipv4.list /etc/openclash/custom/openclash_custom_localnetwork_ipv6.list /etc/openclash/custom/openclash_custom_chnroute_pass.list /etc/openclash/custom/openclash_custom_chnroute6_pass.list $cndomain_path"
 	 if [ ! -f "$CONFIG_FILE" ] || [ ! -f "/tmp/openclash_config.tmp" ] || [ ! -f "/tmp/openclash.change" ]; then
 	    quick_start=false
 	    return
@@ -1445,8 +1445,12 @@ if [ -n "$FW4" ]; then
       nft 'add rule inet fw4 openclash ip daddr @wan_ac_black_ips counter return' 2>/dev/null
       nft 'add rule inet fw4 openclash ip saddr @lan_ac_black_ips counter return' 2>/dev/null
       nft 'add rule inet fw4 openclash ether saddr @lan_ac_black_macs counter return' 2>/dev/null
-      nft 'add rule inet fw4 openclash ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
-      nft 'add rule inet fw4 openclash ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         nft 'add rule inet fw4 openclash ether saddr != @lan_ac_white_macs ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      else
+         nft 'add rule inet fw4 openclash ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
+         nft 'add rule inet fw4 openclash ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      fi
 
       if [ "$en_mode" = "redir-host" ]; then
          nft 'add rule inet fw4 openclash tcp dport != @common_ports counter return' 2>/dev/null
@@ -1478,8 +1482,12 @@ if [ -n "$FW4" ]; then
             nft 'add rule inet fw4 openclash_mangle ip daddr @wan_ac_black_ips counter return' 2>/dev/null
             nft 'add rule inet fw4 openclash_mangle ip saddr @lan_ac_black_ips counter return' 2>/dev/null
             nft 'add rule inet fw4 openclash_mangle ether saddr @lan_ac_black_macs counter return' 2>/dev/null
-            nft 'add rule inet fw4 openclash_mangle ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
-            nft 'add rule inet fw4 openclash_mangle ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+            if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+               nft 'add rule inet fw4 openclash_mangle ether saddr != @lan_ac_white_macs ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+            else
+               nft 'add rule inet fw4 openclash_mangle ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
+               nft 'add rule inet fw4 openclash_mangle ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+            fi
 
             if [ "$en_mode" = "redir-host" ]; then
                nft 'add rule inet fw4 openclash_mangle udp dport != @common_ports counter return' 2>/dev/null
@@ -1619,8 +1627,12 @@ if [ -n "$FW4" ]; then
       nft 'add rule inet fw4 openclash_mangle ip daddr @wan_ac_black_ips counter return' 2>/dev/null
       nft 'add rule inet fw4 openclash_mangle ip saddr @lan_ac_black_ips counter return' 2>/dev/null
       nft 'add rule inet fw4 openclash_mangle ether saddr @lan_ac_black_macs counter return' 2>/dev/null
-      nft 'add rule inet fw4 openclash_mangle ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
-      nft 'add rule inet fw4 openclash_mangle ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         nft 'add rule inet fw4 openclash_mangle ether saddr != @lan_ac_white_macs ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      else
+         nft 'add rule inet fw4 openclash_mangle ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
+         nft 'add rule inet fw4 openclash_mangle ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      fi
       
       if [ "$en_mode" = "redir-host" ]; then
          nft 'add rule inet fw4 openclash_mangle meta l4proto {tcp,udp} th dport != @common_ports counter return' 2>/dev/null
@@ -1637,8 +1649,12 @@ if [ -n "$FW4" ]; then
          nft 'insert rule inet fw4 mangle_prerouting position 0 meta nfproto {ipv4} tcp dport 53 counter jump openclash_dns_hijack' 2>/dev/null
          nft 'add rule inet fw4 openclash_dns_hijack ip saddr @lan_ac_black_ips counter return' 2>/dev/null
          nft 'add rule inet fw4 openclash_dns_hijack ether saddr @lan_ac_black_macs counter return' 2>/dev/null
-         nft 'add rule inet fw4 openclash_dns_hijack ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
-         nft 'add rule inet fw4 openclash_dns_hijack ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+         if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+            nft 'add rule inet fw4 openclash_dns_hijack ether saddr != @lan_ac_white_macs ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+         else
+            nft 'add rule inet fw4 openclash_dns_hijack ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
+            nft 'add rule inet fw4 openclash_dns_hijack ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+         fi
          nft add rule inet fw4 openclash_dns_hijack meta nfproto {ipv4} tcp dport 53 mark set "$PROXY_FWMARK" comment \"OpenClash TCP DNS Hijack\" 2>/dev/null
          nft 'insert rule inet fw4 mangle_prerouting position 0 ip protocol udp counter jump openclash_mangle' 2>/dev/null
       fi
@@ -1663,8 +1679,12 @@ if [ -n "$FW4" ]; then
    if [ "$enable_redirect_dns" -eq 2 ]; then
       nft 'insert rule inet fw4 openclash_dns_redirect position 0 ip saddr @lan_ac_black_ips counter return' 2>/dev/null
       nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr @lan_ac_black_macs counter return' 2>/dev/null
-      nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
-      nft 'insert rule inet fw4 openclash_dns_redirect position 0 ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr != @lan_ac_white_macs ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      else
+         nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
+         nft 'insert rule inet fw4 openclash_dns_redirect position 0 ip saddr != @lan_ac_white_ips counter return' 2>/dev/null
+      fi
    fi
 
    #google_dns_block
@@ -1793,8 +1813,12 @@ if [ -n "$FW4" ]; then
 
       nft 'add rule inet fw4 openclash_mangle_v6 ip6 saddr @lan_ac_black_ipv6s counter return' 2>/dev/null
       nft 'add rule inet fw4 openclash_mangle_v6 ether saddr @lan_ac_black_macs counter return' 2>/dev/null
-      nft 'add rule inet fw4 openclash_mangle_v6 ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
-      nft 'add rule inet fw4 openclash_mangle_v6 ip6 saddr != @lan_ac_white_ipv6s counter return' 2>/dev/null
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         nft 'add rule inet fw4 openclash_mangle_v6 ether saddr != @lan_ac_white_macs ip6 saddr != @lan_ac_white_ipv6s counter return' 2>/dev/null
+      else
+         nft 'add rule inet fw4 openclash_mangle_v6 ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
+         nft 'add rule inet fw4 openclash_mangle_v6 ip6 saddr != @lan_ac_white_ipv6s counter return' 2>/dev/null
+      fi
 
       if [ "$china_ip6_route" = "1" ]; then
          nft 'add rule inet fw4 openclash_mangle_v6 ip6 daddr @china_ip6_route ip6 daddr != @china_ip6_route_pass counter return' 2>/dev/null
@@ -1806,8 +1830,12 @@ if [ -n "$FW4" ]; then
       if [ "$enable_redirect_dns" -eq 2 ]; then
          nft 'insert rule inet fw4 openclash_dns_redirect position 0 ip6 saddr @lan_ac_black_ipv6s counter return' 2>/dev/null
          nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr @lan_ac_black_macs counter return' 2>/dev/null
-         nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
-         nft 'insert rule inet fw4 openclash_dns_redirect position 0 ip6 saddr != @lan_ac_white_ipv6s counter return' 2>/dev/null
+         if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+            nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr != @lan_ac_white_macs ip6 saddr != @lan_ac_white_ipv6s counter return' 2>/dev/null
+         else
+            nft 'insert rule inet fw4 openclash_dns_redirect position 0 ether saddr != @lan_ac_white_macs counter return' 2>/dev/null
+            nft 'insert rule inet fw4 openclash_dns_redirect position 0 ip6 saddr != @lan_ac_white_ipv6s counter return' 2>/dev/null
+         fi
       fi
 
       if [ -z "$_koolshare" ]; then
@@ -2061,8 +2089,12 @@ else
       iptables -t nat -A openclash -m set --match-set wan_ac_black_ips dst -j RETURN >/dev/null 2>&1
       iptables -t nat -A openclash -m set --match-set lan_ac_black_ips src -j RETURN >/dev/null 2>&1
       iptables -t nat -A openclash -m set --match-set lan_ac_black_macs src -j RETURN >/dev/null 2>&1
-      iptables -t nat -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
-      iptables -t nat -A openclash -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         iptables -t nat -A openclash -m set ! --match-set lan_ac_white_ips src -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      else
+         iptables -t nat -A openclash -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+         iptables -t nat -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      fi
       if [ "$en_mode" = "redir-host" ]; then
          iptables -t nat -A openclash -m set ! --match-set common_ports dst -j RETURN >/dev/null 2>&1
       fi
@@ -2095,8 +2127,12 @@ else
             iptables -t mangle -A openclash -m set --match-set wan_ac_black_ips dst -j RETURN >/dev/null 2>&1
             iptables -t mangle -A openclash -m set --match-set lan_ac_black_macs src -j RETURN >/dev/null 2>&1
             iptables -t mangle -A openclash -m set --match-set lan_ac_black_ips src -j RETURN >/dev/null 2>&1
-            iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
-            iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+            if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+               iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_ips src -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+            else
+               iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+               iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+            fi
             if [ "$en_mode" = "redir-host" ]; then
                iptables -t mangle -A openclash -m set ! --match-set common_ports dst -j RETURN >/dev/null 2>&1
             fi
@@ -2249,8 +2285,12 @@ else
       iptables -t mangle -A openclash -m set --match-set wan_ac_black_ips dst -j RETURN >/dev/null 2>&1
       iptables -t mangle -A openclash -m set --match-set lan_ac_black_ips src -j RETURN >/dev/null 2>&1
       iptables -t mangle -A openclash -m set --match-set lan_ac_black_macs src -j RETURN >/dev/null 2>&1
-      iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
-      iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_ips src -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      else
+         iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+         iptables -t mangle -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      fi
 
       if [ "$en_mode" = "redir-host" ]; then
          iptables -t mangle -A openclash -m set ! --match-set common_ports dst -j RETURN >/dev/null 2>&1
@@ -2269,8 +2309,12 @@ else
          iptables -t mangle -I PREROUTING -p tcp --dport 53 -j openclash_dns_hijack
          iptables -t mangle -A openclash_dns_hijack -m set --match-set lan_ac_black_ips src -j RETURN >/dev/null 2>&1
          iptables -t mangle -A openclash_dns_hijack -m set --match-set lan_ac_black_macs src -j RETURN >/dev/null 2>&1
-         iptables -t mangle -A openclash_dns_hijack -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
-         iptables -t mangle -A openclash_dns_hijack -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+         if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+            iptables -t mangle -A openclash_dns_hijack -m set ! --match-set lan_ac_white_ips src -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+         else
+            iptables -t mangle -A openclash_dns_hijack -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+            iptables -t mangle -A openclash_dns_hijack -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+         fi
          iptables -t mangle -A openclash_dns_hijack -m comment --comment "OpenClash TCP DNS Hijack" -p tcp --dport 53 -j MARK --set-mark "$PROXY_FWMARK"
          iptables -t mangle -I PREROUTING -p udp -j openclash
       fi
@@ -2295,8 +2339,12 @@ else
    if [ "$enable_redirect_dns" -eq 2 ]; then
       iptables -t nat -I openclash_dns_redirect -m set --match-set lan_ac_black_ips src -j RETURN >/dev/null 2>&1
       iptables -t nat -I openclash_dns_redirect -m set --match-set lan_ac_black_macs src -j RETURN >/dev/null 2>&1
-      iptables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
-      iptables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         iptables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_ips src -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      else
+         iptables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+         iptables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      fi
    fi
 
    #google_dns_block
@@ -2414,8 +2462,12 @@ else
       ip6tables -t mangle -A openclash -m set --match-set wan_ac_black_ipv6s dst -j RETURN >/dev/null 2>&1
       ip6tables -t mangle -A openclash -m set --match-set lan_ac_black_macs src -j RETURN >/dev/null 2>&1
       ip6tables -t mangle -A openclash -m set --match-set lan_ac_black_ipv6s src -j RETURN >/dev/null 2>&1
-      ip6tables -t mangle -A openclash -m set ! --match-set lan_ac_white_ipv6s src -j RETURN >/dev/null 2>&1
-      ip6tables -t mangle -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+         ip6tables -t mangle -A openclash -m set ! --match-set lan_ac_white_ipv6s src -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      else
+         ip6tables -t mangle -A openclash -m set ! --match-set lan_ac_white_ipv6s src -j RETURN >/dev/null 2>&1
+         ip6tables -t mangle -A openclash -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+      fi
 
       if [ "$en_mode" == "redir-host" ]; then
          ip6tables -t mangle -A openclash -m set ! --match-set common_ports dst -j RETURN >/dev/null 2>&1
@@ -2431,8 +2483,12 @@ else
       if [ "$enable_redirect_dns" -eq 2 ]; then
          ip6tables -t nat -I openclash_dns_redirect -m set --match-set lan_ac_black_ips src -j RETURN >/dev/null 2>&1
          ip6tables -t nat -I openclash_dns_redirect -m set --match-set lan_ac_black_macs src -j RETURN >/dev/null 2>&1
-         ip6tables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
-         ip6tables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+         if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_ips)" ] && [ -n "$(uci -q get openclash.config.lan_ac_white_macs)" ]; then
+            ip6tables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_ips src -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+         else
+            ip6tables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_ips src -j RETURN >/dev/null 2>&1
+            ip6tables -t nat -I openclash_dns_redirect -m set ! --match-set lan_ac_white_macs src -j RETURN >/dev/null 2>&1
+         fi
       fi
 
       if [ -z "$_koolshare" ]; then
@@ -2489,11 +2545,11 @@ else
       #intranet allowed
       if [ "$intranet_allowed" -eq 1 ]; then
          wan6_ints=$(ip6tables-save -t filter |grep -e "-j zone_wan_input" 2>/dev/null |awk '{for (i=1;i<=NF;i++) {if ($i ~ /-i/) {print $(i+1)}}}' 2>/dev/null)
-         if [ -n "$wan_ints" ]; then
+         if [ -n "$wan6_ints" ]; then
             ip6tables -t filter -N openclash_wan_input
             ip6tables -t filter -F openclash_wan_input
             for wan6_int in $wan6_ints; do
-               ip6tables -t filter -I INPUT -i "$wan_int" -m set ! --match-set localnetwork6 src -j openclash_wan_input
+               ip6tables -t filter -I INPUT -i "$wan6_int" -m set ! --match-set localnetwork6 src -j openclash_wan_input
             done
             ip6tables -t filter -A openclash_wan_input -p udp -m multiport --dport "$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port" -j REJECT >/dev/null 2>&1
             ip6tables -t filter -A openclash_wan_input -p tcp -m multiport --dport "$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port" -j REJECT >/dev/null 2>&1
