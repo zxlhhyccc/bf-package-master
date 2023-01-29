@@ -47,4 +47,4 @@ define Build/Compile
 	+$(KERNEL_MAKE) M="$(PKG_BUILD_DIR)/src" modules
 endef
 
-$(eval $(call KernelPackage,nft-fullcone)
+$(eval $(call KernelPackage,nft-fullcone))
