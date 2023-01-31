@@ -1454,6 +1454,7 @@ o.template = "cbi/tvalue"
 o.description = translate("The Traffic of The Destination For The Specified Address Will Not Pass The Core")
 o.rows = 20
 o.wrap = "off"
+o:depends("ipv6_enable", "1")
 
 function o.cfgvalue(self, section)
 	return NXFS.readfile("/etc/openclash/custom/openclash_custom_localnetwork_ipv6.list") or ""
@@ -1473,7 +1474,7 @@ o.template = "cbi/tvalue"
 o.description = translate("Domains or IPs in The List Will Not be Affected by The China IP Route Option, Depend on Dnsmasq")
 o.rows = 20
 o.wrap = "off"
-o:depends("enable_redirect_dns", "1")
+o:depends({ipv6_enable = "1", enable_redirect_dns = "1"})
 
 function o.cfgvalue(self, section)
 	return NXFS.readfile("/etc/openclash/custom/openclash_custom_chnroute6_pass.list") or ""
@@ -1529,6 +1530,15 @@ function o.write(self, section, value)
 			NXFS.writefile("/usr/share/openclash/yml_change.sh", value)
 		end
 	end
+end
+
+o = s:taboption("developer", Button, translate("Restore Override Script"))
+o.title = translate("Restore Override Script")
+o.inputtitle = translate("Restore")
+o.inputstyle = "reload"
+o.write = function()
+  SYS.call("cp /usr/share/openclash/backup/yml_change.sh /usr/share/openclash/yml_change.sh >/dev/null 2>&1")
+  HTTP.redirect(DISP.build_url("admin", "services", "openclash", "settings"))
 end
 
 ---- debug
