@@ -4,7 +4,7 @@ mp = Map("unblockmusic")
 mp.title = translate("解锁网易云灰色歌曲")
 mp.description = translate("采用 [QQ/百度/酷狗/酷我/咪咕/JOOX]等音源，替换网易云变灰歌曲链接")
 
-mp:section(SimpleSection).template = "unblockmusic/unblockmusic_status"
+mp:section(SimpleSection).template  = "unblockmusic/unblockmusic_status"
 
 s = mp:section(TypedSection, "unblockmusic")
 s.anonymous = true
@@ -22,7 +22,7 @@ end
 if nixio.fs.access("/usr/share/UnblockNeteaseMusic/app.js") then
 apptype:value("nodejs", translate("NodeJS 版本"))
 end
-apptype:value("cloud", translate("云解锁（ 云服务器）"))
+apptype:value("cloud", translate("云解锁（ [CTCGFW] 云服务器）"))
 
 speedtype = s:option(Value, "musicapptype", translate("音源选择"))
 speedtype:value("default", translate("默认"))
@@ -62,16 +62,19 @@ replace_music_source:value("320000", translate("当音质低于 320 Kbps（高�
 replace_music_source:value("600000", translate("当音质低于 999 Kbps（无损）时"))
 replace_music_source.description = translate("当音乐音质低于指定数值时，尝试强制使用其他平台的高音质版本进行替换")
 replace_music_source.default = "0"
+replace_music_source.rmempty = false
 replace_music_source:depends("apptype", "nodejs")
 
 local_vip = s:option(Flag, "local_vip", translate("启用本地 VIP"))
 local_vip.description = translate("启用后，可以使用去广告、个性换肤、鲸云音效等本地功能")
 local_vip.default = 0
+local_vip.rmempty = false
 local_vip:depends("apptype", "nodejs")
 
 autoupdate = s:option(Flag, "autoupdate", translate("自动检查更新主程序"))
 autoupdate.description = translate("每天自动检测并更新到最新版本")
 autoupdate.default = "1"
+autoupdate.rmempty = false
 autoupdate:depends("apptype", "nodejs")
 
 download_certificate = s:option(DummyValue, "opennewwindow", translate("HTTPS 证书"))
@@ -88,6 +91,11 @@ restart.write = function()
   luci.http.redirect(luci.dispatcher.build_url("admin", "services", "unblockmusic"))
 end
 restart:depends("apptype", "nodejs")
+
+acl_mode = s:option(ListValue, "acl_mode", translate("默认解锁模式"))
+acl_mode:value(0, translate("解锁"))
+acl_mode:value(1, translate("不解锁"))
+acl_mode.default = 0
 
 t = mp:section(TypedSection, "acl_rule")
 t.title = translate("例外客户端规则")
@@ -114,5 +122,7 @@ filter_mode.rmempty = false
 filter_mode:value("disable", translate("不代理HTTP和HTTPS"))
 filter_mode:value("http", translate("不代理HTTP"))
 filter_mode:value("https", translate("不代理HTTPS"))
+filter_mode:value("proxy_http", translate("代理HTTP"))
+filter_mode:value("proxy_http_https", translate("代理HTTP和HTTPS"))
 
 return mp
