@@ -13,7 +13,7 @@ PKG_SOURCE_URL:=https://codeload.github.com/XIU2/CloudflareSpeedTest/tar.gz/v$(P
 PKG_HASH:=89fea0443b1501331526d95b3a827d93df3da3e3cd693310627fd80b53a46ee8
 
 PKG_LICENSE:=GPL-3.0-only
-PKG_LICENSE_FILE:=LICENSE
+PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_CONFIG_DEPENDS:= \

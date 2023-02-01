@@ -19,7 +19,7 @@ PKG_SOURCE_URL := https://github.com/nx111/oscam.git
 #PKG_SOURCE_URL := http://www.oscam.cc/svn/oscam-mirror/trunk
 
 PKG_LICENSE := GPL-3.0
-PKG_LICENSE_FILE := COPYING
+PKG_LICENSE_FILES:= COPYING
 
 PKG_MAINTAINER := Tomasz Maciej Nowak <tomek_n@o2.pl>
 
