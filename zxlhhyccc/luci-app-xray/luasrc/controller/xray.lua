@@ -1,5 +1,5 @@
 -- Copyright (C) 2014-2017 Jian Chang <aa65535@live.com>
--- Copyright (C) 2020-2022 honwen <https://github.com/honwen>
+-- Copyright (C) 2020-2023 honwen <https://github.com/honwen>
 -- Licensed to the public under the GNU General Public License v3.
 
 module("luci.controller.xray", package.seeall)

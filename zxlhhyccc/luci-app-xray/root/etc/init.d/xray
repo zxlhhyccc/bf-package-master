@@ -1,6 +1,6 @@
 #!/bin/sh /etc/rc.common
 #
-# Copyright (C) 2020-2022 honwen <https://github.com/honwen>
+# Copyright (C) 2020-2023 honwen <https://github.com/honwen>
 #
 # This is free software, licensed under the GNU General Public License v3.
 # See /LICENSE for more information.
@@ -11,7 +11,9 @@ STOP=15
 
 NAME=xray
 EXTRA_COMMANDS="rules healthcheck"
+EXTRA_HELP="	rules		Start IPTABLES inject\n	healthcheck	Check if service health"
 CRON_FILE=/etc/crontabs/root
+PLUGIN_FILE=/var/run/xray-plugin
 WATCHDOG_ENDPOINT='accounts.gstatic.com'
 
 DNSMASQDIR=$(sed -n 's+conf-dir=++p' /var/etc/dnsmasq.conf.* 2>/dev/null)
@@ -46,9 +48,8 @@ random_id() {
 }
 
 random_port() {
-	offset=$(/usr/bin/${NAME} uuid | tr -d '[a-zA-Z-]' | cut -c1-3)
-	[ "V${offset}" = "V" ] && offset=1
-	echo $((offset + 12000))
+	offset=$(/usr/bin/${NAME} uuid | tr -d '[a-zA-Z-]' | cut -c1-3 | sed 's+^0*++g')
+	echo $((offset + 12000)) 2>/dev/null || random_port
 }
 
 validate_server() {
@@ -80,6 +81,10 @@ get_arg_tnd() {
 
 get_server_ips() {
 	echo $(uci_get_by_name $1 server)
+	local alias=$(uci_get_by_name $1 alias)
+	if echo $alias | grep -q '@'; then
+		echo $alias | sed 's+.*@++g'
+	fi
 }
 
 get_lan_hosts() {
@@ -264,11 +269,17 @@ gen_server_vless_config() {
 		ws_path=$(uci_get_by_name $1 ws_path '/')
 	}
 	validate_server $1 && {
-		serverName=$(uci_get_by_name $1 server_name)
+		local serverName=$(uci_get_by_name $1 server_name)
 		[ "V$serverName" = "V" ] && serverName=$(uci_get_by_name $1 server)
+		local alias=$(uci_get_by_name $1 alias)
+		if [ "V$plugin" != "V" ]; then
+			tag="[$alias]-$(random_id)"
+		else
+			tag="[$(uci_get_by_name $1 server)-${network}-${security}]-$(random_id)"
+		fi
 		cat <<-EOF
 			    {
-			      "tag": "OutB-vless-[$(uci_get_by_name $1 server)-${network}-${security}]-$(random_id)",
+			      "tag": "OutB-vless-${tag}",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {
 			        "vnext": [
@@ -306,11 +317,17 @@ gen_server_trojan_config() {
 		security='tls'
 	}
 	validate_server $1 && {
-		serverName=$(uci_get_by_name $1 server_name)
+		local serverName=$(uci_get_by_name $1 server_name)
 		[ "V$serverName" = "V" ] && serverName=$(uci_get_by_name $1 server)
+		local alias=$(uci_get_by_name $1 alias)
+		if [ "V$plugin" != "V" ]; then
+			tag="[$alias]-$(random_id)"
+		else
+			tag="[${serverName}]-$(random_id)"
+		fi
 		cat <<-EOF
 			    {
-			      "tag": "OutB-trojan-[${serverName}]-$(random_id)",
+			      "tag": "OutB-trojan-${tag}",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {
 			        "servers": [
@@ -336,9 +353,15 @@ gen_server_trojan_config() {
 
 gen_server_shadowsocks_config() {
 	validate_server $1 && {
+		local alias=$(uci_get_by_name $1 alias)
+		if [ "V$plugin" != "V" ]; then
+			tag="[$alias]-$(random_id)"
+		else
+			tag="[$(uci_get_by_name $1 server)]-$(random_id)"
+		fi
 		cat <<-EOF
 			    {
-			      "tag": "OutB-ss-[$(uci_get_by_name $1 server)]-$(random_id)",
+			      "tag": "OutB-ss-${tag}",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {$(get_plugin_config $1)
 			        "servers": [
@@ -357,6 +380,7 @@ gen_server_shadowsocks_config() {
 
 gen_server_socks_config() {
 	validate_server $1 && {
+		local alias=$(uci_get_by_name $1 alias)
 		local plugin=$(uci_get_by_name $1 plugin)
 		local plugin_opts=$(uci_get_by_name $1 plugin_opts)
 		local server_port=$(uci_get_by_name $1 server_port)
@@ -366,14 +390,18 @@ gen_server_socks_config() {
 		fi
 		if [ "V$plugin" != "V" ]; then
 			plugin=$(which $plugin)
-			echo $plugin >>/var/run/xray-plugin
+			echo $plugin >>${PLUGIN_FILE}
 			echo "${plugin} ${plugin_opts} >/var/log/xray.$1.log 2>&1 &" |
-				sed "s+_RANDDOM_+${server_port}+g" >>/var/run/xray-plugin.daemon.sh
-			chmod a+x /var/run/xray-plugin.daemon.sh
+				sed "s+_RANDDOM_+${server_port}+g" >>${PLUGIN_FILE}.daemon.sh
+		fi
+		if [ "V$plugin" != "V" ]; then
+			tag="[$alias]-$(random_id)"
+		else
+			tag="[$(basename ${plugin})]-$(random_id)"
 		fi
 		cat <<-EOF
 			    {
-			      "tag": "OutB-socks-[$(basename ${plugin})]-$(random_id)",
+			      "tag": "OutB-socks-${tag}",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
 			      "settings": {
 			        "servers": [
@@ -396,7 +424,7 @@ get_plugin_config() {
 			plugin="v2ray-plugin"
 		else
 			plugin=$(which $plugin)
-			echo $plugin >>/var/run/xray-plugin
+			echo $plugin >>${PLUGIN_FILE}
 		fi
 		echo -e "\n        \"plugin\": \"$plugin\","
 		if [ -n "$plugin_opts" ]; then
@@ -463,6 +491,14 @@ gen_config_file() {
 	echo $config_file
 }
 
+xray_plugin_daemon() {
+	[ -e ${PLUGIN_FILE} ] && kill_all $(sort -u ${PLUGIN_FILE})
+	[ -e ${PLUGIN_FILE}.daemon.sh ] && {
+		chmod a+x ${PLUGIN_FILE}.daemon.sh
+		${PLUGIN_FILE}.daemon.sh
+	}
+}
+
 xray_daemon() {
 	command -v xray >/dev/null 2>&1 || return 0
 	if [ -e /proc/sys/fs/nr_open ] && [ -e /proc/sys/fs/file-max ]; then
@@ -475,7 +511,7 @@ xray_daemon() {
 	while (! ulimit -SHn $limit) && [ $limit -gt 1024 ]; do limit=$((limit / 2)); done
 	ulimit -SHn $limit
 	config_file=$(gen_config_file)
-	/var/run/xray-plugin.daemon.sh 2>/dev/null
+	xray_plugin_daemon 2>/dev/null
 	(/usr/bin/${NAME} run -c ${config_file} >/var/log/xray.log 2>&1) &
 	for _ in $(seq 10); do if pgrep -f /usr/bin/${NAME} >/dev/null; then break; else sleep 1; fi; done
 	pgrep -f /usr/bin/${NAME} >/dev/null
@@ -516,9 +552,9 @@ kill_all() {
 stop() {
 	/usr/bin/${NAME}-rules -f
 	kill_all /usr/bin/${NAME}
-	if [ -f /var/run/xray-plugin ]; then
-		kill_all $(sort -u /var/run/xray-plugin)
-		rm -f /var/run/xray-plugin*
+	if [ -f ${PLUGIN_FILE} ]; then
+		kill_all $(sort -u ${PLUGIN_FILE})
+		rm -f ${PLUGIN_FILE}*
 	fi
 	rm -rf /var/log/xray*.log
 	xray_cleandns
@@ -567,9 +603,15 @@ healthcheck() {
 		retry=${2:-1}
 		timeout=5
 		[ $retry -lt 1 ] && return 1
-		ret_code=$(curl -s --connect-timeout $timeout "$target" -w %{http_code} -o /dev/null | tail -n1)
-		# echo -n "[ $retry $ret_code ] "
-		[ "x$ret_code" = "x200" -o "x$ret_code" = "x204" ] && return 0 || sleep 1 && cat_connect $target $((retry - 1))
+		if which wait4x >/dev/null 2>&1; then # use [wait4x]
+			wait4x http $target || cat_connect $target $((retry - 1))
+		elif which wait-for >/dev/null 2>&1; then # use [wait-for]
+			wait-for -t=10s http --url=$target >/dev/null 2>&1 || cat_connect $target $((retry - 1))
+		else # use [curl]
+			ret_code=$(curl -s --connect-timeout $timeout "$target" -w %{http_code} -o /dev/null | tail -n1)
+			# echo -n "[ $retry $ret_code ] "
+			[ "x$ret_code" = "x200" -o "x$ret_code" = "x204" ] && return 0 || sleep 1 && cat_connect $target $((retry - 1))
+		fi
 	}
 
 	TRPORT=$(uci_get_by_type transparent_proxy local_port 1234)
