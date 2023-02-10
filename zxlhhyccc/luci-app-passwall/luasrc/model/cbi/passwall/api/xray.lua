@@ -7,7 +7,6 @@ local i18n = api.i18n
 
 local pre_release_url = "https://api.github.com/repos/XTLS/Xray-core/releases?per_page=1"
 local release_url = "https://api.github.com/repos/XTLS/Xray-core/releases/latest"
---[[local api_url = release_url]]--
 local api_url = pre_release_url
 local app_path = api.get_xray_path() or ""
 
@@ -70,7 +69,8 @@ function to_download(url, size)
         end
     end
 
-    result = api.curl_logic(url, tmp_file, api.curl_args) == 0
+    local return_code, result = api.curl_logic(url, tmp_file, api.curl_args)
+    result = return_code == 0
 
     if not result then
         api.exec("/bin/rm", {"-f", tmp_file})
