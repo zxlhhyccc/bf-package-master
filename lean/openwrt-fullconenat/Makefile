@@ -6,6 +6,7 @@
 #
 
 include $(TOPDIR)/rules.mk
+include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=fullconenat
 PKG_RELEASE:=1
@@ -20,7 +21,6 @@ PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Chion Tang <tech@chionlab.moe>
 
-include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
 
 define Package/iptables-mod-fullconenat
@@ -36,8 +36,27 @@ define Package/ip6tables-mod-fullconenat
   SECTION:=net
   CATEGORY:=Network
   TITLE:=FULLCONENAT ip6tables extension
-#  DEPENDS:=+ip6tables +kmod-nf-nat6 +kmod-ipt-fullconenat
   DEPENDS:=ip6tables +kmod-nf-nat6 +kmod-ipt-fullconenat +ip6tables-mod-nat
+endef
+
+define KernelPackage/ipt-fullconenat
+  SUBMENU:=Netfilter Extensions
+  TITLE:=FULLCONENAT netfilter module
+  DEPENDS:=+kmod-nf-ipt +kmod-nf-nat
+  KCONFIG:= \
+	CONFIG_NF_CONNTRACK_EVENTS=y \
+	CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
+  FILES:=$(PKG_BUILD_DIR)/xt_FULLCONENAT.ko
+endef
+
+include $(INCLUDE_DIR)/kernel-defaults.mk
+
+define Build/Compile
+	+$(KERNEL_MAKE) $(PKG_JOBS) \
+		M="$(PKG_BUILD_DIR)" \
+		EXTRA_CFLAGS="$(BUILDFLAGS)" \
+		modules
+	$(call Build/Compile/Default)
 endef
 
 define Package/iptables-mod-fullconenat/install
@@ -50,28 +69,6 @@ define Package/ip6tables-mod-fullconenat/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libip6t_FULLCONENAT.so $(1)/usr/lib/iptables
 endef
 
-define KernelPackage/ipt-fullconenat
-  SUBMENU:=Netfilter Extensions
-  TITLE:=FULLCONENAT netfilter module
-  DEPENDS:=+kmod-nf-ipt +kmod-nf-nat
-  KCONFIG:=  \
-	CONFIG_NF_CONNTRACK_EVENTS=y \
-	CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
-  FILES:=$(PKG_BUILD_DIR)/xt_FULLCONENAT.ko
-endef
-
-include $(INCLUDE_DIR)/kernel-defaults.mk
-
-define Build/Compile
-	+$(MAKE) $(PKG_JOBS) -C "$(LINUX_DIR)" \
-		CROSS_COMPILE="$(TARGET_CROSS)" \
-		ARCH="$(LINUX_KARCH)" \
-		M="$(PKG_BUILD_DIR)" \
-		EXTRA_CFLAGS="$(BUILDFLAGS)" \
-		modules
-	$(call Build/Compile/Default)
-endef
-
-$(eval $(call KernelPackage,ipt-fullconenat))
 $(eval $(call BuildPackage,iptables-mod-fullconenat))
 $(eval $(call BuildPackage,ip6tables-mod-fullconenat))
+$(eval $(call KernelPackage,ipt-fullconenat))
