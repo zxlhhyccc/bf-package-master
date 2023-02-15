@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sing-box
-PKG_VERSION:=1.1.5
+PKG_VERSION:=1.2-beta1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=a1e642362f41bd0e362cd9c8d2f0d29d2eca6a55a948677f6f03cfb81c4f0657
+PKG_HASH:=dcf36bc8cacea19a2e47bcfc691059680d6691898327b2317085711e88ff45cb
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
@@ -21,6 +21,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_COMPRESS_UPX \
 	CONFIG_TAG_$(PKG_NAME)_ACME \
 	CONFIG_TAG_$(PKG_NAME)_CLASH_API \
+	CONFIG_TAG_$(PKG_NAME)_DHCP \
 	CONFIG_TAG_$(PKG_NAME)_ECH \
 	CONFIG_TAG_$(PKG_NAME)_GVISOR \
 	CONFIG_TAG_$(PKG_NAME)_GRPC \
@@ -52,6 +53,7 @@ define Package/$(PKG_NAME)
     +kmod-inet-diag \
     +kmod-netlink-diag \
     +SING_BOX_BUILD_GVISOR:kmod-tun
+  USERID:=sing-box=5566:sing-box=5566
 endef
 
 GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
@@ -75,6 +77,10 @@ define Package/$(PKG_NAME)/config
     config TAG_$(PKG_NAME)_CLASH_API
       bool "Build with Clash API support (EXPERIMENTAL!!!)"
       default y
+
+    config TAG_$(PKG_NAME)_DHCP
+    bool "Build with DHCP support"
+    default n
 
     config TAG_$(PKG_NAME)_ECH
       bool "Build with TLS ECH extension support"
@@ -118,6 +124,9 @@ ifneq ($(CONFIG_TAG_$(PKG_NAME)_ACME),)
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_CLASH_API),)
   PKG_BUILD_TAGS+=with_clash_api
+endif
+ifneq ($(CONFIG_TAG_$(PKG_NAME)_DHCP),)
+  PKG_BUILD_TAGS+=with_dhcp
 endif
 ifneq ($(CONFIG_TAG_$(PKG_NAME)_ECH),)
   PKG_BUILD_TAGS+=with_ech
