@@ -40,7 +40,7 @@ PKG_USE_MIPS16:=0
 GO_PKG:=github.com/sagernet/sing-box
 GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/sing-box
 GO_PKG_LDFLAGS:=-s -w 
-GO_PKG_LDFLAGS_X:=$(GO_PKG)/constant.Version=$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=$(GO_PKG)/constant.Version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -171,6 +171,17 @@ define Package/sing-box/install
 	$(INSTALL_CONF) ./files/sing-box.conf $(1)/etc/config/sing-box
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) ./files/sing-box.init $(1)/etc/init.d/sing-box
+endef
+
+define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+
+# check if we are on real system
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	/etc/init.d/sing-box stop >/dev/null 2>&1
+	/etc/init.d/sing-box disable >/dev/null 2>&1
+fi
+exit 0
 endef
 
 $(eval $(call GoBinPackage,sing-box))
