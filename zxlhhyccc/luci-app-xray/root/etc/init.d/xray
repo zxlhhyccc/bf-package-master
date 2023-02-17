@@ -172,6 +172,15 @@ gen_config_inbound_redir() {
 		      "settings": {
 		        "network": "tcp,udp",
 		        "followRedirect": true
+		      },
+		      "sniffing": {
+		        "enabled": true,
+		        "destOverride": ["http", "tls"]
+		      },
+		      "streamSettings": {
+		        "sockopt": {
+		          "tproxy": "redirect" 
+		        }
 		      }
 		    },
 	EOF
@@ -183,7 +192,11 @@ gen_config_inbound_http() {
 		    {
 		      "protocol": "http",
 		      "port": $(uci_get_by_type http_proxy local_port),
-		      "address": "0.0.0.0"
+		      "address": "0.0.0.0",
+		      "sniffing": {
+		        "enabled": true,
+		        "destOverride": ["http", "tls"]
+		      },
 		    },
 	EOF
 }
@@ -195,6 +208,10 @@ gen_config_inbound_socks5() {
 		      "protocol": "socks",
 		      "port": $(uci_get_by_type socks5_proxy local_port),
 		      "address": "0.0.0.0",
+		      "sniffing": {
+		        "enabled": true,
+		        "destOverride": ["http", "tls"]
+		      },
 		      "settings": {
 		        "udp": true
 		      }
@@ -297,6 +314,7 @@ gen_server_vless_config() {
 			        ]
 			      },
 			      "streamSettings": {
+			        "sockopt": { "mark": 255 },
 			        "network": "${network}",
 			        "security": "${security}",
 			        $(gen_stream_setting_key ${network} ${security} $(uci_get_by_name $1 ws_path)): {
@@ -340,6 +358,7 @@ gen_server_trojan_config() {
 			        ]
 			      },
 			      "streamSettings": {
+			        "sockopt": { "mark": 255 },
 			        "network": "${network}",
 			        "security": "${security}",
 			        $(gen_stream_setting_key ${network} ${security}): {
@@ -372,7 +391,8 @@ gen_server_shadowsocks_config() {
 			            "method": "$(uci_get_by_name $1 method)"
 			          }
 			        ]
-			      }
+			      },
+			      "streamSettings": { "sockopt": { "mark": 255 } }
 			    },
 		EOF
 	}
@@ -410,7 +430,8 @@ gen_server_socks_config() {
 			            "port": ${server_port}
 			          }
 			        ]
-			      }
+			      },
+			      "streamSettings": { "sockopt": { "mark": 255 } }
 			    },
 		EOF
 	}
@@ -460,6 +481,10 @@ gen_config_outbounds() {
 gen_config_file() {
 	local config_file=/var/etc/$NAME.json
 	local balancer_name="balancer-$(random_id)"
+	local strategy="$(uci_get_by_type general strategy leastLoad)"
+	[ "V${strategy}" = "VleastLoad" ] && xray version | grep -q 'Xray' && {
+		strategy="leastPing"
+	}
 	cat <<-EOF >$config_file
 		{
 			$(gen_config_inbounds)
@@ -474,7 +499,7 @@ gen_config_file() {
 		      "tag": "${balancer_name}",
 		      "selector": ["OutB"],
 		      "strategy": {
-		      "type": "$(uci_get_by_type general strategy leastLoad)"
+		        "type": "${strategy}"
 		      }
 		    }]
 		  },
