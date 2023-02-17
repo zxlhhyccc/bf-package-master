@@ -1,15 +1,13 @@
 local e = require"nixio.fs"
 require("luci.tools.webadmin")
--- [[ local e = "mwan3 status | grep -c \"is online and tracking is active\"" ]]--
-local e = "mwan3 status | grep -c \"tracking is active\""
-local e = io.popen(e,"r")
-local t = e:read("*a")
-e:close()
+
 m = Map("syncdial")
 m.title = translate("多线多拨")
-m.description = translate("使用macvlan驱动创建多个虚拟WAN口，支持并发多拨 <br />当前在线接口数量：")..t
+m.description = translate("使用macvlan驱动创建多个虚拟WAN口，支持并发多拨。")
 
-s = m:section(TypedSection,"syncdial",translate(" "))
+m:section(SimpleSection).template = "syncdial/syncdial_status"
+
+s = m:section(NamedSection, "config", "syncdial", translate("配置"))
 s.anonymous = true
 
 o = s:option(Flag,"enabled","启用")
@@ -32,7 +30,7 @@ o = s:option(Flag,"ipv6","启用虚拟接口 IPV6")
 o.rmempty = false
 
 o = s:option(Value,"wannum","虚拟WAN接口数量")
-o.datatype = "range(0,249)"
+o.datatype = "and(uinteger,range(0,249))"
 o.optional = false
 o.default = 1
 
@@ -45,7 +43,7 @@ o.optional = false
 o:depends("dial_type","2")
 
 o = s:option(Value,"wannum2",translate("第二条线虚拟WAN接口数量"),translate("设置第二条线的拨号数"))
-o.datatype = "range(0,249)"
+o.datatype = "and(uinteger,range(0,249))"
 o.optional = false
 o.default = 1
 o:depends("dial_type","2")
@@ -58,12 +56,12 @@ o = s:option(Flag,"dialchk","启用掉线检测")
 o.rmempty = false
 
 o = s:option(Value,"dialnum","最低在线接口数量","如果在线接口数量小于这个值则重拨。(每个ipv6也算一个接口)")
-o.datatype = "range(0,248)"
+o.datatype = "and(uinteger,range(0,248))"
 o.optional = false
 o.default = 2
 
 o = s:option(Value,"dialnum2","第二条线最低在线接口数量","如果第二条线在线接口数量小于这个值则重拨。(每个ipv6也算一个接口)")
-o.datatype = "range(0,248)"
+o.datatype = "and(uinteger,range(0,248))"
 o.optional = false
 o.default = 2
 o:depends("dial_type","2")
@@ -83,3 +81,4 @@ o.template = "syncdial/redial_button"
 o.width = "10%"
 
 return m
+
