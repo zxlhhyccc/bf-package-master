@@ -20,10 +20,10 @@ msgid "Protocol"
 msgstr "协议"
 
 msgid "IPv6 Only"
-msgstr "仅IPv6"
+msgstr "仅 IPv6"
 
 msgid "When checked, only IPv6 ports are listen for, otherwise IPv4 will also be listened for."
-msgstr "当勾选时，仅监听IPv6，否则将会同时监听IPv4。"
+msgstr "当勾选时，仅监听 IPv6，否则将会同时监听 IPv4。"
 
 msgid "Port Forwards"
 msgstr "端口转发"
