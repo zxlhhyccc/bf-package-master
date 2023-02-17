@@ -1,7 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #
-# This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2022-2023 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
@@ -13,22 +12,26 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
 PKG_HASH:=dcf36bc8cacea19a2e47bcfc691059680d6691898327b2317085711e88ff45cb
 
-PKG_LICENSE:=GPL-3.0
+PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
+PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_COMPRESS_GOPROXY \
 	CONFIG_SING_BOX_COMPRESS_UPX \
-	CONFIG_TAG_$(PKG_NAME)_ACME \
-	CONFIG_TAG_$(PKG_NAME)_CLASH_API \
-	CONFIG_TAG_$(PKG_NAME)_DHCP \
-	CONFIG_TAG_$(PKG_NAME)_ECH \
-	CONFIG_TAG_$(PKG_NAME)_GVISOR \
-	CONFIG_TAG_$(PKG_NAME)_GRPC \
-	CONFIG_TAG_$(PKG_NAME)_QUIC \
-	CONFIG_TAG_$(PKG_NAME)_SHADOWSOCKSR \
-	CONFIG_TAG_$(PKG_NAME)_UTLS \
-	CONFIG_TAG_$(PKG_NAME)_WIREGUARD
+	CONFIG_SING_BOX_BUILD_ACME \
+	CONFIG_SING_BOX_BUILD_CLASH_API \
+	CONFIG_SING_BOX_BUILD_DHCP \
+	CONFIG_SING_BOX_BUILD_ECH \
+	CONFIG_SING_BOX_BUILD_EMBEDDED_TOR \
+	CONFIG_SING_BOX_BUILD_GRPC \
+	CONFIG_SING_BOX_BUILD_GVISOR \
+	CONFIG_SING_BOX_BUILD_LWIP \
+	CONFIG_SING_BOX_BUILD_QUIC \
+	CONFIG_SING_BOX_BUILD_SHADOWSOCKSR \
+	CONFIG_SING_BOX_BUILD_UTLS \
+	CONFIG_SING_BOX_BUILD_V2RAY_API \
+	CONFIG_SING_BOX_BUILD_WIREGUARD
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
@@ -37,18 +40,18 @@ PKG_USE_MIPS16:=0
 GO_PKG:=github.com/sagernet/sing-box
 GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/sing-box
 GO_PKG_LDFLAGS:=-s -w 
-GO_PKG_LDFLAGS_X:=$(GO_PKG)/constant.Version=v$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=$(GO_PKG)/constant.Version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/$(PKG_NAME)
+define Package/sing-box
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
-  TITLE:=The universal proxy platform.
-  URL:=https://sing-box.sagernet.org
-    DEPENDS:=$(GO_ARCH_DEPENDS) \
+  TITLE:=The universal proxy platform
+  URL:=https://sing-box.sagernet.org/
+  DEPENDS:=$(GO_ARCH_DEPENDS) \
     +ca-bundle \
     +kmod-inet-diag \
     +kmod-netlink-diag \
@@ -56,9 +59,7 @@ define Package/$(PKG_NAME)
   USERID:=sing-box=5566:sing-box=5566
 endef
 
-GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
-
-define Package/$(PKG_NAME)/config
+define Package/sing-box/config
     config SING_BOX_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -69,95 +70,87 @@ define Package/$(PKG_NAME)/config
 	default n
 
   menu "Customizing build tags"
+  if PACKAGE_sing-box
+    config SING_BOX_BUILD_ACME
+	bool "Build with ACME TLS certificate issuer support"
+	default n
 
-    config TAG_$(PKG_NAME)_ACME
-      bool "Build with ACME TLS certificate issuer support"
-      default n
+    config SING_BOX_BUILD_CLASH_API
+	bool "Build with Clash API support"
+	default n
 
-    config TAG_$(PKG_NAME)_CLASH_API
-      bool "Build with Clash API support (EXPERIMENTAL!!!)"
-      default y
+    config SING_BOX_BUILD_DHCP
+	bool "Build with DHCP support"
+	default n
 
-    config TAG_$(PKG_NAME)_DHCP
-    bool "Build with DHCP support"
-    default n
+    config SING_BOX_BUILD_ECH
+	bool "Build with TLS ECH extension support"
+	default y
 
-    config TAG_$(PKG_NAME)_ECH
-      bool "Build with TLS ECH extension support"
-      default n
+    config SING_BOX_BUILD_EMBEDDED_TOR
+	bool "Build with embedded Tor support"
+	default n
 
-    config TAG_$(PKG_NAME)_GVISOR
-      bool "Build with gVisor support"
-      default n
+    config SING_BOX_BUILD_GRPC
+	bool "Build with standard gPRC support"
+	default n
+	help
+      	  Standard gRPC has good compatibility but poor performance.
 
-    config TAG_$(PKG_NAME)_GRPC
-      bool "Build with standard gRPC support"
-      default n
-    help
-      Standard gRPC has good compatibility but poor performance.
+    config SING_BOX_BUILD_GVISOR
+	bool "Build with gVisor support"
+	default y
 
-    config TAG_$(PKG_NAME)_QUIC
-      bool "Build with QUIC support"
-      default y
-      help
-        Required by HTTP3 DNS transports, Naive inbound,
-        Hysteria inbound / outbound, and v2ray QUIC transport.
+    config SING_BOX_BUILD_LWIP
+	bool "Build with LWIP Tun stack support"
+	default n
 
-    config TAG_$(PKG_NAME)_SHADOWSOCKSR
-      bool "Build with ShadowsockR support"
-      default n
+    config SING_BOX_BUILD_QUIC
+    	bool "Build with QUIC support"
+    	default y
+    	help
+      	  Required by HTTP3 DNS transports, Naive inbound,
+      	  Hysteria inbound / outbound, and v2ray QUIC transport.
 
-    config TAG_$(PKG_NAME)_UTLS
-      bool "Build with uTLS support"
-      default y
+    config SING_BOX_BUILD_SHADOWSOCKSR
+    	bool "Build with ShadowsockR support"
+    	default y
 
-    config TAG_$(PKG_NAME)_WIREGUARD
-      bool "Build with WireGuard support"
-      default y
+    config SING_BOX_BUILD_UTLS
+    	bool "Build with uTLS support"
+    	default y
+
+    config SING_BOX_BUILD_V2RAY_API
+    	bool "Build with V2Ray API support"
+    	default n
+
+    config SING_BOX_BUILD_WIREGUARD
+    	bool "Build with WireGuard support"
+    	default y
+  endif
 
   endmenu
 endef
 
-PKG_BUILD_TAGS:=
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_ACME),)
-  PKG_BUILD_TAGS+=with_acme
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_CLASH_API),)
-  PKG_BUILD_TAGS+=with_clash_api
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_DHCP),)
-  PKG_BUILD_TAGS+=with_dhcp
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_ECH),)
-  PKG_BUILD_TAGS+=with_ech
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_GVISOR),)
-  PKG_BUILD_TAGS+=with_gvisor
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_GRPC),)
-  PKG_BUILD_TAGS+=with_grpc
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_QUIC),)
-  PKG_BUILD_TAGS+=with_quic
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_SHADOWSOCKSR),)
-  PKG_BUILD_TAGS+=with_shadowsocksr
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_UTLS),)
-  PKG_BUILD_TAGS+=with_utls
-endif
-ifneq ($(CONFIG_TAG_$(PKG_NAME)_WIREGUARD),)
-  PKG_BUILD_TAGS+=with_wireguard
-endif
-GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip $(PKG_BUILD_TAGS)))
+GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
+	$(if $(CONFIG_SING_BOX_BUILD_ACME),with_acme) \
+	$(if $(CONFIG_SING_BOX_BUILD_CLASH_API),with_clash_api) \
+	$(if $(CONFIG_SING_BOX_BUILD_DHCP),with_dhcp) \
+	$(if $(CONFIG_SING_BOX_BUILD_ECH),with_ech) \
+	$(if $(CONFIG_SING_BOX_BUILD_EMBEDDED_TOR),with_embedded_tor) \
+	$(if $(CONFIG_SING_BOX_BUILD_GRPC),with_grpc) \
+	$(if $(CONFIG_SING_BOX_BUILD_GVISOR),with_gvisor) \
+	$(if $(CONFIG_SING_BOX_BUILD_LWIP),with_lwip) \
+	$(if $(CONFIG_SING_BOX_BUILD_QUIC),with_quic) \
+	$(if $(CONFIG_SING_BOX_BUILD_SHADOWSOCKSR),with_shadowsocksr) \
+	$(if $(CONFIG_SING_BOX_BUILD_UTLS),with_utls) \
+	$(if $(CONFIG_SING_BOX_BUILD_V2RAY_API),with_v2ray_api) \
+	$(if $(CONFIG_SING_BOX_BUILD_WIREGUARD),with_wireguard) \
+))
 
-ifeq ($(CONFIG_SING_BOX_COMPRESS_GOPROXY),y)
-	export GO111MODULE=on
-	export GOPROXY=https://goproxy.baidu.com
-endif
-
-define Package/$(PKG_NAME)/conffiles
+define Package/sing-box/conffiles
 /etc/sing-box/config.json
+/etc/sing-box/
 endef
 
 define Build/Compile
@@ -167,25 +160,17 @@ ifneq ($(CONFIG_SING_BOX_COMPRESS_UPX),)
 endif
 endef
 
-define Package/$(PKG_NAME)/install
+define Package/sing-box/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/sing-box.init $(1)/etc/init.d/sing-box
-
 	$(INSTALL_DIR) $(1)/etc/sing-box
-	$(INSTALL_DATA) ./files/config.json.example $(1)/etc/sing-box/config.json
-endef
+	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/release/config/config.json $(1)/etc/sing-box
+	$(INSTALL_DATA) ./files/config.json.example $(1)/etc/sing-box/config.json.example
 
-define Package/$(PKG_NAME)/postinst
-#!/bin/sh
-
-# check if we are on real system
-if [ -z "$${IPKG_INSTROOT}" ]; then
-	/etc/init.d/sing-box stop >/dev/null 2>&1
-	/etc/init.d/sing-box disable >/dev/null 2>&1
-fi
-exit 0
+	$(INSTALL_DIR) $(1)/etc/config/
+	$(INSTALL_CONF) ./files/sing-box.conf $(1)/etc/config/sing-box
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) ./files/sing-box.init $(1)/etc/init.d/sing-box
 endef
 
 $(eval $(call GoBinPackage,sing-box))
