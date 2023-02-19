@@ -9,6 +9,7 @@ local REMOTE_GROUP = var["-REMOTE_GROUP"]
 local REMOTE_PROXY_SERVER = var["-REMOTE_PROXY_SERVER"]
 local TUN_DNS_PROTO = var["-TUN_DNS_PROTO"]
 local TUN_DNS = var["-TUN_DNS"]
+local TUN_HTTP_HOST = var["-TUN_HTTP_HOST"]
 local TCP_NODE = var["-TCP_NODE"]
 local PROXY_MODE = var["-PROXY_MODE"]
 local NO_PROXY_IPV6 = var["-NO_PROXY_IPV6"]
@@ -134,9 +135,8 @@ local function check_excluded_domain(domain)
 end
 
 local cache_text = ""
-local subscribe_proxy=uci:get(appname, "@global_subscribe[0]", "subscribe_proxy") or "0"
 local new_rules = luci.sys.exec("echo -n $(find /usr/share/passwall/rules -type f | xargs md5sum)")
-local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. TUN_DNS_PROTO .. TUN_DNS .. PROXY_MODE .. NO_PROXY_IPV6 .. subscribe_proxy .. new_rules
+local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. TUN_DNS_PROTO .. TUN_DNS .. PROXY_MODE .. NO_PROXY_IPV6 .. new_rules
 if fs.access(CACHE_TEXT_FILE) then
     for line in io.lines(CACHE_TEXT_FILE) do
         cache_text = line
@@ -165,11 +165,20 @@ local setflag= (NFTFLAG == "1") and "inet#fw4#" or ""
 if not fs.access(CACHE_DNS_FILE) then
     local proxy_server_name = "passwall-proxy-server"
     sys.call(string.format('echo "proxy-server socks5://%s -name %s" >> %s', REMOTE_PROXY_SERVER, proxy_server_name, CACHE_DNS_FILE))
-    if TUN_DNS_PROTO == "tcp" then
-        local server_param = string.format("server-tcp %s -group %s -exclude-default-group -proxy %s", TUN_DNS, REMOTE_GROUP, proxy_server_name)
-        sys.exec(string.format('echo "%s" >> %s', server_param, CACHE_DNS_FILE))
-    elseif TUN_DNS_PROTO == "udp" then
-        local server_param = string.format("server %s -group %s -exclude-default-group -proxy %s", TUN_DNS, REMOTE_GROUP, proxy_server_name)
+    if true then
+        local server_param = string.format("server%s %s -group %s -exclude-default-group -proxy %s", "%s", TUN_DNS, REMOTE_GROUP, proxy_server_name)
+        if TUN_DNS_PROTO == "tcp" then
+            server_param = string.format(server_param, "-tcp")
+        elseif TUN_DNS_PROTO == "udp" then
+            server_param = string.format(server_param, "")
+        elseif TUN_DNS_PROTO == "tls" then
+            server_param = string.format(server_param, "-tls")
+        elseif TUN_DNS_PROTO == "https" then
+            server_param = string.format(server_param, "-https")
+            if TUN_HTTP_HOST and TUN_HTTP_HOST ~= "nil" then
+                server_param = server_param .. " -http-host " .. TUN_HTTP_HOST
+            end
+        end
         sys.exec(string.format('echo "%s" >> %s', server_param, CACHE_DNS_FILE))
     end
     --屏蔽列表

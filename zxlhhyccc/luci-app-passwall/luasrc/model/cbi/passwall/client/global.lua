@@ -201,6 +201,8 @@ o.default = "0"
 if api.is_finded("smartdns") then
     smartdns_mode = s:taboption("DNS", ListValue, "smartdns_mode", translate("Filter Mode"))
     smartdns_mode:value("tcp", translatef("Requery DNS By %s", "TCP"))
+    smartdns_mode:value("https", translatef("Requery DNS By %s", "HTTPS"))
+    smartdns_mode:value("tls", translatef("Requery DNS By %s", "TLS"))
     smartdns_mode:value("udp", translatef("Requery DNS By %s", "UDP"))
     smartdns_mode:depends("dns_shunt", "smartdns")
 
@@ -216,6 +218,21 @@ if api.is_finded("smartdns") then
     o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
     o:depends("smartdns_mode", "tcp")
     o:depends("smartdns_mode", "udp")
+    o:depends("smartdns_mode", "tls")
+
+    o = s:taboption("DNS", Value, "smartdns_remote_dns_doh", translate("Remote DNS DoH"))
+    o.default = "https://1.1.1.1/dns-query"
+    o:value("https://1.1.1.1/dns-query", "CloudFlare")
+    o:value("https://1.1.1.2/dns-query", "CloudFlare-Security")
+    o:value("https://8.8.4.4/dns-query", "Google 8844")
+    o:value("https://8.8.8.8/dns-query", "Google 8888")
+    o:value("https://9.9.9.9/dns-query", "Quad9-Recommended")
+    o:value("https://208.67.222.222/dns-query", "OpenDNS")
+    o:value("https://dns.adguard.com/dns-query,176.103.130.130", "AdGuard")
+    o:value("https://doh.libredns.gr/dns-query,116.202.176.26", "LibreDNS")
+    o:value("https://doh.libredns.gr/ads,116.202.176.26", "LibreDNS (No Ads)")
+    o.validate = doh_validate
+    o:depends("smartdns_mode", "https")
 end
 
 ---- DNS Forward Mode
