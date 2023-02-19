@@ -84,6 +84,16 @@ s.anonymous = true
 o = s:option(Flag, "enable", translate("Enable"))
 o.rmempty = false
 
+o = s:option(Flag, "enable_udp", "%s %s" %{translate("Enable"), "UDP"})
+o.default = '1'
+o.rmempty = false
+o:depends('enable', '1')
+
+o = s:option(Flag, "disable_http3", "%s %s" %{translate("Disable"), "HTTP3"})
+o.default = '1'
+o.rmempty = false
+o:depends('enable_udp', '1')
+
 o = s:option(Value, "local_port", translate("Local Port"))
 o.datatype = "port"
 o.default = 1234
@@ -91,6 +101,7 @@ o:depends('enable', '1')
 
 o = s:option(Flag, "no_healthcheck", translate("Disable HealthCheck"))
 o.rmempty = false
+o:depends('enable', '1')
 
 -- [[ HTTP Proxy ]]--
 s = m:section(TypedSection, "http_proxy", translate("HTTP Proxy"))

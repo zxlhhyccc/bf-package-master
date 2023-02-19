@@ -64,8 +64,7 @@ has_valid_server() {
 }
 
 get_arg_udp() {
-	local server=$(uci_get_by_type transparent_proxy udp_relay_server)
-	[ "$server" = "same" ] || validate_server $server && echo "-u"
+	uci_bool_by_type transparent_proxy enable_udp && echo "-u"
 }
 
 get_arg_out() {
@@ -473,8 +472,25 @@ gen_server_config() {
 gen_config_outbounds() {
 	cat <<-EOF | sed 's+,    +,\n    +g;s+},__$+}+g'
 		  "outbounds": [
+		    {
+		      "protocol": "blackhole",
+		      "settings": {},
+		      "tag": "blackhole"
+		    },
 					$(for server in $(uci_get_by_type general server); do gen_server_config $server; done)__
 		  ],
+	EOF
+}
+
+get_rules_http3() {
+	uci_bool_by_type transparent_proxy disable_http3 && cat <<-EOF
+
+		      {
+		        "type": "field",
+		        "network": "udp",
+		        "port": 443,
+		        "outboundTag": "blackhole"
+		      },
 	EOF
 }
 
@@ -490,11 +506,13 @@ gen_config_file() {
 			$(gen_config_inbounds)
 			$(gen_config_outbounds)
 		  "routing": {
-		    "rules": [{
-		      "type": "field",
-		      "network": "tcp,udp",
-		      "balancerTag": "${balancer_name}"
-		    }],
+		    "rules": [$(get_rules_http3)
+		      {
+		        "type": "field",
+		        "network": "tcp,udp",
+		        "balancerTag": "${balancer_name}"
+		      }
+		    ],
 		    "balancers": [{
 		      "tag": "${balancer_name}",
 		      "selector": ["OutB"],
