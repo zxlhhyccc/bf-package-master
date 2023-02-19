@@ -1065,121 +1065,131 @@ start_dns() {
 		done
 	}
 
-	case "$DNS_MODE" in
-	dns2socks)
-		local dns2socks_socks_server=$(echo $(config_t_get global socks_server 127.0.0.1:1080) | sed "s/#/:/g")
-		local dns2socks_forward=$(get_first_dns REMOTE_DNS 53 | sed 's/#/:/g')
-		run_dns2socks socks=$dns2socks_socks_server listen_address=127.0.0.1 listen_port=${dns_listen_port} dns=$dns2socks_forward cache=$DNS_CACHE
-		echolog "  - 域名解析：dns2socks(127.0.0.1:${dns_listen_port})，${dns2socks_socks_server} -> ${dns2socks_forward}"
-	;;
-	v2ray|\
-	xray)
-		[ "${resolve_dns}" == "0" ] && {
-			local config_file=$TMP_PATH/DNS.json
-			local log_file=$TMP_PATH/DNS.log
-			local log_file=/dev/null
-			local _v2ray_args="type=$DNS_MODE config_file=$config_file log_file=$log_file"
-			[ "${DNS_CACHE}" == "0" ] && _v2ray_args="${_v2ray_args} dns_cache=0"
-			_v2ray_args="${_v2ray_args} dns_query_strategy=${DNS_QUERY_STRATEGY}"
-			local _dns_client_ip=$(config_t_get global dns_client_ip)
-			[ -n "${_dns_client_ip}" ] && _v2ray_args="${_v2ray_args} dns_client_ip=${_dns_client_ip}"
-			use_tcp_node_resolve_dns=1
-			local v2ray_dns_mode=$(config_t_get global v2ray_dns_mode tcp)
-			_v2ray_args="${_v2ray_args} dns_listen_port=${dns_listen_port}"
-			_v2ray_args="${_v2ray_args} remote_dns_protocol=${v2ray_dns_mode}"
-			case "$v2ray_dns_mode" in
-				tcp)
-					_v2ray_args="${_v2ray_args} remote_dns_tcp_server=${REMOTE_DNS}"
-					echolog "  - 域名解析 DNS Over TCP..."
-				;;
-				doh)
-					remote_dns_doh=$(config_t_get global remote_dns_doh "https://1.1.1.1/dns-query")
-					_v2ray_args="${_v2ray_args} remote_dns_doh=${remote_dns_doh}"
-					
-					local _doh_url=$(echo $remote_dns_doh | awk -F ',' '{print $1}')
-					local _doh_host_port=$(lua_api "get_domain_from_url(\"${_doh_url}\")")
-					local _doh_host=$(echo $_doh_host_port | awk -F ':' '{print $1}')
-					local _is_ip=$(lua_api "is_ip(\"${_doh_host}\")")
-					local _doh_port=$(echo $_doh_host_port | awk -F ':' '{print $2}')
-					[ -z "${_doh_port}" ] && _doh_port=443
-					local _doh_bootstrap=$(echo $remote_dns_doh | cut -d ',' -sf 2-)
-					[ "${_is_ip}" = "true" ] && _doh_bootstrap=${_doh_host}
-					[ -n "${_doh_bootstrap}" ] && REMOTE_DNS=${_doh_bootstrap}:${_doh_port}
-					unset _doh_url _doh_host_port _doh_host _is_ip _doh_port _doh_bootstrap
-					echolog "  - 域名解析 DNS Over HTTPS..."
-				;;
-			esac
-			run_v2ray ${_v2ray_args}
-		}
-	;;
-	pdnsd)
-		use_tcp_node_resolve_dns=1
-		gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
-		ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
-		echolog "  - 域名解析：pdnsd + 使用(TCP节点)解析域名..."
-	;;
-	dns2tcp)
-		use_tcp_node_resolve_dns=1
-		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-		echolog "  - 域名解析：dns2tcp + 使用(TCP节点)解析域名..."
-	;;
-	udp)
-		use_udp_node_resolve_dns=1
-		if [ -f "$(first_type pdnsd)" ];then
-			gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
- 			ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
-			echolog "  - 域名解析：pdnsd + 使用(UDP节点)解析域名..."
-		else
- 			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
-			echolog "  - 域名解析：使用UDP协议请求DNS（$TUN_DNS）..."
-		fi
-	;;
-	esac
-
-	[ "${use_tcp_node_resolve_dns}" = "1" ] && echolog "  * 请确认上游 DNS 支持 TCP 查询，如非直连地址，确保 TCP 代理打开，并且已经正确转发！"
-	[ "${use_udp_node_resolve_dns}" = "1" ] && echolog "  * 要求代理 DNS 请求，如上游 DNS 非直连地址，确保 UDP 代理打开，并且已经正确转发！"
-
 	case "$DNS_SHUNT" in
+	dnsmasq)
+		case "$DNS_MODE" in
+		dns2socks)
+			local dns2socks_socks_server=$(echo $(config_t_get global socks_server 127.0.0.1:1080) | sed "s/#/:/g")
+			local dns2socks_forward=$(get_first_dns REMOTE_DNS 53 | sed 's/#/:/g')
+			run_dns2socks socks=$dns2socks_socks_server listen_address=127.0.0.1 listen_port=${dns_listen_port} dns=$dns2socks_forward cache=$DNS_CACHE
+			echolog "  - 域名解析：dns2socks(127.0.0.1:${dns_listen_port})，${dns2socks_socks_server} -> ${dns2socks_forward}"
+		;;
+		v2ray|\
+		xray)
+			[ "${resolve_dns}" == "0" ] && {
+				local config_file=$TMP_PATH/DNS.json
+				local log_file=$TMP_PATH/DNS.log
+				local log_file=/dev/null
+				local _v2ray_args="type=$DNS_MODE config_file=$config_file log_file=$log_file"
+				[ "${DNS_CACHE}" == "0" ] && _v2ray_args="${_v2ray_args} dns_cache=0"
+				_v2ray_args="${_v2ray_args} dns_query_strategy=${DNS_QUERY_STRATEGY}"
+				local _dns_client_ip=$(config_t_get global dns_client_ip)
+				[ -n "${_dns_client_ip}" ] && _v2ray_args="${_v2ray_args} dns_client_ip=${_dns_client_ip}"
+				use_tcp_node_resolve_dns=1
+				local v2ray_dns_mode=$(config_t_get global v2ray_dns_mode tcp)
+				_v2ray_args="${_v2ray_args} dns_listen_port=${dns_listen_port}"
+				_v2ray_args="${_v2ray_args} remote_dns_protocol=${v2ray_dns_mode}"
+				case "$v2ray_dns_mode" in
+					tcp)
+						_v2ray_args="${_v2ray_args} remote_dns_tcp_server=${REMOTE_DNS}"
+						echolog "  - 域名解析 DNS Over TCP..."
+					;;
+					doh)
+						remote_dns_doh=$(config_t_get global remote_dns_doh "https://1.1.1.1/dns-query")
+						_v2ray_args="${_v2ray_args} remote_dns_doh=${remote_dns_doh}"
+
+						local _doh_url=$(echo $remote_dns_doh | awk -F ',' '{print $1}')
+						local _doh_host_port=$(lua_api "get_domain_from_url(\"${_doh_url}\")")
+						local _doh_host=$(echo $_doh_host_port | awk -F ':' '{print $1}')
+						local _is_ip=$(lua_api "is_ip(\"${_doh_host}\")")
+						local _doh_port=$(echo $_doh_host_port | awk -F ':' '{print $2}')
+						[ -z "${_doh_port}" ] && _doh_port=443
+						local _doh_bootstrap=$(echo $remote_dns_doh | cut -d ',' -sf 2-)
+						[ "${_is_ip}" = "true" ] && _doh_bootstrap=${_doh_host}
+						[ -n "${_doh_bootstrap}" ] && REMOTE_DNS=${_doh_bootstrap}:${_doh_port}
+						unset _doh_url _doh_host_port _doh_host _is_ip _doh_port _doh_bootstrap
+						echolog "  - 域名解析 DNS Over HTTPS..."
+					;;
+				esac
+				run_v2ray ${_v2ray_args}
+			}
+		;;
+		pdnsd)
+			use_tcp_node_resolve_dns=1
+			gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
+			ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
+			echolog "  - 域名解析：pdnsd + 使用(TCP节点)解析域名..."
+		;;
+		dns2tcp)
+			use_tcp_node_resolve_dns=1
+			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
+			echolog "  - 域名解析：dns2tcp + 使用(TCP节点)解析域名..."
+		;;
+		udp)
+			use_udp_node_resolve_dns=1
+			if [ -f "$(first_type pdnsd)" ];then
+				gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
+ 				ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
+				echolog "  - 域名解析：pdnsd + 使用(UDP节点)解析域名..."
+			else
+			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
+			echolog "  - 域名解析：使用UDP协议请求DNS（$TUN_DNS）..."
+			fi
+		;;
+		esac
+
+		[ "${use_tcp_node_resolve_dns}" = "1" ] && echolog "  * 请确认上游 DNS 支持 TCP 查询，如非直连地址，确保 TCP 代理打开，并且已经正确转发！"
+		[ "${use_udp_node_resolve_dns}" = "1" ] && echolog "  * 要求代理 DNS 请求，如上游 DNS 非直连地址，确保 UDP 代理打开，并且已经正确转发！"
+
+		[ -n "$chnlist" ] && [ "$CHINADNS_NG" = "1" ] && [ -n "$(first_type chinadns-ng)" ] && [ -s "${RULES_PATH}/chnlist" ] && {
+			china_ng_listen_port=$(expr $dns_listen_port + 1)
+			china_ng_listen="127.0.0.1#${china_ng_listen_port}"
+			china_ng_chn=$(echo -n $(echo "${LOCAL_DNS}" | sed "s/,/\n/g" | head -n2) | tr " " ",")
+			china_ng_gfw="${TUN_DNS}"
+			echolog "  | - (chinadns-ng) 最高支持4级域名过滤..."
+
+			local gfwlist_param="${TMP_PATH}/chinadns_gfwlist"
+			[ -s "${RULES_PATH}/gfwlist" ] && cp -a "${RULES_PATH}/gfwlist" "${gfwlist_param}"
+			local chnlist_param="${TMP_PATH}/chinadns_chnlist"
+			[ -s "${RULES_PATH}/chnlist" ] && cp -a "${RULES_PATH}/chnlist" "${chnlist_param}"
+
+			[ -s "${RULES_PATH}/proxy_host" ] && {
+				cat "${RULES_PATH}/proxy_host" | tr -s '\n' | grep -v "^#" | sort -u >> "${gfwlist_param}"
+				echolog "  | - [$?](chinadns-ng) 代理域名表合并到防火墙域名表"
+			}
+			[ -s "${RULES_PATH}/direct_host" ] && {
+				cat "${RULES_PATH}/direct_host" | tr -s '\n' | grep -v "^#" | sort -u >> "${chnlist_param}"
+				echolog "  | - [$?](chinadns-ng) 域名白名单合并到中国域名表"
+			}
+			chnlist_param=${chnlist_param:+-m "${chnlist_param}" -M}
+			local log_path="${TMP_PATH}/chinadns-ng.log"
+			log_path="/dev/null"
+			ln_run "$(first_type chinadns-ng)" chinadns-ng "$log_path" -v -b 0.0.0.0 -l "${china_ng_listen_port}" ${china_ng_chn:+-c "${china_ng_chn}"} ${chnlist_param} ${china_ng_gfw:+-t "${china_ng_gfw}"} ${gfwlist_param:+-g "${gfwlist_param}"} -f
+			echolog "  + 过滤服务：ChinaDNS-NG(:${china_ng_listen_port})：国内DNS：${china_ng_chn}，可信DNS：${china_ng_gfw}"
+		}
+		source $APP_PATH/helper_dnsmasq.sh stretch
+		source $APP_PATH/helper_dnsmasq.sh add FLAG="default" DNS_MODE=$DNS_MODE TMP_DNSMASQ_PATH=$TMP_DNSMASQ_PATH DNSMASQ_CONF_FILE=/tmp/dnsmasq.d/dnsmasq-passwall.conf REMOTE_FAKEDNS=$fakedns DEFAULT_DNS=$DEFAULT_DNS LOCAL_DNS=$LOCAL_DNS TUN_DNS=$TUN_DNS CHINADNS_DNS=$china_ng_listen TCP_NODE=$TCP_NODE PROXY_MODE=${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${ACL_TCP_PROXY_MODE} NO_PROXY_IPV6=${filter_proxy_ipv6} NFTFLAG=${nftflag}
+	;;
 	smartdns)
+		local SMARTDNS_TUN_DNS=
+		local SMARTDNS_TUN_DNS_PROTO=
 		local group_domestic=$(config_t_get global group_domestic)
-		CHINADNS_NG=0
-		source $APP_PATH/helper_smartdns.sh add FLAG="default" DNS_MODE=$DNS_MODE SMARTDNS_CONF=/tmp/etc/smartdns/$CONFIG.conf REMOTE_FAKEDNS=$fakedns DEFAULT_DNS=$DEFAULT_DNS LOCAL_GROUP=$group_domestic TUN_DNS=$TUN_DNS TCP_NODE=$TCP_NODE PROXY_MODE=${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${ACL_TCP_PROXY_MODE} NO_PROXY_IPV6=${filter_proxy_ipv6} NFTFLAG=${nftflag}
+		local smartdns_mode=$(config_t_get global smartdns_mode)
+		case "$smartdns_mode" in
+		tcp)
+			SMARTDNS_TUN_DNS_PROTO="tcp"
+			SMARTDNS_TUN_DNS=$(config_t_get global smartdns_remote_dns 1.1.1.1)
+		;;
+		udp)
+			SMARTDNS_TUN_DNS_PROTO="udp"
+			SMARTDNS_TUN_DNS=$(config_t_get global smartdns_remote_dns 1.1.1.1)
+		;;
+		esac
+		source $APP_PATH/helper_smartdns.sh add FLAG="default" DNS_MODE=$DNS_MODE SMARTDNS_CONF=/tmp/etc/smartdns/$CONFIG.conf REMOTE_PROXY_SERVER=$(cat $TMP_PATH/TCP_SOCKS_server) DEFAULT_DNS=$DEFAULT_DNS LOCAL_GROUP=$group_domestic TUN_DNS_PROTO=$SMARTDNS_TUN_DNS_PROTO TUN_DNS=$SMARTDNS_TUN_DNS TCP_NODE=$TCP_NODE PROXY_MODE=${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${ACL_TCP_PROXY_MODE} NO_PROXY_IPV6=${filter_proxy_ipv6} NFTFLAG=${nftflag}
 		source $APP_PATH/helper_smartdns.sh restart
 		echolog "  - 域名解析：使用SmartDNS，请确保配置正常。"
 	;;
 	esac
-
-	[ -n "$chnlist" ] && [ "$CHINADNS_NG" = "1" ] && [ -n "$(first_type chinadns-ng)" ] && [ -s "${RULES_PATH}/chnlist" ] && {
-		china_ng_listen_port=$(expr $dns_listen_port + 1)
-		china_ng_listen="127.0.0.1#${china_ng_listen_port}"
-		china_ng_chn=$(echo -n $(echo "${LOCAL_DNS}" | sed "s/,/\n/g" | head -n2) | tr " " ",")
-		china_ng_gfw="${TUN_DNS}"
-		echolog "  | - (chinadns-ng) 最高支持4级域名过滤..."
-
-		local gfwlist_param="${TMP_PATH}/chinadns_gfwlist"
-		[ -s "${RULES_PATH}/gfwlist" ] && cp -a "${RULES_PATH}/gfwlist" "${gfwlist_param}"
-		local chnlist_param="${TMP_PATH}/chinadns_chnlist"
-		[ -s "${RULES_PATH}/chnlist" ] && cp -a "${RULES_PATH}/chnlist" "${chnlist_param}"
-
-		[ -s "${RULES_PATH}/proxy_host" ] && {
-			cat "${RULES_PATH}/proxy_host" | tr -s '\n' | grep -v "^#" | sort -u >> "${gfwlist_param}"
-			echolog "  | - [$?](chinadns-ng) 代理域名表合并到防火墙域名表"
-		}
-		[ -s "${RULES_PATH}/direct_host" ] && {
-			cat "${RULES_PATH}/direct_host" | tr -s '\n' | grep -v "^#" | sort -u >> "${chnlist_param}"
-			echolog "  | - [$?](chinadns-ng) 域名白名单合并到中国域名表"
-		}
-		chnlist_param=${chnlist_param:+-m "${chnlist_param}" -M}
-		local log_path="${TMP_PATH}/chinadns-ng.log"
-		log_path="/dev/null"
-		ln_run "$(first_type chinadns-ng)" chinadns-ng "$log_path" -v -b 0.0.0.0 -l "${china_ng_listen_port}" ${china_ng_chn:+-c "${china_ng_chn}"} ${chnlist_param} ${china_ng_gfw:+-t "${china_ng_gfw}"} ${gfwlist_param:+-g "${gfwlist_param}"} -f
-		echolog "  + 过滤服务：ChinaDNS-NG(:${china_ng_listen_port})：国内DNS：${china_ng_chn}，可信DNS：${china_ng_gfw}"
-	}
-	
-	[ "$DNS_SHUNT" = "dnsmasq" ] && {
-		source $APP_PATH/helper_dnsmasq.sh stretch
-		source $APP_PATH/helper_dnsmasq.sh add FLAG="default" DNS_MODE=$DNS_MODE TMP_DNSMASQ_PATH=$TMP_DNSMASQ_PATH DNSMASQ_CONF_FILE=/tmp/dnsmasq.d/dnsmasq-passwall.conf REMOTE_FAKEDNS=$fakedns DEFAULT_DNS=$DEFAULT_DNS LOCAL_DNS=$LOCAL_DNS TUN_DNS=$TUN_DNS CHINADNS_DNS=$china_ng_listen TCP_NODE=$TCP_NODE PROXY_MODE=${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${ACL_TCP_PROXY_MODE} NO_PROXY_IPV6=${filter_proxy_ipv6} NFTFLAG=${nftflag}
-	}
 }
 
 gen_pdnsd_config() {

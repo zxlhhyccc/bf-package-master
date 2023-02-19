@@ -193,16 +193,33 @@ if api.is_finded("smartdns") then
     group_domestic.placeholder = "local"
     group_domestic:depends("dns_shunt", "smartdns")
     group_domestic.description = translate("You only need to configure domestic DNS packets in SmartDNS and set it redirect or as Dnsmasq upstream, and fill in the domestic DNS group name here.")
-    group_domestic.description = group_domestic.description .. string.format('<a href="%s" target="_blank">%s</a>', "https://github.com/luckyyyyy/blog/issues/57", translate("Guide"))
 end
 
 o = s:taboption("DNS", Flag, "filter_proxy_ipv6", translate("Filter Proxy Host IPv6"), translate("Experimental feature."))
 o.default = "0"
 
+if api.is_finded("smartdns") then
+    smartdns_mode = s:taboption("DNS", ListValue, "smartdns_mode", translate("Filter Mode"))
+    smartdns_mode:value("tcp", translatef("Requery DNS By %s", "TCP"))
+    smartdns_mode:value("udp", translatef("Requery DNS By %s", "UDP"))
+    smartdns_mode:depends("dns_shunt", "smartdns")
+
+    o = s:taboption("DNS", Value, "smartdns_remote_dns", translate("Remote DNS"))
+    o.datatype = "or(ipaddr,ipaddrport)"
+    o.default = "1.1.1.1"
+    o:value("1.1.1.1", "1.1.1.1 (CloudFlare)")
+    o:value("1.1.1.2", "1.1.1.2 (CloudFlare-Security)")
+    o:value("8.8.4.4", "8.8.4.4 (Google)")
+    o:value("8.8.8.8", "8.8.8.8 (Google)")
+    o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
+    o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
+    o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
+    o:depends("smartdns_mode", "tcp")
+    o:depends("smartdns_mode", "udp")
+end
+
 ---- DNS Forward Mode
 dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
-dns_mode.rmempty = false
-dns_mode:reset_values()
 if api.is_finded("pdnsd") then
     dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
 end
@@ -216,6 +233,9 @@ if has_xray then
     dns_mode:value("xray", "Xray")
 end
 dns_mode:value("udp", translatef("Requery DNS By %s", "UDP"))
+if api.is_finded("smartdns") then
+    dns_mode:depends("dns_shunt", "dnsmasq")
+end
 
 o = s:taboption("DNS", ListValue, "v2ray_dns_mode", " ")
 o:value("tcp", "TCP")
