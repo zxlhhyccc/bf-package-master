@@ -218,6 +218,7 @@ if api.is_finded("smartdns") then
     o:value("https://dns.adguard.com/dns-query,176.103.130.130")
     o:value("https://doh.libredns.gr/dns-query,116.202.176.26")
     o:value("https://doh.libredns.gr/ads,116.202.176.26")
+    o:depends("dns_shunt", "smartdns")
     function o.write(self, section, value)
         local t = {}
         local t2 = {}
