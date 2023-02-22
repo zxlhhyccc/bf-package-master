@@ -180,28 +180,16 @@ if not REMOTE_GROUP or REMOTE_GROUP == "nil" then
     sys.call('sed -i "/passwall/d" /etc/smartdns/custom.conf >/dev/null 2>&1')
 end
 
-local setflag= (NFTFLAG == "1") and "inet#fw4#" or ""
-
 if not fs.access(CACHE_DNS_FILE) then
     local proxy_server_name = "passwall-proxy-server"
     sys.call(string.format('echo "proxy-server socks5://%s -name %s" >> %s', REMOTE_PROXY_SERVER, proxy_server_name, CACHE_DNS_FILE))
     if true then
         string.gsub(TUN_DNS, '[^' .. "|" .. ']+', function(w)
-            local server_param = string.format("server%s %s -group %s -exclude-default-group -proxy %s", "%s", "%s", REMOTE_GROUP, proxy_server_name) 
-            local isTCP = w:find("tcp://")
-            local isUDP = w:find("udp://")
-            local isTLS = w:find("tls://")
+            local server_dns = w
+            local server_param = string.format("server %s -group %s -exclude-default-group -proxy %s", "%s", REMOTE_GROUP, proxy_server_name)
+
             local isHTTPS = w:find("https://")
-            if isTCP and isTCP == 1 then
-                local dns = w:gsub("tcp://", "")
-                server_param = string.format(server_param, "-tcp", dns)
-            elseif isUDP and isUDP == 1 then
-                local dns = w:gsub("udp://", "")
-                server_param = string.format(server_param, "", dns)
-            elseif isTLS and isTLS == 1 then
-                local dns = w:gsub("tls://", "")
-                server_param = string.format(server_param, "-tls", dns)
-            elseif isHTTPS and isHTTPS == 1 then
+            if isHTTPS and isHTTPS == 1 then
                 local http_host = nil
                 local url = w
                 local port = 443
@@ -220,14 +208,18 @@ if not fs.access(CACHE_DNS_FILE) then
                         url = url:gsub(http_host, dns_ip)
                     end
                 end
-                server_param = string.format(server_param, "-https", url)
+                server_dns = url
                 if http_host then
-                    server_param = server_param .. " -http-host " .. http_host
+                    server_dns = server_dns .. " -http-host " .. http_host
                 end
             end
+            server_param = string.format(server_param, server_dns)
             sys.exec(string.format('echo "%s" >> %s', server_param, CACHE_DNS_FILE))
         end)
     end
+
+    local setflag= (NFTFLAG == "1") and "inet#fw4#" or ""
+
     --屏蔽列表
     for line in io.lines("/usr/share/passwall/rules/block_host") do
         if line ~= "" and not line:find("#") then
