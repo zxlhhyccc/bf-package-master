@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-meta
 PKG_VERSION:=alpha
-PKG_RELEASE:=gdb3e1b9e
+PKG_RELEASE:=g7fecd20
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_META_ARCH:=mipsle-softfloat
@@ -60,7 +60,7 @@ openclash-meta is a cross-platform proxy software
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz ] && wget https://raw.githubusercontent.com/vernesong/OpenClash/dev/core-lateset/meta/clash-linux-$(OPENCLASH_META_ARCH).tar.gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz
+	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/meta/clash-linux-$(OPENCLASH_META_ARCH).tar.gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz
 	tar -xzvf $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz -C $(PKG_BUILD_DIR)
 endef
 
