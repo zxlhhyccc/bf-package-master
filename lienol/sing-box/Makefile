@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sing-box
-PKG_VERSION:=1.1.6
+PKG_VERSION:=1.2-beta5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=2fdf93fd49c9375cd14b2fe2e2163cbad4b65d0cfa422c592855e7810036ef56
+PKG_HASH:=14a5834b9cde1c7e951c5d65ddf3c660b56cde76de4fff43f5454c9549f6ee82
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -28,6 +28,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_BUILD_GVISOR \
 	CONFIG_SING_BOX_BUILD_LWIP \
 	CONFIG_SING_BOX_BUILD_QUIC \
+	CONFIG_SING_BOX_BUILD_REALITY_SERVER \
 	CONFIG_SING_BOX_BUILD_SHADOWSOCKSR \
 	CONFIG_SING_BOX_BUILD_UTLS \
 	CONFIG_SING_BOX_BUILD_V2RAY_API \
@@ -112,6 +113,10 @@ define Package/sing-box/config
       	  Required by HTTP3 DNS transports, Naive inbound,
       	  Hysteria inbound / outbound, and v2ray QUIC transport.
 
+    config SING_BOX_WITH_REALITY_SERVER
+      	bool "Build with reality TLS server support"
+      	default n
+
     config SING_BOX_BUILD_SHADOWSOCKSR
     	bool "Build with ShadowsockR support"
     	default y
@@ -126,7 +131,7 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_WIREGUARD
     	bool "Build with WireGuard support"
-    	default y
+    	default n
   endif
 
   endmenu
@@ -142,6 +147,7 @@ GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SING_BOX_BUILD_GVISOR),with_gvisor) \
 	$(if $(CONFIG_SING_BOX_BUILD_LWIP),with_lwip) \
 	$(if $(CONFIG_SING_BOX_BUILD_QUIC),with_quic) \
+	$(if $(CONFIG_SING_BOX_BUILD_REALITY_SERVER),with_reality_server \
 	$(if $(CONFIG_SING_BOX_BUILD_SHADOWSOCKSR),with_shadowsocksr) \
 	$(if $(CONFIG_SING_BOX_BUILD_UTLS),with_utls) \
 	$(if $(CONFIG_SING_BOX_BUILD_V2RAY_API),with_v2ray_api) \
