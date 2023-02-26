@@ -31,7 +31,7 @@ function getServiceStatus() {
 }
 
 function renderStatus(isRunning, port) {
-	var spanTemp = '<span style="color:%s"><strong>%s %s</strong></span>';
+	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
 	var renderHTML;
 	if (isRunning) {
 		var button = String.format('&#160;<a class="btn cbi-button" href="http://%s:%s" target="_blank" rel="noreferrer noopener">%s</a>',
