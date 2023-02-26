@@ -20,15 +20,6 @@ var callServiceList = rpc.declare({
 	expect: { '': {} }
 });
 
-/*
-var callInitAction = rpc.declare({
-	object: 'luci',
-	method: 'setInitAction',
-	params: ['name', 'action'],
-	expect: { result:false }
-});
-*/
-
 function getServiceStatus() {
 	return L.resolveDefault(callServiceList('v2raya'), {}).then(function (res) {
 		var isRunning = false;
@@ -40,7 +31,7 @@ function getServiceStatus() {
 }
 
 function renderStatus(isRunning, port) {
-	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
+	var spanTemp = '<span style="color:%s"><strong>%s %s</strong></span>';
 	var renderHTML;
 	if (isRunning) {
 		var button = String.format('&#160;<a class="btn cbi-button" href="http://%s:%s" target="_blank" rel="noreferrer noopener">%s</a>',
@@ -80,17 +71,6 @@ return view.extend({
 		]);
 	},
 
-/*
-	handleSaveApply: function(ev, mode) {
-		return this.handleSave(ev).then(function() {
-			classes.ui.changes.apply(mode == '0');
-			callInitAction('v2raya', 'disable').then(function() {
-				callInitAction('v2raya', 'restart');
-			});
-		})
-	},
-*/
-
 	render: function(data) {
 		var m, s, o;
 		var webport = (uci.get(data[0], 'config', 'address') || '0.0.0.0:2017').split(':').slice(-1)[0];
@@ -102,7 +82,7 @@ return view.extend({
 		s.anonymous = true;
 		s.render = function () {
 			poll.add(function () {
-				return L.resolveDefault(getServiceStatus()).then(function(res) {
+				return L.resolveDefault(getServiceStatus()).then(function (res) {
 					var view = document.getElementById('service_status');
 					view.innerHTML = renderStatus(res, webport);
 				});
