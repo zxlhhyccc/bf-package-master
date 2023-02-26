@@ -147,7 +147,7 @@ GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SING_BOX_BUILD_GVISOR),with_gvisor) \
 	$(if $(CONFIG_SING_BOX_BUILD_LWIP),with_lwip) \
 	$(if $(CONFIG_SING_BOX_BUILD_QUIC),with_quic) \
-	$(if $(CONFIG_SING_BOX_BUILD_REALITY_SERVER),with_reality_server \
+	$(if $(CONFIG_SING_BOX_WITH_REALITY_SERVER),with_reality_server) \
 	$(if $(CONFIG_SING_BOX_BUILD_SHADOWSOCKSR),with_shadowsocksr) \
 	$(if $(CONFIG_SING_BOX_BUILD_UTLS),with_utls) \
 	$(if $(CONFIG_SING_BOX_BUILD_V2RAY_API),with_v2ray_api) \
