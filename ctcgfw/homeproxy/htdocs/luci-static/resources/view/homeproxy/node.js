@@ -555,14 +555,12 @@ return view.extend({
 		so = ss.option(form.Value, 'hysteria_recv_window_conn', _('QUIC stream receive window'),
 			_('The QUIC stream-level flow control window for receiving data.'));
 		so.datatype = 'uinteger';
-		so.default = '67108864';
 		so.depends('type', 'hysteria');
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'hysteria_revc_window', _('QUIC connection receive window'),
 			_('The QUIC connection-level flow control window for receiving data.'));
 		so.datatype = 'uinteger';
-		so.default = '15728640';
 		so.depends('type', 'hysteria');
 		so.modalonly = true;
 
@@ -689,11 +687,17 @@ return view.extend({
 		so.rmempty = false;
 		so.modalonly = true;
 
-		/* VMess config start */
+		/* VMess / VLESS config start */
 		so = ss.option(form.Value, 'uuid', _('UUID'));
 		so.depends('type', 'vless');
 		so.depends('type', 'vmess');
 		so.validate = hp.validateUUID;
+		so.modalonly = true;
+
+		so = ss.option(form.ListValue, 'vless_flow', _('Flow'));
+		so.value('', _('None'));
+		so.value('xtls-rprx-vision');
+		so.depends('type', 'vless');
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'vmess_alterid', _('Alter ID'),
@@ -784,21 +788,20 @@ return view.extend({
 		so = ss.option(form.Value, 'websocket_early_data', _('Early data'),
 			_('Allowed payload size is in the request.'));
 		so.datatype = 'uinteger';
-		so.default = '2048';
+		so.value('2048');
 		so.depends('transport', 'ws');
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'websocket_early_data_header', _('Early data header name'));
-		so.default = 'Sec-WebSocket-Protocol';
+		so.value('Sec-WebSocket-Protocol');
 		so.depends('transport', 'ws');
 		so.modalonly = true;
 		/* WebSocket config end */
 
 		so = ss.option(form.ListValue, 'packet_encoding', _('Packet encoding'));
 		so.value('', _('none'));
-		so.value('packet', _('packet (v2ray-core v5+)'));
+		so.value('packetaddr', _('packet addr (v2ray-core v5+)'));
 		so.value('xudp', _('Xudp (Xray-core)'));
-		so.default = 'xudp';
 		so.depends('type', 'vless');
 		so.depends('type', 'vmess');
 		so.modalonly = true;
@@ -846,7 +849,6 @@ return view.extend({
 		so.depends('type', 'shadowsocks');
 		so.depends('type', 'trojan');
 		so.depends('type', 'vmess');
-		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.option(form.ListValue, 'multiplex_protocol', _('Protocol'),
@@ -907,7 +909,7 @@ return view.extend({
 		so = ss.option(form.Flag, 'tls_insecure', _('Allow insecure'),
 			_('Allow insecure connection at TLS client.') +
 			'<br/>' +
-			_('This is <b>DANGEROUS</b>, your traffic is almost like <b>PLAIN TEXT</b>! Use at your own risk!'));
+			_('This is <strong>DANGEROUS</strong>, your traffic is almost like <strong>PLAIN TEXT</strong>! Use at your own risk!'));
 		so.default = so.disabled;
 		so.depends('tls', '1');
 		so.onchange = allowInsecureConfirm;
@@ -995,6 +997,21 @@ return view.extend({
 			so.value('safari', _('Safari'));
 			so.depends('tls', '1');
 			so.modalonly = true;
+
+			so = ss.option(form.Flag, 'tls_reality', _('REALITY'));
+			so.default = so.disabled;
+			so.depends('tls', '1');
+			so.modalonly = true;
+
+			so = ss.option(form.Value, 'tls_reality_public_key', _('REALITY public key'));
+			so.depends('tls_reality', '1');
+			so.rmempty = false;
+			so.modalonly = true;
+
+			so = ss.option(form.Value, 'tls_reality_short_id', _('REALITY short ID'));
+			so.depends('tls_reality', '1');
+			so.rmempty = false;
+			so.modalonly = true;
 		}
 		/* TLS config end */
 
@@ -1021,7 +1038,7 @@ return view.extend({
 		s.tab('subscription', _('Subscriptions'));
 
 		o = s.taboption('subscription', form.Flag, 'auto_update', _('Auto update'),
-			_('Auto update subscriptions, geoip and geosite.'));
+			_('Auto update subscriptions, GeoIP and GeoSite.'));
 		o.default = o.disabled;
 		o.rmempty = false;
 
@@ -1069,16 +1086,15 @@ return view.extend({
 		o = s.taboption('subscription', form.Flag, 'allow_insecure', _('Allow insecure'),
 			_('Allow insecure connection by default when add nodes from subscriptions.') +
 			'<br/>' +
-			_('This is <b>DANGEROUS</b>, your traffic is almost like <b>PLAIN TEXT</b>! Use at your own risk!'));
+			_('This is <strong>DANGEROUS</strong>, your traffic is almost like <strong>PLAIN TEXT</strong>! Use at your own risk!'));
 		o.default = o.disabled;
 		o.rmempty = false;
 		o.onchange = allowInsecureConfirm;
 
 		o = s.taboption('subscription', form.ListValue, 'packet_encoding', _('Default packet encoding'));
 		o.value('', _('none'));
-		o.value('packet', _('packet (v2ray-core v5+)'));
+		o.value('packetaddr', _('packet addr (v2ray-core v5+)'));
 		o.value('xudp', _('Xudp (Xray-core)'));
-		o.default = 'xudp';
 
 		o = s.taboption('subscription', form.Button, '_save_subscriptions', _('Save subscriptions settings'),
 			_('NOTE: Save current settings before updating subscriptions.'));

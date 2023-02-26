@@ -61,6 +61,7 @@ return view.extend({
 		o.value('shadowsocks', _('Shadowsocks'));
 		o.value('socks', _('Socks'));
 		o.value('trojan', _('Trojan'));
+		o.value('vless', _('VLESS'));
 		o.value('vmess', _('VMess'));
 		o.rmempty = false;
 		o.onchange = function(ev, section_id, value) {
@@ -95,7 +96,6 @@ return view.extend({
 		o.depends('type', 'shadowsocks');
 		o.depends('type', 'socks');
 		o.depends('type', 'trojan');
-		o.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
 		o.validate = function(section_id, value) {
 			if (section_id) {
 				var type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
@@ -195,17 +195,9 @@ return view.extend({
 		o.depends('type', 'shadowsocks');
 		o.modalonly = true;
 
-		/* ShadowTLS config */
-		o = s.option(form.ListValue, 'shadowtls_version', _('ShadowTLS version'));
-		o.value('1', _('v1'));
-		o.value('2', _('v2'));
-		o.default = '1';
-		o.depends('type', 'shadowtls');
-		o.rmempty = false;
-		o.modalonly = true;
-
-		/* VMess config start */
+		/* VLESS / VMess config start */
 		o = s.option(form.Value, 'uuid', _('UUID'));
+		o.depends('type', 'vless');
 		o.depends('type', 'vmess');
 		o.validate = hp.validateUUID;
 		o.modalonly = true;
@@ -235,59 +227,52 @@ return view.extend({
 				desc.innerHTML = _('No TCP transport, plain HTTP is merged into the HTTP transport.');
 		}
 		o.depends('type', 'trojan');
+		o.depends('type', 'vless');
 		o.depends('type', 'vmess');
 		o.modalonly = true;
 
 		/* gRPC config */
 		o = s.option(form.Value, 'grpc_servicename', _('gRPC service name'));
-		o.depends({'type': 'trojan', 'transport': 'grpc'});
-		o.depends({'type': 'vmess', 'transport': 'grpc'});
+		o.depends('transport', 'grpc');
 		o.modalonly = true;
 
 		/* HTTP config start */
 		o = s.option(form.DynamicList, 'http_host', _('Host'));
 		o.datatype = 'hostname';
-		o.depends({'type': 'trojan', 'transport': 'http'});
-		o.depends({'type': 'vmess', 'transport': 'http'});
+		o.depends('transport', 'http');
 		o.modalonly = true;
 
 		o = s.option(form.Value, 'http_path', _('Path'));
-		o.depends({'type': 'trojan', 'transport': 'http'});
-		o.depends({'type': 'vmess', 'transport': 'http'});
+		o.depends('transport', 'http');
 		o.modalonly = true;
 
 		o = s.option(form.Value, 'http_method', _('Method'));
-		o.depends({'type': 'trojan', 'transport': 'http'});
-		o.depends({'type': 'vmess', 'transport': 'http'});
+		o.depends('transport', 'http');
 		o.modalonly = true;
 		/* HTTP config end */
 
 		/* WebSocket config start */
 		o = s.option(form.Value, 'ws_host', _('Host'));
-		o.depends({'type': 'trojan', 'transport': 'ws', 'tls': '0'});
-		o.depends({'type': 'vmess', 'transport': 'ws', 'tls': '0'});
+		o.depends('transport', 'ws');
 		o.modalonly = true;
 
 		o = s.option(form.Value, 'ws_path', _('Path'));
-		o.depends({'type': 'trojan', 'transport': 'ws'});
-		o.depends({'type': 'vmess', 'transport': 'ws'});
+		o.depends('transport', 'ws');
 		o.modalonly = true;
 
 		o = s.option(form.Value, 'websocket_early_data', _('Early data'),
 			_('Allowed payload size is in the request.'));
 		o.datatype = 'uinteger';
-		o.default = '2048';
-		o.depends({'type': 'trojan', 'transport': 'ws'});
-		o.depends({'type': 'vmess', 'transport': 'ws'});
+		o.value('2048');
+		o.depends('transport', 'ws');
 		o.modalonly = true;
 
 		o = s.option(form.Value, 'websocket_early_data_header', _('Early data header name'),
 			_('Early data is sent in path instead of header by default.') +
 			'<br/>' +
 			_('To be compatible with Xray-core, set this to <code>Sec-WebSocket-Protocol</code>.'));
-		o.default = 'Sec-WebSocket-Protocol';
-		o.depends({'type': 'trojan', 'transport': 'ws'});
-		o.depends({'type': 'vmess', 'transport': 'ws'});
+		o.value('Sec-WebSocket-Protocol');
+		o.depends('transport', 'ws');
 		o.modalonly = true;
 		/* WebSocket config end */
 
@@ -300,6 +285,7 @@ return view.extend({
 		o.depends('type', 'hysteria');
 		o.depends('type', 'naive');
 		o.depends('type', 'trojan');
+		o.depends('type', 'vless');
 		o.depends('type', 'vmess');
 		o.rmempty = false;
 		o.modalonly = true;
