@@ -1,6 +1,6 @@
 --- a/easyrsa3/easyrsa
 +++ b/easyrsa3/easyrsa
-@@ -4212,7 +4212,7 @@ vars_setup() {
+@@ -4503,7 +4503,7 @@ vars_setup() {
  	# Removed for basic sanity - To re-enable provide a REASON
  	#prog_file2="$(which -- "$prog_file" 2>/dev/null)" && prog_file="$prog_file2"
  	#prog_file2="$(readlink -f "$prog_file" 2>/dev/null)" && prog_file="$prog_file2"
@@ -9,7 +9,7 @@
  	if [ "$prog_dir" = . ] || [ "$prog_dir" = "$PWD" ]; then
  		prog_in_pwd=1
  	else
-@@ -4220,7 +4220,7 @@ vars_setup() {
+@@ -4511,7 +4511,7 @@ vars_setup() {
  	fi
  
  	# Program dir vars - This location is least wanted.
@@ -18,7 +18,7 @@
  
  	# set up PKI path vars - Top preference
  	pki_vars="${EASYRSA_PKI:-$PWD/pki}/vars"
-@@ -4363,7 +4363,7 @@ Sourcing the vars file and building certificates will probably fail ..'
+@@ -4654,7 +4654,7 @@ Sourcing the vars file and building cert
  	# Set defaults, preferring existing env-vars if present
  	set_var EASYRSA					"$PWD"
  	set_var EASYRSA_OPENSSL			openssl
