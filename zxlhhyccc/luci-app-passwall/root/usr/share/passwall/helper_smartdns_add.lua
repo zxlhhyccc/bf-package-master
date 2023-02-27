@@ -59,14 +59,29 @@ local function check_ipset(domain, ipset)
     return false
 end
 
-local function set_domain_address(domain, address)
+local function set_domain_extra_param(domain, param)
     if domain == "" or domain:find("#") then
         return
     end
     if not list1[domain] then
         list1[domain] = {
-            ipsets = {}
+            params = {}
         }
+    end
+    if not list1[domain].params then
+        list1[domain].params = {}
+    end
+    if not list1[domain].params[param] then
+        list1[domain].params[param] = param
+    end
+end
+
+local function set_domain_address(domain, address)
+    if domain == "" or domain:find("#") then
+        return
+    end
+    if not list1[domain] then
+        list1[domain] = {}
     end
     if not list1[domain].address then
         list1[domain].address = address
@@ -81,9 +96,7 @@ local function set_domain_group(domain, group)
         return
     end
     if not list1[domain] then
-        list1[domain] = {
-            ipsets = {}
-        }
+        list1[domain] = {}
     end
     if not list1[domain].group then
         list1[domain].group = group
@@ -101,9 +114,10 @@ local function set_domain_ipset(domain, ipset)
         return
     end
     if not list1[domain] then
-        list1[domain] = {
-            ipsets = {}
-        }
+        list1[domain] = {}
+    end
+    if not list1[domain].ipsets then
+        list1[domain].ipsets = {}
     end
     for line in string.gmatch(ipset, '[^' .. "," .. ']+') do
         if not check_ipset(domain, line) then
@@ -219,6 +233,7 @@ if not fs.access(CACHE_DNS_FILE) then
     end
 
     local setflag= (NFTFLAG == "1") and "inet#fw4#" or ""
+    local set_type= (NFTFLAG == "1") and "-nftset" or "-ipset"
 
     --屏蔽列表
     for line in io.lines("/usr/share/passwall/rules/block_host") do
@@ -247,10 +262,6 @@ if not fs.access(CACHE_DNS_FILE) then
     end
     log(string.format("  - 域名白名单(whitelist)使用分组：%s", LOCAL_GROUP or "默认"))
 
-    local fwd_group = LOCAL_GROUP
-    local ipset_flag = "#4:" .. setflag .. "whitelist,#6:" .. setflag .. "whitelist6"
-    local no_ipv6
-
     --始终使用远程DNS解析代理（黑名单）列表
     for line in io.lines("/usr/share/passwall/rules/proxy_host") do
         if line ~= "" and not line:find("#") then
@@ -262,6 +273,7 @@ if not fs.access(CACHE_DNS_FILE) then
             end
             set_domain_group(line, REMOTE_GROUP)
             set_domain_ipset(line, ipset_flag)
+            set_domain_extra_param(line, "-no-serve-expired")
         end
     end
     log(string.format("  - 代理域名表(blacklist)使用分组：%s", REMOTE_GROUP or "默认"))
@@ -277,9 +289,9 @@ if not fs.access(CACHE_DNS_FILE) then
                     _node_id = default_node_id
                 end
 
-                fwd_group = nil
-                ipset_flag = nil
-                no_ipv6 = nil
+                local fwd_group = nil
+                local ipset_flag = nil
+                local no_ipv6 = nil
 
                 if _node_id == "_direct" then
                     fwd_group = LOCAL_GROUP
@@ -306,6 +318,9 @@ if not fs.access(CACHE_DNS_FILE) then
                         end
                         set_domain_group(line, fwd_group)
                         set_domain_ipset(line, ipset_flag)
+                        if fwd_group == REMOTE_GROUP then
+                            set_domain_extra_param(line, "-no-serve-expired")
+                        end
                     end
                 end
                 if _node_id ~= "_direct" then
@@ -324,14 +339,15 @@ if not fs.access(CACHE_DNS_FILE) then
             sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
             local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, REMOTE_GROUP)
             domain_rules_str = domain_rules_str .. " -speed-check-mode none"
+            domain_rules_str = domain_rules_str .. " -no-serve-expired"
             if NO_PROXY_IPV6 == "1" then
                 domain_rules_str = domain_rules_str .. " -address #6"
-                domain_rules_str = domain_rules_str .. " -ipset #4:" .. setflag .. "gfwlist"
+                domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "gfwlist"
             else
-                domain_rules_str = domain_rules_str .. " -ipset #4:" .. setflag .. "gfwlist,#6:" .. setflag .. "gfwlist6"
+                domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "gfwlist" .. ",#6:" .. setflag .. "gfwlist6"
             end
             sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
-            log(string.format("  - 防火墙域名表(gfwlist)使用分组：%s", fwd_group or "默认"))
+            log(string.format("  - 防火墙域名表(gfwlist)使用分组：%s", REMOTE_GROUP or "默认"))
         end
 
         if fs.access("/usr/share/passwall/rules/chnlist") and chnlist then
@@ -340,7 +356,7 @@ if not fs.access(CACHE_DNS_FILE) then
             sys.exec('cat /usr/share/passwall/rules/chnlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
             sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
             local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, LOCAL_GROUP)
-            domain_rules_str = domain_rules_str .. " -ipset #4:" .. setflag .. "chnroute,#6:" .. setflag .. "chnroute6"
+            domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "chnroute,#6:" .. setflag .. "chnroute6"
             sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
             log(string.format("  - 中国域名表(chnroute)使用分组：%s", LOCAL_GROUP or "默认"))
         end
@@ -352,11 +368,12 @@ if not fs.access(CACHE_DNS_FILE) then
             sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
             local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, REMOTE_GROUP)
             domain_rules_str = domain_rules_str .. " -speed-check-mode none"
+            domain_rules_str = domain_rules_str .. " -no-serve-expired"
             if NO_PROXY_IPV6 == "1" then
                 domain_rules_str = domain_rules_str .. " -address #6"
-                domain_rules_str = domain_rules_str .. " -ipset #4:" .. setflag .. "chnroute"
+                domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "chnroute"
             else
-                domain_rules_str = domain_rules_str .. " -ipset #4:" .. setflag .. "chnroute,#6:" .. setflag .. "chnroute6"
+                domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "chnroute" .. ",#6:" .. setflag .. "chnroute6"
             end
             sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
             log(string.format("  - 中国域名表(chnroute)使用分组：%s", REMOTE_GROUP or "默认"))
@@ -369,6 +386,7 @@ if not fs.access(CACHE_DNS_FILE) then
         local ipset_str = ""
         local speed_check_mode_str = ""
         local address_str = ""
+        local extra_param_str = ""
         if value.group and #value.group > 0 then
             group_str = group_str .. value.group
         end
@@ -382,7 +400,7 @@ if not fs.access(CACHE_DNS_FILE) then
             ipset_str = ipset_str:sub(1, #ipset_str - 1)
         end
         if ipset_str ~= "" then
-            ipset_str = " -p " .. ipset_str
+            ipset_str = " " .. set_type .. " " .. ipset_str
         end
         if value.address and #value.address > 0 then
             address_str = address_str .. value.address
@@ -396,7 +414,12 @@ if not fs.access(CACHE_DNS_FILE) then
         if speed_check_mode_str ~= "" then
             speed_check_mode_str = " -c " .. speed_check_mode_str
         end
-        local str = string.format("domain-rules /%s/ %s%s%s%s\n", key, group_str, ipset_str, address_str, speed_check_mode_str)
+        if value.params then
+            for k2, v2 in pairs(value.params) do
+                extra_param_str = extra_param_str .. " " .. v2
+            end
+        end
+        local str = string.format("domain-rules /%s/ %s%s%s%s%s\n", key, group_str, ipset_str, address_str, speed_check_mode_str, extra_param_str)
         f_out:write(str)
     end
     f_out:close()
