@@ -21,7 +21,7 @@ local lan_ip = SYS.exec("uci -q get network.lan.ipaddr |awk -F '/' '{print $1}' 
 
 m = Map("openclash", translate("Overwrite Settings"))
 m.pageaction = false
-m.description = translate("Note: To restore the default configuration, try accessing:").." <a href='javascript:void(0)' onclick='javascript:restore_config(this)'>http://"..lan_ip.."/cgi-bin/luci/admin/services/openclash/restore</a>"
+m.description = translate("Note: To restore the default configuration, try accessing:").." <a href='javascript:void(0)' onclick='javascript:restore_config_(this)'>http://"..lan_ip.."/cgi-bin/luci/admin/services/openclash/restore</a>"
 
 s = m:section(TypedSection, "openclash")
 s.anonymous = true
@@ -234,7 +234,7 @@ o.default = 0
 
 custom_hosts = s:taboption("dns", Value, "custom_hosts")
 custom_hosts.template = "cbi/tvalue"
-custom_hosts.description = translate("Custom Hosts Here, For More Go:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://lancellc.gitbook.io/clash/clash-config-file/dns/host\")'>https://lancellc.gitbook.io/clash/clash-config-file/dns/host</a>"
+custom_hosts.description = translate("Custom Hosts Here, You May Need to Turn off The Rebinding Protection Option of Dnsmasq When Hosts Has Set a Reserved Address, For More Go:").." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://lancellc.gitbook.io/clash/clash-config-file/dns/host\")'>https://lancellc.gitbook.io/clash/clash-config-file/dns/host</a>"
 custom_hosts.rows = 20
 custom_hosts.wrap = "off"
 custom_hosts:depends("custom_host", "1")
