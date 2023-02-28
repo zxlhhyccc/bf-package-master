@@ -38,9 +38,15 @@ make package/chinadns-ng/{clean,compile} V=s
 `timeout_sec`    | 整数值   | 上游 DNS 超时
 `repeat_times`   | 整数值   | 同一时间向可信 DNS 发送多少个 DNS 查询包
 `chnlist_first`  | 布尔值   | 优先匹配白名单域名列表
+`no_ipv6`        | 布尔值   | 禁用 IPv6 地址查询
 `fair_mode`      | 布尔值   | 启用 "公平模式" 代替 "抢答模式"
 `reuse_port`     | 布尔值   | 启用多进程负载均衡
 `noip_as_chnip`  | 布尔值   | 接受 QTYPE 为 A/AAAA 但没有 IP 的 reply
+`verbose`        | 布尔值   | 详细日志输出
+
+## 发布
+
+https://github.com/openwrt-dev/feeds
 
 ## 鸣谢
 
@@ -50,7 +56,7 @@ make package/chinadns-ng/{clean,compile} V=s
 ## 许可证
 
 ```
-Copyright (C) 2019-2020, pexcn <i@pexcn.me>
+Copyright (C) 2019-2023, pexcn <pexcn97@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
