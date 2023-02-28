@@ -15,6 +15,7 @@ EXTRA_HELP="	rules		Start IPTABLES inject\n	healthcheck	Check if service health"
 CRON_FILE=/etc/crontabs/root
 PLUGIN_FILE=/var/run/xray-plugin
 WATCHDOG_ENDPOINT='accounts.gstatic.com'
+# WATCHDOG_ENDPOINT='cp.cloudflare.com'
 
 DNSMASQDIR=$(sed -n 's+conf-dir=++p' /var/etc/dnsmasq.conf.* 2>/dev/null)
 [ "V$DNSMASQDIR" = "V" ] && DNSMASQDIR=/var/dnsmasq.d
@@ -678,7 +679,7 @@ healthcheck() {
 
 	iptables -t nat -I OUTPUT -p tcp -d $GOOGLE -j REDIRECT --to-port $TRPORT
 	iptables -t nat -I OUTPUT -p tcp -d $DNSPOD -j RETURN
-	cat_connect "http://${GOOGLE}/generate_204" 3
+	cat_connect "http://${WATCHDOG_ENDPOINT}/generate_204" 3
 	if [ "Z$?" = "Z0" ]; then
 		echo "[${LOGTIME}] ${NAME} No Problem."
 	else

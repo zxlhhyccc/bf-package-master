@@ -50,7 +50,7 @@ fw_reinit() {
 }
 
 flush_rules() {
-	iptables-save -c | grep -v "XRAY_SPEC" | sed '/[^ ]--/d' | uniq | iptables-restore -c
+	iptables-save -c | grep -v "XRAY_SPEC" | sed '/[^ ]--/d' | uniq | iptables-restore -w -c
 	uci -q show firewall | sed -n 's/.*path=//p' | sed -n '/gargoyle/p' | tr -d \' | while read init; do
 		sh $init restart >/dev/null 2>&1
 	done
@@ -87,7 +87,7 @@ EOF
 
 ipt_nat() {
 	include_ac_rules nat
-	ipt="iptables -t nat"
+	ipt="iptables -w -t nat"
 	$ipt -A XRAY_SPEC_WAN_FW -p tcp \
 		-j REDIRECT --to-ports $local_port || return 1
 	if [ -n "$OUTPUT" ]; then
@@ -109,7 +109,7 @@ ipt_mangle() {
 	ip rule add fwmark 1 lookup 100
 	ip route add local default dev lo table 100
 	include_ac_rules mangle
-	iptables -t mangle -A XRAY_SPEC_WAN_FW -p udp \
+	iptables -w -t mangle -A XRAY_SPEC_WAN_FW -p udp \
 		-j TPROXY --on-port $LOCAL_PORT --tproxy-mark 0x01/0x01
 	return $?
 }
@@ -117,9 +117,9 @@ ipt_mangle() {
 export_ipt_rules() {
 	[ -n "$FWI" ] || return 0
 	cat <<-CAT >>$FWI
-	iptables-save -c | grep -v "XRAY_SPEC" | sed '/[^ ]--/d' | uniq | iptables-restore -c
+	iptables-save -c | grep -v "XRAY_SPEC" | sed '/[^ ]--/d' | uniq | iptables-restore -w -c
 
-	iptables-restore -n <<-EOF
+	iptables-restore -w -n <<-EOF
 	$(iptables-save | grep -E "XRAY_SPEC|^\*|^COMMIT" |\
 			sed -e "s/^-A \(OUTPUT\|PREROUTING\)/-I \1 1/")
 	EOF
@@ -177,7 +177,7 @@ EOF
 include_ac_rules() {
 	ipt_chain=$1
 	local protocol=$([ "$1" = "mangle" ] && echo udp || echo tcp)
-	iptables-restore -n <<-EOF
+	iptables-restore -w -n <<-EOF
 	*$1
 	:XRAY_SPEC_LAN_DG - [0:0]
 	:XRAY_SPEC_LAN_AC - [0:0]
@@ -197,8 +197,8 @@ include_ac_rules() {
 EOF
 	if [ "Z${WAN_BP_LIST}" = "Z/dev/flag_gfwlist" ]; then
 		[ $(ipset list -n | grep -c gfwlist) -lt 1 ] && /etc/init.d/dnsmasq-extra restart
-		idx=$(($(iptables -t $ipt_chain -L XRAY_SPEC_WAN_AC | grep all | sed -n -e '/xray_spec_dst_bp/=') +1))
-		iptables -t $ipt_chain -I XRAY_SPEC_WAN_AC $idx -m set ! --match-set gfwlist dst -j RETURN
+		idx=$(($(iptables -w -t $ipt_chain -L XRAY_SPEC_WAN_AC | grep all | sed -n -e '/xray_spec_dst_bp/=') +1))
+		iptables -w -t $ipt_chain -I XRAY_SPEC_WAN_AC $idx -m set ! --match-set gfwlist dst -j RETURN
 	fi
 }
 
