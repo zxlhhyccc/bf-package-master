@@ -871,7 +871,6 @@ end
 
 o = s:taboption("geo_update", Flag, "geoip_auto_update", font_red..bold_on..translate("Auto Update GeoIP Dat")..bold_off..font_off)
 o.default = 0
-o:depends("enable_meta_core", "1")
 
 o = s:taboption("geo_update", ListValue, "geoip_update_week_time", translate("Update Time (Every Week)"))
 o:value("*", translate("Every Day"))
@@ -916,7 +915,6 @@ o:depends("geoip_auto_update", "1")
 
 o = s:taboption("geo_update", Flag, "geosite_auto_update", font_red..bold_on..translate("Auto Update GeoSite")..bold_off..font_off)
 o.default = 0
-o:depends("enable_meta_core", "1")
 
 o = s:taboption("geo_update", ListValue, "geosite_update_week_time", translate("Update Time (Every Week)"))
 o:value("*", translate("Every Day"))
@@ -1140,7 +1138,7 @@ core_update.template = "openclash/update"
 ---- developer
 o = s:taboption("developer", Value, "firewall_custom")
 o.template = "cbi/tvalue"
-o.description = translate("Custom Firewall Rules, Support IPv4 and IPv6, All Rules Will Be Added After The OpenClash Rules Completely")
+o.description = translate("Custom Firewall Rules, Support IPv4 and IPv6, All Rules Will Be Added After Plugin Own Completely")
 o.rows = 30
 o.wrap = "off"
 
