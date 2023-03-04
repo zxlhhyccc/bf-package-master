@@ -50,6 +50,12 @@ msgstr "IPv6 支持"
 msgid "Make sure your IPv6 network works fine before you turn it on."
 msgstr "开启前，请确保您的 IPv6 网络工作正常。"
 
+msgid "Nftables support"
+msgstr "Nftables 支持"
+
+msgid "Experimental feature. Make sure you have installed nftables."
+msgstr "实验性特征。确保你已经安装了 nftables。"
+
 msgid "AUTO"
 msgstr "自动"
 
@@ -58,6 +64,12 @@ msgstr "开启"
 
 msgid "OFF"
 msgstr "关闭"
+
+msgid "On"
+msgstr "开"
+
+msgid "Off"
+msgstr "关"
 
 msgid "Log file path"
 msgstr "日志文件路径"

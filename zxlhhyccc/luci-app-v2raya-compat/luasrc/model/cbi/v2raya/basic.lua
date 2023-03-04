@@ -52,6 +52,13 @@ o:value("off", translate("OFF"))
 o.default = "auto"
 o.rmempty = false
 
+o = s:taboption("settings", ListValue, "nftables_support", translate("Nftables support"))
+o.description = translate("Experimental feature. Make sure you have installed nftables.")
+o:value("on", translate("ON"))
+o:value("off", translate("OFF"))
+o.default = "off"
+o.rmempty = false
+
 o = s:taboption("settings", Value, "log_file", translate("Log file path"))
 o.datatype = path
 o.default = "/var/log/v2raya/v2raya.log"
