@@ -178,7 +178,7 @@ local function fetch_rule(rule_name,rule_type,url,exclude_domain)
 				end
 				out:close()
 
-			end			
+			end
 		else
 			sret = 0
 			log(rule_name.. " 第" ..k.. "条规则:" ..v.. "下载失败，请检查网络或下载链接后重试！")
