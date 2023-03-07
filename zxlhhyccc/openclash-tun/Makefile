@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-tun
 PKG_VERSION:=2023.03.04
-PKG_RELEASE:=
+PKG_RELEASE:=1-gee6bc57
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_TUN_ARCH:=mipsle-softfloat
@@ -40,8 +40,8 @@ endif
 
 PKG_LICENSE:=Apache-2.0
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)
-# PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).$(PKG_RELEASE).gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)-$(PKG_RELEASE)
+# PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz
 # PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/
 PKG_HASH:=skip
 
@@ -60,13 +60,13 @@ openclash-tun is a cross-platform proxy software
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz
-	gzip -d -k -f -c $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz > $(PKG_BUILD_DIR)/clash-tun
-	chmod +x $(PKG_BUILD_DIR)/clash-tun
+	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz
+	gzip -d -k -f -c $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz > $(PKG_BUILD_DIR)/clash_tun
+	chmod +x $(PKG_BUILD_DIR)/clash_tun
 endef
 
 define Build/Configure
-	# $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/clash-tun
+	# $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/clash_tun
 endef
 
 define Build/Compile
@@ -74,7 +74,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/openclash/core
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash-tun $(1)/etc/openclash/core/clash_tun
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash_tun $(1)/etc/openclash/core/clash_tun
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
