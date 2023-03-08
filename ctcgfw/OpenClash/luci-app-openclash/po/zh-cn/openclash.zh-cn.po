@@ -251,6 +251,9 @@ msgstr "指定下方列表中域名的 DNS 服务器，只支持填写一个IP�
 msgid "Domain Names In The List Do Not Return Fake-IP, One rule per line, Depend on Dnsmasq"
 msgstr "每行请只填写一个域名，列表中的域名将使用上方指定的 DNS 进行查询并返回真实IP地址，此功能依赖于 Dnsmasq"
 
+msgid "Domain Names In The List Do Not Return Fake-IP, One rule per line"
+msgstr "每行请只填写一个域名，列表中的域名在 Fake-IP 模式下将返回真实IP地址"
+
 msgid "Domain Names In The List Use The Custom DNS Server, But Still Return Fake-IP Results, One rule per line"
 msgstr "每行请只填写一个规则，列表中的域名将使用指定的 DNS 进行查询，但 Fake-IP 模式下仍将返回保留地址"
 
@@ -2972,15 +2975,6 @@ msgstr "（TUN&Meta 内核）"
 
 msgid "Warning: Only Meta Core Support QUIC Type DNS, Skip"
 msgstr "警告：仅 Meta 内核支持 QUIC 类型的 DNS，跳过"
-
-msgid "Force Sniffing Domains Lists"
-msgstr "强制探测（嗅探）的域名列表"
-
-msgid "Force Sniffing Domains(sni) Filter"
-msgstr "忽略探测（嗅探）的域名（sni）列表"
-
-msgid "Sniffing Ports Filter"
-msgstr "指定探测（嗅探）的端口列表"
 
 msgid "Will Override Dns Queries If Domains in The List"
 msgstr "列表中的域名将会强制进行探测（嗅探）"
