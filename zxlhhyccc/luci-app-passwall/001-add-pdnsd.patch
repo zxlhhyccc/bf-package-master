@@ -11,7 +11,7 @@ index 1bf087c..18a24dd 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,11 +37,13 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,13 +37,15 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -21,11 +21,13 @@ index 1bf087c..18a24dd 100644
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Brook:brook \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD:pdnsd-alt \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD:pdnsd-alt \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
 @@ -110,6 +114,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||(arm&&TARGET_gemini)||armeb||mips||mips64||powerpc)
  	default n
