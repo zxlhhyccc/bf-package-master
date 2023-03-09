@@ -186,6 +186,10 @@ local returnhome = PROXY_MODE:find("returnhome")
 local chnlist = PROXY_MODE:find("chnroute")
 local gfwlist = PROXY_MODE:find("gfwlist")
 
+if LOCAL_GROUP == "nil" then
+    LOCAL_GROUP = nil
+end
+
 if not REMOTE_GROUP or REMOTE_GROUP == "nil" then
     REMOTE_GROUP = "passwall_proxy"
     if TUN_DNS then
@@ -333,7 +337,7 @@ if not fs.access(CACHE_DNS_FILE) then
     --如果没有使用回国模式
     if not returnhome then
         if fs.access("/usr/share/passwall/rules/gfwlist") then
-            local domain_set_name = "passwall-gfwlist-list"
+            local domain_set_name = "passwall-gfwlist"
             local domain_file = CACHE_DNS_PATH .. "_gfwlist.list"
             sys.exec('cat /usr/share/passwall/rules/gfwlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
             sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
@@ -351,18 +355,18 @@ if not fs.access(CACHE_DNS_FILE) then
         end
 
         if fs.access("/usr/share/passwall/rules/chnlist") and chnlist then
-            local domain_set_name = "passwall-chnlist-list"
+            local domain_set_name = "passwall-chnlist"
             local domain_file = CACHE_DNS_PATH .. "_chnlist.list"
             sys.exec('cat /usr/share/passwall/rules/chnlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
             sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
-            local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, LOCAL_GROUP)
+            local domain_rules_str = string.format('domain-rules /domain-set:%s/ %s', domain_set_name, LOCAL_GROUP and "-nameserver " .. LOCAL_GROUP or "")
             domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "chnroute,#6:" .. setflag .. "chnroute6"
             sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
             log(string.format("  - 中国域名表(chnroute)使用分组：%s", LOCAL_GROUP or "默认"))
         end
     else
         if fs.access("/usr/share/passwall/rules/chnlist") then
-            local domain_set_name = "passwall-chnlist-list"
+            local domain_set_name = "passwall-chnlist"
             local domain_file = CACHE_DNS_PATH .. "_chnlist.list"
             sys.exec('cat /usr/share/passwall/rules/chnlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
             sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))

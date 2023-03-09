@@ -9,6 +9,7 @@ config global
 	option remote_dns '1.1.1.1'
 	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 	option filter_proxy_ipv6 '0'
+	option when_chnroute_default_dns 'direct'
 	option tcp_proxy_mode 'chnroute'
 	option udp_proxy_mode 'chnroute'
 	option localhost_tcp_proxy_mode 'default'
