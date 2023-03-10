@@ -1651,16 +1651,6 @@ acl_app() {
 	}
 }
 
-boot() {
-	local delay=$(config_t_get global_delay start_delay 1)
-	if [ "$delay" -gt 0 ]; then
-		echolog "执行启动延时 $delay 秒后再启动!"
-		sleep $delay && start >/dev/null 2>&1 &
-	else
-		start
-	fi
-}
-
 start() {
 	ulimit -n 65535
 	start_haproxy
@@ -1802,8 +1792,5 @@ stop)
 	;;
 start)
 	start
-	;;
-boot)
-	boot
 	;;
 esac
