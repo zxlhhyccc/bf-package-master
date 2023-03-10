@@ -297,7 +297,7 @@ function m.on_commit(map)
 				uci:set("AdGuardHome","AdGuardHome","ucitracktest","2")
 			end
 		end
-		uci:save("AdGuardHome")
+		uci:commit("AdGuardHome")
 	end
 end
 return m
