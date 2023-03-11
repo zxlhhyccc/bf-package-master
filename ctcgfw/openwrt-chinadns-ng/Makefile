@@ -5,32 +5,29 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=chinadns-ng
-PKG_VERSION:=2023.03.06
+PKG_VERSION:=2023.03.10
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/zfl9/chinadns-ng.git
-PKG_SOURCE_VERSION:=b4d0026de766446099f5a792ee57dad6d22decb6
-PKG_MIRROR_HASH:=d515bd75ecc96063260fe86eb504ea1cf7b50779e0345e2439c70ff9f9985b13
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION)
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/zfl9/chinadns-ng/tar.gz/$(PKG_VERSION)?
+PKG_HASH:=7de9f0436c16bb7f2a9d2f8fb7b4fbcb8b291f57925a1f7c4c18c98daccf70b1
+
+PKG_LICENSE:=AGPL-3.0-only
+PKG_LICENSE_FILES:=LICENSE
+PKG_MAINTAINER:=pexcn <i@pexcn.me>
 
 PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
-
-PKG_LICENSE:=GPL-3.0
-PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=pexcn <pexcn97@gmail.com>
+PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/chinadns-ng
-	SECTION:=net
-	CATEGORY:=Network
-	TITLE:=ChinaDNS Next Generation, refactoring with epoll and ipset
-	URL:=https://github.com/zfl9/chinadns-ng
-	DEPENDS:=+ipset
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=IP Addresses and Names
+  TITLE:=ChinaDNS next generation, refactoring with epoll and ipset.
+  URL:=https://github.com/zfl9/chinadns-ng
+  DEPENDS:=+ipset
 endef
 
 define Package/chinadns-ng/description
@@ -47,8 +44,9 @@ endef
 
 define Package/chinadns-ng/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/chinadns-ng $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/chinadns-ng $(1)/usr/bin
 	$(INSTALL_BIN) files/chinadns-ng-daily.sh $(1)/usr/bin
+
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) files/chinadns-ng.init $(1)/etc/init.d/chinadns-ng
 	$(INSTALL_DIR) $(1)/etc/config
