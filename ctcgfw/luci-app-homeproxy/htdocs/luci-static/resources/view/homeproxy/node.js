@@ -754,10 +754,18 @@ return view.extend({
 		}
 		so.modalonly = true;
 
-		/* gRPC config */
+		/* gRPC config start */
 		so = ss.option(form.Value, 'grpc_servicename', _('gRPC service name'));
 		so.depends('transport', 'grpc');
 		so.modalonly = true;
+
+		if (features.with_grpc) {
+			so = ss.option(form.Flag, 'grpc_permit_without_stream', _('gRPC permit without stream'));
+			so.default = so.disabled;
+			so.depends('transport', 'grpc');
+			so.modalonly = true;
+		}
+		/* gRPC config end */
 
 		/* HTTP config start */
 		so = ss.option(form.DynamicList, 'http_host', _('Host'));
@@ -773,6 +781,18 @@ return view.extend({
 		so.value('get', _('GET'));
 		so.value('put', _('PUT'));
 		so.depends('transport', 'http');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'http_idle_timeout', _('Idle timeout'));
+		so.datatype = 'uinteger';
+		so.depends('transport', 'grpc');
+		so.depends({'transport': 'http', 'tls': '1'});
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'http_ping_timeout', _('Ping timeout'));
+		so.datatype = 'uinteger';
+		so.depends('transport', 'grpc');
+		so.depends({'transport': 'http', 'tls': '1'});
 		so.modalonly = true;
 		/* HTTP config end */
 
@@ -997,6 +1017,15 @@ return view.extend({
 			so.value('randomized', _('Randomized'));
 			so.value('safari', _('Safari'));
 			so.depends('tls', '1');
+			so.validate = function(section_id, value) {
+				if (section_id) {
+					let tls_reality = this.map.lookupOption('tls_reality', section_id)[0].formvalue(section_id);
+					if (tls_reality && !value)
+						return _('Expecting: %s').format(_('non-empty value'));
+				}
+
+				return true;
+			}
 			so.modalonly = true;
 
 			so = ss.option(form.Flag, 'tls_reality', _('REALITY'));
