@@ -1,7 +1,7 @@
 {
 	"admin/services/smartdns": {
 		"title": "SmartDNS",
-		"order": 80,
+		"order": 59,
 		"action": {
 			"type": "view",
 			"path": "smartdns/smartdns"
