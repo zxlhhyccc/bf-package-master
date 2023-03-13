@@ -15,7 +15,7 @@ PKG_SOURCE_URL:=https://github.com/mokeyish/smartdns-rs.git
 PKG_SOURCE_VERSION:=9f87f49a5e441c518afd8f7f99e048cf9675764f
 PKG_MIRROR_HASH:=2117b1e7a6c1abb7c08ef10570dbcae9bfb831f8d970c9cf4d27f724b6816655
 
-PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
+PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
