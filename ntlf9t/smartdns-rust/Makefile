@@ -12,8 +12,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/mokeyish/smartdns-rs.git
-PKG_SOURCE_VERSION:=9f87f49a5e441c518afd8f7f99e048cf9675764f
-PKG_MIRROR_HASH:=2117b1e7a6c1abb7c08ef10570dbcae9bfb831f8d970c9cf4d27f724b6816655
+PKG_SOURCE_VERSION:=cd7291a2e47d45431043da3e8d18378522dba612
+PKG_MIRROR_HASH:=e8d5070307cf921b9285a40ad2e11803775bd23df7a761bf16d4b029f6856f88
 
 PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
 PKG_LICENSE:=MIT
@@ -39,6 +39,9 @@ endef
 define Package/smartdns-rust/install
 	$$(INSTALL_DIR) $$(1)/usr/sbin
 	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/bin/smartdns $$(1)/usr/sbin/
+
+	$(INSTALL_DIR) $(1)/etc/smartdns
+	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
 endef
 endef
 
