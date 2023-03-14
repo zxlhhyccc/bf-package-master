@@ -36,11 +36,16 @@ define Package/smartdns-rust/Default
     DEPENDS:=$$(RUST_ARCH_DEPENDS)
 endef
 
+define Package/smartdns-rust/description
+A cross platform local DNS server written in rust to obtain the fastest website IP for the best Internet experience, support DoT, DoH.
+endef
+
 define Package/smartdns-rust/install
 	$$(INSTALL_DIR) $$(1)/usr/sbin
 	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/bin/smartdns $$(1)/usr/sbin/
 
-	$(INSTALL_DIR) $(1)/etc/smartdns
+	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns
+	$(INSTALL_bin) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
 endef
 endef
