@@ -12,8 +12,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/mokeyish/smartdns-rs.git
-PKG_SOURCE_VERSION:=c8845a3abde88aafcb98f209dc53153dd9166b7d
-PKG_MIRROR_HASH:=a80d2d1e9dc478575438155732a74b1f9af7331ee9c949d044a3ef387ed07c70
+PKG_SOURCE_VERSION:=da2926214d3b0340fe8996dd65d3f7b570d4d1ae
+PKG_MIRROR_HASH:=582386deaa354be02d20f5fad5d7dcf60ca86643a531be2c6b78935252116e1a
 
 PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
 PKG_LICENSE:=MIT
@@ -34,20 +34,20 @@ define Package/smartdns-rust/Default
     TITLE:=smartdns-rust server
     URL:=https://github.com/mokeyish/smartdns-rs.git
     DEPENDS:=$$(RUST_ARCH_DEPENDS)
-endef
+  endef
 
-define Package/smartdns-rust/description
-A cross platform local DNS server written in rust to obtain the fastest website IP for the best Internet experience, support DoT, DoH.
-endef
+  define Package/smartdns-rust/description
+  A cross platform local DNS server (Dnsmasq like) written in rust to obtain the fastest website IP for the best Internet experience, supports DoT, DoH.
+  endef
 
-define Package/smartdns-rust/install
+  define Package/smartdns-rust/install
 	$$(INSTALL_DIR) $$(1)/usr/sbin
 	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/bin/smartdns $$(1)/usr/sbin/
 
-	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns
-	$(INSTALL_bin) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
-	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
-endef
+	$$(INSTALL_DIR) $$(1)/etc/init.d $$(1)/etc/smartdns
+	$$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $$(1)/etc/init.d/smartdns
+	$$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $$(1)/etc/smartdns/custom.conf
+  endef
 endef
 
 define smartdns-rust/templates
