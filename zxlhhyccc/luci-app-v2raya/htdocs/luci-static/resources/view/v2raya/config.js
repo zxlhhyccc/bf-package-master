@@ -119,9 +119,10 @@ return view.extend({
 
 		o = s.option(form.ListValue, 'nftables_support', _('Nftables support'),
 			_('Experimental feature. Make sure you have installed nftables.'));
+		o.value('auto', _('Auto'));
 		o.value('on', _('On'));
 		o.value('off', _('Off'));
-		o.default = 'off';
+		o.default = 'auto';
 		o.rmempty = false;
 
 		o = s.option(form.ListValue, 'log_level', _('Log level'));
