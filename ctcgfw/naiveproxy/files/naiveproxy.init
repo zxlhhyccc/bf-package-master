@@ -1,8 +1,8 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2021 ImmortalWrt
 
-. /lib/functions.sh
-. /lib/functions/procd.sh
+. "$IPKG_INSTROOT/lib/functions.sh"
+. "$IPKG_INSTROOT/lib/functions/procd.sh"
 
 USE_PROCD=1
 

@@ -16,6 +16,7 @@ PKG_LICENSE:=BSD 3-Clause
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
+# PKG_USE_MIPS16:=0
 PKG_BUILD_DEPENDS:=gn/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
@@ -64,6 +65,15 @@ define Download/CLANG
 	HASH:=b4afdf625aa4b72c5d188ed28a13dd352a881a2a4149542f0c903698d0498017
 endef
 
+# GN_VER:=5e19d2fb166fbd4f6f32147fbb2f497091a54ad8
+# GN_FILE:=gn-git_revision-$(GN_VER).zip
+# define Download/GN_TOOL
+#	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+
+#	URL_FILE:=git_revision:$(GN_VER)
+#	FILE:=$(GN_FILE)
+#	HASH:=a95c29544e581b56c1d3f1920637a9f518989b3b744d6b2234fe8de634acddf1
+# endef
+
 PGO_VER:=5563-1677886924-aa8d450a18b4f7f1cd41619f60bc5da6beb3c1d0
 PGO_FILE:=chrome-linux-$(PGO_VER).profdata
 define Download/PGO_PROF
@@ -72,6 +82,22 @@ define Download/PGO_PROF
 	FILE:=$(PGO_FILE)
 	HASH:=eb16e7be414614c215ba90538f70f431cf444b9985865ad20d8743b707a235a6
 endef
+
+# define Build/Prepare
+#	$(call Build/Prepare/Default)
+#
+#	( \
+#		pushd $(PKG_BUILD_DIR)/src ; \
+#		mkdir -p "chrome/build/pgo_profiles" ; \
+#		$(CP) "$(DL_DIR)/$(PGO_FILE)" "chrome/build/pgo_profiles" ; \
+#		mkdir -p "third_party/llvm-build/Release+Asserts" ; \
+#		$(TAR) -xzf "$(DL_DIR)/$(CLANG_FILE)" -C "third_party/llvm-build/Release+Asserts" ; \
+#		echo -e "llvmorg-$(CLANG_VER)" > "third_party/llvm-build/Release+Asserts/cr_build_revision" ; \
+#		mkdir -p "gn/out" ; \
+#		unzip -o "$(DL_DIR)/$(GN_FILE)" -d "gn/out" ; \
+#		popd ; \
+#	)
+# endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
@@ -86,6 +112,17 @@ define Build/Prepare
 		popd ; \
 	)
 endef
+
+# define Build/Configure
+#	( \
+#		pushd "$(PKG_BUILD_DIR)/src" ; \
+#		. ../init_env.sh "$(ARCH)" $(CPU_TYPE) $(CPU_SUBTYPE) "$(TOOLCHAIN_DIR)" ; \
+#		export naive_flags+=" $$$${naive_ccache_flags}" ; \
+#		mkdir -p "out" ; \
+#		./gn/out/gn gen "out/Release" --args="$$$${naive_flags}" --script-executable="$(PYTHON)" ; \
+#		popd ; \
+#	)
+# endef
 
 define Build/Configure
 	( \
@@ -115,6 +152,7 @@ define Package/naiveproxy/install
 endef
 
 $(eval $(call Download,CLANG))
+# $(eval $(call Download,GN_TOOL))
 $(eval $(call Download,PGO_PROF))
 
 $(eval $(call BuildPackage,naiveproxy))
