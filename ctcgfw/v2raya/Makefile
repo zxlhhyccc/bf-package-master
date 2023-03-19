@@ -5,12 +5,19 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA
-PKG_VERSION:=1.5.9.1698.1
-PKG_RELEASE:=4
+PKG_VERSION:=2.0.2
+PKG_RELEASE:=1
 
+# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+# PKG_SOURCE_URL:=https://codeload.github.com/v2rayA/v2rayA/tar.gz/v$(PKG_VERSION)?
+# PKG_HASH:=5bb02d178cdc95de1facdd214392d753be128bef522ae7654ebdbc880b874f37
+# PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
+
+PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/v2rayA/v2rayA/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=247a357230c616bf48309c61d119686e4ad56939c05afef584c45051e9dc6220
+PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA.git
+PKG_SOURCE_VERSION:=fba38b0daddd11e916339c4a927604e707983d16
+PKG_MIRROR_HASH:=b671ccf2a1c85e9b17b1175d75ceaad3cf49cc68cb564809b19cf0e5b4d815e2
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
 
 PKG_LICENSE:=AGPL-3.0-only
@@ -27,7 +34,9 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/v2rayA/v2rayA
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:=$(GO_PKG)/conf.Version=$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:= \
+	$(GO_PKG)/conf.Version=$(PKG_VERSION) \
+	$(GO_PKG)/core/iptables.TproxyNotSkipBr=true
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -87,7 +96,7 @@ define Download/v2raya-web
 	URL:=https://codeload.github.com/v2rayA/v2raya-web/tar.gz/v$(PKG_VERSION)?
 	URL_FILE:=$(WEB_FILE)
 	FILE:=$(WEB_FILE)
-	HASH:=149097a42c3e5fa6f5c3cd46d1bf7ec4546e79ad37c1446b759539e700bd75e2
+	HASH:=830e201d1098d7e8ec8b61c6b4d192dda34dd9f745c8b937c7335306a498bf97
 endef
 
 define Build/Prepare
