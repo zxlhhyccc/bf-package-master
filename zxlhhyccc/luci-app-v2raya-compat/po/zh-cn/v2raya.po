@@ -53,8 +53,8 @@ msgstr "开启前，请确保您的 IPv6 网络工作正常。"
 msgid "Nftables support"
 msgstr "Nftables 支持"
 
-msgid "Experimental feature. Make sure you have installed nftables."
-msgstr "实验性特征。确保你已经安装了 nftables。"
+msgid "Make sure you have installed nftables before you turn it on."
+msgstr "开启前，请确保您已安装 nftables。"
 
 msgid "AUTO"
 msgstr "自动"

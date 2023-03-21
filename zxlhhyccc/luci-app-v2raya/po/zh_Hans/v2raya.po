@@ -122,8 +122,8 @@ msgid "Make sure your IPv6 network works fine before you turn it on."
 msgstr "开启前，请确保您的 IPv6 网络工作正常。"
 
 #: applications/luci-app-v2raya/htdocs/luci-static/resources/view/v2raya/config.js:121
-msgid "Experimental feature. Make sure you have installed nftables."
-msgstr "实验性特征。确保你已经安装了 nftables。"
+msgid "Make sure you have installed nftables before you turn it on."
+msgstr "开启前，请确保您已安装 nftables。"
 
 #: applications/luci-app-v2raya/htdocs/luci-static/resources/view/v2raya/config.js:143
 msgid "Max log retention period"

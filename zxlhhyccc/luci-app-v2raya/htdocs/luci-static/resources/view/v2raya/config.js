@@ -5,12 +5,9 @@
 
 'use strict';
 'require form';
-'require fs';
 'require poll';
 'require rpc';
 'require uci';
-'require ui';
-'require validation';
 'require view';
 
 var callServiceList = rpc.declare({
@@ -118,7 +115,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.option(form.ListValue, 'nftables_support', _('Nftables support'),
-			_('Experimental feature. Make sure you have installed nftables.'));
+			_('Make sure you have installed nftables before you turn it on.'));
 		o.value('auto', _('Auto'));
 		o.value('on', _('On'));
 		o.value('off', _('Off'));
@@ -145,15 +142,12 @@ return view.extend({
 			_('Maximum number of days to keep log files.'));
 		o.datatype = 'uinteger';
 		o.default = '3';
-		o.rmempty = false;
 
 		o = s.option(form.Flag, 'log_disable_color', _('Disable log color output'));
-		o.default = o.enabled;
-		o.rmempty = false;
+		o.default = o.disabled;
 
 		o = s.option(form.Flag, 'log_disable_timestamp', _('Disable log timestamp'));
 		o.default = o.disabled;
-		o.rmempty = false;
 
 		o = s.option(form.Value, 'v2ray_bin', _('v2ray binary path'),
 			_('Executable v2ray binary path. Auto-detect if put it empty (recommended).'));

@@ -53,10 +53,11 @@ o.default = "auto"
 o.rmempty = false
 
 o = s:taboption("settings", ListValue, "nftables_support", translate("Nftables support"))
-o.description = translate("Experimental feature. Make sure you have installed nftables.")
+o.description = translate("Make sure you have installed nftables before you turn it on.")
+o:value("auto", translate("Auto"))
 o:value("on", translate("ON"))
 o:value("off", translate("OFF"))
-o.default = "off"
+o.default = "auto"
 o.rmempty = false
 
 o = s:taboption("settings", Value, "log_file", translate("Log file path"))
@@ -82,15 +83,12 @@ o:value("1", translate("1"))
 o:value("2", translate("2"))
 o:value("3", translate("3"))
 o.default = "3"
-o.rmempty = false
 
 o = s:taboption("settings", Flag, "log_disable_color", translate("Disable log color output"))
-o.default = o.enabled
-o.rmempty = false
+o.default = o.disabled
 
 o = s:taboption("settings", Flag, "log_disable_timestamp", translate("Disable log timestamp"))
 o.default = o.disabled
-o.rmempty = false
 
 o = s:taboption("settings", Value, "v2ray_bin", translate("v2ray binary path"))
 o.description = translate("Executable v2ray binary path. Auto-detect if put it empty (recommended).")
