@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
 PKG_VERSION:=1.15.3
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 
 PKG_SOURCE_PROTO:=git
@@ -28,8 +28,6 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=rust/host
-
-RUST_PKG_FEATURES:=local-redir
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
@@ -75,8 +73,7 @@ endef
 $(eval $(call shadowsocks-rust/templates))
 
 define Build/Compile
-	#$(call Build/Compile/Cargo,,--features local-redir)
-	$(call Build/Compile/Cargo)
+	$(call Build/Compile/Cargo,,--features local-redir)
 $(foreach component,$(SHADOWSOCKS_COMPONENTS),
   ifneq ($(CONFIG_SHADOWSOCKS-RUST_$(component)_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/$(component)
