@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-v2ray-server
 LUCI_TITLE:=LuCI support for V2ray Server
-LUCI_DEPENDS:=+unzip +sagernet-core +wget-ssl
+LUCI_DEPENDS:=+unzip +v2ray-core-v5 +wget-ssl
 LUCI_PKGARCH:=all
 PKG_VERSION:=13
 
