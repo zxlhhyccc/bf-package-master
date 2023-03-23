@@ -16,7 +16,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/lifenjoiner/dnsforwarder.git
 PKG_SOURCE_DATE:=2023-03-22
 PKG_SOURCE_VERSION:=864d11410cd62512b8d663422aaeddf244cdb214
-PKG_MIRROR_HASH:=3c3ee502d87330c9fdcd201ff29a669336a27b176d4
+PKG_MIRROR_HASH:=9c0746d0fc166c6cc931ec49877bc4d27da9654e4654057fbe6ebf595be7f3be
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
@@ -26,7 +26,7 @@ PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 
-PKG_BUILD_FLAGS:=gc-sections
+PKG_BUILD_FLAGS:=gc-sections lto
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -61,8 +61,7 @@ endef
 
 CONFIGURE_ARGS+= --enable-downloader=wget
 
-TARGET_CFLAGS += -flto
-TARGET_LDFLAGS += -Wl,--as-needed -flto
+TARGET_LDFLAGS += -Wl,--as-needed
 
 define Package/dnsforwarder/install
 	$(INSTALL_DIR) $(1)/usr/bin
