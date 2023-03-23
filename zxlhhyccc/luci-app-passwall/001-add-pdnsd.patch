@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index dbcc77d..8d54147 100644
+index e74356c..419b263 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -17,6 +17,8 @@ PKG_CONFIG_DEPENDS:= \
@@ -44,7 +44,7 @@ index dbcc77d..8d54147 100644
  	bool "Include Shadowsocks Libev Client"
  	default y
 diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index 57a538e..e75e57e 100644
+index cbc1e83..13972e2 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -244,8 +244,11 @@ end
@@ -55,11 +55,11 @@ index 57a538e..e75e57e 100644
 +    dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
 +end
  if api.is_finded("dns2tcp") then
--    dns_mode:value("dns2tcp", translatef("Requery DNS By %s", "TCP"))
-+    dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
+-	dns_mode:value("dns2tcp", translatef("Requery DNS By %s", "TCP"))
++	dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
  end
  if api.is_finded("dns2socks") then
-     dns_mode:value("dns2socks", "dns2socks")
+ 	dns_mode:value("dns2socks", "dns2socks")
 @@ -297,6 +300,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -78,18 +78,18 @@ index 57a538e..e75e57e 100644
  o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
  o.rmempty = false
 diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-index de8b410..48056a6 100644
+index 033a159..c3b2c56 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -103,7 +103,7 @@ o.validate = function(self, value, t)
-     end
+ 	end
  end
  
 -o = s:option(DummyValue, "_node_count")
 +o = s:option(DummyValue, "_node_count",translate("Node num"))
  o.rawhtml = true
  o.cfgvalue = function(t, n)
-     local remark = m:get(n, "remark") or ""
+ 	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index a8a5267..132fce3 100644
 --- a/po/zh-cn/passwall.po
@@ -108,7 +108,7 @@ index a8a5267..132fce3 100644
  msgstr "默认代理模式"
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 34f7de8..401ea43 100755
+index dd7ce09..abbcafc 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -1121,6 +1121,12 @@ start_dns() {
@@ -212,7 +212,7 @@ index 34f7de8..401ea43 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1664,7 +1742,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
+@@ -1675,7 +1753,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
  gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
