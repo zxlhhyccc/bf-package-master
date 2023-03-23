@@ -12,8 +12,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/mokeyish/smartdns-rs.git
-PKG_SOURCE_VERSION:=e96c4577e8cff1ff810e96e93eb7dba9bbd25353
-PKG_MIRROR_HASH:=a653849bf7f6962270f73f9cb5554c1d0e2cd4afd05764e5c9de1d860e8bb405
+PKG_SOURCE_VERSION:=4a2befdde1d228876aee4c33423af7695bfc30fa
+PKG_MIRROR_HASH:=3e89c8b8b4dd3d1a9003798c46a50e14bf3e0a730abbfedf0b8b90738177669d
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SMARTDNS-RUST_COMPRESS_GOPROXY \
@@ -27,25 +27,24 @@ PKG_BUILD_PARALLEL:=1
 
 PKG_BUILD_DEPENDS:=rust/host
 
-RUST_PKG:=smartdns
-
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 
-define Package/smartdns-rust
+define Package/smartdns-rust/Default
+  define Package/smartdns-rust
     SECTION:=net
     CATEGORY:=Network
     SUBMENU:=Web Servers/Proxies
     TITLE:=smartdns-rust server
     URL:=https://github.com/mokeyish/smartdns-rs.git
     DEPENDS:=$$(RUST_ARCH_DEPENDS)
-endef
+  endef
 
-define Package/smartdns-rust/description
+  define Package/smartdns-rust/description
   A cross platform local DNS server (Dnsmasq like) written in rust to obtain the fastest website IP for the best Internet experience, supports DoT, DoH.
-endef
+  endef
 
-define Package/smartdns-rust/config
+  define Package/smartdns-rust/config
     config SMARTDNS-RUST_COMPRESS_GOPROXY
       bool "Compiling with GOPROXY proxy"
       default n
@@ -54,36 +53,45 @@ define Package/smartdns-rust/config
       bool "Compress executable files with UPX"
       depends on !mips64
       default n
-endef
+  endef
 
-ifneq ($(CONFIG_SMARTDNS-RUST_COMPRESS_GOPROXY),)
+  ifneq ($(CONFIG_SMARTDNS-RUST_COMPRESS_GOPROXY),)
       export GO111MODULE=on
       export GOPROXY=https://goproxy.baidu.com
-endif
+  endif
+
+  define Package/smartdns-rust/install
+	$$(INSTALL_DIR) $$(1)/usr/sbin
+	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/bin/smartdns $$(1)/usr/sbin/
+
+	$$(INSTALL_DIR) $$(1)/etc/init.d $$(1)/etc/smartdns $$(1)/etc/config
+	$$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $$(1)/etc/init.d/smartdns
+	$$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $$(1)/etc/smartdns/custom.conf
+	$$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $$(1)/etc/config/smartdns
+  endef
+endef
 
 define Package/smartdns-rust/conffiles
 /etc/config/smartdns
 /etc/smartdns/custom.conf
 endef
 
+define smartdns-rust/templates
+  $(foreach smartdns,smartdns,
+    $(call Package/smartdns-rust/Default,smartdns)
+  )
+endef
+$(eval $(call smartdns-rust/templates))
+
 define Build/Compile
-	#$(call Build/Compile/Cargo,, smartdns)
-	$(call Build/Compile/Cargo)
-ifneq ($(CONFIG_SMARTDNS-RUST_COMPRESS_UPX),)
-	#$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns
+	$(call Build/Compile/Cargo,, smartdns)
+$(foreach smartdns,smartdns,
+  ifneq ($(CONFIG_SMARTDNS-RUST_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/smartdns
   endif
+  )
 endef
 
-define Package/smartdns-rust/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	#$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns $(1)/usr/sbin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/smartdns $(1)/usr/sbin/
-
-	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns $(1)/etc/config
-	$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
-	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
-	$$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
-endef
-
-$(eval $(call BuildPackage,smartdns-rust))
+$(foreach smartdns,smartdns, \
+  $(eval $(call BuildPackage,smartdns-rust)) \
+)
