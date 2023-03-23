@@ -83,7 +83,7 @@ define Package/smartdns-rust/install
 	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns $(1)/etc/config
 	$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
-	$$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
+	$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
 endef
 
 $(eval $(call BuildPackage,smartdns-rust))
