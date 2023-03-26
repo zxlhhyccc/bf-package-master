@@ -1,0 +1,58 @@
+From fbfc433e8f833b1a70b7f80232d4b5a25b80570f Mon Sep 17 00:00:00 2001
+From: chen_10 <1803012703@qq.com>
+Date: Sat, 25 Mar 2023 21:38:00 +0800
+Subject: [PATCH 1/2] feat: add support for decompressing data with
+ content-type br
+
+---
+ src/request.js | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/request.js b/src/request.js
+index c938eda70..bf1d650bb 100644
+--- a/src/request.js
++++ b/src/request.js
+@@ -181,6 +181,8 @@ const read = (connect, raw) =>
+ 			buffer.length &&
+ 			['gzip', 'deflate'].includes(connect.headers['content-encoding'])
+ 				? zlib.unzipSync(buffer)
++				: ['br'].includes(connect.headers['content-encoding'])
++				? zlib.brotliDecompressSync(buffer)
+ 				: buffer;
+ 		return raw ? buffer : buffer.toString();
+ 	});
+
+From a895bc8226f2fdf081bf6898db7482d41bc1a4d5 Mon Sep 17 00:00:00 2001
+From: chen_10 <1803012703@qq.com>
+Date: Sun, 26 Mar 2023 12:41:36 +0800
+Subject: [PATCH 2/2] style: improve readability of data decompression code
+
+---
+ src/request.js | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/src/request.js b/src/request.js
+index bf1d650bb..e44de0fa8 100644
+--- a/src/request.js
++++ b/src/request.js
+@@ -177,13 +177,13 @@ const read = (connect, raw) =>
+ 			.on('end', () => resolve(Buffer.concat(chunks)))
+ 			.on('error', (error) => reject(error));
+ 	}).then((buffer) => {
+-		buffer =
+-			buffer.length &&
+-			['gzip', 'deflate'].includes(connect.headers['content-encoding'])
+-				? zlib.unzipSync(buffer)
+-				: ['br'].includes(connect.headers['content-encoding'])
+-				? zlib.brotliDecompressSync(buffer)
+-				: buffer;
++		if (buffer.length) {
++			if (['gzip', 'deflate'].includes(connect.headers['content-encoding'])) {
++				buffer = zlib.unzipSync(buffer)
++			} else if (['br'].includes(connect.headers['content-encoding'])) {
++				buffer = zlib.brotliDecompressSync(buffer)
++			}
++		}
+ 		return raw ? buffer : buffer.toString();
+ 	});
+ 
