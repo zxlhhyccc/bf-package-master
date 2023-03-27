@@ -6,14 +6,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=smartdns-rust
-PKG_VERSION:=0.5.1
+PKG_VERSION:=0.5.2
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/mokeyish/smartdns-rs.git
-PKG_SOURCE_VERSION:=ea2d3d1432fc086049e97bac9d7e05d96640cac8
-PKG_MIRROR_HASH:=7134ed871e18a65979a2c723ac46c36fd1ecefed7ebf346cf13a019c1b2bb673
+PKG_SOURCE_VERSION:=aeefc97d56b8fe6fd6e88c4a198e85c2f2917d55
+PKG_MIRROR_HASH:=d70ddfc1680fb618f3127e9c90ccaed669601fcec4c8019c5f3f41f770af2e4e
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SMARTDNS-RUST_COMPRESS_GOPROXY \
@@ -81,7 +81,8 @@ define Package/smartdns-rust/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/smartdns $(1)/usr/sbin/
 
 	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns $(1)/etc/config
-	$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
+	#$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/contrib/openwrt/conf/smartdns.init $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
 endef
