@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index e74356c..419b263 100644
+index 0d947c5..556bde5 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -17,6 +17,8 @@ PKG_CONFIG_DEPENDS:= \
@@ -44,7 +44,7 @@ index e74356c..419b263 100644
  	bool "Include Shadowsocks Libev Client"
  	default y
 diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index cbc1e83..13972e2 100644
+index cbc1e83..ebd63da 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -244,8 +244,11 @@ end
@@ -52,7 +52,7 @@ index cbc1e83..13972e2 100644
  ---- DNS Forward Mode
  dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
 +if api.is_finded("pdnsd") then
-+    dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
++	dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
 +end
  if api.is_finded("dns2tcp") then
 -	dns_mode:value("dns2tcp", translatef("Requery DNS By %s", "TCP"))
@@ -91,7 +91,7 @@ index 033a159..c3b2c56 100644
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index a8a5267..132fce3 100644
+index 27a5492..be5519c 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -238,6 +238,12 @@ msgstr "单进程"
@@ -108,7 +108,7 @@ index a8a5267..132fce3 100644
  msgstr "默认代理模式"
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index dd7ce09..abbcafc 100755
+index ebc4fc7..a2b5fef 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -1121,6 +1121,12 @@ start_dns() {
@@ -139,7 +139,7 @@ index dd7ce09..abbcafc 100755
  		;;
  		esac
  
-@@ -1194,6 +1206,72 @@ start_dns() {
+@@ -1198,6 +1210,72 @@ start_dns() {
  	esac
  }
  
@@ -212,7 +212,7 @@ index dd7ce09..abbcafc 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1675,7 +1753,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
+@@ -1683,7 +1761,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
  gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
