@@ -81,8 +81,8 @@ define Package/smartdns-rust/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/smartdns $(1)/usr/sbin/
 
 	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns $(1)/etc/config
-	#$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/contrib/openwrt/conf/smartdns.init $(1)/etc/init.d/smartdns
+	$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
+	#$(INSTALL_BIN) $(PKG_BUILD_DIR)/contrib/openwrt/conf/smartdns.init $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
 endef
