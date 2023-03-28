@@ -248,7 +248,7 @@ if api.is_finded("pdnsd") then
 	dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
 end
 if api.is_finded("dns2tcp") then
-	dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
+	dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP")))
 end
 if api.is_finded("dns2socks") then
 	dns_mode:value("dns2socks", "dns2socks")
@@ -336,6 +336,17 @@ o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
 o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
 o.rmempty = false
 
+if api.is_finded("chinadns-ng") then
+	o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, but will increase the memory."))
+	o.default = "0"
+	o:depends({dns_mode = "dns2socks"})
+	o:depends({dns_mode = "pdnsd"})
+	o:depends({dns_mode = "dns2tcp"})
+	o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
+	o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
+	o:depends({dns_mode = "udp"})
+end
+
 if has_chnlist then
 	when_chnroute_default_dns = s:taboption("DNS", ListValue, "when_chnroute_default_dns", translate("When using the chnroute list the default DNS"))
 	when_chnroute_default_dns.default = "direct"
@@ -344,14 +355,12 @@ if has_chnlist then
 	when_chnroute_default_dns.description = "<ul>"
 	.. "<li>" .. translate("Remote DNS can avoid more DNS leaks, but some domestic domain names maybe to proxy!") .. "</li>"
 	.. "<li>" .. translate("Direct DNS Internet experience may be better, but DNS will be leaked!") .. "</li>"
-	if api.is_finded("chinadns-ng") then
-		when_chnroute_default_dns:value("chinadns_ng", translate("ChinaDNS-NG"))
-		when_chnroute_default_dns.default = "chinadns_ng"
-	end
-	when_chnroute_default_dns.description = when_chnroute_default_dns.description .. "</li></ul>"
+	.. "</ul>"
+	local _depends = {}
 	if api.is_finded("smartdns") then
-		when_chnroute_default_dns:depends("dns_shunt", "dnsmasq")
+		_depends["dns_shunt"] = "dnsmasq"
 	end
+	when_chnroute_default_dns:depends(_depends)
 end
 
 o = s:taboption("DNS", Button, "clear_ipset", translate("Clear IPSET"), translate("Try this feature if the rule modification does not take effect."))
