@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sing-box
 PKG_VERSION:=1.2.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
@@ -100,7 +100,7 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_GVISOR
 	bool "Build with gVisor support"
-	default y
+	default n
 
     config SING_BOX_BUILD_LWIP
 	bool "Build with LWIP Tun stack support"
@@ -113,9 +113,9 @@ define Package/sing-box/config
       	  Required by HTTP3 DNS transports, Naive inbound,
       	  Hysteria inbound / outbound, and v2ray QUIC transport.
 
-    config SING_BOX_WITH_REALITY_SERVER
+    config SING_BOX_BUILD_REALITY_SERVER
       	bool "Build with reality TLS server support"
-      	default n
+      	default y
 
     config SING_BOX_BUILD_SHADOWSOCKSR
     	bool "Build with ShadowsockR support"
