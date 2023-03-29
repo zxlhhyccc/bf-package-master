@@ -121,5 +121,5 @@ endef
 
 $(eval $(call GoBinPackage,mosdns))
 $(eval $(call BuildPackage,mosdns))
-$(eval $(call BuildPackage,mosdns-neo))
+$(eval $(call BuildPackage,mosdns-v5))
 $(eval $(call BuildPackage,mosdns-ssrp))
