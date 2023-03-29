@@ -84,6 +84,20 @@ restart_service() {
     /etc/init.d/mosdns restart
 }
 
+ecs_local() {
+    ipaddr=$(curl -s -4 --connect-timeout 2 -H "Host:ip.3322.org" 118.184.169.32) || ipaddr=119.29.0.0
+    echo "ecs ${ipaddr%.*}.0/24"
+}
+
+ecs_remote() {
+    ipaddr=$(curl -s -4 --connect-timeout 2 -H "Host:icanhazip.com" 104.18.114.97) || ipaddr=103.103.65.0
+    echo "ecs ${ipaddr%.*}.0/24"
+}
+
+flush_cache() {
+    curl -s 127.0.0.1:$(uci -q get mosdns.config.listen_port_api)/plugins/cache/flush || exit 1
+}
+
 case $script_action in
     "dns")
         interface_dns
@@ -99,6 +113,15 @@ case $script_action in
     ;;
     "adlist_update")
         adlist_update && restart_service
+    ;;
+    "ecs_local")
+        ecs_local
+    ;;
+    "ecs_remote")
+        ecs_remote
+    ;;
+    "flush")
+        flush_cache
     ;;
     "version")
         mosdns version
