@@ -50,7 +50,7 @@ define Package/mosdns
   $(call Package/mosdns/Default)
 endef
 
-define Package/mosdns-neo
+define Package/mosdns-v5
   $(call Package/mosdns/Default)
 endef
 
@@ -97,7 +97,7 @@ define Package/mosdns/install
 	$(INSTALL_DATA) ./files/config.yaml $(1)/etc/mosdns/config.yaml
 endef
 
-define Package/mosdns-neo/install
+define Package/mosdns-v5/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 endef
 
