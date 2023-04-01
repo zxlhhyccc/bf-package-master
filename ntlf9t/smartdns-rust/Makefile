@@ -12,8 +12,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/mokeyish/smartdns-rs.git
-PKG_SOURCE_VERSION:=aeefc97d56b8fe6fd6e88c4a198e85c2f2917d55
-PKG_MIRROR_HASH:=d70ddfc1680fb618f3127e9c90ccaed669601fcec4c8019c5f3f41f770af2e4e
+PKG_SOURCE_VERSION:=fea125cf7c06b431015c41c876b8ab12e6c3c1a8
+PKG_MIRROR_HASH:=eb4089dd077c6aba2c75a6ab343a51ee027c576ae0f7638e80a613ed5711bca9
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SMARTDNS-RUST_COMPRESS_GOPROXY \
@@ -70,19 +70,19 @@ define Build/Compile
 	#$(call Build/Compile/Cargo,, smartdns)
 	$(call Build/Compile/Cargo)
 ifneq ($(CONFIG_SMARTDNS-RUST_COMPRESS_UPX),)
-	#$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/smartdns
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns
+	#$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/smartdns
   endif
 endef
 
 define Package/smartdns-rust/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	#$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns $(1)/usr/sbin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/smartdns $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns $(1)/usr/sbin/
+	#$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/smartdns $(1)/usr/sbin/
 
 	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns $(1)/etc/config
-	$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
-	#$(INSTALL_BIN) $(PKG_BUILD_DIR)/contrib/openwrt/conf/smartdns.init $(1)/etc/init.d/smartdns
+	#$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/contrib/openwrt/conf/smartdns.init $(1)/etc/init.d/smartdns
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
 endef
