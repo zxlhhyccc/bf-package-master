@@ -31,8 +31,8 @@ msgstr "通过IP得到城市信息。"
 msgid "City :"
 msgstr "城市:"
 
-msgid "For more information, visit: https://docs.seniverse.com/api/start/common.html#地点-location"
-msgstr "欲了解更多信息，请访问: https://docs.seniverse.com/api/start/common.html#地点-location"
+msgid "For more information,Please visit:"
+msgstr "欲了解更多信息，请访问："
 
 msgid "Weather update interval :"
 msgstr "天气更新时间间隔:"
@@ -40,8 +40,8 @@ msgstr "天气更新时间间隔:"
 msgid "Private Key :"
 msgstr "私钥:"
 
-msgid "Input private key, visit: https://docs.seniverse.com/api/start/key.html"
-msgstr "输入私钥，请访问: https://docs.seniverse.com/api/start/key.html"
+msgid "Input private key,Please visit:"
+msgstr "输入私钥，请访问："
 
 msgid "Hide Wireless password"
 msgstr "隐藏无线密码"

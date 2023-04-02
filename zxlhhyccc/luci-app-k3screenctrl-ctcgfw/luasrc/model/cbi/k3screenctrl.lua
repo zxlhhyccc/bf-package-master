@@ -36,13 +36,13 @@ o.default = 0
 o.rmempty = false
 
 o = s:option(Value, "key", translate("Private Key :"), 
-translate("Input private key, visit: https://docs.seniverse.com/api/start/key.html"))
+translate("Input private key,Please visit:") .. '<a href="https://docs.seniverse.com/api/start/key.html" target="_blank">https://docs.seniverse.com/api/start/key.html</a>')
 
 o = s:option(Flag, "city_checkip", translate("Check city from ip"), translate("Check city from local ip."))
 o.default = 0
 
 o = s:option(Value, "city", translate("City :"), 
-translate("For more information, visit: https://docs.seniverse.com/api/start/common.html#地点-location"))
+translate("For more information,Please visit:") .. '<a href="https://docs.seniverse.com/api/start/common.html#地点-location" target="_blank">https://docs.seniverse.com/api/start/common.html#地点-location</a>')
 --o.rmempty = false
 
 o = s:option(Flag, "psk_hide", translate("Hide Wireless password"))
