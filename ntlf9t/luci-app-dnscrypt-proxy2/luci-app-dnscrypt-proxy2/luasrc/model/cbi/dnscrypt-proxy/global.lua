@@ -46,7 +46,8 @@ m:section(SimpleSection).template  = "dnscrypt-proxy/status"
 s = m:section(TypedSection, cfg, translate("Binary Management"), has_dnscrypt and "" or ('<b style="color:red">%s</b>' % translate("DNSCrypt Proxy binary not found.")))
 s.anonymous = true
 
-o = s:option(Flag, "enable", translate("Enable"))
+o = s:option(Flag, "enable", translate("Enable"),
+		translate("Subscription needs to be configured before running for the first time."))
 o.default = false
 o.optional = false
 
@@ -56,7 +57,7 @@ o.template = "dnscrypt-proxy/refresh"
 o.name = translate("Update")
 o.ret = bin_version:match('^1%..*') and  translate("Version2 atleast: ") or translate("Current version: ")
 o.value = o.ret .. bin_version
-o.description = translate("Update to final release from: ") .. "https://github.com/dnscrypt/dnscrypt-proxy/releases"
+o.description = translate("Update to final release from: ") .. '<a href="https://github.com/dnscrypt/dnscrypt-proxy/releases" target="_blank">https://github.com/dnscrypt/dnscrypt-proxy/releases</a>'
 o.write = function (self, ...) end
 
 o = s:option(Button, "Force Reload", translate("Force Reload"), translate("Proxy force reload, ") .. "/etc/init.d/dnscrypt-proxy reload")

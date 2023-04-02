@@ -9,7 +9,7 @@ m = Map(cfg, "%s - %s" %{translate("DNSCrypt Proxy"),
 		translate("ACL Setting")})
 
 -- [[ ACL Setting ]]--
-s = m:section(TypedSection, "server_addr", translate("DNSCrypt Resolver ACL"), translate("DNSCrypt will automatically pick the fastest, working servers from the list<br />All or filtered out addresses are prepared for 'Address filter list(ipset)'.<br />Resolver with detailed addresses is a must.") .. " https://dnscrypt.info/stamps/")
+s = m:section(TypedSection, "server_addr", translate("DNSCrypt Resolver ACL"), translate("DNSCrypt will automatically pick the fastest, working servers from the list<br />All or filtered out addresses are prepared for 'Address filter list(ipset)'.<br />Resolver with detailed addresses is a must,Please visit:") .. '<a href="https://dnscrypt.info/stamps/" target="_blank">https://dnscrypt.info/stamps/</a>')
 	s.sectionhead = translate("Alias")
 	s.template = "cbi/tblsection"
 	s.addremove = true
