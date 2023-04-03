@@ -161,7 +161,7 @@ msgid "Proxy force reload,"
 msgstr "强制重启代理："
 
 msgid "DNS resolve test"
-msgstr "DNS解析测试"
+msgstr "DNS 解析测试"
 
 msgid "Cache Management"
 msgstr "缓存文件"
@@ -197,7 +197,7 @@ msgid "Enabled Resolvers"
 msgstr "订阅列表"
 
 msgid "Fallback resolvers"
-msgstr "备用DNS"
+msgstr "备用 DNS"
 
 msgid "DNS resolver on query fails or for forced forwarding domain list."
 msgstr "用于解析 DNSCrypt 解析失败时，及强制转发名单里的域名。"
@@ -233,7 +233,7 @@ msgid "IP Address to blacklist, [.conf] file treat like dnsmasq configure:"
 msgstr "拒绝解析的 IP 名单，可处理 dnsmasq 的配置文件 [.conf]："
 
 msgid "Net probe address"
-msgstr "网络 DNS"
+msgstr "首选 DNS"
 
 msgid "Resolver on downloading resolver lists file."
 msgstr "用于解析订阅地址的 DNS。"
@@ -311,22 +311,22 @@ msgid "One or more requred configure is missing!"
 msgstr "至少需要 1 个正确配置并更新的订阅！"
 
 msgid "Address filter list(ipset)"
-msgstr "节点地址过滤 (ipset)"
+msgstr "节点地址过滤 ( ipset )"
 
 msgid "The ipset list name that DNSCrypt server addresses try appending to if any."
-msgstr "向使用中的 ipset 列表追加过滤出来的DNSCrypt 节点地址。"
+msgstr "向使用中的 ipset 列表追加过滤出来的 DNSCrypt 节点地址。"
 
 msgid "Follwing available one (auto)"
-msgstr "检测已知 (auto)"
+msgstr "检测已知 ( auto )"
 
 msgid "PassWall direct (vpsiplist)"
-msgstr "PassWall 直走 (vpsiplist)"
+msgstr "PassWall 直走 ( vpsiplist )"
 
 msgid "Clash direct (localnetwork)"
-msgstr "Clash 直走 (localnetwork)"
+msgstr "Clash 直走 ( localnetwork )"
 
 msgid "SSR-Plus direct (ss_spec_wan_ac)"
-msgstr "SSR+ 直走 (ss_spec_wan_ac)"
+msgstr "SSR+ 直走 ( ss_spec_wan_ac )"
 
 msgid "Total %d records."
 msgstr "总计 %d 条记录。"
@@ -362,7 +362,7 @@ msgid "DNSCrypt Resolver ACL"
 msgstr "DNSCrypt 节点流控"
 
 msgid "DNSCrypt will automatically pick the fastest, working servers from the list<br />All or filtered out addresses are prepared for 'Address filter list(ipset)'.<br />Resolver with detailed addresses is a must,Please visit:"
-msgstr "DNSCrypt 会自动选择最快的有效服务器。<br />所有已知或过滤出来的地址将用于 '节点地址过滤 (ipset)' <br />只有存在详细地址的节点才能添加进来，请访问："
+msgstr "DNSCrypt 会自动选择最快的有效服务器。<br />所有已知或过滤出来的地址将用于 '节点地址过滤 ( ipset )' <br />只有存在详细地址的节点才能添加进来，请访问："
 
 msgid "DNS Resolver Filter"
 msgstr "节点筛选器"
