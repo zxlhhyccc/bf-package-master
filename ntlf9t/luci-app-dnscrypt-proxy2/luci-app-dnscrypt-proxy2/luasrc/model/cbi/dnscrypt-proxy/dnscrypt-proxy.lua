@@ -55,7 +55,7 @@ o.optional = false
 o.rmempty = false
 o.placeholder = "onion-services"
 
-o = s:option(MultiValue, "force", translate("Force Options"), , font_blue .. bold_on ..translate("Prompt:Items forced for checking, will show your the defaults when unchecked all.") .. bold_off .. font_off)
+o = s:option(MultiValue, "force", translate("Force Options"), font_blue .. bold_on ..translate("Prompt:Items forced for checking, will show your the defaults when unchecked all.") .. bold_off .. font_off)
 o.optional = false
 --o.widget = "select"
 o.widget = "checkbox"
