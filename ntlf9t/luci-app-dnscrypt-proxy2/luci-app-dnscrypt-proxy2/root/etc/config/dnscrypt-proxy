@@ -5,7 +5,7 @@ config dnscrypt-proxy 'ns1'
 	option netprobe_address '114.114.114.114:53'
 	option bootstrap_resolvers '223.5.5.5:53,114.114.114.114:53'
 	option listen_addresses '127.0.0.1:5335'
-	option force 'cache dnscrypt_servers lb_estimator ignore_system_dns cert_ignore_timestamp block_unqualified block_undelegated ipv4_servers require_nofilter require_nolog doh_servers block_ipv6'
+	option force 'block_undelegated cache dnscrypt_servers ignore_system_dns lb_estimator block_unqualified cert_ignore_timestamp require_nofilter ipv4_servers require_nolog doh_servers block_ipv6'
 	option lb_strategy 'p2'
 	list forwarding_rules '/etc/dnsmasq.oversea/oversea_list.conf'
 	list blocked_names '/usr/share/adbyby/dnsmasq.adblock'
@@ -21,13 +21,85 @@ config server_addr
 	option stamp 'sdns://AgUAAAAAAAAABzguOC44LjigHvYkz_9ea9O63fP92_3qVlRn43cpncfuZnUWbzAMwbmgdoAkR6AZkxo_AEMExT_cbBssN43Evo9zs5_ZyWnftEUgalBisNF41VbxY7E7Gw8ZQ10CWIKRzHVYnf7m6xHI1cMKZG5zLmdvb2dsZQovZG5zLXF1ZXJ5'
 
 config server_addr
-	option alias 'cloudflare.Australia@DoH'
-	option country 'Australia'
-	option name 'cloudflare'
-	option addrs 'dns.cloudflare.com,1.0.0.1'
+	option alias 'quad9-doh-ip4-port443-nofilter-pri.United States@DoH'
+	option country 'United States'
+	option name 'quad9-doh-ip4-port443-nofilter-pri'
+	option addrs 'dns10.quad9.net,149.112.112.10'
 	option ports '443'
 	option proto 'DoH'
-	option stamp 'sdns://AgcAAAAAAAAABzEuMC4wLjEAEmRucy5jbG91ZGZsYXJlLmNvbQovZG5zLXF1ZXJ5'
+	option stamp 'sdns://AgYAAAAAAAAADjE0OS4xMTIuMTEyLjEwICoV9dastufAkBreTrvHQ7LM1IkDK0bhZC8Gk2gwASWKE2RuczEwLnF1YWQ5Lm5ldDo0NDMKL2Rucy1xdWVyeQ'
+
+config server_addr
+	option alias 'quad9-doh-ip4-port5053-nofilter-ecs-pri.United States@DoH'
+	option country 'United States'
+	option name 'quad9-doh-ip4-port5053-nofilter-ecs-pri'
+	option addrs 'dns12.quad9.net,9.9.9.12'
+	option ports '5053'
+	option proto 'DoH'
+	option stamp 'sdns://AgYAAAAAAAAACDkuOS45LjEyICoV9dastufAkBreTrvHQ7LM1IkDK0bhZC8Gk2gwASWKFGRuczEyLnF1YWQ5Lm5ldDo1MDUzCi9kbnMtcXVlcnk'
+
+config server_addr
+	option alias 'cisco-doh.United States@DoH'
+	option country 'United States'
+	option name 'cisco-doh'
+	option addrs 'doh.opendns.com,146.112.41.2'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgAAAAAAAAAADDE0Ni4xMTIuNDEuMiCYZO337qhZZ1J0sPrfvSaTZamrnrp3PahnSUxalKQ33w9kb2gub3BlbmRucy5jb20KL2Rucy1xdWVyeQ'
+
+config server_addr
+	option alias 'dns.ryan-palmer.United Kingdom@DoH'
+	option country 'United Kingdom'
+	option name 'dns.ryan-palmer'
+	option addrs 'dns1.ryan-palmer.com,68.183.253.200'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgcAAAAAAAAADjY4LjE4My4yNTMuMjAwoMwQYNOcgym2K2-8fQ1t-TCYabmB5-Y5LVzY-kCPTYDmIEROvWe7g_iAezkh6TiskXi4gr1QqtsRIx8ETPXwjffOFGRuczEucnlhbi1wYWxtZXIuY29tCi9kbnMtcXVlcnk'
+
+config server_addr
+	option alias 'jp.tiar.app-doh.Japan@DoH'
+	option country 'Japan'
+	option name 'jp.tiar.app-doh'
+	option addrs 'jp.tiar.app,172.104.93.80'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgcAAAAAAAAADTE3Mi4xMDQuOTMuODCgzBBg05yDKbYrb7x9DW35MJhpuYHn5jktXNj6QI9NgOYgRE69Z7uD-IB7OSHpOKyReLiCvVCq2xEjHwRM9fCN984LanAudGlhci5hcHAKL2Rucy1xdWVyeQ'
+
+config server_addr
+	option alias 'doh.tiar.app-doh.Singapore@DoH'
+	option country 'Singapore'
+	option name 'doh.tiar.app-doh'
+	option addrs 'doh.tiar.app,174.138.29.175'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgMAAAAAAAAADjE3NC4xMzguMjkuMTc1oMwQYNOcgym2K2-8fQ1t-TCYabmB5-Y5LVzY-kCPTYDmIEROvWe7g_iAezkh6TiskXi4gr1QqtsRIx8ETPXwjffODGRvaC50aWFyLmFwcAovZG5zLXF1ZXJ5'
+
+config server_addr
+	option alias 'plan9dns-fl.United States@DNSCrypt'
+	option country 'United States'
+	option name 'plan9dns-fl'
+	option addrs '149.28.101.119'
+	option ports '8443'
+	option proto 'DNSCrypt'
+	option stamp 'sdns://AQcAAAAAAAAAEzE0OS4yOC4xMDEuMTE5Ojg0NDMgVaFV4a8StIfx8fnCxDxVlxppqm-hJYyCKqtMtQENnCwkMi5kbnNjcnlwdC1jZXJ0LnBsdXRvbi5wbGFuOS1kbnMuY29t'
+
+config server_addr
+	option alias 'dnscrypt.ca-2-doh.Canada@DoH'
+	option country 'Canada'
+	option name 'dnscrypt.ca-2-doh'
+	option addrs 'dns2.dnscrypt.ca,149.56.228.45'
+	option ports '453'
+	option proto 'DoH'
+	option stamp 'sdns://AgcAAAAAAAAAETE0OS41Ni4yMjguNDU6NDUzoMwQYNOcgym2K2-8fQ1t-TCYabmB5-Y5LVzY-kCPTYDmIEROvWe7g_iAezkh6TiskXi4gr1QqtsRIx8ETPXwjffOFGRuczIuZG5zY3J5cHQuY2E6NDUzCi9kbnMtcXVlcnk'
+
+config server_addr
+	option alias 'quad9-dnscrypt-ip4-nofilter-pri.United States@DNSCrypt'
+	option country 'United States'
+	option name 'quad9-dnscrypt-ip4-nofilter-pri'
+	option addrs '149.112.112.10'
+	option ports '8443'
+	option proto 'DNSCrypt'
+	option stamp 'sdns://AQYAAAAAAAAAEzE0OS4xMTIuMTEyLjEwOjg0NDMgZ8hHuMh1jNEgJFVDvnVnRt803x2EwAuMRwNo34Idhj4ZMi5kbnNjcnlwdC1jZXJ0LnF1YWQ5Lm5ldA'
 
 config server_addr
 	option alias 'quad9-dnscrypt-ip4-filter-pri.France@DNSCrypt'
@@ -37,3 +109,22 @@ config server_addr
 	option ports '8443'
 	option proto 'DNSCrypt'
 	option stamp 'sdns://AQMAAAAAAAAADDkuOS45Ljk6ODQ0MyBnyEe4yHWM0SAkVUO-dWdG3zTfHYTAC4xHA2jfgh2GPhkyLmRuc2NyeXB0LWNlcnQucXVhZDkubmV0'
+
+config server_addr
+	option alias 'cloudflare.Australia@DoH'
+	option country 'Australia'
+	option name 'cloudflare'
+	option addrs 'dns.cloudflare.com,1.0.0.1'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgcAAAAAAAAABzEuMC4wLjEAEmRucy5jbG91ZGZsYXJlLmNvbQovZG5zLXF1ZXJ5'
+
+config server_addr
+	option alias 'quad9-dnscrypt-ip4-nofilter-ecs-pri.United States@DNSCrypt'
+	option country 'United States'
+	option name 'quad9-dnscrypt-ip4-nofilter-ecs-pri'
+	option addrs '149.112.112.12'
+	option ports '8443'
+	option proto 'DNSCrypt'
+	option stamp 'sdns://AQYAAAAAAAAAEzE0OS4xMTIuMTEyLjEyOjg0NDMgZ8hHuMh1jNEgJFVDvnVnRt803x2EwAuMRwNo34Idhj4ZMi5kbnNjcnlwdC1jZXJ0LnF1YWQ5Lm5ldA'
+

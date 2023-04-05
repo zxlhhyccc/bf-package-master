@@ -298,8 +298,8 @@ msgstr "拒绝时回应"
 msgid "Load-balancing strategy"
 msgstr "负载均衡模式"
 
-msgid "Items forced for checking, will show your the defaults when unchecked all."
-msgstr "DNSCrypt 节点过滤和其它设置项，清空后会显示为默认。"
+msgid "Prompt:Items forced for checking, will show your the defaults when unchecked all."
+msgstr "提示：DNSCrypt 节点过滤和其它设置项，清空后会显示为默认。"
 
 msgid "Static Stamp"
 msgstr "静态戳记"

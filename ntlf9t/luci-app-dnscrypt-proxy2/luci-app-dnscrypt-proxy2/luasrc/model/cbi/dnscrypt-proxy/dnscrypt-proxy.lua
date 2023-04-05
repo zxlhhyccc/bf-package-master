@@ -6,6 +6,11 @@ local dc = require "luci.tools.dnscrypt".init()
 local resolvers = dc:resolvers_list(true)
 local cfg = "dnscrypt-proxy"
 
+font_blue = [[<b style=color:red>]]
+font_off = [[</b>]]
+bold_on = [[<strong>]]
+bold_off = [[</strong>]]
+
 m = Map(cfg, "%s - %s" %{translate("DNSCrypt Proxy"), translate("Proxy Setting")})
 
 -- [[ Proxy Setting ]]--
@@ -50,9 +55,10 @@ o.optional = false
 o.rmempty = false
 o.placeholder = "onion-services"
 
-o = s:option(MultiValue, "force", translate("Force Options"), translate("Items forced for checking, will show your the defaults when unchecked all."))
+o = s:option(MultiValue, "force", translate("Force Options"), , font_blue .. bold_on ..translate("Prompt:Items forced for checking, will show your the defaults when unchecked all.") .. bold_off .. font_off)
 o.optional = false
-o.widget = "select"
+--o.widget = "select"
+o.widget = "checkbox"
 o.force_defaults = {
 ["lb_estimator"] = "true",
 ["ignore_system_dns"] = "true",
