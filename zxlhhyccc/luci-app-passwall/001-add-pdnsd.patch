@@ -47,7 +47,7 @@ diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/pass
 index d433b6d..9dbf384 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -323,8 +323,11 @@ end
+@@ -313,8 +313,11 @@ end
  
  ---- DNS Forward Mode
  dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
@@ -60,7 +60,7 @@ index d433b6d..9dbf384 100644
  end
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
-@@ -376,6 +379,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
+@@ -366,6 +369,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
@@ -68,7 +68,7 @@ index d433b6d..9dbf384 100644
  o:depends({dns_mode = "dns2tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({v2ray_dns_mode = "tcp"})
-@@ -405,6 +409,8 @@ o:depends("v2ray_dns_mode", "doh")
+@@ -395,6 +399,8 @@ o:depends("v2ray_dns_mode", "doh")
  o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
  o.default = "1"
  o:depends({dns_mode = "dns2socks"})
@@ -77,7 +77,7 @@ index d433b6d..9dbf384 100644
  o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
  o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
  o.rmempty = false
-@@ -413,6 +419,7 @@ if api.is_finded("chinadns-ng") then
+@@ -403,6 +409,7 @@ if api.is_finded("chinadns-ng") then
  	o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, but will increase the memory."))
  	o.default = "0"
  	o:depends({dns_mode = "dns2socks"})
