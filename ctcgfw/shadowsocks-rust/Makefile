@@ -13,8 +13,8 @@ PKG_RELEASE:=2
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-rust.git
-PKG_SOURCE_VERSION:=91028db4a327c9b0b7fa3e64412377b645ce9266
-PKG_MIRROR_HASH:=e9711ab4393d656cc3cce8cd6947ea6108468b6f1dab493ac413a0f3c8e5dbe9
+PKG_SOURCE_VERSION:=498e6a2446c5f81498182a4244ad2fd037f10f02
+PKG_MIRROR_HASH:=86b66686d538c07d58ee7ee3098c0183fc89910eba9aa421fd6ad8d392862847
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
 # PKG_HASH:=25d7a099ab09425c27c6543dbbddc38f65ab382e8353d51c695add91b4ced61f
@@ -29,7 +29,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=rust/host
 
-RUST_PKG_FEATURES:=local-redir
+RUST_PKG_FEATURES:=local-redir local-tun
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
