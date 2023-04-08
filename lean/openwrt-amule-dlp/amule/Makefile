@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amule
 PKG_VERSION:=2.3.3
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=1
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/amule-project/amule/tar.gz/$(PKG_VERSION)?
@@ -35,7 +35,7 @@ define Package/amule
   TITLE:=A multi-platform eMule-like ed2k client
   URL:=http://www.amule.org/
   DEPENDS:=+antileech +libpng +libpthread +libncurses +libreadline +libwxbase \
-	+libupnp +libbfd +libintl $(ICONV_DEPENDS) $(INTL_DEPENDS) \
+	+libupnp +libbfd $(ICONV_DEPENDS) $(INTL_DEPENDS) \
 	+!AMULE_CRYPTOPP_STATIC_LINKING:libcryptopp
 endef
 
@@ -49,7 +49,7 @@ define Download/AmuleWebUI
   URL:=https://github.com/MatteoRagni/AmuleWebUI-Reloaded/archive
   URL_FILE:=master.zip
   FILE:=AmuleWebUI.zip
-  HASH:=8121a1b543c2c8ea51522c3b3836dadbf023897e3e8d36606ca6dbbd8db41d03
+  HASH:=83b17acd4744786bc1539fe102c4d7ecf49cec9f0358f3d6613663c6deb22d80
 endef
 
 define Build/Prepare
@@ -58,12 +58,13 @@ define Build/Prepare
 	sed -i s/"ajax.googleapis.com"/"ajax.lug.ustc.edu.cn"/g  $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-master/*.php
 endef
 
-TARGET_LDFLAGS+= -liconv
+TARGET_LDFLAGS += $(if $(ICONV_FULL),-liconv)
 
 CONFIGURE_ARGS+= \
 	--disable-static \
+	--disable-geoip \
 	--disable-rpath \
-	--disable-ccache \
+	--enable-ccache \
 	--enable-optimize \
 	--disable-profile \
 	--disable-monolithic \
@@ -73,10 +74,10 @@ CONFIGURE_ARGS+= \
 	--disable-amule-gui \
 	--disable-cas \
 	--disable-wxcas \
-	--disable-ed2k \
+	--disable-xas \
+	--enable-ed2k \
 	--disable-alc \
 	--disable-alcc \
-	--disable-debug \
 	--disable-fileview \
 	--enable-mmap \
 	--disable-plasmamule \
@@ -93,17 +94,26 @@ CONFIGURE_ARGS+= \
 	--with-libiconv-prefix="$(ICONV_PREFIX)" \
 	--with-libintl-prefix="$(INTL_PREFIX)" \
 	--with-libupnp-prefix="$(STAGING_DIR)/usr" \
-	--without-x
-
-MAKE_FLAGS += HOSTCC="$(HOSTCC)"
+	--disable-debug 
 
 define Build/Configure
 	cd $(PKG_BUILD_DIR); $(SHELL) autogen.sh
 	$(call Build/Configure/Default)
+endef
+
 ifeq ($(CONFIG_AMULE_CRYPTOPP_STATIC_LINKING),y)
-	$(SED) 's;^CRYPTOPP_LIBS.*;CRYPTOPP_LIBS \= "$(STAGING_DIR)/usr/lib/libcryptopp.a";g' \
-		$(PKG_BUILD_DIR)/src/Makefile
+	SED_CMD:=sed
+else
+	SED_CMD:=true
 endif
+
+define Build/Compile
+	$(SED_CMD) -i 's;^CRYPTOPP_LIBS.*;CRYPTOPP_LIBS \= "$(STAGING_DIR)/usr/lib/libcryptopp.a";g' \
+		$(PKG_BUILD_DIR)/src/Makefile
+	$(MAKE) -C $(PKG_BUILD_DIR) \
+		HOSTCC="$(HOSTCC)" \
+		DESTDIR="$(PKG_INSTALL_DIR)" \
+		all
 endef
 
 define Package/amule/install

@@ -12,7 +12,7 @@ diff --git a/src/Preferences.cpp b/src/Preferences.cpp
 index 9b7fd3207..934853dcf 100644
 --- a/src/Preferences.cpp
 +++ b/src/Preferences.cpp
-@@ -1249,7 +1249,7 @@ void CPreferences::BuildItemList( const wxString& appdir )
+@@ -1286,7 +1286,7 @@ void CPreferences::BuildItemList( const wxString& appdir )
  	s_MiscList.push_back( new Cfg_Str(	wxT("/eMule/Ed2kServersUrl"),		s_Ed2kURL, wxT("http://upd.emule-security.org/server.met") ) );
  	s_MiscList.push_back( MkCfg_Int( wxT("/eMule/ShowRatesOnTitle"),		s_showRatesOnTitle, 0 ));
  
