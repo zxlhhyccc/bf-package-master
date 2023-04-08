@@ -23,7 +23,8 @@ PKG_LICENSE_FILES:=LICENSE.md
 
 PKG_FIXUP:=autoreconf
 
-PKG_USE_MIPS16:=0
+# PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS:=no-mips16
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
