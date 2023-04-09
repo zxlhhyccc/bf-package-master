@@ -27,13 +27,22 @@ plugins:
       mask4: 24       # 写入 ipv4 地址时使用的掩码。默认: 24。
       mask6: 32       # 写入 ipv6 地址时使用的掩码。默认: 32。
 
+  # ipset 写入应答 IP 到系统 ipset，用于使用主机名进行连接的场合
+  - tag: whitelist
+    type: 'ipset'
+    args:
+      set_name4: 'whitelist'   # 如果非空，存放 ipv4 地址到这个表。这个表属性 family 需为 `inet`。
+      set_name6: ''   # 如果非空，存放 ipv6 地址到这个表。这个表属性 family 需为 `inet6`。
+      mask4: 32       # 写入 ipv4 地址时使用的掩码。默认: 24。
+      mask6: 32       # 写入 ipv6 地址时使用的掩码。默认: 32。
+
   # 转发至本地服务器的插件
   - tag: forward_local
     type: fast_forward
     args:
       upstream:
-        - addr:   101.226.4.6
         - addr:   119.29.29.29
+        - addr:   101.226.4.6
         - addr:   223.5.5.5
           trusted: true # 是否是可信服务器
 
@@ -46,6 +55,11 @@ plugins:
         - addr:   tcp://76.76.19.19
         - addr:   tcp://208.67.222.222
           trusted: true # 是否是可信服务器
+  - tag: is_gate
+    type: query_matcher
+    args:
+      domain:
+        - "gate.example.net"
 
   # 匹配本地域名的插件
   - tag: query_is_local_domain
@@ -53,8 +67,8 @@ plugins:
     args:
       domain:
         - 'provider:geosite:cn'
-        - 'provider:geosite:apple-cn'
-        - 'provider:geosite:google-cn'
+        #- 'provider:geosite:apple-cn'
+        #- 'provider:geosite:google-cn'
 
   # 匹配非本地域名的插件
   - tag: query_is_non_local_domain
@@ -95,6 +109,10 @@ plugins:
 
         - primary:
             - forward_local
+            - if: "is_gate"
+              exec:
+                - whitelist
+                - _return
             - if: "response_has_local_ip"
               exec:
                 - _return
