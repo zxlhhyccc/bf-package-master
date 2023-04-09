@@ -218,7 +218,8 @@ return view.extend({
 
 		o = s.taboption('routing', form.ListValue, 'proxy_mode', _('Proxy mode'));
 		o.value('redirect', _('Redirect TCP'));
-		o.value('redirect_tproxy', _('Redirect TCP + TProxy UDP'));
+		if (features.hp_has_tproxy)
+			o.value('redirect_tproxy', _('Redirect TCP + TProxy UDP'));
 		if (features.hp_has_tun) {
 			o.value('redirect_tun', _('Redirect TCP + Tun UDP'));
 			o.value('tun', _('Tun TCP/UDP'));
@@ -838,12 +839,7 @@ return view.extend({
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_direct_ipv6_ips', _('Direct IPv6 IP-s'), null, 'ipv6', hosts, true);
 		so.depends({'lan_proxy_mode': 'except_listed', 'homeproxy.config.ipv6_support': '1'});
 
-		so = ss.taboption('lan_ip_policy', form.DynamicList, 'lan_direct_mac_addrs', _('Direct MAC-s'));
-		so.datatype = 'macaddr';
-		Object.keys(hosts).forEach(function(mac) {
-			var hint = hosts[mac].name || L.toArray(hosts[mac].ipaddrs || hosts[mac].ipv4)[0];
-			so.value(mac, hint ? '%s (%s)'.format(mac, hint) : mac);
-		});
+		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_direct_mac_addrs', _('Direct MAC-s'), null, hosts);
 		so.depends('lan_proxy_mode', 'except_listed');
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_proxy_ipv4_ips', _('Proxy IPv4 IP-s'), null, 'ipv4', hosts, true);
@@ -852,12 +848,7 @@ return view.extend({
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_proxy_ipv6_ips', _('Proxy IPv6 IP-s'), null, 'ipv6', hosts, true);
 		so.depends({'lan_proxy_mode': 'listed_only', 'homeproxy.config.ipv6_support': '1'});
 
-		so = ss.taboption('lan_ip_policy', form.DynamicList, 'lan_proxy_mac_addrs', _('Proxy MAC-s'));
-		so.datatype = 'macaddr';
-		Object.keys(hosts).forEach(function(mac) {
-			var hint = hosts[mac].name || L.toArray(hosts[mac].ipaddrs || hosts[mac].ipv4)[0];
-			so.value(mac, hint ? '%s (%s)'.format(mac, hint) : mac);
-		});
+		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_proxy_mac_addrs', _('Proxy MAC-s'), null, hosts);
 		so.depends('lan_proxy_mode', 'listed_only');
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_gaming_mode_ipv4_ips', _('Gaming mode IPv4 IP-s'), null, 'ipv4', hosts, true);
@@ -865,12 +856,7 @@ return view.extend({
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_gaming_mode_ipv6_ips', _('Gaming mode IPv6 IP-s'), null, 'ipv6', hosts, true);
 		so.depends('homeproxy.config.ipv6_support', '1');
 
-		so = ss.taboption('lan_ip_policy', form.DynamicList, 'lan_gaming_mode_mac_addrs', _('Gaming mode MAC-s'));
-		so.datatype = 'macaddr';
-		Object.keys(hosts).forEach(function(mac) {
-			var hint = hosts[mac].name || L.toArray(hosts[mac].ipaddrs || hosts[mac].ipv4)[0];
-			so.value(mac, hint ? '%s (%s)'.format(mac, hint) : mac);
-		});
+		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_gaming_mode_mac_addrs', _('Gaming mode MAC-s'), null, hosts);
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_global_proxy_ipv4_ips', _('Global proxy IPv4 IP-s'), null, 'ipv4', hosts, true);
 		so.depends({'homeproxy.config.routing_mode': 'custom', '!reverse': true});
@@ -878,12 +864,8 @@ return view.extend({
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_global_proxy_ipv6_ips', _('Global proxy IPv6 IP-s'), null, 'ipv6', hosts, true);
 		so.depends({'homeproxy.config.routing_mode': /^((?!custom).)+$/, 'homeproxy.config.ipv6_support': '1'});
 
-		so = ss.taboption('lan_ip_policy', form.DynamicList, 'lan_global_proxy_mac_addrs', _('Global proxy MAC-s'));
-		so.datatype = 'macaddr';
-		Object.keys(hosts).forEach(function(mac) {
-			var hint = hosts[mac].name || L.toArray(hosts[mac].ipaddrs || hosts[mac].ipv4)[0];
-			so.value(mac, hint ? '%s (%s)'.format(mac, hint) : mac);
-		});
+		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_global_proxy_mac_addrs', _('Global proxy MAC-s'), null, hosts);
+		so.depends({'homeproxy.config.routing_mode': 'custom', '!reverse': true});
 		/* LAN IP policy end */
 
 		/* WAN IP policy start */
