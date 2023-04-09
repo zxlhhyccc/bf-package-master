@@ -4,7 +4,7 @@
 
 ## 简介
 
-本软件包是 [xray][openwrt-xray] 的 LuCI 控制界面,
+本软件包是 [xray][openwrt-xray] 的 LuCI 控制界面, 兼容[SagerNet/v2ray-core][openwrt-xray]
 方便用户控制和使用「透明代理」「SOCKS5 代理」「端口转发」功能.
 
 软件包文件结构:

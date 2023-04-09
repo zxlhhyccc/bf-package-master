@@ -44,12 +44,20 @@ uci_bool_by_type() {
 	return 1
 }
 
+xray_bin() {
+	if grep -q 'v2ray-sing' ${PLUGIN_FILE} 2>/dev/null; then
+		which v2ray-sing
+	else
+		which xray
+	fi
+}
+
 random_id() {
-	/usr/bin/${NAME} uuid | cut -c1-4
+	$(xray_bin) uuid | cut -c1-4
 }
 
 random_port() {
-	offset=$(/usr/bin/${NAME} uuid | tr -d '[a-zA-Z-]' | cut -c1-3 | sed 's+^0*++g')
+	offset=$($(xray_bin) uuid | tr -d '[a-zA-Z-]' | cut -c1-3 | sed 's+^0*++g')
 	echo $((offset + 12000)) 2>/dev/null || random_port
 }
 
@@ -101,6 +109,8 @@ xray_cleandns() {
 xray_injectdns() {
 	uci_bool_by_type general no_dns_injection && return 0
 
+	echo >&2 "# Info: $NAME dnsmasq injecting..."
+
 	DNSconf=$DNSMASQDIR/xray-servers.conf
 	tmpDNSconf=$DNSMASQDIR/xray.conf
 	echo "all-servers" >$tmpDNSconf
@@ -130,15 +140,23 @@ xray_injectdns() {
 		echo "server=/${WATCHDOG_ENDPOINT}/80.80.80.80" >>$DNSconf
 	}
 
+	DNSPROBE_DOMAIN='t.cn'
 	cat <<-EOF >>$DNSconf
-		server=/t.cn/223.5.5.5
-		server=/t.cn/119.29.29.29
-		server=/t.cn/114.114.114.114
+		server=/$DNSPROBE_DOMAIN/223.5.5.5
+		server=/$DNSPROBE_DOMAIN/119.29.29.29
+		server=/$DNSPROBE_DOMAIN/114.114.114.114
 	EOF
 
-	/etc/init.d/dnsmasq restart >/dev/null 2>&1
+	([ -x /etc/init.d/dnsmasq-extra ] && /etc/init.d/dnsmasq reload || /etc/init.d/dnsmasq restart) >/dev/null 2>&1
 	# wait-for-dns, timeout 10s
-	for _ in $(seq 10); do if ping -4 -q -c 1 -s 0 -W 1 -w 1 t.cn >/dev/null 2>&1; then break; fi; done
+	if which wait4x >/dev/null 2>&1; then # use [wait4x]
+		wait4x http http://$DNSPROBE_DOMAIN --no-redirect -q
+	elif which wait-for >/dev/null 2>&1; then # use [wait-for]
+		wait-for -t=10s http --url=http://$DNSPROBE_DOMAIN >/dev/null 2>&1
+	else # use [ping]
+		for _ in $(seq 10); do if ping -4 -q -c 1 -s 0 -W 1 -w 1 $DNSPROBE_DOMAIN >/dev/null 2>&1; then break; fi; done
+	fi
+	echo >&2 "# Info: $NAME dnsmasq injected."
 }
 
 start_rules() {
@@ -158,12 +176,12 @@ start_rules() {
 }
 
 rules() {
-	pgrep -f /usr/bin/${NAME} >/dev/null || return 0
+	pgrep -f $(xray_bin) >/dev/null || return 0
 	start_rules || /usr/bin/${NAME}-rules -f
 }
 
 gen_config_inbound_redir() {
-	command -v xray >/dev/null 2>&1 || return 0
+	command -v $(xray_bin) >/dev/null 2>&1 || return 0
 	uci_bool_by_type 'transparent_proxy' 'enable' && cat <<-EOF
 		    {
 		      "protocol": "dokodemo-door",
@@ -187,7 +205,7 @@ gen_config_inbound_redir() {
 }
 
 gen_config_inbound_http() {
-	command -v xray >/dev/null 2>&1 || return 0
+	command -v $(xray_bin) >/dev/null 2>&1 || return 0
 	uci_bool_by_type 'http_proxy' 'enable' && cat <<-EOF
 		    {
 		      "protocol": "http",
@@ -202,7 +220,7 @@ gen_config_inbound_http() {
 }
 
 gen_config_inbound_socks5() {
-	command -v xray >/dev/null 2>&1 || return 0
+	command -v $(xray_bin) >/dev/null 2>&1 || return 0
 	uci_bool_by_type 'socks5_proxy' 'enable' && cat <<-EOF
 		    {
 		      "protocol": "socks",
@@ -220,7 +238,7 @@ gen_config_inbound_socks5() {
 }
 
 gen_config_inbound_tunnel() {
-	command -v xray >/dev/null 2>&1 || return 0
+	command -v $(xray_bin) >/dev/null 2>&1 || return 0
 	uci_bool_by_type 'port_forward' 'enable' && cat <<-EOF
 		    {
 		      "protocol": "dokodemo-door",
@@ -257,9 +275,22 @@ gen_stream_setting_key() {
 	fi
 }
 
+gen_reality_settings() {
+	uci_get_by_name $1 security | grep -q 'reality' || return
+	echo >&2 "# Info: vless@reality[utls@chrome]"
+	cat <<-EOF
+		,
+		          "fingerprint": "chrome",
+		          "publicKey": "$(uci_get_by_name $1 public_key)",
+		          "shortId": "$(uci_get_by_name $1 short_id '')",
+		          "spiderX": "/$(random_id)"
+	EOF
+}
+
 gen_xtls_flow() {
-	local security=$(uci_get_by_name $1 security | sed 's+-.*++g')
-	local flow=$(uci_get_by_name $1 security | sed 's+.*-++g')
+	local security=$(uci_get_by_name $1 security | sed 's+@.*$++g' | sed 's+-.*++g')
+	local flow=$(uci_get_by_name $1 security | sed 's+@.*$++g' | sed 's+.*-++g')
+	[ "V${security}" == 'Vh2' ] && return
 	[ "V${flow}" == 'Vxtls' ] && flow='splice'
 	if [ "V${security}" == 'Vxtls' ]; then
 		echo -e "\n                \"flow\": \"xtls-rprx-${flow}\","
@@ -269,7 +300,12 @@ gen_xtls_flow() {
 gen_server_vless_config() {
 	local network='tcp'
 	local security=$(uci_get_by_name $1 security 'tls')
-	if echo $security | grep -q 'vision'; then
+	if echo $security | grep -q 'reality'; then
+		if echo ${security} | grep -q '^h2'; then
+			network='h2'
+		fi
+		security='reality'
+	elif echo $security | grep -q 'vision'; then
 		security='tls'
 	else
 		security=$(echo $security | sed 's+-.*++g')
@@ -292,8 +328,9 @@ gen_server_vless_config() {
 		if [ "V$plugin" != "V" ]; then
 			tag="[$alias]-$(random_id)"
 		else
-			tag="[$(uci_get_by_name $1 server)-${network}-${security}]-$(random_id)"
+			tag="[${serverName}-${network}-${security}]-$(random_id)"
 		fi
+		echo >&2 "# Debug: OutB-vless-${tag}"
 		cat <<-EOF
 			    {
 			      "tag": "OutB-vless-${tag}",
@@ -318,7 +355,7 @@ gen_server_vless_config() {
 			        "network": "${network}",
 			        "security": "${security}",
 			        $(gen_stream_setting_key ${network} ${security} $(uci_get_by_name $1 ws_path)): {
-			          "serverName": "${serverName}"
+			          "serverName": "${serverName}"$(gen_reality_settings $1)
 			        }
 			      }
 			    },
@@ -343,6 +380,7 @@ gen_server_trojan_config() {
 		else
 			tag="[${serverName}]-$(random_id)"
 		fi
+		echo >&2 "# Debug: OutB-trojan-${tag}"
 		cat <<-EOF
 			    {
 			      "tag": "OutB-trojan-${tag}",
@@ -378,11 +416,12 @@ gen_server_shadowsocks_config() {
 		else
 			tag="[$(uci_get_by_name $1 server)]-$(random_id)"
 		fi
+		echo >&2 "# Debug: OutB-ss-${tag}"
 		cat <<-EOF
 			    {
 			      "tag": "OutB-ss-${tag}",
 			      "protocol": "$(uci_get_by_name $1 protocol)",
-			      "settings": {$(get_plugin_config $1)
+			      "settings": {$(get_shadowsocks_plugin_config $1)
 			        "servers": [
 			          {
 			            "address": "$(uci_get_by_name $1 server)",
@@ -410,6 +449,7 @@ gen_server_socks_config() {
 		fi
 		if [ "V$plugin" != "V" ]; then
 			plugin=$(which $plugin)
+			echo >&2 "# Info: socks(:$server_port)-extra-plugin[$plugin]"
 			echo $plugin >>${PLUGIN_FILE}
 			echo "${plugin} ${plugin_opts} >/var/log/xray.$1.log 2>&1 &" |
 				sed "s+_RANDDOM_+${server_port}+g" >>${PLUGIN_FILE}.daemon.sh
@@ -419,6 +459,7 @@ gen_server_socks_config() {
 		else
 			tag="[$(basename ${plugin})]-$(random_id)"
 		fi
+		echo >&2 "# Debug: OutB-socks-${tag}"
 		cat <<-EOF
 			    {
 			      "tag": "OutB-socks-${tag}",
@@ -437,16 +478,23 @@ gen_server_socks_config() {
 	}
 }
 
-get_plugin_config() {
+get_shadowsocks_plugin_config() {
 	local plugin=$(uci_get_by_name $1 plugin)
 	local plugin_opts=$(uci_get_by_name $1 plugin_opts)
 	if [ "V$plugin" != "V" ]; then
+		if which v2ray-sing >/dev/null 2>&1; then
+			echo '# v2ray-sing' >>${PLUGIN_FILE}
+		else
+			echo >&2 "# Err: [https://github.com/SagerNet/v2ray-core] is needed to support SIP003"
+			exit 1
+		fi
 		if [ "V$plugin" = "Vv2ray-plugin" -o "V$plugin" = "Vxray-plugin" ]; then
 			plugin="v2ray-plugin"
 		else
 			plugin=$(which $plugin)
 			echo $plugin >>${PLUGIN_FILE}
 		fi
+		echo >&2 "# Info: SIP003[$plugin]"
 		echo -e "\n        \"plugin\": \"$plugin\","
 		if [ -n "$plugin_opts" ]; then
 			echo "        \"pluginOpts\": \"$plugin_opts\","
@@ -456,6 +504,7 @@ get_plugin_config() {
 
 gen_server_config() {
 	local protocol=$(uci_get_by_name $1 protocol)
+	echo >&2 "# Info: config@protocol[$protocol]"
 	if [ "V${protocol}" = "Vsocks" ]; then
 		gen_server_socks_config $1
 	elif [ "V${protocol}" = "Vvless" ]; then
@@ -465,7 +514,7 @@ gen_server_config() {
 	elif [ "V${protocol}" = "Vshadowsocks" ]; then
 		gen_server_shadowsocks_config $1
 	else
-		echo "# Err: protocol[$protocol] not supported!"
+		echo >&2 "# Err: protocol[$protocol] not supported!"
 		exit 1
 	fi
 }
@@ -484,7 +533,9 @@ gen_config_outbounds() {
 }
 
 get_rules_http3() {
-	uci_bool_by_type transparent_proxy disable_http3 && cat <<-EOF
+	uci_bool_by_type transparent_proxy disable_http3 || return
+	echo >&2 "# Info: disable[http3]"
+	cat <<-EOF
 
 		      {
 		        "type": "field",
@@ -499,7 +550,7 @@ gen_config_file() {
 	local config_file=/var/etc/$NAME.json
 	local balancer_name="balancer-$(random_id)"
 	local strategy="$(uci_get_by_type general strategy leastLoad)"
-	[ "V${strategy}" = "VleastLoad" ] && xray version | grep -q 'Xray' && {
+	[ "V${strategy}" = "VleastLoad" ] && $(xray_bin) version | grep -q 'Xray' && {
 		strategy="leastPing"
 	}
 	cat <<-EOF >$config_file
@@ -536,15 +587,16 @@ gen_config_file() {
 }
 
 xray_plugin_daemon() {
-	[ -e ${PLUGIN_FILE} ] && kill_all $(sort -u ${PLUGIN_FILE})
+	[ -e ${PLUGIN_FILE} ] && kill_all $(sort -u ${PLUGIN_FILE} | grep -v '^#')
 	[ -e ${PLUGIN_FILE}.daemon.sh ] && {
 		chmod a+x ${PLUGIN_FILE}.daemon.sh
 		${PLUGIN_FILE}.daemon.sh
 	}
+	echo >&2 "# Info: xray-plugin daemon init."
 }
 
 xray_daemon() {
-	command -v xray >/dev/null 2>&1 || return 0
+	command -v $(xray_bin) >/dev/null 2>&1 || return 0
 	if [ -e /proc/sys/fs/nr_open ] && [ -e /proc/sys/fs/file-max ]; then
 		[ $(cat /proc/sys/fs/nr_open) -lt 1048576 ] && echo 1048576 >/proc/sys/fs/nr_open   # 1048576=2^31
 		[ $(cat /proc/sys/fs/file-max) -lt 2097152 ] && echo 2097152 >/proc/sys/fs/file-max # 2097152=2^32
@@ -556,13 +608,22 @@ xray_daemon() {
 	ulimit -SHn $limit
 	config_file=$(gen_config_file)
 	xray_plugin_daemon 2>/dev/null
-	(/usr/bin/${NAME} run -c ${config_file} >/var/log/xray.log 2>&1) &
-	for _ in $(seq 10); do if pgrep -f /usr/bin/${NAME} >/dev/null; then break; else sleep 1; fi; done
-	pgrep -f /usr/bin/${NAME} >/dev/null
+	($(xray_bin) run -c ${config_file} >/var/log/xray.log 2>&1) &
+	# wait-for-dns, timeout 10s
+	if which wait4x >/dev/null 2>&1; then # use [wait4x]
+		wait4x tcp 127.0.0.1:$(sed -n 's/.*"port".*: *\(.*\),/\1/p' ${config_file} | head -n1) --connection-timeout=300ms -q
+	elif which wait-for >/dev/null 2>&1; then # use [wait-for]
+		wait-for -t=10s net --address 127.0.0.1:$(sed -n 's/.*"port".*: *\(.*\),/\1/p' ${config_file} | head -n1) >/dev/null 2>&1
+	else # use [pgrep]
+		for _ in $(seq 10); do if pgrep -f $(xray_bin) >/dev/null; then break; else sleep 1; fi; done
+	fi
+	pgrep -f $(xray_bin) >/dev/null
 }
 
 start() {
-	pgrep -f /usr/bin/${NAME} >/dev/null && return 0
+	local t0=$(date '+%s')
+	echo >&2 "# Info: starting..."
+	pgrep -f $(xray_bin) >/dev/null && return 0
 	uci_bool_by_type 'transparent_proxy' 'enable' ||
 		uci_bool_by_type 'port_forward' 'enable' ||
 		uci_bool_by_type 'http_proxy' 'enable' ||
@@ -573,11 +634,14 @@ start() {
 	has_valid_server $(uci_get_by_type general server) && {
 		xray_injectdns
 		xray_daemon
+		echo >&2 "# Info: xray daemon init."
 	}
 	uci_bool_by_type 'transparent_proxy' 'enable' && {
 		rules
 		add_cron
+		echo >&2 "# Info: transparent proxy init."
 	}
+	echo >&2 "# Info: started. CostTime: $(($(date '+%s') - $t0))s"
 }
 
 boot() {
@@ -594,8 +658,10 @@ kill_all() {
 }
 
 stop() {
+	local t0=$(date '+%s')
+	echo >&2 "# Info: stopping..."
 	/usr/bin/${NAME}-rules -f
-	kill_all /usr/bin/${NAME}
+	kill_all $(xray_bin)
 	if [ -f ${PLUGIN_FILE} ]; then
 		kill_all $(sort -u ${PLUGIN_FILE})
 		rm -f ${PLUGIN_FILE}*
@@ -603,6 +669,7 @@ stop() {
 	rm -rf /var/log/xray*.log
 	xray_cleandns
 	del_cron
+	echo >&2 "# Info: stopped. CostTime: $(($(date '+%s') - $t0))s"
 }
 
 add_cron() {
@@ -624,7 +691,7 @@ del_cron() {
 }
 
 healthcheck() {
-	command -v xray >/dev/null 2>&1 || return 1
+	command -v $(xray_bin) >/dev/null 2>&1 || return 1
 	has_valid_server $(uci_get_by_type general server) && uci_bool_by_type 'transparent_proxy' 'enable' || return 1
 	uci_bool_by_type transparent_proxy no_healthcheck && return 0
 
@@ -683,8 +750,10 @@ healthcheck() {
 	if [ "Z$?" = "Z0" ]; then
 		echo "[${LOGTIME}] ${NAME} No Problem."
 	else
+		# cat_connect "http://wifi.vivo.com/generate_204"
 		# cat_connect "http://wifi.vivo.com.cn/generate_204"
 		# cat_connect "http://www.qualcomm.cn/generate_204"
+		# cat_connect "http://connectivitycheck.platform.hicloud.com/generate_204"
 		cat_connect "http://${DNSPOD}/d"
 		if [ "Z$?" = "Z0" ]; then
 			echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."

@@ -12,6 +12,8 @@ local protocols = {
 	"shadowsocks",
 }
 local securitys = {
+	"h2@reality",
+	"xtls-vision@reality",
 	"xtls-splice",
 	"xtls-direct",
 	"xtls-vision",
@@ -88,7 +90,7 @@ o = s:option(ListValue, "security", translate("Security"))
 for _, v in ipairs(securitys) do o:value(v, v:upper()) end
 o:depends('protocol', 'vless')
 o:depends('protocol', 'trojan')
-o.default = 'xtls-splice'
+o.default = 'xtls-vision@reality'
 o.rmempty = false
 
 o = s:option(Value, "ws_path", translate("Websocket Path"))
@@ -96,6 +98,18 @@ o:depends('security', 'wss')
 o.placeholder = "/"
 o.rmempty = false
 -- [[ vless/trojan ]]--
+
+-- [[ vless@reality ]]--
+o = s:option(Value, "public_key", translate("Public Key"))
+o:depends('security', 'xtls-vision@reality')
+o:depends('security', 'h2@reality')
+o.rmempty = false
+
+o = s:option(Value, "short_id", translate("Short ID"))
+o:depends('security', 'xtls-vision@reality')
+o:depends('security', 'h2@reality')
+o.rmempty = true
+-- [[ vless@reality ]]--
 
 -- [[ shadowsocks ]]--
 o = s:option(ListValue, "method", translate("Encrypt Method"))
