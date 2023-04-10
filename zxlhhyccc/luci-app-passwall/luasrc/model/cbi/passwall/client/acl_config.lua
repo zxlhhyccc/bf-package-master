@@ -313,7 +313,12 @@ if has_chnlist then
 	.. "<li>" .. translate("Remote DNS can avoid more DNS leaks, but some domestic domain names maybe to proxy!") .. "</li>"
 	.. "<li>" .. translate("Direct DNS Internet experience may be better, but DNS will be leaked!") .. "</li>"
 	.. "</ul>"
-	when_chnroute_default_dns:depends("tcp_proxy_mode", "chnroute")
+	local _depends = {}
+	_depends["tcp_proxy_mode"] = "chnroute"
+	if api.is_finded("chinadns-ng") then
+		_depends["chinadns_ng"] = false
+	end
+	when_chnroute_default_dns:depends(_depends)
 end
 
 return m
