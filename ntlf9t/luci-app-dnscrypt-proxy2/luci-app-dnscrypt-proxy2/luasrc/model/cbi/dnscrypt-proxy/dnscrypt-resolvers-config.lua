@@ -59,7 +59,7 @@ o.placeholder = "https://xxx.xxx.xxx/public-resolvers.md"
 --o.placeholder = "eg: custom.md"
 --o.rmempty = false
 
-o = s:option(Value, "details_json", translate("Details File URL"), translate("Detailed resolvers JSON file `dnscrypt-proxy -json --list-all` or: ") .. "https://download.dnscrypt.info/dnscrypt-resolvers/json/{*}.json")
+o = s:option(Value, "details_json", translate("Details File URL"), translate("Detailed resolvers JSON file `dnscrypt-proxy -json --list-all` or: ") .. '<a href="https://download.dnscrypt.info/dnscrypt-resolvers/json/{*}.json" target="_blank">https://download.dnscrypt.info/dnscrypt-resolvers/json/{*}.json</a>')
 o.default = "https://download.dnscrypt.info/dnscrypt-resolvers/json/public-resolvers.json"
 o.placeholder = "eg: custom.json"
 o.rmempty = true
@@ -69,13 +69,13 @@ o.default = true
 o.optional = false
 o.rmempty = false
 
-o = s:option(Flag, "selfsign", translate("Selfsign Resolvers"), translate("Mostly useful for build your own resolvers list on net probe fails. minisign binary needed: ") .. "https://github.com/peter-tank/openwrt-minisign")
+o = s:option(Flag, "selfsign", translate("Selfsign Resolvers"), translate("Mostly useful for build your own resolvers list on net probe fails. minisign binary needed: ") .. '<a href="https://github.com/peter-tank/openwrt-minisign" target="_blank">https://github.com/peter-tank/openwrt-minisign</a>')
 o.default = false
 o.optional = false
 o.rmempty = true
 o:depends("cache_mode", true)
 
-o = s:option(Value, "minisign_key", translate("MiniSign Key"), translate("Resolvers singed by: ") .. "https://download.dnscrypt.info/dnscrypt-resolvers/v3/minisign.pub")
+o = s:option(Value, "minisign_key", translate("MiniSign Key"), translate("Resolvers singed by: ") .. '<a href="https://download.dnscrypt.info/dnscrypt-resolvers/v3/minisign.pub" target="_blank">https://download.dnscrypt.info/dnscrypt-resolvers/v3/minisign.pub</a>')
 o.default = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"
 o.optional = false
 o.placeholder = o.default

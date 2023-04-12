@@ -45,7 +45,7 @@ o.placeholder = o.default
 o.optional = false
 o.rmempty = false
 
-o = s:option(DynamicList, "resolvers", translate("Enabled Resolvers"), translate("Available Resolvers: ") .. "https://download.dnscrypt.info/dnscrypt-resolvers/v2/{*}.md")
+o = s:option(DynamicList, "resolvers", translate("Enabled Resolvers"), translate("Available Resolvers: ") .. '<a href="https://download.dnscrypt.info/dnscrypt-resolvers/v2/{*}.md" target="_blank">https://download.dnscrypt.info/dnscrypt-resolvers/v2/{*}.md</a>')
 local opt, val
 for _, val in ipairs(resolvers) do
   opt = luci.util.split(val, "|")[1]
@@ -129,13 +129,13 @@ o.placeholder = "/etc/dnsmasq.oversea/oversea_list.conf"
 o.optional = true
 o.rmempty = true
 
-o = s:option(DynamicList, "blocked_named", translate("Domain Black List"), translate("Domains to blacklist, [.conf|.adblock] file treat like dnsmasq configure: ") .. "https://download.dnscrypt.info/blacklists/domains/mybase.txt")
+o = s:option(DynamicList, "blocked_named", translate("Domain Black List"), translate("Domains to blacklist, [.conf|.adblock] file treat like dnsmasq configure: ") .. '<a href="https://download.dnscrypt.info/blacklists/domains/mybase.txt" target="_blank">https://download.dnscrypt.info/blacklists/domains/mybase.txt</a>'")
 o.default = "/etc/dnsmasq.ssr/ad.conf"
 o.placeholder = "/usr/share/adbyby/dnsmasq.adblock"
 o.optional = true
 o.rmempty = true
 
-o = s:option(DynamicList, "blocked_ips", translate("IP Address List"), translate("IP Address to blacklist, [.conf] file treat like dnsmasq configure: ") .. "https://download.dnscrypt.info/blacklists/ips/mybase.txt")
+o = s:option(DynamicList, "blocked_ips", translate("IP Address List"), translate("IP Address to blacklist, [.conf] file treat like dnsmasq configure: ") .. '<a href="https://download.dnscrypt.info/blacklists/ips/mybase.txt" target="_blank">https://download.dnscrypt.info/blacklists/ips/mybase.txt</a>')
 o.default = "https://download.dnscrypt.info/blacklists/domains/mybase.txt"
 o.placeholder = "/etc/dnsmasq.ssr/ad.conf"
 o.optional = true
