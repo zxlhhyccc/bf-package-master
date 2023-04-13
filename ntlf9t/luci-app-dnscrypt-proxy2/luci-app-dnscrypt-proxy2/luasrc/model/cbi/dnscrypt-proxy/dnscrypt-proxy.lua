@@ -129,7 +129,7 @@ o.placeholder = "/etc/dnsmasq.oversea/oversea_list.conf"
 o.optional = true
 o.rmempty = true
 
-o = s:option(DynamicList, "blocked_named", translate("Domain Black List"), translate("Domains to blacklist, [.conf|.adblock] file treat like dnsmasq configure: ") .. '<a href="https://download.dnscrypt.info/blacklists/domains/mybase.txt" target="_blank">https://download.dnscrypt.info/blacklists/domains/mybase.txt</a>'")
+o = s:option(DynamicList, "blocked_named", translate("Domain Black List"), translate("Domains to blacklist, [.conf|.adblock] file treat like dnsmasq configure: ") .. '<a href="https://download.dnscrypt.info/blacklists/domains/mybase.txt" target="_blank">https://download.dnscrypt.info/blacklists/domains/mybase.txt</a>')
 o.default = "/etc/dnsmasq.ssr/ad.conf"
 o.placeholder = "/usr/share/adbyby/dnsmasq.adblock"
 o.optional = true
