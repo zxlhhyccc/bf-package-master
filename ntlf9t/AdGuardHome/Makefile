@@ -7,19 +7,24 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=AdGuardHome
-PKG_VERSION:=0.107.26
+PKG_VERSION:=0.107.28
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome.git
-PKG_SOURCE_VERSION:=a21558f418b4fa4135b1220759eff88c6077ae94
-PKG_MIRROR_HASH:=bb4d5369dccb0ee7ca24ebb9bfdc5d8276a0ed8273e452936e91d06d5d44f0b8
+PKG_SOURCE_VERSION:=v$(PKG_VERSION)
+PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
+PKG_MIRROR_HASH:=609e991f0d03c1541e02fc656f8abea686e64ed350729b85ea87fe25640dd03a
+
+# PKG_SOURCE_PROTO:=git
+# PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome.git
+# PKG_SOURCE_VERSION:=a21558f418b4fa4135b1220759eff88c6077ae94
+#PKG_MIRROR_HASH:=bb4d5369dccb0ee7ca24ebb9bfdc5d8276a0ed8273e452936e91d06d5d44f0b8
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
 PKG_MAINTAINER:=Dobroslaw Kijowski <dobo90@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host packr/host
+PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
 PKG_BUILD_PARALLEL:=1
 # PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
@@ -84,15 +89,14 @@ export GOPROXY=https://goproxy.cn
 endif
 
 define Build/Compile
-( \
-  pushd $(PKG_BUILD_DIR) ; \
-  make js-deps js-build ; \
-  packr -z -v -i internal ; \
-  popd ; \
-  $(call GoPackage/Build/Compile) ; \
-)
+	( \
+		pushd $(PKG_BUILD_DIR) ; \
+		NODE_OPTIONS=--openssl-legacy-provider make js-deps js-build ; \
+		popd ; \
+		$(call GoPackage/Build/Compile) ; \
+	)
 ifeq ($(CONFIG_ADGUARDHOME_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome || true
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome
 endif
 endef
 
