@@ -373,7 +373,7 @@ yml_other_set()
                Value['rules']=Value['rules'].to_a.insert(0,'SRC-IP-CIDR,$7/32,DIRECT');
             end;
          else
-            Value['rules']=%w('SRC-IP-CIDR,${12},DIRECT','SRC-IP-CIDR,$7/32,DIRECT');
+            Value['rules']=['SRC-IP-CIDR,${12},DIRECT','SRC-IP-CIDR,$7/32,DIRECT'];
          end;
       elsif Value.has_key?('rules') and not Value['rules'].to_a.empty? then
          Value['rules'].delete('SRC-IP-CIDR,${12},DIRECT');
@@ -787,7 +787,7 @@ yml_other_set()
          if Value.key?(i) then
             Value[i].values.each{
             |x,v|
-            if x['path'] and not x['path'].include? p and not x['path'].include? 'game_rules' then
+            if x['path'] and not x['path'] =~ /.\/#{p}\/*/ and not x['path'] =~ /.\/game_rules\/*/ then
                v=File.basename(x['path']);
                x['path']='./'+p+'/'+v;
             end;
