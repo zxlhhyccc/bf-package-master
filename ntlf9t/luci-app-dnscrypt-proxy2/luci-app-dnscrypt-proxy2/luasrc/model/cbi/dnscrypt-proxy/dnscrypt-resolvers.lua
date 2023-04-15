@@ -20,7 +20,7 @@ end
 m = Map(cfg, translate("DNSCrypt Resolvers"))
 m.anonymous = true
 m.addremove = false
-m.pageaction = false
+--m.pageaction = false
 
 local type = "dnscrypt-proxy"
 s = m:section(NamedSection, 'ns1', type, translate("Choose a resolver to configure"), translate("Input the name to re-configure, if your resolvers not updated correctly and not showns up."))
