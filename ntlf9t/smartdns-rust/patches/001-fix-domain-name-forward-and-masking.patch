@@ -1,6 +1,6 @@
 --- a/src/dns_conf.rs
 +++ b/src/dns_conf.rs
-@@ -1516,37 +1516,41 @@ impl FromStr for ConfigItem<DomainId, DomainRule> {
+@@ -1533,37 +1533,41 @@ impl FromStr for ConfigItem<DomainId, DomainRule> {
  
              let mut dualstack_ip_selection = None;
  
@@ -67,7 +67,7 @@
              }
  
              Ok(Self {
-@@ -2148,7 +2152,7 @@ mod parse {
+@@ -2165,7 +2169,7 @@ mod parse {
                      && matches!(line.chars().nth(sharp_idx - 1), Some(c) if c.is_whitespace()) =>
              {
                  let preserve = line[0..sharp_idx].trim_end();
@@ -76,7 +76,7 @@
                      line = preserve;
                  }
              }
-@@ -2352,6 +2356,16 @@ mod parse {
+@@ -2394,6 +2398,16 @@ mod parse {
              assert_eq!(domain_addr_rule.value, DomainAddress::SOA);
          }
  
