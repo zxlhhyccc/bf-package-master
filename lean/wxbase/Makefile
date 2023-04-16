@@ -40,72 +40,63 @@ endef
 
 TARGET_CFLAGS += $(FPIC)
 
-CONFIGURE_ARGS+= \
-	--enable-shared \
-	--disable-rpath \
-	--disable-gui \
-	--disable-monolithic \
-	--enable-plugins \
-	--disable-universal \
-	--disable-nanox \
-	--disable-gpe \
-	--enable-optimise \
+CONFIGURE_ARGS += \
+	--disable-backtrace \
+	--disable-compat28 \
+	--disable-compat30 \
 	--disable-debug \
-	--disable-stl \
 	--disable-debug_flag \
-	--disable-mediactrl \
 	--disable-debug_info \
 	--disable-debug_gdb \
 	--disable-debug_cntxt \
+	--disable-gpe \
+	--disable-gui \
+	--disable-mediactrl \
 	--disable-mem_tracing \
-	--disable-profile \
+	--disable-monolithic \
+	--disable-nanox \
 	--disable-no_rtti \
 	--disable-no_exceptions \
-	--disable-compat28 \
-	--disable-compat30 \
-	--enable-intl \
-	--enable-ipv6 \
-	--disable-backtrace \
-	--enable-exceptions \
+	--disable-precomp-headers \
+	--disable-profile \
+	--disable-rpath \
 	--disable-sound \
+	--disable-stl \
+	--disable-universal \
+	--enable-exceptions \
+	--enable-ipv6 \
+	--enable-intl \
 	--enable-largefile \
+	--enable-optimise \
+	--enable-plugins \
+	--enable-shared \
+	--enable-unicode \
 	\
-	--without-gtk \
-	--without-motif \
-	--without-mac \
-	--without-msw \
-	--without-cocoa \
-	--without-wine \
-	--without-x11 \
-	--without-libpng \
-	--without-libjpeg \
-	--without-libtiff \
-	--without-libjbig \
-	--without-libxpm \
-	--without-libmspack \
-	--without-sdl \
-	--without-opengl \
-	--without-dmalloc \
+	--with-expat="sys" \
 	--with-regex="sys" \
 	--with-zlib="sys" \
-	--with-expat="sys" \
+	--without-cocoa \
+	--without-dmalloc \
 	--without-gtk-prefix \
-	--without-x \
+	--without-gtk \
 	--without-libiconv-prefix \
+	--without-libjbig \
+	--without-libjpeg \
+	--without-libmspack \
+	--without-libpng \
+	--without-libtiff \
+	--without-libxpm \
+	--without-mac \
+	--without-motif \
+	--without-msw \
+	--without-opengl \
+	--without-sdl \
 	--without-sdl-prefix \
-	--disable-precomp-headers
+	--without-wine \
+	--without-x \
+	--without-x11
 
 CONFIGURE_ARGS := $(filter-out --disable-nls, $(CONFIGURE_ARGS))
-
-UNICODE=yes
-
-ifeq ($(UNICODE),yes)
-  CONFIGURE_ARGS+= --enable-unicode
-  LIB_PFX:=u
-else
-  CONFIGURE_ARGS+= --disable-unicode
-  LIB_PFX:=
-endif
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/bin
