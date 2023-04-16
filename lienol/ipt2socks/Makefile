@@ -16,7 +16,7 @@ PKG_MIRROR_HASH:=d09a1fcc1be0b6159b8e01f7520b9336854c3f783b6f5f89d40ef5f7f5da934
 
 PKG_BUILD_PARALLEL:=1
 # PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16
+PKG_BUILD_FLAGS:=no-mips16 lto
 
 PKG_LICENSE:=AGPL-3.0
 PKG_LICENSE_FILES:=LICENSE
@@ -35,7 +35,7 @@ define Package/ipt2socks/description
   Utility for converting iptables (redirect/tproxy) to socks5.
 endef
 
-TARGET_CFLAGS+= $(FPIC) -flto
+TARGET_CFLAGS+= $(FPIC)
 MAKE_FLAGS+= \
 	CFLAGS="-std=c99 -pthread $(TARGET_CFLAGS)" \
 	EVCFLAGS="$(TARGET_CFLAGS)"
