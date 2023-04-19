@@ -75,27 +75,21 @@ define Package/sing-box/config
   if PACKAGE_sing-box
     config SING_BOX_BUILD_ACME
 	bool "Build with ACME TLS certificate issuer support"
-	default n
 
     config SING_BOX_BUILD_CLASH_API
 	bool "Build with Clash API support"
-	default n
 
     config SING_BOX_BUILD_DHCP
 	bool "Build with DHCP support"
-	default n
 
     config SING_BOX_BUILD_ECH
 	bool "Build with TLS ECH extension support"
-	default n
 
     config SING_BOX_BUILD_EMBEDDED_TOR
 	bool "Build with embedded Tor support"
-	default n
 
     config SING_BOX_BUILD_GRPC
 	bool "Build with standard gPRC support"
-	default n
 	help
       	  Standard gRPC has good compatibility but poor performance.
 
@@ -105,7 +99,6 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_LWIP
 	bool "Build with LWIP Tun stack support"
-	default n
 
     config SING_BOX_BUILD_QUIC
     	bool "Build with QUIC support"
@@ -128,11 +121,9 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_V2RAY_API
     	bool "Build with V2Ray API support"
-    	default n
 
     config SING_BOX_BUILD_WIREGUARD
     	bool "Build with WireGuard support"
-    	default n
   endif
 
   endmenu
