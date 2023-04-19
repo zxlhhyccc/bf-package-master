@@ -22,6 +22,8 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
+DISABLE_NLS:=
+
 define Package/libwxbase
   SECTION:=libs
   CATEGORY:=Libraries
@@ -96,7 +98,7 @@ CONFIGURE_ARGS += \
 	--without-x \
 	--without-x11
 
-CONFIGURE_ARGS := $(filter-out --disable-nls, $(CONFIGURE_ARGS))
+# CONFIGURE_ARGS := $(filter-out --disable-nls, $(CONFIGURE_ARGS))
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/bin
