@@ -1,14 +1,12 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (C) 2019-2021
-#
-# This is free software, licensed under the Apache License, Version 2.0 .
-#
+# Copyright (C) 2017-2023 bishuiwuhen
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qtbase
-PKG_BASE:=6.4
-PKG_BUGFIX:=2
+PKG_BASE:=6.5
+PKG_BUGFIX:=0
 PKG_VERSION:=$(PKG_BASE).$(PKG_BUGFIX)
 PKG_RELEASE:=1
 
@@ -16,7 +14,7 @@ PKG_SOURCE:=$(PKG_NAME)-everywhere-src-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:= \
 		http://download.qt.io/official_releases/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
 		http://master.qt.io/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules
-PKG_HASH:=a88bc6cedbb34878a49a622baa79cace78cfbad4f95fdbd3656ddb21c705525d
+PKG_HASH:=fde1aa7b4fbe64ec1b4fc576a57f4688ad1453d2fab59cbadd948a10a6eaf5ef
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
@@ -26,7 +24,10 @@ PKG_BUILD_DEPENDS:=qtbase/host
 HOST_BUILD_PARALLEL:=1
 PKG_BUILD_PARALLEL:=1
 # PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16
+PKG_BUILD_FLAGS:=no-mips16 gc-sections
+
+PKG_LICENSE:=LGPL-3.0-only
+PKG_LICENSE_FILES:=LICENSES/LGPL-3.0-only.txt
 PKG_CPE_ID:=cpe:/a:qt:qt
 
 CMAKE_INSTALL:=1
@@ -44,7 +45,7 @@ define Package/qtbase/Default
   SUBMENU:=Qt6
   TITLE:=qtbase
   URL:=http://qt-project.org
-  DEPENDS:=+libgcc +libstdcpp +libdouble-conversion @!LINUX_2_6_36 @!(ARM&&CPU_32v4)
+  DEPENDS:=+libgcc +libstdcpp @!LINUX_2_6_36 @!(ARM&&CPU_32v4)
 endef
 
 define Package/qtbase/description
@@ -92,18 +93,18 @@ ifeq ($(CONFIG_CPU_TYPE),"xscale")
   TARGET_CFLAGS+= -mfloat-abi=softfp
 endif
 
+# Can be removed if glibc version> 2.34
 ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS += -ldl -lrt -lpthread
 endif
 
-TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+TARGET_CFLAGS += $(FPIC)
+TARGET_LDFLAGS += -Wl,--as-needed
 
 CMAKE_SHARED_LDFLAGS:=$(filter-out -Wl$(comma)-Bsymbolic-functions,$(CMAKE_SHARED_LDFLAGS))
 
 CMAKE_HOST_OPTIONS += \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.21 \
-	-DCMAKE_STAGING_PREFIX=$(STAGING_DIR_HOSTPKG) \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.19 \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_SHARED_LIBS=OFF \
 	-DFEATURE_concurrent=OFF \
@@ -115,18 +116,20 @@ CMAKE_HOST_OPTIONS += \
 	-DFEATURE_zstd=OFF \
 	-DFEATURE_glib=OFF \
 	-DFEATURE_icu=OFF \
-	-DFEATURE_libb2=OFF \
 	-DFEATURE_brotli=OFF \
 	-DFEATURE_androiddeployqt=OFF \
 	-DFEATURE_macdeployqt=OFF \
 	-DFEATURE_windeployqt=OFF \
+	-DINPUT_libb2=no \
 	-DINPUT_openssl=no \
 	-DQT_BUILD_EXAMPLES=OFF \
 	-DQT_BUILD_TESTS=OFF
 
+# The corelib will depend on openssl if openssl version >= 3.0. It is used in class QCryptographicHash.
+# Disable `FEATURE_opensslv30` explicitly because we don't use it.
 CMAKE_OPTIONS += \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.21 \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_USING_QT=3.21 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.19 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_USING_QT=3.19 \
 	-DINSTALL_ARCHDATADIR=/usr/share/Qt6 \
 	-DINSTALL_DATADIR=/usr/share/Qt6 \
 	-DQT_HOST_PATH=$(STAGING_DIR_HOSTPKG) \
@@ -149,11 +152,12 @@ CMAKE_OPTIONS += \
 	-DFEATURE_zstd=OFF \
 	-DFEATURE_system_zlib=ON \
 	\
-	-DFEATURE_system_doubleconversion=ON \
-	-DFEATURE_system_pcre2=ON \
+	-DINPUT_doubleconversion=qt \
+	-DINPUT_pcre2=system \
 	-DFEATURE_glib=OFF \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_mimetype=ON \
+	-DFEATURE_opensslv30=OFF \
 	\
 	-DFEATURE_network=ON \
 	-DINPUT_openssl=runtime \
@@ -161,7 +165,7 @@ CMAKE_OPTIONS += \
 	-DFEATURE_gssapi=OFF \
 	\
 	-DFEATURE_sql=ON \
-	-DFEATURE_system_sqlite=ON \
+	-DFEATURE_system_sqlite=OFF \
 	-DFEATURE_sql_db2=OFF \
 	-DFEATURE_sql_ibase=OFF \
 	-DFEATURE_sql_mysql=OFF \
@@ -207,7 +211,7 @@ endef
 $(eval $(call DefineQtbaseLibrary,core,,+libatomic +libpcre2-16 +zlib))
 $(eval $(call DefineQtbaseLibrary,network,core,+zlib))
 $(eval $(call DefineQtbaseLibrary,xml,core,))
-$(eval $(call DefineQtbaseLibrary,sql,core,+libsqlite3))
+$(eval $(call DefineQtbaseLibrary,sql,core,))
 
 define Package/qtbase/Plugins/install
 	$(INSTALL_DIR) $(1)/usr/share/Qt6/plugins/$(2)

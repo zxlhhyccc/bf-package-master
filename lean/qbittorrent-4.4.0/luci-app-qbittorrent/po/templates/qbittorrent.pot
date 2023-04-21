@@ -1,333 +1,329 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:232
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:237
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:242
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:247
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:231
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:236
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:241
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:246
 msgid "0 means has no limit."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:128
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:131
 msgid "A BT/PT downloader base on Qt."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:541
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:545
 msgid "Add Custom HTTP Headers"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:147
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:150
 msgid "Advance Settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:241
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:240
 msgid "Alternative Download Speed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:242
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:241
 msgid "Alternative Download Speed Limit(KiB/s)."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:246
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:245
 msgid "Alternative Upload Speed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:247
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:246
 msgid "Alternative Upload Speed Limit(KiB/s)."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:596
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:608
 msgid "Announce To All Tiers"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:590
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:602
 msgid "Announce To All Trackers"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:591
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:603
 msgid "Announce To all trackers of per tier."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:550
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:562
 msgid "Anonymous Mode"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:587
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:599
 msgid "Anti-Leech"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:366
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:365
 msgid "Apply rate limit to μTP protocol."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:219
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:218
 msgid ""
 "Assign a different port randomly every time when qBittorrent starts up, "
 "which will invalidate the customized options."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:274
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:273
 msgid "Auto Delete Torrent File"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:320
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:319
 msgid "Automaic"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:187
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:186
 msgid "Backup log file when oversize the given size."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:141
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:144
 msgid "Basic Settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:145
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:148
 msgid "Bittorrent Settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:305
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:304
 msgid ""
 "By default, this value 64. Besides, -1 is auto and 0 is disable. (Unit: MiB)"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:310
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:309
 msgid "By default, this value is 60. (Unit: s)"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:526
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:530
 msgid "Bypass Local Host Authentication"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:533
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:537
 msgid "Bypass authentication for clients in Whitelisted IP Subnets."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:527
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:531
 msgid "Bypass authentication for clients on localhost."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:503
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:507
 msgid "CSRF Protection"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:336
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:335
 msgid "Category Save Path Changed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:171
-msgid "Chinese (zh)"
-msgstr ""
-
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:583
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:595
 msgid "Choking Algorithm"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:336
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:335
 msgid "Choose the action when category save path changed."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:330
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:329
 msgid "Choose the action when default save path changed."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:324
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:323
 msgid "Choose the action when torrent category changed."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:497
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:501
 msgid "Clickjacking Protection"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:35
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:36
 msgid "Collecting data..."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:225
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:224
 msgid "Connection Port"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:143
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:146
 msgid "Connection Settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:509
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:513
 msgid "Cookie Secure flag"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:261
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:260
 msgid "Create Subfolder"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:262
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:261
 msgid "Create subfolder for torrents with multiple files."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:130
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:133
 msgid "Current Version: %s."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:546
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:550
 msgid "Custom HTTP Headers"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:158
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:157
 msgid "Customized Location"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:330
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:329
 msgid "Default Save Path Changed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:318
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:317
 msgid "Default Torrent Management Mode"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:193
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:192
 msgid "Delete Old Backup"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:374
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:373
 msgid "Disable Encryption"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:304
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:303
 msgid "Disk Cache Size"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:309
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:308
 msgid "Disk Cache TTL"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:433
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:432
 msgid "Do not count slow torrents in these limits."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:268
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:267
 msgid "Do not start the download automatically."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:439
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:438
 msgid "Download rate threshold"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:144
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:147
 msgid "Downloads Settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:186
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:185
 msgid "Enable Backup"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:504
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:508
 msgid "Enable Cross-Site Request Forgery (CSRF) protection."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:347
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:346
 msgid "Enable DHT"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:348
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:347
 msgid "Enable DHT (decentralized network) to find more peers."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:482
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:486
 msgid "Enable HTTPS"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:359
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:358
 msgid "Enable LSD"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:360
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:359
 msgid "Enable Local Peer Discovery to find more peers."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:178
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:177
 msgid "Enable Log"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:353
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:352
 msgid "Enable PeX"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:354
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:353
 msgid "Enable Peer Exchange (PeX) to find more peers."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:294
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:293
 msgid "Enable Temp Path"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:415
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:414
 msgid "Enable Torrent Queueing"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:498
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:502
 msgid "Enable clickjacking protection."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:510
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:514
 msgid "Enable cookie secure flag (require HTTPS)."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:178
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:177
 msgid "Enable logger to log file."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:149
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:152
 msgid "Enabled"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:483
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:487
 msgid ""
 "Encrypt the connections with qbittorrent by SSL/TLS. The web clients must "
 "use https scheme to access the WebUI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:371
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:370
 msgid "Encryption Mode"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:170
-msgid "English (en)"
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:169
+msgid "English"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:85
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:88
 msgid "Expecting: non-empty value"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:586
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:598
 msgid "Fastest Upload"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:344
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:343
 msgid "Finished Torrent Export Dir"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:65
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:66
 msgid "Generate Randomly"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:205
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:204
 msgid ""
 "Give the time for keeping the old log, refer the setting 'Delete Old "
 "Backup', eg. 1d for one day, 1m for one month and 1y for one year."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:231
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:230
 msgid "Global Download Speed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:232
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:231
 msgid "Global Download Speed Limit(KiB/s)."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:236
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:235
 msgid "Global Upload Speed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:237
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:236
 msgid "Global Upload Speed Limit(KiB/s)."
 msgstr ""
 
@@ -335,481 +331,477 @@ msgstr ""
 msgid "Grant access to LuCI app qBittorrent"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:548
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:552
 msgid "Header: value pairs, one per line"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:516
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:520
 msgid "Host Header Validation"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:175
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:174
 msgid ""
 "If this option is enabled, the configuration set in WebUI will be replaced "
 "by the one in the LuCI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:564
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:576
 msgid "Ignore LAN Limit"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:432
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:431
 msgid "Ignore Slow Torrents"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:565
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:577
 msgid "Ignore the speed limit to LAN."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:258
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:257
 msgid "Inet Address"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:558
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:570
 msgid "Limit Overhead Usage"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:474
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:478
 msgid "Listening Address"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:478
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:482
 msgid "Listening Port"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:168
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:167
 msgid "Locale Language"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:205
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:204
 msgid "Log Keep Time"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:200
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:199
 msgid "Log Max Size"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:183
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:182
 msgid "Log Path"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:142
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:145
 msgid "Log Settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:319
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:318
 msgid "Manual"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:428
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:427
 msgid "Max Active Torrents"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:424
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:423
 msgid "Max Active Uploads"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:377
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:376
 msgid "Max Connections"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:383
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:382
 msgid "Max Connections Per Torrent"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:575
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:587
 msgid "Max Outgoing Port"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:397
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:396
 msgid "Max Ratio"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:402
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:401
 msgid "Max Ratio Action"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:409
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:408
 msgid "Max Seeding Minutes"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:387
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:386
 msgid "Max Uploads"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:392
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:391
 msgid "Max Uploads Per Torrent"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:420
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:419
 msgid "Maximum Active Downloads"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:154
-msgid "Memory Limit"
-msgstr ""
-
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:579
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:591
 msgid "Min Outgoing Port"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:174
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:173
 msgid "Overwrite the settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:462
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:461
 msgid "Password"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:489
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:493
 msgid "Path to the Certificate"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:493
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:497
 msgid "Path to the Key"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:404
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:403
 msgid "Pause them"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:154
-msgid "Percentage."
-msgstr ""
-
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:279
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:278
 msgid "Pre Allocation"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:280
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:279
 msgid "Pre-allocate disk space for all files."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:372
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:371
 msgid "Prefer Encryption"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:251
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:250
 msgid "Protocol Enabled"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:412
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:411
 msgid "Queueing Setting"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:128
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:212
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:552
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:131
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:211
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:564
 msgid "Refer to the"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:332
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:338
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:331
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:337
 msgid "Relocate affected torrent"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:326
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:325
 msgid "Relocate torrent"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:405
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:404
 msgid "Remove them"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:373
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:372
 msgid "Require Encryption"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:160
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:159
 msgid "Root Path of the Profile"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:585
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:597
 msgid "Round Robin"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:152
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:155
 msgid "Run daemon as user"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:291
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:290
 msgid "Save Path"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:314
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:313
 msgid "Saving Management"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:522
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:526
 msgid "Server Domains"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:158
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:170
+msgid "Simplified Chinese"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:157
 msgid "Specify the binary location of qBittorrent."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:291
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:290
 msgid "Specify the path of the downloaded files."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:161
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:160
 msgid ""
 "Specify the root path of all profiles which is equivalent to the commandline "
 "parameter: <b>--profile [PATH]</b>. The default value is /tmp."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:166
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:165
 msgid ""
 "Specify the suffix of the profile root path and a new profile root path will "
 "be formated as <b>[ROOT_PROFILE_PATH]_[SUFFIX]</b>. This value is empty by "
 "default."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:267
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:266
 msgid "Start In Pause"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:36
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:46
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:37
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:47
 msgid "Start qBittorrent"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:538
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:542
 msgid "Subnet Whitelist"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:331
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:337
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:330
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:336
 msgid "Switch affected torrent to Manual Mode"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:325
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:324
 msgid "Switch torrent to Manual Mode"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:254
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:253
 msgid "TCP"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:253
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:252
 msgid "TCP and UTP"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:299
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:298
 msgid "Temp Path"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:345
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:344
 msgid ""
 "The .torrent files for finished downloads will be copied to the target "
 "directory."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:342
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:341
 msgid "The .torrent files will be copied to the target directory."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:274
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:273
 msgid "The .torrent files will be deleted afterwards."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:165
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:164
 msgid "The Suffix of the Profile Root Path"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:300
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:299
 msgid "The absolute and relative path can be set."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:403
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:402
 msgid "The action when reach the max seeding ratio."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:259
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:258
 msgid "The address that respond to the trackers."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:597
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:609
 msgid "The first tier (0 tier) is announced by default."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:286
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:285
 msgid "The incomplete tasks will be added the extension of !qB."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:474
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:478
 msgid "The listening IP address for WebUI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:478
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:482
 msgid "The listening port for WebUI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:459
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:458
 msgid "The login name for WebUI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:462
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:461
 msgid "The login password for WebUI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:393
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:392
 msgid "The max number of connected peers per torrent."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:388
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:387
 msgid "The max number of connected peers."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:383
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:382
 msgid "The max number of connections per torrent."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:378
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:377
 msgid "The max number of connections."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:576
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:588
 msgid "The max outgoing port."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:398
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:397
 msgid "The max ratio for seeding. -1 is not to limit the seeding."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:201
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:200
 msgid "The max size for qBittorrent log (Unit: Bytes)."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:580
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:592
 msgid "The min outgoing port."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:559
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:571
 msgid "The overhead usage is been limitted."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:183
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:182
 msgid "The path for qBittorrent log."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:252
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:251
 msgid "The protocol that was enabled."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:45
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:46
 msgid ""
 "The qBittorrent daemon is not running. Click the button below to startup the "
 "daemon."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:41
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:42
 msgid ""
 "The qBittorrent daemon is running. Click the button below to startup the "
 "WebUI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:584
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:596
 msgid "The strategy of choking algorithm."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:169
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:168
 msgid "The supported language codes can be used to customize the setting."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:323
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:322
 msgid "Torrent Category Changed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:341
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:340
 msgid "Torrent Export Dir"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:449
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:448
 msgid "Torrent inactivity timer"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:255
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:254
 msgid "UTP"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:439
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:444
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:438
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:443
 msgid "Units: KiB/s"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:409
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:408
 msgid "Units: minutes"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:449
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:448
 msgid "Units: s"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:444
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:443
 msgid "Upload rate threshold"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:285
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:284
 msgid "Use Incomplete Extension"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:218
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:217
 msgid "Use Random Port"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:211
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:210
 msgid "Use UPnP for Connections"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:453
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:452
 msgid "Use UPnP for WebUI"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:212
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:211
 msgid "Use UPnP/ NAT-PMP port forwarding from the router."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:570
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:582
 msgid "Use os Cache"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:459
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:458
 msgid "Username"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:454
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:453
 msgid "Using the UPnP / NAT-PMP port of the router for connecting to WebUI."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:517
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:521
 msgid "Validate the host header."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:146
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:149
 msgid "WebUI Settings"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:551
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:563
 msgid ""
 "When enabled, qBittorrent will take certain measures to try to mask its "
 "identity."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:194
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:193
 msgid ""
 "When enabled, the overdue log files will be deleted after given keep time."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:127
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:130
 #: root/usr/share/luci/menu.d/luci-app-qbittorrent.json:3
 msgid "qBittorrent"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:133
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:136
 msgid "qBittorrent Status"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:365
+#: htdocs/luci-static/resources/view/qbittorrent/qbittorrent.js:364
 msgid "μTP Rate Limit"
 msgstr ""

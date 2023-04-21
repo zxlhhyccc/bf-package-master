@@ -1,16 +1,12 @@
-# Copyright (C) 2019 Openwrt.org
+# SPDX-License-Identifier: GPL-2.0-only
 #
-# This is free software, licensed under the Apache License, Version 2.0 .
-#
+# Copyright (C) 2017-2023 bishuiwuhen
 
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for qBittorrent
 LUCI_DEPENDS:=+qbittorrent
 LUCI_PKGARCH:=all
-
-PKG_NAME:=luci-app-qbittorrent
-PKG_RELEASE:=$(AUTORELEASE)
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

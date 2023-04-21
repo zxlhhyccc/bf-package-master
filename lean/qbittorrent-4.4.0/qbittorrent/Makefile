@@ -1,8 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (C) 2017-2021
-#
-# This is free software, licensed under the GNU General Public License v2.
-#
+# Copyright (C) 2017-2023 bishuiwuhen
 
 include $(TOPDIR)/rules.mk
 
@@ -20,12 +18,14 @@ PKG_LICENSE:=GPL-2.0+
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:qbittorrent:qbittorrent
 
-PKG_BUILD_DEPENDS:=qttools/host boost
+PKG_BUILD_DEPENDS:=\
+	boost  qttools/host libtorrent-rasterbar \
+	openssl qtbase zlib
 
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 # PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16
+PKG_BUILD_FLAGS:=no-mips16 gc-sections
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -34,7 +34,9 @@ define Package/qbittorrent
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=BitTorrent
-  DEPENDS:=+libgcc +libstdcpp +libtorrent-rasterbar +libopenssl +libqt6core +libqt6network \
+  DEPENDS:= \
+	+@PACKAGE_boost +@PACKAGE_boost-system \
+	+libgcc +libstdcpp +libtorrent-rasterbar +libopenssl +libqt6core +libqt6network \
 	+libqt6network-tlsbackend-openssl +libqt6sql +libqt6sql-sqlite +libqt6xml +zlib
   TITLE:=bittorrent client programmed in C++ / Qt
   URL:=https://www.qbittorrent.org/
@@ -74,8 +76,7 @@ ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS += -ldl -lrt -lpthread
 endif
 
-TARGET_CFLAGS += -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+TARGET_LDFLAGS += -Wl,--as-needed
 
 define Package/qbittorrent/conffiles
 /etc/config/qbittorrent

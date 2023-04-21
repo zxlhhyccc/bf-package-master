@@ -1,14 +1,12 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (C) 2019-2021
-#
-# This is free software, licensed under the Apache License, Version 2.0 .
-#
+# Copyright (C) 2017-2023 bishuiwuhen
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qttools
-PKG_BASE:=6.4
-PKG_BUGFIX:=2
+PKG_BASE:=6.5
+PKG_BUGFIX:=0
 PKG_VERSION:=$(PKG_BASE).$(PKG_BUGFIX)
 PKG_RELEASE:=1
 
@@ -16,7 +14,7 @@ PKG_SOURCE:=$(PKG_NAME)-everywhere-src-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:= \
 		http://download.qt.io/official_releases/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
 		http://master.qt.io/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules
-PKG_HASH:=a31387916184e4a5ef522d3ea841e8e931cc0f88be0824a7a354a572d5826c68
+PKG_HASH:=49c33d96b0a44988be954269b8ce3d1a495b439726e03a6be7c0d50a686369c4
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
 
@@ -25,8 +23,8 @@ HOST_BUILD_PARALLEL:=1
 HOST_BUILD_DEPENDS:=qtbase/host
 
 include $(INCLUDE_DIR)/host-build.mk
-include $(INCLUDE_DIR)/cmake.mk
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/qttools
   SECTION:=libs
@@ -37,26 +35,21 @@ define Package/qttools
   BUILDONLY:=1
 endef
 
-HOST_CONFIGURE_ARGS = \
-	-no-feature-assistant \
-	-no-feature-clang \
-	-no-feature-clangcpp \
-	-no-feature-designer \
-	-no-feature-distancefieldgenerator \
-	-no-feature-kmap2qmap \
-	-no-feature-pixeltool \
-	-no-feature-qdbus \
-	-no-feature-qev \
-	-no-feature-qtattributionsscanner \
-	-no-feature-qtdiag \
-	-no-feature-qtplugininfo \
-	-- \
+CMAKE_HOST_OPTIONS += \
 	-DCMAKE_DISABLE_FIND_PACKAGE_Clang=TRUE \
-	-DCMAKE_DISABLE_FIND_PACKAGE_WrapLibClang=TRUE
-
-define Host/Configure
-	cd $(HOST_BUILD_DIR) && $(STAGING_DIR_HOSTPKG)/bin/qt-configure-module . $(HOST_CONFIGURE_ARGS)
-endef
+	-DCMAKE_DISABLE_FIND_PACKAGE_WrapLibClang=TRUE \
+	-DINPUT_assistant=no \
+	-DINPUT_clang=no \
+	-DINPUT_clangcpp=no \
+	-DINPUT_designer=no \
+	-DINPUT_distancefieldgenerator=no \
+	-DINPUT_kmap2qmap=no \
+	-DINPUT_pixeltool=no \
+	-DINPUT_qdbus=no \
+	-DINPUT_qev=no \
+	-DINPUT_qtattributionsscanner=no \
+	-DINPUT_qtdiag=no \
+	-DINPUT_qtplugininfo=no
 
 $(eval $(call BuildPackage,qttools))
 $(eval $(call HostBuild))

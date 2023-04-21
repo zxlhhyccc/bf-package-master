@@ -9,7 +9,6 @@ NAME="$(basename ${script:-$initscript})"
 PROG=/usr/bin/qbittorrent-nox
 
 QBT_CONF_FILE=/tmp/qBittorrent/config/qBittorrent.conf
-QBT_INSTANCE=""
 
 _info() {
 	logger -p daemon.info -t "$NAME" "$*"
@@ -19,112 +18,21 @@ _err() {
 	logger -p daemon.err -t "$NAME" "$*"
 }
 
-validate_QBT() {
-	uci_load_validate "$1" "$2" "$3" "$4" \
-		'EnableService:bool:0' \
-		'Overwrite:bool:0' \
-		'user:string:root' \
-		'nice:range(-20,19):0' \
-		'BinaryLocation:string' \
-		'RootProfilePath:string:/tmp' \
-		'ConfigurationName:string' \
-		'DHT:or("true","false"):true' \
-		'Encryption:or("0","1","2"):0' \
-		'LSD:or("true","false"):true' \
-		'MaxConnecs:integer' \
-		'MaxConnecsPerTorrent:integer' \
-		'MaxRatio:float' \
-		'MaxRatioAction:or("0","1")' \
-		'MaxUploads:integer' \
-		'MaxUploadsPerTorrent:integer' \
-		'PeX:or("true","false"):true' \
-		'uTP_rate_limited:or("true","false"):true' \
-		'PortRangeMin:range(1024,65535)' \
-		'InetAddress:string' \
-		'UPnP:or("true","false"):false' \
-		'GlobalDLLimit:float' \
-		'GlobalDLLimitAlt:float' \
-		'GlobalUPLimit:float' \
-		'GlobalUPLimitAlt:float' \
-		'DiskWriteCacheSize:integer' \
-		'DiskWriteCacheTTL:integer' \
-		'FinishedTorrentExportDir:string' \
-		'PreAllocation:or("true","false"):false' \
-		'SavePath:string:/tmp/download' \
-		'StartInPause:or("true","false"):false' \
-		'TempPathEnabled:or("true","false"):true' \
-		'TempPath:string:temp/' \
-		'UseIncompleteExtension:or("true","false"):false' \
-		'TorrentExportDir:string' \
-		'Locale:string:zh' \
-		'UseRandomPort:or("true","false"):true' \
-		'IgnoreSlowTorrents:or("true","false")' \
-		'MaxActiveDownloads:integer' \
-		'MaxActiveTorrents:integer' \
-		'MaxActiveUploads:integer' \
-		'QueueingEnabled:or("true","false")' \
-		'AuthSubnetWhitelist:string' \
-		'Address:ipaddr' \
-		'AuthSubnetWhitelistEnabled:or("true","false"):false' \
-		'ClickjackingProtection:or("true","false"):true' \
-		'CSRFProtection:or("true","false"):false' \
-		'CustomHTTPHeadersEnabled:or("true","false"):false' \
-		'CustomHTTPHeaders:string' \
-		'HostHeaderValidation:or("true","false"):true' \
-		'HTTPS__Enabled:or("true","false")' \
-		'HTTPS__CertificatePath:string' \
-		'HTTPS__KeyPath:string' \
-		'LocalHostAuth:or("true","false"):true' \
-		'Password:string' \
-		'Port:port:8080' \
-		'SecureCookie:or("true","false"):true' \
-		'ServerDomains:string' \
-		'Username:string' \
-		'UseUPnP:or("true","false")' \
-		'AnonymousMode:or("true","false"):true' \
-		'AnnounceToAllTrackers:or("true","false")' \
-		'IgnoreLimitsLAN:or("true","false"):true' \
-		'IncludeOverhead:or("true","false"):false' \
-		'osCache:or("true","false")' \
-		'OutgoingPortsMax:port' \
-		'OutgoingPortsMin:port' \
-		'AnnounceToAllTiers:or("true","false")' \
-		'BTProtocol:or("Both","TCP","UTP")' \
-		'CreateTorrentSubfolder:or("true","false"):true' \
-		'DisableAutoTMMByDefault:or("true","false"):true' \
-		'GlobalMaxSeedingMinutes:integer' \
-		'SeedChokingAlgorithm:or("RoundRobin","FastestUpload","AntiLeech")' \
-		'SlowTorrentsDownloadRate:integer' \
-		'SlowTorrentsInactivityTimer:integer' \
-		'SlowTorrentsUploadRate:integer' \
-		'CategoryChanged:or("true","false"):false' \
-		'CategorySavePathChanged:or("true","false"):true' \
-		'DefaultSavePathChanged:or("true","false"):true' \
-		'AutoDeleteAddedTorrentFile:or("Never","IfAdded"):Never' \
-		'Enabled:or("true","false"):true' \
-		'Path:string' \
-		'Backup:or("true","false")' \
-		'DeleteOld:or("true","false")' \
-		'MaxSizeBytes:integer' \
-		'SaveTime:string'
-}
-
 sed_options() {
 	local Anchor=$1
-	local category="$( echo $2 | sed 's/\s/\\\\/g' )"
-	shift
-	shift
+	local category="${2// /\\\\}"
+	shift; shift;
 
 	if [ -z "$(grep ^\\[$Anchor\\]\$ $QBT_CONF_FILE)" ]; then
-		test -s "$QBT_CONF_FILE" && sed -i "\${/./G;s/\$/\n\[$Anchor\]/}"  "$QBT_CONF_FILE" || echo "[$Anchor]" >>"$QBT_CONF_FILE"
+		[ -s "$QBT_CONF_FILE" ] && sed -i "\${/./G;s/\$/\n\[$Anchor\]/}"  "$QBT_CONF_FILE" || echo "[$Anchor]" >>"$QBT_CONF_FILE"
 	fi
 
-	local o; local v; local ol
+	local o v ol
 	for o in "$@"; do
-		v="$( eval echo -E "\$$o" | sed 's/[\/\.]/\\&/g' )"
+		v="$(eval echo -E "\$$o" | sed 's/[\/\.]/\\&/g')"
 
 		[ -n "$category" ] && ol="$category\\\\$o" || ol="$o"
-		ol="$( echo $ol | sed 's/__/\\\\/g')"
+		ol="${ol//__/\\\\}"
 
 		if [ -n "$v" ]; then
 			if [ -z "$(grep ^$ol=.* $QBT_CONF_FILE)" ]; then
@@ -139,7 +47,49 @@ sed_options() {
 	done
 }
 
-config_QBT() {
+init_instance() {
+	[ "$2" = 0 ] || return $2
+	[ x"$EnableService" = x1 ] || return 0
+
+	local instance="${NAME}.$1"
+
+	RootProfilePath=$(echo $RootProfilePath | sed 's/\(.*\)\/$/\1/')
+	[ -z "$BinaryLocation" ] || PROG="$BinaryLocation"
+
+	local confdir=qBittorrent$([ -z "$ConfigurationName" ] || echo _$ConfigurationName)
+
+	local fullTempPath
+	case $TempPath in
+	/*|~/*)
+		fullTempPath="$TempPath"
+	;;
+	*)
+		fullTempPath="$RootProfilePath/$confdir/$TempPath"
+	;;
+	esac
+
+	local group=$(id -ng $user)
+	for directory in "$RootProfilePath/$confdir" "$RootProfilePath/$confdir/config" "$SavePath" "$fullTempPath" "$FinishedTorrentExportDir" "$TorrentExportDir"; do
+		if [ -n "$directory" ]; then
+			[ -d "$directory" ] || mkdir -m 0755 -p "$directory"
+			chmod -R g+w "$directory"
+			chown -R "$user:$group" "$directory"
+		fi
+	done
+
+	if [ "$AuthSubnetWhitelistEnabled" = "true" ]; then
+		AuthSubnetWhitelist="${AuthSubnetWhitelist// /,}"
+	else
+		AuthSubnetWhitelist="@Invalid()"
+	fi
+
+	if [ "$CustomHTTPHeadersEnabled" = "true" ]; then
+		CustomHTTPHeaders="$(echo -E "$CustomHTTPHeaders" | sed ':tag;N;s/\n/\\n/;b tag')"
+	fi
+
+	# Write to the configuration file.
+	QBT_CONF_FILE="$RootProfilePath/$confdir/config/qBittorrent.conf"
+
 	if [ "${#Password}" -eq 32 ]; then
 		Password_ha1="@ByteArray($Password)"
 	elif [ "${#Password}" -eq 113 ]; then
@@ -197,60 +147,8 @@ config_QBT() {
 				"Enabled" "Path" "Backup" "DeleteOld" "MaxSizeBytes" "Age" "AgeType"
 
 	[ "$Overwrite" != "1" ] || sed -i "s/\(MigrationVersion\)=.*/\1=1/g" "$QBT_CONF_FILE"
-}
 
-init_instance() {
-	[ "$2" = 0 ] || return 1
-
-	QBT_INSTANCE="${NAME}.$1"
-
-	RootProfilePath=$(echo $RootProfilePath | sed 's/\(.*\)\/$/\1/')
-
-	[ -z "$BinaryLocation" ] || PROG="$BinaryLocation"
-
-	local running=$(ubus call service list "{'name':'$NAME'}" | jsonfilter -e "@.$NAME.instances['${QBT_INSTANCE}'].running")
-	[ x"$EnableService" != x0 ] || return 1
-
-	local confdir="qBittorrent"
-	[ -z "$ConfigurationName" ] || confdir="qBittorrent_$ConfigurationName"
-
-	local group=$(id -nG $user)
-
-	local fullTempPath
-	case $TempPath in
-	/*|~/*)
-		fullTempPath="$TempPath"
-	;;
-	*)
-		fullTempPath="$RootProfilePath/$confdir/$TempPath"
-	;;
-	esac
-
-	for directory in "$RootProfilePath/$confdir" "$RootProfilePath/$confdir/config" "$SavePath" "$fullTempPath" "$FinishedTorrentExportDir" "$TorrentExportDir"; do
-		if [ -n "$directory" ]; then
-			[ -d "$directory" ] || mkdir -m 0755 -p "$directory"
-			chmod -R g+w "$directory"
-			chown -R "$user:$group" "$directory"
-		fi
-	done
-
-	if [ "$AuthSubnetWhitelistEnabled" = true ]; then
-		AuthSubnetWhitelist="$( echo $AuthSubnetWhitelist | sed 's/ /,/g')"
-	else
-		AuthSubnetWhitelist="@Invalid()"
-	fi
-
-	if [ "$CustomHTTPHeadersEnabled" = true ]; then
-		CustomHTTPHeaders="$( echo -E "$CustomHTTPHeaders" | sed ':tag;N;s/\n/\\n/;b tag')"
-	fi
-
-	QBT_CONF_FILE="$RootProfilePath/$confdir/config/qBittorrent.conf"
-	config_QBT
-	create_instance
-}
-
-create_instance() {
-	procd_open_instance "$QBT_INSTANCE"
+	procd_open_instance "$instance"
 	procd_set_param command "$PROG"
 	procd_append_param command --profile="$RootProfilePath"
 
@@ -269,14 +167,98 @@ service_triggers() {
 }
 
 start_service() {
-	config_load "$NAME"
-	validate_QBT "$NAME" "$NAME" "main" init_instance
-	return 0
+	uci_load_validate "$NAME" "$NAME" "main" init_instance \
+		'EnableService:bool:0' \
+		'Overwrite:bool:0' \
+		'user:string:root' \
+		'nice:range(-20,19):0' \
+		'BinaryLocation:string' \
+		'RootProfilePath:string:/tmp' \
+		'ConfigurationName:string' \
+		'DHT:or("true","false"):true' \
+		'Encryption:or("0","1","2"):0' \
+		'LSD:or("true","false"):true' \
+		'MaxConnecs:integer' \
+		'MaxConnecsPerTorrent:integer' \
+		'MaxRatio:float' \
+		'MaxRatioAction:or("0","1")' \
+		'MaxUploads:integer' \
+		'MaxUploadsPerTorrent:integer' \
+		'PeX:or("true","false"):true' \
+		'uTP_rate_limited:or("true","false"):true' \
+		'PortRangeMin:range(1024,65535)' \
+		'InetAddress:string' \
+		'UPnP:or("true","false"):false' \
+		'GlobalDLLimit:float' \
+		'GlobalDLLimitAlt:float' \
+		'GlobalUPLimit:float' \
+		'GlobalUPLimitAlt:float' \
+		'DiskWriteCacheSize:integer' \
+		'DiskWriteCacheTTL:integer' \
+		'FinishedTorrentExportDir:string' \
+		'PreAllocation:or("true","false"):false' \
+		'SavePath:string:/tmp/download' \
+		'StartInPause:or("true","false"):false' \
+		'TempPathEnabled:or("true","false"):true' \
+		'TempPath:string:temp/' \
+		'UseIncompleteExtension:or("true","false"):false' \
+		'TorrentExportDir:string' \
+		'Locale:string:zh_CN' \
+		'UseRandomPort:or("true","false"):true' \
+		'IgnoreSlowTorrents:or("true","false")' \
+		'MaxActiveDownloads:integer' \
+		'MaxActiveTorrents:integer' \
+		'MaxActiveUploads:integer' \
+		'QueueingEnabled:or("true","false")' \
+		'AuthSubnetWhitelist:string' \
+		'Address:ipaddr' \
+		'AuthSubnetWhitelistEnabled:or("true","false"):false' \
+		'ClickjackingProtection:or("true","false"):true' \
+		'CSRFProtection:or("true","false"):false' \
+		'CustomHTTPHeadersEnabled:or("true","false"):false' \
+		'CustomHTTPHeaders:string' \
+		'HostHeaderValidation:or("true","false"):true' \
+		'HTTPS__Enabled:or("true","false")' \
+		'HTTPS__CertificatePath:string' \
+		'HTTPS__KeyPath:string' \
+		'LocalHostAuth:or("true","false"):true' \
+		'Password:string' \
+		'Port:port:8080' \
+		'SecureCookie:or("true","false"):true' \
+		'ServerDomains:string' \
+		'Username:string' \
+		'UseUPnP:or("true","false")' \
+		'AnonymousMode:or("true","false"):true' \
+		'AnnounceToAllTrackers:or("true","false")' \
+		'IgnoreLimitsLAN:or("true","false"):true' \
+		'IncludeOverhead:or("true","false"):false' \
+		'osCache:or("true","false")' \
+		'OutgoingPortsMax:port' \
+		'OutgoingPortsMin:port' \
+		'AnnounceToAllTiers:or("true","false")' \
+		'BTProtocol:or("Both","TCP","UTP")' \
+		'CreateTorrentSubfolder:or("true","false"):true' \
+		'DisableAutoTMMByDefault:or("true","false"):true' \
+		'GlobalMaxSeedingMinutes:integer' \
+		'SeedChokingAlgorithm:or("RoundRobin","FastestUpload","AntiLeech")' \
+		'SlowTorrentsDownloadRate:integer' \
+		'SlowTorrentsInactivityTimer:integer' \
+		'SlowTorrentsUploadRate:integer' \
+		'CategoryChanged:or("true","false"):false' \
+		'CategorySavePathChanged:or("true","false"):true' \
+		'DefaultSavePathChanged:or("true","false"):true' \
+		'AutoDeleteAddedTorrentFile:or("Never","IfAdded"):Never' \
+		'Enabled:or("true","false"):true' \
+		'Path:string' \
+		'Backup:or("true","false")' \
+		'DeleteOld:or("true","false")' \
+		'MaxSizeBytes:integer' \
+		'SaveTime:string'
 }
 
 reload_service() {
 	stop
-	while running "$NAME" "$QBT_INSTANCE"; do
+	while running "${NAME}.main"; do
 		sleep 1
 	done
 	start

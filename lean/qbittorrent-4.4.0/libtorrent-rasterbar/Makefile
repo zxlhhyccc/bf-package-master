@@ -1,6 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (C) 2007-2021
-#
+# Copyright (C) 2017-2023 bishuiwuhen
 
 include $(TOPDIR)/rules.mk
 
@@ -18,7 +18,7 @@ PKG_CPE_ID:=cpe:/a:libtorrent:libtorrent
 
 PKG_BUILD_PARALLEL:=1
 # PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16
+PKG_BUILD_FLAGS:=no-mips16 gc-sections
 
 PYTHON3_PKG_BUILD:=0
 
@@ -52,8 +52,8 @@ define Package/python3-libtorrent/description
   is a python module that can be imported in a python program.
 endef
 
-TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+TARGET_CFLAGS += $(FPIC)
+TARGET_LDFLAGS += -Wl,--as-needed
 
 CMAKE_OPTIONS += \
 	-DBUILD_SHARED_LIBS=ON \

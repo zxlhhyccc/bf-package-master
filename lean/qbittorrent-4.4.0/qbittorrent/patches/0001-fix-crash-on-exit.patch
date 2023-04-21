@@ -1,0 +1,198 @@
+--- a/src/app/application.cpp
++++ b/src/app/application.cpp
+@@ -226,6 +226,42 @@ Application::~Application()
+     // we still need to call cleanup()
+     // in case the App failed to start
+     cleanup();
++
++#ifndef DISABLE_WEBUI
++    delete m_webui;
++#endif
++
++    delete RSS::AutoDownloader::instance();
++    delete RSS::Session::instance();
++
++    TorrentFilesWatcher::freeInstance();
++    BitTorrent::Session::freeInstance();
++    Net::GeoIPManager::freeInstance();
++    Net::DownloadManager::freeInstance();
++    Net::ProxyConfigurationManager::freeInstance();
++    Preferences::freeInstance();
++    SettingsStorage::freeInstance();
++    IconProvider::freeInstance();
++    SearchPluginManager::freeInstance();
++    Utils::Fs::removeDirRecursively(Utils::Fs::tempPath());
++
++    LogMsg(tr("qBittorrent is now ready to exit"));
++    Logger::freeInstance();
++    delete m_fileLogger;
++
++#ifndef DISABLE_GUI
++    delete m_window;
++    delete m_desktopIntegration;
++    UIThemeManager::freeInstance();
++#endif // DISABLE_GUI
++
++    Profile::freeInstance();
++
++    if (m_shutdownAct != ShutdownDialogAction::Exit)
++    {
++        qDebug() << "Sending computer shutdown/suspend/hibernate signal...";
++        Utils::Misc::shutdownComputer(m_shutdownAct);
++    }
+ }
+ 
+ #ifndef DISABLE_GUI
+@@ -1213,45 +1249,13 @@ void Application::cleanup()
+     }
+ #endif // DISABLE_GUI
+ 
+-#ifndef DISABLE_WEBUI
+-    delete m_webui;
+-#endif
+-
+-    delete RSS::AutoDownloader::instance();
+-    delete RSS::Session::instance();
+ 
+-    TorrentFilesWatcher::freeInstance();
+-    BitTorrent::Session::freeInstance();
+-    Net::GeoIPManager::freeInstance();
+-    Net::DownloadManager::freeInstance();
+-    Net::ProxyConfigurationManager::freeInstance();
+-    Preferences::freeInstance();
+-    SettingsStorage::freeInstance();
+-    IconProvider::freeInstance();
+-    SearchPluginManager::freeInstance();
+-    Utils::Fs::removeDirRecursively(Utils::Fs::tempPath());
+-
+-    LogMsg(tr("qBittorrent is now ready to exit"));
+-    Logger::freeInstance();
+-    delete m_fileLogger;
++    BitTorrent::Session::instance()->cleanup();
++    RSS::AutoDownloader::instance()->cleanup();
++    SettingsStorage::instance()->cleanup();
+ 
+-#ifndef DISABLE_GUI
++#if !defined(DISABLE_GUI) && defined(Q_OS_WIN)
+     if (m_window)
+-    {
+-#ifdef Q_OS_WIN
+         ::ShutdownBlockReasonDestroy(reinterpret_cast<HWND>(m_window->effectiveWinId()));
+-#endif // Q_OS_WIN
+-        delete m_window;
+-        delete m_desktopIntegration;
+-        UIThemeManager::freeInstance();
+-    }
+-#endif // DISABLE_GUI
+-
+-    Profile::freeInstance();
+-
+-    if (m_shutdownAct != ShutdownDialogAction::Exit)
+-    {
+-        qDebug() << "Sending computer shutdown/suspend/hibernate signal...";
+-        Utils::Misc::shutdownComputer(m_shutdownAct);
+-    }
++#endif
+ }
+--- a/src/base/bittorrent/session.h
++++ b/src/base/bittorrent/session.h
+@@ -147,6 +147,7 @@ namespace BitTorrent
+ 
+         using QObject::QObject;
+ 
++        virtual void cleanup() = 0;
+         virtual Path savePath() const = 0;
+         virtual void setSavePath(const Path &path) = 0;
+         virtual Path downloadPath() const = 0;
+--- a/src/base/bittorrent/sessionimpl.cpp
++++ b/src/base/bittorrent/sessionimpl.cpp
+@@ -582,12 +582,6 @@ SessionImpl::SessionImpl(QObject *parent)
+ 
+ SessionImpl::~SessionImpl()
+ {
+-    // Do some bittorrent related saving
+-    // After this, (ideally) no more important alerts will be generated/handled
+-    saveResumeData();
+-
+-    saveStatistics();
+-
+     // We must delete FilterParserThread
+     // before we delete lt::session
+     delete m_filterParser;
+@@ -600,6 +594,15 @@ SessionImpl::~SessionImpl()
+     delete m_nativeSession;
+ }
+ 
++void SessionImpl::cleanup()
++{
++    // Do some bittorrent related saving
++    // After this, (ideally) no more important alerts will be generated/handled
++    saveResumeData();
++
++    saveStatistics();
++}
++
+ bool SessionImpl::isDHTEnabled() const
+ {
+     return m_isDHTEnabled;
+--- a/src/base/bittorrent/sessionimpl.h
++++ b/src/base/bittorrent/sessionimpl.h
+@@ -136,6 +136,8 @@ namespace BitTorrent
+         Q_DISABLE_COPY_MOVE(SessionImpl)
+ 
+     public:
++        void cleanup() override;
++
+         Path savePath() const override;
+         void setSavePath(const Path &path) override;
+         Path downloadPath() const override;
+--- a/src/base/rss/rss_autodownloader.cpp
++++ b/src/base/rss/rss_autodownloader.cpp
+@@ -153,6 +153,9 @@ AutoDownloader::AutoDownloader()
+ }
+ 
+ AutoDownloader::~AutoDownloader()
++{}
++
++void AutoDownloader::cleanup()
+ {
+     store();
+ }
+--- a/src/base/rss/rss_autodownloader.h
++++ b/src/base/rss/rss_autodownloader.h
+@@ -71,6 +71,7 @@ namespace RSS
+         AutoDownloader();
+         ~AutoDownloader() override;
+ 
++        void cleanup();
+     public:
+         enum class RulesFileFormat
+         {
+--- a/src/base/settingsstorage.cpp
++++ b/src/base/settingsstorage.cpp
+@@ -55,7 +55,7 @@ SettingsStorage::SettingsStorage()
+     connect(&m_timer, &QTimer::timeout, this, &SettingsStorage::save);
+ }
+ 
+-SettingsStorage::~SettingsStorage()
++void SettingsStorage::cleanup()
+ {
+     save();
+ }
+--- a/src/base/settingsstorage.h
++++ b/src/base/settingsstorage.h
+@@ -56,12 +56,13 @@ class SettingsStorage final : public QObject
+     Q_DISABLE_COPY_MOVE(SettingsStorage)
+ 
+     SettingsStorage();
+-    ~SettingsStorage();
++    ~SettingsStorage() = default;
+ 
+ public:
+     static void initInstance();
+     static void freeInstance();
+     static SettingsStorage *instance();
++    void cleanup();
+ 
+     template <typename T>
+     T loadValue(const QString &key, const T &defaultValue = {}) const
