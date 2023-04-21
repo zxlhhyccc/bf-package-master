@@ -1,8 +1,6 @@
-diff --git a/Makefile b/Makefile
-index f3ebac1..992d908 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -17,6 +17,8 @@ PKG_CONFIG_DEPENDS:= \
+@@ -16,6 +16,8 @@ PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
@@ -11,15 +9,14 @@ index f3ebac1..992d908 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,13 +37,15 @@ PKG_CONFIG_DEPENDS:= \
+@@ -34,12 +36,14 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
--	+dns2socks +dns2tcp +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
-+	+dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
+-	+chinadns-ng +dns2socks +dns2tcp +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
++	+chinadns-ng +dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
  	+microsocks +resolveip +tcping +unzip \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Brook:brook \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -28,7 +25,7 @@ index f3ebac1..992d908 100644
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
-@@ -110,6 +114,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+@@ -103,6 +107,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||(arm&&TARGET_gemini)||armeb||mips||mips64||powerpc)
  	default n
  
@@ -43,8 +40,6 @@ index f3ebac1..992d908 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
  	bool "Include Shadowsocks Libev Client"
  	default y
-diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index d433b6d..9dbf384 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -343,8 +343,11 @@ end
@@ -85,8 +80,6 @@ index d433b6d..9dbf384 100644
  	o:depends({dns_mode = "dns2tcp"})
  	o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
  	o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
-diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-index 033a159..c3b2c56 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -103,7 +103,7 @@ o.validate = function(self, value, t)
@@ -98,8 +91,6 @@ index 033a159..c3b2c56 100644
  o.rawhtml = true
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
-diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 2328aca..6343afb 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -241,6 +241,12 @@ msgstr "单进程"
@@ -115,8 +106,6 @@ index 2328aca..6343afb 100644
  msgid "Default Proxy Mode"
  msgstr "默认代理模式"
  
-diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 2cfb872..cd2ec5e 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -1174,6 +1174,12 @@ start_dns() {
