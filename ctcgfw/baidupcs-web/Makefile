@@ -6,12 +6,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=baidupcs-web
 PKG_VERSION:=3.7.4-nnew
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/Erope/BaiduPCS-Go.git
-PKG_SOURCE_VERSION:=cffd49d0709f9c7d3dd6ae5c9625f68bfd446166
-PKG_MIRROR_HASH:=2cb9c9e27613cf4126234c969f1928e392108ad4f1580b3eac92339c42a2ab0a
+PKG_SOURCE_URL:=https://github.com/zxlhhyccc/BaiduPCS-Go.git
+PKG_SOURCE_VERSION:=ee2d75bacc1453b088a0cb9aed58e29026ceec92
+PKG_MIRROR_HASH:=771a3459f9e9c982c1b5808f71addf9313d9075afe988e9fdf3cd53dd27e9ee0
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -25,7 +25,7 @@ PKG_BUILD_PARALLEL:=1
 # PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
-GO_PKG:=github.com/Erope/BaiduPCS-Go
+GO_PKG:=github.com/zxlhhyccc/BaiduPCS-Go
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:=main.Version=v$(PKG_VERSION)
 
@@ -37,7 +37,7 @@ define Package/baidupcs-web
   CATEGORY:=Network
   SUBMENU:=Download Manager
   TITLE:=A web controller for BaiduPCS-Go
-  URL:=https://github.com/Erope/BaiduPCS-Go
+  URL:=https://github.com/zxlhhyccc/BaiduPCS-Go
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
