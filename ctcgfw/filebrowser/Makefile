@@ -17,7 +17,7 @@ PKG_MIRROR_HASH:=447d9835474d5cbacda2f9512675696ff2630ed3555747279978e5df6951b21
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=CN_SZTL <cnsztl@immortalwrt.org>
+PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 PKG_BUILD_DEPENDS:=golang/host node/host
 PKG_BUILD_PARALLEL:=1
@@ -28,11 +28,11 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_FILEBROWSER_COMPRESS_GOPROXY \
 	CONFIG_FILEBROWSER_COMPRESS_UPX
 
-GO_PKG:=github.com/filebrowser/filebrowser
+GO_PKG:=github.com/filebrowser/filebrowser/v2
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/v2/version.CommitSHA=$(PKG_SOURCE_VERSION) \
-	$(GO_PKG)/v2/version.Version=$(PKG_VERSION)
+	$(GO_PKG)/version.CommitSHA=$(PKG_VERSION) \
+	$(GO_PKG)/version.Version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
