@@ -5,8 +5,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qtbase
-PKG_BASE:=6.5
-PKG_BUGFIX:=0
+PKG_BASE:=6.4
+PKG_BUGFIX:=3
 PKG_VERSION:=$(PKG_BASE).$(PKG_BUGFIX)
 PKG_RELEASE:=1
 
@@ -14,7 +14,7 @@ PKG_SOURCE:=$(PKG_NAME)-everywhere-src-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:= \
 		http://download.qt.io/official_releases/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
 		http://master.qt.io/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules
-PKG_HASH:=fde1aa7b4fbe64ec1b4fc576a57f4688ad1453d2fab59cbadd948a10a6eaf5ef
+PKG_HASH:=5087c9e5b0165e7bc3c1a4ab176b35d0cd8f52636aea903fa377bdba00891a60
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
@@ -101,10 +101,8 @@ endif
 TARGET_CFLAGS += $(FPIC)
 TARGET_LDFLAGS += -Wl,--as-needed
 
-CMAKE_SHARED_LDFLAGS:=$(filter-out -Wl$(comma)-Bsymbolic-functions,$(CMAKE_SHARED_LDFLAGS))
-
 CMAKE_HOST_OPTIONS += \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.19 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.21 \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_SHARED_LIBS=OFF \
 	-DFEATURE_concurrent=OFF \
@@ -128,8 +126,8 @@ CMAKE_HOST_OPTIONS += \
 # The corelib will depend on openssl if openssl version >= 3.0. It is used in class QCryptographicHash.
 # Disable `FEATURE_opensslv30` explicitly because we don't use it.
 CMAKE_OPTIONS += \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.19 \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_USING_QT=3.19 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.21 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_USING_QT=3.21 \
 	-DINSTALL_ARCHDATADIR=/usr/share/Qt6 \
 	-DINSTALL_DATADIR=/usr/share/Qt6 \
 	-DQT_HOST_PATH=$(STAGING_DIR_HOSTPKG) \
@@ -237,3 +235,4 @@ $(eval $(call DefineQtbasePlugin,tls,network-tlsbackend-openssl,qopensslbackend,
 $(foreach lib,$(QTBASE_LIBS),$(eval $(call BuildPackage,libqt6$(lib))))
 $(eval $(call HostBuild))
 $(eval $(call BuildPackage,qtbase))
+
