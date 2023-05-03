@@ -5,28 +5,22 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dae
-PKG_VERSION:=0.1.7
+PKG_VERSION:=0.1.8
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).zip
 PKG_SOURCE_URL:=https://github.com/daeuniverse/dae/releases/download/v$(PKG_VERSION)/dae-full-src.zip?
-PKG_HASH:=b387673509bdec405ac4762a0ec2680aef6a988cc31ce6a9f1c7439db1b9266e
+PKG_HASH:=0163f400f384a6e6dafc0779cad636b7f6b65dc0d2ceb912772745f11201115a
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
-PKG_CONFIG_DEPENDS:= \
-	CONFIG_DAE_COMPRESS_GOPROXY \
-	CONFIG_DAE_COMPRESS_UPX
-
 PKG_BUILD_DEPENDS:=golang/host bpf-headers
 PKG_BUILD_PARALLEL:=1
-# PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/daeuniverse/dae
-GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/cmd.Version=$(PKG_VERSION) \
 	$(GO_PKG)/common/consts.MaxMatchSetLen_=64
@@ -48,7 +42,7 @@ define Package/dae
   $(call Package/dae/Default)
   TITLE:=A lightweight and high-performance transparent proxy solution
   # You need enable KERNEL_DEBUG_INFO_BTF and KERNEL_BPF_EVENTS
-  DEPENDS:=$(GO_ARCH_DEPENDS) +$(BPF_DEPENDS)  \
+  DEPENDS:=$(GO_ARCH_DEPENDS) $(BPF_DEPENDS)  \
     +ca-bundle +kmod-sched-core +kmod-sched-bpf
 endef
 
@@ -76,22 +70,6 @@ define Package/dae/description
   loss and additional resource consumption for direct traffic.
 endef
 
-define Package/dae/config
-config DAE_COMPRESS_GOPROXY
-	bool "Compiling with GOPROXY proxy"
-	default n
-
-config DAE_COMPRESS_UPX
-	bool "Compress executable files with UPX"
-	depends on !mips64
-	default n
-endef
-
-ifeq ($(CONFIG_DAE_COMPRESS_GOPROXY),y)
-	export GO111MODULE=on
-	export GOPROXY=https://goproxy.baidu.com
-endif
-
 define Package/dae/conffiles
 /etc/dae/config.dae
 endef
@@ -115,9 +93,6 @@ define Build/Compile
 		go generate $(PKG_BUILD_DIR)/control/control.go ; \
 		$(call GoPackage/Build/Compile) ; \
 	)
-ifeq ($(CONFIG_DAE_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/dae
-endif
 endef
 
 define Package/dae/install
