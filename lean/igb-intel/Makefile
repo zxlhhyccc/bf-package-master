@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=kmod-igb-intel
-PKG_VERSION:=5.12.3
+PKG_VERSION:=5.13.7
 PKG_RELEASE:=1
 
 PKG_SOURCE:=igb-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://downloads.sourceforge.net/project/e1000/igb%20stable/$(PKG_VERSION)/
-PKG_HASH:=ea361508254a739694a5c5528fb959340804c2e33031e93c01f1fb5068ecd55b
+PKG_HASH:=4ccae73110f3c871a17b7cc6df7dbdf6295fc90f4941e8b2978a471c2fec83cb
 
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
