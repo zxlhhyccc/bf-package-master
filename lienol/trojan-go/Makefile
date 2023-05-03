@@ -33,7 +33,6 @@ PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/p4gefau1t/trojan-go
 GO_PKG_BUILD_PKG:=$(GO_PKG)
-
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/constant.Version=$(PKG_VERSION) \
