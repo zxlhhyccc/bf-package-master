@@ -16,11 +16,16 @@ PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_DAE_COMPRESS_GOPROXY \
+	CONFIG_DAE_COMPRESS_UPX
+
 PKG_BUILD_DEPENDS:=golang/host bpf-headers
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/daeuniverse/dae
+GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/cmd.Version=$(PKG_VERSION) \
 	$(GO_PKG)/common/consts.MaxMatchSetLen_=64
@@ -42,7 +47,7 @@ define Package/dae
   $(call Package/dae/Default)
   TITLE:=A lightweight and high-performance transparent proxy solution
   # You need enable KERNEL_DEBUG_INFO_BTF and KERNEL_BPF_EVENTS
-  DEPENDS:=$(GO_ARCH_DEPENDS) $(BPF_DEPENDS)  \
+  DEPENDS:=$(GO_ARCH_DEPENDS) +$(BPF_DEPENDS)  \
     +ca-bundle +kmod-sched-core +kmod-sched-bpf
 endef
 
@@ -70,6 +75,22 @@ define Package/dae/description
   loss and additional resource consumption for direct traffic.
 endef
 
+define Package/dae/config
+config DAE_COMPRESS_GOPROXY
+	bool "Compiling with GOPROXY proxy"
+	default n
+
+config DAE_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	depends on !mips64
+	default n
+endef
+
+ifeq ($(CONFIG_DAE_COMPRESS_GOPROXY),y)
+	export GO111MODULE=on
+	export GOPROXY=https://goproxy.baidu.com
+endif
+
 define Package/dae/conffiles
 /etc/dae/config.dae
 endef
@@ -93,6 +114,9 @@ define Build/Compile
 		go generate $(PKG_BUILD_DIR)/control/control.go ; \
 		$(call GoPackage/Build/Compile) ; \
 	)
+ifeq ($(CONFIG_DAE_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/dae
+endif
 endef
 
 define Package/dae/install
