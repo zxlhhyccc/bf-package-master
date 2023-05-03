@@ -347,7 +347,7 @@ if api.is_finded("pdnsd") then
 	dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
 end
 if api.is_finded("dns2tcp") then
-	dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP")))
+	dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
 end
 if api.is_finded("dns2socks") then
 	dns_mode:value("dns2socks", "dns2socks")
