@@ -1,7 +1,7 @@
 #!/bin/sh /etc/rc.common
 
 LOCK=/var/lock/netwizard-boot.lock
-START=19
+START=99
 
 set_lock() {
 	exec 1000>"$LOCK"
