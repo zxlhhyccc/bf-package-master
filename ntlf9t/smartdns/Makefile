@@ -11,8 +11,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=ccadadd3fb710c23e9cbbd48fd396b19580427fd
-PKG_MIRROR_HASH:=9c45e9372afa515d7f376438d4738884b6172379e76273d5c0eecb22cb7f0c82
+PKG_SOURCE_VERSION:=ed102cda03c56e9c63040d33d4a391b56491493e
+PKG_MIRROR_HASH:=2c4e641db0aaa92065b8adfdcd0f4ddbc6ee7b8b251528c2b5c59a73fff607e0
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -48,6 +48,8 @@ define Package/smartdns/conffiles
 /etc/smartdns/blacklist-chnroute.conf
 /etc/smartdns/smartdns-domains.china.conf
 /etc/smartdns/whitelist-chnroute.conf
+/etc/smartdns/domain-block.list
+/etc/smartdns/domain-forwarding.list
 endef
 
 define Package/smartdns/install
