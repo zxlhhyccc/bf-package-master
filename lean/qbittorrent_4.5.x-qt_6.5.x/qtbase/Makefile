@@ -5,8 +5,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qtbase
-PKG_BASE:=6.4
-PKG_BUGFIX:=3
+PKG_BASE:=6.5
+PKG_BUGFIX:=0
 PKG_VERSION:=$(PKG_BASE).$(PKG_BUGFIX)
 PKG_RELEASE:=1
 
@@ -14,7 +14,7 @@ PKG_SOURCE:=$(PKG_NAME)-everywhere-src-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:= \
 		http://download.qt.io/official_releases/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
 		http://master.qt.io/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules
-PKG_HASH:=5087c9e5b0165e7bc3c1a4ab176b35d0cd8f52636aea903fa377bdba00891a60
+PKG_HASH:=fde1aa7b4fbe64ec1b4fc576a57f4688ad1453d2fab59cbadd948a10a6eaf5ef
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
@@ -23,7 +23,6 @@ PKG_BUILD_DEPENDS:=qtbase/host
 
 HOST_BUILD_PARALLEL:=1
 PKG_BUILD_PARALLEL:=1
-# PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16 gc-sections
 
 PKG_LICENSE:=LGPL-3.0-only
@@ -108,7 +107,7 @@ CMAKE_HOST_OPTIONS += \
 	-DFEATURE_concurrent=OFF \
 	-DFEATURE_dbus=OFF \
 	-DFEATURE_gui=OFF \
-	-DFEATURE_optimize_size=ON \
+	-DFEATURE_optimize_full=ON \
 	-DFEATURE_sql=OFF \
 	-DFEATURE_testlib=OFF \
 	-DFEATURE_zstd=OFF \
@@ -142,7 +141,7 @@ CMAKE_OPTIONS += \
 	-DFEATURE_dbus=OFF \
 	-DFEATURE_gui=OFF \
 	-DFEATURE_libudev=OFF \
-	-DFEATURE_optimize_size=ON \
+	-DFEATURE_optimize_full=ON \
 	-DFEATURE_printsupport=OFF \
 	-DFEATURE_testlib=OFF \
 	-DFEATURE_thread=ON \
@@ -155,7 +154,7 @@ CMAKE_OPTIONS += \
 	-DFEATURE_glib=OFF \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_mimetype=ON \
-	-DFEATURE_opensslv30=OFF \
+	-DFEATURE_openssl=ON \
 	\
 	-DFEATURE_network=ON \
 	-DINPUT_openssl=runtime \
