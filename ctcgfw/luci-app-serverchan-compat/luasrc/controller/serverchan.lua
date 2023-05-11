@@ -7,7 +7,7 @@ function index()
 	
 	local page = entry({"admin", "services", "serverchan"}, alias("admin", "services", "serverchan", "setting"), _("微信推送"), 30)
 	page.dependent = true
-	page.acl_depends = { "luci-app-serverchan" }
+	page.acl_depends = { "luci-app-serverchan-compat" }
 
 	entry({"admin", "services", "serverchan", "setting"}, cbi("serverchan/setting"), _("配置"), 40).leaf = true
 	entry({"admin", "services", "serverchan", "advanced"}, cbi("serverchan/advanced"), _("高级设置"), 50).leaf = true

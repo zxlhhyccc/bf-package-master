@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-serverchan
+PKG_NAME:=luci-app-serverchan-compat
 PKG_VERSION:=2.07.1
 PKG_RELEASE:=10
 

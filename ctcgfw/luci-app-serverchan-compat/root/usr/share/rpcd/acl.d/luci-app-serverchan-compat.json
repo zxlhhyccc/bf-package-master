@@ -1,6 +1,6 @@
 {
-	"luci-app-serverchan": {
-		"description": "Grant UCI access for luci-app-serverchan",
+	"luci-app-serverchan-compat": {
+		"description": "Grant UCI access for luci-app-serverchan-compat",
 		"read": {
 			"uci": [ "serverchan" ]
 		},
