@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=3.16.0
+PKG_VERSION:=3.17.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/alist-org/alist/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=5f946c95a769f2ba85a53612082f33d742110426cbcbc954d5b8395a071b3135
+PKG_HASH:=70647bcec0d7856692b33e5d77c072df821e1f61f88512c569ef5b545a53adfa
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -36,12 +36,13 @@ define Package/alist
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +fuse-utils
 endef
 
-WEB_FILE:=$(PKG_NAME)-web-$(PKG_VERSION).tar.gz
+WEB_VERSION:=$(PKG_VERSION)
+WEB_FILE:=$(PKG_NAME)-web-$(WEB_VERSION).tar.gz
 define Download/alist-web
-	URL:=https://github.com/alist-org/alist-web/releases/download/$(PKG_VERSION)/dist.tar.gz?
+	URL:=https://github.com/alist-org/alist-web/releases/download/$(WEB_VERSION)/dist.tar.gz?
 	URL_FILE:=$(WEB_FILE)
 	FILE:=$(WEB_FILE)
-	HASH:=0a08e205887dcaf17f5e57af5a2024021e35e3d29878259d372d980bbea3eedd
+	HASH:=85718110e958b9543fd99d14f1acea0d95042bedccbe1569177e8e9995a48aaf
 endef
 
 define Build/Prepare
