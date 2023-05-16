@@ -115,7 +115,7 @@ xray_injectdns() {
 	tmpDNSconf=$DNSMASQDIR/xray.conf
 	echo "all-servers" >$tmpDNSconf
 	config_load $NAME
-	for server in $(config_foreach get_server_ips servers | sort -u); do
+	for server in $(config_foreach get_server_ips servers | sort -u | grep -v '[0-9]$'); do
 		cat <<-EOF >>$tmpDNSconf
 			ipset=/${server}/xray_spec_dst_bp
 			server=/${server}/#
@@ -162,7 +162,7 @@ xray_injectdns() {
 start_rules() {
 	config_load $NAME
 	/usr/bin/${NAME}-rules \
-		-s "$(config_foreach get_server_ips servers | sort -u)" \
+		-s "$(for it in $(uci_get_by_type general server); do get_server_ips $it; done | sort -u)" \
 		-l "$(uci_get_by_type transparent_proxy local_port 1234)" \
 		-B "$(uci_get_by_type access_control wan_bp_list)" \
 		-b "$(uci_get_by_type access_control wan_bp_ips)" \
@@ -520,14 +520,14 @@ gen_server_config() {
 }
 
 gen_config_outbounds() {
-	cat <<-EOF | sed 's+,    +,\n    +g;s+},__$+}+g'
+	cat <<-EOF | sed 's+,    +,\n    +g'
 		  "outbounds": [
+					$(for server in $(uci_get_by_type general server); do gen_server_config $server; done)
 		    {
 		      "protocol": "blackhole",
 		      "settings": {},
 		      "tag": "blackhole"
-		    },
-					$(for server in $(uci_get_by_type general server); do gen_server_config $server; done)__
+		    }
 		  ],
 	EOF
 }

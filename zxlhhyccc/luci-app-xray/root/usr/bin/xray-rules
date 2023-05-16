@@ -210,7 +210,11 @@ gen_prerouting_rules() {
 }
 
 resolveip() {
-	ping -q -c 1 -s 0 -W 1 -w 1 $1 2>/dev/null | sed '1{s/[^(]*(//; s/).*//;q}' | sed 's/[^(]*(//; s/).*//'
+	if echo $1 | grep -q '[0-9]$'; then
+		echo $1
+	else
+		ping -q -c 1 -s 0 -W 1 -w 1 $1 2>/dev/null | sed '1{s/[^(]*(//; s/).*//;q}' | sed 's/[^(]*(//; s/).*//'
+	fi
 }
 
 while getopts ":s:l:S:L:B:b:W:w:I:d:a:e:oOuUfh" arg; do
