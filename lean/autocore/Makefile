@@ -23,7 +23,7 @@ define Package/autocore
   DEPENDS:=@(aarch64||arm||i386||i686||x86_64) \
     +TARGET_bcm27xx:bcm27xx-userland \
     +TARGET_bcm53xx:nvram \
-    +TARGET_mvebu:mhz \
+    +(TARGET_mediatek_filogic||TARGET_mvebu):mhz \
     +TARGET_x86:ethtool \
     +TARGET_x86:lm-sensors
   PROVIDES:=autocore-arm autocore-x86
@@ -47,7 +47,7 @@ endif
 
 	$(INSTALL_DIR) $(1)/sbin
 	$(INSTALL_BIN) ./files/generic/cpuinfo $(1)/sbin/
-ifneq ($(filter ipq% %mt7622, $(TARGETID)),)
+ifneq ($(filter ipq% mediatek%, $(TARGETID)),)
 	$(INSTALL_BIN) ./files/arm/tempinfo $(1)/sbin/
 endif
 
