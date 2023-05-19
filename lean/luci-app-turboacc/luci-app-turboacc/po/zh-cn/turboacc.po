@@ -19,11 +19,8 @@ msgstr "基于软件的 Routing/NAT 分载"
 msgid "Hardware flow offloading"
 msgstr "硬件流量分载"
 
-msgid "Requires hardware NAT support, implemented at least for mt762x"
-msgstr "需要硬件 NAT 支持，目前 mt762x 已实现"
-
-msgid "Requires hardware support, implemented at least for Filogic 8x0"
-msgstr "需要硬件支持，目前 Filogic 8x0 已实现"
+msgid "Requires hardware NAT support. Implemented at least for mt762x"
+msgstr "需要硬件 NAT 支持。目前 mt762x 已实现"
 
 msgid "Shortcut-FE flow offloading"
 msgstr "Shortcut-FE 流量分载"
@@ -94,6 +91,7 @@ msgstr "DNS 解析程序,使用 AdGuardHome 解析登录的用户名/密码：Ad
 msgid "Using PDNSD to query and cache"
 msgstr "使用 PDNSD 解析"
 
+
 msgid "Using DNSForwarder to query and cache"
 msgstr "使用 DNSForwarder 解析"
 
@@ -129,9 +127,6 @@ msgstr "高性能模式"
 
 msgid "DNS Caching"
 msgstr "DNS 缓存"
-
-msgid "MTK WED WO offloading"
-msgstr "MTK 无线硬件加速"
 
 msgid "AdGuardHome Anti-AD"
 msgstr "AdGuardHome 去广告"
