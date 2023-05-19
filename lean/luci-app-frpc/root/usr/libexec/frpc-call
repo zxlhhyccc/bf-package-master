@@ -5,10 +5,15 @@ NAME=frpc
 action=$1
 shift
 
+log_file="$(uci -q get $NAME.common.log_file)"
+list_file="${log_file:-/var/log/frpc.log}"
+
 case "$action" in
+	clear_log)
+		> $list_file
+	;;
 	tail)
-		log_file="$(uci -q get $NAME.common.log_file)"
-		tail -n 50 "${log_file:-/var/log/frpc.log}"
+		tail -n 5000 "$list_file"
 	;;
 esac
 

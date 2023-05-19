@@ -149,6 +149,7 @@ var callServiceList = rpc.declare({
 
 function getServiceStatus() {
 	return L.resolveDefault(callServiceList('frpc'), {}).then(function (res) {
+		console.log(res);
 		var isRunning = false;
 		try {
 			isRunning = res['frpc']['instances']['instance1']['running'];

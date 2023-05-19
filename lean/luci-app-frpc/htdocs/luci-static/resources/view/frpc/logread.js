@@ -2,71 +2,130 @@
 'require dom';
 'require fs';
 'require poll';
+'require uci';
 'require view';
-
-var css = '				\
-#log_textarea {				\
-	padding: 10px;			\
-	text-align: left;		\
-}					\
-#log_textarea pre {			\
-	padding: .5rem;		\
-	word-break: break-all;		\
-	margin: 0;			\
-}					\
-.description {				\
-	background-color: #33ccff;	\
-}';
-
-function pollLog(e) {
-	return Promise.all([
-			fs.exec_direct('/usr/libexec/frpc-call', [ 'tail' ]).then(function(res) {
-				return res.trim()
-			}),
-			fs.exec_direct('/sbin/logread', [ '-e', 'frpc' ]).then(function(res) {
-				return res.trim()
-			})
-		]).then(function(data) {
-			var t = E('pre', { 'wrap': 'pre' }, [
-				E('div', { 'class': 'description' }, _('Last 50 lines of log file:')),
-				E('br'),
-				data[0] || _('No log data.'),
-				E('br'),
-				E('br'),
-				E('div', { 'class': 'description' }, _('Last 50 lines of syslog:')),
-				E('br'),
-				data[1] || _('No log data.')
-			]);
-			dom.content(e, t);
-		});
-};
+'require form';
 
 return view.extend({
-	render: function() {
+	render: function () {
+		var css = `
+			#log_textarea {
+				margin-top: 10px;
+			}
+			#log_textarea pre {
+				background-color: #f7f7f7;
+				color: #333;
+				padding: 10px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				font-family: Consolas, Menlo, Monaco, monospace;
+				font-size: 14px;
+				line-height: 1.5;
+				white-space: pre-wrap;
+				word-wrap: break-word;
+				overflow-y: auto;
+				max-height: 400px;
+			}
+			#.description {
+				background-color: #33ccff;
+			}
+			.cbi-button-danger {
+				background-color: #fff;
+				color: #f00;
+				border: 1px solid #f00;
+				border-radius: 4px;
+				padding: 4px 8px;
+				font-size: 14px;
+				cursor: pointer;
+				margin-top: 10px;
+			}
+			.cbi-button-danger:hover {
+				background-color: #f00;
+				color: #fff;
+			}
+			.cbi-section small {
+				margin-left: 10px;
+			}
+			.cbi-section .cbi-section-actions {
+				margin-top: 10px;
+			}
+			.cbi-section .cbi-section-actions-right {
+				text-align: right;
+			}
+		`;
+
+
 		var log_textarea = E('div', { 'id': 'log_textarea' },
 			E('img', {
 				'src': L.resource(['icons/loading.gif']),
-				'alt': _('Loading'),
+				'alt': _('Loading...'),
 				'style': 'vertical-align:middle'
-			}, _('Collecting data...'))
+			}, _('数据收集中...'))
 		);
 
-		poll.add(pollLog.bind(this, log_textarea));
-		return E([
-			E('style', [ css ]),
-			E('div', {'class': 'cbi-map'}, [
-				E('h2', {'name': 'content'}, '%s - %s'.format(_('frpc'), _('Log Data'))),
-				E('div', {'class': 'cbi-section'}, [
-					log_textarea,
-					E('div', {'style': 'text-align:right'},
-						E('small', {}, _('Refresh every %s seconds.').format(L.env.pollinterval))
-					)
-				])
+		var clear_log_button = E('div', {}, [
+			E('button', {
+				'class': 'cbi-button cbi-button-danger',
+				'click': function (ev) {
+					ev.preventDefault();
+					var button = ev.target;
+					button.disabled = true;
+					button.textContent = _('清除日志...');
+					fs.exec_direct('/usr/libexec/frpc-call', ['clear_log'])
+						.then(function () {
+							button.textContent = _('日志清除成功！');
+							setTimeout(function () {
+								button.disabled = false;
+								button.textContent = _('清除日志');
+							}, 5000);
+							// 立即刷新日志显示框
+							var log = E('pre', { 'wrap': 'pre' }, [_('Log is clean.')]);
+							dom.content(log_textarea, log);
+						})
+						.catch(function () {
+							button.textContent = _('Failed to clear log.');
+							setTimeout(function () {
+								button.disabled = false;
+								button.textContent = _('清除日志');
+							}, 5000);
+						});
+				}
+			}, _('清除日志'))
+		]);
+
+
+		poll.add(L.bind(function () {
+			return fs.exec_direct('/usr/libexec/frpc-call', [ 'tail' ])
+				.then(function (res) {
+					var log = E('pre', { 'wrap': 'pre' }, [res.trim() || _('Log is clean.')]);
+
+					dom.content(log_textarea, log);
+					log.scrollTop = log.scrollHeight;
+				}).catch(function (err) {
+					var log;
+
+					if (err.toString().includes('NotFoundError')) {
+						log = E('pre', { 'wrap': 'pre' }, [_('Log file does not exist.')]);
+					} else {
+						log = E('pre', { 'wrap': 'pre' }, [_('Unknown error: %s').format(err)]);
+					}
+
+					dom.content(log_textarea, log);
+				});
+		}));
+
+		return E('div', { 'class': 'cbi-map' }, [
+			E('style', [css]),
+			E('div', { 'class': 'cbi-section' }, [
+				clear_log_button,
+				log_textarea,
+				E('small', {}, _('每 5 秒刷新一次 ').format(L.env.pollinterval)),
+				E('div', { 'class': 'cbi-section-actions cbi-section-actions-right' })
 			])
 		]);
 	},
 
-	handleSave: null,
 	handleSaveApply: null,
+	handleSave: null,
 	handleReset: null
 });
