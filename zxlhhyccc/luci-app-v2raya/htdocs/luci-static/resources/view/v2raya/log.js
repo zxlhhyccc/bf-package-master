@@ -24,7 +24,7 @@ return view.extend({
 				white-space: pre-wrap;
 				word-wrap: break-word;
 				overflow-y: auto;
-				max-height: 400px;
+				max-height: 800px;
 			}
 			#.description {
 				background-color: #33ccff;
