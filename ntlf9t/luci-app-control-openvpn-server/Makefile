@@ -11,7 +11,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=LuCI support for OpenVPN Server
-  DEPENDS:=+openvpn-openssl +openvpn-easy-rsa-whisky +luci-compat
+  DEPENDS:=+openvpn-server-openssl +openvpn-easy-rsa-whisky +luci-compat
   PKGARCH:=all
 endef
 
