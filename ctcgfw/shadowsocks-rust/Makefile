@@ -13,8 +13,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-rust.git
-PKG_SOURCE_VERSION:=bf5d9a909acc04c93405729542f5f0c9de31121f
-PKG_MIRROR_HASH:=2026ab569b52ef37ce0f7584d77b5431cd9fe9f455c777d4a71f1b41f04d2b22
+PKG_SOURCE_VERSION:=736df148ebb7387741b0745f250748d8cccf1a2e
+PKG_MIRROR_HASH:=2afac22d418bc0bb8a7786cf4ac166155926e128b6d9ee8d76d4377fce0add12
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
 # PKG_HASH:=25d7a099ab09425c27c6543dbbddc38f65ab382e8353d51c695add91b4ced61f
@@ -29,7 +29,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=rust/host
 
-RUST_PKG_FEATURES:=aead-cipher-2022 default ipnet local local-dns local-flow-stat local-http local-redir local-socks4 local-tun local-tunnel log4rs logging manager multi-threaded qrcode server trust-dns utility
+RUST_PKG_FEATURES:=local server manager service trust-dns logging local-dns local-http local-redir local-tunnel local-socks4 local-tun multi-threaded aead-cipher-2022 aead-cipher-2022-extra security-replay-attack-detect
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
