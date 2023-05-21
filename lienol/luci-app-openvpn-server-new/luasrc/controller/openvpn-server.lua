@@ -5,7 +5,7 @@ function index()
     if not nixio.fs.access("/etc/config/luci-app-openvpn-server") then return end
 
     entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
-    entry({"admin", "vpn", "openvpn-server"}, alias("admin", "vpn", "openvpn-server", "settings"), _("OpenVPN Server"), 50).acl_depends = { "luci-app-openvpn-server" }
+    entry({"admin", "vpn", "openvpn-server"}, alias("admin", "vpn", "openvpn-server", "settings"), _("OpenVPN Server"), 50).acl_depends = { "luci-app-openvpn-server-new" }
     entry({"admin", "vpn", "openvpn-server", "settings"}, cbi("openvpn-server/settings"), _("Server"), 10).leaf = true
     entry({"admin", "vpn", "openvpn-server", "user"}, cbi("openvpn-server/user")).leaf = true
     entry({"admin", "vpn", "openvpn-server", "online"}, cbi("openvpn-server/online"), _("Online Users"), 11).leaf = true
