@@ -42,8 +42,8 @@ define Package/openvpn-server/Default
   PROVIDES:=openvpn openvpn-crypto
 endef
 
-Package/openvpn-server-openssl=$(call Package/openvpn-server/Default,openssl,OpenSSL,+PACKAGE_openvpn-openssl:libopenssl)
-Package/openvpn-server-mbedtls=$(call Package/openvpn-server/Default,mbedtls,mbedTLS,+PACKAGE_openvpn-mbedtls:libmbedtls)
+Package/openvpn-server-openssl=$(call Package/openvpn-server/Default,openssl,OpenSSL,+PACKAGE_openvpn-server-openssl:libopenssl)
+Package/openvpn-server-mbedtls=$(call Package/openvpn-server/Default,mbedtls,mbedTLS,+PACKAGE_openvpn-server-mbedtls:libmbedtls)
 Package/openvpn-server-wolfssl=$(call Package/openvpn-server/Default,wolfssl,WolfSSL \(experimental\),+PACKAGE_openvpn-server-wolfssl:libwolfssl)
 
 define Package/openvpn-server/config/Default
