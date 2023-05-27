@@ -1,33 +1,21 @@
-# Copyright (C) 2016 Openwrt.org
+#
+# Copyright (C) 2020 xxx <xxx@xxx.com>
 #
 # This is free software, licensed under the Apache License, Version 2.0 .
 #
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI support for Wrtbwmon
-LUCI_DEPENDS:=+luci +wrtbwmon
-LUCI_PKGARCH:=all
+PKG_NAME:=luci-app-wrtbwmon
+PKG_VERSION:=2.0.12
 
 PKG_LICENSE:=Apache-2.0
-PKG_MAINTAINER:=Peter Bailey <peter.eldridge.bailey+wrtbwmon@gmail.com>
+PKG_MAINTAINER:=
 
-PKG_NAME:=luci-app-wrtbwmon
-PKG_VERSION:=1.0
-PKG_RELEASE:=8
-
-URL:=https://github.com/Kiougar/luci-wrtbwmon
-
-define Package/luci-app-wrtbwmon/conffiles
-/etc/config/wrtbwmon
-endef
+LUCI_TITLE:=A Luci module that uses wrtbwmon to track bandwidth usage
+LUCI_DEPENDS:=+wrtbwmon
+LUCI_PKGARCH:=all
 
 include $(TOPDIR)/feeds/luci/luci.mk
-
-define Package/luci-app-wrtbwmon/postinst
-#!/bin/sh
-#__remove_luci_cache__
-rm -rf /tmp/luci*
-endef
 
 # call BuildPackage - OpenWrt buildroot signature
