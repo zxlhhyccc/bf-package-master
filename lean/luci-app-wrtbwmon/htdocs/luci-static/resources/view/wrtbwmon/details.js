@@ -8,7 +8,7 @@
 'require view';
 
 var cachedData = [];
-var luciConfig = '/etc/luci-wrtbwmon.conf';
+var luciConfig = '/etc/config/luci-wrtbwmon.conf';
 var hostNameFile = '/etc/wrtbwmon.user';
 var columns = {
 	thClient: _('Clients'),
