@@ -337,7 +337,8 @@ cert_ignore_timestamp,true
         config_get_bool cache_mode              $section 'cache_mode'    '1'
         config_get_bool selfsign                $section 'selfsign'      '0'
 
-        if [ $cache_mode -eq 1 ] ; then
+        # if [ $cache_mode -eq 1 ]; then
+        if [ $cache_mode -eq 0 ]; then
             local redirect_https site_addr schema port
             redirect_https="$(uci_get uhttpd     main       redirect_https     '0')"
             site_addr="$(uci_get      uhttpd     main       listen_https        '[::]:80')"
