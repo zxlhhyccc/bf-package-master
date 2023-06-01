@@ -72,11 +72,6 @@ define Package/cloudflared/conffiles
 /etc/cloudflared/
 endef
 
-define Build/Prepare
-	$(call Build/Prepare/Default)
-	$(RM) -r $(PKG_BUILD_DIR)/vendor
-endef
-
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_CLOUDFLARED_COMPRESS_UPX),y)
