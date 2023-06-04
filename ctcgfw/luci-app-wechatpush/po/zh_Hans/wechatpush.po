@@ -57,11 +57,11 @@ msgid "Push Mode"
 msgstr "推送模式"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:135
-msgid "WeChat wechatpush"
+msgid "WeChat serverchan"
 msgstr "微信 Server 酱"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:136
-msgid "Using wechatpush API, simple configuration, supports multiple push methods"
+msgid "Using serverchan API, simple configuration, supports multiple push methods"
 msgstr "使用 Server酱 接口，配置较简单，支持多项推送方式"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:137
@@ -712,6 +712,14 @@ msgstr "首次登录后推送通知，在设定时间内不再重复提醒<br/>�
 msgid "Login reminder whitelist"
 msgstr "登录提醒白名单"
 
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:689
+msgid "Login reminder log anti-flooding"
+msgstr "登录提醒日志免刷屏"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:690
+msgid "Users in the whitelist or during the undisturbed time period after their first login IP will be exempt from log recording, preventing log flooding."
+msgstr "白名单列表内的用户，或者登录 IP 处于首次登录后的免打扰时段，不做日志记录，避免日志刷屏"
+
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:688
 msgid "Do not send login events from IP addresses in the list, and ignore blacklisting operations. Only record in the log. Mask bit representation is not supported at the moment."
 msgstr "不对列表内 IP 登录事件推送，并忽略拉黑操作，仅在日志中记录，暂不支持掩码位表示"
@@ -796,13 +804,21 @@ msgstr "返回的温度值为空"
 msgid "Fetch failed："
 msgstr "获取失败："
 
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:82
+msgid "Assist in obtaining device information"
+msgstr "辅助获取设备列表"
+
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:83
-msgid "Get host information from the optical modem"
+msgid "Retrieve hostname list from modem"
 msgstr "从光猫获取主机名等信息"
 
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:84
+msgid "Scan local IP"
+msgstr "扫描局域网 IP"
+
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:86
-msgid "Suitable for OpenWrt used as a bypass gateway when unable to obtain device hostnames and complete LAN device lists.<br/>Tested only on HG5143F/HN8145V China Telecom optical modems, universality is not guaranteed."
-msgstr "适用于 OpenWrt 作为旁路网关，无法获取设备主机名及完整的局域网设备列表时<br/>仅测试通过 HG5143F/HN8145V 天翼网关，不保证通用性"
+msgid "When OpenWrt is used as a bypass gateway and cannot obtain device hostnames or a complete list of local network devices.<br/>the \"Retrieve hostname list from modem\" option has only been tested with HG5143F/HN8145V China Telecom gateways and may not be universally applicable.<br/>The \"Scan local IP\" option may not retrieve hostnames, so please use device name annotations in conjunction with it."
+msgstr "适用于 OpenWrt 作为旁路网关，无法获取设备主机名及完整的局域网设备列表时<br/>\"从光猫获取主机名列表\"选项仅测试通过 HG5143F/HN8145V 天翼网关，不保证通用性<br/>\"定期扫描局域网 IP\"选项可能无法获取主机名，请配合设备名备注使用"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:88
 msgid "Optical modem login URL"
@@ -849,78 +865,82 @@ msgid "Use a regular account, no need for super password"
 msgstr "使用普通账号即可，不需要超密"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:126
-msgid "Interval for capturing optical modem information"
-msgstr "抓取光猫信息时间间隔"
+msgid "IP range to be scanned"
+msgstr "需要扫描的 IP 段"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:130
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:131
+msgid "Interval for capturing info"
+msgstr "抓取信息时间间隔"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:135
 msgid "Generally, frequent capturing is not necessary. Adjust it as needed."
 msgstr "一般不需要频繁抓取，酌情设置"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:133
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:139
 msgid "Unattended tasks"
 msgstr "无人值守任务"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:136
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:142
 msgid "Please make sure the script can run properly, otherwise it may cause frequent restarts and other errors!"
 msgstr "请确认脚本可以正常运行，否则可能造成频繁重启等错误！"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:138
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:144
 msgid "Restart zerotier after IP change"
 msgstr "IP 变化后重启 zerotier"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:139
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:145
 msgid "An old issue with zerotier<br/>Cannot reconnect after disconnection, emmm, I don't know if it has been fixed now."
 msgstr "zerotier 的陈年老问题<br/>断网后不能重新打洞，emmm，我也不知道修了没有"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:142
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:148
 msgid "Redial only during Do-Not-Disturb period"
 msgstr "仅在免打扰时段重拨"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:145
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:151
 msgid "Avoid redialing network during the day to prevent waiting for DDNS domain resolution. This feature does not affect disconnection detection.<br/>Due to the issue of certain apps consuming excessive data at night, this feature may be unstable."
 msgstr "避免在白天重拨网络造成 DDNS 域名等待解析，此功能不影响断网检测<br/>因夜间某些 APP 偷跑流量问题，该功能可能不稳定"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:150
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:156
 msgid "Will only be executed when none of the devices in the list are online.<br/>After an hour of Do-Not-Disturb period, if the devices in the focus list have low traffic (around 100kb/m) for five minutes, they will be considered offline."
 msgstr "只会在列表中设备都不在线时才会执行<br/>免打扰时段一小时后，关注设备五分钟低流量（约100kb/m）将视为离线"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:154
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:160
 msgid "When the network is disconnected"
 msgstr "网络断开时"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:156
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:164
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:162
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:170
 msgid "No operation"
 msgstr "无操作"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:157
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:165
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:163
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:171
 msgid "Restart the router"
 msgstr "重启路由器"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:158
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:166
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:164
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:172
 msgid "Redialing network"
 msgstr "重新拨号"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:159
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:165
 msgid "Option 1 and Option 2 will not modify settings and will try a maximum of 2 times.<br/>【!!This feature cannot guarantee compatibility!!】"
 msgstr "选项 1 选项 2 不会修改设置，并最多尝试 2 次。<br/>【！！此功能无法保证兼容性！！】"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:162
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:168
 msgid "Scheduled reboot"
 msgstr "定时重启"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:169
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:175
 msgid "System uptime greater than"
 msgstr "系统运行时间大于"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:173
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:180
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:179
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:186
 msgid "Unit: hours"
 msgstr "单位为小时"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:176
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:182
 msgid "Network uptime greater than"
 msgstr "网络在线时间大于"
 
