@@ -62,7 +62,7 @@ index 3c17502..b844b93 100644
 \ No newline at end of file
 +</div>
 diff --git a/luasrc/view/bypass/ssrurl.htm b/luasrc/view/bypass/ssrurl.htm
-index 0f2c7e3..306de30 100644
+index ef2f80c..4a0b573 100644
 --- a/luasrc/view/bypass/ssrurl.htm
 +++ b/luasrc/view/bypass/ssrurl.htm
 @@ -69,9 +69,9 @@ function export_ssr_url(btn, urlname, sid) {
@@ -87,7 +87,7 @@ index 0f2c7e3..306de30 100644
  		}
  		s.innerHTML = "";
 @@ -118,7 +118,7 @@ function import_ssr_url(btn, urlname, sid) {
- 			document.getElementsByName('cbid.bypass.' + sid + '.insecure')[0].checked = (params.get("insecure") === "1");
+ 			document.getElementsByName('cbid.bypass.' + sid + '.insecure')[0].checked = params.get("insecure") ? true : false;
  			document.getElementsByName('cbid.bypass.' + sid + '.alias')[0].value = url.hash ? decodeURIComponent(url.hash.slice(1)) : "";
  
 -			s.innerHTML = "<font color='green'><%:Import configuration information successfully.%></font>";
@@ -140,7 +140,7 @@ index 0f2c7e3..306de30 100644
  			return false;
  		case "vless":
  			try {
-@@ -349,10 +349,10 @@ function import_ssr_url(btn, urlname, sid) {
+@@ -356,10 +356,10 @@ function import_ssr_url(btn, urlname, sid) {
  				}
  				break;
  			}
