@@ -51,6 +51,14 @@ o = s:option(Flag, "enable", translate("Enable"),
 o.default = false
 o.optional = false
 
+o = s:option(ListValue, "user_name", translate("Run daemon as user"))
+o.description = translate("The default is root, Other user it may cause permission denied.")
+local user_name
+--o:value("")
+for user_name in luci.util.execi("cat /etc/passwd | cut -d ':' -f1") do
+	o:value(user_name)
+end
+
 o = s:option(DummyValue,"dnscrypt_bin", translate("Binary update"))
 o.rawhtml  = true
 o.template = "dnscrypt-proxy/refresh"

@@ -1,6 +1,7 @@
 
 config dnscrypt-proxy 'ns1'
 	option enable '0'
+	option user_name 'root'
 	list resolvers 'public-resolvers'
 	option netprobe_address '114.114.114.114:53'
 	option bootstrap_resolvers '223.5.5.5:53,114.114.114.114:53'
@@ -127,4 +128,67 @@ config server_addr
 	option ports '8443'
 	option proto 'DNSCrypt'
 	option stamp 'sdns://AQYAAAAAAAAAEzE0OS4xMTIuMTEyLjEyOjg0NDMgZ8hHuMh1jNEgJFVDvnVnRt803x2EwAuMRwNo34Idhj4ZMi5kbnNjcnlwdC1jZXJ0LnF1YWQ5Lm5ldA'
+
+config server_addr
+	option alias 'mullvad-doh.Unkown@DoH'
+	option country 'Unkown'
+	option name 'mullvad-doh'
+	option addrs 'doh.mullvad.net'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgcAAAAAAAAAAAAPZG9oLm11bGx2YWQubmV0Ci9kbnMtcXVlcnk'
+
+config server_addr
+	option alias 'saldns01-conoha-ipv4.Japan@DNSCrypt'
+	option country 'Japan'
+	option name 'saldns01-conoha-ipv4'
+	option addrs '118.27.108.140'
+	option ports '50443'
+	option proto 'DNSCrypt'
+	option stamp 'sdns://AQcAAAAAAAAAFDExOC4yNy4xMDguMTQwOjUwNDQzIPL_JdttytAhcocG8vZH5EVk-uQKKose72bD0ji5G-xlIjIuZG5zY3J5cHQtY2VydC5zYWxkbnMwMS50eXBlcS5vcmc'
+
+config server_addr
+	option alias 'saldns03-conoha-ipv4.Japan@DNSCrypt'
+	option country 'Japan'
+	option name 'saldns03-conoha-ipv4'
+	option addrs '133.130.98.250'
+	option ports '50443'
+	option proto 'DNSCrypt'
+	option stamp 'sdns://AQcAAAAAAAAAFDEzMy4xMzAuOTguMjUwOjUwNDQzIFl1NfOwMd24kRlr0mXR4rKo-c_jMV7DBUVooDEY1xFeIjIuZG5zY3J5cHQtY2VydC5zYWxkbnMwMy50eXBlcS5vcmc'
+
+config server_addr
+	option alias 'jp.tiar.app.Japan@DNSCrypt'
+	option country 'Japan'
+	option name 'jp.tiar.app'
+	option addrs '172.104.93.80'
+	option ports '1443'
+	option proto 'DNSCrypt'
+	option stamp 'sdns://AQcAAAAAAAAAEjE3Mi4xMDQuOTMuODA6MTQ0MyAyuHY-8b9lNqHeahPAzW9IoXnjiLaZpTeNbVs8TN9UUxsyLmRuc2NyeXB0LWNlcnQuanAudGlhci5hcHA'
+
+config server_addr
+	option alias 'dns.sb.Unknown@DoH'
+	option country 'Unknown'
+	option name 'dns.sb'
+	option addrs '185.222.222.222,185.222.222.222'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgcAAAAAAAAADzE4NS4yMjIuMjIyLjIyMiCaOjT3J965vKUQA9nOnDn48n3ZxSQpAcK6saROY1oCGQ8xODUuMjIyLjIyMi4yMjIKL2Rucy1xdWVyeQ'
+
+config server_addr
+	option alias 'iij.Japan@DoH'
+	option country 'Japan'
+	option name 'iij'
+	option addrs 'public.dns.iij.jp,103.2.57.5'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgEAAAAAAAAACjEwMy4yLjU3LjUgmOPV5TavKVjNL38U9wTvSidtJeM81l8uZfXk8nJ8EzARcHVibGljLmRucy5paWouanAKL2Rucy1xdWVyeQ'
+
+config server_addr
+	option alias 'adguard-dns-unfiltered-doh.France@DoH'
+	option country 'France'
+	option name 'adguard-dns-unfiltered-doh'
+	option addrs 'dns-unfiltered.adguard.com,94.140.14.140'
+	option ports '443'
+	option proto 'DoH'
+	option stamp 'sdns://AgcAAAAAAAAADTk0LjE0MC4xNC4xNDAgmjo09yfeubylEAPZzpw5-PJ92cUkKQHCurGkTmNaAhkaZG5zLXVuZmlsdGVyZWQuYWRndWFyZC5jb20KL2Rucy1xdWVyeQ'
 

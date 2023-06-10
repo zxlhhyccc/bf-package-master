@@ -7,6 +7,12 @@ msgstr "启用"
 msgid "Subscription needs to be configured before running for the first time."
 msgstr "首次运行前需要先配置订阅。"
 
+msgid "Run daemon as user"
+msgstr "以此用户权限运行"
+
+msgid "The default is root, Other user it may cause permission denied."
+msgstr "默认为 root，其他用户可能引起权限不足问题。"
+
 msgid "Disable"
 msgstr "停用"
 
@@ -421,6 +427,12 @@ msgstr "多个值以英文逗号分隔"
 msgid "MiniSign Key"
 msgstr "Mini 验证"
 
+msgid "Cache update"
+msgstr "缓存更新"
+
+msgid "The cache check interval is less than 24 hours will have no effect. The maximum delay is 168 hours (1 week) to ensure the freshness of the cache."
+msgstr "缓存检查间隔小于 24 小时无效。最大延迟为 168 小时(1 周)，以确保缓存的新鲜度。"
+
 msgid "Resolvers singed by:"
 msgstr "订阅源签名公钥："
 
@@ -432,6 +444,12 @@ msgstr "使用缓存文件，主要用来解决在订阅源无法正常获取时
 
 msgid "Selfsign Resolvers"
 msgstr "自签订阅"
+
+msgid "Change this only on filtering the resolvers: "
+msgstr "仅在过滤解析器时更改此设置: "
+
+msgid "Configure file version."
+msgstr "配置文件版本。"
 
 msgid "Mostly useful for build your own resolvers list on net probe fails. minisign binary needed:"
 msgstr "主要用于自定义的服务器订阅，需要安装 minisign 应用："

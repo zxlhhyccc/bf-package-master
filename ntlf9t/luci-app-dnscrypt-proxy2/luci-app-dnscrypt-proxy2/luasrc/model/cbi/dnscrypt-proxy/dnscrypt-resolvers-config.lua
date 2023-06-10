@@ -82,6 +82,11 @@ o.placeholder = o.default
 o.rmempty = false
 o:depends("selfsign", false)
 
+o = s:option(Value, "refresh_delay", translate("Cache update"), translate("The cache check interval is less than 24 hours will have no effect. The maximum delay is 168 hours (1 week) to ensure the freshness of the cache."))
+o.optional = true
+o.default = "72"
+o.rmempty = true
+
 o = s:option(Value, "prefix", translate("Prefix"), translate("Change this only on filtering the resolvers: "))
 o.optional = true
 o.placeholder = "eg: quad9-"
