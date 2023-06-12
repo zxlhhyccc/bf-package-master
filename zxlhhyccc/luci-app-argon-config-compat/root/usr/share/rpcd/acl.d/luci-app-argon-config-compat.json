@@ -1,6 +1,6 @@
 {
-    "luci-app-argon-config": {
-        "description": "Grant UCI access for luci-app-argon-config",
+    "luci-app-argon-config-compat": {
+        "description": "Grant UCI access for luci-app-argon-config-compat",
         "read": {
             "uci": [ "argon" ]
         },
