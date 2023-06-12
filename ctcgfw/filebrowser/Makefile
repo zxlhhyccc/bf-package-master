@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filebrowser
 PKG_VERSION:=2.23.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/filebrowser/filebrowser.git
@@ -92,8 +92,7 @@ define Build/Compile
 	( \
 		pushd "$(PKG_BUILD_DIR)/frontend" ; \
 		npm ci; \
-		npm run lint ; \
-		npm run build ; \
+		NODE_OPTIONS=--openssl-legacy-provider npm run build ; \
 		popd ; \
 		$(call GoPackage/Build/Compile) ; \
 	)
