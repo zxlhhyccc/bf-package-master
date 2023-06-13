@@ -1,25 +1,32 @@
 #
+# Copyright (C) 2015-2016 OpenWrt.org
 # This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
+# See /LICENSE.txt for more information.
 #
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=AdGuardHome
 PKG_VERSION:=0.107.31
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/AdguardTeam/AdGuardHome/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=38e2ad4ffd8b91bcc6ce9d8fcfcf4d9b9b7667fe9c4f535980eb3c8a8076c903
-PKG_BUILD_DIR:=$(BUILD_DIR)/AdGuardHome-$(PKG_VERSION)
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=v$(PKG_VERSION)
+PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome
+PKG_MIRROR_HASH:=c4846fec2a1e3414387348b4e5cc44243e1fa69f6bf02e5731ed3b8bd1d9d0a2
+
+# PKG_SOURCE_PROTO:=git
+# PKG_SOURCE_URL:=https://github.com/AdguardTeam/AdGuardHome.git
+# PKG_SOURCE_VERSION:=a21558f418b4fa4135b1220759eff88c6077ae94
+#PKG_MIRROR_HASH:=bb4d5369dccb0ee7ca24ebb9bfdc5d8276a0ed8273e452936e91d06d5d44f0b8
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE.txt
 PKG_MAINTAINER:=Dobroslaw Kijowski <dobo90@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host
+PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
 PKG_BUILD_PARALLEL:=1
+# PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 PKG_CONFIG_DEPENDS:= \
@@ -27,16 +34,18 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_ADGUARDHOME_COMPRESS_UPX
 
 GO_PKG:=github.com/AdguardTeam/AdGuardHome
-GO_PKG_BUILD_PKG:=$(GO_PKG)
+# GO_PKG_EXCLUDES:=internal/dhcpd/standalone
+GO_PKG_BUILD_PKG:=github.com/AdguardTeam/AdGuardHome
 
 AGH_BUILD_TIME:=$(shell date -d @$(SOURCE_DATE_EPOCH) +%FT%TZ%z)
+AGH_VERSION_PKG:=github.com/AdguardTeam/AdGuardHome/internal/version
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/internal/version.channel=release \
-	$(GO_PKG)/internal/version.version=v$(PKG_VERSION) \
-	$(GO_PKG)/internal/version.buildtime=$(AGH_BUILD_TIME) \
-	$(GO_PKG)/internal/version.goarm=$(GO_ARM) \
-	$(GO_PKG)/internal/version.gomips=$(GO_MIPS)
+	$(AGH_VERSION_PKG).channel=release \
+	$(AGH_VERSION_PKG).version=v$(PKG_VERSION) \
+	$(AGH_VERSION_PKG).buildtime=$(AGH_BUILD_TIME) \
+	$(AGH_VERSION_PKG).goarm=$(GO_ARM) \
+	$(AGH_VERSION_PKG).gomips=$(GO_MIPS)
 
 ifneq ($(findstring $(ARCH),mips mipsel),)
 	ADG_CONF_NAME:=small_flash
@@ -60,10 +69,10 @@ define Package/AdGuardHome/conffiles
 endef
 
 define Package/AdGuardHome/description
-  Free and open source, powerful network-wide ads and trackers blocking DNS server.
+Free and open source, powerful network-wide ads and trackers blocking DNS server.
 endef
 
-define Package/AdGuardHome/config
+define Package/$(PKG_NAME)/config
 config ADGUARDHOME_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
@@ -79,34 +88,25 @@ export GO111MODULE=on
 export GOPROXY=https://goproxy.cn
 endif
 
-FRONTEND_FILE:=$(PKG_NAME)-frontend-$(PKG_VERSION).tar.gz
-define Download/AdGuardHome-frontend
-	URL:=https://github.com/AdguardTeam/AdGuardHome/releases/download/v$(PKG_VERSION)/
-	URL_FILE:=AdGuardHome_frontend.tar.gz
-	FILE:=$(FRONTEND_FILE)
-	HASH:=917119e2ae846397a6857f0aa02f4ae501562d28b409a4131d682de3277fa2ff
-endef
-
-define Build/Prepare
-	$(call Build/Prepare/Default)
-
-	gzip -dc $(DL_DIR)/$(FRONTEND_FILE) | $(HOST_TAR) -C $(PKG_BUILD_DIR)/ $(TAR_OPTIONS)
-endef
-
 define Build/Compile
-	$(call GoPackage/Build/Compile)
+	( \
+		pushd $(PKG_BUILD_DIR) ; \
+		NODE_OPTIONS=--openssl-legacy-provider make js-deps js-build ; \
+		popd ; \
+		$(call GoPackage/Build/Compile) ; \
+	)
 ifeq ($(CONFIG_ADGUARDHOME_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome
 endif
 endef
 
 define Package/AdGuardHome/install
-	$(call GoPackage/Package/Install/Bin,$(1))
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/etc/AdGuardHome
-
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome $(1)/usr/bin/AdGuardHome
 	$(INSTALL_CONF) ./conf/$(ADG_CONF_NAME).yaml $(1)/etc/AdGuardHome/AdGuardHome.yaml
 endef
 
-$(eval $(call Download,AdGuardHome-frontend))
 $(eval $(call GoBinPackage,AdGuardHome))
 $(eval $(call BuildPackage,AdGuardHome))
