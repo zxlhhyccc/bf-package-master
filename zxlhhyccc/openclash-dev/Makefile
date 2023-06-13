@@ -6,7 +6,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openclash
+PKG_NAME:=openclash-dev
 PKG_VERSION:=v1.16.0
 PKG_RELEASE:=15-g289025c
 
@@ -35,12 +35,12 @@ ifeq ($(BOARD),kirkwood)
 	OPENCLASH_ARCH:=armv5
 endif
 ifeq ($(ARCH),aarch64)
-	OPENCLASH_ARCH:=armv8
+	OPENCLASH_ARCH:=arm64
 endif
 
-PKG_LICENSE:=Apache-2.0
+PKG_LICENSE:=MIT
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)-$(PKG_RELEASE)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
 # PKG_SOURCE:=clash-linux-$(OPENCLASH_ARCH).tar.gz
 # PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/Clash/
 PKG_HASH:=skip

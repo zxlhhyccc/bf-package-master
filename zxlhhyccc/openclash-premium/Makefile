@@ -6,7 +6,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openclash-tun
+PKG_NAME:=openclash-premium
 PKG_VERSION:=2023.05.29
 PKG_RELEASE:=4-ga3a6670
 
@@ -35,12 +35,12 @@ ifeq ($(BOARD),kirkwood)
 	OPENCLASH_TUN_ARCH:=armv5
 endif
 ifeq ($(ARCH),aarch64)
-	OPENCLASH_TUN_ARCH:=armv8
+	OPENCLASH_TUN_ARCH:=arm64
 endif
 
-PKG_LICENSE:=Apache-2.0
+PKG_LICENSE:=MIT
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/clash-$(PKG_VERSION)-$(PKG_RELEASE)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
 # PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz
 # PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/
 PKG_HASH:=skip
@@ -61,15 +61,14 @@ endef
 
 define Build/Prepare
 	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz
-	gzip -d -k -f -c $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz > $(PKG_BUILD_DIR)/clash
-	chmod +x $(PKG_BUILD_DIR)/clash
+	gzip -dc $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz > $(PKG_BUILD_DIR)/clash
 endef
 
 define Build/Configure
-	# $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/clash_tun
 endef
 
 define Build/Compile
+	# $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/clash
 endef
 
 define Package/$(PKG_NAME)/install
