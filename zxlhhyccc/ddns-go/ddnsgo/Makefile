@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ddns-go
-PKG_VERSION:=5.3.1
+PKG_VERSION:=5.3.4
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/jeessy2/ddns-go.git
-PKG_SOURCE_VERSION:=49b0511d24c8e3beeb8763af20d99bffcaf884ee
-PKG_MIRROR_HASH:=7e7d04f3ca4c8681b5f2fd71b1611e8567e038789097bb34f7381d963a5e24df
+PKG_SOURCE_VERSION:=841031505bedb5e4023d52e5e994d476c49b76d2
+PKG_MIRROR_HASH:=040224e99a337e0ec531ee24ee7242d34f826ad2f5492478e64ababada9b204c
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -44,11 +44,21 @@ define Package/ddnsgo
   SUBMENU:=Web Servers/Proxies
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle 
   URL:=https://github.com/jeessy2/ddns-go
+  USERID:=ddns-go:ddns-go
 endef
 
 define Package/$(PKG_NAME)/description
-  ddns-go is a automatically obtain your public IPv4 or IPv6 address and resolve it to the corresponding domain name service,
-  support Alidns Dnspod Cloudflare Hicloud Callback Baiducloud porkbun GoDaddy Google Domains.
+  A simple and easy-to-use Dynamic DNS client with IPv6 support.
+  Supported backend:
+    - Alidns
+    - Baidu Cloud
+    - CloudFlare
+    - DnsPod
+    - GoDaddy Domains
+    - Google Domains
+    - Huawei Cloud
+    - Porkbun
+    - Custom callback
 endef
 
 define Package/$(PKG_NAME)/config
