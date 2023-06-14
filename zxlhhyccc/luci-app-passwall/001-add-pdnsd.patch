@@ -1,3 +1,5 @@
+diff --git a/Makefile b/Makefile
+index 18bedc1..05c994a 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -16,6 +16,8 @@ PKG_CONFIG_DEPENDS:= \
@@ -40,6 +42,8 @@
  config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
  	bool "Include Shadowsocks Libev Client"
  	default y
+diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
+index c783e80..cd36f57 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -343,8 +343,11 @@ end
@@ -80,6 +84,8 @@
  	o:depends({dns_mode = "dns2tcp"})
  	o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
  	o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
+diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
+index 033a159..c3b2c56 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -103,7 +103,7 @@ o.validate = function(self, value, t)
@@ -91,6 +97,8 @@
  o.rawhtml = true
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
+diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
+index 40b443d..8d15794 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -241,6 +241,12 @@ msgstr "单进程"
@@ -106,6 +114,8 @@
  msgid "Default Proxy Mode"
  msgstr "默认代理模式"
  
+diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
+index 291f9fb..b225ae5 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -1182,6 +1182,12 @@ start_dns() {
