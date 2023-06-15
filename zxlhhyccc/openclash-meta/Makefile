@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-meta
 PKG_VERSION:=alpha
-PKG_RELEASE:=g183f2d9
+PKG_RELEASE:=gaf28b99
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_META_ARCH:=mipsle-softfloat
@@ -39,6 +39,8 @@ ifeq ($(ARCH),aarch64)
 endif
 
 PKG_LICENSE:=MIT
+PKG_LICENSE_FILE:=LICENSE
+PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
 # PKG_SOURCE:=clash-linux-$(OPENCLASH_META_ARCH).tar.gz
