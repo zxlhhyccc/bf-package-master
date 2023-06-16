@@ -90,6 +90,11 @@ return view.extend({
 		o.password = true;
 		o.rmempty = false;
 
+		o = s.option(form.Flag, 'auto_acid', _('Auto Detect AC_ID')
+			,_('Automatically obtain correct ac_id from login server, the program will still use the configured ac_id below if it fails.'));
+		o.default = o.enabled;
+		o.rmempty = false;
+
 		o = s.option(form.Value, 'acid', 'AC_ID',
 			_('Please refer to you school to modify this value, incorrect ac_id may cause login error.'));
 		o.datatype = 'uinteger';
@@ -119,11 +124,6 @@ return view.extend({
 
 		o = s.option(form.Value, 'interfaces', _('Interface name'),
 			_('Interface name in regex, e.g. "eth0\\.[2-3]".<br/>Multi-interfaces mode will be enabled if not empty.'));
-
-		o = s.option(form.Flag, 'use_dhcp_ip', _('Use interface IP'),
-			_('Use interface IP for authentication in multi-interfaces mode.'));
-		o.default = o.disabled;
-		o.depends({'interfaces': '', '!reverse': true});
 
 		o = s.option(form.Flag, 'debug', _('Debug mode'),
 			_('More granular information will be given in log.'));
