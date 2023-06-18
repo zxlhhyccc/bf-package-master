@@ -32,7 +32,7 @@ case "$DISTRIB_TARGET" in
 		fi
 		uci_write_config 0 ondemand 864000 $CPU_MAX_FREQ 10 50
 		;;
-	"ipq806x/generic")
+	"qualcommax/ipq60xx")
 		if echo "$CPU_FREQS" | grep -q "1725000"; then
 			# IPQ8065
 			CPU_MAX_FREQ="1725000"
