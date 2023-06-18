@@ -7,9 +7,9 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_DATE:=2023-06-12
-PKG_SOURCE_VERSION:=d11d72be6ccb7f7e00a3bd05755ff77743a8f413
-PKG_MIRROR_HASH:=00b6818bb1674ae13760d97a3fbee98211eb2742882acece5e7ac3ea28867550
+PKG_SOURCE_DATE:=2023-06-16
+PKG_SOURCE_VERSION:=084f4f2e4c5d0a058b885341ee27dc450b0ceaf3
+PKG_MIRROR_HASH:=3bcc8bd7e11bf4a26845d70efbe2beea9981d0680a20230d3f86bb3d042d78fd
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0
@@ -78,7 +78,7 @@ menu "Xray-core Configuration"
 
 config XRAY_CORE_PROVIDE_V2RAY_CORE
 	bool "Provide V2Ray binary using XRay"
-	default y
+	default n
 
 config XRAY_CORE_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
