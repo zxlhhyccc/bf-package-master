@@ -514,8 +514,8 @@ msgid "Clear Logs"
 msgstr "清除日志"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:122
-msgid "Refresh every 5 seconds."
-msgstr "每 5 秒刷新"
+msgid "Refresh every %s seconds."
+msgstr "每 %s 秒刷新。"
 
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:14
 msgid "Configuration"

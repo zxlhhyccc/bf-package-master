@@ -119,7 +119,7 @@ return view.extend({
 			E('div', { 'class': 'cbi-section' }, [
 				clear_log_button,
 				log_textarea,
-				E('small', {}, _('Refresh every 5 seconds.').format(L.env.pollinterval)),
+				E('small', {}, _('Refresh every %s seconds.').format(L.env.pollinterval)),
 				E('div', { 'class': 'cbi-section-actions cbi-section-actions-right' })
 			])
 		]);
