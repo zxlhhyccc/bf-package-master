@@ -495,26 +495,27 @@ msgid ""
 "as HTTP and HTTPS protocols."
 msgstr "Frp 是一个可用于内网穿透的高性能的反向代理应用，支持 TCP、UDP、HTTP、HTTPS 等多种协议。"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:31
-msgid "Last 50 lines of log file:"
-msgstr "日志文件的最新 50 行："
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:63
+msgid "Collecting data ..."
+msgstr "数据收集中..."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:36
-msgid "Last 50 lines of syslog:"
-msgstr "系统日志的最新 50 行："
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:73
+msgid "Clear Logs..."
+msgstr "清除日志..."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:33
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:38
-msgid "No log data."
-msgstr "无日志数据。"
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:76
+msgid "Logs cleared successfully!"
+msgstr "日志清除成功！"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:58
-msgid "Log Data"
-msgstr "日志数据"
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:79
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:89
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:93
+msgid "Clear Logs"
+msgstr "清除日志"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:62
-msgid "Refresh every %s seconds."
-msgstr "每 %s 秒刷新。"
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/logread.js:122
+msgid "Refresh every 5 seconds."
+msgstr "每 5 秒刷新"
 
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:14
 msgid "Configuration"
