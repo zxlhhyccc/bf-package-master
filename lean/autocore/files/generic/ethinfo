@@ -13,13 +13,39 @@ if (!stat) {
 }
 
 let device_list = [];
-map(keys(stat), (ifname) => {
-	if (ifname && stat[ifname]?.devtype in ['ethernet', 'dsa'] && length(stat[ifname]['link-advertising']))
-		push(device_list, ifname);
-});
+for (let ifname in stat) {
+	if (!ifname || stat[ifname]?.devtype !== 'ethernet' || !length(stat[ifname]['link-advertising']))
+		continue;
+
+	let status, speed, duplex;
+
+	if (stat[ifname]?.carrier)
+		status = 'yes';
+	else
+		status = 'no';
+
+	if (!stat[ifname]?.carrier || !stat[ifname]?.speed || substr(stat[ifname]?.speed, 0, 1) === '-')
+		speed = '-';
+	else
+		speed = substr(stat[ifname]?.speed, 0, -1) + 'Mb/s';
+
+	if (speed == '-')
+		duplex = '-';
+	else if (substr(stat[ifname]?.speed, -1) === 'F')
+		duplex = 'Full';
+	else
+		duplex = 'Half';
+
+	push(device_list, {
+		name: ifname,
+		status: status,
+		speed: speed,
+		duplex: duplex,
+	});
+}
 
 sort(device_list, (a, b) => {
-	return a > b;
+	return a?.name > b?.name;
 });
 
 print(device_list);
