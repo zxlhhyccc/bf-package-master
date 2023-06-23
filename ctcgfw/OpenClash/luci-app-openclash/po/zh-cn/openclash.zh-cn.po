@@ -663,8 +663,8 @@ msgstr "保留配置"
 msgid "Only Update Servers Below When Subscription"
 msgstr "订阅时仅更新节点和代理集，保留下方策略组设置，不修改顺序"
 
-msgid "New Servers Group"
-msgstr "新节点默认策略组"
+msgid "New Servers Group (Support Regex)"
+msgstr "新节点默认策略组（请勿重复添加，支持正则匹配）"
 
 msgid "Set The New Subscribe Server's Default Proxy Groups"
 msgstr "选择符合订阅要求的新节点的默认策略组（请勿重复添加）"
@@ -843,8 +843,8 @@ msgstr "Load-Balance【负载均衡】"
 msgid "Relay-Traffic"
 msgstr "Relay【嵌套中转】"
 
-msgid "Other Group"
-msgstr "包含其他策略组（请勿重复添加）"
+msgid "Other Group (Support Regex)"
+msgstr "包含其他策略组（请勿重复添加，支持正则匹配）"
 
 msgid "The Added Proxy Groups Must Exist Except 'DIRECT' & 'REJECT'"
 msgstr "注意：除'DIRECT'和'REJECT'外，修改配置文件前添加的其他策略组必须已创建"
@@ -852,8 +852,8 @@ msgstr "注意：除'DIRECT'和'REJECT'外，修改配置文件前添加的其�
 msgid "The Added Proxy Provider Must Exist"
 msgstr "修改配置文件前添加的代理集必须已创建"
 
-msgid "Proxy Group"
-msgstr "添加到策略组（请勿重复添加）"
+msgid "Proxy Group (Support Regex)"
+msgstr "添加到策略组（请勿重复添加，支持正则匹配）"
 
 msgid "Set Proxy Group"
 msgstr "指定策略组"
