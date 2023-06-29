@@ -204,7 +204,6 @@ config shunt_rules 'OpenAI'
 config shunt_rules 'Direct'
 	option remarks 'Direct'
 	option domain_list 'geosite:cn'
-geosite:cn'
 	option ip_list '223.5.5.5/32
 119.29.29.29/32
 180.76.76.76/32
