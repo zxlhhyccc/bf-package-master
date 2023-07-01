@@ -13,7 +13,10 @@ end
 local lan_ip = uci:get("network", "lan", "ipaddr")
 local lan_dhcp = uci:get("dhcp", "lan", "ignore")
 local wan_face = sys.exec(" [ `uci -q get network.wan.ifname` ] && uci -q get network.wan.ifname  || uci -q get network.wan.device ")
-local wan_proto = uci:get("network", "wan", "proto")
+local wanproto = uci:get("netwizard", "default", "wan_proto")
+if wanproto == "" then
+     wanproto = sys.exec("uci -q get network.wan.proto || echo 'siderouter'")
+end
 local validation = require "luci.cbi.datatypes"
 local has_wifi = false
 uci:foreach("wireless", "wifi-device",
@@ -53,11 +56,11 @@ e:value('3', translate('IPv6 Hybird mode'))
 e.default = '3'
 
 wan_proto = s:taboption("wansetup", ListValue, "wan_proto", translate("Network protocol mode selection"), translate("Four different ways to access the Internet, please choose according to your own situation.</br>"))
+wan_proto.default = wanproto
 wan_proto:value("dhcp", translate("DHCP client"))
 wan_proto:value("static", translate("Static address"))
 wan_proto:value("pppoe", translate("PPPoE dialing"))
 wan_proto:value("siderouter", translate("SideRouter"))
-wan_proto.default = wan_proto
 
 wan_interface = s:taboption("wansetup",Value, "wan_interface",translate("interface<font color=\"red\">(*)</font>"), translate("Allocate the physical interface of WAN port"))
 wan_interface:depends({wan_proto="pppoe"})
@@ -81,8 +84,6 @@ wan_interface.default = wan_face
 
 wan_pppoe_user = s:taboption("wansetup", Value, "wan_pppoe_user", translate("PAP/CHAP username"))
 wan_pppoe_user:depends({wan_proto="pppoe"})
-
-
 
 wan_pppoe_pass = s:taboption("wansetup", Value, "wan_pppoe_pass", translate("PAP/CHAP password"))
 wan_pppoe_pass:depends({wan_proto="pppoe"})
@@ -135,7 +136,8 @@ lan_dhcp.default = lan_dhcp
 lan_dhcp.anonymous = false
 
 e = s:taboption("wansetup", Flag, "dnsset", translate("Enable DNS notifications (ipv4/ipv6)"),translate("Force the DNS server in the DHCP server to be specified as the IP for this route"))
-e:depends("lan_dhcp", true)
+e:depends("lan_dhcp", false)
+e.default = "0"
 
 e = s:taboption("wansetup", Value, "dns_tables", translate(" "))
 e:value("1", translate("Use local IP for DNS (default)"))
