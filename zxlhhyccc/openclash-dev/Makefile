@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-dev
-PKG_VERSION:=v1.16.0
-PKG_RELEASE:=25-g5212aaf
+PKG_VERSION:=v1.17.0
+PKG_RELEASE:=
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_ARCH:=mipsle-softfloat
@@ -42,7 +42,7 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 # PKG_SOURCE:=clash-linux-$(OPENCLASH_ARCH).tar.gz
 # PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/Clash/
 PKG_HASH:=skip
