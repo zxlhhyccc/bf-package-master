@@ -236,8 +236,8 @@ local sectiontype = "_"..self.config.."_"..string.match(self.sectiontype, "[%w_]
 							-%>
 							<%- if self.sortable then -%>
 								<td class="cbi-section-table-cell">
-									<input class="btn cbi-button cbi-button-up" type="button" value="<%:Move up%>"  onclick="return cbi_row_swap(this, true, 'cbi.sts.<%=self.config%>.<%=self.sectiontype%>')" alt="<%:Move up%>" title="<%:Move up%>" />
-									<input class="btn cbi-button cbi-button-down" type="button" value="<%:Move down%>"  onclick="return cbi_row_swap(this, false, 'cbi.sts.<%=self.config%>.<%=self.sectiontype%>')" alt="<%:Move down%>" title="<%:Move down%>" />
+									<input class="cbi-button cbi-button-up" type="button" value="<%:∧%>"  onclick="return cbi_row_swap(this, true, 'cbi.sts.<%=self.config%>.<%=self.sectiontype%>')" alt="<%:Move up%>" title="<%:Move up%>" />
+									<input class="cbi-button cbi-button-down" type="button" value="<%:∨%>"  onclick="return cbi_row_swap(this, false, 'cbi.sts.<%=self.config%>.<%=self.sectiontype%>')" alt="<%:Move down%>" title="<%:Move down%>" />
 								</td>
 							<%- end -%>
 			
