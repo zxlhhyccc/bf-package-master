@@ -37,7 +37,7 @@ GO_PKG_LDFLAGS_X:=m.version=$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/ddnsgo
+define Package/ddns-go
   TITLE:=A Linux web GUI client of ddns-go
   SECTION:=net
   CATEGORY:=Network
@@ -101,5 +101,5 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) $(CURDIR)/file/luci-ddns-go.uci-default $(1)/etc/uci-defaults/luci-ddns-go
 endef
 
-$(eval $(call GoBinPackage,ddnsgo))
-$(eval $(call BuildPackage,ddnsgo))
+$(eval $(call GoBinPackage,ddns-go))
+$(eval $(call BuildPackage,ddns-go))
