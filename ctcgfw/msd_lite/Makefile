@@ -49,6 +49,8 @@ define Package/msd_lite/install
 	$(INSTALL_CONF) $(CURDIR)/files/msd_lite.config $(1)/etc/config/msd_lite
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(CURDIR)/files/msd_lite.init $(1)/etc/init.d/msd_lite
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	$(INSTALL_BIN) $(CURDIR)/files/99-msd_lite $(1)/etc/hotplug.d/iface/99-msd_lite	
 endef
 
 $(eval $(call BuildPackage,msd_lite))
