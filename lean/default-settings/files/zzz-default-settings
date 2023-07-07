@@ -1,49 +1,44 @@
 #!/bin/sh
 
-uci set luci.main.lang=auto
-uci commit luci
+uci -q get system.@imm_init[0] > "/dev/null" || uci -q add system imm_init > "/dev/null"
 
-uci set fstab.@global[0].anon_mount=1
-uci commit fstab
+if ! uci -q get system.@imm_init[0].lang > "/dev/null"; then
+	uci -q set luci.main.lang="auto"
+	uci -q commit luci
 
-rm -f /www/luci-static/resources/view/status/include/50_dsl.js
-rm -f /www/luci-static/resources/view/status/include/70_ddns.js
-rm -f /www/luci-static/resources/view/status/include/80_minidlna.js
-rm -f /www/luci-static/resources/view/status/include/80_upnp.js
+	uci -q set system.@imm_init[0].lang="1"
+	uci -q commit system
+fi
 
-# sed -i 's/\"services\"/\"nas\"/g' /usr/lib/lua/luci/controller/aria2.lua
-# sed -i 's#admin/services#admin/nas#g' /usr/lib/lua/luci/view/aria2/settings_header.htm
-sed -i 's/services/nas/g' /usr/share/luci/menu.d/luci-app-aria2.json
-sed -i 's/services/nas/g' /usr/share/luci/menu.d/luci-app-hd-idle.json
-sed -i 's/services/nas/g' /root/usr/share/luci/menu.d/luci-app-minidlna.json
-sed -i 's/services/nas/g' /usr/share/luci/menu.d/luci-app-mjpg-streamer.json
-sed -i 's/services/nas/g' /usr/share/luci/menu.d/luci-app-p910nd.json
-sed -i 's/\"services\"/\"nas\"/g' /usr/lib/lua/luci/controller/usb_printer.lua
-sed -i 's/\"services\"/\"nas\"/g' /usr/lib/lua/luci/controller/xunlei.lua
+if ! uci -q get system.@imm_init[0].anon_mount > "/dev/null"; then
+	uci -q set fstab.@global[0].anon_mount="1"
+	uci -q commit fstab
 
-uci set minidlna.config.enabled='0'
-uci commit minidlna
+	uci -q set system.@imm_init[0].anon_mount="1"
+	uci -q commit system
+fi
+
+uci -q set minidlna.config.enabled='0'
+uci -q commit minidlna
 # /etc/init.d/minidlna stop
 
-uci set vsftpd.@listen[0].enable4='0'
-uci commit vsftpd
+uci -q set vsftpd.@listen[0].enable4='0'
+uci -q commit vsftpd
 # /etc/init.d/vsftpd stop
 
-ln -sf /sbin/ip /usr/bin/ip
-
-sed -i "s/# //g" /etc/opkg/distfeeds.conf
+ln -sf "/sbin/ip" "/usr/bin/ip"
 
 sed -i 's/root:::0:99999:7:::/root:$1$gSikykrC$1dqepKd6Exe8BOxn9JffZ0:0:0:99999:7:::/g' /etc/shadow
-[ -f '/bin/bash' ] && sed -i 's|root:x:0:0:root:/root:/bin/ash|root:x:0:0:root:/root:/bin/bash|g' /etc/passwd
+[ ! -e "/bin/bash" ] || sed -i "s|root:x:0:0:root:/root:/bin/ash|root:x:0:0:root:/root:/bin/bash|g" "/etc/passwd"
 
 sed -i '/option disabled/d' /etc/config/wireless
 sed -i '/set wireless.radio${devidx}.disabled/d' /lib/wifi/mac80211.sh
 wifi up
 
-sed -i '/log-facility/d' /etc/dnsmasq.conf
-echo "log-facility=/dev/null" >> /etc/dnsmasq.conf
+sed -i "/log-facility/d" "/etc/dnsmasq.conf"
+echo "log-facility=/dev/null" >> "/etc/dnsmasq.conf"
 
-rm -rf /tmp/luci-modulecache/
-rm -f /tmp/luci-indexcache
+rm -rf "/tmp/luci-modulecache"
+rm -f "/tmp/luci-indexcache"
 
 exit 0
