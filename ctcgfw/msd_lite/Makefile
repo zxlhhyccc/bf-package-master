@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=msd_lite
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/rozhuk-im/msd_lite.git
@@ -49,8 +49,8 @@ define Package/msd_lite/install
 	$(INSTALL_CONF) $(CURDIR)/files/msd_lite.config $(1)/etc/config/msd_lite
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(CURDIR)/files/msd_lite.init $(1)/etc/init.d/msd_lite
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
-	$(INSTALL_BIN) $(CURDIR)/files/99-msd_lite $(1)/etc/hotplug.d/iface/99-msd_lite	
+	#$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	#$(INSTALL_BIN) $(CURDIR)/files/99-msd_lite $(1)/etc/hotplug.d/iface/99-msd_lite	
 endef
 
 $(eval $(call BuildPackage,msd_lite))
