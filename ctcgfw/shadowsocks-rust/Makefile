@@ -29,7 +29,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=rust/host
 
-RUST_PKG_FEATURES:=local-dns local-tun local-redir jemalloc aead-cipher-2022-extra security-replay-attack-detect
+RUST_PKG_FEATURES:=local-http-rustls local-redir local-dns local-tun dns-over-tls dns-over-https stream-cipher jemalloc aead-cipher-2022-extra security-replay-attack-detect
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
