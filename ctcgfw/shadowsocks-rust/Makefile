@@ -17,7 +17,7 @@ PKG_SOURCE_VERSION:=32de79eeb7f3b0867ee415b16f5ead0df8a750ef
 PKG_MIRROR_HASH:=4cb442a9a68e1c2be503610cb72c7e0e9f57cada2f7696cc486067250d894d47
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=25d7a099ab09425c27c6543dbbddc38f65ab382e8353d51c695add91b4ced61f
+# PKG_HASH:=d3077af7d292ff2a0d36e9debb2104e37ad998deac4dd6eb0674b8fe7d41cf20
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SHADOWSOCKS-RUST_$(1)_COMPRESS_GOPROXY \
@@ -29,7 +29,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=rust/host
 
-RUST_PKG_FEATURES:=local server manager service trust-dns logging local-dns local-http local-redir local-tunnel local-socks4 local-tun multi-threaded aead-cipher-2022 aead-cipher-2022-extra security-replay-attack-detect
+RUST_PKG_FEATURES:=local-dns local-tun local-redir jemalloc aead-cipher-2022-extra security-replay-attack-detect
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
