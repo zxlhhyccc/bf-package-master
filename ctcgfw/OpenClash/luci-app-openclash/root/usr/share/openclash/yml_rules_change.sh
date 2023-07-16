@@ -559,7 +559,7 @@ yml_other_set()
                if defined? Value_2 then
                   Value_2.each{|x|
                      if ${10} != 1 then
-                        if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
+                        if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^IN-USER,|^IN-NAME,|^NETWORK,|^UID,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
                            puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
                            next
                         end;
@@ -937,7 +937,7 @@ yml_other_rules_get()
    config_get "GoogleFCM" "$section" "GoogleFCM" "DIRECT"
    config_get "Discovery" "$section" "Discovery" "$GlobalTV"
    config_get "DAZN" "$section" "DAZN" "$GlobalTV"
-   config_get "ChatGPT" "$section" "ChatGPT" "$Proxy"
+   config_get "OpenAI" "$section" "OpenAI" "$Proxy"
    config_get "AppleTV" "$section" "AppleTV" "$GlobalTV"
    config_get "miHoYo" "$section" "miHoYo" "$Domestic"
 }
@@ -988,7 +988,7 @@ if [ "$1" != "0" ]; then
     || [ -z "$(grep -F "$Disney" /tmp/Proxy_Group)" ]\
     || [ -z "$(grep -F "$Discovery" /tmp/Proxy_Group)" ]\
     || [ -z "$(grep -F "$DAZN" /tmp/Proxy_Group)" ]\
-    || [ -z "$(grep -F "$ChatGPT" /tmp/Proxy_Group)" ]\
+    || [ -z "$(grep -F "$OpenAI" /tmp/Proxy_Group)" ]\
     || [ -z "$(grep -F "$Spotify" /tmp/Proxy_Group)" ]\
     || [ -z "$(grep -F "$Steam" /tmp/Proxy_Group)" ]\
     || [ -z "$(grep -F "$miHoYo" /tmp/Proxy_Group)" ]\
@@ -1050,7 +1050,7 @@ if [ "$1" != "0" ]; then
             .gsub(/,Netflix$/, ',$Netflix#delete_')
             .gsub(/,Disney$/, ',$Disney#delete_')
             .gsub(/,Spotify$/, ',$Spotify#delete_')
-            .gsub(/,ChatGPT$/, ',$ChatGPT#delete_')
+            .gsub(/,OpenAI$/, ',$OpenAI#delete_')
             .gsub(/,Steam$/, ',$Steam#delete_')
             .gsub(/,miHoYo$/, ',$miHoYo#delete_')
             .gsub(/,AdBlock$/, ',$AdBlock#delete_')
@@ -1082,7 +1082,7 @@ if [ "$1" != "0" ]; then
             .gsub!(/: \"Netflix\"/,': \"$Netflix#delete_\"')
             .gsub!(/: \"Disney\"/,': \"$Disney#delete_\"')
             .gsub!(/: \"Spotify\"/,': \"$Spotify#delete_\"')
-            .gsub!(/: \"ChatGPT\"/,': \"$ChatGPT#delete_\"')
+            .gsub!(/: \"OpenAI\"/,': \"$OpenAI#delete_\"')
             .gsub!(/: \"Steam\"/,': \"$Steam#delete_\"')
             .gsub!(/: \"miHoYo\"/,': \"$miHoYo#delete_\"')
             .gsub!(/: \"AdBlock\"/,': \"$AdBlock#delete_\"')
