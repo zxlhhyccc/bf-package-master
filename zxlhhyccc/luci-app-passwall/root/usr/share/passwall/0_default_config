@@ -106,6 +106,7 @@ config shunt_rules 'DirectGame'
 regexp:\.cm.steampowered.com$
 regexp:\.steamserver.net$
 geosite:category-games@cn
+
 	option ip_list '103.10.124.0/24
 103.10.125.0/24
 103.28.54.0/24
