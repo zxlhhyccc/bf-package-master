@@ -326,6 +326,8 @@ local tuic = {
         },
 		["local"] = {
 				server = "[::]:" .. tonumber(local_port),
+				--username = server.tuic_socks_username,
+				--password = server.tuic_socks_password,
 				dual_stack = (server.tuic_dual_stack == "1") and true or false,
 				max_packet_size = tonumber(server.tuic_max_package_size)
 		}

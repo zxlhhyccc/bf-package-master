@@ -883,6 +883,12 @@ msgstr "TUIC 服务器 IP 地址"
 msgid "TUIC User Password"
 msgstr "TUIC 用户密钥"
 
+msgid "TUIC UserName For Local Socks"
+msgstr "用于本地 Socks 服务器连接的用户名"
+
+msgid "TUIC Password For Local Socks"
+msgstr "用于本地 Socks 服务器连接的密码"
+
 msgid "UDP relay mode"
 msgstr "UDP 中继模式"
 

@@ -367,6 +367,20 @@ o.rmempty = true
 o.default = ""
 o:depends("type", "tuic")
 
+--[[
+-- Tuic username for local socks connect
+o = s:option(Value, "tuic_socks_username", translate("TUIC UserName For Local Socks"))
+o.rmempty = true
+o.default = ""
+o:depends("type", "tuic")
+
+-- Tuic Password for local socks connect
+o = s:option(Value, "tuic_socks_password", translate("TUIC Password For Local Socks"))
+o.password = true
+o.rmempty = true
+o.default = ""
+o:depends("type", "tuic")
+--]]
 
 o = s:option(ListValue, "udp_relay_mode", translate("UDP relay mode"))
 o:depends("type", "tuic")
