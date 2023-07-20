@@ -55,12 +55,14 @@ define Package/dae-geoip
   $(call Package/dae/Default)
   TITLE:=geoip for dae
   DEPENDS:=+v2ray-geoip
+  PKGARCH:=all
 endef
 
 define Package/dae-geosite
   $(call Package/dae/Default)
   TITLE:=geosite for dae
   DEPENDS:=+v2ray-geosite
+  PKGARCH:=all
 endef
 
 define Package/dae/description
