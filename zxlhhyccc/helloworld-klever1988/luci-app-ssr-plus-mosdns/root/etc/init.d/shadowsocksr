@@ -46,6 +46,7 @@ EXTRA_COMMANDS='reset'
 EXTRA_HELP="        reset   Reset to default settings"
 #extra_command "reset" "Reset to default settings"
 PS="/bin/busybox ps"
+mosdns_bypass_ip=''
 
 uci_get_by_name() {
 	local ret=$(uci get $NAME.$1.$2 2>/dev/null)
@@ -72,13 +73,11 @@ uci_get_by_cfgid() {
 	echo ${ret:=$3}
 }
 
-mosdns_bypass_ip=''
 get_host_ip() {
 	local host=$(uci_get_by_name $1 server)
 	local ip=$host
 	if [ -z "$(echo $host | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}")" ]; then
 		if [ "$host" == "${host#*:[0-9a-fA-F]}" ]; then
-			echo ' - "'$host'"' >> /tmp/config.yaml.tp2
 			ip=$(resolveip -4 -t 3 $host | awk 'NR==1{print}')
 			[ -z "$ip" ] && ip=$(wget-ssl -q -O- http://119.29.29.29/d?dn=$host | awk -F ';' '{print $1}')
 		fi
@@ -869,6 +868,7 @@ start_monitor() {
 start_rules() {
 	rm -f /tmp/config.yaml.tp2
 	local server=$(get_host_ip $GLOBAL_SERVER)
+	mosdns_bypass_ip=$server
 	local local_port=$(uci_get_by_name $GLOBAL_SERVER local_port)
 	local lan_ac_ips=$(uci_get_by_type access_control lan_ac_ips)
 	local lan_ac_mode=$(uci_get_by_type access_control lan_ac_mode)
@@ -927,7 +927,7 @@ start_rules() {
 
 start_mosdns(){
 	killall -q -9 mosdns
-	cat /etc/mosdns/config.yaml.tp1 /tmp/config.yaml.tp2 /etc/mosdns/config.yaml.tp3 > /etc/mosdns/config.yaml
+	sed "s/255.255.255.255/$mosdns_bypass_ip/" /etc/mosdns/config.yaml.tpl > /etc/mosdns/config.yaml
 	cp /etc/ssrplus/gfw_list.conf /etc/ssrplus/gfw_list.conf.back
 	cat /dev/null > /etc/ssrplus/gfw_list.conf
 	/usr/bin/mosdns start -c config.yaml -d /etc/mosdns >/dev/null 2>&1 &

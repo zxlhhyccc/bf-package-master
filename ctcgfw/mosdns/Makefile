@@ -106,7 +106,7 @@ define Package/mosdns-ssrp/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 
 	$(INSTALL_DIR) $(1)/etc/mosdns
-	$(INSTALL_DATA) ./ssrp-files/config.yaml $(1)/etc/mosdns/config.yaml
+	$(INSTALL_DATA) ./ssrp-files/config.yaml.tpl $(1)/etc/mosdns/config.yaml.tpl
 endef
 
 define Package/mosdns/postinst

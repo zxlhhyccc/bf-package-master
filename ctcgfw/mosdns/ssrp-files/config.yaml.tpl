@@ -56,10 +56,10 @@ plugins:
         - addr:   tcp://208.67.222.222
           trusted: true # 是否是可信服务器
   - tag: is_gate
-    type: query_matcher
+    type: response_matcher
     args:
-      domain:
-        - "gate.example.net"
+      ip:
+        - "255.255.255.255"
 
   # 匹配本地域名的插件
   - tag: query_is_local_domain
@@ -85,11 +85,11 @@ plugins:
         - 'provider:geoip:cn'
 
   # 匹配广告域名的插件
-  - tag: query_is_ad_domain
-    type: query_matcher
-    args:
-      domain:
-        - 'provider:geosite:category-ads-all'
+  #- tag: query_is_ad_domain
+  #  type: query_matcher
+  #  args:
+  #    domain:
+  #      - 'provider:geosite:category-ads-all'
 
   # 主要的运行逻辑插件
   # sequence 插件中调用的插件 tag 必须在 sequence 前定义，
@@ -123,7 +123,7 @@ plugins:
             - _no_ecs
             - _prefer_ipv4
             - forward_remote
-            - if: "!response_has_local_ip"
+            - if: "!response_has_local_ip && !is_gate"
               exec:
                 - blacklist
           fast_fallback: 150
