@@ -1,4 +1,4 @@
-if PACKAGE_openvpn-wolfssl
+if PACKAGE_openvpn-server-wolfssl
 
 config OPENVPN_wolfssl
 	bool
