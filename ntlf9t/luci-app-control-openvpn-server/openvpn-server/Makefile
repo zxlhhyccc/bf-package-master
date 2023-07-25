@@ -15,8 +15,9 @@ PKG_RELEASE:=1
 PKG_SOURCE_URL:=\
 	https://build.openvpn.net/downloads/releases/ \
 	https://swupdate.openvpn.net/community/releases/
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=openvpn-$(PKG_VERSION).tar.gz
 PKG_HASH:=e34efdb9a3789a760cfc91d57349dfb1e31da169c98c06cb490c6a8a015638e2
+PKG_BUILD_DIR:=$(BUILD_DIR)/openvpn-server-$(BUILD_VARIANT)/openvpn-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Magnus Kroken <mkroken@gmail.com>
 
