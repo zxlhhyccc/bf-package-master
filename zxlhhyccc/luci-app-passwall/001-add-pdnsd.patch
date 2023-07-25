@@ -1,5 +1,3 @@
-diff --git a/Makefile b/Makefile
-index 18bedc1..05c994a 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -16,6 +16,8 @@ PKG_CONFIG_DEPENDS:= \
@@ -11,7 +9,7 @@ index 18bedc1..05c994a 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -34,12 +36,14 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,12 +37,14 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -27,7 +25,7 @@ index 18bedc1..05c994a 100644
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
-@@ -103,6 +107,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+@@ -106,6 +110,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||(arm&&TARGET_gemini)||armeb||mips||mips64||powerpc)
  	default n
  
@@ -42,8 +40,6 @@ index 18bedc1..05c994a 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
  	bool "Include Shadowsocks Libev Client"
  	default y
-diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index c783e80..cd36f57 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -343,8 +343,11 @@ end
@@ -84,8 +80,6 @@ index c783e80..cd36f57 100644
  	o:depends({dns_mode = "dns2tcp"})
  	o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
  	o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
-diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-index 033a159..c3b2c56 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -103,7 +103,7 @@ o.validate = function(self, value, t)
@@ -97,8 +91,6 @@ index 033a159..c3b2c56 100644
  o.rawhtml = true
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
-diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 40b443d..8d15794 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -241,6 +241,12 @@ msgstr "单进程"
@@ -114,11 +106,9 @@ index 40b443d..8d15794 100644
  msgid "Default Proxy Mode"
  msgstr "默认代理模式"
  
-diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 291f9fb..b225ae5 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1182,6 +1182,12 @@ start_dns() {
+@@ -1208,6 +1208,12 @@ start_dns() {
  				run_v2ray ${_v2ray_args}
  			}
  		;;
@@ -131,7 +121,7 @@ index 291f9fb..b225ae5 100755
  		dns2tcp)
  			use_tcp_node_resolve_dns=1
  			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1189,8 +1195,14 @@ start_dns() {
+@@ -1215,8 +1221,14 @@ start_dns() {
  		;;
  		udp)
  			use_udp_node_resolve_dns=1
@@ -146,7 +136,7 @@ index 291f9fb..b225ae5 100755
  		;;
  		esac
  
-@@ -1247,6 +1259,74 @@ start_dns() {
+@@ -1273,6 +1285,74 @@ start_dns() {
  	esac
  }
  
@@ -221,7 +211,7 @@ index 291f9fb..b225ae5 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1628,7 +1708,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
+@@ -1668,7 +1748,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
  gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"

@@ -214,7 +214,6 @@ check_depends() {
 			[ -z "$(opkg status ${depends} 2>/dev/null | grep 'Status' | awk -F ': ' '{print $2}' 2>/dev/null)" ] && echolog "$tables透明代理基础依赖 $depends 未安装..."
 		done
 	fi
-	echo $status
 }
 
 get_new_port() {
