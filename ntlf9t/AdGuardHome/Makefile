@@ -84,7 +84,7 @@ define Download/AdGuardHome-frontend
 	URL:=https://github.com/AdguardTeam/AdGuardHome/releases/download/v$(PKG_VERSION)/
 	URL_FILE:=AdGuardHome_frontend.tar.gz
 	FILE:=$(FRONTEND_FILE)
-	HASH:=50453f89b2380f8af3c75127f411ce47f6b98987b1c628ae22907025fe6fd09c
+	HASH:=e6218110fece71dffb5d509524a08b4b998f03ec18c3e31935b1e5befb3f2022
 endef
 
 define Build/Prepare
