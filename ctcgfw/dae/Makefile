@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dae
-PKG_VERSION:=0.2.2
+PKG_VERSION:=0.2.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).zip
 PKG_SOURCE_URL:=https://github.com/daeuniverse/dae/releases/download/v$(PKG_VERSION)/dae-full-src.zip?
-PKG_HASH:=884117b067f00c0ab39e0c6ae4e064c62f3a6b69eb2b8916dff2d619eeca1126
+PKG_HASH:=98df8c161f3ae0ac9cc875186f48baf0dd8d0cd199201f6bc2105bade49d5a9b
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILE:=LICENSE
