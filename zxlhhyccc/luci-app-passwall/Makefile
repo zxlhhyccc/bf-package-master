@@ -158,7 +158,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_tuic_client
 	bool "Include tuic-client"
-	depends on aarch64||arm||i386||x86_64
+	depends on aarch64||arm||x86_64
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
