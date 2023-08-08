@@ -13,8 +13,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-rust.git
-PKG_SOURCE_VERSION:=65deef10ae96c83c4d9fde9609e04f5b108777d1
-PKG_MIRROR_HASH:=4d1c39f11c8cbfaee73b1caa9e4ce33b0d37239efcdf9d7193ce9a1bade42ad1
+PKG_SOURCE_VERSION:=0ed488f9dcd9cc5ccc4cf49d6c2ad995ccaafecc
+PKG_MIRROR_HASH:=989c3830200ea065ae83b72003142a533dfbcc7e06c2fa39db4a476d0889bef4
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
 # PKG_HASH:=d3077af7d292ff2a0d36e9debb2104e37ad998deac4dd6eb0674b8fe7d41cf20
@@ -29,7 +29,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=rust/host
 
-RUST_PKG_FEATURES:=local-http-rustls local-redir local-dns local-tun dns-over-tls dns-over-https stream-cipher jemalloc aead-cipher-2022-extra security-replay-attack-detect
+RUST_PKG_FEATURES:=local-http-rustls local-redir local-tunnel local-dns local-tun trust-dns dns-over-tls dns-over-https stream-cipher jemalloc aead-cipher-2022-extra security-replay-attack-detect
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
