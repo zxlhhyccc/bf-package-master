@@ -1,5 +1,6 @@
 --Alex<1886090@gmail.com>
 --Dennis<code@tossp.com>
+
 local fs = require "nixio.fs"
 local CONFIG_FILE = "/tmp/dnsforwarder.conf";
 
@@ -9,8 +10,8 @@ function sync_value_to_file(value, file)
 	if value ~= old_value then
 		nixio.fs.writefile(file, value)
 	end
-
 end
+
 local state_msg = "" 
 
 local dnsforwarder_on = (luci.sys.call("pidof dnsforwarder > /dev/null") == 0)
@@ -22,7 +23,6 @@ if dnsforwarder_on then
 else
 	state_msg = "<b><font color=\"red\">" .. translate("Not running") .. "</font></b>"
 end
-
 
 if dnsforwarder_on and string.sub(listen_port,1,14) == "127.0.0.1#5053" then 
 	state_msg=state_msg .. "，DNSmasq已经将流量定向至本软件"
@@ -36,7 +36,9 @@ else if dnsforwarder_on then
 	state_msg=state_msg .. "<b><font color=\"red\"></font></b>"
 	end
 end
+
 m=Map("dnsforwarder",translate("dnsforwarder"),translate("Dnsforwarder是企业级DNS服务器，可以通过TCP协议进行DNS解析,可以方便的使用iptables进行透明代理，配合ipset、GFWList使用效果更佳。默认上游服务器为114DNS，SSR和Redsocks的GFWList模式要依赖本软件包提供的功能").. "<br><br>状态 - " .. state_msg)
+
 s=m:section(TypedSection,"arguments", translate("通用配置"))
 s.addremove=false
 s.anonymous=true
