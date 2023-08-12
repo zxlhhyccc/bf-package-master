@@ -44,6 +44,14 @@ uci_bool_by_type() {
 	return 1
 }
 
+xray_xudp_basekey() {
+	cache=/var/run/xray-xdup-basekey
+	if [ ! -f $cache ]; then
+		xray x25519 | tail -n 1 | sed 's+.* ++g' >$cache
+	fi
+	cat $cache
+}
+
 xray_bin() {
 	if grep -q 'v2ray-sing' ${PLUGIN_FILE} 2>/dev/null; then
 		which v2ray-sing
@@ -103,7 +111,8 @@ get_lan_hosts() {
 xray_cleandns() {
 	uci_bool_by_type general no_dns_injection && return 0
 
-	rm -f $DNSMASQDIR/ss.conf $DNSMASQDIR/ss-servers.conf 2>/dev/null
+	rm -f $DNSMASQDIR/xray.conf $DNSMASQDIR/xray-servers.conf 2>/dev/null
+	([ -x /etc/init.d/dnsmasq-extra ] && /etc/init.d/dnsmasq reload || /etc/init.d/dnsmasq restart) >/dev/null 2>&1
 }
 
 xray_injectdns() {
@@ -448,16 +457,14 @@ gen_server_socks_config() {
 			[ "V$server_port" = "V" ] && server_port=12000
 		fi
 		if [ "V$plugin" != "V" ]; then
+			tag="[$(basename ${plugin})]-$(random_id)"
 			plugin=$(which $plugin)
 			echo >&2 "# Info: socks(:$server_port)-extra-plugin[$plugin]"
 			echo $plugin >>${PLUGIN_FILE}
 			echo "${plugin} ${plugin_opts} >/var/log/xray.$1.log 2>&1 &" |
 				sed "s+_RANDDOM_+${server_port}+g" >>${PLUGIN_FILE}.daemon.sh
-		fi
-		if [ "V$plugin" != "V" ]; then
-			tag="[$alias]-$(random_id)"
 		else
-			tag="[$(basename ${plugin})]-$(random_id)"
+			tag="[$alias]-$(random_id)"
 		fi
 		echo >&2 "# Debug: OutB-socks-${tag}"
 		cat <<-EOF
@@ -607,8 +614,10 @@ xray_daemon() {
 	while (! ulimit -SHn $limit) && [ $limit -gt 1024 ]; do limit=$((limit / 2)); done
 	ulimit -SHn $limit
 	config_file=$(gen_config_file)
+	cd /var/run/xrayservice
 	xray_plugin_daemon 2>/dev/null
-	($(xray_bin) run -c ${config_file} >/var/log/xray.log 2>&1) &
+	(XRAY_XUDP_BASEKEY=$(xray_xudp_basekey) $(xray_bin) run -c ${config_file} >/var/log/xray.log 2>&1) &
+	cd - >/dev/null
 	# wait-for-dns, timeout 10s
 	if which wait4x >/dev/null 2>&1; then # use [wait4x]
 		wait4x tcp 127.0.0.1:$(sed -n 's/.*"port".*: *\(.*\),/\1/p' ${config_file} | head -n1) --connection-timeout=300ms -q
@@ -630,16 +639,17 @@ start() {
 		uci_bool_by_type 'socks5_proxy' 'enable' ||
 		return 0
 
-	mkdir -p /var/run /var/etc $DNSMASQDIR
+	mkdir -p /var/run/xrayservice /var/etc $DNSMASQDIR
 	has_valid_server $(uci_get_by_type general server) && {
 		xray_injectdns
 		xray_daemon
 		echo >&2 "# Info: xray daemon init."
-	}
-	uci_bool_by_type 'transparent_proxy' 'enable' && {
-		rules
-		add_cron
-		echo >&2 "# Info: transparent proxy init."
+
+		uci_bool_by_type 'transparent_proxy' 'enable' && {
+			rules
+			add_cron
+			echo >&2 "# Info: transparent proxy init."
+		}
 	}
 	echo >&2 "# Info: started. CostTime: $(($(date '+%s') - $t0))s"
 }
@@ -667,6 +677,7 @@ stop() {
 		rm -f ${PLUGIN_FILE}*
 	fi
 	rm -rf /var/log/xray*.log
+	rm -rf /var/run/xrayservice
 	xray_cleandns
 	del_cron
 	echo >&2 "# Info: stopped. CostTime: $(($(date '+%s') - $t0))s"
