@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-premium
 PKG_VERSION:=2023.07.22
-PKG_RELEASE:=10-ge51b9ec
+PKG_RELEASE:=16-gdcb610f
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_TUN_ARCH:=mipsle-softfloat
