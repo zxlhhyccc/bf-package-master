@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2022 ImmortalWrt.org
 
@@ -6,14 +6,12 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=i40e
-PKG_VERSION:=2.22.8
-PKG_RELEASE:=2
+PKG_VERSION:=2.23.17
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://sources.immortalwrt.org \
-		https://sources.cdn.immortalwrt.org \
-		https://mirror.immortalwrt.org/sources
-PKG_HASH:=938eac24067e385d6e7e47788c7a1c47987bbe0ed36f3360809cbaa8caf85c6b
+PKG_SOURCE_URL:=@SF/e1000/i40e%20stable/$(PKG_VERSION)/
+PKG_HASH:=7d5a107a49e0c2cede2facba93086dde6fa5cbf529a92dbe57c5407b62d3c31d
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=GPL-2.0-only
