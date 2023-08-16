@@ -7,7 +7,7 @@ function index()
 
 	local page = entry({"admin", "nas", "alist"}, alias("admin", "nas", "alist", "basic"), _("Alist"), 20)
 	page.dependent = true
-	page.acl_depends = { "luci-app-alist" }
+	page.acl_depends = { "luci-app-alist-compat" }
 
 	entry({"admin", "nas"}, firstchild(), "NAS", 44).dependent = false
 	entry({"admin", "nas", "alist", "basic"}, cbi("alist/basic"), _("Basic Setting"), 1).leaf = true
