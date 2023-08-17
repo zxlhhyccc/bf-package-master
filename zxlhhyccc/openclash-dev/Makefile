@@ -15,7 +15,7 @@ ifeq ($(ARCH),mipsel)
 endif
 ifeq ($(ARCH),mips)
 	OPENCLASH_ARCH:=mips64
-endif20-ga19a9fe
+endif
 ifeq ($(ARCH),i386)
 	OPENCLASH_ARCH:=386
 endif
