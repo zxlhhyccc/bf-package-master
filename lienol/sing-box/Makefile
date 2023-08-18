@@ -95,7 +95,7 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_GVISOR
 	bool "Build with gVisor support"
-	default n
+	default y
 
     config SING_BOX_BUILD_LWIP
 	bool "Build with LWIP Tun stack support"
@@ -124,6 +124,7 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_WIREGUARD
     	bool "Build with WireGuard support"
+    	default y
   endif
 
   endmenu
