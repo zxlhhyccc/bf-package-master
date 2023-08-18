@@ -28,14 +28,14 @@ GO_PKG:=github.com/syncthing/syncthing
 GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/syncthing
 GO_PKG_INSTALL_EXTRA:=^gui/
 
+GO_PKG_TAGS:=noupgrade,noquic
 GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/lib/build.Version=v$(PKG_VERSION) \
 	$(GO_PKG)/lib/build.Stamp=$(SOURCE_DATE_EPOCH) \
 	$(GO_PKG)/lib/build.User=openwrt \
 	$(GO_PKG)/lib/build.Host=openwrt \
-	$(GO_PKG)/lib/build.Tags=noupgrade
-GO_PKG_TAGS:=noupgrade
+	$(GO_PKG)/lib/build.Tags=$(GO_PKG_TAGS)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
