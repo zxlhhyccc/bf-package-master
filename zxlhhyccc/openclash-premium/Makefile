@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-premium
-PKG_VERSION:=2023.07.22
-PKG_RELEASE:=18-g0ede9a3
+PKG_VERSION:=2023.08.17
+PKG_RELEASE:=
 
 ifeq ($(ARCH),mipsel)
 	OPENCLASH_TUN_ARCH:=mipsle-softfloat
@@ -42,7 +42,7 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 # PKG_SOURCE:=clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz
 # PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/
 PKG_HASH:=skip
@@ -62,8 +62,8 @@ openclash-tun is a cross-platform proxy software
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz
-	gzip -dc $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION)-$(PKG_RELEASE).gz > $(PKG_BUILD_DIR)/clash
+	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/premium/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz
+	gzip -dc $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_TUN_ARCH)-$(PKG_VERSION).gz > $(PKG_BUILD_DIR)/clash
 endef
 
 define Build/Configure
