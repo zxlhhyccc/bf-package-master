@@ -51,11 +51,10 @@ function getServiceStatus() {
 function renderStatus(isRunning) {
 	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
 	var renderHTML;
-	if (isRunning) {
+	if (isRunning)
 		renderHTML = spanTemp.format('green', _('HomeProxy'), _('RUNNING'));
-	} else {
+	else
 		renderHTML = spanTemp.format('red', _('HomeProxy'), _('NOT RUNNING'));
-	}
 
 	return renderHTML;
 }
@@ -216,7 +215,7 @@ return view.extend({
 		}
 
 		o = s.taboption('routing', form.Value, 'routing_port', _('Routing ports'),
-			_('Specify target port(s) that get proxied. Multiple ports must be separated by commas.'));
+			_('Specify target ports to be proxied. Multiple ports must be separated by commas.'));
 		o.value('all', _('All ports'));
 		o.value('common', _('Common ports only (bypass P2P traffic)'));
 		o.default = 'common';
