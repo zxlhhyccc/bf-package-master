@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=clashr
-PKG_VERSION:=0.19.0.2
+PKG_VERSION:=1.1.0
 PKG_MAINTAINER:=frainzy1477
 
 ifeq ($(ARCH),mipsel)
@@ -26,8 +26,8 @@ ifeq ($(ARCH),aarch64)
 	PKG_ARCH:=armv8
 endif
 
-PKG_SOURCE:=clashr-linux-$(PKG_ARCH)-v$(PKG_VERSION).gz
-PKG_SOURCE_URL:=https://github.com/frainzy1477/clashrdev/releases/download/v$(PKG_VERSION)/
+PKG_SOURCE:=clash-linux-$(PKG_ARCH).gz
+PKG_SOURCE_URL:=https://github.com/frainzy1477/clash_dev/releases/download/v$(PKG_VERSION)/
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_HASH:=skip
 
