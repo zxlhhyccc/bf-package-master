@@ -42,7 +42,7 @@
  	default y
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -343,8 +343,11 @@ end
+@@ -317,8 +317,11 @@ end
  
  ---- DNS Forward Mode
  dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
@@ -55,7 +55,7 @@
  end
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
-@@ -396,6 +399,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
+@@ -370,6 +373,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
@@ -63,7 +63,7 @@
  o:depends({dns_mode = "dns2tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({v2ray_dns_mode = "tcp"})
-@@ -425,6 +429,8 @@ o:depends("v2ray_dns_mode", "doh")
+@@ -399,6 +403,8 @@ o:depends("v2ray_dns_mode", "doh")
  o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
  o.default = "1"
  o:depends({dns_mode = "dns2socks"})
@@ -72,7 +72,7 @@
  o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
  o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
  o.rmempty = false
-@@ -433,6 +439,7 @@ if api.is_finded("chinadns-ng") then
+@@ -407,6 +413,7 @@ if api.is_finded("chinadns-ng") then
  	o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, but will increase the memory."))
  	o.default = "0"
  	o:depends({dns_mode = "dns2socks"})
@@ -108,7 +108,7 @@
  
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1208,6 +1208,12 @@ start_dns() {
+@@ -1178,6 +1178,12 @@ start_dns() {
  				run_v2ray ${_v2ray_args}
  			}
  		;;
@@ -121,7 +121,7 @@
  		dns2tcp)
  			use_tcp_node_resolve_dns=1
  			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1215,8 +1221,14 @@ start_dns() {
+@@ -1185,8 +1191,14 @@ start_dns() {
  		;;
  		udp)
  			use_udp_node_resolve_dns=1
@@ -136,7 +136,7 @@
  		;;
  		esac
  
-@@ -1273,6 +1285,74 @@ start_dns() {
+@@ -1243,6 +1255,74 @@ start_dns() {
  	esac
  }
  
@@ -211,7 +211,7 @@
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1668,7 +1748,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
+@@ -1638,7 +1718,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
  gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"

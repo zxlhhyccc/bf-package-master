@@ -299,7 +299,7 @@ load_acl() {
 			[ "$udp_redir_ports" = "default" ] && udp_redir_ports=$UDP_REDIR_PORTS
 			[ "$tcp_no_redir_ports" = "1:65535" ] && tcp_proxy_mode="disable"
 			[ "$udp_no_redir_ports" = "1:65535" ] && udp_proxy_mode="disable"
-			
+
 			tcp_node_remark=$(config_n_get $TCP_NODE remarks)
 			udp_node_remark=$(config_n_get $UDP_NODE remarks)
 			[ -s "${TMP_ACL_PATH}/${sid}/var_tcp_node" ] && tcp_node=$(cat ${TMP_ACL_PATH}/${sid}/var_tcp_node)
