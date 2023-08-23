@@ -92,13 +92,12 @@ define Package/v2raya/conffiles
 /etc/config/v2raya
 endef
 
-WEB_PKG_VERSION:=2.1.3
-WEB_FILE:=$(PKG_NAME)-web-$(WEB_PKG_VERSION).tar.gz
+WEB_FILE:=$(PKG_NAME)-web-$(PKG_VERSION).zip
 define Download/v2raya-web
-	URL:=https://codeload.github.com/v2rayA/v2raya-web/tar.gz/v$(PKG_VERSION)?
-	URL_FILE:=$(WEB_FILE)
+	URL:=https://github.com/v2rayA/v2rayA/releases/download/v$(PKG_VERSION)/
+	URL_FILE:=web.zip
 	FILE:=$(WEB_FILE)
-	HASH:=f262efe46b5377ceed0450f519ba8562a0e7553ec2cc34a4e62f95749b19be01
+	HASH:=b7769b287b6e2ecdf8823142d126bf9b981a8d3af4cb73c8f798ed483bcc988c
 endef
 
 define Build/Prepare
@@ -106,7 +105,7 @@ define Build/Prepare
 
 	( \
 		mkdir -p $(PKG_BUILD_DIR)/server/router/web ; \
-		gzip -dc $(DL_DIR)/$(WEB_FILE) | $(HOST_TAR) -C $(PKG_BUILD_DIR)/server/router/web $(TAR_OPTIONS) ; \
+		unzip -q -d $(PKG_BUILD_DIR)/server/router/web $(DL_DIR)/$(WEB_FILE) ; \
 	)
 endef
 
