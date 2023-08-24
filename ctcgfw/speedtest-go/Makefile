@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=speedtest-go
-PKG_VERSION:=1.6.4
+PKG_VERSION:=1.6.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/showwin/speedtest-go/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=c43924d2860ed6ecd661b3393663fbe1092bf22a557c1fa37d8464a8f5d658cd
+PKG_HASH:=84cb717ffbc1998612f148b7b8660fad81e38960ee4ca5a2f7af6de217a778be
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
