@@ -18,6 +18,10 @@ PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=Silvan <cnsilvan@gmail.com>
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_UNBLOCKNETEASEMUSICGO_COMPRESS_GOPROXY \
+	CONFIG_UNBLOCKNETEASEMUSICGO_COMPRESS_UPX
+
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 # PKG_USE_MIPS16:=0
@@ -32,13 +36,18 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/$(PKG_NAME)/config
-config $(PKG_NAME)_INCLUDE_GOPROXY
+config UNBLOCKNETEASEMUSICGO_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
-	default y
+	default n
+
+config UNBLOCKNETEASEMUSICGO_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	depends on !mips64
+	default n
 
 endef
 
-ifeq ($(CONFIG_$(PKG_NAME)_INCLUDE_GOPROXY),y)
+ifeq ($(CONFIG_UNBLOCKNETEASEMUSICGO_INCLUDE_GOPROXY),y)
 export GO111MODULE=on
 export GOPROXY=https://goproxy.io
 #export GOPROXY=https://mirrors.aliyun.com/goproxy/
@@ -57,9 +66,9 @@ define Package/$(PKG_NAME)/description
 Revive Netease Cloud Music (Golang)
 endef
 
-define Build/Prepare
-	tar -zxvf $(DL_DIR)/$(PKG_SOURCE) -C $(BUILD_DIR)/$(PKG_NAME) --strip-components 1
-endef
+#define Build/Prepare
+#	tar -xvf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_BUILD_DIR) --strip-components 1
+#endef
 
 define Build/Configure
   
@@ -69,7 +78,9 @@ define Build/Compile
 	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG))
 	$(call GoPackage/Build/Configure)
 	$(call GoPackage/Build/Compile)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/UnblockNeteaseMusic || true
+ifeq ($(CONFIG_UNBLOCKNETEASEMUSICGO_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/UnblockNeteaseMusic
+endif
 	chmod +wx $(GO_PKG_BUILD_BIN_DIR)/UnblockNeteaseMusic
 endef
 
