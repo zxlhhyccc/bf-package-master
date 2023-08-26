@@ -1,6 +1,8 @@
-# Copyright (C) 2021 xiaorouji
+# SPDX-License-Identifier: MIT
 #
-# This is free software, licensed under the GNU General Public License v3.
+# Copyright (C) 2021-2021  sirpdboy  <herboy2008@gmail.com>
+# 
+# This is free software, licensed under the Apache License, Version 2.0 .
 #
 
 include $(TOPDIR)/rules.mk
@@ -9,83 +11,75 @@ PKG_NAME:=hysteria
 PKG_VERSION:=1.3.5
 PKG_RELEASE:=1
 
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://codeload.github.com/HyNetwork/hysteria/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=8f1945eb36dba8ebc47e3f68af4ba421f65ca119cc0c54d552f59228ee824e89
-
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/apernet/hysteria.git
-PKG_SOURCE_VERSION:=57c5164854d6cfe00bead730cce731da2babe406
-PKG_MIRROR_HASH:=b023cb15ab9db07ece8f7d1f4f56e326a68a7bba2c984c74ab00511b2906f27d
-
-PKG_CONFIG_DEPENDS:= \
-	CONFIG_HYSTERIA_COMPRESS_GOPROXY \
-	CONFIG_HYSTERIA_COMPRESS_UPX
+ifeq ($(ARCH),mipsel)
+	HYSTERIA_ARCH:=mipsle
+endif
+ifeq ($(ARCH),x86_64)
+	HYSTERIA_ARCH:=amd64
+endif
+ifeq ($(ARCH),arm)
+	HYSTERIA_ARCH:=arm
+endif
+ifeq ($(BOARD),bcm53xx)
+	HYSTERIA_ARCH:=arm
+ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
+	HYSTERIA_ARCH:=armv5
+endif
+endif
+ifeq ($(BOARD),kirkwood)
+	HYSTERIA_ARCH:=armv5
+endif
+ifeq ($(ARCH),aarch64)
+	HYSTERIA_ARCH:=arm64
+endif
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
+PKG_MAINTAINER:=ZXLHHYCCC <zxlhhy@gmail.com>
 
-PKG_BUILD_DEPENDS:=golang/host
-PKG_BUILD_PARALLEL:=1
-# PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_HYSTERIA_COMPRESS_UPX
 
-GO_PKG:=github.com/apernet/hysteria
-GO_PKG_BUILD_PKG:=$(GO_PKG)/app/cmd
-GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:= \
-	main.appVersion=$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=57c5164854d6cfe00bead730cce731da2babe406
 
 include $(INCLUDE_DIR)/package.mk
-include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
-	DEPENDS:=$$(GO_ARCH_DEPENDS)
 	TITLE:=Hysteria is a feature-packed network utility optimized for networks of poor quality (e.g. satellite connections, congested public Wi-Fi, connecting from China to servers abroad)
+	DEPENDS:=@(x86_64||arm||aarch64||mipsel)
 	URL:=https://github.com/apernet/hysteria
 endef
 
+define Package/$(PKG_NAME)/description
+  Hysteria is a feature-packed network utility optimized for networks of poor quality (e.g. satellite connections, congested public Wi-Fi, connecting from China to servers abroad)
+endef
+
+define Build/Prepare
+	[ ! -f $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH) ] && wget https://github.com/apernet/hysteria/releases/download/v$(PKG_VERSION)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH) -O $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH)
+	chmod +x $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH)
+endef
+
 define Package/$(PKG_NAME)/config
-
-menu "Configuration"
-	depends on PACKAGE_$(PKG_NAME)
-
-config HYSTERIA_COMPRESS_GOPROXY
-	bool "Compiling with GOPROXY proxy"
-	default n
-
 config HYSTERIA_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
 	default n
-
-endmenu
-
 endef
 
-ifeq ($(CONFIG_HYSTERIA_COMPRESS_GOPROXY),y)
-export GO111MODULE=on
-export GOPROXY=https://goproxy.io
-endif
-
 define Build/Compile
-	$(call GoPackage/Build/Compile)
+	true
 ifeq ($(CONFIG_HYSTERIA_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/cmd
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH)
 endif
 endef
 
 define Package/$(PKG_NAME)/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-
-	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/cmd $(1)/usr/bin/hysteria
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH) $(1)/usr/bin/hysteria
 endef
 
-$(eval $(call GoBinPackage,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))
