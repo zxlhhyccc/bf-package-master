@@ -23,7 +23,7 @@
 URL="https://github.com/privacy-protection-tools/anti-AD/raw/master/anti-ad-smartdns.conf"
 
 # Smartdns Config File Path
-CONFIG_FLODER="/etc/smartdns"
+CONFIG_FLODER="/etc/smartdns/domain-set"
 CONFIG_FILE="anti-ad-smartdns.conf"
 
 INPUT_FILE=$(mktemp)
@@ -71,10 +71,10 @@ mv -f $INPUT_FILE $OUTPUT_FILE
 URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/direct-list.txt"
 
 # DNS Server Group
-PROXYDNS_NAME="china"
+PROXYDNS_NAME="CN"
 
 # Smartdns Config File Path
-CONFIG_FLODER="/etc/smartdns"
+CONFIG_FLODER="/etc/smartdns/domain-set"
 CONFIG_FILE="cnlist.conf"
 
 INPUT_FILE=$(mktemp)
@@ -105,10 +105,10 @@ rm $INPUT_FILE
 URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/gfw.txt"  # 也可使用gfw.txt
 
 # DNS Server Group
-PROXYDNS_NAME="oversea"
+PROXYDNS_NAME="overseas"
 
 # Smartdns Config File Path
-CONFIG_FLODER="/etc/smartdns"
+CONFIG_FLODER="/etc/smartdns/domain-set"
 CONFIG_FILE="gfwlist.conf"
 
 INPUT_FILE=$(mktemp)
