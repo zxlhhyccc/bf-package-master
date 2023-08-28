@@ -1,0 +1,5 @@
+国外域名，文件名设置为overseas.txt（可自行修改）
+https://github.com/ruijzhan/chnroute/blob/master/gfwlist.txt
+
+国内域名，文件名设置为chinalist.txt（可自行修改）
+https://github.com/Rongronggg9/chinalist/blob/main/chinalist_plain.txt
