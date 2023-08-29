@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=BaiduPCS-Go
-PKG_VERSION:=3.9.2
+PKG_VERSION:=3.9.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/qjfoidnh/BaiduPCS-Go/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=da7749bb0534f23154cbca7aad7e77d5531c3aabe458a0a0b1cd618b76f59217
+PKG_HASH:=e560b1a977fda5e4d3e9e67df5ae8eddd45ed0bf9f9e65b604afe06aeed8a1c8
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
