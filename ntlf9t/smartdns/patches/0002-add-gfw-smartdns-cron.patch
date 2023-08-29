@@ -22,7 +22,7 @@
  	uci commit smartdns
  
 +	sed -i '/smartdns\/update-china-list/d' $SMARTDNS_CRON_FILE
-+	[ "$gfw_smartdns" = "1" -a "$enabled" -gt 0 ] && echo "0 4 * * * sh /usr/share/smartdns/update-china-list.sh" >> $SMARTDNS_CRON_FILE
++	[ "$gfw_smartdns" = "1" -a "$enabled" -gt 0 ] && echo "30 4 * * * sh /usr/share/smartdns/update-china-list.sh" >> $SMARTDNS_CRON_FILE
 +	crontab $SMARTDNS_CRON_FILE
 +
  	# disable service
