@@ -65,6 +65,14 @@ o.cfgvalue    = function(...)
     return Flag.cfgvalue(...) or "0"
 end
 
+---- Update china list(GFW)
+o = s:taboption("settings", Flag, "gfw_smartdns", translate("Update Domain rule list And Adblock Database"), translate("If required domain rules,then in domain name rule list configure.If required Adblock,then in the custom settings Remove the # sign before 'conf-file'."))
+o.rmempty     = false
+o.default     = o.disabled
+o.cfgvalue    = function(...)
+    return Flag.cfgvalue(...) or "0"
+end
+
 ---- Speed check mode;
 o = s:taboption("advanced", Value, "speed_check_mode", translate("Speed Check Mode"), translate("Smartdns speed check mode."));
 o.rmempty = true;
@@ -492,6 +500,7 @@ o.rempty      = true
 o:depends("type", "udp")
 o:depends("type", "tcp")
 o:depends("type", "tls")
+o:depends("type", "https")
 
 ---- type
 o = s:option(ListValue, "type", translate("type"), translate("DNS Server type"))

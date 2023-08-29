@@ -162,6 +162,12 @@ return view.extend({
 		o.rmempty = false;
 		o.default = o.enabled;
 
+		// Update china list(GFW)
+		o = s.taboption("settings", form.Flag, "gfw_smartdns", _("Update Domain rule list And Adblock Database"),
+			_("If required domain rules,then in domain name rule list configure.If required Adblock,then in the custom settings Remove the # sign before 'conf-file'."));
+		o.rmempty = false;
+		o.default = o.enabled;
+
 		///////////////////////////////////////
 		// advanced settings;
 		///////////////////////////////////////
@@ -660,6 +666,7 @@ return view.extend({
 		o.depends("type", "udp");
 		o.depends("type", "tcp");
 		o.depends("type", "tls");
+		o.depends("type", "https");
 
 		// type;
 		o = s.taboption("general", form.ListValue, "type", _("type"), _("DNS Server type"));

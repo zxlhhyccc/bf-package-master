@@ -1,0 +1,30 @@
+--- a/package/openwrt/files/etc/init.d/smartdns
++++ b/package/openwrt/files/etc/init.d/smartdns
+@@ -32,6 +32,7 @@ SMARTDNS_CONF_DOWNLOAD_DIR="$SMARTDNS_CO
+ SMARTDNS_DOMAIN_LIST_DOWNLOAD_DIR="$SMARTDNS_CONF_DIR/domain-set"
+ SMARTDNS_VAR_CONF_DIR="/var/etc/smartdns"
+ SMARTDNS_CONF="$SMARTDNS_VAR_CONF_DIR/smartdns.conf"
++SMARTDNS_CRON_FILE="/etc/crontabs/root"
+ ADDRESS_CONF="$SMARTDNS_CONF_DIR/address.conf"
+ BLACKLIST_IP_CONF="$SMARTDNS_CONF_DIR/blacklist-ip.conf"
+ CUSTOM_CONF="$SMARTDNS_CONF_DIR/custom.conf"
+@@ -524,6 +525,8 @@ load_service()
+ 
+ 	config_get auto_set_dnsmasq "$section" "auto_set_dnsmasq" "1"
+ 
++	config_get gfw_smartdns "$section" "gfw_smartdns" "0"
++
+ 	config_get ipset_no_speed "$section" "ipset_no_speed" ""
+ 	[ -z "$ipset_no_speed" ] || conf_append "ipset-no-speed" "$ipset_no_speed"
+ 
+@@ -623,6 +626,10 @@ load_service()
+ 	uci -q set smartdns.@smartdns[0].old_auto_set_dnsmasq="$auto_set_dnsmasq"
+ 	uci commit smartdns
+ 
++	sed -i '/smartdns\/update-china-list/d' $SMARTDNS_CRON_FILE
++	[ "$gfw_smartdns" = "1" -a "$enabled" -gt 0 ] && echo "0 4 * * * sh /usr/share/smartdns/update-china-list.sh" >> $SMARTDNS_CRON_FILE
++	crontab $SMARTDNS_CRON_FILE
++
+ 	# disable service
+ 	[ "$enabled" = "0" ] && {
+ 		[ "$old_enabled" = "0" ] && return 1

@@ -36,6 +36,8 @@ mkdir -p $CONFIG_FLODER
 
 mv -f $INPUT_FILE $OUTPUT_FILE
 
+chmod 644 $OUTPUT_FILE
+
 # Update China Domain
 # source: https://raw.githubusercontent.com/huifukejian/test/master/update-china-list.sh
 
@@ -98,6 +100,8 @@ then
 	done
 fi
 
+chmod 644 $OUTPUT_FILE
+
 rm $INPUT_FILE
 
 # GFWlist Download Link
@@ -130,6 +134,8 @@ then
 		echo "nameserver /$line/$PROXYDNS_NAME" >> $OUTPUT_FILE
 	done
 fi
+
+chmod 644 $OUTPUT_FILE
 
 rm $INPUT_FILE
 
@@ -164,6 +170,8 @@ then
 		echo "blacklist-ip $line" >> $BLACKLIST_OUTPUT_FILE
 	done
 fi
+
+chmod 644 $WHITELIST_OUTPUT_FILE $BLACKLIST_OUTPUT_FILE
 
 rm $INPUT_FILE
 
