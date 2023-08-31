@@ -78,6 +78,9 @@ msgstr "网络存储"
 msgid "Ethernet Information"
 msgstr "网口信息"
 
+msgid "Port status"
+msgstr "端口状态"
+
 msgid "Ethernet Name"
 msgstr "网口名"
 
