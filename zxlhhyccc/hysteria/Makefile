@@ -57,7 +57,7 @@ of poor quality (e.g. satellite connections, congested public Wi-Fi,connecting f
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH) ] && wget https://github.com/apernet/hysteria/releases/download/v$(PKG_VERSION)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH) -O $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH)
+	[ ! -f $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH) ] && wget https://github.com/apernet/hysteria/releases/download/app/v$(PKG_VERSION)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH) -O $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH)
 	chmod +x $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH)
 endef
 
