@@ -1,14 +1,11 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright (C) 2021-2021  sirpdboy  <herboy2008@gmail.com>
-# 
-# This is free software, licensed under the Apache License, Version 2.0 .
-#
+# Copyright (C) 2021 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hysteria
-PKG_VERSION:=1.3.5
+PKG_VERSION:=2.0.0
 PKG_RELEASE:=1
 
 ifeq ($(ARCH),mipsel)
@@ -41,7 +38,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_HYSTERIA_COMPRESS_UPX
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=57c5164854d6cfe00bead730cce731da2babe406
+PKG_SOURCE_VERSION:=e11762a196e4fcdbde728ef160bc3c6cfeb5bc6e
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -49,13 +46,14 @@ define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
-	TITLE:=Hysteria is a feature-packed network utility optimized for networks of poor quality (e.g. satellite connections, congested public Wi-Fi, connecting from China to servers abroad)
+	TITLE:=A feature-packed network utility optimized for networks of poor quality
 	DEPENDS:=@(x86_64||arm||aarch64||mipsel)
 	URL:=https://github.com/apernet/hysteria
 endef
 
 define Package/$(PKG_NAME)/description
-  Hysteria is a feature-packed network utility optimized for networks of poor quality (e.g. satellite connections, congested public Wi-Fi, connecting from China to servers abroad)
+  Hysteria is a feature-packed network utility optimized for networks
+of poor quality (e.g. satellite connections, congested public Wi-Fi,connecting from China to servers abroad) powered by a custom version of QUIC protocol.
 endef
 
 define Build/Prepare
