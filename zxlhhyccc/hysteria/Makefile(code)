@@ -9,9 +9,9 @@ PKG_NAME:=hysteria
 PKG_VERSION:=2.0.0
 PKG_RELEASE:=1
 
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://codeload.github.com/HyNetwork/hysteria/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=8f1945eb36dba8ebc47e3f68af4ba421f65ca119cc0c54d552f59228ee824e89
+#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+#PKG_SOURCE_URL:=https://codeload.github.com/apernet/hysteria/tar.gz/app/v$(PKG_VERSION)?
+#PKG_HASH:=06f86cf466cbe08e7aaea68914263780ed4474cd73df9a591676779535d330d5
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -44,16 +44,23 @@ include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 TAR_OPTIONS+= --strip-components 1
 TAR_CMD=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 
-define Package/$(PKG_NAME)
+define Package/hysteria
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
+	TITLE:=A feature-packed network utility optimized for networks of poor quality
 	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
-	TITLE:=Hysteria is a feature-packed network utility optimized for networks of poor quality (e.g. satellite connections, congested public Wi-Fi, connecting from China to servers abroad)
 	URL:=https://github.com/apernet/hysteria
 endef
 
-define Package/$(PKG_NAME)/config
+define Package/hysteria/description
+  Hysteria is a feature-packed network utility optimized for networks
+  of poor quality (e.g. satellite connections, congested public Wi-Fi,
+  connecting from China to servers abroad) powered by a custom version
+  of QUIC protocol.
+endef
+
+define Package/hysteria/config
 
 menu "Configuration"
 	depends on PACKAGE_$(PKG_NAME)
@@ -83,12 +90,12 @@ ifeq ($(CONFIG_HYSTERIA_COMPRESS_UPX),y)
 endif
 endef
 
-define Package/$(PKG_NAME)/install
+define Package/hysteria/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/cmd $(1)/usr/bin/hysteria
 endef
 
-$(eval $(call GoBinPackage,$(PKG_NAME)))
-$(eval $(call BuildPackage,$(PKG_NAME)))
+$(eval $(call GoBinPackage,hysteria))
+$(eval $(call BuildPackage,hysteria))

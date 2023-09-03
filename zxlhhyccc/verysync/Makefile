@@ -69,13 +69,13 @@ define Package/verysync/config
 endef
 
 define Build/Configure
-	true
-ifeq ($(CONFIG_VERYSYNC_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/verysync
-endif
 endef
 
 define Build/Compile
+	$(call Package/Build/Compile)
+ifeq ($(CONFIG_VERYSYNC_COMPRESS_UPX),y)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/verysync
+endif
 endef
 
 define Package/verysync/install

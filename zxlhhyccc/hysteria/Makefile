@@ -69,7 +69,7 @@ config HYSTERIA_COMPRESS_UPX
 endef
 
 define Build/Compile
-	true
+	$(call Package/Build/Compile)
 ifeq ($(CONFIG_HYSTERIA_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(HYSTERIA_ARCH)
 endif
