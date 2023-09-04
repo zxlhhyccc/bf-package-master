@@ -35,6 +35,7 @@ PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/apernet/hysteria
 GO_PKG_BUILD_PKG:=$(GO_PKG)/app
+GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X = \
 	$(GO_PKG)/app/cmd.appVersion=v$(PKG_VERSION) \
 	$(GO_PKG)/app/cmd.appType=release \
