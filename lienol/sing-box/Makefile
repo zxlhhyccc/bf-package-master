@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sing-box
-PKG_VERSION:=1.5.0-beta.2
+PKG_VERSION:=1.5.0-beta.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=0fe5c6da2e64982362f73a85c1f0b5855db4b2362be2bab3b8611c6466bf6bde
+PKG_HASH:=11a4070e64c798de24ac59284bac5f21b76219ee5738d6d6cdcd34bdada107a4
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -78,12 +78,14 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_CLASH_API
 	bool "Build with Clash API support"
+	default y
 
     config SING_BOX_BUILD_DHCP
 	bool "Build with DHCP support"
 
     config SING_BOX_BUILD_ECH
 	bool "Build with TLS ECH extension support"
+	default y
 
     config SING_BOX_BUILD_EMBEDDED_TOR
 	bool "Build with embedded Tor support"
@@ -140,7 +142,7 @@ GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SING_BOX_BUILD_GVISOR),with_gvisor) \
 	$(if $(CONFIG_SING_BOX_BUILD_LWIP),with_lwip) \
 	$(if $(CONFIG_SING_BOX_BUILD_QUIC),with_quic) \
-	$(if $(CONFIG_SING_BOX_WITH_REALITY_SERVER),with_reality_server) \
+	$(if $(CONFIG_SING_BOX_BUILD_REALITY_SERVER),with_reality_server) \
 	$(if $(CONFIG_SING_BOX_BUILD_SHADOWSOCKSR),with_shadowsocksr) \
 	$(if $(CONFIG_SING_BOX_BUILD_UTLS),with_utls) \
 	$(if $(CONFIG_SING_BOX_BUILD_V2RAY_API),with_v2ray_api) \
@@ -149,6 +151,7 @@ GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 
 define Package/sing-box/conffiles
 /etc/sing-box/config.json
+/etc/config/sing-box
 /etc/sing-box/
 endef
 
