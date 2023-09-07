@@ -308,12 +308,12 @@ o = s:option(Value, "obfs_param", translate("Obfs param (optional)"))
 o:depends("type", "ssr")
 
 -- [[ Hysteria ]]--
-o = s:option(Flag, "port_hopping", translate("Port Hopping"))
+o = s:option(Flag, "port_hopping", translate("Enable Port Hopping"))
 o:depends("type", "hysteria")
 o.rmempty = true
 o.default = "0"
 
-o = s:option(Value, "port_range", translate("Port range"))
+o = s:option(Value, "port_range", translate("Port Range"))
 o:depends({type = "hysteria", port_hopping = "1"})
 o.datatype = "portrange"
 o.rmempty = true
