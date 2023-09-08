@@ -1,5 +1,3 @@
-diff --git a/Makefile b/Makefile
-index d1c5ed3..e978fe0 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -16,6 +16,8 @@ PKG_CONFIG_DEPENDS:= \
@@ -42,8 +40,6 @@ index d1c5ed3..e978fe0 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
  	bool "Include Shadowsocks Libev Client"
  	default y
-diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index 29ceafd..863aac2 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -317,8 +317,11 @@ end
@@ -84,8 +80,6 @@ index 29ceafd..863aac2 100644
  	o:depends({dns_mode = "dns2tcp"})
  	o:depends({dns_mode = "sing-box", v2ray_dns_mode = "tcp"})
  	o:depends({dns_mode = "sing-box", v2ray_dns_mode = "doh"})
-diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-index 0838d86..d9d73b3 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -103,7 +103,7 @@ o.validate = function(self, value, t)
@@ -97,8 +91,6 @@ index 0838d86..d9d73b3 100644
  o.rawhtml = true
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
-diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 3672ef8..5fb1e5c 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -241,6 +241,12 @@ msgstr "单进程"
@@ -114,11 +106,9 @@ index 3672ef8..5fb1e5c 100644
  msgid "Default Proxy Mode"
  msgstr "默认代理模式"
  
-diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 1cb66ba..5f23021 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1327,6 +1327,12 @@ start_dns() {
+@@ -1336,6 +1336,12 @@ start_dns() {
  				run_xray ${_args}
  			}
  		;;
@@ -131,7 +121,7 @@ index 1cb66ba..5f23021 100755
  		dns2tcp)
  			use_tcp_node_resolve_dns=1
  			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1334,8 +1340,14 @@ start_dns() {
+@@ -1343,8 +1349,14 @@ start_dns() {
  		;;
  		udp)
  			use_udp_node_resolve_dns=1
@@ -146,7 +136,7 @@ index 1cb66ba..5f23021 100755
  		;;
  		esac
  
-@@ -1392,6 +1404,74 @@ start_dns() {
+@@ -1401,6 +1413,74 @@ start_dns() {
  	esac
  }
  
@@ -221,7 +211,7 @@ index 1cb66ba..5f23021 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1787,7 +1867,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
+@@ -1796,7 +1876,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
  gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
