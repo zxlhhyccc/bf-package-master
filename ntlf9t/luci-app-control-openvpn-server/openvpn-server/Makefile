@@ -9,14 +9,14 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openvpn-server
 
-PKG_VERSION:=2.6.5
+PKG_VERSION:=2.6.6
 PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=\
 	https://build.openvpn.net/downloads/releases/ \
 	https://swupdate.openvpn.net/community/releases/
 PKG_SOURCE:=openvpn-$(PKG_VERSION).tar.gz
-PKG_HASH:=e34efdb9a3789a760cfc91d57349dfb1e31da169c98c06cb490c6a8a015638e2
+PKG_HASH:=3b074f392818b31aa529b84f76e8b5e4ad03fca764924f46d906bceaaf421034
 PKG_BUILD_DIR:=$(BUILD_DIR)/openvpn-server-$(BUILD_VARIANT)/openvpn-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Magnus Kroken <mkroken@gmail.com>
@@ -37,7 +37,8 @@ define Package/openvpn-server/Default
   URL:=http://openvpn.net
   SUBMENU:=VPN
   MENU:=1
-  DEPENDS:=+kmod-tun +libcap-ng +OPENVPN_$(1)_ENABLE_LZO:liblzo +OPENVPN_$(1)_ENABLE_LZ4:liblz4 +OPENVPN_$(1)_ENABLE_IPROUTE2:ip +OPENVPN_$(1)_ENABLE_DCO:libnl-genl $(3)
+  DEPENDS:=+kmod-tun +libcap-ng +OPENVPN_$(1)_ENABLE_LZO:liblzo +OPENVPN_$(1)_ENABLE_LZ4:liblz4 +OPENVPN_$(1)_ENABLE_IPROUTE2:ip \
+	+OPENVPN_$(1)_ENABLE_DCO:libnl-genl +OPENVPN_$(1)_ENABLE_DCO:kmod-ovpn-dco-v2 $(3)
   VARIANT:=$(1)
   PROVIDES:=openvpn openvpn-crypto
 endef
