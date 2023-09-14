@@ -55,7 +55,7 @@
  end
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
-@@ -374,6 +377,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
+@@ -364,6 +367,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
@@ -63,23 +63,23 @@
  o:depends({dns_mode = "dns2tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({v2ray_dns_mode = "tcp"})
-@@ -403,6 +407,8 @@ o:depends({dns_mode = "xray", v2ray_dns_mode = "doh"})
+@@ -410,6 +414,8 @@ end
  o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
  o.default = "1"
  o:depends({dns_mode = "dns2socks"})
 +o:depends({dns_mode = "pdnsd"})
 +o:depends({dns_mode = "udp"})
- o:depends({dns_mode = "sing-box", v2ray_dns_mode = "tcp"})
- o:depends({dns_mode = "sing-box", v2ray_dns_mode = "doh"})
- o:depends({dns_mode = "xray", v2ray_dns_mode = "tcp"})
-@@ -413,6 +419,7 @@ if api.is_finded("chinadns-ng") then
+ o:depends({dns_mode = "sing-box", remote_fakedns = false})
+ o:depends({dns_mode = "xray"})
+ o.rmempty = false
+@@ -418,6 +424,7 @@ if api.is_finded("chinadns-ng") then
  	o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, but will increase the memory."))
  	o.default = "0"
  	o:depends({dns_mode = "dns2socks"})
 +	o:depends({dns_mode = "pdnsd"})
  	o:depends({dns_mode = "dns2tcp"})
- 	o:depends({dns_mode = "sing-box", v2ray_dns_mode = "tcp"})
- 	o:depends({dns_mode = "sing-box", v2ray_dns_mode = "doh"})
+ 	o:depends({dns_mode = "sing-box", remote_fakedns = false})
+ 	o:depends({dns_mode = "xray"})
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -103,7 +103,7 @@ o.validate = function(self, value, t)
@@ -93,7 +93,7 @@
  	local remark = m:get(n, "remark") or ""
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -241,6 +241,12 @@ msgstr "单进程"
+@@ -244,6 +244,12 @@ msgstr "单进程"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -108,7 +108,7 @@
  
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1344,6 +1344,12 @@ start_dns() {
+@@ -1312,6 +1312,12 @@ start_dns() {
  				run_xray ${_args}
  			}
  		;;
@@ -121,7 +121,7 @@
  		dns2tcp)
  			use_tcp_node_resolve_dns=1
  			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1351,8 +1357,14 @@ start_dns() {
+@@ -1319,8 +1325,14 @@ start_dns() {
  		;;
  		udp)
  			use_udp_node_resolve_dns=1
@@ -136,7 +136,7 @@
  		;;
  		esac
  
-@@ -1409,6 +1421,74 @@ start_dns() {
+@@ -1377,6 +1389,74 @@ start_dns() {
  	esac
  }
  
@@ -211,7 +211,7 @@
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1804,7 +1884,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
+@@ -1775,7 +1855,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
  gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
