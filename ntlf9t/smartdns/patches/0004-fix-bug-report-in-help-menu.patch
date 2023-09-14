@@ -1,0 +1,22 @@
+From a8a2e19e0064640d3e181e895969b551686cfa22 Mon Sep 17 00:00:00 2001
+From: PikuZheng <cba321123@gmail.com>
+Date: Thu, 14 Sep 2023 19:10:35 +0800
+Subject: [PATCH] fix #1495
+
+---
+ src/smartdns.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/smartdns.c b/src/smartdns.c
+index fc3ae2abd..dfe508735 100644
+--- a/src/smartdns.c
++++ b/src/smartdns.c
+@@ -765,7 +765,7 @@ int main(int argc, char *argv[])
+ 	sigset_t empty_sigblock;
+ 	struct stat sb;
+ 
+-	static struct option long_options[] = {{"cache-print", required_argument, 0, 256}};
++	static struct option long_options[] = {{"cache-print", required_argument, 0, 256}, {"help", no_argument, 0, 'h'}, {0, 0, 0, 0}};
+ 
+ 	safe_strncpy(config_file, SMARTDNS_CONF_FILE, MAX_LINE_LEN);
+ 
