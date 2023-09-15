@@ -235,30 +235,6 @@ function parseShareLink(uri, features) {
 			};
 
 			break;
-		case 'hysteria2':
-			/* https://v2.hysteria.network/zh/docs/developers/URI-Scheme */
-			/* hysteria2://letmein@example.com/?insecure=1&obfs=salamander&obfs-password=gawrgura&pinSHA256=deadbeef&sni=real.example.com */
-			var url = new URL('http://' + uri[1]);
-			var params = url.searchParams;
-
-			if (!features.with_quic || !url.username)
-				return null;
-
-			config = {
-				label: url.hash ? decodeURIComponent(url.hash.slice(1)) : null,
-				type: 'hysteria2',
-				address: url.hostname,
-				port: url.port || '80',
-				password: url.username,
-				hysteria2_obfs_type: params.get('obfs'),
-				hysteria2_obfs_password: params.get('obfs-password'),
-				tls: '1',
-				tls_sni: params.get('sni'),
-				tls_alpn: params.get('alpn'),
-				tls_insecure: params.get('insecure') ? '1' : '0'
-			};
-
-			break;
 		case 'vless':
 			/* https://github.com/XTLS/Xray-core/discussions/716 */
 			var url = new URL('http://' + uri[1]);
@@ -546,8 +522,6 @@ return view.extend({
 		so.value('trojan', _('Trojan'));
 		if (features.with_quic)
 			so.value('tuic', _('Tuic'));
-		if (features.with_quic)
-			so.value('hysteria2', _('Hysteria2'));
 		if (features.with_wireguard)
 			so.value('wireguard', _('WireGuard'));
 		so.value('vless', _('VLESS'));
@@ -576,7 +550,6 @@ return view.extend({
 		so.depends('type', 'shadowsocksr');
 		so.depends('type', 'trojan');
 		so.depends('type', 'tuic');
-		so.depends('type', 'hysteria2');
 		so.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
 		so.depends({'type': 'shadowtls', 'shadowtls_version': '3'});
 		so.depends({'type': 'socks', 'socks_version': '5'});
@@ -658,14 +631,12 @@ return view.extend({
 			_('Max download speed in Mbps.'));
 		so.datatype = 'uinteger';
 		so.depends('type', 'hysteria');
-		so.depends('type', 'hysteria2');
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'hysteria_up_mbps', _('Max upload speed'),
 			_('Max upload speed in Mbps.'));
 		so.datatype = 'uinteger';
 		so.depends('type', 'hysteria');
-		so.depends('type', 'hysteria2');
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'hysteria_recv_window_conn', _('QUIC stream receive window'),
@@ -851,26 +822,6 @@ return view.extend({
 		so.modalonly = true;
 		/* Tuic config end */
 
-		/* Hysteria2 config start */
-		so = ss.option(form.Value, 'hysteria2_obfs_type', _('QUIC traffic obfuscator type, only available with salamander'));
-		so.depends('type', 'hysteria2');
-		so.default = '';
-		so.modalonly = true;
-
-		so = ss.option(form.Value, 'hysteria2_obfs_password', _('QUIC traffic obfuscator password'));
-		so.depends('type', 'hysteria2');
-		so.default = '';
-		so.modalonly = true;
-
-		so = ss.option(form.ListValue, 'hysteria2_network', _('Enabled network'));
-		so.value('', _('Default'));
-		so.value('tcp', _('TCP'));
-		so.value('udp', _('UDP'));
-		so.default = '';
-		so.depends('type', 'hysteria2');
-		so.modalonly = true;
-		/* Hysteria2 config end */
-
 		/* VMess / VLESS config start */
 		so = ss.option(form.ListValue, 'vless_flow', _('Flow'));
 		so.value('', _('None'));
@@ -1039,12 +990,14 @@ return view.extend({
 		so.password = true;
 		so.depends('type', 'wireguard');
 		so.validate = L.bind(hp.validateBase64Key, this, 44);
+		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'wireguard_peer_public_key', _('Peer pubkic key'),
 			_('WireGuard peer public key.'));
 		so.depends('type', 'wireguard');
 		so.validate = L.bind(hp.validateBase64Key, this, 44);
+		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'wireguard_pre_shared_key', _('Pre-shared key'),
@@ -1118,7 +1071,6 @@ return view.extend({
 		so.depends('type', 'shadowtls');
 		so.depends('type', 'trojan');
 		so.depends('type', 'tuic');
-		so.depends('type', 'hysteria2');
 		so.depends('type', 'vless');
 		so.depends('type', 'vmess');
 		so.validate = function(section_id, value) {
@@ -1126,7 +1078,7 @@ return view.extend({
 				var type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
 				var tls = this.map.findElement('id', 'cbid.homeproxy.%s.tls'.format(section_id)).firstElementChild;
 
-				if (['hysteria', 'shadowtls', 'tuic', 'hysteria2'].includes(type)) {
+				if (['hysteria', 'shadowtls', 'tuic'].includes(type)) {
 					tls.checked = true;
 					tls.disabled = true;
 				} else {
@@ -1275,9 +1227,11 @@ return view.extend({
 		so.default = so.disabled;
 		so.modalonly = true;
 
-		so = ss.option(form.Flag, 'tcp_multi_path', _('Enable TCP Multi Path'));
-		so.default = so.disabled;
-		so.modalonly = true;
+		if (features.has_mptcp) {
+			so = ss.option(form.Flag, 'tcp_multi_path', _('MultiPath TCP'));
+			so.default = so.disabled;
+			so.modalonly = true;
+		}
 
 		so = ss.option(form.Flag, 'udp_fragment', _('UDP Fragment'),
 			_('Enable UDP fragmentation.'));
