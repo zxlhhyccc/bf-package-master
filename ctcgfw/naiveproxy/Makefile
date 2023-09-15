@@ -72,7 +72,7 @@ endef
 #	URL_FILE:=git_revision:$(GN_VER)
 #	FILE:=$(GN_FILE)
 #	HASH:=e269a7136143d7ac503820da2b4847733dfdb15b9443aa9e6a7f2e2925447d13
- endef
+# endef
 
 PGO_VER:=5938-1693935896-daaeff75cfda3bcc13276975ff4ba18cb55c14c5
 PGO_FILE:=chrome-linux-$(PGO_VER).profdata
