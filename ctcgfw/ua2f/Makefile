@@ -6,16 +6,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=UA2F
-PKG_VERSION:=4.1.2
+PKG_VERSION:=4.3.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Zxilly/UA2F/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=99e77e0215aa7fdfdfcb3922d3bae607c4f11a2bdf57d44526bc7d76ccf67e83
+PKG_HASH:=3eec0b24d214a94ff040bb4838f58a3522e4edb55e971c534959db50c8946eae
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
+
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_UA2F_CUSTOM_USER_AGENT \
+	CONFIG_UA2F_USER_AGENT_STRING
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -26,15 +30,34 @@ define Package/ua2f
   SUBMENU:=Routing and Redirection
   TITLE:=Change User-Agent to Fwords
   URL:=https://github.com/Zxilly/UA2F
-  DEPENDS:=+iptables +iptables-mod-conntrack-extra \
-    +iptables-mod-filter +iptables-mod-nfqueue \
-    +libnetfilter-conntrack +libnetfilter-queue \
+  DEPENDS:=+libnetfilter-conntrack +libnetfilter-queue +kmod-nft-queue \
     +USE_GLIBC:libasan
 endef
 
 define Package/ua2f/description
   Change User-agent to Fwords to prevent being checked by Dr.Com.
 endef
+
+define Package/ua2f/config
+  if PACKAGE_ua2f
+	config UA2F_CUSTOM_USER_AGENT
+	bool "Enable custom User-Agent"
+	help
+	  Enable this option to use a custom User-Agent string.
+
+	config UA2F_USER_AGENT_STRING
+	string "Custom User-Agent string"
+	depends on UA2F_CUSTOM_USER_AGENT
+	default "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.68"
+	help
+	  Specify the custom User-Agent string to use when UA2F_CUSTOM_USER_AGENT is enabled.
+   endif
+endef
+
+CMAKE_OPTIONS += \
+	-DUA2F_VERSION_STR="$(PKG_VERSION)" \
+	-DUA2F_CUSTOM_USER_AGENT=$(if $(CONFIG_UA2F_CUSTOM_USER_AGENT),ON,OFF) \
+	-DUA2F_USER_AGENT_STRING=$(CONFIG_UA2F_USER_AGENT_STRING)
 
 define Package/ua2f/install
 	$(INSTALL_DIR) $(1)/usr/bin
