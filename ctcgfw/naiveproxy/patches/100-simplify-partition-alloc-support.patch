@@ -20,7 +20,7 @@
  #include "base/at_exit.h"
  #include "base/command_line.h"
  #include "base/feature_list.h"
-@@ -145,7 +146,9 @@ class MultipleListenCollector : public base::DuplicateSwitchHandler {
+@@ -145,7 +146,9 @@ class MultipleListenCollector : public b
      }
    }
  
