@@ -3,6 +3,7 @@ require("luci.json")
 require("luci.sys")
 require("luci.phtunnel")
 
+local write_err_log = luci.phtunnel.write_err_log
 local manager_url
 
 local function main()
@@ -28,4 +29,3 @@ main()
 {
 	"url" : "<%=(manager_url and manager_url or "")%>"
 }
-

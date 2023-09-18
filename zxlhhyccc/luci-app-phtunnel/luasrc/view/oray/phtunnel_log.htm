@@ -12,9 +12,6 @@ if not log_file or log_file == "" then
 end
 %>
 
-<%=string.gsub(luci.sys.exec("cat " .. log_file), "\n", "<br/>")%>
-
-
+<%=string.gsub(luci.sys.exec("tail -n 5000 " .. log_file), "\n", "<br/>")%>
 
 <%+footer%>
-
