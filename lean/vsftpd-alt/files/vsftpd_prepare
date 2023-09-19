@@ -254,5 +254,6 @@ fi
 
 output_const "seccomp_sandbox" NO
 output_const "use_localtime" YES
+output_const "check_shell" NO
 
 exit 0
