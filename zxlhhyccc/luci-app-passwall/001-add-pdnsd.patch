@@ -93,7 +93,7 @@
  	local remark = m:get(n, "remark") or ""
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -244,6 +244,12 @@ msgstr "单进程"
+@@ -250,6 +250,12 @@ msgstr "单进程"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -108,7 +108,7 @@
  
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1314,6 +1314,12 @@ start_dns() {
+@@ -1313,6 +1313,12 @@ start_dns() {
  				run_xray ${_args}
  			}
  		;;
@@ -121,7 +121,7 @@
  		dns2tcp)
  			use_tcp_node_resolve_dns=1
  			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1321,8 +1327,14 @@ start_dns() {
+@@ -1320,8 +1326,14 @@ start_dns() {
  		;;
  		udp)
  			use_udp_node_resolve_dns=1
@@ -136,7 +136,7 @@
  		;;
  		esac
  
-@@ -1379,6 +1391,74 @@ start_dns() {
+@@ -1377,6 +1389,74 @@ start_dns() {
  	esac
  }
  
@@ -211,7 +211,7 @@
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1781,7 +1861,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
+@@ -1777,7 +1857,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
  gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
