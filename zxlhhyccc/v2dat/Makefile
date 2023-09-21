@@ -24,7 +24,6 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 
 GO_PKG:=github.com/urlesistiana/v2dat
-GO_PKG_LDFLAGS:= -s -w
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
