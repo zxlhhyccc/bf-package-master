@@ -62,6 +62,42 @@ msgstr "自动更新域名规则和广告数据库"
 msgid "If required domain rules,then in domain name rule list configure.If required Adblock,then in the custom settings Remove the # sign before 'conf-file'."
 msgstr "如需使用域名规则，则在域名规则列表配置。如需广告屏蔽，则在自定义设置中去除 conf-file 前面的 # 号。"
 
+msgid "Update Time (Every Week)"
+msgstr "更新时间(每周)"
+
+msgid "Every Day"
+msgstr "每天"
+
+msgid "Every Monday"
+msgstr "每周一"
+
+msgid "Every Tuesday"
+msgstr "每周二"
+
+msgid "Every Wednesday"
+msgstr "每周三"
+
+msgid "Every Thursday"
+msgstr "每周四"
+
+msgid "Every Friday"
+msgstr "每周五"
+
+msgid "Every Saturday"
+msgstr "每周六"
+
+msgid "Every Sunday"
+msgstr "每周日"
+
+msgid "Update time (every day)"
+msgstr "更新时间(每天)"
+
+msgid "Update Interval (min)"
+msgstr "更新间隔(分钟)"
+
+msgid "Update List"
+msgstr "更新列表"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:229
 msgid "Bind Device"
 msgstr "绑定到设备"

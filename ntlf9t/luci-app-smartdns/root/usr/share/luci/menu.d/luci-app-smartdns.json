@@ -1,13 +1,11 @@
 {
 	"admin/services/smartdns": {
 		"title": "SmartDNS",
-		"order": 59,
 		"action": {
 			"type": "view",
 			"path": "smartdns/smartdns"
 		},
 		"depends": {
-			"acl": [ "luci-app-smartdns" ],
 			"uci": { "smartdns": true }
 		}
 	}

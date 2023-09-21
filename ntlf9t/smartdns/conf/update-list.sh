@@ -1,4 +1,7 @@
-#/bin/sh
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# Copyright (C) 2023 ImmortalWrt.org
 
 #mkdir -p /tmp/smartdns/
 

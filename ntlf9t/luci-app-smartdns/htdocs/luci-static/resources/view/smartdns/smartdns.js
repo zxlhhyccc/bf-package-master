@@ -162,11 +162,47 @@ return view.extend({
 		o.rmempty = false;
 		o.default = o.enabled;
 
-		// Update china list(GFW)
-		o = s.taboption("settings", form.Flag, "gfw_smartdns", _("Update Domain rule list And Adblock Database"),
+		// Update domain rules and IP list
+		o = s.taboption("settings", form.Flag, "enable_list_auto_update", _("Update Domain rule list And Adblock Database"),
 			_("If required domain rules,then in domain name rule list configure.If required Adblock,then in the custom settings Remove the # sign before 'conf-file'."));
 		o.rmempty = false;
 		o.default = o.enabled;
+
+		o = s.taboption("settings", form.ListValue, "list_update_week_time", _("Update Time (Every Week)"));
+		o.value('*', _('Every Day'));
+		o.value('1', _('Every Monday'));
+		o.value('2', _('Every Tuesday'));
+		o.value('3', _('Every Wednesday'));
+		o.value('4', _('Every Thursday'));
+		o.value('5', _('Every Friday'));
+		o.value('6', _('Every Saturday'));
+		o.value('0', _('Every Sunday'));
+		o.default = "*";
+		o.depends('enable_list_auto_update', '1');
+
+		o = s.taboption('settings', form.ListValue, 'list_update_day_time', _("Update time (every day)"));
+		for (var i = 0; i < 24; i++)
+			o.value(i, i + ':00');
+		o.default = '2';
+		o.depends('enable_list_auto_update', '1');
+
+		o = s.taboption('settings', form.ListValue, 'list_update_min_time', _("Update Interval (min)"));
+		for (var i = 0; i < 60; i++)
+			o.value(i, i + ':00');
+		o.default = '30';
+		o.depends('enable_list_auto_update', '1');
+
+		o = s.taboption('settings', form.DummyValue, "_list_update", _("Update List"));
+		o.renderWidget = function () {
+			return E('button', {
+				'class': 'btn cbi-button cbi-button-apply',
+				'id': 'btn_list_update',
+				'click': ui.createHandlerFn(this, function () {
+					return fs.exec('/usr/share/smartdns/update-list.sh', ['updatelist'])
+						.catch(function (e) { ui.addNotification(null, E('p', e.message), 'error') });
+				})
+			}, [_("Update")]);
+		}
 
 		///////////////////////////////////////
 		// advanced settings;
@@ -502,6 +538,18 @@ return view.extend({
 		o.rmempty = true;
 		o.default = o.disabled;
 		o.rempty = true;
+
+		o = s.taboption('files', form.ListValue, 'auto_update_day_time', _("Update time (every day)"));
+		for (var i = 0; i < 24; i++)
+			o.value(i, i + ':00');
+		o.default = '5';
+		o.depends('enable_auto_update', '1');
+
+		o = s.taboption('files', form.ListValue, 'auto_update_min_time', _("Update Interval (min)"));
+		for (var i = 0; i < 60; i++)
+			o.value(i, i + ':00');
+		o.default = '';
+		o.depends('enable_auto_update', '1');
 
 		o = s.taboption("files", form.FileUpload, "upload_conf_file", _("Upload Config File"),
 			_("Upload smartdns config file to /etc/smartdns/conf.d"));

@@ -11,8 +11,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=28139d20200f4c2cff960f703fbd7d3a133a0cd7
-PKG_MIRROR_HASH:=7b14938619cc35e7a620a64d37029c9a4cfb94e2eedbd2b5394b8d28857166a0
+PKG_SOURCE_VERSION:=b7fb501be99aae05d6b8d217611c702e2cfc5c65
+PKG_MIRROR_HASH:=ae8d96424cbdd22d14bccee4b9475d94bec046baa92c60f11b4148f19489bf06
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -70,7 +70,7 @@ define Package/smartdns/install
 	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/domain-set/anti-ad-smartdns.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/smartdns-domains.china.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/cnlist.conf $(1)/etc/smartdns/domain-set/cnlist.conf
-	$(INSTALL_BIN) $(CURDIR)/conf/update-china-list.sh $(1)/usr/share/smartdns/update-china-list.sh
+	$(INSTALL_BIN) $(CURDIR)/conf/update-list.sh $(1)/usr/share/smartdns/update-list.sh
 endef
 
 $(eval $(call BuildPackage,smartdns))
