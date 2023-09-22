@@ -46,6 +46,10 @@ else
 
 const dns_port = uci.get(uciconfig, uciinfra, 'dns_port') || '5333';
 
+const clash_dashboard_port = uci.get(uciconfig, ucimain, 'clash_dashboard_port') || '9090',
+	clash_external_ui_download_url = uci.get(uciconfig, ucimain, 'clash_external_ui_download_url'),
+	clash_cleanup_ui_files = uci.get(uciconfig, ucimain, 'clash_cleanup_ui_files');
+
 let main_node, main_udp_node, dedicated_udp_node, default_outbound, sniff_override = '1',
     dns_server, dns_default_strategy, dns_default_server, dns_disable_cache, dns_disable_cache_expire,
     direct_domain_list;
@@ -118,9 +122,27 @@ function generate_outbound(node) {
 	if (type(node) !== 'object' || isEmpty(node))
 		return null;
 
+	if (node.type === 'selector' || node.type === 'urltest') {
+		let outbounds = [];
+		for (let outbound in node.node_outbounds)
+			push(outbounds, uci.get(uciconfig, outbound, 'label'));
+		return {
+			/* Selector */
+			type: node.type,
+			tag: node.label,
+			outbounds: outbounds,
+			default: uci.get(uciconfig, node.selector_default, 'label'),
+			/* URLTest */
+			url: node.urltest_url,
+			interval: node.urltest_interval,
+			tolerance: strToInt(node.urltest_tolerance),
+			interrupt_exist_connections: strToBool(node.node_interrupt_exist_connections)
+		};
+	}
+
 	const outbound = {
 		type: node.type,
-		tag: 'cfg-' + node['.name'] + '-out',
+		tag: node.label,
 		routing_mark: strToInt(self_mark),
 
 		server: node.address,
@@ -136,7 +158,7 @@ function generate_outbound(node) {
 		/* Hysteria */
 		up_mbps: strToInt(node.hysteria_down_mbps),
 		down_mbps: strToInt(node.hysteria_down_mbps),
-		obfs: node.hysteria_bofs_password,
+		obfs: (node.type == 'hysteria2') ? {type: node.hysteria2_obfs_type, password: node.hyseria2_obfs_password} : node.hysteria_obfs_password,
 		auth: (node.hysteria_auth_type === 'base64') ? node.hysteria_auth_payload : null,
 		auth_str: (node.hysteria_auth_type === 'string') ? node.hysteria_auth_payload : null,
 		recv_window_conn: strToInt(node.hysteria_recv_window_conn),
@@ -160,6 +182,8 @@ function generate_outbound(node) {
 		udp_over_stream: strToBool(node.tuic_udp_over_stream),
 		zero_rtt_handshake: strToBool(node.tuic_enable_zero_rtt),
 		heartbeat: node.tuic_heartbeat ? (node.tuic_heartbeat + 's') : null,
+		/* Hysteria2 */
+		network: node.hysteria2_network,
 		/* VLESS / VMess */
 		flow: node.vless_flow,
 		alter_id: strToInt(node.vmess_alterid),
@@ -247,8 +271,12 @@ function get_outbound(cfg) {
 		const node = uci.get(uciconfig, cfg, 'node');
 		if (isEmpty(node))
 			die(sprintf("%s's node is missing, please check your configuration.", cfg));
-		else
-			return 'cfg-' + node + '-out';
+		else {
+			const label = uci.get(uciconfig, node, 'label');
+			if (isEmpty(label))
+				die(sprintf("%s's label is missing, please check your configuration.", node));
+			return label;
+		}
 	}
 }
 
@@ -272,6 +300,20 @@ config.log = {
 	output: RUN_DIR + '/sing-box-c.log',
 	timestamp: true
 };
+
+/* Clash dashboard */
+config.experimental = {
+	clash_api: {
+		external_controller: '[::]:'+ clash_dashboard_port,
+		external_ui: RUN_DIR + '/ui',
+		external_ui_download_url: clash_external_ui_download_url,
+		store_selected: true
+	}
+};
+
+if (clash_cleanup_ui_files === '1') {
+	system('rm -rf ' + RUN_DIR + '/ui');
+}
 
 /* DNS start */
 /* Default settings */
@@ -352,6 +394,15 @@ if (!isEmpty(main_node)) {
 	});
 
 	/* DNS rules */
+	let domains = [];
+	uci.foreach(uciconfig, ucinode, (cfg) => {
+                if (cfg.type !=='selector' && cfg.type !=='urltest' && validateHostname(cfg.address))
+			push(domains, cfg.address);
+	});
+	push(config.dns.rules, {
+		domain: domains,
+		server: 'default-dns'
+	});
 	uci.foreach(uciconfig, ucidnsrule, (cfg) => {
 		if (cfg.enabled !== '1')
 			return;
@@ -466,16 +517,10 @@ if (!isEmpty(main_node)) {
 		config.outbounds[length(config.outbounds)-1].tag = 'main-udp-out';
 	}
 } else if (!isEmpty(default_outbound))
-	uci.foreach(uciconfig, uciroutingnode, (cfg) => {
-		if (cfg.enabled !== '1')
-			return;
-
-		const outbound = uci.get_all(uciconfig, cfg.node) || {};
-		push(config.outbounds, generate_outbound(outbound));
-		config.outbounds[length(config.outbounds)-1].domain_strategy = cfg.domain_strategy;
-		config.outbounds[length(config.outbounds)-1].bind_interface = cfg.bind_interface;
-		config.outbounds[length(config.outbounds)-1].detour = get_outbound(cfg.outbound);
-	});
+       uci.foreach(uciconfig, ucinode, (cfg) => {
+               let outbound = generate_outbound(cfg);
+               push(config.outbounds, outbound);
+       });
 /* Outbound end */
 
 /* Routing rules start */

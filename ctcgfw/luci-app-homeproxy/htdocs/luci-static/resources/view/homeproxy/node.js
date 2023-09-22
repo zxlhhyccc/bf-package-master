@@ -374,6 +374,12 @@ return view.extend({
 		var m, s, o, ss, so;
 		var main_node = uci.get(data[0], 'config', 'main_node');
 		var routing_mode = uci.get(data[0], 'config', 'routing_mode');
+		var proxy_nodes = {};
+		uci.sections(data[0], 'node', (res) => {
+			proxy_nodes[res['.name']] =
+				String.format('[%s] %s', res.type, res.label || (stubValidator.apply('ip6addr', res.address || '') ?
+					String.format('[%s]', res.address) : res.address) + ':' + res.port);
+		});
 		var features = data[1];
 
 		m = new form.Map('homeproxy', _('Edit nodes'));
@@ -522,20 +528,24 @@ return view.extend({
 		so.value('trojan', _('Trojan'));
 		if (features.with_quic)
 			so.value('tuic', _('Tuic'));
+		if (features.with_quic)
+			so.value('hysteria2', _('Hysteria2'));
 		if (features.with_wireguard)
 			so.value('wireguard', _('WireGuard'));
 		so.value('vless', _('VLESS'));
 		so.value('vmess', _('VMess'));
+		so.value('selector', _('Selector'));
+		so.value('urltest', _('URLTest'));
 		so.rmempty = false;
 
 		so = ss.option(form.Value, 'address', _('Address'));
 		so.datatype = 'host';
-		so.depends({'type': 'direct', '!reverse': true});
+		so.depends({'type': /^(direct|selector|urltest)$/, '!reverse': true});
 		so.rmempty = false;
 
 		so = ss.option(form.Value, 'port', _('Port'));
 		so.datatype = 'port';
-		so.depends({'type': 'direct', '!reverse': true});
+		so.depends({'type': /^(direct|selector|urltest)$/, '!reverse': true});
 		so.rmempty = false;
 
 		so = ss.option(form.Value, 'username', _('Username'));
@@ -550,6 +560,7 @@ return view.extend({
 		so.depends('type', 'shadowsocksr');
 		so.depends('type', 'trojan');
 		so.depends('type', 'tuic');
+		so.depends('type', 'hysteria2');
 		so.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
 		so.depends({'type': 'shadowtls', 'shadowtls_version': '3'});
 		so.depends({'type': 'socks', 'socks_version': '5'});
@@ -631,12 +642,14 @@ return view.extend({
 			_('Max download speed in Mbps.'));
 		so.datatype = 'uinteger';
 		so.depends('type', 'hysteria');
+		so.depends('type', 'hysteria2');
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'hysteria_up_mbps', _('Max upload speed'),
 			_('Max upload speed in Mbps.'));
 		so.datatype = 'uinteger';
 		so.depends('type', 'hysteria');
+		so.depends('type', 'hysteria2');
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'hysteria_recv_window_conn', _('QUIC stream receive window'),
@@ -797,7 +810,6 @@ return view.extend({
 		so.value('', _('Default'));
 		so.value('native', _('Native'));
 		so.value('quic', _('QUIC'));
-		so.default = '';
 		so.depends('type', 'tuic');
 		so.modalonly = true;
 
@@ -821,6 +833,26 @@ return view.extend({
 		so.depends('type', 'tuic');
 		so.modalonly = true;
 		/* Tuic config end */
+
+		/* Hysteria2 config start */
+		so = ss.option(form.Value, 'hysteria2_obfs_type', _('QUIC traffic obfuscator type'));
+		so.depends('type', 'hysteria2');
+		so.default = '';
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'hysteria2_obfs_password', _('QUIC traffic obfuscator password'));
+		so.depends('type', 'hysteria2');
+		so.default = '';
+		so.modalonly = true;
+
+		so = ss.option(form.ListValue, 'hysteria2_network', _('Enabled network'));
+		so.value('', _('Default'));
+		so.value('tcp', _('TCP'));
+		so.value('udp', _('UDP'));
+		so.default = '';
+		so.depends('type', 'hysteria2');
+		so.modalonly = true;
+		/* Hysteria2 config end */
 
 		/* VMess / VLESS config start */
 		so = ss.option(form.ListValue, 'vless_flow', _('Flow'));
@@ -859,6 +891,54 @@ return view.extend({
 		so.depends('type', 'vmess');
 		so.modalonly = true;
 		/* VMess config end */
+
+		/* Selector config start */
+		so = ss.option(form.DynamicList, 'node_outbounds', _('Outbounds'),
+			_('List of outbound tags.'));
+		for (var i in proxy_nodes)
+			so.value(i, proxy_nodes[i]);
+		so.depends('type', 'selector');
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'selector_default', _('Default outbound'),
+			_('The default outbound tag. The first outbound will be used if empty.'));
+		so.value('', _('Default'));
+		for (var i in proxy_nodes)
+			so.value(i, proxy_nodes[i]);
+		so.default = '';
+		so.depends('type', 'selector');
+		so.modalonly = true;
+		/* Selector config end */
+
+		/* URLTest config start */
+		so = ss.option(form.Value, 'urltest_url', _('URLTest url'),
+			_('The URL to test. https://www.gstatic.com/generate_204 will be used if empty.'));
+		so.value('', _('Default'));
+		so.default = 'https://www.gstatic.com/generate_204';
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_interval', _('URLTest interval'),
+			_('The test interval. 1m will be used if empty.'));
+		so.value('', _('Default'));
+		so.default = '1m';
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_tolerance', _('URLTest tolerance'),
+			_('The test tolerance in milliseconds. 50 will be used if empty.'));
+		so.datatype = 'uinteger';
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Flag, 'node_interrupt_exist_connections', _('Interrupt existing connections'),
+			_('Interrupt existing connections when the selected outbound has changed.'));
+		so.default = so.disabled;
+		so.depends('type', 'selector');
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+		/* URLTest config end */
 
 		/* Transport config start */
 		so = ss.option(form.ListValue, 'transport', _('Transport'),
@@ -1071,6 +1151,7 @@ return view.extend({
 		so.depends('type', 'shadowtls');
 		so.depends('type', 'trojan');
 		so.depends('type', 'tuic');
+		so.depends('type', 'hysteria2');
 		so.depends('type', 'vless');
 		so.depends('type', 'vmess');
 		so.validate = function(section_id, value) {
@@ -1078,7 +1159,7 @@ return view.extend({
 				var type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
 				var tls = this.map.findElement('id', 'cbid.homeproxy.%s.tls'.format(section_id)).firstElementChild;
 
-				if (['hysteria', 'shadowtls', 'tuic'].includes(type)) {
+				if (['hysteria', 'shadowtls', 'tuic', 'hysteria2'].includes(type)) {
 					tls.checked = true;
 					tls.disabled = true;
 				} else {
@@ -1225,17 +1306,18 @@ return view.extend({
 		/* Extra settings start */
 		so = ss.option(form.Flag, 'tcp_fast_open', _('TCP fast open'));
 		so.default = so.disabled;
+		so.depends({'type': /^(selector|urltest)$/, '!reverse': true});
 		so.modalonly = true;
 
-		if (features.has_mptcp) {
-			so = ss.option(form.Flag, 'tcp_multi_path', _('MultiPath TCP'));
-			so.default = so.disabled;
-			so.modalonly = true;
-		}
+		so = ss.option(form.Flag, 'tcp_multi_path', _('Enable TCP Multi Path'));
+		so.default = so.disabled;
+		so.depends({'type': /^(selector|urltest)$/, '!reverse': true});
+		so.modalonly = true;
 
 		so = ss.option(form.Flag, 'udp_fragment', _('UDP Fragment'),
 			_('Enable UDP fragmentation.'));
 		so.default = so.disabled;
+		so.depends({'type': /^(selector|urltest)$/, '!reverse': true});
 		so.modalonly = true;
 
 		so = ss.option(form.Flag, 'udp_over_tcp', _('UDP over TCP'),
