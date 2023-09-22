@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=0.54.0
+PKG_VERSION:=0.55.0
 PKG_RELEASE:=1
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -15,9 +15,9 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/dnsproxy.git
-PKG_SOURCE_DATE:=2023-08-08
-PKG_SOURCE_VERSION:=930f37e20f8a95479810886506b1a5e6aeadd6a6
-PKG_MIRROR_HASH:=22ec26cc81cf9a64647855088d8f2aba93eb00e9767ada61a9aa529e8fbe8bd3
+PKG_SOURCE_DATE:=2023-09-21
+PKG_SOURCE_VERSION:=e012331db8783004a3fc1277cbf57d6abb2b7920
+PKG_MIRROR_HASH:=adbc25518fd247823e4585a9dd58dba40e589440051596f708103202f455736d
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=Apache-2.0
@@ -34,7 +34,7 @@ PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/AdguardTeam/dnsproxy
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:=main.VersionString=v$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=$(GO_PKG)/internal/version.version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
