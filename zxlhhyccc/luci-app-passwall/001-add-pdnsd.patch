@@ -42,7 +42,7 @@
  	default y
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -317,8 +317,11 @@ end
+@@ -318,8 +318,11 @@ end
  
  ---- DNS Forward Mode
  dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
@@ -55,7 +55,7 @@
  end
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
-@@ -383,6 +386,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
+@@ -384,6 +387,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
@@ -63,7 +63,7 @@
  o:depends({dns_mode = "dns2tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({xray_dns_mode = "tcp"})
-@@ -430,6 +434,8 @@ end
+@@ -431,6 +435,8 @@ end
  o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
  o.default = "1"
  o:depends({dns_mode = "dns2socks"})
@@ -72,7 +72,7 @@
  o:depends({dns_mode = "sing-box", remote_fakedns = false})
  o:depends({dns_mode = "xray"})
  o.rmempty = false
-@@ -438,6 +444,7 @@ if api.is_finded("chinadns-ng") then
+@@ -439,6 +445,7 @@ if api.is_finded("chinadns-ng") then
  	o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, but will increase the memory."))
  	o.default = "0"
  	o:depends({dns_mode = "dns2socks"})
@@ -82,7 +82,7 @@
  	o:depends({dns_mode = "xray"})
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-@@ -103,7 +103,7 @@ o.validate = function(self, value, t)
+@@ -104,7 +104,7 @@ o.validate = function(self, value, t)
  	end
  end
  
