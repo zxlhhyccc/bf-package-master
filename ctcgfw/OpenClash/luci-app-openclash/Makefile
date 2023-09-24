@@ -9,7 +9,28 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DEV \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_META
+
 define Package/$(PKG_NAME)/config
+menu "Configuration"
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_DEV
+	bool "Include OPENCLASH-DEV"
+	default n
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM
+	bool "Include OPENCLASH-PREMIUM"
+	default n
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_META
+	bool "Include OPENCLASH-META"
+	default n
+
+endmenu
+
 	config PACKAGE_kmod-inet-diag
 	default y if PACKAGE_$(PKG_NAME)
 
@@ -31,8 +52,12 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	TITLE:=LuCI support for clash
 	PKGARCH:=all
-	DEPENDS:=+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
-	+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip +luci-compat
+	DEPENDS:= \
+		+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
+		+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip +luci-compat \
+		+PACKAGE_$(PKG_NAME)_INCLUDE_DEV:openclash-dev \
+		+PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM:openclash-premium \
+		+PACKAGE_$(PKG_NAME)_INCLUDE_META:openclash-meta
 	MAINTAINER:=vernesong
 endef
 
