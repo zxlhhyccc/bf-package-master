@@ -6,36 +6,36 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openclash-dev
-PKG_VERSION:=v1.18.0
-PKG_RELEASE:=13-gd034a40
+PKG_NAME:=openclash-meta
+PKG_VERSION:=alpha
+PKG_RELEASE:=g0d7a57f
 
 ifeq ($(ARCH),mipsel)
-	OPENCLASH_ARCH:=mipsle-softfloat
+	OPENCLASH_META_ARCH:=mipsle-softfloat
 endif
 ifeq ($(ARCH),mips)
-	OPENCLASH_ARCH:=mips64
+	OPENCLASH_META_ARCH:=mips64
 endif
 ifeq ($(ARCH),i386)
-	OPENCLASH_ARCH:=386
+	OPENCLASH_META_ARCH:=386
 endif
 ifeq ($(ARCH),x86_64)
-	OPENCLASH_ARCH:=amd64
+	OPENCLASH_META_ARCH:=amd64
 endif
 ifeq ($(ARCH),arm)
-	OPENCLASH_ARCH:=armv7
+	OPENCLASH_META_ARCH:=armv7
 endif
 ifeq ($(BOARD),bcm53xx)
-	OPENCLASH_ARCH:=armv6
+	OPENCLASH_META_ARCH:=armv6
 ifeq ($(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE)))),)
-	OPENCLASH_ARCH:=armv5
+	OPENCLASH_META_ARCH:=armv5
 endif
 endif
 ifeq ($(BOARD),kirkwood)
-	OPENCLASH_ARCH:=armv5
+	OPENCLASH_META_ARCH:=armv5
 endif
 ifeq ($(ARCH),aarch64)
-	OPENCLASH_ARCH:=arm64
+	OPENCLASH_META_ARCH:=arm64
 endif
 
 PKG_LICENSE:=MIT
@@ -43,8 +43,8 @@ PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
-# PKG_SOURCE:=clash-linux-$(OPENCLASH_ARCH).tar.gz
-# PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/Clash/
+# PKG_SOURCE:=clash-linux-$(OPENCLASH_META_ARCH).tar.gz
+# PKG_SOURCE_URL:=https://github.com/vernesong/OpenClash/releases/download/TUN/
 PKG_HASH:=skip
 
 include $(INCLUDE_DIR)/package.mk
@@ -52,18 +52,18 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
-	TITLE:=openclash is a cross-platform proxy software
-	DEPENDS:=
+	TITLE:=openclash-meta is a cross-platform proxy software
+	DEPENDS:=+kmod-tun
 	URL:=https://github.com/frainzy1477/clash_dev/releases
 endef
 
 define Package/$(PKG_NAME)/description
-openclash is a cross-platform proxy software
+openclash-meta is a cross-platform proxy software
 endef
 
 define Build/Prepare
-	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_ARCH).tar.gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/dev/clash-linux-$(OPENCLASH_ARCH).tar.gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_ARCH).tar.gz
-	tar -xzvf $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_ARCH).tar.gz -C $(PKG_BUILD_DIR)
+	[ ! -f $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz ] && wget https://github.com/vernesong/OpenClash/raw/core/dev/meta/clash-linux-$(OPENCLASH_META_ARCH).tar.gz -O $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz
+	tar -xzvf $(PKG_BUILD_DIR)/clash-linux-$(OPENCLASH_META_ARCH).tar.gz -C $(PKG_BUILD_DIR)
 endef
 
 define Build/Configure
@@ -74,7 +74,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/openclash/core
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash $(1)/etc/openclash/core/clash
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash $(1)/etc/openclash/core/clash_meta
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
