@@ -48,14 +48,12 @@ function getServiceStatus() {
 	});
 }
 
-function renderStatus(isRunning, port) {
+function renderStatus(isRunning) {
 	var spanTemp = '<em><span style="color:%s"><strong>%s %s</strong></span></em>';
 	var renderHTML;
-	if (isRunning) {
-		var button = String.format('&#160;<a class="btn cbi-button" href="http://%s:%s" target="_blank" rel="noreferrer noopener">%s</a>',
-			window.location.hostname, port, _('Open clash dashboard'));
-		renderHTML = spanTemp.format('green', _('HomeProxy'), _('RUNNING')) + button;
-	} else
+	if (isRunning)
+		renderHTML = spanTemp.format('green', _('HomeProxy'), _('RUNNING'));
+	else
 		renderHTML = spanTemp.format('red', _('HomeProxy'), _('NOT RUNNING'));
 
 	return renderHTML;
@@ -104,7 +102,6 @@ return view.extend({
 
 	render: function(data) {
 		var m, s, o, ss, so;
-		var webport = uci.get(data[0], 'config', 'clash_dashboard_port') || '9090';
 
 		var features = data[1],
 		    hosts = data[2]?.hosts;
@@ -117,7 +114,7 @@ return view.extend({
 			poll.add(function () {
 				return L.resolveDefault(getServiceStatus()).then((res) => {
 					var view = document.getElementById('service_status');
-					view.innerHTML = renderStatus(res, webport);
+					view.innerHTML = renderStatus(res);
 				});
 			});
 
@@ -973,42 +970,6 @@ return view.extend({
 		}
 		/* Direct domain list end */
 		/* ACL settings end */
-
-		/* Clash dashboard settings start */
-		s.tab('clash', _('Dashboard settings'));
-		o = s.taboption('clash', form.Value, 'clash_dashboard_port', _('Port'));
-		o.value('', _('Default'));
-		o.value('9090', _('9090'));
-		o.default = '9090';
-		o.validate = function(section_id, value) {
-			if (section_id && value && !stubValidator.apply('port', value)) {
-				return _('Expecting: %s').format(_('valid port value'));
-			}
-			return true;
-		}
-
-		o = s.taboption('clash', form.Value, 'clash_external_ui_download_url', _('External UI download url'));
-		o.value('', _('Default'));
-		o.value('https://github.com/MetaCubeX/Yacd-meta/archive/gh-pages.zip', _('yacd-meta'));
-		o.value('https://github.com/MetaCubeX/metacubexd/archive/gh-pages.zip', _('metacubexd'));
-		o.default = '';
-		o.validate = function(section_id, value) {
-			if (section_id && value) {
-				try {
-					new URL(value);
-				} catch (_) {
-					return _('Expecting: %s').format(_('valid url value'));
-				}
-			}
-			return true;
-		}
-
-
-		o = s.taboption('clash', form.Flag, 'clash_cleanup_ui_files', _('Clean up UI files'),
-			_('Clean up the previous UI files every time you start.'));
-		o.default = o.disabled;
-		o.rmempty = false;
-		/* Clash dashboard settings end */
 
 		return m.render();
 	}
