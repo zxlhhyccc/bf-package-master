@@ -2,10 +2,11 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-dev
 PKG_VERSION:=1.18.0-13
-PKG_RELEASE:=d034a40
+PKG_RELEASE:=1
+PKG_REV=d034a40
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-g$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/Dreamacro/clash.git
 PKG_SOURCE_VERSION:=d034a408be42815e98f3aea80be24949946aea83
 PKG_MIRROR_HASH:=309d7c5fbbd9071ea6ccff5bb09f0ca24db0c415ed2a1d7b22a0de0eaf9cf3a5
@@ -27,7 +28,7 @@ GO_PKG:=github.com/Dreamacro/clash
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/constant.Version=v$(PKG_VERSION)-g$(PKG_RELEASE)
+	$(GO_PKG)/constant.Version=v$(PKG_VERSION)-g$(PKG_REV)
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/../feeds/packages/lang/golang/golang-package.mk

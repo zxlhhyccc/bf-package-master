@@ -54,7 +54,7 @@ define Package/$(PKG_NAME)
 	PKGARCH:=all
 	DEPENDS:= \
 		+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
-		+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip +luci-compat \
+		+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip +luci-base \
 		+PACKAGE_$(PKG_NAME)_INCLUDE_DEV:openclash-dev \
 		+PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM:openclash-premium \
 		+PACKAGE_$(PKG_NAME)_INCLUDE_META:openclash-meta
