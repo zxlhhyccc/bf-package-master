@@ -90,6 +90,7 @@ endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
+#	$(STAGING_DIR_HOST)/bin/gzip -dc $(DL_DIR)/$(TUN_ARCH) > $(PKG_BUILD_DIR)/$(TUN_TYPE)-$(ARCH)
 	gzip -dc $(DL_DIR)/$(TUN_ARCH) > $(PKG_BUILD_DIR)/$(TUN_TYPE)-$(ARCH)
 ifneq ($(CONFIG_PACKAGE_openclash-premium),)
 	$(call Download,openclash-premium)
