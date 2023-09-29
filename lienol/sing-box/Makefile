@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sing-box
-PKG_VERSION:=1.5.0-rc.6
+PKG_VERSION:=1.5.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=1cbffec00a288831c16ea085eed1f3728af18fedd6094da6b5cb03c884cbedc7
+PKG_HASH:=4e2447907a5891aaa5e8c8aa272bc530f7098449ef76e624a2e7c917d41c2a78
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -82,6 +82,7 @@ define Package/sing-box/config
 
     config SING_BOX_BUILD_DHCP
 	bool "Build with DHCP support"
+	default y
 
     config SING_BOX_BUILD_ECH
 	bool "Build with TLS ECH extension support"
