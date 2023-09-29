@@ -10,7 +10,7 @@
  override CXXFLAGS +=-Iinclude
 --- a/src/dns_server.c
 +++ b/src/dns_server.c
-@@ -5380,7 +5380,7 @@ static int _dns_server_do_query(struct d
+@@ -5478,7 +5478,7 @@ static int _dns_server_do_query(struct d
  		}
  	}
  

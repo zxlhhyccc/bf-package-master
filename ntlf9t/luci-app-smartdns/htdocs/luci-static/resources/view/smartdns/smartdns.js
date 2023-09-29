@@ -198,7 +198,7 @@ return view.extend({
 				'class': 'btn cbi-button cbi-button-apply',
 				'id': 'btn_list_update',
 				'click': ui.createHandlerFn(this, function () {
-					return fs.exec('/usr/share/smartdns/update-list.sh', ['updatelist'])
+					return fs.exec('/usr/share/smartdns/update-list.sh')
 						.catch(function (e) { ui.addNotification(null, E('p', e.message), 'error') });
 				})
 			}, [_("Update")]);

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2023 ImmortalWrt.org
@@ -23,7 +23,8 @@
 #rm -rf /tmp/smartdns/
 
 # Anti-ad Download Link
-URL="https://github.com/privacy-protection-tools/anti-AD/raw/master/anti-ad-smartdns.conf"
+# URL="https://github.com/privacy-protection-tools/anti-AD/raw/master/anti-ad-smartdns.conf"
+URL="https://anti-ad.net/anti-ad-for-smartdns.conf"
 
 # Smartdns Config File Path
 CONFIG_FLODER="/etc/smartdns/domain-set"
@@ -73,7 +74,8 @@ chmod 644 $OUTPUT_FILE
 
 # Update China Domain
 # 2、China Domain Download Link
-URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/direct-list.txt"
+# URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/direct-list.txt"
+URL="https://testingcf.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/direct-list.txt"
 
 # DNS Server Group
 PROXYDNS_NAME="CN"
@@ -109,7 +111,8 @@ rm $INPUT_FILE
 
 # GFWlist Download Link
 #URL="https://cokebar.github.io/gfwlist2dnsmasq/gfwlist_domain.txt"
-URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/gfw.txt"  # 也可使用gfw.txt
+# URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/gfw.txt"  # 也可使用gfw.txt
+URL="https://testingcf.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/gfw.txt"  # 也可使用gfw.txt
 
 # DNS Server Group
 PROXYDNS_NAME="overseas"
