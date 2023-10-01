@@ -79,6 +79,8 @@ define Build/Prepare
 	$(call Build/Prepare/Default)
 endef
 
+# Package/mosdns-v5/config=$(Package/mosdns/config)
+# Package/mosdns-ssrp/config=$(Package/mosdns/config)
 # GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
 define Build/Compile

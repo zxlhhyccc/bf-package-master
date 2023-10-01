@@ -12,7 +12,7 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 include $(INCLUDE_DIR)/package.mk
 
-GEOIP_VER:=202309070542
+GEOIP_VER:=202309280056
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 define Download/geoip
 #  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
@@ -22,10 +22,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/geoip/releases/latest/download
   URL_FILE:=geoip-only-cn-private.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=skip
+  HASH:=71a551bde0d8b78eaad51cf899e248f1c4baa191b5575dde870d03a8556399df
 endef
 
-GEOSITE_VER:=202309070957
+GEOSITE_VER:=202309302207
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 define Download/geosite
@@ -35,7 +35,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=skip
+  HASH:=5a51c1bc4c01a8f2c46e6702a83c73bf721103a33bb81a9a511c89da505cf30d
 endef
 
 define Package/v2ray-geodata/template
@@ -60,6 +60,16 @@ define Package/v2ray-geosite
   LICENSE:=MIT
 endef
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+ifneq ($(CONFIG_PACKAGE_v2ray-geoip),)
+	$(call Download,geoip)
+endif
+ifneq ($(CONFIG_PACKAGE_v2ray-geosite),)
+	$(call Download,geosite)
+endif
+endef
+
 define Build/Compile
 endef
 
@@ -73,7 +83,5 @@ define Package/v2ray-geosite/install
 	$(INSTALL_DATA) $(DL_DIR)/$(GEOSITE_FILE) $(1)/usr/share/v2ray/geosite.dat
 endef
 
-$(eval $(call Download,geoip))
-$(eval $(call Download,geosite))
 $(eval $(call BuildPackage,v2ray-geoip))
 $(eval $(call BuildPackage,v2ray-geosite))
