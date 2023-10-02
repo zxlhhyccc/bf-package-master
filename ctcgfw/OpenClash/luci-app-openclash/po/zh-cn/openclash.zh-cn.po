@@ -2976,6 +2976,9 @@ msgstr "注意: 游戏代理请使用 Vmess 以外的节点"
 msgid "Note: If the connection is abnormal, please follow the steps on this page to check first"
 msgstr "注意: 连接异常时请按照此页步骤先进行检查"
 
+msgid "Note: If you need to perform client access control in Fake-ip mode, please change the DNS hijacking mode to firewall forwarding"
+msgstr "注意: Fake-ip 模式下如需要进行客户端访问控制，请将DNS劫持模式改为防火墙转发"
+
 msgid "Click to the page"
 msgstr "点击前往"
 
@@ -3443,3 +3446,6 @@ msgstr "更改 TCP Keep-alive 间隔，选择较大数值可以避免异常的�
 
 msgid "TCP Keep-alive Interval(s)"
 msgstr "TCP Keep-alive 间隔（s）"
+
+msgid "Used for Downloading Subscriptions, Defaults to Clash"
+msgstr "用于下载订阅时指定 UA，默认为 Clash"

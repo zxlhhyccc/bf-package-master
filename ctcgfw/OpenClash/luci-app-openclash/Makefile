@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-openclash
-PKG_VERSION:=0.45.143
+PKG_VERSION:=0.45.144
 PKG_RELEASE:=beta
 PKG_MAINTAINER:=vernesong <https://github.com/vernesong/OpenClash>
 
@@ -34,6 +34,9 @@ endmenu
 	config PACKAGE_kmod-inet-diag
 	default y if PACKAGE_$(PKG_NAME)
 
+	config PACKAGE_luci-compat
+	default y if PACKAGE_$(PKG_NAME)
+
 	config PACKAGE_kmod-nft-tproxy
 	default y if PACKAGE_firewall4
 
@@ -54,7 +57,7 @@ define Package/$(PKG_NAME)
 	PKGARCH:=all
 	DEPENDS:= \
 		+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
-		+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip +luci-base \
+		+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip \
 		+PACKAGE_$(PKG_NAME)_INCLUDE_DEV:openclash-dev \
 		+PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM:openclash-premium \
 		+PACKAGE_$(PKG_NAME)_INCLUDE_META:openclash-meta
