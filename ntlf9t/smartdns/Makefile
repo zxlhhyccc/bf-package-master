@@ -11,8 +11,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=a1d067f9eb9fef682e98e9f86c3cff03d186e261
-PKG_MIRROR_HASH:=26600aceb42dc30b26bb3f56831a5e86dabecc7ee70e450fed1fe3b47af5a31d
+PKG_SOURCE_VERSION:=37a87e864ea8c19f5a7607ee642f46e171f3c2ac
+PKG_MIRROR_HASH:=cebca23527aec2b3435b04b9cf806c61c7dd6850ad49d413bcf98b9499b3b016
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -43,11 +43,8 @@ define Package/smartdns/conffiles
 /etc/config/smartdns
 /etc/smartdns/address.conf
 /etc/smartdns/blacklist-ip.conf
+/etc/smartdns/whitelist-ip.conf
 /etc/smartdns/custom.conf
-/etc/smartdns/anti-ad-smartdns.conf
-/etc/smartdns/blacklist-chnroute.conf
-/etc/smartdns/smartdns-domains.china.conf
-/etc/smartdns/whitelist-chnroute.conf
 /etc/smartdns/domain-block.list
 /etc/smartdns/domain-forwarding.list
 endef
@@ -61,15 +58,12 @@ define Package/smartdns/install
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/domain-block.list $(1)/etc/smartdns/domain-block.list
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/domain-forwarding.list $(1)/etc/smartdns/domain-forwarding.list
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/blacklist-ip.conf $(1)/etc/smartdns/blacklist-ip.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/whitelist-ip.conf $(1)/etc/smartdns/whitelist-ip.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/custom.conf $(1)/etc/smartdns/custom.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
 	$(INSTALL_CONF) $(CURDIR)/conf/gfwlist.conf $(1)/etc/smartdns/domain-set/gfwlist.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/ipv4list.list $(1)/etc/smartdns/domain-set/ipv4list.list
-	$(INSTALL_CONF) $(CURDIR)/conf/whitelist-chnroute.conf $(1)/etc/smartdns/whitelist-chnroute.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/blacklist-chnroute.conf $(1)/etc/smartdns/blacklist-chnroute.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/domain-set/anti-ad-smartdns.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad-smartdns.conf $(1)/etc/smartdns/smartdns-domains.china.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/cnlist.conf $(1)/etc/smartdns/domain-set/cnlist.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/chinalist.conf $(1)/etc/smartdns/domain-set/chinalist.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad.conf $(1)/etc/smartdns/conf.d/anti-ad.conf
 	$(INSTALL_BIN) $(CURDIR)/conf/update-list.sh $(1)/usr/share/smartdns/update-list.sh
 endef
 

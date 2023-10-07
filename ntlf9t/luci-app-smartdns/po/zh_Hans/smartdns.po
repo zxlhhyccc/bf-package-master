@@ -56,11 +56,11 @@ msgstr "自动设置Dnsmasq"
 msgid "Automatically set as upstream of dnsmasq when port changes."
 msgstr "端口更改时自动设为 dnsmasq 的上游。"
 
-msgid "Update Domain rule list And Adblock Database"
-msgstr "自动更新域名规则和广告数据库"
+msgid "Update domestic blacklist And whitelist"
+msgstr "自动更新国内黑白名单"
 
-msgid "If required domain rules,then in domain name rule list configure.If required Adblock,then in the custom settings Remove the # sign before 'conf-file'."
-msgstr "如需使用域名规则，则在域名规则列表配置。如需广告屏蔽，则在自定义设置中去除 conf-file 前面的 # 号。"
+msgid "If required domestic ip segment whitelist,then in the custom settings Remove the # sign before 'conf-file'."
+msgstr "如需使用国内 IP 段白名单，则在自定义设置中去除 conf-file 前面的 # 号。"
 
 msgid "Update Time (Every Week)"
 msgstr "更新时间(每周)"

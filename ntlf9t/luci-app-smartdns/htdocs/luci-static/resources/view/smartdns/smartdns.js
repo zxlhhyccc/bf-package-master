@@ -163,8 +163,8 @@ return view.extend({
 		o.default = o.enabled;
 
 		// Update domain rules and IP list
-		o = s.taboption("settings", form.Flag, "enable_list_auto_update", _("Update Domain rule list And Adblock Database"),
-			_("If required domain rules,then in domain name rule list configure.If required Adblock,then in the custom settings Remove the # sign before 'conf-file'."));
+		o = s.taboption("settings", form.Flag, "enable_list_auto_update", _("Update domestic blacklist And whitelist"),
+			_("If required domestic ip segment whitelist,then in the custom settings Remove the # sign before 'conf-file'."));
 		o.rmempty = false;
 		o.default = o.enabled;
 

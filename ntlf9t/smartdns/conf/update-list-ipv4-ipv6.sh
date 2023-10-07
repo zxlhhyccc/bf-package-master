@@ -28,40 +28,53 @@
 
 # Update Chnroute
 # China IP4 Download Link
+
+# URL="https://ispip.clang.cn/all_cn.txt"
+URL="https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest"
+
 # Smartdns Config File Path
-
 FILE_IPV4="tmp/chnroute.txt"
+FILE_IPV6="tmp/chnroute-v6.txt"
 NAME_IPV4="$(basename $FILE_IPV4)"
-
-CLANG_URL="https://ispip.clang.cn/all_cn.txt"
-CLANG_LIST="clang.txt"
+NAME_IPV6="$(basename $FILE_IPV6)"
 
 CONFIG_FLODER="/etc/smartdns"
 WHITELIST_CONFIG_FILE="whitelist-chnroute.conf"
 BLACKLIST_CONFIG_FILE="blacklist-chnroute.conf"
+WHITELIST_CONFIG_FILE_IPV6="whitelist-chnroute-ipv6.conf"
+BLACKLIST_CONFIG_FILE_IPV6="blacklist-chnroute-ipv6.conf"
 
 WHITELIST_OUTPUT_FILE="$CONFIG_FLODER/$WHITELIST_CONFIG_FILE"
 BLACKLIST_OUTPUT_FILE="$CONFIG_FLODER/$BLACKLIST_CONFIG_FILE"
+WHITELIST_OUTPUT_FILE_IPV6="$CONFIG_FLODER/$WHITELIST_CONFIG_FILE_IPV6"
+BLACKLIST_OUTPUT_FILE_IPV6="$CONFIG_FLODER/$BLACKLIST_CONFIG_FILE_IPV6"
 
 CUR_DIR=$(pwd)
 TMP_DIR=$(mktemp -d /tmp/chnroute.XXXXXX)
 
+if [ "$1" != "" ]; then
+	URL="$1"
+fi
+
 function fetch_data() {
   cd $TMP_DIR
 
-  curl -sSL -4 --connect-timeout 10 $CLANG_URL -o $CLANG_LIST
+  curl -sSL -4 --connect-timeout 10 $URL -o apnic.txt
 
-  echo "Download successful, updating..."
   cd $CUR_DIR
 }
 
-mkdir -p $CONFIG_FLODER
+if [ $? -eq 0 ]; then
+	echo "Download successful, updating..."
+	
+	mkdir -p $CONFIG_FLODER
 
 cat > $WHITELIST_OUTPUT_FILE <<EOF
 # Add IP whitelist which you want to filtering from some DNS server here.
 # The example below filtering ip from the result of DNS server which is configured with -whitelist-ip.
 # whitelist-ip [ip/subnet]
 # whitelist-ip 254.0.0.1/16
+
 EOF
 
 cat > $BLACKLIST_OUTPUT_FILE <<EOF
@@ -69,36 +82,50 @@ cat > $BLACKLIST_OUTPUT_FILE <<EOF
 # The example below filtering ip from the result of DNS server which is configured with -blacklist-ip.
 # blacklist-ip [ip/subnet]
 # blacklist-ip 254.0.0.1/16
+
 EOF
 
-function gen_ipv4_chnroute() {
-  cd $TMP_DIR
-	cat $CLANG_LIST | aggregate -q > $NAME_IPV4
+	function gen_ipv4_chnroute() {
+	cd $TMP_DIR
+	cat apnic.txt | grep ipv4 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, 32-log($5)/log(2)) }' | aggregate -q > $NAME_IPV4
 		cat $NAME_IPV4 | while read line
 	do
 		echo "whitelist-ip $line" >> $WHITELIST_OUTPUT_FILE
 		echo "blacklist-ip $line" >> $BLACKLIST_OUTPUT_FILE
-  done
+	done
+	cd $CUR_DIR
+	}
 
-  cat /dev/null > $CONFIG_FLODER/whitelist-ip.conf
-  cat /dev/null > $CONFIG_FLODER/blacklist-ip.conf
+	function gen_ipv6_chnroute() {
+	cd $TMP_DIR
+	cat apnic.txt | grep ipv6 | grep CN | awk -F\| '{ printf("%s/%d\n", $4, $5) }' > $NAME_IPV6
+		cat $NAME_IPV6 | while read line
+	do
+		echo "whitelist-ip $line" >> $WHITELIST_OUTPUT_FILE_IPV6
+		echo "blacklist-ip $line" >> $BLACKLIST_OUTPUT_FILE_IPV6
+	done
+	cd $CUR_DIR
+	}
 
-  cat $WHITELIST_OUTPUT_FILE >> $CONFIG_FLODER/whitelist-ip.conf
-  cat $BLACKLIST_OUTPUT_FILE >> $CONFIG_FLODER/blacklist-ip.conf
-  cd $CUR_DIR
-}
+	fetch_data
+	gen_ipv4_chnroute
+	gen_ipv6_chnroute
+
+	cat /dev/null > $CONFIG_FLODER/whitelist-ip.conf
+	cat /dev/null > $CONFIG_FLODER/blacklist-ip.conf
+fi
+
+cat $WHITELIST_OUTPUT_FILE >> $CONFIG_FLODER/whitelist-ip.conf
+cat $BLACKLIST_OUTPUT_FILE >> $CONFIG_FLODER/blacklist-ip.conf
 
 function clean_up() {
-  rm -r $TMP_DIR
-  rm -f $WHITELIST_OUTPUT_FILE $BLACKLIST_OUTPUT_FILE
-  echo "[chnroute]: OK."
+	rm -r $TMP_DIR
+	rm -f $WHITELIST_OUTPUT_FILE $BLACKLIST_OUTPUT_FILE $WHITELIST_OUTPUT_FILE_IPV6 $BLACKLIST_OUTPUT_FILE_IPV6
+	echo "[chnroute]: OK."
 }
 
-fetch_data
-gen_ipv4_chnroute
-clean_up
+	clean_up
 
 # chmod 644 $WHITELIST_OUTPUT_FILE $BLACKLIST_OUTPUT_FILE
 
 /etc/init.d/smartdns reload
-
