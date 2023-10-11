@@ -40,7 +40,7 @@ LUCI_DEPENDS:= \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:curl \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray-core \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria-v1 \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_TUIC-Client:tuic-client \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks:ipt2socks \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
@@ -117,7 +117,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
 	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria
-	bool "Include Hysteria"
+	bool "Include Hysteria-v1"
 	select PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
 	default n
 

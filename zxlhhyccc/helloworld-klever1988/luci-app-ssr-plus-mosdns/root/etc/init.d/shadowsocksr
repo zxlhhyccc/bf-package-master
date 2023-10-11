@@ -427,6 +427,7 @@ start_udp() {
 		ln_start_bin $(first_type tuic-client) tuic-client --config $udp_config_file
 		ln_start_bin $(first_type ipt2socks) ipt2socks -U -b 0.0.0.0 -4 -s 127.0.0.1 -p $tmp_udp_local_port -l $tmp_udp_port
 		echolog "UDP TPROXY Relay:tuic-client $($(first_type tuic-client) --version) Started!"
+		echolog "TUIC UDP TPROXY Relay not supported!"
 		;;
 	socks5)
 		# if [ "$(uci_get_by_name $UDP_RELAY_SERVER auth_enable 0)" == "1" ]; then

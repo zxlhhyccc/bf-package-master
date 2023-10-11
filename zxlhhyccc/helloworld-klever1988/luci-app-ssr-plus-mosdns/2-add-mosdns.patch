@@ -1,0 +1,449 @@
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ include $(TOPDIR)/rules.mk
+ 
+-PKG_NAME:=luci-app-ssr-plus
++PKG_NAME:=luci-app-ssr-plus-mosdns
+ PKG_VERSION:=187
+ PKG_RELEASE:=2
+ 
+@@ -26,7 +26,8 @@ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_V2ray_Plugin \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server \
+-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_mosdns
+ 
+ LUCI_TITLE:=SS/SSR/V2Ray/Trojan/NaiveProxy/TUIC/Hysteria/Socks5/Tun LuCI interface
+ LUCI_PKGARCH:=all
+@@ -57,7 +58,8 @@ LUCI_DEPENDS:= \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-local \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-redir \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
+-	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan
++	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_mosdns:mosdns-ssrp
+ 
+ define Package/$(PKG_NAME)/config
+ select PACKAGE_luci-lib-ipkg if PACKAGE_$(PKG_NAME)
+@@ -170,11 +172,16 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
+ 	bool "Include Trojan"
+ 	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
+ 	default n
++
++config PACKAGE_$(PKG_NAME)_INCLUDE_mosdns
++	bool "Include mosdns-ssrp"
++	default y
+ endef
+ 
+ define Package/$(PKG_NAME)/conffiles
+ /etc/config/shadowsocksr
+ /etc/ssrplus/
++/etc/mosdns/config.yaml
+ endef
+ 
+ include $(TOPDIR)/feeds/luci/luci.mk
+--- a/luasrc/controller/shadowsocksr.lua
++++ b/luasrc/controller/shadowsocksr.lua
+@@ -9,7 +9,7 @@ function index()
+ 	local page
+ 	page = entry({"admin", "services", "shadowsocksr"}, alias("admin", "services", "shadowsocksr", "client"), _("ShadowSocksR Plus+"), 10)
+ 	page.dependent = true
+-	page.acl_depends = { "luci-app-ssr-plus" }
++	page.acl_depends = { "luci-app-ssr-plus-mosdns" }
+ 	entry({"admin", "services", "shadowsocksr", "client"}, cbi("shadowsocksr/client"), _("SSR Client"), 10).leaf = true
+ 	entry({"admin", "services", "shadowsocksr", "servers"}, arcombine(cbi("shadowsocksr/servers", {autoapply = true}), cbi("shadowsocksr/client-config")), _("Servers Nodes"), 20).leaf = true
+ 	entry({"admin", "services", "shadowsocksr", "control"}, cbi("shadowsocksr/control"), _("Access Control"), 30).leaf = true
+--- a/luasrc/model/cbi/shadowsocksr/client.lua
++++ b/luasrc/model/cbi/shadowsocksr/client.lua
+@@ -78,6 +78,7 @@ o.default = "0"
+ o.rmempty = false
+ 
+ o = s:option(ListValue, "run_mode", translate("Running Mode"))
++o:value("dyn", translate("Dynamic Mode"))
+ o:value("gfw", translate("GFW List Mode"))
+ o:value("router", translate("IP Route Mode"))
+ o:value("all", translate("Global Mode"))
+@@ -92,9 +93,15 @@ o.default = 1
+ o = s:option(ListValue, "pdnsd_enable", translate("Resolve Dns Mode"))
+ o:value("1", translate("Use DNS2TCP query"))
+ o:value("2", translate("Use DNS2SOCKS query and cache"))
+-o:value("3", translate("Use Pdnsd tcp query and cache"))
++if nixio.fs.access('/usr/sbin/pdnsd') then
++	o:value("3", translate("Use Pdnsd tcp query and cache"))
++end
+ o:value("0", translate("Use Local DNS Service listen port 5335"))
+ o.default = 1
++o:depends("run_mode", "gfw")
++o:depends("run_mode", "router")
++o:depends("run_mode", "all")
++o:depends("run_mode", "oversea")
+ 
+ o = s:option(Value, "tunnel_forward", translate("Anti-pollution DNS Server"))
+ o:value("8.8.4.4:53", translate("Google Public DNS (8.8.4.4)"))
+--- a/luasrc/model/cbi/shadowsocksr/status.lua
++++ b/luasrc/model/cbi/shadowsocksr/status.lua
+@@ -88,7 +88,7 @@ if Process_list:find("ssr.server") then
+ 	server_run = 1
+ end
+ 
+-if Process_list:find("ssrplus/bin/pdnsd") or Process_list:find("ssrplus/bin/dns2tcp") or (Process_list:find("ssrplus.dns") and Process_list:find("dns2socks.127.0.0.1.*127.0.0.1.5335")) then
++if Process_list:find("/usr/bin/mosdns") or Process_list:find("ssrplus/bin/pdnsd") or Process_list:find("ssrplus/bin/dns2tcp") or (Process_list:find("ssrplus.dns") and Process_list:find("dns2socks.127.0.0.1.*127.0.0.1.5335")) then
+ 	pdnsd_run = 1
+ end
+ 
+@@ -112,7 +112,7 @@ else
+ 	s.value = style_blue .. bold_on .. translate("Not Running") .. bold_off .. font_off
+ end
+ 
+-if uci:get_first("shadowsocksr", 'global', 'pdnsd_enable', '0') ~= '0' then
++if uci:get_first("shadowsocksr", 'global', 'pdnsd_enable', '0') ~= '0' or uci:get_first("shadowsocksr", 'global', 'run_mode', '0') == 'dyn' then
+ 	s = m:field(DummyValue, "pdnsd_run", translate("DNS Anti-pollution"))
+ 	s.rawhtml = true
+ 	if pdnsd_run == 1 then
+@@ -183,6 +183,11 @@ if uci:get_first("shadowsocksr", 'global', 'adblock', '0') == '1' then
+ 	s.value = ad_count .. " " .. translate("Records")
+ end
+ 
++s = m:field(DummyValue, "mosdns", translate("MosDNS GeoIP List Data"))
++s.rawhtml = true
++s.template = "shadowsocksr/refresh"
++s.value = translate("No Check")
++
+ if uci:get_first("shadowsocksr", 'global', 'pdnsd_enable', '0') == '1' then
+ 	s = m:field(DummyValue, "cache", translate("Reset pdnsd cache"))
+ 	s.template = "shadowsocksr/cache"
+--- a/luasrc/view/shadowsocksr/refresh.htm
++++ b/luasrc/view/shadowsocksr/refresh.htm
+@@ -15,7 +15,9 @@
+ 				switch (rv.ret)
+ 				{
+ 					case 0:
+-						s.innerHTML ="<font color='green'>"+"<%:Refresh OK!%> "+"<%:Total Records:%>"+rv.retcount+"</font>";
++						s.innerHTML ="<font color='green'>"+"<%:Refresh OK!%> ";
++						if(rv.retcount!=0)
++							s.innerHTML +="<%:Total Records:%>"+rv.retcount+"</font>";
+ 						break;
+ 					case 1:
+ 						s.innerHTML ="<font color='green'>"+"<%:No new data!%> "+"</font>";
+--- a/root/etc/init.d/shadowsocksr
++++ b/root/etc/init.d/shadowsocksr
+@@ -46,6 +46,7 @@ EXTRA_COMMANDS='reset'
+ EXTRA_HELP="        reset   Reset to default settings"
+ #extra_command "reset" "Reset to default settings"
+ PS="/bin/busybox ps"
++mosdns_bypass_ip=''
+ 
+ uci_get_by_name() {
+ 	local ret=$(uci get $NAME.$1.$2 2>/dev/null)
+@@ -860,7 +861,9 @@ start_monitor() {
+ }
+ 
+ start_rules() {
++	rm -f /tmp/config.yaml.tp2
+ 	local server=$(get_host_ip $GLOBAL_SERVER)
++	mosdns_bypass_ip=$server
+ 	local local_port=$(uci_get_by_name $GLOBAL_SERVER local_port)
+ 	local lan_ac_ips=$(uci_get_by_type access_control lan_ac_ips)
+ 	local lan_ac_mode=$(uci_get_by_type access_control lan_ac_mode)
+@@ -878,6 +881,7 @@ start_rules() {
+ 	fi
+ 	gfwmode() {
+ 		case "$(uci_get_by_type global run_mode)" in
++		dyn) echo "-d" ;;
+ 		gfw) echo "-g" ;;
+ 		router) echo "-r" ;;
+ 		oversea) echo "-c" ;;
+@@ -916,6 +920,54 @@ start_rules() {
+ 	return $?
+ }
+ 
++start_mosdns(){
++	killall -q -9 mosdns
++	sed "s/255.255.255.255/$mosdns_bypass_ip/" /etc/mosdns/config.yaml.tpl > /etc/mosdns/config.yaml
++	cp /etc/ssrplus/gfw_list.conf /etc/ssrplus/gfw_list.conf.back
++	cat /dev/null > /etc/ssrplus/gfw_list.conf
++	/usr/bin/mosdns start -c config.yaml -d /etc/mosdns >/dev/null 2>&1 &
++	addr="127.0.0.1#5335"
++	OLD_SERVER="$(uci get dhcp.@dnsmasq[0].server 2>/dev/null)"
++	if echo "$OLD_SERVER" | grep "^$addr" >/dev/null 2>&1; then
++		return
++	fi
++	uci delete dhcp.@dnsmasq[0].server 2>/dev/null
++	uci add_list dhcp.@dnsmasq[0].server="$addr"
++	for server in $OLD_SERVER; do
++		[ "$server" = "$addr" ] && continue
++		uci add_list dhcp.@dnsmasq[0].server="$server"
++	done
++	uci set dhcp.@dnsmasq[0].noresolv=1
++	uci commit dhcp
++	/etc/init.d/dnsmasq reload
++	ipset add blacklist 1.1.1.1 >/dev/null 2>&1
++	ipset add blacklist 8.8.4.4 >/dev/null 2>&1
++	ipset add blacklist 208.67.222.222 >/dev/null 2>&1
++
++	config_get_bool adg_enabled AdGuardHome enabled 0
++	[ "$enabled" == "1" ] && /etc/init.d/AdGuardHome stop
++}
++stop_mosdns(){
++	killall -q -9 mosdns
++	[ -e "/etc/ssrplus/gfw_list.conf.back" ] && {
++	mv /etc/ssrplus/gfw_list.conf.back /etc/ssrplus/gfw_list.conf
++	}
++	addr="127.0.0.1#5335"
++	uci del_list dhcp.@dnsmasq[0].server="$addr" 2>/dev/null
++	addrlist="$(uci get dhcp.@dnsmasq[0].server 2>/dev/null)"
++	[ -z "$addrlist" ] && {
++		uci delete dhcp.@dnsmasq[0].noresolv 2>/dev/null
++	}
++	uci commit dhcp
++	/etc/init.d/dnsmasq reload
++	ipset del blacklist 1.1.1.1 >/dev/null 2>&1
++	ipset del blacklist 8.8.4.4 >/dev/null 2>&1
++	ipset del blacklist 208.67.222.222 >/dev/null 2>&1
++
++	config_get_bool adg_enabled AdGuardHome enabled 0
++	[ "$enabled" == "1" ] && /etc/init.d/AdGuardHome start
++}
++
+ start() {
+ 	set_lock
+ 	echolog "----------start------------"
+@@ -924,9 +976,10 @@ start() {
+ 	if load_config; then
+ 		Start_Run
+ 		start_rules
+-		start_dns
++		[ "$(uci_get_by_type global run_mode)" != "dyn" ] && start_dns
+ 		add_cron
+ 		start_switch
++		[ "$(uci_get_by_type global run_mode)" == "dyn" ] && start_mosdns
+ 	else
+ 		echolog "未启动主节点，禁止连接的域名正在加载。"
+ 		cat /etc/ssrplus/deny.list | sed '/^$/d' | sed '/#/d' | sed "/.*/s/.*/address=\/&\//" >$TMP_DNSMASQ_PATH/denylist.conf
+@@ -960,6 +1013,7 @@ boot() {
+ stop() {
+ 	unlock
+ 	set_lock
++	stop_mosdns
+ 	/usr/bin/ssr-rules -f
+ 	local srulecount=$(iptables -L | grep SSR-SERVER-RULE | wc -l)
+ 	if [ $srulecount -gt 0 ]; then
+@@ -1010,9 +1064,9 @@ reset() {
+ 		set shadowsocksr.@global[0].netflix_server='nil'
+ 		set shadowsocksr.@global[0].netflix_proxy='0'
+ 		set shadowsocksr.@global[0].threads='0'
+-		set shadowsocksr.@global[0].run_mode='router'
+-		set shadowsocksr.@global[0].dports='2'
+-		set shadowsocksr.@global[0].pdnsd_enable='1'
++		set shadowsocksr.@global[0].run_mode='dyn'
++		set shadowsocksr.@global[0].dports='1'
++		set shadowsocksr.@global[0].pdnsd_enable='0'
+ 		set shadowsocksr.@global[0].tunnel_forward='8.8.4.4:53'
+ 		set shadowsocksr.@global[0].monitor_enable='1'
+ 		set shadowsocksr.@global[0].enable_switch='1'
+--- a/root/usr/bin/ssr-rules
++++ b/root/usr/bin/ssr-rules
+@@ -75,7 +75,7 @@ flush_r() {
+ 	ipset -X gmlan 2>/dev/null
+ 	ipset -X oversea 2>/dev/null
+ 	ipset -X whitelist 2>/dev/null
+-	ipset -X blacklist 2>/dev/null
++	#ipset -X blacklist 2>/dev/null
+ 	ipset -X netflix 2>/dev/null
+ 	[ -n "$FWI" ] && echo '#!/bin/sh' >$FWI
+ 	return 0
+@@ -97,12 +97,14 @@ ipset_r() {
+ 		$IPT -A SS_SPEC_WAN_AC -m set --match-set china dst -j RETURN
+ 		$IPT -A SS_SPEC_WAN_AC -m set --match-set gmlan src -m set ! --match-set china dst -j SS_SPEC_WAN_FW
+ 		$IPT -A SS_SPEC_WAN_AC -j SS_SPEC_WAN_FW
++		[ -n "$(command -v ip6tables)" ] && . /etc/ssrplus/blockipv6.sh
+ 		;;
+ 	gfw)
+ 		ipset -N gfwlist hash:net 2>/dev/null
+ 		$IPT -A SS_SPEC_WAN_AC -m set --match-set china dst -j RETURN
+ 		$IPT -A SS_SPEC_WAN_AC -m set --match-set gfwlist dst -j SS_SPEC_WAN_FW
+ 		$IPT -A SS_SPEC_WAN_AC -m set --match-set gmlan src -m set ! --match-set china dst -j SS_SPEC_WAN_FW
++		[ -n "$(command -v ip6tables)" ] && . /etc/ssrplus/blockipv6.sh
+ 		;;
+ 	oversea)
+ 		ipset -N oversea hash:net 2>/dev/null
+@@ -122,6 +124,11 @@ ipset_r() {
+ 	$IPT -I SS_SPEC_WAN_AC -m set --match-set bplan src -j RETURN
+ 	ipset -N whitelist hash:net 2>/dev/null
+ 	ipset -N blacklist hash:net 2>/dev/null
++	if [ $? -eq 0 ]; then
++	while read ip; do
++		ipset -! add blacklist $ip
++	done < /etc/ssrplus/blackipv4.sh
++	fi
+ 	$IPT -I SS_SPEC_WAN_AC -m set --match-set blacklist dst -j SS_SPEC_WAN_FW
+ 	$IPT -I SS_SPEC_WAN_AC -m set --match-set whitelist dst -j RETURN
+ 	if [ $(ipset list music -name -quiet | grep music) ]; then
+@@ -246,6 +253,7 @@ tp_rule() {
+ 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set china dst -j RETURN
+ 		$ipt -A SS_SPEC_TPROXY -p udp --dport 80 -j REJECT
+ 		$ipt -A SS_SPEC_TPROXY -p udp --dport 443 -j REJECT
++		#$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set blacklist dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+ 		$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set --match-set gfwlist dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+ 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set gmlan src -m set ! --match-set china dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+ 		;;
+@@ -254,6 +262,10 @@ tp_rule() {
+ 		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set gmlan src -m set -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+ 		$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set --match-set china dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+ 		;;
++	dyn)
++		#$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set blacklist dst -j DROP
++		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set blacklist dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
++		;;
+ 	all)
+ 		$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
+ 		;;
+@@ -317,7 +329,7 @@ gen_include() {
+ 	return 0
+ }
+ 
+-while getopts ":m:s:l:S:L:i:e:a:B:b:w:p:G:D:F:N:M:I:oOuUfgrczh" arg; do
++while getopts ":m:s:l:S:L:i:e:a:B:b:w:p:G:D:F:N:M:I:oOuUfgrczdh" arg; do
+ 	case "$arg" in
+ 	m)
+ 		Interface=$OPTARG
+@@ -397,6 +409,9 @@ while getopts ":m:s:l:S:L:i:e:a:B:b:w:p:G:D:F:N:M:I:oOuUfgrczh" arg; do
+ 	z)
+ 		RUNMODE=all
+ 		;;
++	d)
++		RUNMODE=dyn
++		;;
+ 	f)
+ 		flush_r
+ 		exit 0
+--- a/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
++++ b/root/usr/share/rpcd/acl.d/luci-app-ssr-plus-mosdns.json
+@@ -1,6 +1,6 @@
+ {
+-	"luci-app-ssr-plus": {
+-		"description": "Grant UCI access for luci-app-ssr-plus",
++	"luci-app-ssr-plus-mosdns": {
++		"description": "Grant UCI access for luci-app-ssr-plus-mosdns",
+ 		"read": {
+ 			"file": {
+ 				"/etc/ssrplus/*": [ "read" ]
+--- a/root/usr/share/shadowsocksr/gfw2ipset.sh
++++ b/root/usr/share/shadowsocksr/gfw2ipset.sh
+@@ -10,6 +10,9 @@ netflix() {
+ mkdir -p $TMP_DNSMASQ_PATH
+ if [ "$(uci_get_by_type global run_mode router)" == "oversea" ]; then
+ 	cp -rf /etc/ssrplus/oversea_list.conf $TMP_DNSMASQ_PATH/
++elif [ "$(uci_get_by_type global run_mode router)" == "dyn" ]; then
++	echo > $TMP_DNSMASQ_PATH/gfw_list.conf
++	echo > $TMP_DNSMASQ_PATH/gfw_base.conf
+ else
+ 	cp -rf /etc/ssrplus/gfw_list.conf $TMP_DNSMASQ_PATH/
+ 	cp -rf /etc/ssrplus/gfw_base.conf $TMP_DNSMASQ_PATH/
+--- a/root/usr/share/shadowsocksr/ssrplusupdate.sh
++++ b/root/usr/share/shadowsocksr/ssrplusupdate.sh
+@@ -4,3 +4,5 @@ sleep 2s
+ /usr/share/shadowsocksr/chinaipset.sh /var/etc/ssrplus/china_ssr.txt
+ sleep 2s
+ /usr/bin/lua /usr/share/shadowsocksr/subscribe.lua
++sleep 2s
++/bin/bash /usr/share/shadowsocksr/updatemosdns.sh
+--- a/root/usr/share/shadowsocksr/update.lua
++++ b/root/usr/share/shadowsocksr/update.lua
+@@ -184,6 +184,11 @@ if args then
+ 		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", args)
+ 		os.exit(0)
+ 	end
++	if args == "mosdns" then
++		ret = luci.sys.exec("/bin/bash /usr/share/shadowsocksr/updatemosdns.sh")
++		log(ret, 0)
++		os.exit(0)
++	end
+ else
+ 	log("正在更新【GFW列表】数据库")
+ 	update(uci:get_first("shadowsocksr", "global", "gfwlist_url"), "/etc/ssrplus/gfw_list.conf", "gfw_data", TMP_DNSMASQ_PATH .. "/gfw_list.conf")
+--- /dev/null
++++ b/root/usr/share/shadowsocksr/updatemosdns.sh
+@@ -0,0 +1,79 @@
++#!/bin/bash
++
++WORKDIR="/usr/share/v2ray"
++TEMPDIR="/tmp/MosDNSupdatelist"
++
++DOWNLOAD_LINK_GEOIP="https://github.com/Loyalsoldier/geoip/releases/latest/download/geoip-only-cn-private.dat"
++# DOWNLOAD_LINK_GEOIP="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat"
++DOWNLOAD_LINK_GEOSITE="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
++
++download_geoip() {
++	if ! curl -s -L -H 'Cache-Control: no-cache' -o "${TEMPDIR}/geoip.dat.new" "$DOWNLOAD_LINK_GEOIP"; then
++		echo 'error: Download failed! Please check your network or try again.'
++		EXIT 4
++	fi
++	if ! curl -s -L -H 'Cache-Control: no-cache' -o "${TEMPDIR}/geoip.dat.sha256sum.new" "$DOWNLOAD_LINK_GEOIP.sha256sum"; then
++		echo 'error: Download failed! Please check your network or try again.'
++		EXIT 5
++	fi
++	SUM="$(sha256sum ${TEMPDIR}/geoip.dat.new | sed 's/ .*//')"
++	CHECKSUM="$(sed 's/ .*//' ${TEMPDIR}/geoip.dat.sha256sum.new)"
++	if [[ "$SUM" != "$CHECKSUM" ]]; then
++		echo 'error: Check failed! Please check your network or try again.'
++		EXIT 6
++	fi
++}
++
++download_geosite() {
++	if ! curl -s -L -H 'Cache-Control: no-cache' -o "${TEMPDIR}/geosite.dat.new" "$DOWNLOAD_LINK_GEOSITE"; then
++		echo 'error: Download failed! Please check your network or try again.'
++		EXIT 7
++	fi
++	if ! curl -s -L -H 'Cache-Control: no-cache' -o "${TEMPDIR}/geosite.dat.sha256sum.new" "$DOWNLOAD_LINK_GEOSITE.sha256sum"; then
++		echo 'error: Download failed! Please check your network or try again.'
++		EXIT 8
++	fi
++	SUM="$(sha256sum ${TEMPDIR}/geosite.dat.new | sed 's/ .*//')"
++	CHECKSUM="$(sed 's/ .*//' ${TEMPDIR}/geosite.dat.sha256sum.new)"
++	if [[ "$SUM" != "$CHECKSUM" ]]; then
++		echo 'error: Check failed! Please check your network or try again.'
++		EXIT 9
++	fi
++}
++
++rename_new() {
++	for DAT in 'geoip' 'geosite'; do
++		mv "${TEMPDIR}/$DAT.dat.new" "${WORKDIR}/$DAT.dat"
++		# rm "${TEMPDIR}/$DAT.dat.new"
++		rm "${TEMPDIR}/$DAT.dat.sha256sum.new"
++	done
++}
++
++LOG_FILE=/var/log/ssrplus.log
++echolog() {
++	local d="$(date "+%Y-%m-%d %H:%M:%S")"
++	echo -e "$d: $*" >>$LOG_FILE
++}
++
++EXIT(){
++	rm /var/run/update_dat 2>/dev/null
++	rm -rf $TEMPDIR 2>/dev/null
++	[ "$1" != "0" ] && echolog "MosDNS更新失败，代码：$1" && touch /var/run/update_dat_error && echo $1 > /var/run/update_dat_error
++	[ "$1" == "0" ] && echolog "MosDNS更新成功"
++	exit $1
++}
++
++main(){
++	touch /var/run/update_dat
++	rm -rf $TEMPDIR 2>/dev/null
++	rm /var/run/update_dat_error 2>/dev/null
++	mkdir $TEMPDIR
++
++	download_geoip
++	download_geosite
++	rename_new
++	echo -n 0
++	EXIT 0
++}
++
++main
