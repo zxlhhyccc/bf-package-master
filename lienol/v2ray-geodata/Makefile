@@ -25,7 +25,7 @@ define Download/geoip
   HASH:=16546c7e5c950880024b5177e83f382cbd8fc0f50b1bb038659ef4ccf2f77321
 endef
 
-GEOSITE_VER:=202310082208
+GEOSITE_VER:=202310102208
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 define Download/geosite
@@ -35,7 +35,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=74e7cb5da43e113944483200a7f565a2ff7132c051e5fa2725ce9ab7807e0828
+  HASH:=4da30a766bd020adbe3d432ba79a608739793e78aa33fe79d6508ded0748ec5a
 endef
 
 define Package/v2ray-geodata/template
