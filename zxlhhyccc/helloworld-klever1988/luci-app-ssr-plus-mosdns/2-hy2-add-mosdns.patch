@@ -1,3 +1,5 @@
+diff --git a/Makefile b/Makefile
+index 02d3d85..1d59c54 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,6 +1,6 @@
@@ -8,7 +10,7 @@
  PKG_VERSION:=187
  PKG_RELEASE:=2
  
-@@ -26,7 +26,8 @@ PKG_CONFIG_DEPENDS:= \
+@@ -27,7 +27,8 @@ PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_V2ray_Plugin \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server \
@@ -16,9 +18,9 @@
 +	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan \
 +	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_mosdns
  
- LUCI_TITLE:=SS/SSR/V2Ray/Trojan/NaiveProxy/TUIC/Hysteria/Socks5/Tun LuCI interface
+ LUCI_TITLE:=SS/SSR/V2Ray/Trojan/NaiveProxy/TUIC/ShadowTLS/Hysteria/Socks5/Tun LuCI interface
  LUCI_PKGARCH:=all
-@@ -57,7 +58,8 @@ LUCI_DEPENDS:= \
+@@ -59,7 +60,8 @@ LUCI_DEPENDS:= \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-redir \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
@@ -28,7 +30,7 @@
  
  define Package/$(PKG_NAME)/config
  select PACKAGE_luci-lib-ipkg if PACKAGE_$(PKG_NAME)
-@@ -170,11 +172,16 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
+@@ -180,11 +182,16 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
  	bool "Include Trojan"
  	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
  	default n
@@ -45,6 +47,8 @@
  endef
  
  include $(TOPDIR)/feeds/luci/luci.mk
+diff --git a/luasrc/controller/shadowsocksr.lua b/luasrc/controller/shadowsocksr.lua
+index 24e6298..868bab0 100644
 --- a/luasrc/controller/shadowsocksr.lua
 +++ b/luasrc/controller/shadowsocksr.lua
 @@ -9,7 +9,7 @@ function index()
@@ -56,6 +60,8 @@
  	entry({"admin", "services", "shadowsocksr", "client"}, cbi("shadowsocksr/client"), _("SSR Client"), 10).leaf = true
  	entry({"admin", "services", "shadowsocksr", "servers"}, arcombine(cbi("shadowsocksr/servers", {autoapply = true}), cbi("shadowsocksr/client-config")), _("Servers Nodes"), 20).leaf = true
  	entry({"admin", "services", "shadowsocksr", "control"}, cbi("shadowsocksr/control"), _("Access Control"), 30).leaf = true
+diff --git a/luasrc/model/cbi/shadowsocksr/client.lua b/luasrc/model/cbi/shadowsocksr/client.lua
+index 5037c64..bc6ada4 100644
 --- a/luasrc/model/cbi/shadowsocksr/client.lua
 +++ b/luasrc/model/cbi/shadowsocksr/client.lua
 @@ -78,6 +78,7 @@ o.default = "0"
@@ -83,6 +89,8 @@
  
  o = s:option(Value, "tunnel_forward", translate("Anti-pollution DNS Server"))
  o:value("8.8.4.4:53", translate("Google Public DNS (8.8.4.4)"))
+diff --git a/luasrc/model/cbi/shadowsocksr/status.lua b/luasrc/model/cbi/shadowsocksr/status.lua
+index 6610fb2..9961ff6 100644
 --- a/luasrc/model/cbi/shadowsocksr/status.lua
 +++ b/luasrc/model/cbi/shadowsocksr/status.lua
 @@ -88,7 +88,7 @@ if Process_list:find("ssr.server") then
@@ -115,6 +123,8 @@
  if uci:get_first("shadowsocksr", 'global', 'pdnsd_enable', '0') == '1' then
  	s = m:field(DummyValue, "cache", translate("Reset pdnsd cache"))
  	s.template = "shadowsocksr/cache"
+diff --git a/luasrc/view/shadowsocksr/refresh.htm b/luasrc/view/shadowsocksr/refresh.htm
+index da89fd5..1e2ca38 100644
 --- a/luasrc/view/shadowsocksr/refresh.htm
 +++ b/luasrc/view/shadowsocksr/refresh.htm
 @@ -15,7 +15,9 @@
@@ -128,9 +138,11 @@
  						break;
  					case 1:
  						s.innerHTML ="<font color='green'>"+"<%:No new data!%> "+"</font>";
+diff --git a/root/etc/init.d/shadowsocksr b/root/etc/init.d/shadowsocksr
+index 3a12297..d2ee871 100755
 --- a/root/etc/init.d/shadowsocksr
 +++ b/root/etc/init.d/shadowsocksr
-@@ -46,6 +46,7 @@ EXTRA_COMMANDS='reset'
+@@ -51,6 +51,7 @@ EXTRA_COMMANDS='reset'
  EXTRA_HELP="        reset   Reset to default settings"
  #extra_command "reset" "Reset to default settings"
  PS="/bin/busybox ps"
@@ -138,7 +150,7 @@
  
  uci_get_by_name() {
  	local ret=$(uci get $NAME.$1.$2 2>/dev/null)
-@@ -860,7 +861,9 @@ start_monitor() {
+@@ -979,7 +980,9 @@ start_monitor() {
  }
  
  start_rules() {
@@ -148,7 +160,7 @@
  	local local_port=$(uci_get_by_name $GLOBAL_SERVER local_port)
  	local lan_ac_ips=$(uci_get_by_type access_control lan_ac_ips)
  	local lan_ac_mode=$(uci_get_by_type access_control lan_ac_mode)
-@@ -878,6 +881,7 @@ start_rules() {
+@@ -997,6 +1000,7 @@ start_rules() {
  	fi
  	gfwmode() {
  		case "$(uci_get_by_type global run_mode)" in
@@ -156,7 +168,7 @@
  		gfw) echo "-g" ;;
  		router) echo "-r" ;;
  		oversea) echo "-c" ;;
-@@ -916,6 +920,54 @@ start_rules() {
+@@ -1035,6 +1039,55 @@ start_rules() {
  	return $?
  }
  
@@ -187,6 +199,7 @@
 +	config_get_bool adg_enabled AdGuardHome enabled 0
 +	[ "$enabled" == "1" ] && /etc/init.d/AdGuardHome stop
 +}
++
 +stop_mosdns(){
 +	killall -q -9 mosdns
 +	[ -e "/etc/ssrplus/gfw_list.conf.back" ] && {
@@ -211,7 +224,7 @@
  start() {
  	set_lock
  	echolog "----------start------------"
-@@ -924,9 +976,10 @@ start() {
+@@ -1043,9 +1096,10 @@ start() {
  	if load_config; then
  		Start_Run
  		start_rules
@@ -223,7 +236,7 @@
  	else
  		echolog "未启动主节点，禁止连接的域名正在加载。"
  		cat /etc/ssrplus/deny.list | sed '/^$/d' | sed '/#/d' | sed "/.*/s/.*/address=\/&\//" >$TMP_DNSMASQ_PATH/denylist.conf
-@@ -960,6 +1013,7 @@ boot() {
+@@ -1079,6 +1133,7 @@ boot() {
  stop() {
  	unlock
  	set_lock
@@ -231,7 +244,7 @@
  	/usr/bin/ssr-rules -f
  	local srulecount=$(iptables -L | grep SSR-SERVER-RULE | wc -l)
  	if [ $srulecount -gt 0 ]; then
-@@ -1010,9 +1064,9 @@ reset() {
+@@ -1129,9 +1184,9 @@ reset() {
  		set shadowsocksr.@global[0].netflix_server='nil'
  		set shadowsocksr.@global[0].netflix_proxy='0'
  		set shadowsocksr.@global[0].threads='0'
@@ -244,6 +257,8 @@
  		set shadowsocksr.@global[0].tunnel_forward='8.8.4.4:53'
  		set shadowsocksr.@global[0].monitor_enable='1'
  		set shadowsocksr.@global[0].enable_switch='1'
+diff --git a/root/usr/bin/ssr-rules b/root/usr/bin/ssr-rules
+index bbb1654..3607b52 100755
 --- a/root/usr/bin/ssr-rules
 +++ b/root/usr/bin/ssr-rules
 @@ -75,7 +75,7 @@ flush_r() {
@@ -320,6 +335,11 @@
  	f)
  		flush_r
  		exit 0
+diff --git a/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json b/root/usr/share/rpcd/acl.d/luci-app-ssr-plus-mosdns.json
+similarity index 67%
+rename from root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
+rename to root/usr/share/rpcd/acl.d/luci-app-ssr-plus-mosdns.json
+index 4b96a2d..9e8f719 100644
 --- a/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
 +++ b/root/usr/share/rpcd/acl.d/luci-app-ssr-plus-mosdns.json
 @@ -1,6 +1,6 @@
@@ -331,6 +351,8 @@
  		"read": {
  			"file": {
  				"/etc/ssrplus/*": [ "read" ]
+diff --git a/root/usr/share/shadowsocksr/gfw2ipset.sh b/root/usr/share/shadowsocksr/gfw2ipset.sh
+index 66d2b25..45b6bb2 100755
 --- a/root/usr/share/shadowsocksr/gfw2ipset.sh
 +++ b/root/usr/share/shadowsocksr/gfw2ipset.sh
 @@ -10,6 +10,9 @@ netflix() {
@@ -343,6 +365,8 @@
  else
  	cp -rf /etc/ssrplus/gfw_list.conf $TMP_DNSMASQ_PATH/
  	cp -rf /etc/ssrplus/gfw_base.conf $TMP_DNSMASQ_PATH/
+diff --git a/root/usr/share/shadowsocksr/ssrplusupdate.sh b/root/usr/share/shadowsocksr/ssrplusupdate.sh
+index 9424cfa..60d56ce 100755
 --- a/root/usr/share/shadowsocksr/ssrplusupdate.sh
 +++ b/root/usr/share/shadowsocksr/ssrplusupdate.sh
 @@ -4,3 +4,5 @@ sleep 2s
@@ -351,6 +375,8 @@
  /usr/bin/lua /usr/share/shadowsocksr/subscribe.lua
 +sleep 2s
 +/bin/bash /usr/share/shadowsocksr/updatemosdns.sh
+diff --git a/root/usr/share/shadowsocksr/update.lua b/root/usr/share/shadowsocksr/update.lua
+index 37782fb..8c37b40 100755
 --- a/root/usr/share/shadowsocksr/update.lua
 +++ b/root/usr/share/shadowsocksr/update.lua
 @@ -184,6 +184,11 @@ if args then
@@ -365,6 +391,9 @@
  else
  	log("正在更新【GFW列表】数据库")
  	update(uci:get_first("shadowsocksr", "global", "gfwlist_url"), "/etc/ssrplus/gfw_list.conf", "gfw_data", TMP_DNSMASQ_PATH .. "/gfw_list.conf")
+diff --git a/root/usr/share/shadowsocksr/updatemosdns.sh b/root/usr/share/shadowsocksr/updatemosdns.sh
+new file mode 100644
+index 0000000..e578444
 --- /dev/null
 +++ b/root/usr/share/shadowsocksr/updatemosdns.sh
 @@ -0,0 +1,79 @@
