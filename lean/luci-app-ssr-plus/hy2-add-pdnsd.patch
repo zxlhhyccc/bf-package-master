@@ -1,6 +1,8 @@
+diff --git a/Makefile b/Makefile
+index 3018dfc..02d3d85 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -14,6 +14,7 @@ PKG_CONFIG_DEPENDS:= \
+@@ -15,6 +15,7 @@ PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
@@ -8,7 +10,7 @@
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2 \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
-@@ -32,8 +33,8 @@ LUCI_PKGARCH:=all
+@@ -33,8 +34,8 @@ LUCI_PKGARCH:=all
  LUCI_DEPENDS:= \
  	@(PACKAGE_libustream-mbedtls||PACKAGE_libustream-openssl||PACKAGE_libustream-wolfssl) \
  	+coreutils +coreutils-base64 +dns2socks +dns2tcp +dnsmasq-full +@PACKAGE_dnsmasq_full_ipset +ipset +kmod-ipt-nat \
@@ -19,7 +21,7 @@
  	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:curl \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray-core \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:curl \
-@@ -44,6 +45,7 @@ LUCI_DEPENDS:= \
+@@ -46,6 +47,7 @@ LUCI_DEPENDS:= \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks:ipt2socks \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -27,7 +29,7 @@
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2:redsocks2 \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
-@@ -123,7 +125,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_TUIC-Client
+@@ -125,7 +127,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_TUIC-Client
  	bool "Include tuic-client"
  	select PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
  	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
@@ -36,7 +38,7 @@
  	depends on !(TARGET_x86_geode||TARGET_x86_legacy)
  	default n
  
-@@ -140,6 +142,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+@@ -150,6 +152,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||armeb||mips||mips64||powerpc||TARGET_gemini)
  	default n
  
@@ -47,6 +49,8 @@
  config PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2
  	bool "Include Redsocks2"
  	default n
+diff --git a/luasrc/controller/shadowsocksr.lua b/luasrc/controller/shadowsocksr.lua
+index 8ceaba7..24e6298 100644
 --- a/luasrc/controller/shadowsocksr.lua
 +++ b/luasrc/controller/shadowsocksr.lua
 @@ -26,6 +26,7 @@ function index()
@@ -68,9 +72,11 @@
 +	luci.http.prepare_content("application/json")
 +	luci.http.write_json(e)
 +end
+diff --git a/luasrc/model/cbi/shadowsocksr/client-config.lua b/luasrc/model/cbi/shadowsocksr/client-config.lua
+index d8f5ca1..6aeaf78 100644
 --- a/luasrc/model/cbi/shadowsocksr/client-config.lua
 +++ b/luasrc/model/cbi/shadowsocksr/client-config.lua
-@@ -377,6 +377,20 @@ o.rmempty = true
+@@ -495,6 +495,20 @@ o.rmempty = true
  o.default = ""
  o:depends("type", "tuic")
  
@@ -91,6 +97,8 @@
  
  o = s:option(ListValue, "udp_relay_mode", translate("UDP relay mode"))
  o:depends("type", "tuic")
+diff --git a/luasrc/model/cbi/shadowsocksr/client.lua b/luasrc/model/cbi/shadowsocksr/client.lua
+index 482949c..5037c64 100644
 --- a/luasrc/model/cbi/shadowsocksr/client.lua
 +++ b/luasrc/model/cbi/shadowsocksr/client.lua
 @@ -92,6 +92,7 @@ o.default = 1
@@ -117,6 +125,8 @@
  	o.description = translate("Custom DNS Server format as IP:PORT (default: disabled)")
  	o.validate = function(self, value, section)
  		if (section and value) then
+diff --git a/luasrc/model/cbi/shadowsocksr/status.lua b/luasrc/model/cbi/shadowsocksr/status.lua
+index 1400c91..6610fb2 100644
 --- a/luasrc/model/cbi/shadowsocksr/status.lua
 +++ b/luasrc/model/cbi/shadowsocksr/status.lua
 @@ -88,7 +88,7 @@ if Process_list:find("ssr.server") then
@@ -140,6 +150,9 @@
  s = m:field(DummyValue, "check_port", translate("Check Server Port"))
  s.template = "shadowsocksr/checkport"
  s.value = translate("No Check")
+diff --git a/luasrc/view/shadowsocksr/cache.htm b/luasrc/view/shadowsocksr/cache.htm
+new file mode 100644
+index 0000000..8c162f1
 --- /dev/null
 +++ b/luasrc/view/shadowsocksr/cache.htm
 @@ -0,0 +1,29 @@
@@ -172,9 +185,73 @@
 +<input type="button" class="btn cbi-button cbi-button-reset" value="<%:Perform reset%>" onclick="return cache(this,'<%=self.option%>')" />
 +<span id="<%=self.option%>-status"><em><%=self.value%></em></span>
 +<%+cbi/valuefooter%>
+diff --git a/po/zh-cn/ssr-plus.po b/po/zh-cn/ssr-plus.po
+index aa317d8..2ab67db 100644
 --- a/po/zh-cn/ssr-plus.po
 +++ b/po/zh-cn/ssr-plus.po
-@@ -400,6 +400,9 @@ msgstr "DNS 解析方式"
+@@ -134,22 +134,22 @@ msgid "Obfuscation Password"
+ msgstr "混淆密码"
+ 
+ msgid "Hysterir QUIC parameters"
+-msgstr "QUIC参数"
++msgstr "QUIC 参数"
+ 
+ msgid "QUIC initStreamReceiveWindow"
+-msgstr "QUIC初始流接收窗口大小。"
++msgstr "QUIC 初始流接收窗口大小。"
+ 
+ msgid "QUIC maxStreamReceiveWindow"
+-msgstr "QUIC最大的流接收窗口大小"
++msgstr "QUIC 最大的流接收窗口大小"
+ 
+ msgid "QUIC initConnReceiveWindow"
+-msgstr "QUIC初始的连接接收窗口大小"
++msgstr "QUIC 初始的连接接收窗口大小"
+ 
+ msgid "QUIC maxConnReceiveWindow"
+-msgstr "QUIC最大的连接接收窗口大小"
++msgstr "QUIC 最大的连接接收窗口大小"
+ 
+ msgid "QUIC maxIdleTimeout(Unit:second)"
+-msgstr "QUIC最长空闲超时时间（单位：秒）"
++msgstr "QUIC 最长空闲超时时间（单位：秒）"
+ 
+ msgid "The keep-alive period.(Unit:second)"
+ msgstr "心跳包发送间隔（单位：秒）"
+@@ -159,13 +159,13 @@ msgid "Certificate fingerprint"
+ msgstr "证书指纹"
+ 
+ msgid "shadowTLS protocol Version"
+-msgstr "ShadowTLS协议版本"
++msgstr "ShadowTLS 协议版本"
+ 
+ msgid "TLS 1.3 Strict mode"
+ msgstr "TLS 1.3 限定模式"
+ 
+ msgid "Disable TCP No_delay"
+-msgstr "禁用TCP无延迟"
++msgstr "禁用 TCP 无延迟"
+ 
+ msgid "shadow-TLS SNI"
+ msgstr "服务器名称指示"
+@@ -174,13 +174,13 @@ msgid "Shadow-TLS ChainPoxy type"
+ msgstr "代理链类型"
+ 
+ msgid "Shadowsocks-rust Version"
+-msgstr "shadowsocks rust版本"
++msgstr "shadowsocks rust 版本"
+ 
+ msgid "Vmess Protocol"
+-msgstr "VMESS协议"
++msgstr "VMESS 协议"
+ 
+ msgid "Shadowsocks password"
+-msgstr "shadowsocks密码"
++msgstr "shadowsocks 密码"
+ 
+ msgid "QUIC connection receive window"
+ msgstr "QUIC 连接接收窗口"
+@@ -468,6 +468,9 @@ msgstr "DNS 解析方式"
  msgid "Use SSR DNS Tunnel"
  msgstr "使用 SSR DNS 隧道"
  
@@ -184,7 +261,7 @@
  msgid "DNS Anti-pollution"
  msgstr "DNS 防污染服务"
  
-@@ -463,6 +466,9 @@ msgstr "使用 DNS2TCP 查询"
+@@ -531,6 +534,9 @@ msgstr "使用 DNS2TCP 查询"
  msgid "Use DNS2SOCKS query and cache"
  msgstr "使用 DNS2SOCKS 查询并缓存"
  
@@ -194,7 +271,7 @@
  msgid "DNS Server IP:Port"
  msgstr "DNS 服务器 IP:Port"
  
-@@ -748,6 +754,9 @@ msgstr "WebSocket 主机名"
+@@ -816,6 +822,9 @@ msgstr "WebSocket 主机名"
  msgid "WebSocket Path"
  msgstr "WebSocket 路径"
  
@@ -204,7 +281,7 @@
  msgid "Max Early Data"
  msgstr "最大前置数据"
  
-@@ -799,6 +808,9 @@ msgstr "微信视频通话"
+@@ -867,6 +876,9 @@ msgstr "微信视频通话"
  msgid "DTLS 1.2"
  msgstr "DTLS 1.2 数据包"
  
@@ -214,7 +291,7 @@
  msgid "MTU"
  msgstr "最大传输单元"
  
-@@ -832,6 +844,9 @@ msgstr "节点公钥"
+@@ -900,6 +912,9 @@ msgstr "节点公钥"
  msgid "Pre-shared key"
  msgstr "预共享密钥"
  
@@ -224,7 +301,7 @@
  msgid "Network interface to use"
  msgstr "使用的网络接口"
  
-@@ -847,6 +862,9 @@ msgstr "重置完成"
+@@ -915,6 +930,9 @@ msgstr "重置完成"
  msgid "Reset Error"
  msgstr "重置错误"
  
@@ -234,7 +311,7 @@
  msgid "Finger Print"
  msgstr "指纹伪造"
  
-@@ -856,23 +874,32 @@ msgstr "重新应用"
+@@ -924,23 +942,32 @@ msgstr "重新应用"
  msgid "Apply"
  msgstr "应用"
  
@@ -272,7 +349,7 @@
  
  msgid "lossless UDP relay using QUIC streams"
  msgstr "使用 QUIC 流的无损 UDP 中继"
-@@ -887,13 +914,13 @@ msgid "Timeout for establishing a connection to server(second)"
+@@ -955,13 +982,13 @@ msgid "Timeout for establishing a connection to server(second)"
  msgstr "连接超时时间（单位：秒）"
  
  msgid "Garbage collection interval(second)"
@@ -289,8 +366,8 @@
  
  msgid "Enable 0-RTT QUIC handshake"
  msgstr "客户端启用 0-RTT QUIC 连接握手"
-@@ -908,7 +935,8 @@ msgid "Set if the listening socket should be dual-stack"
- msgstr "设置监听套接字为双栈"
+@@ -976,7 +1003,7 @@ msgid "Dual-stack Listening Socket"
+ msgstr "双栈Socket监听"
  
  msgid "Maximum packet size the socks5 server can receive from external"
 -msgstr "socks5服务器可以从外部接收的最大数据包大小（单位：字节）"
@@ -298,10 +375,11 @@
  
  msgid "Disable ChinaDNS-NG"
  msgstr "直通模式（禁用ChinaDNS-NG）"
-+
+diff --git a/root/etc/init.d/shadowsocksr b/root/etc/init.d/shadowsocksr
+index 932febe..3a12297 100755
 --- a/root/etc/init.d/shadowsocksr
 +++ b/root/etc/init.d/shadowsocksr
-@@ -78,7 +78,7 @@ get_host_ip() {
+@@ -83,7 +83,7 @@ get_host_ip() {
  	if [ -z "$(echo $host | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}")" ]; then
  		if [ "$host" == "${host#*:[0-9a-fA-F]}" ]; then
  			ip=$(resolveip -4 -t 3 $host | awk 'NR==1{print}')
@@ -310,7 +388,7 @@
  		fi
  	fi
  	[ -z "$ip" ] || uci_set_by_name $1 ip $ip
-@@ -177,7 +177,44 @@ start_dns() {
+@@ -182,7 +182,44 @@ start_dns() {
  	local ssrplus_dns="$(uci_get_by_type global pdnsd_enable 0)"
  	local dnsserver="$(uci_get_by_type global tunnel_forward 8.8.4.4:53)"
  	local run_mode="$(uci_get_by_type global run_mode)"
@@ -356,7 +434,7 @@
  	if [ "$ssrplus_dns" != "0" ]; then
  		case "$run_mode" in
  		gfw) ipset add gfwlist ${dnsserver%:*} 2>/dev/null ;;
-@@ -194,6 +231,12 @@ start_dns() {
+@@ -199,6 +236,12 @@ start_dns() {
  			ln_start_bin $(first_type dns2socks) dns2socks 127.0.0.1:$tmp_dns_port $dnsserver 127.0.0.1:$dns_port -q
  			pdnsd_enable_flag=2
  			;;
@@ -369,36 +447,7 @@
  		esac
  
  		if [ "$run_mode" = "router" ]; then
-@@ -379,14 +422,11 @@ start_udp() {
- 		echolog "UDP TPROXY Relay:$($(first_type "hysteria") --version | awk '{print $1,$3}') Started!"
- 		;;
- 	tuic)
--		# gen_config_file $UDP_RELAY_SERVER $type 2 $tmp_udp_local_port
--		# ln_start_bin $(first_type tuic-client) tuic-client --config $udp_config_file
--		# ln_start_bin $(first_type ipt2socks) ipt2socks -U -b 0.0.0.0 -4 -s 127.0.0.1 -p $tmp_udp_local_port -l $tmp_udp_port
--		# echolog "UDP TPROXY Relay:tuic-client $($(first_type tuic-client) --version) Started!"
--		# FIXME: ipt2socks cannot handle udp reply from tuic
--		echolog "TUIC UDP TPROXY Relay not supported!"
--		redir_udp=0
--		ARG_UDP=""
-+		gen_config_file $UDP_RELAY_SERVER $type 2 $tmp_udp_local_port
-+		ln_start_bin $(first_type tuic-client) tuic-client --config $udp_config_file
-+		ln_start_bin $(first_type ipt2socks) ipt2socks -U -b 0.0.0.0 -4 -s 127.0.0.1 -p $tmp_udp_local_port -l $tmp_udp_port
-+		echolog "UDP TPROXY Relay:tuic-client $($(first_type tuic-client) --version) Started!"
-+		echolog "TUIC UDP TPROXY Relay not supported!"
- 		;;
- 	socks5)
- 		# if [ "$(uci_get_by_name $UDP_RELAY_SERVER auth_enable 0)" == "1" ]; then
-@@ -476,8 +515,6 @@ start_shunt() {
- 		ln_start_bin $(first_type ipt2socks) ipt2socks -R -b 0.0.0.0 -4 -s 127.0.0.1 -p $tmp_port -l $tmp_shunt_port
- 		ln_start_bin $(first_type dns2socks) dns2socks 127.0.0.1:$tmp_port 8.8.8.8:53 127.0.0.1:$tmp_shunt_dns_port -q
- 		echolog "shunt:tuic-client $($(first_type tuic-client) --version) Started!"
--		# FIXME: ipt2socks cannot handle udp reply from tuic
--		redir_udp=0
- 		;;
- 	# socks5)
- 	# 	if [ "$(uci_get_by_name $SHUNT_SERVER auth_enable 0)" == "1" ]; then
-@@ -994,6 +1031,7 @@ reset() {
+@@ -1109,6 +1152,7 @@ reset() {
  		add shadowsocksr access_control
  		set shadowsocksr.@access_control[0].lan_ac_mode='0'
  		set shadowsocksr.@access_control[0].router_proxy='1'
@@ -406,6 +455,8 @@
  		add_list shadowsocksr.@access_control[0].wan_fw_ips=149.154.160.0/20
  		add_list shadowsocksr.@access_control[0].wan_fw_ips=67.198.55.0/24
  		add_list shadowsocksr.@access_control[0].wan_fw_ips=91.108.4.0/22
+diff --git a/root/usr/bin/ssr-monitor b/root/usr/bin/ssr-monitor
+index fb9ed57..6011855 100755
 --- a/root/usr/bin/ssr-monitor
 +++ b/root/usr/bin/ssr-monitor
 @@ -105,6 +105,20 @@ while [ "1" == "1" ]; do #死循环
@@ -429,6 +480,8 @@
  	#chinadns-ng
  	if [ "$(uci -q get "dhcp.@dnsmasq[0]._unused_ssrp_changed")" = "1" ]; then
  		icount=$(busybox ps -w | grep $TMP_BIN_PATH/chinadns-ng | grep -v grep | wc -l)
+diff --git a/root/usr/bin/ssr-rules b/root/usr/bin/ssr-rules
+index 547d910..bbb1654 100755
 --- a/root/usr/bin/ssr-rules
 +++ b/root/usr/bin/ssr-rules
 @@ -237,13 +237,15 @@ tp_rule() {
@@ -449,6 +502,8 @@
  		$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set --match-set gfwlist dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
  		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set gmlan src -m set ! --match-set china dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
  		;;
+diff --git a/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json b/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
+index 2c38125..4b96a2d 100644
 --- a/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
 +++ b/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
 @@ -2,10 +2,16 @@
@@ -470,29 +525,21 @@
 -}
 \ No newline at end of file
 +}
+diff --git a/root/usr/share/shadowsocksr/gen_config.lua b/root/usr/share/shadowsocksr/gen_config.lua
+index 9e84683..b62e2a1 100755
 --- a/root/usr/share/shadowsocksr/gen_config.lua
 +++ b/root/usr/share/shadowsocksr/gen_config.lua
-@@ -319,14 +319,16 @@ local tuic = {
- 				gc_interval = server.gc_interval and server.gc_interval .. "s" or nil,
- 				gc_lifetime = server.gc_lifetime and server.gc_lifetime .. "s" or nil,
- 				alpn = server.tls_alpn,
--				disable_sni = (server.disable_sni == "1") and true or false,
--				zero_rtt_handshake = (server.zero_rtt_handshake == "1") and true or false,
-+				disable_sni = (server.disable_sni == "1"),
-+				zero_rtt_handshake = (server.zero_rtt_handshake == "1"),
- 				send_window = tonumber(server.send_window),
- 				receive_window = tonumber(server.receive_window)
-         },
+@@ -429,6 +429,8 @@ local tuic = {
+ 		},
  		["local"] = {
--				server = "0.0.0.0:" .. tonumber(local_port),
--				--dual_stack = (server.tuic_dual_stack == "1") and true or false,
-+				server = "[::]:" .. tonumber(local_port),
-+				--username = server.tuic_socks_username,
-+				--password = server.tuic_socks_password,
-+				dual_stack = (server.tuic_dual_stack == "1") and true or false,
- 				max_packet_size = tonumber(server.tuic_max_package_size)
+ 			server = tonumber(socks_port) and (server.tuic_dual_stack == "1" and "[::1]:" or "127.0.0.1:")  .. (socks_port == "0" and local_port or tonumber(socks_port)),
++			--username = server.tuic_socks_username,
++			--password = server.tuic_socks_password,
+ 			dual_stack = (server.tuic_dual_stack == "1") and true or false,
+ 			max_packet_size = tonumber(server.tuic_max_package_size)
  		}
- }
+diff --git a/root/usr/share/shadowsocksr/update.lua b/root/usr/share/shadowsocksr/update.lua
+index e49825e..37782fb 100755
 --- a/root/usr/share/shadowsocksr/update.lua
 +++ b/root/usr/share/shadowsocksr/update.lua
 @@ -101,7 +101,7 @@ end
