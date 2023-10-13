@@ -140,28 +140,6 @@ local function check_excluded_domain(domain)
 	return false
 end
 
-local function split(full, sep)
-	if full then
-		full = full:gsub("%z", "")
-		local off, result = 1, {}
-		while true do
-			local nStart, nEnd = full:find(sep, off)
-			if not nEnd then
-				local res = string.sub(full, off, string.len(full))
-				if #res > 0 then
-					table.insert(result, res)
-				end
-				break
-			else
-				table.insert(result, string.sub(full, off, nStart - 1))
-				off = nEnd + 1
-			end
-		end
-		return result
-	end
-	return {}
-end
-
 local cache_text = ""
 local new_rules = luci.sys.exec("echo -n $(find /usr/share/passwall/rules -type f | xargs md5sum)")
 local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. TUN_DNS .. PROXY_MODE .. NO_PROXY_IPV6 .. new_rules
@@ -205,14 +183,14 @@ if not fs.access(CACHE_DNS_FILE) then
 				local http_host = nil
 				local url = w
 				local port = 443
-				local s = split(w, ",")
+				local s = api.split(w, ",")
 				if s and #s > 1 then
 					url = s[1]
 					local dns_ip = s[2]
 					local host_port = api.get_domain_from_url(s[1])
 					if host_port and #host_port > 0 then
 						http_host = host_port
-						local s2 = split(host_port, ":")
+						local s2 = api.split(host_port, ":")
 						if s2 and #s2 > 1 then
 							http_host = s2[1]
 							port = s2[2]
