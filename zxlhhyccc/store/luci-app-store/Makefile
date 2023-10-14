@@ -11,13 +11,13 @@ LUCI_DEPENDS:=+curl +opkg +luci-base +tar +coreutils +coreutils-stat +libuci-lua
 LUCI_EXTRA_DEPENDS:=luci-lib-taskd (>=1.0.17)
 LUCI_PKGARCH:=all
 
-PKG_VERSION:=0.1.13-2
+PKG_VERSION:=0.1.14-2
 # PKG_RELEASE MUST be empty for luci.mk
 PKG_RELEASE:=
 
-ISTORE_UI_VERSION:=0.1.12
-ISTORE_UI_RELEASE:=5
-PKG_HASH:=23279d9fa532bbe6a66c4523cfee617d098a6e9a797e4c7e5c07c52b04434047
+ISTORE_UI_VERSION:=0.1.14
+ISTORE_UI_RELEASE:=2
+PKG_HASH:=4d20ffeabfe6572b01e0bedd860043ec0dbd6f2f63aaf0ee58caeb851df18e73
 
 PKG_SOURCE_URL_FILE:=v$(ISTORE_UI_VERSION)-$(ISTORE_UI_RELEASE).tar.gz
 PKG_SOURCE:=istore-ui-$(PKG_SOURCE_URL_FILE)
@@ -30,6 +30,7 @@ TARGET_CONFIGURE_OPTS+= SED="$(SED)"
 
 define Package/luci-app-store/conffiles
 /etc/.app_store.id
+/etc/config/istore
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
