@@ -1,6 +1,6 @@
 --- a/Makefile
 +++ b/Makefile
-@@ -16,6 +16,8 @@ PKG_CONFIG_DEPENDS:= \
+@@ -17,6 +17,8 @@ PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
@@ -9,7 +9,7 @@
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,12 +37,14 @@ PKG_CONFIG_DEPENDS:= \
+@@ -36,12 +38,14 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -25,7 +25,7 @@
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
-@@ -106,6 +110,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+@@ -107,6 +111,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||(arm&&TARGET_gemini)||armeb||mips||mips64||powerpc)
  	default n
  
@@ -72,9 +72,9 @@
  o:depends({dns_mode = "sing-box", remote_fakedns = false})
  o:depends({dns_mode = "xray"})
  o.rmempty = false
-@@ -439,6 +445,7 @@ if api.is_finded("chinadns-ng") then
- 	o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, but will increase the memory."))
- 	o.default = "0"
+@@ -450,6 +456,7 @@ if api.is_finded("chinadns-ng") then
+ 			.. "</ul>"
+ 	chinadns_ng_default_tag:depends("chinadns_ng", true)
  	o:depends({dns_mode = "dns2socks"})
 +	o:depends({dns_mode = "pdnsd"})
  	o:depends({dns_mode = "dns2tcp"})
@@ -93,7 +93,7 @@
  	local remark = m:get(n, "remark") or ""
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -250,6 +250,12 @@ msgstr "单进程"
+@@ -259,6 +259,12 @@ msgstr "单进程"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
