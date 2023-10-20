@@ -115,7 +115,7 @@ function init(){
 	[ -z "$ip_version" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】无法获取依赖项 iputils-arping 版本号，请确认插件是否正常运行" >> ${logfile}
 	[ -z "$cu_version" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】无法获取依赖项 curl 版本号，请确认插件是否正常运行" >> ${logfile}
 	[ -z "${sckey}${tg_token}${pushplus_token}${corpid}${wxpusher_apptoken}${wxpusher_uids}${wxpusher_topicIds}" -a "${jsonpath}" != "/usr/share/wechatpush/api/diy.json" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】请填写正确的 key " >> ${logfile} && return 1
-	local interfacelist=`getinterfacelist` && [ -z "$interfacelist" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】无法获取接口在线时间等信息，可能存在多个接口或配置错误，请确认插件是否正常运行" >> ${logfile}
+	local interfacelist=`getinterfacelist` && [ -z "$interfacelist" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】存在多个接口或配置错误，可能无法获取接口在线时间等信息，请确认插件是否正常运行" >> ${logfile}
 	[ -n "$notification_temp" ] && [ -n "$temperature_threshold" ] && local cpu_temp=`soc_temp` || local cpu_temp="null"
 	[ -z "$cpu_temp" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【！！！】无法读取设备温度，请检查命令" >> ${logfile}
 	[ -n "$notification_load" ] && [ -n "$cpu_load_threshold" ] && local cpu_fuzai=`cat /proc/loadavg|awk '{print $1}'` 2>/dev/null || local cpu_fuzai="null"
@@ -285,7 +285,7 @@ function getname(){
 	[ -z "$tmp_name" ] && [ -f "/tmp/dhcp.leases" ] && local tmp_name=`cat /tmp/dhcp.leases|grep -w ${1}|awk '{print $4}'|grep -v "^$"|sort -u|head -n1`
 	# 光猫
 	echo "$tmp_name" | grep -q -w "unknown\|*" && unset tmp_name # 为unknown时重新读取
-	[ -z "$tmp_name" ] && local	tmp_name=$(cut_str "$(echo "$gatewayinfo"|grep -w ${1}|awk '{print $2}'|sort -u|head -n1)" "30")
+	[ -z "$tmp_name" ] && [ -f "${dir}gateway_info" ] && gatewayinfo=`cat ${dir}gateway_info` && local tmp_name=$(cut_str "$(echo "$gatewayinfo"|grep -w ${1}|awk '{print $2}'|sort -u|head -n1)" "30")
 	# MAC设备信息数据库
 	echo "$tmp_name" | grep -q -w "unknown\|*" && unset tmp_name # 为unknown时重新读取
 	[ -z "$tmp_name" ] && [ -f "$oui_base" ] && local tmp_name=$(cat $oui_base|grep -i $(echo "$2"|cut -c 1,2,4,5,7,8)|sed -nr 's#^.*16)..(.*)#\1#gp')
@@ -311,8 +311,12 @@ function getgateway(){
 		# 注销
 		[ ! -z "$get_gateway" ] && [ ! -z "$gateway_logout_url" ] && curl -s -b ${dir}cookies.txt "${gateway_logout_url}" -d 'token='$mytoken 2>/dev/null
 		[ -z "$get_gateway" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【info】获取光猫信息失败，可能当前用户未注销或设置错误" >> ${logfile}
+		# 保存信息
+		[ ! -z "$get_gateway" ] && echo "$get_gateway" > ${dir}gateway_info
+		gateway_iplist=`echo "${get_gateway}"|awk '{print $1}'`
+	else
+		unset gateway_iplist
 	fi
-	[ ! -z "$get_gateway" ] && echo "$get_gateway" > ${dir}gateway_info
 }
 
 # 扫描范围内 IP
@@ -326,9 +330,14 @@ function scanlocalip(){
 		i=$(echo "$start_ip" | awk -F '.' '{print $NF}')
 		end_i=$(echo "$end_ip" | awk -F '.' '{print $NF}')
 		while [ "$i" -le "$end_i" ]; do
-			ping "${start_ip%.*}.$i" -c 1 >> /dev/null 2>&1 &
+			if ping -c 1 "${start_ip%.*}.$i" > /dev/null 2>&1 & then
+				echo "${start_ip%.*}.$i" >> "${dir}scan_info"
+			fi
 			i=$((i + 1))
 		done
+		scan_iplist=`cat ${dir}scan_info`
+	else
+		unset scan_iplist
 	fi
 }
 
@@ -583,9 +592,7 @@ function first(){
 	wait
 
 	local IPLIST=`cat /proc/net/arp|grep "0x2\|0x6"|awk '{print $1}'|grep -v "^169.254."|grep -v "^$"|sort -u|grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'`
-	[ -f "${dir}gateway_info" ] && gatewayinfo=`cat ${dir}gateway_info`
-	local gateway_iplist=`echo "${gatewayinfo}"|awk '{print $1}'`
-	[ ! -z "$gateway_iplist" ] && local IPLIST=`echo -e "${IPLIST}\n${gateway_iplist}"|grep -v "^$"|sort -u`
+	local IPLIST=`echo -e "${IPLIST}\n${gateway_iplist}\n${scan_iplist}"|grep -v "^$"|sort -u`
 	for ip in $IPLIST; do
 		[ ! -z "$passive_mode" ] && [ "$passive_mode" -eq "1" ] && break
 		read -u 5
@@ -943,7 +950,6 @@ function down(){
 		LockFile lock
 		[ ! -f "${dir}send_enable.lock" ] && cat ${dir}ipAddress|grep -w ${1}|grep -v "^$"|sort -u|head -n1 >> ${dir}tmp_downlist
 		sed -i "/^${1} /d" ${dir}ipAddress
-		sed -i "/^${1} /d" ${dir}gateway_info
 		rm -f ${dir}client/${1} >/dev/null 2>&1
 		LockFile unlock
 	# 更新主机名或 MAC
@@ -1339,6 +1345,7 @@ function add_ip_white() {
 	[ -n "$port_knocking_enable" ] && [ "$port_knocking_enable" -eq "1" ] || return
 	[ -z "$2" ] && timeout=$login_ip_white_timeout || timeout=$2
 	# 检查 IP 版本
+	unset ipset_name
 	( echo "$1"|grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$' ) && local ipset_name="wechatpush_whitelist"
 	( echo "$1"|grep -Eq '^([\da-fA-F0-9]{1,4}(:{1,2})){1,15}[\da-fA-F0-9]{1,4}$' ) && local ipset_name="wechatpush_whitelistv6"
 	[ -z "$ipset_name" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【!!!】白名单添加失败，IP 格式错误" >> ${logfile} && return
@@ -1435,6 +1442,7 @@ function add_ip_black(){
 	[ ! "$1" ] && return
 	echo "$login_ip_white_list"|grep -w -q "$1" && return
 	# 检查 IP 版本
+	unset ipset_name
 	( echo "$1"|grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$' ) && ipset_name="wechatpush_blacklist"
 	( echo "$1"|grep -Eq '^([\da-fA-F0-9]{1,4}(:{1,2})){1,15}[\da-fA-F0-9]{1,4}$' ) && ipset_name="wechatpush_blacklistv6"
 	[ -z "$ipset_name" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【!!!】黑名单添加失败，IP 格式错误" >> ${logfile} && return
@@ -1453,6 +1461,7 @@ function del_ip_black(){
 	sed -i "/^${1}/d" ${ip_blacklist_path}
 	
 	# 检查 IP 版本
+	unset ipset_name
 	( echo "$1"|grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$' ) && ipset_name="wechatpush_blacklist"
 	( echo "$1"|grep -Eq '^([\da-fA-F0-9]{1,4}(:{1,2})){1,15}[\da-fA-F0-9]{1,4}$' ) && ipset_name="wechatpush_blacklistv6"
 	[ -z "$ipset_name" ] && echo "`date "+%Y-%m-%d %H:%M:%S"` 【!!!】黑名单删除失败，IP 格式错误" >> ${logfile} && return
