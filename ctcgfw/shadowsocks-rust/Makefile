@@ -28,6 +28,7 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=rust/host
+PKG_BUILD_PARALLEL:=1
 
 RUST_PKG_FEATURES:=logging local server service local-http local-http-rustls local-redir local-tunnel local-dns local-tun local-socks4 trust-dns dns-over-tls dns-over-https stream-cipher jemalloc security-replay-attack-detect multi-threaded aead-cipher-2022 aead-cipher-2022-extra
 

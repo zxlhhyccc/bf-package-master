@@ -23,6 +23,7 @@ PKG_LICENSE:=MIT
 PKG_MAINTAINER:=messense <messense@icloud.com>
 
 PKG_BUILD_DEPENDS:=rust/host
+PKG_BUILD_PARALLEL:=1
 
 RUST_PKG_FEATURES:=rustls-tls atomic64 native-tls native-tls-vendored
 
