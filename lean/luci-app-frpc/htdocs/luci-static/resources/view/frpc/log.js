@@ -63,7 +63,7 @@ return view.extend({
 			}, _('Collecting data ...'))
 		);
 
-		const log_path = open(uci.get('frpc', 'common', 'log_file'), 'r');
+		//const log_path = open(uci.get('frpc', 'common', 'log_file'), 'r');
 
 		var clear_log_button = E('div', {}, [
 			E('button', {
@@ -97,7 +97,8 @@ return view.extend({
 
 
 		poll.add(L.bind(function () {
-			return fs.read_direct(log_path, 'text')
+			//return fs.read_direct(log_path, 'text')
+			return fs.exec_direct('/usr/libexec/frpc-call', [ 'tail' ])
 				.then(function (res) {
 					var log = E('pre', { 'wrap': 'pre' }, [res.trim() || _('Log is clean.')]);
 
