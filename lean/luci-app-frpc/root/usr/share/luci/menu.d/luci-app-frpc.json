@@ -19,12 +19,12 @@
 			"path": "frpc/frpc"
 		}
 	},
-	"admin/services/frpc/logread": {
+	"admin/services/frpc/log": {
 		"title": "Logs",
 		"order": 20,
 		"action": {
 			"type": "view",
-			"path": "frpc/logread"
+			"path": "frpc/log"
 		}
 	}
 }

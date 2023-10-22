@@ -10,6 +10,7 @@ list_file="${log_file:-/var/log/frpc.log}"
 
 case "$action" in
 	clear_log)
+	# 清空日志
 		> $list_file
 	;;
 	tail)
