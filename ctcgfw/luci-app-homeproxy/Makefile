@@ -12,8 +12,6 @@ LUCI_DEPENDS:= \
 	+firewall4 \
 	+kmod-nft-tproxy
 
-PKG_NAME:=luci-app-homeproxy
-
 define Package/luci-app-homeproxy/conffiles
 /etc/config/homeproxy
 /etc/homeproxy/certs/
