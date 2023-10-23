@@ -1,20 +1,19 @@
 #!/bin/sh
 
-NAME=frpc
-
 action=$1
 shift
 
-log_file="$(uci -q get $NAME.common.log_file)"
+log_file="$(uci -q get frpc.common.log_file)"
 list_file="${log_file:-/var/log/frpc.log}"
 
 case "$action" in
+	tail)
+	# 读取日志
+		tail -n 5000 "$list_file"
+	;;
 	clear_log)
 	# 清空日志
 		> $list_file
-	;;
-	tail)
-		tail -n 5000 "$list_file"
 	;;
 esac
 
