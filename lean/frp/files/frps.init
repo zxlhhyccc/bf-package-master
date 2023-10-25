@@ -67,7 +67,7 @@ service_triggers()
 
 start_service() {
 	local init_cfg=" "
-	local conf_file="/var/etc/$NAME.ini"
+	local conf_file="/var/etc/$NAME.toml"
 
 	> "$conf_file"
 	config_load "$NAME"
