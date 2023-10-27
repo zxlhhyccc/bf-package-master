@@ -43,10 +43,12 @@ config_cb() {
 	local name="$2"
 	if [ "$type" = "conf" ]; then
 		echo "[$name]" >> "$conf_file"
+		#sed -i "1d" "$conf_file"
 		option_cb() {
 			local option="$1"
 			local value="$2"
-			[ "$option" = "name" ] && \
+			#[ "$option" = "name" ] && \#
+			[ "$option" = "$name" ] && \
 			sed -i "s/$CONFIG_SECTION/$value/g" "$conf_file" || \
 			echo "$option = $value" >> "$conf_file";
 		}
