@@ -1,6 +1,40 @@
 --- a/package/openwrt/files/etc/init.d/smartdns
 +++ b/package/openwrt/files/etc/init.d/smartdns
-@@ -241,6 +241,35 @@ restart_crond()
+@@ -42,6 +42,33 @@ COREDUMP="0"
+ RESPAWN="1"
+ DO_RELOAD="0"
+ 
++make_dir() {
++	local d
++	for d in "$@"; do
++		if [ ! -d "$d" ]; then
++			mkdir -p "$d" 2>/dev/null || return 1
++		fi
++	done
++
++	return 0
++}
++
++log_dir() {
++	local section="$1"
++
++	config_get log_file "$section" "log_file" ""
++	log_file="${log_file:-"/var/log/smartdns/smartdns.log"}"
++	
++	local log_dir
++	log_dir="$(dirname "${log_file}")"
++
++	[ -s ${log_file} ] || {
++		[ -d "$log_dir" ] || {
++			make_dir "$log_dir" || return 1
++		}
++	}
++}
++
+ set_forward_dnsmasq()
+ {
+ 	local PORT="$1"
+@@ -241,6 +268,35 @@ restart_crond()
  	/etc/init.d/cron restart >/dev/null 2>&1
  }
  
@@ -36,7 +70,7 @@
  disable_auto_update()
  {
  	local no_restart="$1"
-@@ -260,13 +289,13 @@ disable_auto_update()
+@@ -260,13 +316,13 @@ disable_auto_update()
  
  enable_auto_update()
  {
@@ -52,7 +86,16 @@
  	restart_crond
  }
  
-@@ -498,7 +527,11 @@ load_service()
+@@ -468,6 +524,8 @@ conf_append_conf_files()
+ 
+ load_service()
+ {
++	log_dir
++
+ 	local section="$1"
+ 	args=""
+ 	local device=""
+@@ -498,7 +556,11 @@ load_service()
  	config_get tcp_server "$section" "tcp_server" "1"
  	config_get server_flags "$section" "server_flags" ""
  
@@ -64,7 +107,7 @@
  
  	config_get speed_check_mode "$section" "speed_check_mode" ""
  	[ ! -z "$speed_check_mode" ] && conf_append "speed-check-mode" "$speed_check_mode"
-@@ -526,6 +559,9 @@ load_service()
+@@ -526,6 +588,9 @@ load_service()
  
  	config_get auto_set_dnsmasq "$section" "auto_set_dnsmasq" "1"
  
@@ -74,7 +117,7 @@
  	config_get ipset_no_speed "$section" "ipset_no_speed" ""
  	[ -z "$ipset_no_speed" ] || conf_append "ipset-no-speed" "$ipset_no_speed"
  
-@@ -630,6 +666,7 @@ load_service()
+@@ -630,6 +695,7 @@ load_service()
  		[ "$old_enabled" = "0" ] && return 1
  		[ "$old_port" = "53" ] && stop_main_dns "0"
  		[ "$old_port" != "53" ] && [ "$old_auto_set_dnsmasq" = "1" ] && stop_forward_dnsmasq "$old_port" "0"
