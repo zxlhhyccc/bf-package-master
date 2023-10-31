@@ -1,8 +1,6 @@
-diff --git a/Makefile b/Makefile
-index 3018dfc..02d3d85 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -15,6 +15,7 @@ PKG_CONFIG_DEPENDS:= \
+@@ -16,6 +16,7 @@ PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
@@ -10,7 +8,7 @@ index 3018dfc..02d3d85 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2 \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
-@@ -33,8 +34,8 @@ LUCI_PKGARCH:=all
+@@ -34,20 +35,21 @@ LUCI_PKGARCH:=all
  LUCI_DEPENDS:= \
  	@(PACKAGE_libustream-mbedtls||PACKAGE_libustream-openssl||PACKAGE_libustream-wolfssl) \
  	+coreutils +coreutils-base64 +dns2socks +dns2tcp +dnsmasq-full +@PACKAGE_dnsmasq_full_ipset +ipset +kmod-ipt-nat \
@@ -21,7 +19,13 @@ index 3018dfc..02d3d85 100644
  	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:curl \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray-core \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:curl \
-@@ -46,6 +47,7 @@ LUCI_DEPENDS:= \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Xray:xray-core \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
+-	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:mosdns \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:mosdns-v5 \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client:tuic-client \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS:shadow-tls \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks:ipt2socks \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -29,8 +33,8 @@ index 3018dfc..02d3d85 100644
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2:redsocks2 \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
-@@ -125,7 +127,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_TUIC-Client
- 	bool "Include tuic-client"
+@@ -131,7 +133,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client
+ 	bool "Include Tuic-Client"
  	select PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
  	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
 -	depends on aarch64||arm||i386||x86_64
@@ -38,7 +42,7 @@ index 3018dfc..02d3d85 100644
  	depends on !(TARGET_x86_geode||TARGET_x86_legacy)
  	default n
  
-@@ -150,6 +152,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+@@ -156,6 +158,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||armeb||mips||mips64||powerpc||TARGET_gemini)
  	default n
  
@@ -49,8 +53,6 @@ index 3018dfc..02d3d85 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2
  	bool "Include Redsocks2"
  	default n
-diff --git a/luasrc/controller/shadowsocksr.lua b/luasrc/controller/shadowsocksr.lua
-index 8ceaba7..24e6298 100644
 --- a/luasrc/controller/shadowsocksr.lua
 +++ b/luasrc/controller/shadowsocksr.lua
 @@ -26,6 +26,7 @@ function index()
@@ -72,8 +74,6 @@ index 8ceaba7..24e6298 100644
 +	luci.http.prepare_content("application/json")
 +	luci.http.write_json(e)
 +end
-diff --git a/luasrc/model/cbi/shadowsocksr/client-config.lua b/luasrc/model/cbi/shadowsocksr/client-config.lua
-index d8f5ca1..6aeaf78 100644
 --- a/luasrc/model/cbi/shadowsocksr/client-config.lua
 +++ b/luasrc/model/cbi/shadowsocksr/client-config.lua
 @@ -495,6 +495,20 @@ o.rmempty = true
@@ -97,36 +97,32 @@ index d8f5ca1..6aeaf78 100644
  
  o = s:option(ListValue, "udp_relay_mode", translate("UDP relay mode"))
  o:depends("type", "tuic")
-diff --git a/luasrc/model/cbi/shadowsocksr/client.lua b/luasrc/model/cbi/shadowsocksr/client.lua
-index 482949c..5037c64 100644
 --- a/luasrc/model/cbi/shadowsocksr/client.lua
 +++ b/luasrc/model/cbi/shadowsocksr/client.lua
-@@ -92,6 +92,7 @@ o.default = 1
- o = s:option(ListValue, "pdnsd_enable", translate("Resolve Dns Mode"))
- o:value("1", translate("Use DNS2TCP query"))
- o:value("2", translate("Use DNS2SOCKS query and cache"))
-+o:value("3", translate("Use Pdnsd tcp query and cache"))
+@@ -95,6 +95,7 @@ o:value("2", translate("Use DNS2SOCKS query and cache"))
+ if is_finded("mosdns") then
+ o:value("3", translate("Use MOSDNS query (Not Support Oversea Mode)"))
+ end
++o:value("4", translate("Use Pdnsd tcp query and cache"))
  o:value("0", translate("Use Local DNS Service listen port 5335"))
  o.default = 1
  
-@@ -111,6 +112,7 @@ o:value("114.114.114.114:53", translate("Oversea Mode DNS-1 (114.114.114.114)"))
+@@ -114,6 +115,7 @@ o:value("114.114.114.114:53", translate("Oversea Mode DNS-1 (114.114.114.114)"))
  o:value("114.114.115.115:53", translate("Oversea Mode DNS-2 (114.114.115.115)"))
  o:depends("pdnsd_enable", "1")
  o:depends("pdnsd_enable", "2")
-+o:depends("pdnsd_enable", "3")
++o:depends("pdnsd_enable", "4")
  o.description = translate("Custom DNS Server format as IP:PORT (default: 8.8.4.4:53)")
  o.datatype = "ip4addrport"
  
-@@ -128,6 +130,7 @@ if is_finded("chinadns-ng") then
+@@ -146,6 +148,7 @@ if is_finded("chinadns-ng") then
  	o:value("1.2.4.8:53", translate("CNNIC SDNS (1.2.4.8)"))
  	o:depends({pdnsd_enable = "1", run_mode = "router"})
  	o:depends({pdnsd_enable = "2", run_mode = "router"})
-+	o:depends({pdnsd_enable = "3", run_mode = "router"})
++	o:depends({pdnsd_enable = "4", run_mode = "router"})
  	o.description = translate("Custom DNS Server format as IP:PORT (default: disabled)")
  	o.validate = function(self, value, section)
  		if (section and value) then
-diff --git a/luasrc/model/cbi/shadowsocksr/status.lua b/luasrc/model/cbi/shadowsocksr/status.lua
-index 1400c91..6610fb2 100644
 --- a/luasrc/model/cbi/shadowsocksr/status.lua
 +++ b/luasrc/model/cbi/shadowsocksr/status.lua
 @@ -88,7 +88,7 @@ if Process_list:find("ssr.server") then
@@ -134,7 +130,7 @@ index 1400c91..6610fb2 100644
  end
  
 -if Process_list:find("ssrplus/bin/dns2tcp") or (Process_list:find("ssrplus.dns") and Process_list:find("dns2socks.127.0.0.1.*127.0.0.1.5335")) then
-+if Process_list:find("ssrplus/bin/pdnsd") or Process_list:find("ssrplus/bin/dns2tcp") or (Process_list:find("ssrplus.dns") and Process_list:find("dns2socks.127.0.0.1.*127.0.0.1.5335")) then
++if Process_list:find("ssrplus/bin/pdnsd") or Process_list:find("ssrplus/bin/dns2tcp") or Process_list:find("ssrplus/bin/mosdns") or (Process_list:find("ssrplus.dns") and Process_list:find("dns2socks.127.0.0.1.*127.0.0.1.5335")) then
  	pdnsd_run = 1
  end
  
@@ -150,9 +146,6 @@ index 1400c91..6610fb2 100644
  s = m:field(DummyValue, "check_port", translate("Check Server Port"))
  s.template = "shadowsocksr/checkport"
  s.value = translate("No Check")
-diff --git a/luasrc/view/shadowsocksr/cache.htm b/luasrc/view/shadowsocksr/cache.htm
-new file mode 100644
-index 0000000..8c162f1
 --- /dev/null
 +++ b/luasrc/view/shadowsocksr/cache.htm
 @@ -0,0 +1,29 @@
@@ -185,8 +178,6 @@ index 0000000..8c162f1
 +<input type="button" class="btn cbi-button cbi-button-reset" value="<%:Perform reset%>" onclick="return cache(this,'<%=self.option%>')" />
 +<span id="<%=self.option%>-status"><em><%=self.value%></em></span>
 +<%+cbi/valuefooter%>
-diff --git a/po/zh-cn/ssr-plus.po b/po/zh-cn/ssr-plus.po
-index aa317d8..2ab67db 100644
 --- a/po/zh-cn/ssr-plus.po
 +++ b/po/zh-cn/ssr-plus.po
 @@ -134,22 +134,22 @@ msgid "Obfuscation Password"
@@ -268,10 +259,10 @@ index aa317d8..2ab67db 100644
 +msgid "Use Pdnsd tcp query and cache"
 +msgstr "使用 PDNSD TCP 查询并缓存"
 +
- msgid "DNS Server IP:Port"
- msgstr "DNS 服务器 IP:Port"
+ msgid "Use MOSDNS query (Not Support Oversea Mode)"
+ msgstr "使用 MOSDNS 查询 (不支持海外用户回国模式)"
  
-@@ -816,6 +822,9 @@ msgstr "WebSocket 主机名"
+@@ -831,6 +837,9 @@ msgstr "WebSocket 主机名"
  msgid "WebSocket Path"
  msgstr "WebSocket 路径"
  
@@ -281,7 +272,7 @@ index aa317d8..2ab67db 100644
  msgid "Max Early Data"
  msgstr "最大前置数据"
  
-@@ -867,6 +876,9 @@ msgstr "微信视频通话"
+@@ -882,6 +891,9 @@ msgstr "微信视频通话"
  msgid "DTLS 1.2"
  msgstr "DTLS 1.2 数据包"
  
@@ -291,7 +282,7 @@ index aa317d8..2ab67db 100644
  msgid "MTU"
  msgstr "最大传输单元"
  
-@@ -900,6 +912,9 @@ msgstr "节点公钥"
+@@ -915,6 +927,9 @@ msgstr "节点公钥"
  msgid "Pre-shared key"
  msgstr "预共享密钥"
  
@@ -301,7 +292,7 @@ index aa317d8..2ab67db 100644
  msgid "Network interface to use"
  msgstr "使用的网络接口"
  
-@@ -915,6 +930,9 @@ msgstr "重置完成"
+@@ -930,6 +945,9 @@ msgstr "重置完成"
  msgid "Reset Error"
  msgstr "重置错误"
  
@@ -311,7 +302,7 @@ index aa317d8..2ab67db 100644
  msgid "Finger Print"
  msgstr "指纹伪造"
  
-@@ -924,23 +942,32 @@ msgstr "重新应用"
+@@ -939,23 +957,32 @@ msgstr "重新应用"
  msgid "Apply"
  msgstr "应用"
  
@@ -349,7 +340,7 @@ index aa317d8..2ab67db 100644
  
  msgid "lossless UDP relay using QUIC streams"
  msgstr "使用 QUIC 流的无损 UDP 中继"
-@@ -955,13 +982,13 @@ msgid "Timeout for establishing a connection to server(second)"
+@@ -970,13 +997,13 @@ msgid "Timeout for establishing a connection to server(second)"
  msgstr "连接超时时间（单位：秒）"
  
  msgid "Garbage collection interval(second)"
@@ -366,7 +357,7 @@ index aa317d8..2ab67db 100644
  
  msgid "Enable 0-RTT QUIC handshake"
  msgstr "客户端启用 0-RTT QUIC 连接握手"
-@@ -976,7 +1003,7 @@ msgid "Dual-stack Listening Socket"
+@@ -991,7 +1018,7 @@ msgid "Dual-stack Listening Socket"
  msgstr "双栈Socket监听"
  
  msgid "Maximum packet size the socks5 server can receive from external"
@@ -375,8 +366,6 @@ index aa317d8..2ab67db 100644
  
  msgid "Disable ChinaDNS-NG"
  msgstr "直通模式（禁用ChinaDNS-NG）"
-diff --git a/root/etc/init.d/shadowsocksr b/root/etc/init.d/shadowsocksr
-index 932febe..3a12297 100755
 --- a/root/etc/init.d/shadowsocksr
 +++ b/root/etc/init.d/shadowsocksr
 @@ -83,7 +83,7 @@ get_host_ip() {
@@ -388,11 +377,10 @@ index 932febe..3a12297 100755
  		fi
  	fi
  	[ -z "$ip" ] || uci_set_by_name $1 ip $ip
-@@ -182,7 +182,44 @@ start_dns() {
- 	local ssrplus_dns="$(uci_get_by_type global pdnsd_enable 0)"
+@@ -191,6 +191,45 @@ start_dns() {
  	local dnsserver="$(uci_get_by_type global tunnel_forward 8.8.4.4:53)"
  	local run_mode="$(uci_get_by_type global run_mode)"
--
+ 
 +	start_pdnsd() {
 +		local usr_dns="$1"
 +		local usr_port="$2"
@@ -431,14 +419,15 @@ index 932febe..3a12297 100755
 +		EOF
 +		ln_start_bin $(first_type pdnsd) pdnsd -c $TMP_PATH/pdnsd.conf
 +	}
++
  	if [ "$ssrplus_dns" != "0" ]; then
- 		case "$run_mode" in
- 		gfw) ipset add gfwlist ${dnsserver%:*} 2>/dev/null ;;
-@@ -199,6 +236,12 @@ start_dns() {
- 			ln_start_bin $(first_type dns2socks) dns2socks 127.0.0.1:$tmp_dns_port $dnsserver 127.0.0.1:$dns_port -q
- 			pdnsd_enable_flag=2
+ 		if [ -n "$dnsserver" ]; then
+ 			add_dns_into_ipset $run_mode $dnsserver
+@@ -225,6 +264,12 @@ start_dns() {
+ 			ln_start_bin $(first_type mosdns) mosdns start -c $TMP_PATH/mosdns-config.yaml
+ 			pdnsd_enable_flag=3
  			;;
-+		3)
++		4)
 +		local dns_server=$(echo "$dnsserver" | awk -F ':' '{print $1}')
 +		local dnsport=$(echo "$dnsserver" | awk -F ':' '{print $2}')
 +			start_pdnsd $dns_server $dnsport
@@ -447,7 +436,7 @@ index 932febe..3a12297 100755
  		esac
  
  		if [ "$run_mode" = "router" ]; then
-@@ -1109,6 +1152,7 @@ reset() {
+@@ -1163,6 +1208,7 @@ reset() {
  		add shadowsocksr access_control
  		set shadowsocksr.@access_control[0].lan_ac_mode='0'
  		set shadowsocksr.@access_control[0].router_proxy='1'
@@ -455,18 +444,16 @@ index 932febe..3a12297 100755
  		add_list shadowsocksr.@access_control[0].wan_fw_ips=149.154.160.0/20
  		add_list shadowsocksr.@access_control[0].wan_fw_ips=67.198.55.0/24
  		add_list shadowsocksr.@access_control[0].wan_fw_ips=91.108.4.0/22
-diff --git a/root/usr/bin/ssr-monitor b/root/usr/bin/ssr-monitor
-index fb9ed57..6011855 100755
 --- a/root/usr/bin/ssr-monitor
 +++ b/root/usr/bin/ssr-monitor
-@@ -105,6 +105,20 @@ while [ "1" == "1" ]; do #死循环
- 			ln_start_bin $(first_type dns2socks) dns2socks 127.0.0.1:$tmp_dns_port $dnsserver 127.0.0.1:$dns_port -q
+@@ -115,6 +115,20 @@ while [ "1" == "1" ]; do #死循环
+ 			ln_start_bin $(first_type mosdns) mosdns start -c /etc/mosdns/config.yaml
  		fi
  	fi
 +	#pdnsd
-+	elif [ "$pdnsd_process" -eq 3 ]; then
++	elif [ "$pdnsd_process" -eq 4 ]; then
 +		icount=$(busybox ps -w | grep $TMP_BIN_PATH/pdnsd | grep -v grep | wc -l)
-+		if [ "$icount" -lt 3 ]; then #如果进程挂掉就重启它
++		if [ "$icount" -lt 4 ]; then #如果进程挂掉就重启它
 +			logger -t "$NAME" "pdnsd tunnel error.restart!"
 +			echolog "pdnsd tunnel error.restart!"
 +			if [ -f /var/run/pdnsd.pid ]; then
@@ -480,8 +467,6 @@ index fb9ed57..6011855 100755
  	#chinadns-ng
  	if [ "$(uci -q get "dhcp.@dnsmasq[0]._unused_ssrp_changed")" = "1" ]; then
  		icount=$(busybox ps -w | grep $TMP_BIN_PATH/chinadns-ng | grep -v grep | wc -l)
-diff --git a/root/usr/bin/ssr-rules b/root/usr/bin/ssr-rules
-index 547d910..bbb1654 100755
 --- a/root/usr/bin/ssr-rules
 +++ b/root/usr/bin/ssr-rules
 @@ -237,13 +237,15 @@ tp_rule() {
@@ -502,8 +487,6 @@ index 547d910..bbb1654 100755
  		$ipt -A SS_SPEC_TPROXY -p udp $PROXY_PORTS -m set --match-set gfwlist dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
  		$ipt -A SS_SPEC_TPROXY -p udp -m set --match-set gmlan src -m set ! --match-set china dst -j TPROXY --on-port "$LOCAL_PORT" --tproxy-mark 0x01/0x01
  		;;
-diff --git a/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json b/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
-index 2c38125..4b96a2d 100644
 --- a/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
 +++ b/root/usr/share/rpcd/acl.d/luci-app-ssr-plus.json
 @@ -2,10 +2,16 @@
@@ -525,11 +508,9 @@ index 2c38125..4b96a2d 100644
 -}
 \ No newline at end of file
 +}
-diff --git a/root/usr/share/shadowsocksr/gen_config.lua b/root/usr/share/shadowsocksr/gen_config.lua
-index 9e84683..b62e2a1 100755
 --- a/root/usr/share/shadowsocksr/gen_config.lua
 +++ b/root/usr/share/shadowsocksr/gen_config.lua
-@@ -429,6 +429,8 @@ local tuic = {
+@@ -430,6 +430,8 @@ local tuic = {
  		},
  		["local"] = {
  			server = tonumber(socks_port) and (server.tuic_dual_stack == "1" and "[::1]:" or "127.0.0.1:")  .. (socks_port == "0" and local_port or tonumber(socks_port)),
@@ -538,8 +519,6 @@ index 9e84683..b62e2a1 100755
  			dual_stack = (server.tuic_dual_stack == "1") and true or false,
  			max_packet_size = tonumber(server.tuic_max_package_size)
  		}
-diff --git a/root/usr/share/shadowsocksr/update.lua b/root/usr/share/shadowsocksr/update.lua
-index e49825e..37782fb 100755
 --- a/root/usr/share/shadowsocksr/update.lua
 +++ b/root/usr/share/shadowsocksr/update.lua
 @@ -101,7 +101,7 @@ end
