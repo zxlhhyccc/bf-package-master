@@ -5,8 +5,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qtbase
-PKG_BASE:=6.5
-PKG_BUGFIX:=2
+PKG_BASE:=6.6
+PKG_BUGFIX:=0
 PKG_VERSION:=$(PKG_BASE).$(PKG_BUGFIX)
 PKG_RELEASE:=1
 
@@ -14,7 +14,7 @@ PKG_SOURCE:=$(PKG_NAME)-everywhere-src-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:= \
 		http://download.qt.io/official_releases/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules \
 		http://master.qt.io/archive/qt/$(PKG_BASE)/$(PKG_VERSION)/submodules
-PKG_HASH:=3db4c729b4d80a9d8fda8dd77128406353baff4755ca619177eda4cddae71269
+PKG_HASH:=039d53312acb5897a9054bd38c9ccbdab72500b71fdccdb3f4f0844b0dd39e0e
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
@@ -22,17 +22,15 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-everywhere-src-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=qtbase/host
 
 HOST_BUILD_PARALLEL:=1
-PKG_BUILD_FLAGS:=no-mips16 gc-sections
 PKG_BUILD_PARALLEL:=1
+PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS+=no-mips16
 
 PKG_LICENSE:=LGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSES/LGPL-3.0-only.txt
 PKG_CPE_ID:=cpe:/a:qt:qt
 
 CMAKE_INSTALL:=1
-
-# Force to use strip instead of sstrip
-STRIP:=$(TARGET_CROSS)strip $(call qstrip,$(CONFIG_STRIP_ARGS))
 
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
@@ -82,26 +80,17 @@ menu "qtbase"
 endmenu
 endef
 
-#LBITS = $(shell $(TARGET_CC) -dM -E - </dev/null | grep -q "__LP64__" && echo 64 || echo 32)
-#
-#ifeq ($(LBITS),64)
-#    export USE_64=1
-#endif
-
-ifeq ($(CONFIG_CPU_TYPE),"xscale")
-  TARGET_CFLAGS+= -mfloat-abi=softfp
-endif
-
 # Can be removed if glibc version> 2.34
 ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS += -ldl -lrt -lpthread
 endif
 
-TARGET_CFLAGS += $(FPIC)
 TARGET_LDFLAGS += -Wl,--as-needed
 
+CMAKE_SHARED_LDFLAGS:=$(filter-out -Wl$(comma)-Bsymbolic-functions,$(CMAKE_SHARED_LDFLAGS))
+
 CMAKE_HOST_OPTIONS += \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.21 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.19 \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DBUILD_SHARED_LIBS=OFF \
 	-DFEATURE_concurrent=OFF \
@@ -125,8 +114,8 @@ CMAKE_HOST_OPTIONS += \
 # The corelib will depend on openssl if openssl version >= 3.0. It is used in class QCryptographicHash.
 # Disable `FEATURE_opensslv30` explicitly because we don't use it.
 CMAKE_OPTIONS += \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.21 \
-	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_USING_QT=3.21 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_BUILDING_QT=3.19 \
+	-DQT_FORCE_MIN_CMAKE_VERSION_FOR_USING_QT=3.19 \
 	-DINSTALL_ARCHDATADIR=/usr/share/Qt6 \
 	-DINSTALL_DATADIR=/usr/share/Qt6 \
 	-DQT_HOST_PATH=$(STAGING_DIR_HOSTPKG) \
@@ -154,21 +143,23 @@ CMAKE_OPTIONS += \
 	-DFEATURE_glib=OFF \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_mimetype=ON \
-	-DFEATURE_openssl=ON \
+	-DFEATURE_permissions=OFF \
+	-DFEATURE_opensslv30=OFF \
 	\
 	-DFEATURE_network=ON \
-	-DINPUT_openssl=runtime \
+	-DINPUT_openssl=linked \
 	-DFEATURE_libproxy=OFF \
 	-DFEATURE_gssapi=OFF \
 	\
 	-DFEATURE_sql=ON \
-	-DFEATURE_system_sqlite=ON \
+	-DFEATURE_system_sqlite=OFF \
 	-DFEATURE_sql_db2=OFF \
 	-DFEATURE_sql_ibase=OFF \
 	-DFEATURE_sql_mysql=OFF \
 	-DFEATURE_sql_oci=OFF \
 	-DFEATURE_sql_odbc=OFF \
 	-DFEATURE_sql_psql=OFF \
+	-DFEATURE_sql_mimer=OFF \
 	\
 	-DFEATURE_xml=ON \
 	\
@@ -208,7 +199,7 @@ endef
 $(eval $(call DefineQtbaseLibrary,core,,+libatomic +libpcre2-16 +zlib))
 $(eval $(call DefineQtbaseLibrary,network,core,+zlib))
 $(eval $(call DefineQtbaseLibrary,xml,core,))
-$(eval $(call DefineQtbaseLibrary,sql,core,+libsqlite3))
+$(eval $(call DefineQtbaseLibrary,sql,core,))
 
 define Package/qtbase/Plugins/install
 	$(INSTALL_DIR) $(1)/usr/share/Qt6/plugins/$(2)
@@ -234,4 +225,3 @@ $(eval $(call DefineQtbasePlugin,tls,network-tlsbackend-openssl,qopensslbackend,
 $(foreach lib,$(QTBASE_LIBS),$(eval $(call BuildPackage,libqt6$(lib))))
 $(eval $(call HostBuild))
 $(eval $(call BuildPackage,qtbase))
-

@@ -24,8 +24,8 @@ PKG_BUILD_DEPENDS:=\
 
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
-# PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16 gc-sections
+PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS+=no-mips16
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -51,6 +51,8 @@ define Package/qbittorrent/description
   well as many features.
 endef
 
+CMAKE_SHARED_LDFLAGS:=$(filter-out -Wl$(comma)-Bsymbolic-functions,$(CMAKE_SHARED_LDFLAGS))
+
 CMAKE_OPTIONS += \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_CXX_STANDARD=17 \
@@ -60,11 +62,6 @@ CMAKE_OPTIONS += \
 	-DGUI=OFF \
 	-DVERBOSE_CONFIGURE=ON \
 	-DQT_ADDITIONAL_PACKAGES_PREFIX_PATH=$(STAGING_DIR_HOSTPKG)
-
-# The pentium-mmx with lto will build failed on qt6
-ifeq ($(findstring pentium-mmx,$(CONFIG_CPU_TYPE)),)
-  CMAKE_OPTIONS += -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
-endif
 
 # The pcre2 is compiled with support for mips16
 ifdef CONFIG_USE_MIPS16
@@ -76,7 +73,8 @@ ifdef CONFIG_USE_GLIBC
   TARGET_LDFLAGS += -ldl -lrt -lpthread
 endif
 
-TARGET_LDFLAGS += -Wl,--as-needed
+TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections -flto=auto -fno-fat-lto-objects
+TARGET_LDFLAGS += $(FPIC) -specs=$(INCLUDE_DIR)/hardened-ld-pie.specs -Wl,--gc-sections,--as-needed -flto=auto -fuse-linker-plugin
 
 define Package/qbittorrent/conffiles
 /etc/config/qbittorrent
