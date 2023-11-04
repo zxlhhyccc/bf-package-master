@@ -62,39 +62,51 @@ msgstr "自动更新国内黑白名单"
 msgid "If required domestic ip segment whitelist,then in the custom settings Remove the # sign before 'conf-file'."
 msgstr "如需使用国内 IP 段白名单，则在自定义设置中去除 conf-file 前面的 # 号。"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:171
 msgid "Update Time (Every Week)"
 msgstr "更新时间(每周)"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:172
 msgid "Every Day"
 msgstr "每天"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:173
 msgid "Every Monday"
 msgstr "每周一"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:174
 msgid "Every Tuesday"
 msgstr "每周二"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:175
 msgid "Every Wednesday"
 msgstr "每周三"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:176
 msgid "Every Thursday"
 msgstr "每周四"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:177
 msgid "Every Friday"
 msgstr "每周五"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:178
 msgid "Every Saturday"
 msgstr "每周六"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:179
 msgid "Every Sunday"
 msgstr "每周日"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:183
 msgid "Update time (every day)"
 msgstr "更新时间(每天)"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:189
 msgid "Update Interval (min)"
 msgstr "更新间隔(分钟)"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:195
 msgid "Update List"
 msgstr "更新列表"
 
@@ -827,7 +839,8 @@ msgstr "URL"
 msgid "URL format error, format: http:// or https://"
 msgstr "URL格式错误，格式：http://或https://"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:523
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:204
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:577
 msgid "Update"
 msgstr "更新"
 
@@ -975,6 +988,14 @@ msgstr "日志已清除。"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:93
 msgid "Clear Logs"
 msgstr "清除日志"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:86
+msgid "Failed to clear log."
+msgstr "清除日志失败。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:108
+msgid "Log file does not exist."
+msgstr "日志文件不存在。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:122
 msgid "Refresh every %s seconds."
