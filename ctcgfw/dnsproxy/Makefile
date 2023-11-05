@@ -29,7 +29,7 @@ PKG_CONFIG_DEPENDS:= \
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
-# PKG_USE_MIPS16:=0
+PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/AdguardTeam/dnsproxy
@@ -89,6 +89,12 @@ define Package/dnsproxy/install
 	$(INSTALL_CONF) $(CURDIR)/files/dnsproxy.config $(1)/etc/config/dnsproxy
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) $(CURDIR)/files/dnsproxy.init $(1)/etc/init.d/dnsproxy
+	$(INSTALL_DIR) $(1)/etc/uci-defaults/
+	$(INSTALL_BIN) $(CURDIR)/files/dnsproxy.defaults $(1)/etc/uci-defaults/80-dnsproxy-migration
+endef
+
+define Package/dnsproxy/conffiles
+/etc/config/dnsproxy
 endef
 
 $(eval $(call GoBinPackage,dnsproxy))
