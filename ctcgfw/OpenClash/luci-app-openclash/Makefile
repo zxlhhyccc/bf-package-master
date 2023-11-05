@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-openclash
-PKG_VERSION:=0.45.150
+PKG_VERSION:=0.45.151
 PKG_RELEASE:=beta
 PKG_MAINTAINER:=vernesong <https://github.com/vernesong/OpenClash>
 
@@ -164,7 +164,7 @@ define Package/$(PKG_NAME)/postrm
 	rm -rf /tmp/openclash_edit_file_name >/dev/null 2>&1
 	rm -rf /tmp/openclash_*_region>/dev/null 2>&1
 	sed -i '/OpenClash Append/,/OpenClash Append End/d' "/usr/lib/lua/luci/model/network.lua" >/dev/null 2>&1
-	sed -i '/.*HTTP_MAX_CONTENT*/c\HTTP_MAX_CONTENT      = 1024*100		-- 100 kB maximum content size' /usr/lib/lua/luci/http.lua >/dev/null 2>&1
+	sed -i '/.*kB maximum content size*/c\HTTP_MAX_CONTENT      = 1024*100		-- 100 kB maximum content size' /usr/lib/lua/luci/http.lua >/dev/null 2>&1
 	uci -q delete firewall.openclash
 	uci -q commit firewall
 	uci -q delete ucitrack.@openclash[-1]
