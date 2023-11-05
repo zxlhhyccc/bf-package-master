@@ -20,6 +20,10 @@ PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=sbwml <admin@cooluc.com>
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_V2DAT_COMPRESS_GOPROXY \
+	CONFIG_V2DAT_COMPRESS_UPX
+
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 
@@ -37,7 +41,30 @@ define Package/v2dat
   DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
+define Package/v2dat/config
+config V2DAT_COMPRESS_GOPROXY
+	bool "Compiling with GOPROXY proxy"
+	default n
+
+config V2DAT_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	depends on !mips64
+	default n
+endef
+
+ifeq ($(CONFIG_V2DAT_COMPRESS_GOPROXY),y)
+	export GO111MODULE=on
+	export GOPROXY=https://goproxy.baidu.com
+endif
+
 GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
+
+define Build/Compile
+	$(call GoPackage/Build/Compile)
+ifneq ($(CONFIG_V2DAT_COMPRESS_UPX),)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2dat
+endif
+endef
 
 define Package/v2dat/install
 	$(call GoPackage/Package/Install/Bin,$(1))
