@@ -135,6 +135,7 @@ return view.extend({
 		s.tab("files", _("Download Files Setting"), _("Download domain list files for domain-rule and include config files, please refresh the page after download to take effect."));
 		s.tab("proxy", _("Proxy Server Settings"));
 		s.tab("custom", _("Custom Settings"));
+		s.tab("log", _("Log Settings"));
 
 		///////////////////////////////////////
 		// Basic Settings
@@ -534,10 +535,22 @@ return view.extend({
 		///////////////////////////////////////
 		// download Files Settings
 		///////////////////////////////////////
-		o = s.taboption("files", form.Flag, "enable_auto_update", _("Enable Auto Update"), _("Enable daily auto update."));
+		o = s.taboption("files", form.Flag, "enable_auto_update", _("Enable Auto Update"), _("Enable daily(week) auto update."));
 		o.rmempty = true;
 		o.default = o.disabled;
 		o.rempty = true;
+
+		o = s.taboption("files", form.ListValue, "auto_update_week_time", _("Update Time (Every Week)"));
+		o.value('*', _('Every Day'));
+		o.value('1', _('Every Monday'));
+		o.value('2', _('Every Tuesday'));
+		o.value('3', _('Every Wednesday'));
+		o.value('4', _('Every Thursday'));
+		o.value('5', _('Every Friday'));
+		o.value('6', _('Every Saturday'));
+		o.value('0', _('Every Sunday'));
+		o.default = "*";
+		o.depends('enable_auto_update', '1');
 
 		o = s.taboption('files', form.ListValue, 'auto_update_day_time', _("Update time (every day)"));
 		for (var i = 0; i < 24; i++)

@@ -63,50 +63,61 @@ msgid "If required domestic ip segment whitelist,then in the custom settings Rem
 msgstr "如需使用国内 IP 段白名单，则在自定义设置中去除 conf-file 前面的 # 号。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:171
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:543
 msgid "Update Time (Every Week)"
 msgstr "更新时间(每周)"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:172
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:544
 msgid "Every Day"
 msgstr "每天"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:173
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:545
 msgid "Every Monday"
 msgstr "每周一"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:174
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:546
 msgid "Every Tuesday"
 msgstr "每周二"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:175
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:547
 msgid "Every Wednesday"
 msgstr "每周三"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:176
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:548
 msgid "Every Thursday"
 msgstr "每周四"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:177
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:549
 msgid "Every Friday"
 msgstr "每周五"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:178
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:550
 msgid "Every Saturday"
 msgstr "每周六"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:179
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:551
 msgid "Every Sunday"
 msgstr "每周日"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:183
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:184
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:555
 msgid "Update time (every day)"
 msgstr "更新时间(每天)"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:189
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:190
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:561
 msgid "Update Interval (min)"
 msgstr "更新间隔(分钟)"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:195
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:196
 msgid "Update List"
 msgstr "更新列表"
 
@@ -323,9 +334,9 @@ msgstr "启用IPV6服务器。"
 msgid "Enable TCP DNS Server"
 msgstr "启用TCP服务器。"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:495
-msgid "Enable daily auto update."
-msgstr "启用每日自动更新"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:538
+msgid "Enable daily(week) auto update."
+msgstr "启用每日（每周）自动更新"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:247
 msgid "Enable domain prefetch, accelerate domain response speed."
