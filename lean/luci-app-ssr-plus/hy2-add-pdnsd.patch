@@ -8,7 +8,7 @@
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2 \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_NONE_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
-@@ -34,20 +35,21 @@ LUCI_PKGARCH:=all
+@@ -34,14 +35,14 @@ LUCI_PKGARCH:=all
  LUCI_DEPENDS:= \
  	@(PACKAGE_libustream-mbedtls||PACKAGE_libustream-openssl||PACKAGE_libustream-wolfssl) \
  	+coreutils +coreutils-base64 +dns2socks +dns2tcp +dnsmasq-full +@PACKAGE_dnsmasq_full_ipset +ipset +kmod-ipt-nat \
@@ -23,9 +23,10 @@
  	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
 -	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:mosdns \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:mosdns-v5 \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client:tuic-client \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS:shadow-tls \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:jq \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:v2dat \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_MosDNS:diffutils \
+@@ -51,6 +52,7 @@ LUCI_DEPENDS:= \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks:ipt2socks \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -33,7 +34,7 @@
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Redsocks2:redsocks2 \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
-@@ -131,7 +133,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client
+@@ -134,7 +136,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Tuic_Client
  	bool "Include Tuic-Client"
  	select PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG
  	select PACKAGE_$(PKG_NAME)_INCLUDE_IPT2Socks
@@ -42,7 +43,7 @@
  	depends on !(TARGET_x86_geode||TARGET_x86_legacy)
  	default n
  
-@@ -156,6 +158,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+@@ -159,6 +161,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||armeb||mips||mips64||powerpc||TARGET_gemini)
  	default n
  
@@ -101,7 +102,7 @@
 +++ b/luasrc/model/cbi/shadowsocksr/client.lua
 @@ -95,6 +95,7 @@ o:value("2", translate("Use DNS2SOCKS query and cache"))
  if is_finded("mosdns") then
- o:value("3", translate("Use MOSDNS query (Not Support Oversea Mode)"))
+ o:value("3", translate("Use MosDNS query (Not Support Oversea Mode)"))
  end
 +o:value("4", translate("Use Pdnsd tcp query and cache"))
  o:value("0", translate("Use Local DNS Service listen port 5335"))
@@ -125,7 +126,7 @@
  		if (section and value) then
 --- a/luasrc/model/cbi/shadowsocksr/status.lua
 +++ b/luasrc/model/cbi/shadowsocksr/status.lua
-@@ -88,7 +88,7 @@ if Process_list:find("ssr.server") then
+@@ -98,7 +98,7 @@ if Process_list:find("ssr.server") then
  	server_run = 1
  end
  
@@ -134,7 +135,7 @@
  	pdnsd_run = 1
  end
  
-@@ -183,6 +183,11 @@ if uci:get_first("shadowsocksr", 'global', 'adblock', '0') == '1' then
+@@ -207,6 +207,11 @@ if uci:get_first("shadowsocksr", 'global', 'adblock', '0') == '1' then
  	s.value = ad_count .. " " .. translate("Records")
  end
  
@@ -242,7 +243,7 @@
  
  msgid "QUIC connection receive window"
  msgstr "QUIC 连接接收窗口"
-@@ -468,6 +468,9 @@ msgstr "DNS 解析方式"
+@@ -476,6 +476,9 @@ msgstr "DNS 解析方式"
  msgid "Use SSR DNS Tunnel"
  msgstr "使用 SSR DNS 隧道"
  
@@ -252,17 +253,17 @@
  msgid "DNS Anti-pollution"
  msgstr "DNS 防污染服务"
  
-@@ -531,6 +534,9 @@ msgstr "使用 DNS2TCP 查询"
+@@ -539,6 +542,9 @@ msgstr "使用 DNS2TCP 查询"
  msgid "Use DNS2SOCKS query and cache"
  msgstr "使用 DNS2SOCKS 查询并缓存"
  
 +msgid "Use Pdnsd tcp query and cache"
 +msgstr "使用 PDNSD TCP 查询并缓存"
 +
- msgid "Use MOSDNS query (Not Support Oversea Mode)"
- msgstr "使用 MOSDNS 查询 (不支持海外用户回国模式)"
+ msgid "Use MosDNS query (Not Support Oversea Mode)"
+ msgstr "使用 MosDNS 查询 (不支持海外用户回国模式)"
  
-@@ -837,6 +843,9 @@ msgstr "WebSocket 主机名"
+@@ -854,6 +860,9 @@ msgstr "WebSocket 主机名"
  msgid "WebSocket Path"
  msgstr "WebSocket 路径"
  
@@ -272,7 +273,7 @@
  msgid "Max Early Data"
  msgstr "最大前置数据"
  
-@@ -888,6 +897,9 @@ msgstr "微信视频通话"
+@@ -905,6 +914,9 @@ msgstr "微信视频通话"
  msgid "DTLS 1.2"
  msgstr "DTLS 1.2 数据包"
  
@@ -282,7 +283,7 @@
  msgid "MTU"
  msgstr "最大传输单元"
  
-@@ -921,6 +933,9 @@ msgstr "节点公钥"
+@@ -938,6 +950,9 @@ msgstr "节点公钥"
  msgid "Pre-shared key"
  msgstr "预共享密钥"
  
@@ -292,7 +293,7 @@
  msgid "Network interface to use"
  msgstr "使用的网络接口"
  
-@@ -936,6 +951,9 @@ msgstr "重置完成"
+@@ -953,6 +968,9 @@ msgstr "重置完成"
  msgid "Reset Error"
  msgstr "重置错误"
  
@@ -302,7 +303,7 @@
  msgid "Finger Print"
  msgstr "指纹伪造"
  
-@@ -945,23 +963,32 @@ msgstr "重新应用"
+@@ -962,23 +980,32 @@ msgstr "重新应用"
  msgid "Apply"
  msgstr "应用"
  
@@ -340,7 +341,7 @@
  
  msgid "lossless UDP relay using QUIC streams"
  msgstr "使用 QUIC 流的无损 UDP 中继"
-@@ -976,13 +1003,13 @@ msgid "Timeout for establishing a connection to server(second)"
+@@ -993,13 +1020,13 @@ msgid "Timeout for establishing a connection to server(second)"
  msgstr "连接超时时间（单位：秒）"
  
  msgid "Garbage collection interval(second)"
@@ -357,7 +358,7 @@
  
  msgid "Enable 0-RTT QUIC handshake"
  msgstr "客户端启用 0-RTT QUIC 连接握手"
-@@ -997,7 +1024,7 @@ msgid "Dual-stack Listening Socket"
+@@ -1014,7 +1041,7 @@ msgid "Dual-stack Listening Socket"
  msgstr "双栈Socket监听"
  
  msgid "Maximum packet size the socks5 server can receive from external"
@@ -368,7 +369,7 @@
  msgstr "直通模式（禁用ChinaDNS-NG）"
 --- a/root/etc/init.d/shadowsocksr
 +++ b/root/etc/init.d/shadowsocksr
-@@ -83,7 +83,7 @@ get_host_ip() {
+@@ -84,7 +84,7 @@ get_host_ip() {
  	if [ -z "$(echo $host | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}")" ]; then
  		if [ "$host" == "${host#*:[0-9a-fA-F]}" ]; then
  			ip=$(resolveip -4 -t 3 $host | awk 'NR==1{print}')
@@ -377,7 +378,7 @@
  		fi
  	fi
  	[ -z "$ip" ] || uci_set_by_name $1 ip $ip
-@@ -191,6 +191,45 @@ start_dns() {
+@@ -198,6 +198,45 @@ start_dns() {
  	local dnsserver="$(uci_get_by_type global tunnel_forward 8.8.4.4:53)"
  	local run_mode="$(uci_get_by_type global run_mode)"
  
@@ -423,20 +424,20 @@
  	if [ "$ssrplus_dns" != "0" ]; then
  		if [ -n "$dnsserver" ]; then
  			add_dns_into_ipset $run_mode $dnsserver
-@@ -225,6 +264,12 @@ start_dns() {
- 			ln_start_bin $(first_type mosdns) mosdns start -c $TMP_PATH/mosdns-config.yaml
- 			pdnsd_enable_flag=3
+@@ -287,6 +326,12 @@ start_dns() {
+ 				ln_start_bin $(first_type mosdns) mosdns start -c $mosdns_config_file
+ 			fi
  			;;
 +		4)
 +		local dns_server=$(echo "$dnsserver" | awk -F ':' '{print $1}')
 +		local dnsport=$(echo "$dnsserver" | awk -F ':' '{print $2}')
 +			start_pdnsd $dns_server $dnsport
-+			pdnsd_enable_flag=3
++			pdnsd_enable_flag=4
 +			;;
  		esac
  
  		if [ "$run_mode" = "router" ]; then
-@@ -1163,6 +1208,7 @@ reset() {
+@@ -1225,6 +1270,7 @@ reset() {
  		add shadowsocksr access_control
  		set shadowsocksr.@access_control[0].lan_ac_mode='0'
  		set shadowsocksr.@access_control[0].router_proxy='1'
@@ -447,7 +448,7 @@
 --- a/root/usr/bin/ssr-monitor
 +++ b/root/usr/bin/ssr-monitor
 @@ -115,6 +115,20 @@ while [ "1" == "1" ]; do #死循环
- 			ln_start_bin $(first_type mosdns) mosdns start -c /etc/mosdns/config.yaml
+ 			ln_start_bin $(first_type mosdns) mosdns start -c $mosdns_config_file
  		fi
  	fi
 +	#pdnsd
@@ -510,7 +511,7 @@
 +}
 --- a/root/usr/share/shadowsocksr/gen_config.lua
 +++ b/root/usr/share/shadowsocksr/gen_config.lua
-@@ -430,6 +430,8 @@ local tuic = {
+@@ -429,6 +429,8 @@ local tuic = {
  		},
  		["local"] = {
  			server = tonumber(socks_port) and (server.tuic_dual_stack == "1" and "[::1]:" or "127.0.0.1:")  .. (socks_port == "0" and local_port or tonumber(socks_port)),
