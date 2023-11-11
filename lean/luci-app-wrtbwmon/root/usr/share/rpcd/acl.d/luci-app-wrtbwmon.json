@@ -15,7 +15,7 @@
 			"file": {
 				"/etc/wrtbwmon.user": [ "read" ],
 				"/usr/sbin/wrtbwmon": [ "exec" ],
-				"/etc/config/luci-wrtbwmon.conf": [ "read" ]
+				"/etc/luci-wrtbwmon.conf": [ "read" ]
 			},
 			"uci": [ "wrtbwmon" ]
 		},
@@ -27,7 +27,7 @@
 				]
 			},
 			"file": {
-				"/etc/config/luci-wrtbwmon.conf": [ "write" ],
+				"/etc/luci-wrtbwmon.conf": [ "write" ],
 				"/etc/wrtbwmon.user": [ "write" ]
 			},
 			"uci": [ "wrtbwmon" ]
