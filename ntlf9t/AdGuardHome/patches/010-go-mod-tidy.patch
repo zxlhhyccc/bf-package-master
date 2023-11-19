@@ -6,10 +6,10 @@
 -go 1.20
 +go 1.21
 +
-+toolchain go1.21.2
++toolchain go1.21.4
  
  require (
- 	github.com/AdguardTeam/dnsproxy v0.56.1
+ 	github.com/AdguardTeam/dnsproxy v0.57.3
 @@ -10,7 +12,6 @@ require (
  	github.com/ameshkov/dnscrypt/v2 v2.2.7
  	github.com/bluele/gcache v0.0.2
@@ -17,7 +17,7 @@
 -	github.com/dimfeld/httptreemux/v5 v5.5.0
  	github.com/fsnotify/fsnotify v1.6.0
  	github.com/go-ping/ping v1.1.0
- 	github.com/google/go-cmp v0.5.9
+ 	github.com/google/go-cmp v0.6.0
 --- a/go.sum
 +++ b/go.sum
 @@ -23,17 +23,18 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9
@@ -46,8 +46,8 @@
  github.com/google/uuid v1.3.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
  github.com/hugelgupf/socketpair v0.0.0-20190730060125-05d35a94e714 h1:/jC7qQFrv8CrSJVmaolDVOxTfS9kc36uB6H40kdbQq8=
 +github.com/hugelgupf/socketpair v0.0.0-20190730060125-05d35a94e714/go.mod h1:2Goc3h8EklBH5mspfHFxBnEoURQCGzQQH1ga9Myjvis=
- github.com/insomniacslk/dhcp v0.0.0-20230908212754-65c27093e38a h1:S33o3djA1nPRd+d/bf7jbbXytXuK/EoXow7+aa76grQ=
- github.com/insomniacslk/dhcp v0.0.0-20230908212754-65c27093e38a/go.mod h1:zmdm3sTSDP3vOOX3CEWRkkRHtKr1DxBx+J1OQFoDQQs=
+ github.com/insomniacslk/dhcp v0.0.0-20231016090811-6a2c8fbdcc1c h1:PgxFEySCI41sH0mB7/2XswdXbUykQsRUGod8Rn+NubM=
+ github.com/insomniacslk/dhcp v0.0.0-20231016090811-6a2c8fbdcc1c/go.mod h1:3A9PQ1cunSDF/1rbTq99Ts4pVnycWg+vlPkfeD2NLFI=
  github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 @@ -59,7 +61,9 @@ github.com/josharian/native v1.1.1-0.202
  github.com/kardianos/service v1.2.2 h1:ZvePhAHfvo0A7Mftk/tEzqEZ7Q4lgnR8sGz4xu1YX60=
@@ -64,8 +64,8 @@
  github.com/miekg/dns v1.1.56/go.mod h1:cRm6Oo2C8TY9ZS/TqsSrseAcncm74lfK5G+ikN2SWWY=
  github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 +github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
- github.com/onsi/ginkgo/v2 v2.12.1 h1:uHNEO1RP2SpuZApSkel9nEh1/Mu+hmQe7Q+Pepg5OYA=
- github.com/onsi/ginkgo/v2 v2.12.1/go.mod h1:TE309ZR8s5FsKKpuB1YAQYBzCaAfUgatB/xlT/ETL/o=
+ github.com/onsi/ginkgo/v2 v2.13.0 h1:0jY9lJquiL8fcf3M4LAXN5aMlS/b2BV86HFFPCPMgE4=
+ github.com/onsi/ginkgo/v2 v2.13.0/go.mod h1:TE309ZR8s5FsKKpuB1YAQYBzCaAfUgatB/xlT/ETL/o=
  github.com/onsi/gomega v1.27.10 h1:naR28SdDFlqrG6kScpT8VWpu1xWY5nJRCF3XaYyBjhI=
 +github.com/onsi/gomega v1.27.10/go.mod h1:RsS8tutOdbdgzbPtzzATp12yT7kM5I5aElG3evPbQ0M=
  github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
@@ -80,8 +80,8 @@
  github.com/quic-go/qpack v0.4.0/go.mod h1:UZVnYIfi5GRk+zI9UMaCPsmZ2xKJP7XBUvVyT1Knj9A=
  github.com/quic-go/qtls-go1-20 v0.3.4 h1:MfFAPULvst4yoMgY9QmtpYmfij/em7O8UUi+bNVm7Cg=
 @@ -97,9 +104,12 @@ github.com/quic-go/qtls-go1-20 v0.3.4/go
- github.com/quic-go/quic-go v0.39.0 h1:AgP40iThFMY0bj8jGxROhw3S0FMGa8ryqsmi9tBH3So=
- github.com/quic-go/quic-go v0.39.0/go.mod h1:T09QsDQWjLiQ74ZmacDfqZmhY/NLnw5BC40MANNNZ1Q=
+ github.com/quic-go/quic-go v0.39.2 h1:hmwAf8zAHlvan0Y5PXxeeBFZEW17IW99sXLry8I2kjk=
+ github.com/quic-go/quic-go v0.39.2/go.mod h1:T09QsDQWjLiQ74ZmacDfqZmhY/NLnw5BC40MANNNZ1Q=
  github.com/shirou/gopsutil/v3 v3.23.7 h1:C+fHO8hfIppoJ1WdsVm1RoI0RwXoNdfTK7yWXV0wVj4=
 +github.com/shirou/gopsutil/v3 v3.23.7/go.mod h1:c4gnmoRC0hQuaLqvxnx1//VXQ0Ms/X9UnJF8pddY5z4=
  github.com/shoenig/go-m1cpu v0.1.6 h1:nxdKQNcEB6vzgA2E2bvzKIYRuNj7XNJ4S/aRSwKzFtM=
@@ -93,8 +93,8 @@
  github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
  github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 @@ -108,10 +118,13 @@ github.com/ti-mo/netfilter v0.2.0/go.mod
- github.com/ti-mo/netfilter v0.5.0 h1:MZmsUw5bFRecOb0AeyjOPxTHg4UxYzyEs0Ek/6Lxoy8=
- github.com/ti-mo/netfilter v0.5.0/go.mod h1:nt+8B9hx/QpqHr7Hazq+2qMCCA8u2OTkyc/7+U9ARz8=
+ github.com/ti-mo/netfilter v0.5.1 h1:cqamEd1c1zmpfpqvInLOro0Znq/RAfw2QL5wL2rAR/8=
+ github.com/ti-mo/netfilter v0.5.1/go.mod h1:h9UPQ3ZrTZGBitay+LETMxZvNgWGK/efTUcqES2YiLw=
  github.com/tklauser/go-sysconf v0.3.11 h1:89WgdJhk5SNwJfu+GKyYveZ4IaJ7xAkecBo+KdJV0CM=
 +github.com/tklauser/go-sysconf v0.3.11/go.mod h1:GqXfhXY3kiPa0nAXPDIQIWzJbMCB7AmcWpGR8lSZfqI=
  github.com/tklauser/numcpus v0.6.0 h1:kebhY2Qt+3U6RNK7UqpYNA+tJ23IBEGKkB7JQBfDYms=
@@ -106,7 +106,7 @@
  go.etcd.io/bbolt v1.3.7 h1:j+zJOnnEjF/kyHlDDgGnVL/AIqIJPq8UoB2GSNfkUfQ=
  go.etcd.io/bbolt v1.3.7/go.mod h1:N9Mkw9X8x5fupy0IKsmuqVtoGDyxsaDlbk4Rd05IAQw=
  go.uber.org/mock v0.3.0 h1:3mUxI1No2/60yUYax92Pt8eNOEecx2D3lcXZh2NEZJo=
-@@ -164,8 +177,10 @@ golang.org/x/tools v0.13.0/go.mod h1:Hvl
+@@ -164,8 +177,10 @@ golang.org/x/tools v0.14.0/go.mod h1:uYB
  golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
  google.golang.org/protobuf v1.28.0 h1:w43yiav+6bVFTBQFZX0r7ipe9JQ1QsbMgHwbBziscLw=
