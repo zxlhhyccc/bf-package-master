@@ -83,6 +83,10 @@ endef
 # Package/mosdns-ssrp/config=$(Package/mosdns/config)
 # GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) CGO_ENABLED=0
 
+define Package/mosdns/conffiles
+/etc/mosdns/
+endef
+
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_MOSDNS_COMPRESS_UPX),)
