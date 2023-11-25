@@ -1,0 +1,91 @@
+diff --git a/Makefile b/Makefile
+index 9ceefc9..a8d8a5c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -9,7 +9,28 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
++PKG_CONFIG_DEPENDS:= \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DEV \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_META
++
+ define Package/$(PKG_NAME)/config
++menu "Configuration"
++
++config PACKAGE_$(PKG_NAME)_INCLUDE_DEV
++	bool "Include OPENCLASH-DEV"
++	default n
++
++config PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM
++	bool "Include OPENCLASH-PREMIUM"
++	default n
++
++config PACKAGE_$(PKG_NAME)_INCLUDE_META
++	bool "Include OPENCLASH-META"
++	default n
++
++endmenu
++
+ 	config PACKAGE_kmod-inet-diag
+ 	default y if PACKAGE_$(PKG_NAME)
+ 
+@@ -34,8 +55,12 @@ define Package/$(PKG_NAME)
+ 	SUBMENU:=3. Applications
+ 	TITLE:=LuCI support for clash
+ 	PKGARCH:=all
+-	DEPENDS:=+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
+-	+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip
++	DEPENDS:= \
++		+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
++		+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip \
++		+PACKAGE_$(PKG_NAME)_INCLUDE_DEV:openclash-dev \
++		+PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM:openclash-premium \
++		+PACKAGE_$(PKG_NAME)_INCLUDE_META:openclash-meta
+ 	MAINTAINER:=vernesong
+ endef
+ 
+diff --git a/luasrc/model/cbi/openclash/config-subscribe-edit.lua b/luasrc/model/cbi/openclash/config-subscribe-edit.lua
+index 6fb4496..03b76cf 100644
+--- a/luasrc/model/cbi/openclash/config-subscribe-edit.lua
++++ b/luasrc/model/cbi/openclash/config-subscribe-edit.lua
+@@ -102,6 +102,11 @@ o.rmempty     = true
+ o.description = font_red..bold_on..translate("Note: There is A Risk of Privacy Leakage in Online Convert")..bold_off..font_off
+ o:depends("sub_convert", "1")
+ o:value("https://api.dler.io/sub", translate("api.dler.io")..translate("(Default)"))
++--o:value("https://subconverter.herokuapp.com/sub", translate("subconverter.herokuapp.com")..translate("(Default)"))
++--o:value("https://v.id9.cc/sub", translate("v.id9.cc")..translate("(Support Vless By Pinyun)"))
++--o:value("https://sub.id9.cc/sub", translate("sub.id9.cc"))
++--o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
++o:value("https://api.190704089.link/sub", translate("sub.190704089.link")..translate("(Support Vless)"))
+ o.default = "https://api.dler.io/sub"
+ 
+ ---- Template
+diff --git a/luasrc/model/cbi/openclash/settings.lua b/luasrc/model/cbi/openclash/settings.lua
+index f89aec1..d64267b 100644
+--- a/luasrc/model/cbi/openclash/settings.lua
++++ b/luasrc/model/cbi/openclash/settings.lua
+@@ -27,7 +27,7 @@ m.description = translate("Note: To restore the default configuration, try acces
+ "<br/>"..font_green..translate("Note: Game proxy please use nodes except Vmess")..font_off..
+ "<br/>"..font_green..translate("Note: If you need to perform client access control in Fake-ip mode, please change the DNS hijacking mode to firewall forwarding")..font_off..
+ "<br/>"..translate("Note: The default proxy routes local traffic, BT, PT download, etc., please use redir mode as much as possible and pay attention to traffic avoidance")..
+-"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..translate("Click to the page").."</a>"
++"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..font_green..bold_on..translate("Click to the page")..bold_off..font_off.."</a>"
+ 
+ s = m:section(TypedSection, "openclash")
+ s.anonymous = true
+diff --git a/root/usr/share/openclash/openclash.sh b/root/usr/share/openclash/openclash.sh
+index 8120cc7..346e805 100644
+--- a/root/usr/share/openclash/openclash.sh
++++ b/root/usr/share/openclash/openclash.sh
+@@ -92,6 +92,9 @@ if [ -n "$subscribe_url_param" ]; then
+       curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 -H "$sub_ua" "$c_address""$subscribe_url_param" -o "$CFG_FILE" 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="$CFG_FILE" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
+    else
+       curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 -H "$sub_ua" https://api.dler.io/sub"$subscribe_url_param" -o "$CFG_FILE" 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="$CFG_FILE" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++#      if [ "$?" -ne 0 ]; then
++#         curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 -H "$sub_ua" https://subconverter.herokuapp.com/sub"$subscribe_url_param" -o "$CFG_FILE" 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="$CFG_FILE" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++#      fi
+    fi
+ else
+    curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 -H "$sub_ua" "$subscribe_url" -o "$CFG_FILE" 2>&1 | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="$CFG_FILE" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
