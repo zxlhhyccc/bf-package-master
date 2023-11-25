@@ -1,18 +1,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=yq
-PKG_VERSION:=4.35.2
+PKG_VERSION:=4.40.3
 PKG_RELEASE:=1
 
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://codeload.github.com/mikefarah/yq/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=b3e079169529ec6b42925d0802c22d86f1ef6e1458dce67eae5a1d6db56cb8c3
-
-PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/mikefarah/yq.git
-PKG_SOURCE_VERSION:=bbe196ba11a42c26f3f2aba0063760a301d81756
-PKG_MIRROR_HASH:=994ecab727776e0ed1baf08079c15deda701c40eafdba18ae3703ee86fa45541
+PKG_SOURCE_URL:=https://codeload.github.com/mikefarah/yq/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=238b695d372753a32bc0b8500a7ca99f98cf98d7855c3e84d6984a2b035b6268
+
+# PKG_SOURCE_PROTO:=git
+# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+# PKG_SOURCE_URL:=https://github.com/mikefarah/yq.git
+# PKG_SOURCE_VERSION:=bbe196ba11a42c26f3f2aba0063760a301d81756
+# PKG_MIRROR_HASH:=994ecab727776e0ed1baf08079c15deda701c40eafdba18ae3703ee86fa45541
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MIT
