@@ -1,0 +1,28 @@
+#!/bin/sh
+
+. "$IPKG_INSTROOT/usr/share/libubox/jshn.sh"
+
+case "$1" in
+	list)
+		json_init
+		json_add_object get-version
+		json_close_object
+		json_dump
+		json_cleanup
+	;;
+	call)
+		case "$2" in
+			get-version)
+				suffix=$(cat /dev/random | tr -dc 0-9a-zA-Z | head -c 7)
+				tmp_path=/var/run/qbittorrent_${suffix}
+				mkdir -p ${tmp_path}
+				version_str=$(HOME=${tmp_path} /usr/bin/qbittorrent-nox -v)
+				rm -rf ${tmp_path}
+				json_init
+				json_add_string version "${version_str}"
+				json_dump
+				json_cleanup
+			;;
+		esac
+	;;
+esac

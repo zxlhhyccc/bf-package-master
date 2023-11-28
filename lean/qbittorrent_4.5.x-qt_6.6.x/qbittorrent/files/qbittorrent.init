@@ -166,6 +166,12 @@ service_triggers() {
 	procd_add_reload_trigger "$NAME"
 }
 
+service_stopped() {
+	while running "${NAME}.main"; do
+		sleep 1
+	done
+}
+
 start_service() {
 	uci_load_validate "$NAME" "$NAME" "main" init_instance \
 		'EnableService:bool:0' \
@@ -257,9 +263,5 @@ start_service() {
 }
 
 reload_service() {
-	stop
-	while running "${NAME}.main"; do
-		sleep 1
-	done
-	start
+	restart
 }

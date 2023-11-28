@@ -4,11 +4,13 @@
 		"read": {
 			"ubus": {
 				"service": [ "list" ],
-				"luci": [ "setInitAction" ]
+				"luci": [ "setInitAction" ],
+				"luci.qbittorrent": [
+					"get-version"
+				]
 			},
 			"file": {
-				"/etc/passwd": [ "read" ],
-				"/usr/bin/qbittorrent-nox": [ "exec" ]
+				"/etc/passwd": [ "read" ]
 			},
 			"uci": [ "qbittorrent" ]
 		},

@@ -1,6 +1,6 @@
 --- a/src/app/application.cpp
 +++ b/src/app/application.cpp
-@@ -226,6 +226,42 @@ Application::~Application()
+@@ -327,6 +327,42 @@ Application::~Application()
      // we still need to call cleanup()
      // in case the App failed to start
      cleanup();
@@ -43,7 +43,7 @@
  }
  
  #ifndef DISABLE_GUI
-@@ -1213,45 +1249,13 @@ void Application::cleanup()
+@@ -1263,47 +1299,15 @@ void Application::cleanup()
      }
  #endif // DISABLE_GUI
  
@@ -94,6 +94,8 @@
 -    }
 +#endif
  }
+ 
+ #ifndef DISABLE_WEBUI
 --- a/src/base/bittorrent/session.h
 +++ b/src/base/bittorrent/session.h
 @@ -147,6 +147,7 @@ namespace BitTorrent
@@ -106,10 +108,10 @@
          virtual Path downloadPath() const = 0;
 --- a/src/base/bittorrent/sessionimpl.cpp
 +++ b/src/base/bittorrent/sessionimpl.cpp
-@@ -582,12 +582,6 @@ SessionImpl::SessionImpl(QObject *parent)
+@@ -618,12 +618,6 @@ SessionImpl::~SessionImpl()
+         m_needSaveTorrentsQueue = true;
+     }
  
- SessionImpl::~SessionImpl()
- {
 -    // Do some bittorrent related saving
 -    // After this, (ideally) no more important alerts will be generated/handled
 -    saveResumeData();
@@ -119,7 +121,7 @@
      // We must delete FilterParserThread
      // before we delete lt::session
      delete m_filterParser;
-@@ -600,6 +594,15 @@ SessionImpl::~SessionImpl()
+@@ -641,6 +635,15 @@ SessionImpl::~SessionImpl()
      delete m_nativeSession;
  }
  
@@ -137,7 +139,7 @@
      return m_isDHTEnabled;
 --- a/src/base/bittorrent/sessionimpl.h
 +++ b/src/base/bittorrent/sessionimpl.h
-@@ -136,6 +136,8 @@ namespace BitTorrent
+@@ -142,6 +142,8 @@ namespace BitTorrent
          Q_DISABLE_COPY_MOVE(SessionImpl)
  
      public:
@@ -148,7 +150,7 @@
          Path downloadPath() const override;
 --- a/src/base/rss/rss_autodownloader.cpp
 +++ b/src/base/rss/rss_autodownloader.cpp
-@@ -153,6 +153,9 @@ AutoDownloader::AutoDownloader()
+@@ -158,6 +158,9 @@ AutoDownloader::AutoDownloader()
  }
  
  AutoDownloader::~AutoDownloader()
@@ -181,7 +183,7 @@
  }
 --- a/src/base/settingsstorage.h
 +++ b/src/base/settingsstorage.h
-@@ -56,12 +56,13 @@ class SettingsStorage final : public QObject
+@@ -56,12 +56,13 @@ class SettingsStorage final : public QOb
      Q_DISABLE_COPY_MOVE(SettingsStorage)
  
      SettingsStorage();

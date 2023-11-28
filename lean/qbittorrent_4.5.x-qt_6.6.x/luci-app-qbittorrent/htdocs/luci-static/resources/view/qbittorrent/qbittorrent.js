@@ -10,6 +10,11 @@
 
 var splitter_html = '<p style="font-size:20px;font-weight:bold;color: DodgerBlue">%s</p>';
 
+var callGetVersion=rpc.declare({
+	object:'luci.qbittorrent',
+	method:'get-version',
+	expect:{}});
+
 var callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
@@ -71,17 +76,26 @@ var CBIRandomPort = form.Value.extend({
 	}
 });
 
-function encryptPassword (pwd, flag) {
-	if (flag) {
-		var salt, key;
-		salt = new Uint8Array(16);
-		asmCrypto.getRandomValues(salt);
-		key = asmCrypto.Pbkdf2HmacSha512(asmCrypto.string_to_bytes(pwd), salt, 100000, 64);
-		return asmCrypto.bytes_to_base64(salt) + ':' + asmCrypto.bytes_to_base64(key);
-	}
-	else {
-		return CryptoJS.enc.Hex.stringify(CryptoJS.MD5(pwd))
-	}
+async function encryptPassword(pwd,flag){
+		if(flag){
+			var crypto=window.crypto;
+			var salt=new Uint8Array(16),key;
+			asmCrypto.getRandomValues(salt);
+			if(crypto.subtle && typeof crypto.subtle['importKey']==='function' && typeof crypto.subtle['deriveKey']==='function'){
+				var enc,keyMaterial,derivedKey;
+				enc=new TextEncoder();
+				keyMaterial=await crypto.subtle.importKey("raw",enc.encode(pwd),{name:"PBKDF2"},false,["deriveBits","deriveKey"]);
+				derivedKey=await crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:100000,hash:"SHA-512",},keyMaterial,{name:"HMAC",hash:{name:"SHA-256"}},true,["verify"]);
+				key=new Uint8Array(await crypto.subtle.exportKey('raw',derivedKey));
+			}
+		else{
+			key=asmCrypto.Pbkdf2HmacSha512(asmCrypto.string_to_bytes(pwd),salt,100000,64);
+			}
+			return asmCrypto.bytes_to_base64(salt)+':'+asmCrypto.bytes_to_base64(key);
+		}
+		else{
+			return CryptoJS.enc.Hex.stringify(CryptoJS.MD5(pwd))
+		}
 }
 
 function isNonEmpty(section_id, value) {
@@ -112,15 +126,15 @@ function randomPort() {
 }
 
 return view.extend({
-	load: function() {
-		document.body.appendChild(E([], [
-			E('script', { 'src': L.resource('view/qbittorrent/crypto-js.min.js') }),
-			E('script', { 'src': L.resource('view/qbittorrent/asmcrypto.all.es5.min.js') })
+	load:function(){
+		document.body.appendChild(E([],[
+			E('script',{'src':L.resource('view/qbittorrent/crypto-js.min.js')}),
+			E('script',{'src':L.resource('view/qbittorrent/asmcrypto.all.es5.min.js')})
 			])
 		);
-		return fs.exec('/usr/bin/qbittorrent-nox', ['-v'], {'HOME': '/var/run/qbittorrent'}).then(function(res) {
-			var ver = res.stdout.trim().match(/v(\d+(\.\d+){2,3})(alpha\d+|beta\d+|rc\d)?$/) || null;
-			return ver ? ver.splice(0, 2) : ['', ''];
+		return callGetVersion().then(function(res){
+			var ver=res.version?res.version.trim().match(/v(\d+(\.\d+){2,3})(alpha\d+|beta\d+|rc\d)?$/):null;
+			return ver?ver.splice(0,2):['',''];
 		});
 	},
 
@@ -460,19 +474,11 @@ return view.extend({
 
 		o = s.taboption('webui', form.Value, 'Password', _('Password'), _('The login password for WebUI.'));
 		o.password = true;
-		o.formvalue = function(section_id) {
-			var node = this.map.findElement('id', this.cbid(section_id));
-			if (node && node.getAttribute('data-changed') == 'true')
-			{
-				var value = dom.callClassMethod(node, 'getValue');
-				if (value)
-				{
-					var flag = ver[1].split('.').map(function(res) {return parseInt(res)}) >= [4, 2, 0];
-					return encryptPassword(value, flag);
-				}
-				return null;
-			}
-			return this.super('formvalue', arguments);
+		o.write=function(section_id,formvalue){
+			var flag=ver[1].split('.').map(function(res){return parseInt(res)})>=[4,2,0];
+			return encryptPassword(formvalue,flag).then(L.bind(function(r){
+					this.super('write',[section_id,r]);
+			},this));
 		}
 
 		o = s.taboption('webui', form.Value, 'Address', _('Listening Address'), _('The listening IP address for WebUI.'));
