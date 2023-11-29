@@ -1,6 +1,6 @@
 --- a/htdocs/luci-static/resources/view/smartdns/smartdns.js
 +++ b/htdocs/luci-static/resources/view/smartdns/smartdns.js
-@@ -162,6 +162,48 @@ return view.extend({
+@@ -166,6 +166,48 @@ return view.extend({
  		o.rmempty = false;
  		o.default = o.enabled;
  
@@ -49,16 +49,10 @@
  		///////////////////////////////////////
  		// advanced settings;
  		///////////////////////////////////////
-@@ -497,6 +539,18 @@ return view.extend({
- 		o.default = o.disabled;
- 		o.rempty = true;
+@@ -563,6 +605,12 @@ return view.extend({
+ 		o.default = '5';
+ 		o.depends('enable_auto_update', '1');
  
-+		o = s.taboption('files', form.ListValue, 'auto_update_day_time', _("Update time (every day)"));
-+		for (var i = 0; i < 24; i++)
-+			o.value(i, i + ':00');
-+		o.default = '5';
-+		o.depends('enable_auto_update', '1');
-+
 +		o = s.taboption('files', form.ListValue, 'auto_update_min_time', _("Update Interval (min)"));
 +		for (var i = 0; i < 60; i++)
 +			o.value(i, i + ':00');
@@ -68,7 +62,7 @@
  		o = s.taboption("files", form.FileUpload, "upload_conf_file", _("Upload Config File"),
  			_("Upload smartdns config file to /etc/smartdns/conf.d"));
  		o.rmempty = true
-@@ -660,6 +714,7 @@ return view.extend({
+@@ -726,6 +774,7 @@ return view.extend({
  		o.depends("type", "udp");
  		o.depends("type", "tcp");
  		o.depends("type", "tls");
@@ -78,64 +72,21 @@
  		o = s.taboption("general", form.ListValue, "type", _("type"), _("DNS Server type"));
 --- a/po/zh_Hans/smartdns.po
 +++ b/po/zh_Hans/smartdns.po
-@@ -56,6 +56,48 @@ msgstr "自动设置Dnsmasq"
+@@ -61,6 +61,14 @@ msgstr "自动设置Dnsmasq"
  msgid "Automatically set as upstream of dnsmasq when port changes."
  msgstr "端口更改时自动设为 dnsmasq 的上游。"
  
-+msgid "Update Domain rule list And Adblock Database"
-+msgstr "自动更新域名规则和广告数据库"
++#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:170
++msgid "Update domestic blacklist And whitelist"
++msgstr "自动更新国内黑白名单"
 +
-+msgid "If required domain rules,then in domain name rule list configure.If required Adblock,then in the custom settings Remove the # sign before 'conf-file'."
-+msgstr "如需使用域名规则，则在域名规则列表配置。如需广告屏蔽，则在自定义设置中去除 conf-file 前面的 # 号。"
++#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:171
++msgid "If required domestic ip segment whitelist,then in the custom settings Remove the # sign before 'conf-file'."
++msgstr "如需使用国内 IP 段白名单，则在自定义设置中去除 conf-file 前面的 # 号。"
 +
-+msgid "Update Time (Every Week)"
-+msgstr "更新时间(每周)"
-+
-+msgid "Every Day"
-+msgstr "每天"
-+
-+msgid "Every Monday"
-+msgstr "每周一"
-+
-+msgid "Every Tuesday"
-+msgstr "每周二"
-+
-+msgid "Every Wednesday"
-+msgstr "每周三"
-+
-+msgid "Every Thursday"
-+msgstr "每周四"
-+
-+msgid "Every Friday"
-+msgstr "每周五"
-+
-+msgid "Every Saturday"
-+msgstr "每周六"
-+
-+msgid "Every Sunday"
-+msgstr "每周日"
-+
-+msgid "Update time (every day)"
-+msgstr "更新时间(每天)"
-+
-+msgid "Update Interval (min)"
-+msgstr "更新间隔(分钟)"
-+
-+msgid "Update List"
-+msgstr "更新列表"
-+
- #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:229
- msgid "Bind Device"
- msgstr "绑定到设备"
-@@ -402,7 +444,7 @@ msgid ""
- "downloaded from the download page."
- msgstr ""
- "包含配置文件，路径为/etc/smartdns/conf.d，或自定义配置文件路径，可以从下载页"
--"配置自动下载。面配置自动下载。"
-+"配置自动下载。"
- 
- #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:283
- msgid "Ipset name, Add domain result to ipset when speed check fails."
+ #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1269
+ msgid "Blacklist IP"
+ msgstr "黑名单"
 --- a/root/usr/share/rpcd/acl.d/luci-app-smartdns.json
 +++ b/root/usr/share/rpcd/acl.d/luci-app-smartdns.json
 @@ -14,7 +14,8 @@
