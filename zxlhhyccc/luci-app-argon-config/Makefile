@@ -8,7 +8,7 @@ PKG_MAINTAINER:=jerrykuku <jerrykuku@qq.com>
 
 LUCI_TITLE:=LuCI app for Argon theme configuration
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+luci-theme-argon
+LUCI_DEPENDS:=+luci-theme-argon-master
 
 define Package/$(PKG_NAME)/conffiles
 /etc/config/argon
