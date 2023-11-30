@@ -78,6 +78,7 @@ const proxy_mode = uci.get(uciconfig, ucimain, 'proxy_mode') || 'redirect_tproxy
       ipv6_support = uci.get(uciconfig, ucimain, 'ipv6_support') || '0',
       default_interface = uci.get(uciconfig, ucicontrol, 'bind_interface');
 
+const mixed_port = uci.get(uciconfig, uciinfra, 'mixed_port') || '5330';
 let self_mark, redirect_port, tproxy_port,
     tun_name, tun_addr4, tun_addr6, tun_mtu,
     tcpip_stack, endpoint_independent_nat;
@@ -412,6 +413,16 @@ push(config.inbounds, {
 	tag: 'dns-in',
 	listen: '::',
 	listen_port: int(dns_port)
+});
+
+push(config.inbounds, {
+	type: 'mixed',
+	tag: 'mixed-in',
+	listen: '::',
+	listen_port: int(mixed_port),
+	sniff: true,
+	sniff_override_destination: (sniff_override === '1'),
+	set_system_proxy: false
 });
 
 if (match(proxy_mode, /redirect/))
