@@ -25,7 +25,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_CLASH-META_COMPRESS_GOPROXY \
 	CONFIG_CLASH-META_COMPRESS_UPX
 
-GO_PKG:=github.com/Dreamacro/clash
+GO_PKG:=github.com/metacubex/mihomo
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
@@ -33,6 +33,9 @@ GO_PKG_LDFLAGS_X:= \
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/../feeds/packages/lang/golang/golang-package.mk
+
+TAR_OPTIONS+= --strip-components 1
+TAR_CMD:=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 
 define Package/$(PKG_NAME)/template
 	SECTION:=net
@@ -71,14 +74,14 @@ endif
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_CLASH-META_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/clash
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/mihomo
 endif
 endef
 
 define Package/$(PKG_NAME)/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/etc/openclash/core
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/clash $(1)/etc/openclash/core/clash_meta
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/mihomo $(1)/etc/openclash/core/clash_meta
 endef
 
 
