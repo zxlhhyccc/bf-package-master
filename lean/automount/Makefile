@@ -22,16 +22,28 @@ define Package/automount
   MAINTAINER:=Lean
   DEPENDS:= \
 	+block-mount \
+	+e2fsprogs \
 	+kmod-usb-storage \
 	+kmod-usb-storage-extras \
 	+!TARGET_ramips:kmod-usb-storage-uas \
 	+kmod-fs-ext4 \
-	+!LINUX_5_4:kmod-fs-exfat \
+	+kmod-fs-exfat \
 	+LINUX_5_4:kmod-fs-exfat0 \
 	+kmod-fs-vfat \
 	+hdparm \
 	+libblkid \
-	+kmod-fs-ntfs3
+	+ntfs3-mount
+  PKGARCH:=all
+endef
+
+define Package/ntfs3-mount
+  SECTION:=utils
+  CATEGORY:=Utilities
+  SUBMENU:=Filesystem
+  TITLE:=NTFS mount script for Paragon NTFS3 driver
+  DEPENDS:=+kmod-fs-ntfs3
+  CONFLICTS:=ntfs-3g
+  VARIANT:=ntfs3-mount
   PKGARCH:=all
 endef
 
@@ -44,8 +56,15 @@ endef
 
 define Package/automount/install
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/11-anonmount $(1)/etc/uci-defaults/11-anonmount
 	$(INSTALL_BIN) ./files/15-automount $(1)/etc/15-automount
 	$(INSTALL_BIN) ./files/zzz-move-automount $(1)/etc/uci-defaults/zzz-move-automount
 endef
 
+define Package/ntfs3-mount/install
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) ./files/mount.ntfs $(1)/sbin
+endef
+
 $(eval $(call BuildPackage,automount))
+$(eval $(call BuildPackage,ntfs3-mount))
