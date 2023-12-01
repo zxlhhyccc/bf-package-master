@@ -63,17 +63,17 @@ define Package/aliyundrive-webdav/conffiles
 endef
 
 define Build/Compile
-	#$(call Build/Compile/Cargo,, smartdns)
+	#$(call Build/Compile/Cargo,, aliyundrive-webdav)
 	$(call Build/Compile/Cargo)
 ifneq ($(CONFIG_ALIYUNDRIVE-WEBDAV_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/aliyundrive-webdav
-	#$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/smartdns
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/aliyundrive-webdav
+	#$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/aliyundrive-webdav
   endif
 endef
 
 define Package/aliyundrive-webdav/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/aliyundrive-webdav $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/aliyundrive-webdav $(1)/usr/bin/
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/aliyundrive-webdav.init $(1)/etc/init.d/aliyundrive-webdav
