@@ -42,7 +42,7 @@ define Package/ntfs3-mount
   SUBMENU:=Filesystem
   TITLE:=NTFS mount script for Paragon NTFS3 driver
   DEPENDS:=+kmod-fs-ntfs3
-  CONFLICTS:=ntfs-3g
+#  CONFLICTS:=ntfs-3g
   VARIANT:=ntfs3-mount
   PKGARCH:=all
 endef
@@ -63,7 +63,7 @@ endef
 
 define Package/ntfs3-mount/install
 	$(INSTALL_DIR) $(1)/sbin
-	$(INSTALL_BIN) ./files/mount.ntfs $(1)/sbin
+	$(INSTALL_BIN) ./files/mount.ntfs $(1)/sbin/mount.ntfs3
 endef
 
 $(eval $(call BuildPackage,automount))
