@@ -1074,3 +1074,9 @@ msgstr "禁止解析 Unknown 类型的记录"
 
 msgid "Filter Unknown DNS Query Type Name Resolve"
 msgstr "过滤掉 Unknown 未知类型的查询"
+
+msgid "Max preferred lifetime"
+msgstr "前缀优先时间上限"
+
+msgid "Max valid lifetime"
+msgstr "前缀有效时间上限"
