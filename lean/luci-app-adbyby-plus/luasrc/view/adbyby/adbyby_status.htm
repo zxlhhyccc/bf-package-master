@@ -1,13 +1,13 @@
 <script type="text/javascript">//<![CDATA[
-XHR.poll(3, '<%=url([[admin]], [[services]], [[adbyby]], [[status]])%>', null,
+XHR.poll(3, '<%=url([[admin]], [[services]], [[adbyby]], [[run]])%>', null,
 	function(x, data) {
 		var tb = document.getElementById('adbyby_status');
 		if (data && tb) {
 			if (data.running) {
-				var links = '<em><b style=color:green>Adbyby Plus+ <%:RUNNING%></b></em>';
+				var links = '<em><b><font color=green>Adbyby Plus+ <%:RUNNING%></font></b></em>';
 				tb.innerHTML = links;
 			} else {
-				tb.innerHTML = '<em><b style=color:red>Adbyby Plus+ <%:NOT RUNNING%></b></em>';
+				tb.innerHTML = '<em><b><font color=red>Adbyby Plus+ <%:NOT RUNNING%></font></b></em>';
 			}
 		}
 	}
