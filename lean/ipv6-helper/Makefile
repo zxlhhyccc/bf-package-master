@@ -10,7 +10,14 @@ include $(INCLUDE_DIR)/package.mk
 define Package/ipv6helper
   SECTION:=ipv6
   TITLE:=IPv6 Helper and Dynamic Update he.net of ip
-  DEPENDS:=+odhcpd-ipv6only +odhcp6c +6in4
+  DEPENDS:=+odhcpd-ipv6only +odhcp6c +6in4 \
+		+PACKAGE_firewall:luci-proto-ipv6 \
+		+PACKAGE_firewall:wget-ssl \
+		+PACKAGE_firewall:libip6tc \
+		+PACKAGE_firewall:ip6tables \
+		+PACKAGE_firewall:ip6tables-mod-nat \
+		+PACKAGE_firewall:kmod-ipt-nat6 \
+		+PACKAGE_firewall:kmod-nf-nat6
   PKGARCH:=all
 endef
 
