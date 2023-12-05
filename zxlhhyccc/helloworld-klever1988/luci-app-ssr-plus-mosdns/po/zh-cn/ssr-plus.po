@@ -999,6 +999,9 @@ msgstr "发送窗口（无需确认即可发送的最大字节数：默认8Mb*2�
 msgid "TUIC receive window"
 msgstr "接收窗口（无需确认即可接收的最大字节数：默认8Mb）"
 
+msgid "Set if the listening socket should be dual-stack"
+msgstr "设置监听套接字为双栈"
+
 msgid "Dual-stack Listening Socket"
 msgstr "双栈Socket监听"
 
@@ -1007,3 +1010,9 @@ msgstr "socks5 服务器可以从外部接收的最大数据包大小（单位�
 
 msgid "Disable ChinaDNS-NG"
 msgstr "直通模式（禁用ChinaDNS-NG）"
+
+msgid "MosDNS GeoIP List Data"
+msgstr "【MosDNS GeoIP】数据库"
+
+msgid "Dynamic Mode"
+msgstr "MosDNS动态模式"
