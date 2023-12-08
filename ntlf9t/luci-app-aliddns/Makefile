@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 chenhw2 <https://github.com/chenhw2/>
+# Copyright (C) 2018-2021 chenhw2 <https://github.com/chenhw2/>
 #
 # See /LICENSE for more information.
 #

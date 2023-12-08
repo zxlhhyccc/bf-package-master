@@ -261,7 +261,7 @@ dm_escape=`urlencode "$sub_dm.$main_dm"`
 sub_dm_escape=`urlencode "$sub_dm"`
 
 # exit if ipv6 not-enabled
-uci_bool_by_name base ipv4 || exit 0
+# uci_bool_by_name base ipv4 || exit 0
 iface=$(uci_get_by_name base interface)
 if [ "Z$iface" == "Zinternet" -o "Z$iface" == "Z" ]; then
 	ip=$(intelnetip)
