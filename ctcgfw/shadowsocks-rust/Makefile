@@ -6,15 +6,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
-PKG_VERSION:=1.17.1
+PKG_VERSION:=1.17.2
 PKG_RELEASE:=1
 
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/shadowsocks/shadowsocks-rust.git
-PKG_SOURCE_VERSION:=a0c6ff8be1da66ae2ff199034b76fcef82b2f931
-PKG_MIRROR_HASH:=705faec34c796573b4e0236db85d51b61d3d5f10859681f77463cf4e2beb4127
+PKG_SOURCE_VERSION:=3b2cd405d004289394cacde40626efc95ed4d057
+PKG_MIRROR_HASH:=8025a073cf5ee0365abcf44e183aa7839044b0f0759cbba5f7497f41f1b94b0c
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 # PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
 # PKG_HASH:=d3077af7d292ff2a0d36e9debb2104e37ad998deac4dd6eb0674b8fe7d41cf20
