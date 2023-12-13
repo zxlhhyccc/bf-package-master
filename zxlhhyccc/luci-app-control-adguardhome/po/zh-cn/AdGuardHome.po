@@ -61,8 +61,8 @@ msgstr "强制更新核心"
 msgid "Fast config"
 msgstr "快速配置"
 
-msgid "Core Version"
-msgstr "核心版本"
+msgid "core version:"
+msgstr "核心版本:"
 
 msgid "Latest Version"
 msgstr "最新版"
