@@ -9,6 +9,7 @@ PKG_REV=d034a40
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-g$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/Dreamacro/clash.git
+# PKG_SOURCE_URL:=https://github.com/Kuingsmile/clash-core.git
 # PKG_SOURCE_URL:=https://github.com/MerlinKodo/clash-rev.git
 # PKG_SOURCE_VERSION:=e7ac74df95665f2f0f1cf4ed54ece204558865cb
 PKG_SOURCE_VERSION:=d034a408be42815e98f3aea80be24949946aea83
