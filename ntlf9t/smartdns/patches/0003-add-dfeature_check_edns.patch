@@ -1,8 +1,8 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -34,6 +34,7 @@ override CFLAGS += $(EXTRA_CFLAGS)
- ifdef VER
- override CFLAGS += -DSMARTDNS_VERION='"$(VER)"'
+@@ -44,6 +44,7 @@ else
+   endif
+  endif
  endif
 +override CFLAGS += -DFEATURE_CHECK_EDNS
  
