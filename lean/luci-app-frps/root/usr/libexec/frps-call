@@ -1,14 +1,19 @@
 #!/bin/sh
 
-NAME=frps
-
 action=$1
 shift
 
+log_file="$(uci -q get frps.common.log_file)"
+list_file="${log_file:-/var/log/frps.log}"
+
 case "$action" in
 	tail)
-		log_file="$(uci -q get $NAME.common.log_file)"
-		tail -n 50 "${log_file:-/var/log/frps.log}"
+	# 读取日志
+		tail -n 5000 "$list_file"
+	;;
+	clear_log)
+	# 清空日志
+		> $list_file
 	;;
 esac
 

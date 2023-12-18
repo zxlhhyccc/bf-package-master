@@ -1,21 +1,23 @@
 {
 	"luci-app-frps": {
-		"description": "Grant access to LuCI app frps",
+		"description": "Grant UCI access for luci-app-frps",
 		"read": {
+			"cgi-io": [ "exec" ],
 			"file": {
-				"/etc/group": [ "read" ],
+				"/etc/passwd": ["read"],
 				"/etc/group": ["read"],
-				"/sbin/logread": [ "exec" ],
+				"/etc/init.d/frps": [ "exec" ],
 				"/usr/bin/frps": [ "exec" ],
-				"/usr/libexec/frps-call": [ "exec" ]
+				"/usr/libexec/frps-call tail": [ "exec" ],
+				"/usr/libexec/frps-call clear_log": [ "exec" ]
 			},
 			"ubus": {
 				"service": [ "list" ]
 			},
-			"uci": ["frps"]
+			"uci": [ "frps" ]
 		},
 		"write": {
-			"uci": ["frps"]
+			"uci": [ "frps" ]
 		}
 	}
 }
