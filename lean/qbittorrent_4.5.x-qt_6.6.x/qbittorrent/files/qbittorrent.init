@@ -220,7 +220,7 @@ start_service() {
 		'Address:ipaddr' \
 		'AuthSubnetWhitelistEnabled:or("true","false"):false' \
 		'ClickjackingProtection:or("true","false"):true' \
-		'CSRFProtection:or("true","false"):true' \
+		'CSRFProtection:or("true","false"):false' \
 		'CustomHTTPHeadersEnabled:or("true","false"):false' \
 		'CustomHTTPHeaders:string' \
 		'HostHeaderValidation:or("true","false"):true' \
