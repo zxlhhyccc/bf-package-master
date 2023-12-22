@@ -1,24 +1,6 @@
 --- a/easyrsa3/easyrsa
 +++ b/easyrsa3/easyrsa
-@@ -5393,7 +5393,7 @@ The 'vars' file was not found:
- 
- 		# set up program path
- 		prog_file="$0"
--		prog_dir="${prog_file%/*}"
-+		prog_dir="/etc/easy-rsa"
- 		if [ "$prog_dir" = . ] || [ "$prog_dir" = "$PWD" ]
- 		then
- 			prog_in_pwd=1
-@@ -5402,7 +5402,7 @@ The 'vars' file was not found:
- 		fi
- 
- 		# Program dir vars - This location is least wanted.
--		prog_vars="${prog_dir}/vars"
-+		prog_vars="/etc/easy-rsa/vars"
- 
- 		# set up PKI path vars - Top preference
- 		pki_vars="${EASYRSA_PKI:-$PWD/pki}/vars"
-@@ -5565,7 +5565,7 @@ One or more of these problems has been found in your 'vars' file:
+@@ -5773,7 +5773,7 @@ One or more of these problems has
  	# Set defaults, preferring existing env-vars if present
  	set_var EASYRSA					"$PWD"
  	set_var EASYRSA_OPENSSL			openssl
@@ -29,7 +11,7 @@
  	set_var EASYRSA_REQ_PROVINCE	"California"
 --- a/easyrsa3/openssl-easyrsa.cnf
 +++ b/easyrsa3/openssl-easyrsa.cnf
-@@ -101,8 +101,8 @@ emailAddress			= Email Address
+@@ -104,8 +104,8 @@ emailAddress			= Email Address
  emailAddress_default		= $ENV::EASYRSA_REQ_EMAIL
  emailAddress_max		= 64
  
