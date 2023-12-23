@@ -139,6 +139,7 @@ return view.extend({
 		s.tab("files", _("Download Files Setting"), _("Download domain list files for domain-rule and include config files, please refresh the page after download to take effect."));
 		s.tab("proxy", _("Proxy Server Settings"));
 		s.tab("custom", _("Custom Settings"));
+		s.tab("log", _("Log Settings"));
 
 		///////////////////////////////////////
 		// Basic Settings
@@ -353,10 +354,15 @@ return view.extend({
 		o.rmempty = false;
 		o.default = o.enabled;
 
-		// cache-size;
+		// resolve local hostname;
 		o = s.taboption("advanced", form.Flag, "resolve_local_hostnames", _("Resolve Local Hostnames"), _("Resolve local hostnames by reading Dnsmasq lease file."));
 		o.rmempty = false;
 		o.default = o.enabled;
+
+		// resolve local network hostname via mDNS;
+		o = s.taboption("advanced", form.Flag, "mdns_lookup", _("mDNS Lookup"), _("Resolve local network hostname via mDNS protocol."));
+		o.rmempty = true;
+		o.default = o.disabled;
 
 		// Force AAAA SOA
 		o = s.taboption("advanced", form.Flag, "force_aaaa_soa", _("Force AAAA SOA"), _("Force AAAA SOA."));
@@ -715,11 +721,14 @@ return view.extend({
 		o.rmempty = true;
 		o.default = o.disabled;
 
-		o = s.taboption("custom", form.Value, "log_size", _("Log Size"));
+		///////////////////////////////////////
+		// log settings;
+		///////////////////////////////////////
+		o = s.taboption("log", form.Value, "log_size", _("Log Size"));
 		o.rmempty = true;
 		o.placeholder = "default";
 
-		o = s.taboption("custom", form.ListValue, "log_level", _("Log Level"));
+		o = s.taboption("log", form.ListValue, "log_level", _("Log Level"));
 		o.rmempty = true;
 		o.placeholder = "default";
 		o.value("", _("default"));
@@ -731,13 +740,28 @@ return view.extend({
 		o.value("fatal");
 		o.value("off");
 
-		o = s.taboption("custom", form.Value, "log_num", _("Log Number"));
+		o = s.taboption("log", form.Value, "log_num", _("Log Number"));
 		o.rmempty = true;
 		o.placeholder = "default";
 
-		o = s.taboption("custom", form.Value, "log_file", _("Log File"))
+		o = s.taboption("log", form.Value, "log_file", _("Log File"))
 		o.rmempty = true
 		o.placeholder = "/var/log/smartdns/smartdns.log"
+
+		o = s.taboption("log", form.Value, "log_file", _("Log File"))
+		o.rmempty = true
+		o.placeholder = "/var/log/smartdns/smartdns.log"
+
+		o = s.taboption("log", form.DummyValue, "_view_log", _("View Log"));
+		o.renderWidget = function () {
+			return E('button', {
+				'class': 'btn cbi-button',
+				'id': 'btn_view_log',
+				'click': ui.createHandlerFn(this, function () {
+					window.location.href = "smartdns/log";
+				})
+			}, [_("View Log")]);
+		}
 
 		////////////////
 		// Upstream servers;
