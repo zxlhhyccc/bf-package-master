@@ -1,6 +1,27 @@
 --- a/easyrsa3/easyrsa
 +++ b/easyrsa3/easyrsa
-@@ -5773,7 +5773,7 @@ One or more of these problems has
+@@ -5643,10 +5643,19 @@ select_vars() {
+ 			fi
+ 		fi
+ 
++		# User specified Custom:"/etc/easy-rsa"; if vars exists, use it ONLY
++		if [ "/etc/easy-rsa" ]; then
++			if [ -e "/etc/easy-rsa/vars" ]; then
++				verbose "select_vars: /etc/easy-rsa/vars"
++				set_var EASYRSA_VARS_FILE "/etc/easy-rsa/vars"
++			fi
++		fi
++
+ 		# Default PKI; if vars exists, use it ONLY
+ 		if [ -e "$PWD/pki/vars" ] && \
+ 			[ -z "$EASYRSA_PKI" ] && \
+-			[ -z "$EASYRSA" ]
++			[ -z "$EASYRSA" ] && \
++			[ -z "/etc/easy-rsa" ]
+ 		then
+ 			# Prevent vars from changing expected PKI.
+ 			# A vars in the PKI MUST always imply EASYRSA_PKI
+@@ -5773,7 +5782,7 @@ default_vars() {
  	# Set defaults, preferring existing env-vars if present
  	set_var EASYRSA					"$PWD"
  	set_var EASYRSA_OPENSSL			openssl
