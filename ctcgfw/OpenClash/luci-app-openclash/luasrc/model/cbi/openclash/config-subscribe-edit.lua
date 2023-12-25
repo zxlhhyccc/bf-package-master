@@ -107,6 +107,7 @@ o:value("https://sub.id9.cc/sub", translate("sub.id9.cc"))
 o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
 o:value("https://api.190704089.link/sub", translate("sub.190704089.link")..translate("(Support Vless)"))
 o.default = "https://api.dler.io/sub"
+o.placeholder = "https://api.dler.io/sub"
 
 ---- Template
 o = s:option(ListValue, "template", translate("Template Name"))

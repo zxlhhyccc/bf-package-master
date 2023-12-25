@@ -67,12 +67,30 @@ config openclash 'config'
 	option chnr_custom_url 'https://ispip.clang.cn/all_cn.txt'
 	option chnr6_custom_url 'https://ispip.clang.cn/all_cn_ipv6.txt'
 	option cndomain_custom_url 'https://testingcf.jsdelivr.net/gh/felixonmars/dnsmasq-china-list@master/accelerated-domains.china.conf'
+
+config dns_servers
+	option type 'udp'
+	option ip '114.114.114.114'
+	option enabled '1'
+	option group 'default'
+
+config dns_servers
+	option type 'udp'
+	option ip '119.29.29.29'
+	option enabled '1'
+	option group 'default'
 	
 config dns_servers
 	option group 'nameserver'
 	option type 'udp'
 	option ip '114.114.114.114'
 	option enabled '1'
+
+config dns_servers
+	option type 'udp'
+	option ip '223.5.5.5'
+	option enabled '1'
+	option group 'default'
 
 config dns_servers
 	option group 'nameserver'
@@ -108,7 +126,7 @@ config dns_servers
 	option type 'https'
 	option group 'fallback'
 	option ip 'dns.cloudflare.com/dns-query'
-	option enabled '1'
+	option enabled '0'
 
 config dns_servers
 	option group 'fallback'
@@ -162,7 +180,7 @@ config dns_servers
 	option group 'fallback'
 	option type 'https'
 	option ip 'public.dns.iij.jp/dns-query'
-	option enabled '1'
+	option enabled '0'
 
 config dns_servers
 	option group 'fallback'
@@ -201,7 +219,7 @@ config dns_servers
 	option type 'https'
 
 config dns_servers
-	option enabled '1'
+	option enabled '0'
 	option group 'fallback'
 	option ip 'dns.oszx.co/dns-query'
 	option type 'https'
