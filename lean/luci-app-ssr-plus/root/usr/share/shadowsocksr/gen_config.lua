@@ -291,13 +291,13 @@ local hysteria = {
 	transport = {
 		type = server.transport_protocol,
 		udp = { 
-			hopInterval = tonumber(server.hopinterval) and tonumber(server.hopinterval) .. "s" or nil
+			hopInterval = tonumber(server.hopinterval) and tonumber(server.hopinterval) .. "s" or "30s"
 		}
 	},
 --[[			
 	tcpTProxy = (proto:find("tcp") and local_port ~= "0") and {
 	listen = "0.0.0.0:" .. tonumber(local_port)
-} or nil,
+	} or nil,
 ]]
 	tcpRedirect = (proto:find("tcp") and local_port ~= "0") and {
 					listen = "0.0.0.0:" .. tonumber(local_port)
@@ -321,10 +321,12 @@ local hysteria = {
 	auth = server.hy2_auth,
 	tls = (server.tls_host) and {
 		sni = server.tls_host,
+		--sni = server.tls_host or (server.tls_host and server.tls_alpn) or nil,
 		insecure = (server.insecure == "1") and true or false,
 		pinSHA256 = (server.insecure == "1") and server.pinsha256 or nil
 	} or {
 		sni = server.server,
+		--sni = server.tls_host or (server.tls_host and server.tls_alpn) or nil,
 		insecure = (server.insecure == "1") and true or false
 	},
 	fast_open = (server.fast_open == "1") and true or false,
