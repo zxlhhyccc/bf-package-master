@@ -56,7 +56,7 @@ It also supports automatic and manual switching between light and dark modes.
 [Contributors](#contributors) •
 [Credits](#credits)
 
-<img src="https://raw.githubusercontent.com/jerrykuku/staff/master/argon4.gif">
+<img src="https://raw.githubusercontent.com/jerrykuku/staff/master/argon2.gif">
 </div>
 
 ## Key Features
@@ -141,7 +141,7 @@ opkg install luci-app-argon-config*.ipk
 ## Contributors
 
 <a href="https://github.com/jerrykuku/luci-theme-argon/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=jerrykuku/luci-theme-argon" />
+  <img src="https://contrib.rocks/image?repo=jerrykuku/luci-theme-argon&v=2" />
 </a>
 
 Made with [contrib.rocks](https://contrib.rocks).
