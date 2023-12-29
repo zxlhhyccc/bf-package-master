@@ -296,7 +296,7 @@ local hysteria = {
 	},
 --[[			
 	tcpTProxy = (proto:find("tcp") and local_port ~= "0") and {
-	listen = "0.0.0.0:" .. tonumber(local_port)
+					listen = "0.0.0.0:" .. tonumber(local_port)
 	} or nil,
 ]]
 	tcpRedirect = (proto:find("tcp") and local_port ~= "0") and {
