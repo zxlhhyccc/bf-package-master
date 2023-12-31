@@ -66,12 +66,6 @@ ifeq ($(CONFIG_BAIDUPCS_WEB_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
-define Package/baidupcs-web/config
-  config MOSDNS_COMPRESS_UPX
-    bool "Compress executable files with UPX"
-    default y
-endef
-
 define Build/Prepare
 	$(call Build/Prepare/Default)
 endef
