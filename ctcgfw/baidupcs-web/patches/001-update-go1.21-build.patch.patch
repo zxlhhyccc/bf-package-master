@@ -1,0 +1,10 @@
+--- a/go.mod
++++ b/go.mod
+@@ -1,6 +1,6 @@
+ module github.com/Erope/BaiduPCS-Go
+ 
+-go 1.17
++go 1.21
+ 
+ require (
+ 	github.com/Erope/Baidu-Login v1.2.3
