@@ -32,7 +32,7 @@ GO_PKG_LDFLAGS_X:=main.Version=v$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/baidupcs-web/Default
+define Package/baidupcs-web
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Download Manager
@@ -43,11 +43,6 @@ endef
 
 define Package/baidupcs-web/description
 BaiduPCS-Web is a web controller for BaiduPCS-Go
-endef
-
-define Package/baidupcs-web
-  $(call Package/baidupcs-web/Default)
-  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/baidupcs-web/config

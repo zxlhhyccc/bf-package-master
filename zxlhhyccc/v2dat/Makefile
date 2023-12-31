@@ -33,16 +33,11 @@ GO_PKG_LDFLAGS:= -s -w
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/v2dat/Default
+define Package/v2dat
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=V2ray geo/ip data unpack tools
   URL:=https://github.com/urlesistiana/v2dat
-  DEPENDS:=$(GO_ARCH_DEPENDS)
-endef
-
-define Package/v2dat
-  $(call Package/v2dat/Default)
   DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
