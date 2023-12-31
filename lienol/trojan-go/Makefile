@@ -28,7 +28,7 @@ PKG_CONFIG_DEPENDS:= \
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
-# PKG_USE_MIPS16:=0
+PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/p4gefau1t/trojan-go
@@ -42,13 +42,18 @@ GO_PKG_TAGS:=full
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/trojan-go
+define Package/trojan-go/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
   TITLE:=A Trojan proxy written in Go
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
   URL:=https://p4gefau1t.github.io/trojan-go/
+endef
+
+define Package/trojan-go
+  $(call Package/trojan-go/Default)
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 endef
 
 define Package/trojan-go/description
@@ -72,7 +77,18 @@ ifeq ($(CONFIG_TROJAN_GO_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.baidu.com
 endif
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+endef
+
+define Build/UpdateDependencies
+	cd $(PKG_BUILD_DIR) && \
+		go get -u && \
+		go mod tidy
+endef
+
 define Build/Compile
+	$(call Build/UpdateDependencies)
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_TROJAN_GO_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/trojan-go
