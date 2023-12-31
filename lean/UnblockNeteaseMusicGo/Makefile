@@ -74,8 +74,19 @@ define Build/Configure
   
 endef
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+endef
+
+define Build/UpdateDependencies
+	cd $(PKG_BUILD_DIR) && \
+		go get -u && \
+		go mod tidy
+endef
+
 define Build/Compile
 	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG))
+	$(call Build/UpdateDependencies)
 	$(call GoPackage/Build/Configure)
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_UNBLOCKNETEASEMUSICGO_COMPRESS_UPX),y)

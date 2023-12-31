@@ -60,7 +60,18 @@ ifeq ($(CONFIG_UNBLOCKNETEASEMUSIC_GO_COMPRESS_GOPROXY),y)
 	export GOPROXY=https://goproxy.io
 endif
 
+define Build/Prepare
+	$(call Build/Prepare/Default)
+endef
+
+define Build/UpdateDependencies
+	cd $(PKG_BUILD_DIR) && \
+		go get -u && \
+		go mod tidy
+endef
+
 define Build/Compile
+	$(call Build/UpdateDependencies)
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_UNBLOCKNETEASEMUSIC_GO_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/UnblockNeteaseMusic
