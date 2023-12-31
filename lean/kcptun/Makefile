@@ -24,7 +24,7 @@ PKG_CONFIG_DEPENDS:= \
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
-# PKG_USE_MIPS16:=0
+PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/xtaci/kcptun
@@ -72,9 +72,15 @@ This package only contains kcptun $(1).
   endef
 endef
 
+define Build/UpdateDependencies
+	cd $(PKG_BUILD_DIR) && \
+		go mod tidy
+endef
+
 KCPTUN_COMPONENTS:=server client
 
 define Build/Compile
+	$(call Build/UpdateDependencies)
 	$(call GoPackage/Build/Compile)
 $(foreach component,$(KCPTUN_COMPONENTS),
   ifneq ($(CONFIG_KCPTUN_$(component)_COMPRESS_UPX),)
