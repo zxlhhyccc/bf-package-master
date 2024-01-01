@@ -341,7 +341,7 @@ o.default = "30"
 
 o = s:option(Value, "port_range", translate("Port Range"))
 o:depends({type = "hysteria", port_hopping = true})
-o.rmempty = false
+o.rmempty = true
 
 o = s:option(Flag, "lazy_mode", translate("Enable Lazy Mode"))
 o:depends("type", "hysteria")
