@@ -18,9 +18,17 @@
 			"path": "smartdns/smartdns"
 		}
 	},
+	"admin/services/smartdns/audit_log": {
+		"title": "Audit Logs",
+		"order": 60,
+		"action": {
+			"type": "view",
+			"path": "smartdns/audit_log"
+		}
+	},
 	"admin/services/smartdns/log": {
 		"title": "Logs",
-		"order": 60,
+		"order": 70,
 		"action": {
 			"type": "view",
 			"path": "smartdns/log"

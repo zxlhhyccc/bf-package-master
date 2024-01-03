@@ -139,7 +139,6 @@ return view.extend({
 		s.tab("files", _("Download Files Setting"), _("Download domain list files for domain-rule and include config files, please refresh the page after download to take effect."));
 		s.tab("proxy", _("Proxy Server Settings"));
 		s.tab("custom", _("Custom Settings"));
-		s.tab("log", _("Log Settings"));
 
 		///////////////////////////////////////
 		// Basic Settings
@@ -728,6 +727,13 @@ return view.extend({
 		///////////////////////////////////////
 		// log settings;
 		///////////////////////////////////////
+		s = m.section(form.TypedSection, "log", _("Log Setting"), _("Log Setting"));
+		s.anonymous = true;
+		s.nodescriptions = true;
+
+		s.tab("log", _('log Setting'));
+		s.tab("audit-log", _("audit Log Setting"));		
+
 		o = s.taboption("log", form.ListValue, "log_level", _("Log Level"));
 		o.rmempty = true;
 		o.placeholder = "default";

@@ -6,7 +6,9 @@
 			"file": {
 				"/etc/smartdns/*": [ "read" ],
 				"/usr/libexec/smartdns-call tail": [ "exec" ],
-				"/usr/libexec/smartdns-call clear_log": [ "exec" ]
+				"/usr/libexec/smartdns-call clear_log": [ "exec" ],
+				"/usr/libexec/smartdns-audit-call tail": [ "exec" ],
+				"/usr/libexec/smartdns-audit-call clear_log": [ "exec" ]
 			},
 			"ubus": {
 				"service": [ "list" ]
