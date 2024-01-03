@@ -593,6 +593,7 @@ o.rempty      = true
 o:depends("type", "udp")
 o:depends("type", "tcp")
 o:depends("type", "tls")
+o:depends("type", "https")
 
 ---- type
 o = s:option(ListValue, "type", translate("type"), translate("DNS Server type"))
