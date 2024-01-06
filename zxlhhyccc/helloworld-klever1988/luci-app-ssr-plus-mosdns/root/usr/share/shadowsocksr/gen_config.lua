@@ -360,7 +360,7 @@ local chain_sslocal = {
 			mode = (proto:find("tcp,udp") and "tcp_and_udp") or proto .. "_only",
 			protocol = "redir",
 			tcp_redir = "redirect",
-		--tcp_redir = "tproxy",
+			--tcp_redir = "tproxy",
 			udp_redir = "tproxy"
 		},
 		socks_port ~= "0" and {
