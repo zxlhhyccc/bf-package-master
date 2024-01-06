@@ -45,14 +45,12 @@
 <meta name="application-name" content="<%=striptags( (boardinfo.hostname or "?") ) %> - LuCI">
 <meta name="apple-mobile-web-app-title" content="<%=striptags( (boardinfo.hostname or "?") ) %> - LuCI">
 <link rel="stylesheet" href="<%=media%>/gaya/gaya.css">
-<link rel="stylesheet" href="<%=media%>/gaya/gaya.dark.css">
 <link rel="shortcut icon" href="<%=media%>/favicon.ico">
 <% if node and node.css then %>
 <link rel="stylesheet" href="<%=resource%>/<%=node.css%>">
 <% end -%>
 <script src="<%=url('admin/translations', luci.i18n.context.lang)%>?v=git-21.295.66888-fc702bc"></script>
 <script src="<%=resource%>/cbi.js?v=git-21.295.66888-fc702bc"></script>
-<script src="/www/luci-static/alpha/icons/feather.min.js"></script>
 <title><%=striptags( (boardinfo.hostname or "?") .. ( (node and node.title) and ' - ' .. translate(node.title) or '')) %> - LuCI</title>
 <% if css then %><style title="text/css">
 <%= css %>
@@ -61,36 +59,7 @@
 </head>
 <body class="lang_<%=luci.i18n.context.lang%> <% if luci.dispatcher.context.authsession then %>logged-in<% end %> <% if not (path == "") then %>node-<%= path %><% else %>node-main-login<% end %>" data-page="<%= pcdata(path) %>">
 <header>
-	<div class="navbar active">
-		<div class="dropdown">
-			
-  <a href="/cgi-bin/luci/admin/services/ttyd"><img src="<%=media%>/images/terminal.png" /></a>
-  <a href="/cgi-bin/luci/admin/services/openclash"><img src="<%=media%>/images/oc.png" /></a>
-  <a href="/cgi-bin/luci/admin/nas/tinyfm"><img src="<%=media%>/images/file.png" /></a>
-  <a href="/cgi-bin/luci/admin/status/vnstat2"><img src="<%=media%>/images/vnstat.png" /></a>
-  <a href="/cgi-bin/luci/admin/status/about"><img src="<%=media%>/images/about.png" /></a>
-  <a href="javascript:void(0)" class="themetoggler"><img src="<%=media%>/images/reload.png" /></a>
-			</div>
-        <label class="toggler">
-			<img src="<%=media%>/gaya/icons/arrow.svg" alt="">
-		</label>
-</div>
-<script>
-	{
-  const nav = document.querySelector(".navbar");
-  let lastScrollY = window.scrollY;
-
-  window.addEventListener("scroll", () => {
-    if (lastScrollY < window.scrollY) {
-      nav.classList.add("navbar--hidden");
-    } else {
-      nav.classList.remove("navbar--hidden");
-    }
-
-    lastScrollY = window.scrollY;
-  });
-}
-	</script>
+	
 	<div class="fill">
 		<div class="container">
           
@@ -98,14 +67,17 @@
 			<img src="<%=media%>/brand.png" alt="OpenWrt">
 		</a>
 		<div class="status" id="indicators"></div>
+		<div class="logout" >  
+			<a href="/cgi-bin/luci/admin/logout" data-title="Logout">Keluar</a>
+			</div>
 		<div class="showSide">
-			<img src="<%=media%>/gaya/icons/menu_icon.svg" alt="">
+			<img src="<%=media%>/gaya/icon/menu_icon.svg" alt="">
 		  </div>
 		</div>
 	</div>
 </header>
 <div class="main">
-	<div style="" class="loading"><span><div class="loading-img"></div><b><%:Memuat%></b></span></div>
+	<div style="" class="loading"><span><div class="loading-img"></div></span></div>
 	<div class="main-left" id="mainmenu" style="display:none"></div>
 	<div class="main-right">
 		<div class="modemenu-buttons" style="display:none">
