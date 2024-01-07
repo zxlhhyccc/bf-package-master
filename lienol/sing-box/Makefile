@@ -26,7 +26,6 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_BUILD_EMBEDDED_TOR \
 	CONFIG_SING_BOX_BUILD_GRPC \
 	CONFIG_SING_BOX_BUILD_GVISOR \
-	CONFIG_SING_BOX_BUILD_LWIP \
 	CONFIG_SING_BOX_BUILD_QUIC \
 	CONFIG_SING_BOX_BUILD_REALITY_SERVER \
 	CONFIG_SING_BOX_BUILD_UTLS \
@@ -56,7 +55,7 @@ define Package/sing-box
     +ca-bundle \
     +kmod-inet-diag \
     +kmod-netlink-diag \
-    +(SING_BOX_BUILD_GVISOR||SING_BOX_BUILD_LWIP):kmod-tun
+    +kmod-tun
   USERID:=sing-box=5566:sing-box=5566
 endef
 
@@ -105,9 +104,6 @@ define Package/sing-box/config
 	bool "Build with gVisor support"
 	default y
 
-    config SING_BOX_BUILD_LWIP
-	bool "Build with LWIP Tun stack support"
-
     config SING_BOX_BUILD_QUIC
     	bool "Build with QUIC support"
     	default y
@@ -142,7 +138,6 @@ GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SING_BOX_BUILD_EMBEDDED_TOR),with_embedded_tor) \
 	$(if $(CONFIG_SING_BOX_BUILD_GRPC),with_grpc) \
 	$(if $(CONFIG_SING_BOX_BUILD_GVISOR),with_gvisor) \
-	$(if $(CONFIG_SING_BOX_BUILD_LWIP),with_lwip) \
 	$(if $(CONFIG_SING_BOX_BUILD_QUIC),with_quic) \
 	$(if $(CONFIG_SING_BOX_BUILD_REALITY_SERVER),with_reality_server) \
 	$(if $(CONFIG_SING_BOX_BUILD_UTLS),with_utls) \
