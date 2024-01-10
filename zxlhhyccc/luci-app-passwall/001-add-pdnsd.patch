@@ -1,6 +1,6 @@
 --- a/Makefile
 +++ b/Makefile
-@@ -17,6 +17,8 @@ PKG_CONFIG_DEPENDS:= \
+@@ -18,6 +18,8 @@ PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
@@ -9,7 +9,7 @@
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -36,12 +38,14 @@ PKG_CONFIG_DEPENDS:= \
+@@ -37,12 +39,14 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -25,7 +25,7 @@
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
-@@ -107,6 +111,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+@@ -108,6 +112,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	depends on !(arc||(arm&&TARGET_gemini)||armeb||mips||mips64||powerpc)
  	default n
  
@@ -42,20 +42,19 @@
  	default y
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -318,8 +318,11 @@ end
- 
- ---- DNS Forward Mode
- dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
-+if api.is_finded("pdnsd") then
-+	dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
-+end
+@@ -322,7 +322,10 @@ dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
+ dns_mode.rmempty = false
+ dns_mode:reset_values()
  if api.is_finded("dns2tcp") then
 -	dns_mode:value("dns2tcp", translatef("Requery DNS By %s", "TCP"))
 +	dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
++end
++if api.is_finded("pdnsd") then
++	dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
  end
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
-@@ -384,6 +387,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
+@@ -387,6 +390,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
@@ -63,7 +62,7 @@
  o:depends({dns_mode = "dns2tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({xray_dns_mode = "tcp"})
-@@ -431,6 +435,8 @@ end
+@@ -434,6 +438,8 @@ end
  o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
  o.default = "1"
  o:depends({dns_mode = "dns2socks"})
@@ -72,7 +71,7 @@
  o:depends({dns_mode = "sing-box", remote_fakedns = false})
  o:depends({dns_mode = "xray"})
  o.rmempty = false
-@@ -450,6 +456,7 @@ if api.is_finded("chinadns-ng") then
+@@ -453,6 +459,7 @@ if api.is_finded("chinadns-ng") then
  			.. "</ul>"
  	chinadns_ng_default_tag:depends("chinadns_ng", true)
  	o:depends({dns_mode = "dns2socks"})
@@ -82,7 +81,7 @@
  	o:depends({dns_mode = "xray"})
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-@@ -104,7 +104,7 @@ o.validate = function(self, value, t)
+@@ -153,7 +153,7 @@ o.validate = function(self, value, t)
  	end
  end
  
