@@ -262,7 +262,6 @@ if api.is_finded("smartdns") then
 	dns_shunt = s:taboption("DNS", ListValue, "dns_shunt", translate("DNS Shunt"))
 	dns_shunt:value("dnsmasq", "Dnsmasq")
 	dns_shunt:value("smartdns", "SmartDNS")
-	dns_shunt:depends("shunt_rule_mode", false)
 
 	group_domestic = s:taboption("DNS", Value, "group_domestic", translate("Domestic group name"))
 	group_domestic.placeholder = "local"
@@ -319,8 +318,6 @@ end
 
 ---- DNS Forward Mode
 dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
-dns_mode.rmempty = false
-dns_mode:reset_values()
 if api.is_finded("dns2tcp") then
 	dns_mode:value("dns2tcp", "dns2tcp " ..translatef("Requery DNS By %s", "TCP"))
 end
