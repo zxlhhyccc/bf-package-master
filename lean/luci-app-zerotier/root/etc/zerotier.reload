@@ -1,4 +1,0 @@
-#!/bin/sh
-
-/etc/zerotier.stop
-/etc/zerotier.start
