@@ -1037,7 +1037,7 @@ o.rmempty = true
 o.default = "https+local://223.5.5.5/dns-query"
 o:value("https+local://223.5.5.5/dns-query", translate("https+local://223.5.5.5/dns-query"))
 o:value("https+local://119.29.29.29/dns-query", translate("https+local://119.29.29.29/dns-query"))
-:value("https://1.1.1.1/dns-query", translate("https://1.1.1.1/dns-query"))
+o:value("https://1.1.1.1/dns-query", translate("https://1.1.1.1/dns-query"))
 o:value("https://8.8.8.8/dns-query", translate("https://8.8.8.8/dns-query"))
 o:depends("custom_dns_enable", true)
 
