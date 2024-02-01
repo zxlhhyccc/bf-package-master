@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=openvpn-server
 
 PKG_VERSION:=2.6.8
-PKG_RELEASE:=2
+PKG_RELEASE:=4
 
 PKG_SOURCE_URL:=\
 	https://build.openvpn.net/downloads/releases/ \
@@ -19,7 +19,7 @@ PKG_SOURCE:=openvpn-$(PKG_VERSION).tar.gz
 PKG_HASH:=5ede1565c8a6d880100f7f235317a7ee9eea83d5052db5547f13a9e76af7805d
 PKG_BUILD_DIR:=$(BUILD_DIR)/openvpn-server-$(BUILD_VARIANT)/openvpn-$(PKG_VERSION)
 
-PKG_MAINTAINER:=Magnus Kroken <mkroken@gmail.com>
+PKG_MAINTAINER:=
 
 PKG_INSTALL:=1
 PKG_FIXUP:=autoreconf
