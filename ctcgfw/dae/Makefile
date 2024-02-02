@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dae
-PKG_VERSION:=0.5.0
-PKG_RELEASE:=1
+PKG_VERSION:=0.5.1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).zip
 PKG_SOURCE_URL:=https://github.com/daeuniverse/dae/releases/download/v$(PKG_VERSION)/dae-full-src.zip?
-PKG_HASH:=2db90b9dc41be16af7b269a985513a4130a7138d732c337dc47c9aac73b2e08b
+PKG_HASH:=aad00888f7f3e8fae916297fede68d067894b5534148d261122bde2e7bba0b98
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILE:=LICENSE
@@ -48,7 +48,7 @@ define Package/dae
   TITLE:=A lightweight and high-performance transparent proxy solution
   # You need enable KERNEL_DEBUG_INFO_BTF and KERNEL_BPF_EVENTS
   DEPENDS:=$(GO_ARCH_DEPENDS) $(BPF_DEPENDS)  \
-    +ca-bundle +kmod-sched-core +kmod-sched-bpf +kmod-xdp-sockets-diag
+    +ca-bundle +kmod-sched-core +kmod-sched-bpf +kmod-xdp-sockets-diag +kmod-veth
 endef
 
 define Package/dae-geoip
