@@ -1,10 +1,17 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -44,6 +44,7 @@ else
+@@ -46,12 +46,13 @@ ifndef NO_GIT_VER
    endif
   endif
  endif
 +override CFLAGS += -DFEATURE_CHECK_EDNS
  
- CXXFLAGS=-O2 -g -Wall -std=c++11 
+ ifdef COMMIT_VERION
+  override CFLAGS += -DCOMMIT_VERION='"$(shell git describe --tags --always --dirty)"'
+ endif
+ 
+-CXXFLAGS=-O2 -g -Wall -std=c++11 
++CXXFLAGS=-O2 -g -Wall -std=c++17
  override CXXFLAGS +=-Iinclude
+ 
+ ifeq ($(STATIC), yes)
