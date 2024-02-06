@@ -2928,9 +2928,6 @@ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
 msgid "(Support Vless By Pinyun)"
 msgstr "(由品云提供，支持 Vless)"
 
-msgid "(Support Vless)"
-msgstr "(支持 Vless)"
-
 msgid "Meta Settings"
 msgstr "Meta 设置"
 
@@ -3476,3 +3473,12 @@ msgstr "清理成功"
 
 msgid "Flush Timeout"
 msgstr "清理超时"
+
+msgid "Fallback DNS Proxy Group (Support Regex)"
+msgstr "Fallback DNS 代理组 (支持正则匹配)"
+
+msgid "Group Use For Proxy The Fallback DNS, Preventing DNS Lookup Failures"
+msgstr "为所有 Fallback DNS 设置代理策略组，防止 DNS 查询失败"
+
+msgid "Error: Set Fallback DNS Proxy Group Failed,"
+msgstr "错误：Fallback DNS 代理策略组设置失败，"
