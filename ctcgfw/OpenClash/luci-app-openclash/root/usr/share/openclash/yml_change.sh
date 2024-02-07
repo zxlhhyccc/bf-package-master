@@ -562,8 +562,8 @@ end;
 # proxy fallback dns
 begin
 Thread.new{
-   if '${proxy_dns_group}' == 'Disable' or '${proxy_dns_group}'.nil? then
-      return;
+   if '${proxy_dns_group}' == 'Disable' or '${proxy_dns_group}'.nil? or ${19} != 1 then
+      Thread.exit;
    end;
    if Value.key?('proxy-groups') then
       Value['proxy-groups'].each{|x,y|
