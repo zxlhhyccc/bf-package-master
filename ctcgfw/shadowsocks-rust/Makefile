@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
 PKG_VERSION:=1.18.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 
 PKG_SOURCE_PROTO:=git
@@ -41,8 +41,14 @@ define Package/shadowsocks-rust/Default
     CATEGORY:=Network
     SUBMENU:=Web Servers/Proxies
     TITLE:=shadowsocks-rust $(1)
-    URL:=https://github.com/shadowsocks/shadowsocks-rust
+    URL:=https://shadowsocks.org/
     DEPENDS:=$$(RUST_ARCH_DEPENDS)
+  endef
+
+  define Package/shadowsocks-rust-$(1)/description
+    Shadowsocks is a fast tunnel proxy that helps you bypass firewalls.
+
+    This package contains the $(1).
   endef
 
   define Package/shadowsocks-rust-$(1)/config
