@@ -9,7 +9,12 @@ local REMOTE_GROUP = var["-REMOTE_GROUP"]
 local REMOTE_PROXY_SERVER = var["-REMOTE_PROXY_SERVER"]
 local TUN_DNS = var["-TUN_DNS"]
 local TCP_NODE = var["-TCP_NODE"]
-local PROXY_MODE = var["-PROXY_MODE"]
+local USE_DIRECT_LIST = var["-USE_DIRECT_LIST"]
+local USE_PROXY_LIST = var["-USE_PROXY_LIST"]
+local USE_BLOCK_LIST = var["-USE_BLOCK_LIST"]
+local USE_GFW_LIST = var["-USE_GFW_LIST"]
+local CHN_LIST = var["-CHN_LIST"]
+local DEFAULT_PROXY_MODE = var["-DEFAULT_PROXY_MODE"]
 local NO_PROXY_IPV6 = var["-NO_PROXY_IPV6"]
 local NO_LOGIC_LOG = var["-NO_LOGIC_LOG"]
 local NFTFLAG = var["-NFTFLAG"]
@@ -18,11 +23,9 @@ local CACHE_FLAG = "smartdns_" .. FLAG
 local CACHE_DNS_PATH = CACHE_PATH .. "/" .. CACHE_FLAG
 local CACHE_DNS_FILE = CACHE_DNS_PATH .. ".conf"
 local CACHE_TEXT_FILE = CACHE_DNS_PATH .. ".txt"
-local SMARTDNS_PATH = "/tmp/etc/smartdns"
 
 local uci = api.uci
 local sys = api.sys
-local jsonc = api.jsonc
 local appname = api.appname
 local fs = api.fs
 local datatypes = api.datatypes
@@ -142,7 +145,7 @@ end
 
 local cache_text = ""
 local new_rules = luci.sys.exec("echo -n $(find /usr/share/passwall/rules -type f | xargs md5sum)")
-local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. TUN_DNS .. PROXY_MODE .. NO_PROXY_IPV6 .. new_rules
+local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. TUN_DNS .. USE_DIRECT_LIST .. USE_PROXY_LIST .. USE_BLOCK_LIST .. USE_GFW_LIST .. CHN_LIST .. DEFAULT_PROXY_MODE .. NO_PROXY_IPV6 .. new_rules
 if fs.access(CACHE_TEXT_FILE) then
 	for line in io.lines(CACHE_TEXT_FILE) do
 		cache_text = line
@@ -152,11 +155,6 @@ end
 if cache_text ~= new_text then
 	api.remove(CACHE_DNS_PATH .. "*")
 end
-
-local global = PROXY_MODE:find("global")
-local returnhome = PROXY_MODE:find("returnhome")
-local chnlist = PROXY_MODE:find("chnroute")
-local gfwlist = PROXY_MODE:find("gfwlist")
 
 if LOCAL_GROUP == "nil" then
 	LOCAL_GROUP = nil
@@ -212,9 +210,11 @@ if not fs.access(CACHE_DNS_FILE) then
 	local set_type= (NFTFLAG == "1") and "-nftset" or "-ipset"
 
 	--屏蔽列表
-	for line in io.lines("/usr/share/passwall/rules/block_host") do
-		if line ~= "" and not line:find("#") then
-			set_domain_address(line, "-")
+	if USE_BLOCK_LIST == "1" then
+		for line in io.lines("/usr/share/passwall/rules/block_host") do
+			if line ~= "" and not line:find("#") then
+				set_domain_address(line, "-")
+			end
 		end
 	end
 
@@ -228,31 +228,89 @@ if not fs.access(CACHE_DNS_FILE) then
 	end)
 	log(string.format("  - 节点列表中的域名(vpslist)使用分组：%s", LOCAL_GROUP or "默认"))
 
-	--始终用国内DNS解析直连（白名单）列表
-	for line in io.lines("/usr/share/passwall/rules/direct_host") do
-		if line ~= "" and not line:find("#") then
-			add_excluded_domain(line)
-			set_domain_group(line, LOCAL_GROUP)
-			set_domain_ipset(line, "#4:" .. setflag .. "passwall_whitelist,#6:" .. setflag .. "passwall_whitelist6")
-		end
-	end
-	log(string.format("  - 域名白名单(whitelist)使用分组：%s", LOCAL_GROUP or "默认"))
-
-	--始终使用远程DNS解析代理（黑名单）列表
-	for line in io.lines("/usr/share/passwall/rules/proxy_host") do
-		if line ~= "" and not line:find("#") then
-			add_excluded_domain(line)
-			local ipset_flag = "#4:" .. setflag .. "passwall_blacklist,#6:" .. setflag .. "passwall_blacklist6"
-			if NO_PROXY_IPV6 == "1" then
-				set_domain_address(line, "#6")
-				ipset_flag = "#4:" .. setflag .. "passwall_blacklist"
+	--直连（白名单）列表
+	if USE_DIRECT_LIST == "1" then
+		for line in io.lines("/usr/share/passwall/rules/direct_host") do
+			if line ~= "" and not line:find("#") then
+				add_excluded_domain(line)
+				set_domain_group(line, LOCAL_GROUP)
+				set_domain_ipset(line, "#4:" .. setflag .. "passwall_whitelist,#6:" .. setflag .. "passwall_whitelist6")
 			end
-			set_domain_group(line, REMOTE_GROUP)
-			set_domain_ipset(line, ipset_flag)
-			set_domain_extra_param(line, "-no-serve-expired")
+		end
+		log(string.format("  - 域名白名单(whitelist)使用分组：%s", LOCAL_GROUP or "默认"))
+	end
+
+	--代理（黑名单）列表
+	if USE_PROXY_LIST == "1" then
+		for line in io.lines("/usr/share/passwall/rules/proxy_host") do
+			if line ~= "" and not line:find("#") then
+				add_excluded_domain(line)
+				local ipset_flag = "#4:" .. setflag .. "passwall_blacklist,#6:" .. setflag .. "passwall_blacklist6"
+				if NO_PROXY_IPV6 == "1" then
+					set_domain_address(line, "#6")
+					ipset_flag = "#4:" .. setflag .. "passwall_blacklist"
+				end
+				set_domain_group(line, REMOTE_GROUP)
+				set_domain_ipset(line, ipset_flag)
+				set_domain_extra_param(line, "-no-serve-expired")
+			end
+		end
+		log(string.format("  - 代理域名表(blacklist)使用分组：%s", REMOTE_GROUP or "默认"))
+	end
+
+	--GFW列表
+	if USE_GFW_LIST == "1" then
+		if fs.access("/usr/share/passwall/rules/gfwlist") then
+			local domain_set_name = "passwall-gfwlist"
+			local domain_file = CACHE_DNS_PATH .. "_gfwlist.list"
+			sys.exec('cat /usr/share/passwall/rules/gfwlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
+			sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
+			local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, REMOTE_GROUP)
+			domain_rules_str = domain_rules_str .. " -speed-check-mode none"
+			domain_rules_str = domain_rules_str .. " -no-serve-expired"
+			if NO_PROXY_IPV6 == "1" then
+				domain_rules_str = domain_rules_str .. " -address #6"
+				domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_gfwlist"
+			else
+				domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_gfwlist" .. ",#6:" .. setflag .. "passwall_gfwlist6"
+			end
+			sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
+			log(string.format("  - 防火墙域名表(gfwlist)使用分组：%s", REMOTE_GROUP or "默认"))
 		end
 	end
-	log(string.format("  - 代理域名表(blacklist)使用分组：%s", REMOTE_GROUP or "默认"))
+
+	--中国列表
+	if CHN_LIST ~= "0" then
+		if fs.access("/usr/share/passwall/rules/chnlist") then
+			if CHN_LIST == "direct" then
+				local domain_set_name = "passwall-chnlist"
+				local domain_file = CACHE_DNS_PATH .. "_chnlist.list"
+				sys.exec('cat /usr/share/passwall/rules/chnlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
+				sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
+				local domain_rules_str = string.format('domain-rules /domain-set:%s/ %s', domain_set_name, LOCAL_GROUP and "-nameserver " .. LOCAL_GROUP or "")
+				domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_chnroute,#6:" .. setflag .. "passwall_chnroute6"
+				sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
+				log(string.format("  - 中国域名表(chnroute)使用分组：%s", LOCAL_GROUP or "默认"))
+			end
+			if CHN_LIST == "proxy" then
+				local domain_set_name = "passwall-chnlist"
+				local domain_file = CACHE_DNS_PATH .. "_chnlist.list"
+				sys.exec('cat /usr/share/passwall/rules/chnlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
+				sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
+				local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, REMOTE_GROUP)
+				domain_rules_str = domain_rules_str .. " -speed-check-mode none"
+				domain_rules_str = domain_rules_str .. " -no-serve-expired"
+				if NO_PROXY_IPV6 == "1" then
+					domain_rules_str = domain_rules_str .. " -address #6"
+					domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_chnroute"
+				else
+					domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_chnroute" .. ",#6:" .. setflag .. "passwall_chnroute6"
+				end
+				sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
+				log(string.format("  - 中国域名表(chnroute)使用分组：%s", REMOTE_GROUP or "默认"))
+			end
+		end
+	end
 
 	--分流规则
 	if uci:get(appname, TCP_NODE, "protocol") == "_shunt" then
@@ -304,56 +362,6 @@ if not fs.access(CACHE_DNS_FILE) then
 				end
 			end
 		end)
-	end
-
-	--如果没有使用回国模式
-	if not returnhome then
-		if fs.access("/usr/share/passwall/rules/gfwlist") then
-			local domain_set_name = "passwall-gfwlist"
-			local domain_file = CACHE_DNS_PATH .. "_gfwlist.list"
-			sys.exec('cat /usr/share/passwall/rules/gfwlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
-			sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
-			local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, REMOTE_GROUP)
-			domain_rules_str = domain_rules_str .. " -speed-check-mode none"
-			domain_rules_str = domain_rules_str .. " -no-serve-expired"
-			if NO_PROXY_IPV6 == "1" then
-				domain_rules_str = domain_rules_str .. " -address #6"
-				domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_gfwlist"
-			else
-				domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_gfwlist" .. ",#6:" .. setflag .. "passwall_gfwlist6"
-			end
-			sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
-			log(string.format("  - 防火墙域名表(gfwlist)使用分组：%s", REMOTE_GROUP or "默认"))
-		end
-
-		if fs.access("/usr/share/passwall/rules/chnlist") and chnlist then
-			local domain_set_name = "passwall-chnlist"
-			local domain_file = CACHE_DNS_PATH .. "_chnlist.list"
-			sys.exec('cat /usr/share/passwall/rules/chnlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
-			sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
-			local domain_rules_str = string.format('domain-rules /domain-set:%s/ %s', domain_set_name, LOCAL_GROUP and "-nameserver " .. LOCAL_GROUP or "")
-			domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_chnroute,#6:" .. setflag .. "passwall_chnroute6"
-			sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
-			log(string.format("  - 中国域名表(chnroute)使用分组：%s", LOCAL_GROUP or "默认"))
-		end
-	else
-		if fs.access("/usr/share/passwall/rules/chnlist") then
-			local domain_set_name = "passwall-chnlist"
-			local domain_file = CACHE_DNS_PATH .. "_chnlist.list"
-			sys.exec('cat /usr/share/passwall/rules/chnlist | grep -v -E "^#" | grep -v -E "' .. excluded_domain_str .. '" > ' .. domain_file)
-			sys.exec(string.format('echo "domain-set -name %s -file %s" >> %s', domain_set_name, domain_file, CACHE_DNS_FILE))
-			local domain_rules_str = string.format('domain-rules /domain-set:%s/ -nameserver %s', domain_set_name, REMOTE_GROUP)
-			domain_rules_str = domain_rules_str .. " -speed-check-mode none"
-			domain_rules_str = domain_rules_str .. " -no-serve-expired"
-			if NO_PROXY_IPV6 == "1" then
-				domain_rules_str = domain_rules_str .. " -address #6"
-				domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_chnroute"
-			else
-				domain_rules_str = domain_rules_str .. " " .. set_type .. " #4:" .. setflag .. "passwall_chnroute" .. ",#6:" .. setflag .. "passwall_chnroute6"
-			end
-			sys.exec(string.format('echo "%s" >> %s', domain_rules_str, CACHE_DNS_FILE))
-			log(string.format("  - 中国域名表(chnroute)使用分组：%s", REMOTE_GROUP or "默认"))
-		end
 	end
 
 	local f_out = io.open(CACHE_DNS_FILE, "a")

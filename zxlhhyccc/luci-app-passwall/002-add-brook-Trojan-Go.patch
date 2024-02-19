@@ -1,0 +1,1122 @@
+diff --git a/Makefile b/Makefile
+index 440cfd0..002320b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -14,6 +14,7 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
+ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Brook \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
+@@ -27,6 +28,7 @@ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_SingBox \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_GO \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_tuic_client \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Geodata \
+@@ -69,6 +71,11 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+ 	depends on PACKAGE_$(PKG_NAME)
+ 	default y if PACKAGE_firewall4
+ 
++config PACKAGE_$(PKG_NAME)_INCLUDE_Brook
++	bool "Include Brook"
++	select PACKAGE_brook
++	default n
++
+ config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
+ 	bool "Include DNS2TCP"
+ 	select PACKAGE_dns2tcp
+@@ -139,6 +146,11 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
+ 	select PACKAGE_sing-box
+ 	default y if aarch64||arm||i386||x86_64
+ 
++config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_GO
++	bool "Include Trojan-GO"
++	select PACKAGE_trojan-go
++	default n
++
+ config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus
+ 	bool "Include Trojan-Plus"
+ 	select PACKAGE_trojan-plus
+diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
+index 176315a..8ed0397 100644
+--- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
++++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
+@@ -5,6 +5,7 @@ local has_ss_rust = api.is_finded("sslocal")
+ local has_trojan_plus = api.is_finded("trojan-plus")
+ local has_singbox = api.finded_com("singbox")
+ local has_xray = api.finded_com("xray")
++local has_trojan_go = api.finded_com("trojan-go")
+ local has_hysteria2 = api.finded_com("hysteria")
+ local ss_aead_type = {}
+ local trojan_type = {}
+@@ -38,6 +39,10 @@ if has_xray then
+ 	table.insert(vmess_type, s)
+ 	table.insert(vless_type, s)
+ end
++if has_trojan_go then
++	local s = "trojan-go"
++	table.insert(trojan_type, s)
++end
+ if has_hysteria2 then
+ 	local s = "hysteria2"
+ 	table.insert(hysteria2_type, s)
+diff --git a/luasrc/model/cbi/passwall/client/node_subscribe_config.lua b/luasrc/model/cbi/passwall/client/node_subscribe_config.lua
+index 891513d..53ff953 100644
+--- a/luasrc/model/cbi/passwall/client/node_subscribe_config.lua
++++ b/luasrc/model/cbi/passwall/client/node_subscribe_config.lua
+@@ -5,6 +5,7 @@ local has_ss_rust = api.is_finded("sslocal")
+ local has_trojan_plus = api.is_finded("trojan-plus")
+ local has_singbox = api.finded_com("singbox")
+ local has_xray = api.finded_com("xray")
++local has_trojan_go = api.finded_com("trojan-go")
+ local has_hysteria2 = api.finded_com("hysteria")
+ local ss_aead_type = {}
+ local trojan_type = {}
+@@ -38,6 +39,10 @@ if has_xray then
+ 	table.insert(vmess_type, s)
+ 	table.insert(vless_type, s)
+ end
++if has_trojan_go then
++	local s = "trojan-go"
++	table.insert(trojan_type, s)
++end
+ if has_hysteria2 then
+ 	local s = "hysteria2"
+ 	table.insert(hysteria2_type, s)
+diff --git a/luasrc/model/cbi/passwall/client/type/brook.lua b/luasrc/model/cbi/passwall/client/type/brook.lua
+new file mode 100644
+index 0000000..9755ca6
+--- /dev/null
++++ b/luasrc/model/cbi/passwall/client/type/brook.lua
+@@ -0,0 +1,40 @@
++local m, s = ...
++
++local api = require "luci.passwall.api"
++
++if not api.finded_com("brook") then
++	return
++end
++
++local type_name = "Brook"
++
++local option_prefix = "brook_"
++
++local function option_name(name)
++	return option_prefix .. name
++end
++
++-- [[ Brook ]]
++
++s.fields["type"]:value(type_name, translate("Brook"))
++
++o = s:option(ListValue, option_name("protocol"), translate("Protocol"))
++o:value("client", translate("Brook"))
++o:value("wsclient", translate("WebSocket"))
++
++o = s:option(Value, option_name("address"), translate("Address (Support Domain Name)"))
++
++o = s:option(Value, option_name("port"), translate("Port"))
++o.datatype = "port"
++
++o = s:option(Value, option_name("ws_path"), translate("WebSocket Path"))
++o.placeholder = "/"
++o:depends({ [option_name("protocol")] = "wsclient" })
++
++o = s:option(Flag, option_name("tls"), translate("Use TLS"))
++o:depends({ [option_name("protocol")] = "wsclient" })
++
++o = s:option(Value, option_name("password"), translate("Password"))
++o.password = true
++
++api.luci_types(arg[1], m, s, type_name, option_prefix)
+diff --git a/luasrc/model/cbi/passwall/client/type/trojan-go.lua b/luasrc/model/cbi/passwall/client/type/trojan-go.lua
+new file mode 100644
+index 0000000..5e1e3d6
+--- /dev/null
++++ b/luasrc/model/cbi/passwall/client/type/trojan-go.lua
+@@ -0,0 +1,119 @@
++local m, s = ...
++
++local api = require "luci.passwall.api"
++
++if not api.finded_com("trojan-go") then
++	return
++end
++
++local type_name = "Trojan-Go"
++
++local option_prefix = "trojan_go_"
++
++local function option_name(name)
++	return option_prefix .. name
++end
++
++local encrypt_methods_ss_aead = {
++	"chacha20-ietf-poly1305",
++	"aes-128-gcm",
++	"aes-256-gcm",
++}
++
++-- [[ Trojan Go ]]
++
++s.fields["type"]:value(type_name, "Trojan-Go")
++
++o = s:option(Value, option_name("address"), translate("Address (Support Domain Name)"))
++
++o = s:option(Value, option_name("port"), translate("Port"))
++o.datatype = "port"
++
++o = s:option(Value, option_name("password"), translate("Password"))
++o.password = true
++
++o = s:option(ListValue, option_name("tcp_fast_open"), "TCP " .. translate("Fast Open"), translate("Need node support required"))
++o:value("false")
++o:value("true")
++
++o = s:option(Flag, option_name("tls"), translate("TLS"))
++o.default = 1
++
++o = s:option(Flag, option_name("tls_allowInsecure"), translate("allowInsecure"), translate("Whether unsafe connections are allowed. When checked, Certificate validation will be skipped."))
++o.default = "0"
++o:depends({ [option_name("tls")] = true })
++
++o = s:option(Value, option_name("tls_serverName"), translate("Domain"))
++o:depends({ [option_name("tls")] = true })
++
++o = s:option(Flag, option_name("tls_sessionTicket"), translate("Session Ticket"))
++o.default = "0"
++o:depends({ [option_name("tls")] = true })
++
++o = s:option(ListValue, option_name("fingerprint"), translate("Finger Print"))
++o:value("disable", translate("Disable"))
++o:value("firefox")
++o:value("chrome")
++o:value("ios")
++o.default = "disable"
++o:depends({ [option_name("tls")] = true })
++
++o = s:option(ListValue, option_name("transport"), translate("Transport"))
++o:value("original", translate("Original"))
++o:value("ws", "WebSocket")
++o.default = "original"
++o.rewrite_option = "trojan_transport"
++
++o = s:option(ListValue, option_name("plugin_type"), translate("Transport Plugin"))
++o:value("plaintext", "Plain Text")
++o:value("shadowsocks", "ShadowSocks")
++o:value("other", "Other")
++o.default = "plaintext"
++o:depends({ [option_name("tls")] = false, [option_name("transport")] = "original" })
++
++o = s:option(Value, option_name("plugin_cmd"), translate("Plugin Binary"))
++o.placeholder = "eg: /usr/bin/v2ray-plugin"
++o:depends({ [option_name("plugin_type")] = "shadowsocks" })
++o:depends({ [option_name("plugin_type")] = "other" })
++
++o = s:option(Value, option_name("plugin_option"), translate("Plugin Option"))
++o.placeholder = "eg: obfs=http;obfs-host=www.baidu.com"
++o:depends({ [option_name("plugin_type")] = "shadowsocks" })
++o:depends({ [option_name("plugin_type")] = "other" })
++
++o = s:option(DynamicList, option_name("plugin_arg"), translate("Plugin Option Args"))
++o.placeholder = "eg: [\"-config\", \"test.json\"]"
++o:depends({ [option_name("plugin_type")] = "shadowsocks" })
++o:depends({ [option_name("plugin_type")] = "other" })
++
++o = s:option(Value, option_name("ws_host"), translate("WebSocket Host"))
++o:depends({ [option_name("transport")] = "ws" })
++
++o = s:option(Value, option_name("ws_path"), translate("WebSocket Path"))
++o.placeholder = "/"
++o:depends({ [option_name("transport")] = "ws" })
++
++-- [[ Shadowsocks2 ]] --
++o = s:option(Flag, option_name("ss_aead"), translate("Shadowsocks secondary encryption"))
++o.default = "0"
++
++o = s:option(ListValue, option_name("ss_aead_method"), translate("Encrypt Method"))
++for _, v in ipairs(encrypt_methods_ss_aead) do o:value(v, v) end
++o.default = "aes-128-gcm"
++o:depends({ [option_name("ss_aead")] = true })
++
++o = s:option(Value, option_name("ss_aead_pwd"), translate("Password"))
++o.password = true
++o:depends({ [option_name("ss_aead")] = true })
++
++o = s:option(Flag, option_name("smux"), translate("Smux"))
++
++o = s:option(Value, option_name("mux_concurrency"), translate("Mux concurrency"))
++o.default = 8
++o:depends({ [option_name("smux")] = true })
++
++o = s:option(Value, option_name("smux_idle_timeout"), translate("Mux idle timeout"))
++o.default = 60
++o:depends({ [option_name("smux")] = true })
++
++api.luci_types(arg[1], m, s, type_name, option_prefix)
+diff --git a/luasrc/model/cbi/passwall/server/type/brook.lua b/luasrc/model/cbi/passwall/server/type/brook.lua
+new file mode 100644
+index 0000000..ca76116
+--- /dev/null
++++ b/luasrc/model/cbi/passwall/server/type/brook.lua
+@@ -0,0 +1,41 @@
++local m, s = ...
++
++local api = require "luci.passwall.api"
++
++if not api.finded_com("brook") then
++	return
++end
++
++local type_name = "Brook"
++
++local option_prefix = "brook_"
++
++local function option_name(name)
++	return option_prefix .. name
++end
++
++-- [[ Brook ]]
++
++s.fields["type"]:value(type_name, translate("Brook"))
++
++o = s:option(Value, option_name("port"), translate("Listen Port"))
++o.datatype = "port"
++
++o = s:option(ListValue, option_name("protocol"), translate("Protocol"))
++o:value("server", "Brook")
++o:value("wsserver", "WebSocket")
++
++--o = s:option(Flag, option_name("tls"), translate("Use TLS"))
++--o:depends({ [option_name("protocol")] = "wsserver" })
++
++o = s:option(Value, option_name("password"), translate("Password"))
++o.password = true
++
++o = s:option(Value, option_name("ws_path"), translate("WebSocket Path"))
++o:depends({ [option_name("protocol")] = "wsserver" })
++
++o = s:option(Flag, option_name("log"), translate("Log"))
++o.default = "1"
++o.rmempty = false
++
++api.luci_types(arg[1], m, s, type_name, option_prefix)
+diff --git a/luasrc/model/cbi/passwall/server/type/trojan-go.lua b/luasrc/model/cbi/passwall/server/type/trojan-go.lua
+new file mode 100644
+index 0000000..195fc2b
+--- /dev/null
++++ b/luasrc/model/cbi/passwall/server/type/trojan-go.lua
+@@ -0,0 +1,159 @@
++local m, s = ...
++
++local api = require "luci.passwall.api"
++
++if not api.finded_com("trojan-go") then
++	return
++end
++
++local type_name = "Trojan-Go"
++
++local option_prefix = "trojan_go_"
++
++local function option_name(name)
++	return option_prefix .. name
++end
++
++local encrypt_methods_ss_aead = {
++	"chacha20-ietf-poly1305",
++	"aes-128-gcm",
++	"aes-256-gcm",
++}
++
++-- [[ Trojan-Go ]]
++
++s.fields["type"]:value(type_name, "Trojan-Go")
++
++o = s:option(Value, option_name("port"), translate("Listen Port"))
++o.datatype = "port"
++
++o = s:option(DynamicList, option_name("uuid"), translate("ID") .. "/" .. translate("Password"))
++for i = 1, 3 do
++	o:value(api.gen_uuid(1))
++end
++
++o = s:option(Flag, option_name("tls"), translate("TLS"))
++o.default = 0
++o.validate = function(self, value, t)
++	if value then
++		local type = s.fields["type"] and s.fields["type"]:formvalue(t) or ""
++		if value == "0" and type == type_name then
++			return nil, translate("Original Trojan only supported 'tls', please choose 'tls'.")
++		end
++		if value == "1" then
++			local ca = s.fields[option_name("tls_certificateFile")] and s.fields[option_name("tls_certificateFile")]:formvalue(t) or ""
++			local key = s.fields[option_name("tls_keyFile")] and s.fields[option_name("tls_keyFile")]:formvalue(t) or ""
++			if ca == "" or key == "" then
++				return nil, translate("Public key and Private key path can not be empty!")
++			end
++		end
++		return value
++	end
++end
++
++o = s:option(FileUpload, option_name("tls_certificateFile"), translate("Public key absolute path"), translate("as:") .. "/etc/ssl/fullchain.pem")
++o.default = m:get(s.section, "tls_certificateFile") or "/etc/config/ssl/" .. arg[1] .. ".pem"
++o:depends({ [option_name("tls")] = true })
++o.validate = function(self, value, t)
++	if value and value ~= "" then
++		if not nixio.fs.access(value) then
++			return nil, translate("Can't find this file!")
++		else
++			return value
++		end
++	end
++	return nil
++end
++
++o = s:option(FileUpload, option_name("tls_keyFile"), translate("Private key absolute path"), translate("as:") .. "/etc/ssl/private.key")
++o.default = m:get(s.section, "tls_keyFile") or "/etc/config/ssl/" .. arg[1] .. ".key"
++o:depends({ [option_name("tls")] = true })
++o.validate = function(self, value, t)
++	if value and value ~= "" then
++		if not nixio.fs.access(value) then
++			return nil, translate("Can't find this file!")
++		else
++			return value
++		end
++	end
++	return nil
++end
++
++o = s:option(Flag, option_name("tls_sessionTicket"), translate("Session Ticket"))
++o.default = "0"
++o:depends({ [option_name("tls")] = true })
++
++o = s:option(ListValue, option_name("transport"), translate("Transport"))
++o:value("original", translate("Original"))
++o:value("ws", "WebSocket")
++o.default = "original"
++
++o = s:option(ListValue, option_name("plugin_type"), translate("Transport Plugin"))
++o:value("plaintext", "Plain Text")
++o:value("shadowsocks", "ShadowSocks")
++o:value("other", "Other")
++o.default = "plaintext"
++o:depends({ [option_name("tls")] = false, [option_name("transport")] = "original" })
++
++o = s:option(Value, option_name("plugin_cmd"), translate("Plugin Binary"))
++o.placeholder = "eg: /usr/bin/v2ray-plugin"
++o:depends({ [option_name("plugin_type")] = "shadowsocks" })
++o:depends({ [option_name("plugin_type")] = "other" })
++
++o = s:option(Value, option_name("plugin_option"), translate("Plugin Option"))
++o.placeholder = "eg: obfs=http;obfs-host=www.baidu.com"
++o:depends({ [option_name("plugin_type")] = "shadowsocks" })
++o:depends({ [option_name("plugin_type")] = "other" })
++
++o = s:option(DynamicList, option_name("plugin_arg"), translate("Plugin Option Args"))
++o.placeholder = "eg: [\"-config\", \"test.json\"]"
++o:depends({ [option_name("plugin_type")] = "shadowsocks" })
++o:depends({ [option_name("plugin_type")] = "other" })
++
++o = s:option(Value, option_name("ws_host"), translate("WebSocket Host"))
++o:depends({ [option_name("transport")] = "ws" })
++
++o = s:option(Value, option_name("ws_path"), translate("WebSocket Path"))
++o:depends({ [option_name("transport")] = "ws" })
++
++o = s:option(Flag, option_name("ss_aead"), translate("Shadowsocks secondary encryption"))
++o.default = "0"
++
++o = s:option(ListValue, option_name("ss_aead_method"), translate("Encrypt Method"))
++for _, v in ipairs(encrypt_methods_ss_aead) do o:value(v, v) end
++o.default = "aes-128-gcm"
++o:depends({ [option_name("ss_aead")] = true })
++
++o = s:option(Value, option_name("ss_aead_pwd"), translate("Password"))
++o.password = true
++o:depends({ [option_name("ss_aead")] = true })
++
++o = s:option(Flag, option_name("tcp_fast_open"), translate("TCP Fast Open"))
++o.default = "0"
++
++o = s:option(Flag, option_name("remote_enable"), translate("Enable Remote"), translate("You can forward to Nginx/Caddy/V2ray/Xray WebSocket and more."))
++o.default = "1"
++o.rmempty = false
++
++o = s:option(Value, option_name("remote_address"), translate("Remote Address"))
++o.default = "127.0.0.1"
++o:depends({ [option_name("remote_enable")] = true })
++
++o = s:option(Value, option_name("remote_port"), translate("Remote Port"))
++o.datatype = "port"
++o.default = "80"
++o:depends({ [option_name("remote_enable")] = true })
++
++o = s:option(Flag, option_name("log"), translate("Log"))
++o.default = "1"
++
++o = s:option(ListValue, option_name("loglevel"), translate("Log Level"))
++o.default = "2"
++o:value("0", "all")
++o:value("1", "info")
++o:value("2", "warn")
++o:value("3", "error")
++o:value("4", "fatal")
++o:depends({ [option_name("log")] = true })
++
++api.luci_types(arg[1], m, s, type_name, option_prefix)
+diff --git a/luasrc/passwall/com.lua b/luasrc/passwall/com.lua
+index 4322781..9e98b37 100644
+--- a/luasrc/passwall/com.lua
++++ b/luasrc/passwall/com.lua
+@@ -8,6 +8,17 @@ local function gh_pre_release_url(self)
+ 	return "https://api.github.com/repos/" .. self.repo .. "/releases?per_page=1"
+ end
+ 
++_M.brook = {
++	name = "Brook",
++	repo = "txthinking/brook",
++	get_url = gh_release_url,
++	cmd_version = "-v | awk '{print $3}'",
++	zipped = false,
++	default_path = "/usr/bin/brook",
++	match_fmt_str = "linux_%s$",
++	file_tree = {}
++}
++
+ _M.hysteria = {
+ 	name = "Hysteria",
+ 	repo = "HyNetwork/hysteria",
+@@ -23,6 +34,22 @@ _M.hysteria = {
+ 	}
+ }
+ 
++_M["trojan-go"] = {
++	name = "Trojan-Go",
++	repo = "p4gefau1t/trojan-go",
++	get_url = gh_release_url,
++	cmd_version = "-version | awk '{print $2}' | sed -n 1P",
++	zipped = true,
++	default_path = "/usr/bin/trojan-go",
++	match_fmt_str = "linux%%-%s%%.zip",
++	file_tree = {
++		aarch64 = "armv8",
++		armv8   = "armv8",
++		mips    = "mips%-hardfloat",
++		mipsel  = "mipsle%-hardfloat"
++	}
++}
++
+ _M.singbox = {
+ 	name = "Sing-Box",
+ 	repo = "SagerNet/sing-box",
+diff --git a/luasrc/passwall/server_app.lua b/luasrc/passwall/server_app.lua
+index a3285c0..9d5b5fa 100644
+--- a/luasrc/passwall/server_app.lua
++++ b/luasrc/passwall/server_app.lua
+@@ -152,6 +152,18 @@ local function start()
+ 			elseif type == "Trojan-Plus" then
+ 				config = require(require_dir .. "util_trojan").gen_config_server(user)
+ 				bin = ln_run("/usr/sbin/trojan-plus", "trojan-plus", "-c " .. config_file, log_path)
++			elseif type == "Trojan-Go" then
++				config = require(require_dir .. "util_trojan").gen_config_server(user)
++				bin = ln_run(api.get_app_path("trojan-go"), "trojan-go", "-config " .. config_file, log_path)
++			elseif type == "Brook" then
++				local brook_protocol = user.protocol
++				local brook_password = user.password
++				local brook_path = user.ws_path or "/ws"
++				local brook_path_arg = ""
++				if brook_protocol == "wsserver" and brook_path then
++					brook_path_arg = " --path " .. brook_path
++				end
++				bin = ln_run(api.get_app_path("brook"), "brook_" .. id, string.format("--debug %s -l :%s -p %s%s", brook_protocol, port, brook_password, brook_path_arg), log_path)
+ 			elseif type == "Hysteria2" then
+ 				config = require(require_dir .. "util_hysteria2").gen_config_server(user)
+ 				bin = ln_run(api.get_app_path("hysteria"), "hysteria", "-c " .. config_file .. " server", log_path)
+diff --git a/luasrc/passwall/util_trojan.lua b/luasrc/passwall/util_trojan.lua
+index 848b689..9961e81 100644
+--- a/luasrc/passwall/util_trojan.lua
++++ b/luasrc/passwall/util_trojan.lua
+@@ -37,6 +37,30 @@ function gen_config_server(node)
+ 			fast_open_qlen = 20
+ 		}
+ 	}
++	if node.type == "Trojan-Go" then
++		config.ssl.cipher = nil
++		config.ssl.cipher_tls13 = nil
++		config.udp_timeout = 60
++		config.disable_http_check = true
++		config.transport_plugin = ((node.tls == nil or node.tls ~= "1") and node.trojan_transport == "original") and {
++			enabled = node.plugin_type ~= nil,
++			type = node.plugin_type or "plaintext",
++			command = node.plugin_type ~= "plaintext" and node.plugin_cmd or nil,
++			option = node.plugin_type ~= "plaintext" and node.plugin_option or nil,
++			arg = node.plugin_type ~= "plaintext" and { node.plugin_arg } or nil,
++			env = {}
++		} or nil
++		config.websocket = (node.trojan_transport == 'ws') and {
++			enabled = true,
++			path = node.ws_path or "/",
++			host = node.ws_host or ""
++		} or nil
++		config.shadowsocks = (node.ss_aead == "1") and {
++			enabled = true,
++			method = node.ss_aead_method or "aes_128_gcm",
++			password = node.ss_aead_pwd or ""
++		} or nil
++	end
+ 	return config
+ end
+ 
+@@ -91,6 +115,36 @@ function gen_config(var)
+ 			fast_open_qlen = 20
+ 		}
+ 	}
++	if node.type == "Trojan-Go" then
++		trojan.ssl.cipher = nil
++		trojan.ssl.cipher_tls13 = nil
++		trojan.ssl.fingerprint = (node.fingerprint ~= "disable") and node.fingerprint or ""
++		trojan.ssl.alpn = (node.trojan_transport == 'ws') and {} or {"h2", "http/1.1"}
++		if node.tls ~= "1" and node.trojan_transport == "original" then trojan.ssl = nil end
++		trojan.transport_plugin = ((not node.tls or node.tls ~= "1") and node.trojan_transport == "original") and {
++			enabled = node.plugin_type ~= nil,
++			type = node.plugin_type or "plaintext",
++			command = node.plugin_type ~= "plaintext" and node.plugin_cmd or nil,
++			option = node.plugin_type ~= "plaintext" and node.plugin_option or nil,
++			arg = node.plugin_type ~= "plaintext" and { node.plugin_arg } or nil,
++			env = {}
++		} or nil
++		trojan.websocket = (node.trojan_transport == 'ws') and {
++			enabled = true,
++			path = node.ws_path or "/",
++			host = node.ws_host or (node.tls_serverName or server)
++		} or nil
++		trojan.shadowsocks = (node.ss_aead == "1") and {
++			enabled = true,
++			method = node.ss_aead_method or "aes_128_gcm",
++			password = node.ss_aead_pwd or ""
++		} or nil
++		trojan.mux = (node.smux == "1") and {
++			enabled = true,
++			concurrency = tonumber(node.mux_concurrency),
++			idle_timeout = tonumber(node.smux_idle_timeout)
++		} or nil
++	end
+ 	return json.stringify(trojan, 1)
+ end
+ 
+diff --git a/luasrc/view/passwall/node_list/link_share_man.htm b/luasrc/view/passwall/node_list/link_share_man.htm
+index 2540f66..762bb6e 100644
+--- a/luasrc/view/passwall/node_list/link_share_man.htm
++++ b/luasrc/view/passwall/node_list/link_share_man.htm
+@@ -140,6 +140,12 @@ local api = require "luci.passwall.api"
+ 		} else if (v_type === "Trojan-Plus") {
+ 			dom_prefix = "trojan_plus_"
+ 			protocol = "trojan"
++		} else if (v_type === "Trojan-Go") {
++			dom_prefix = "trojan_go_"
++			protocol = "trojan-go"
++		} else if (v_type === "Brook") {
++			dom_prefix = "brook_"
++			protocol = "brook"
+ 		} else if (v_type === "Hysteria2") {
+ 			dom_prefix = "hysteria2_"
+ 			protocol = "hysteria2"
+@@ -340,6 +346,74 @@ local api = require "luci.passwall.api"
+ 				params = params.substring(1);
+ 			}
+ 			url += params;
++		} else if (v_type === "Trojan-Go") {
++			var v_password = opt.get(dom_prefix + "password");
++			var v_port = opt.get(dom_prefix + "port");
++			url = encodeURIComponent(v_password.value) +
++				"@" + _address +
++				":" + v_port.value + "/?";
++			var params = "";
++			if (opt.get(dom_prefix + "tls").checked) {
++				params += opt.query("sni", dom_prefix + "tls_serverName");
++			} else {
++				if (opt.get(dom_prefix + "transport").value === "original") {
++					var plugin = {};
++					plugin.type = opt.get(dom_prefix + "plugin_type").value;
++					if (plugin.type !== "plaintext") {
++						plugin.command = opt.get(dom_prefix + "plugin_cmd").value;
++						plugin.option = opt.get(dom_prefix + "plugin_option").value;
++						plugin.arg = opt.getlist(dom_prefix + "plugin_arg");
++					}
++					params += "&plugin=" + encodeURIComponent(JSON.stringify(plugin));
++				}
++			}
++			params += opt.query("type", dom_prefix + "transport");
++			var ws = (opt.get(dom_prefix + "transport").value.indexOf("ws") !== -1);
++			var h2 = (opt.get(dom_prefix + "transport").value.indexOf("h2") !== -1);
++			if (ws) {
++				params += opt.query("host", dom_prefix + "ws_host");
++				params += opt.query("path", dom_prefix + "ws_path");
++			}
++			var enc = "none";
++			if (opt.get(dom_prefix + "ss_aead").checked === true) {
++				enc = "ss;" +
++					opt.get(dom_prefix + "ss_aead_method").value +
++					":" + opt.get(dom_prefix + "ss_aead_pwd").value;
++			}
++			params += "&encryption=" + encodeURIComponent(enc);
++			params += "#" + encodeURI(v_alias.value);
++			if (params[0] == "&") {
++				params = params.substring(1);
++			}
++			url += params;
++		} else if (v_type === "Brook") {
++			var url = "";
++			var params = "?";
++			var v_protocol = opt.get(dom_prefix + "protocol");
++			var v_port = opt.get(dom_prefix + "port");
++			var v_password = opt.get(dom_prefix + "password");
++			var b_protocol_value = v_protocol.value.split('client').join('server');
++
++			var url_protocol = b_protocol_value;
++			params += opt.query("password", dom_prefix + "password");
++			if (b_protocol_value == "wsserver") {
++				var server = '';
++				var prefix = "ws://";
++				if (opt.get(dom_prefix + "tls").checked) {
++					prefix = "wss://";
++					url_protocol = 'wssserver';
++				}
++				var v_path = opt.get(dom_prefix + "ws_path");
++				var v_path_value = v_path.value || '/ws';
++				if (v_path_value.length > 1 && v_path_value.indexOf('/') < 0) {
++					v_path_value = '/' + v_path_value;
++				}
++				params += "&" + url_protocol + "=" + encodeURIComponent(prefix + _address + ":" + v_port.value + v_path_value);
++			} else {
++				params += "&" + url_protocol + "=" + encodeURIComponent(_address + ":" + v_port.value);
++			}
++			url += url_protocol;
++			url += params;
+ 		} else if ((v_type === "Hysteria2") || (v_type === "sing-box" && opt.get(dom_prefix + "protocol").value === "hysteria2")) {
+ 			protocol = "hysteria2"
+ 			var v_port = opt.get(dom_prefix + "port");
+@@ -651,6 +725,9 @@ local api = require "luci.passwall.api"
+ 					queryParam[decodeURIComponent(params[0]).toLowerCase()] = decodeURIComponent(params[1] || '');
+ 				}
+ 			}
++			if (queryParam.mux || queryParam.ws || queryParam.h2 || queryParam.ss || queryParam.plugin) {
++				ssu[0] = "trojan-go"
++			}
+ 			opt.set(dom_prefix + 'address', m.hostname);
+ 			opt.set(dom_prefix + 'port', m.port || "443");
+ 			opt.set(dom_prefix + 'password', decodeURIComponent(password));
+@@ -660,6 +737,80 @@ local api = require "luci.passwall.api"
+ 			if (m.hash) {
+ 				opt.set('remarks', decodeURI(m.hash.substr(1)));
+ 			}
++		} if (ssu[0] === "trojan-go") {
++			dom_prefix = "trojan_go_"
++			var m = parseNodeUrl(ssrurl);
++			var password = m.passwd;
++			if (password === "") {
++				s.innerHTML = "<font color='red'><%:Invalid Share URL Format%></font>";
++				return false;
++			}
++			var queryParam = {};
++			if (m.search.length > 1) {
++				var query = m.search.split('?');
++				var queryParams = query[1];
++				var queryArray = queryParams.split('&');
++				for (i = 0; i < queryArray.length; i++) {
++					var params = queryArray[i].split('=');
++					queryParam[decodeURIComponent(params[0]).toLowerCase()] = decodeURIComponent(params[1] || '');
++				}
++			}
++			opt.set('type', 'Trojan-Go');
++			opt.set(dom_prefix + 'address', m.hostname);
++			opt.set(dom_prefix + 'port', m.port || "443");
++			opt.set(dom_prefix + 'password', decodeURIComponent(password));
++			opt.set(dom_prefix + 'tls', true);
++			opt.set(dom_prefix + 'tls_allowInsecure', '0');
++			opt.set(dom_prefix + 'tls_serverName', queryParam.peer || queryParam.sni || '');
++			var plugin = queryParam.plugin !== undefined;
++			if (plugin) {
++				opt.set(dom_prefix + 'transport', 'original');
++				var plugin = JSON.parse(queryParam.plugin);
++				if (plugin) {
++					opt.set(dom_prefix + 'plugin_type', plugin.type);
++					if (plugin.type !== "plaintext") {
++						opt.set(dom_prefix + 'plugin_cmd', plugin.command);
++						opt.set(dom_prefix + 'plugin_option', plugin.option);
++						opt.setlist(dom_prefix + 'plugin_arg', plugin.arg);
++					}
++				} else
++					alert(queryParam.plugin);
++			}
++			var tran = 'original';
++			var or = queryParam.type === undefined || queryParam.type === 'original';
++			var ws = null;
++			var h2 = null;
++			if (queryParam.type) {
++				ws = queryParam.type.indexOf('ws') !== -1;
++				h2 = queryParam.type.indexOf('h2') !== -1;
++			}
++			if (ws && h2) {
++				tran = 'h2+ws'
++			} else {
++				if (ws) tran = 'ws';
++				if (h2) tran = 'h2';
++			}
++			opt.set(dom_prefix + 'transport', tran);
++			if (ws) {
++				opt.set(dom_prefix + 'ws_host', queryParam.host || '');
++				opt.set(dom_prefix + 'ws_path', queryParam.path || '/');
++			}
++			var enc = {};
++			var ss = false;
++			if (queryParam.encryption) {
++				var r = queryParam.encryption.match(/^(ss);([^;:]*)[;:](.*)$/),
++					enc = { type: r[1], method: r[2], password: r[3] };
++			}
++			ss = enc.type === 'ss';
++			opt.set(dom_prefix + 'ss_aead', ss);
++			if (ss) {
++				opt.set(dom_prefix + 'ss_aead_method', enc.method.toLowerCase() || '');
++				opt.set(dom_prefix + 'ss_aead_pwd', enc.password || '');
++			}
++			opt.set(dom_prefix + 'smux', '1');
++			if (m.hash) {
++				opt.set('remarks', decodeURI(m.hash.substr(1)));
++			}
+ 		}
+ 		if (ssu[0] === "vmess") {
+ 			var sstr = b64DecodeUnicode(ssu[1]);
+@@ -811,6 +962,62 @@ local api = require "luci.passwall.api"
+ 				opt.set('remarks', decodeURI(m.hash.substr(1)));
+ 			}
+ 		}
++		if (ssu[0] === "brook") {
++			dom_prefix = "brook_"
++			var stype = "Brook";
++			var m = parseNodeUrl(ssrurl);
++
++			var from_protocol = m.host;
++			var protocol = from_protocol.split('server').join('client');
++
++			var queryParam = {};
++			if (m.search.length > 1) {
++				var query = m.search.split('?');
++				var queryParams = query[1];
++				var queryArray = queryParams.split('&');
++				var params;
++				for (i = 0; i < queryArray.length; i++) {
++					params = queryArray[i].split('=');
++					queryParam[decodeURIComponent(params[0])] = decodeURIComponent(params[1] || '');
++				}
++			}
++
++			var password = queryParam.password;
++			if (password === "") {
++				s.innerHTML = "<font color='red'><%:Invalid Share URL Format%></font>";
++				return false;
++			}
++
++			opt.set('type', stype);
++			opt.set(dom_prefix + 'protocol', protocol);
++			opt.set(dom_prefix + 'password', password);
++
++			if (protocol == 'wsclient' || protocol == 'wssclient') {
++				opt.set(dom_prefix + 'protocol', 'wsclient');
++				var wsserver = queryParam[from_protocol].split('://');
++				wsserver = wsserver[1].split('/');
++				var path = wsserver[1] && '/' + wsserver[1] || '/ws';
++				var server = wsserver[0].split(':');
++				opt.set(dom_prefix + 'address', server[0]);
++				opt.set(dom_prefix + 'port', server[1]);
++				opt.set(dom_prefix + 'ws_path', path);
++				if (protocol == 'wssclient') {
++					opt.set(dom_prefix + 'tls', true);
++				}
++			} else {
++				var server = queryParam[from_protocol].split(':');
++				if (server.length < 2) {
++					s.innerHTML = "<font color='red'><%:Invalid Share URL Format%></font>";
++					return false;
++				}
++				opt.set(dom_prefix + 'address', server[0]);
++				opt.set(dom_prefix + 'port', server[1]);
++			}
++
++			if (m.hash) {
++				opt.set('remarks', decodeURI(m.hash.substr(1)));
++			}
++		}
+ 		if (ssu[0] === "hysteria2" || ssu[0] === "hy2") {
+ 			var m = parseNodeUrl(ssrurl);
+ 			var password = m.passwd;
+diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
+index 89d65a1..de1b486 100644
+--- a/po/zh-cn/passwall.po
++++ b/po/zh-cn/passwall.po
+@@ -913,6 +913,9 @@ msgstr "%s 程序路径"
+ msgid "%s Client App Path"
+ msgstr "%s 客户端程序路径"
+ 
++msgid "Trojan-Go Version API"
++msgstr "Trojan-Go 版本 API"
++
+ msgid "alternate API URL for version checking"
+ msgstr "用于版本检查的 API URL"
+ 
+@@ -1132,6 +1135,12 @@ msgstr "插件名称"
+ msgid "Plugin Arguments"
+ msgstr "插件参数"
+ 
++msgid "Brook Protocol"
++msgstr "Brook协议"
++
++msgid "Use TLS"
++msgstr "使用TLS"
++
+ msgid "Naiveproxy Protocol"
+ msgstr "Naiveproxy协议"
+ 
+diff --git a/root/usr/share/passwall/0_default_config b/root/usr/share/passwall/0_default_config
+index 8c202ed..0faaece 100644
+--- a/root/usr/share/passwall/0_default_config
++++ b/root/usr/share/passwall/0_default_config
+@@ -76,6 +76,8 @@ config global_rules
+ config global_app
+ 	option singbox_file '/usr/bin/sing-box'
+ 	option xray_file '/usr/bin/xray'
++	option trojan_go_file '/usr/bin/trojan-go'
++	option brook_file '/usr/bin/brook'
+ 	option hysteria_file '/usr/bin/hysteria'
+ 	option chinadns_ng '/usr/bin/chinadns-ng'
+ 
+diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
+index 65fd519..f022c26 100755
+--- a/root/usr/share/passwall/app.sh
++++ b/root/usr/share/passwall/app.sh
+@@ -608,6 +608,10 @@ run_socks() {
+ 		[ -n "$relay_port" ] && _args="${_args} -server_host $server_host -server_port $port"
+ 		run_xray flag=$flag node=$node socks_port=$socks_port config_file=$config_file log_file=$log_file ${_args}
+ 	;;
++	trojan-go)
++		lua $UTIL_TROJAN gen_config -node $node -run_type client -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
++		ln_run "$(first_type $(config_t_get global_app trojan_go_file) trojan-go)" trojan-go $log_file -config "$config_file"
++	;;
+ 	trojan*)
+ 		lua $UTIL_TROJAN gen_config -node $node -run_type client -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
+ 		ln_run "$(first_type ${type})" "${type}" $log_file -c "$config_file"
+@@ -616,6 +620,21 @@ run_socks() {
+ 		lua $UTIL_NAIVE gen_config -node $node -run_type socks -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
+ 		ln_run "$(first_type naive)" naive $log_file "$config_file"
+ 	;;
++	brook)
++		local protocol=$(config_n_get $node protocol client)
++		local prefix=""
++		[ "$protocol" == "wsclient" ] && {
++			prefix="ws://"
++			local brook_tls=$(config_n_get $node brook_tls 0)
++			[ "$brook_tls" == "1" ] && {
++				prefix="wss://"
++				protocol="wssclient"
++			}
++			local ws_path=$(config_n_get $node ws_path "/ws")
++		}
++		server_host=${prefix}${server_host}
++		ln_run "$(first_type $(config_t_get global_app brook_file) brook)" "brook_SOCKS_${flag}" $log_file "$protocol" --socks5 "$bind:$socks_port" -s "${server_host}:${port}${ws_path}" -p "$(config_n_get $node password)"
++	;;
+ 	ssr)
+ 		lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $socks_port -server_host $server_host -server_port $port > $config_file
+ 		ln_run "$(first_type ssr-local)" "ssr-local" $log_file -c "$config_file" -v -u
+@@ -714,6 +733,11 @@ run_redir() {
+ 		xray)
+ 			run_xray flag=UDP node=$node udp_redir_port=$local_port config_file=$config_file log_file=$log_file
+ 		;;
++		trojan-go)
++			local loglevel=$(config_t_get global trojan_loglevel "2")
++			lua $UTIL_TROJAN gen_config -node $node -run_type nat -local_addr "0.0.0.0" -local_port $local_port -loglevel $loglevel > $config_file
++			ln_run "$(first_type $(config_t_get global_app trojan_go_file) trojan-go)" trojan-go $log_file -config "$config_file"
++		;;
+ 		trojan*)
+ 			local loglevel=$(config_t_get global trojan_loglevel "2")
+ 			lua $UTIL_TROJAN gen_config -node $node -run_type nat -local_addr "0.0.0.0" -local_port $local_port -loglevel $loglevel > $config_file
+@@ -722,6 +746,14 @@ run_redir() {
+ 		naiveproxy)
+ 			echolog "Naiveproxy不支持UDP转发！"
+ 		;;
++		brook)
++			local protocol=$(config_n_get $node protocol client)
++			if [ "$protocol" == "wsclient" ]; then
++				echolog "Brook的WebSocket不支持UDP转发！"
++			else
++				ln_run "$(first_type $(config_t_get global_app brook_file) brook)" "brook_UDP" $log_file tproxy -l ":$local_port" -s "$server_host:$port" -p "$(config_n_get $node password)" --doNotRunScripts
++			fi
++		;;
+ 		ssr)
+ 			lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $local_port > $config_file
+ 			ln_run "$(first_type ssr-redir)" "ssr-redir" $log_file -c "$config_file" -v -U
+@@ -866,6 +898,16 @@ run_redir() {
+ 			}
+ 			run_xray flag=$_flag node=$node tcp_redir_port=$local_port config_file=$config_file log_file=$log_file ${_args}
+ 		;;
++		trojan-go)
++			[ "$TCP_UDP" = "1" ] && {
++				config_file=$(echo $config_file | sed "s/TCP/TCP_UDP/g")
++				UDP_REDIR_PORT=$TCP_REDIR_PORT
++				UDP_NODE="nil"
++			}
++			local loglevel=$(config_t_get global trojan_loglevel "2")
++			lua $UTIL_TROJAN gen_config -node $node -run_type nat -local_addr "0.0.0.0" -local_port $local_port -loglevel $loglevel > $config_file
++			ln_run "$(first_type $(config_t_get global_app trojan_go_file) trojan-go)" trojan-go $log_file -config "$config_file"
++		;;
+ 		trojan*)
+ 			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-use_tproxy true"
+ 			[ "$TCP_UDP" = "1" ] && {
+@@ -881,6 +923,19 @@ run_redir() {
+ 			lua $UTIL_NAIVE gen_config -node $node -run_type redir -local_addr "0.0.0.0" -local_port $local_port > $config_file
+ 			ln_run "$(first_type naive)" naive $log_file "$config_file"
+ 		;;
++		brook)
++			local server_ip=$server_host
++			local protocol=$(config_n_get $node protocol client)
++			local prefix=""
++			[ "$protocol" == "wsclient" ] && {
++				prefix="ws://"
++				local brook_tls=$(config_n_get $node brook_tls 0)
++				[ "$brook_tls" == "1" ] && prefix="wss://"
++				local ws_path=$(config_n_get $node ws_path "/ws")
++			}
++			server_ip=${prefix}${server_ip}
++			ln_run "$(first_type $(config_t_get global_app brook_file) brook)" "brook_TCP" $log_file tproxy -l ":$local_port" -s "${server_ip}:${port}${ws_path}" -p "$(config_n_get $node password)" --doNotRunScripts
++		;;
+ 		ssr)
+ 			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
+ 			[ "$TCP_UDP" = "1" ] && {
+@@ -1791,8 +1846,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+ FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
+ dns_listen_port=${DNS_PORT}
+ 
+-REDIRECT_LIST="socks ss ss-rust ssr sing-box xray trojan-plus naiveproxy hysteria2"
+-TPROXY_LIST="socks ss ss-rust ssr sing-box xray trojan-plus hysteria2"
++REDIRECT_LIST="socks ss ss-rust ssr sing-box xray trojan-go trojan-plus hysteria2"
++TPROXY_LIST="brook socks ss ss-rust ssr sing-box xray trojan-go trojan-plus hysteria2"
+ RESOLVFILE=/tmp/resolv.conf.d/resolv.conf.auto
+ [ -f "${RESOLVFILE}" ] && [ -s "${RESOLVFILE}" ] || RESOLVFILE=/tmp/resolv.conf.auto
+ 
+diff --git a/root/usr/share/passwall/subscribe.lua b/root/usr/share/passwall/subscribe.lua
+index bb28e71..cad9894 100755
+--- a/root/usr/share/passwall/subscribe.lua
++++ b/root/usr/share/passwall/subscribe.lua
+@@ -27,6 +27,7 @@ local has_ss_rust = api.is_finded("sslocal")
+ local has_trojan_plus = api.is_finded("trojan-plus")
+ local has_singbox = api.finded_com("singbox")
+ local has_xray = api.finded_com("xray")
++local has_trojan_go = api.finded_com("trojan-go")
+ local has_hysteria2 = api.finded_com("hysteria")
+ local allowInsecure_default = nil
+ local ss_aead_type_default = uci:get(appname, "@global_subscribe[0]", "ss_aead_type") or "shadowsocks-libev"
+@@ -605,7 +606,23 @@ local function processData(szType, content, add_mode, add_from)
+ 			local peer, sni = nil, ""
+ 			if params.peer then peer = params.peer end
+ 			sni = params.sni and params.sni or ""
++			if params.ws and params.ws == "1" then
++				result.trojan_transport = "ws"
++				if params.wshost then result.ws_host = params.wshost end
++				if params.wspath then result.ws_path = params.wspath end
++				if sni == "" and params.wshost then sni = params.wshost end
++			end
++			if params.ss and params.ss == "1" then
++				result.ss_aead = "1"
++				if params.ssmethod then result.ss_aead_method = string.lower(params.ssmethod) end
++				if params.sspasswd then result.ss_aead_pwd = params.sspasswd end
++			end
+ 			result.port = port
++			if result.trojan_transport == "ws" or result.ss_aead then
++				result.type = "Trojan-Go"
++				result.fingerprint = "firefox"
++				result.mux = "1"
++			end
+ 			result.tls = '1'
+ 			result.tls_serverName = peer and peer or sni
+ 			if params.allowinsecure then
+@@ -627,6 +644,65 @@ local function processData(szType, content, add_mode, add_from)
+ 		elseif trojan_type_default == "xray" and has_xray then
+ 			result.type = 'Xray'
+ 			result.protocol = 'trojan'
++		elseif trojan_type_default == "trojan-go" and has_trojan_go then
++			result.type = 'Trojan-Go'
++		end
++	elseif szType == "trojan-go" then
++		local alias = ""
++		if content:find("#") then
++			local idx_sp = content:find("#")
++			alias = content:sub(idx_sp + 1, -1)
++			content = content:sub(0, idx_sp - 1)
++		end
++		result.remarks = UrlDecode(alias)
++		if has_trojan_go then
++			result.type = "Trojan-Go"
++		end
++		if content:find("@") then
++			local Info = split(content, "@")
++			result.password = UrlDecode(Info[1])
++			local port = "443"
++			Info[2] = (Info[2] or ""):gsub("/%?", "?")
++			local query = split(Info[2], "?")
++			local host_port = query[1]
++			local params = {}
++			for _, v in pairs(split(query[2], '&')) do
++				local t = split(v, '=')
++				params[string.lower(t[1])] = UrlDecode(t[2])
++			end
++			-- [2001:4860:4860::8888]:443
++			-- 8.8.8.8:443
++			if host_port:find(":") then
++				local sp = split(host_port, ":")
++				port = sp[#sp]
++				if api.is_ipv6addrport(host_port) then
++					result.address = api.get_ipv6_only(host_port)
++				else
++					result.address = sp[1]
++				end
++			else
++				result.address = host_port
++			end
++			local peer, sni = nil, ""
++			if params.peer then peer = params.peer end
++			sni = params.sni and params.sni or ""
++			if params.type and params.type == "ws" then
++				result.trojan_transport = "ws"
++				if params.host then result.ws_host = params.host end
++				if params.path then result.ws_path = params.path end
++				if sni == "" and params.host then sni = params.host end
++			end
++			if params.encryption and params.encryption:match('^ss;[^;:]*[;:].*$') then
++				result.ss_aead = "1"
++				result.ss_aead_method, result.ss_aead_pwd = params.encryption:match('^ss;([^;:]*)[;:](.*)$')
++				result.ss_aead_method = string.lower(result.ss_aead_method)
++			end
++			result.port = port
++			result.fingerprint = "firefox"
++			result.tls = "1"
++			result.tls_serverName = peer and peer or sni
++			result.tls_allowInsecure = "0"
++			result.mux = "1"
+ 		end
+ 	elseif szType == "ssd" then
+ 		result.type = "SS"
+@@ -1142,7 +1218,7 @@ local function parse_link(raw, add_mode, add_from)
+ 					local node = trim(v)
+ 					local dat = split(node, "://")
+ 					if dat and dat[1] and dat[2] then
+-						if dat[1] == 'ss' or dat[1] == 'trojan' then
++						if dat[1] == 'ss' or dat[1] == 'trojan' or dat[1] == 'trojan-go' then
+ 							result = processData(dat[1], dat[2], add_mode, add_from)
+ 						else
+ 							result = processData(dat[1], base64Decode(dat[2]), add_mode, add_from)

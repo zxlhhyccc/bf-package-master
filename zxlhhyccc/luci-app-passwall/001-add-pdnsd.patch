@@ -1,48 +1,55 @@
+diff --git a/Makefile b/Makefile
+index 311eb20..a009929 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -18,6 +18,8 @@ PKG_CONFIG_DEPENDS:= \
+@@ -14,9 +14,11 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
+ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
 +	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD \
-+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -37,12 +39,14 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,12 +37,17 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
 -	+chinadns-ng +dns2socks +dns2tcp +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
 +	+chinadns-ng +dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
- 	+microsocks +resolveip +tcping +unzip \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Brook:brook \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD:pdnsd-alt \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
- 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
-@@ -108,6 +112,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
- 	depends on !(arc||(arm&&TARGET_gemini)||armeb||mips||mips64||powerpc)
+ 	+microsocks +resolveip +tcping +unzip
+ 
+ define Package/$(PKG_NAME)/config
+ menu "Configuration"
+ 
++config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
++	bool "Include DNS2TCP"
++	select PACKAGE_dns2tcp
++	default y
++
+ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
+ 	bool "Iptables Transparent Proxy"
+ 	select PACKAGE_dnsmasq-full
+@@ -83,6 +90,11 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+ 	select PACKAGE_naiveproxy
  	default n
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
 +	bool "Include PDNSD"
-+	default y
-+
-+config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
-+	bool "Include DNS2TCP"
++	select PACKAGE_pdnsd-alt
 +	default y
 +
  config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
  	bool "Include Shadowsocks Libev Client"
- 	default y
+ 	select PACKAGE_shadowsocks-libev-ss-local
+diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
+index 8fe81c2..f3033b4 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -319,7 +319,10 @@ end
+@@ -307,7 +307,10 @@ end
  ---- DNS Forward Mode
  dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
  if api.is_finded("dns2tcp") then
@@ -54,15 +61,15 @@
  end
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
-@@ -384,6 +387,7 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
- o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
+@@ -373,6 +376,7 @@ o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
-+o:depends({dns_mode = "pdnsd"})
  o:depends({dns_mode = "dns2tcp"})
++o:depends({dns_mode = "pdnsd"})
  o:depends({dns_mode = "udp"})
  o:depends({xray_dns_mode = "tcp"})
-@@ -431,6 +435,8 @@ end
+ o:depends({xray_dns_mode = "tcp+doh"})
+@@ -419,6 +423,8 @@ end
  o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
  o.default = "1"
  o:depends({dns_mode = "dns2socks"})
@@ -71,17 +78,19 @@
  o:depends({dns_mode = "sing-box", remote_fakedns = false})
  o:depends({dns_mode = "xray"})
  o.rmempty = false
-@@ -450,6 +456,7 @@ if api.is_finded("chinadns-ng") then
- 			.. "</ul>"
+@@ -439,6 +445,7 @@ if api.is_finded("chinadns-ng") then
  	chinadns_ng_default_tag:depends("chinadns_ng", true)
  	o:depends({dns_mode = "dns2socks"})
-+	o:depends({dns_mode = "pdnsd"})
  	o:depends({dns_mode = "dns2tcp"})
++	o:depends({dns_mode = "pdnsd"})
  	o:depends({dns_mode = "sing-box", remote_fakedns = false})
  	o:depends({dns_mode = "xray"})
+ 	o:depends({dns_mode = "udp"})
+diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
+index 2b62674..176315a 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-@@ -153,7 +153,7 @@ o.validate = function(self, value, t)
+@@ -148,7 +148,7 @@ o.validate = function(self, value, t)
  	end
  end
  
@@ -90,9 +99,11 @@
  o.rawhtml = true
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
+diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
+index 0723269..89d65a1 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -259,6 +259,12 @@ msgstr "单进程"
+@@ -268,6 +268,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -105,9 +116,11 @@
  msgid "Default Proxy Mode"
  msgstr "默认代理模式"
  
+diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
+index 4093da7..65fd519 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1307,6 +1307,12 @@ start_dns() {
+@@ -1238,6 +1238,12 @@ start_dns() {
  				run_xray ${_args}
  			}
  		;;
@@ -120,7 +133,7 @@
  		dns2tcp)
  			use_tcp_node_resolve_dns=1
  			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1314,8 +1320,14 @@ start_dns() {
+@@ -1245,8 +1251,14 @@ start_dns() {
  		;;
  		udp)
  			use_udp_node_resolve_dns=1
@@ -135,7 +148,7 @@
  		;;
  		esac
  
-@@ -1371,6 +1383,74 @@ start_dns() {
+@@ -1304,6 +1316,74 @@ start_dns() {
  	esac
  }
  
@@ -210,8 +223,8 @@
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1771,7 +1851,7 @@ chnlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${L
- gfwlist=$(echo "${TCP_PROXY_MODE}${LOCALHOST_TCP_PROXY_MODE}${UDP_PROXY_MODE}${LOCALHOST_UDP_PROXY_MODE}" | grep "gfwlist")
+@@ -1703,7 +1783,7 @@ LOCALHOST_UDP_PROXY_MODE=$(config_t_get global localhost_udp_proxy_mode default)
+ [ "$LOCALHOST_UDP_PROXY_MODE" == "default" ] && LOCALHOST_UDP_PROXY_MODE=$UDP_PROXY_MODE
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
 -DNS_MODE=$(config_t_get global dns_mode dns2tcp)
