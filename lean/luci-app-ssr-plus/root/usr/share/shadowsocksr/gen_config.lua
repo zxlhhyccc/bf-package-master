@@ -392,7 +392,7 @@ local ss = {
 	reuse_port = true
 }
 local hysteria = {
-	server = (server.port_range and (server.server .. ":" .. server.port_range)) or (server.server_port and (server.server .. ":" .. server.server_port)),
+	server = (server.server_port and (server.port_range and (server.server .. ":" .. server.server_port .. "," .. server.port_range) or server.server .. ":" .. server.server_port) or (server.port_range and server.server .. ":" .. server.port_range or server.server .. ":443")),
 	bandwidth = (server.uplink_capacity or server.downlink_capacity) and {
 	up = tonumber(server.uplink_capacity) and tonumber(server.uplink_capacity) .. " mbps" or nil,
 	down = tonumber(server.downlink_capacity) and tonumber(server.downlink_capacity) .. " mbps" or nil 
@@ -401,12 +401,12 @@ local hysteria = {
 		listen = "0.0.0.0:" .. tonumber(socks_port),
 		disable_udp = false
 	} or nil,
-	transport = {
-		type = server.transport_protocol,
-		udp = { 
-			hopInterval = tonumber(server.hopinterval) and tonumber(server.hopinterval) .. "s" or "30s"
-		}
-	},
+	transport = (server.transport_protocol) and {
+		type = (server.transport_protocol) or udp,
+		udp = (server.port_range and (server.hopinterval) and {
+                        hopInterval = (server.port_range and (tonumber(server.hopinterval) .. "s") or nil)
+                } or nil)
+        } or nil,
 --[[			
 	tcpTProxy = (proto:find("tcp") and local_port ~= "0") and {
 					listen = "0.0.0.0:" .. tonumber(local_port)
@@ -434,7 +434,7 @@ local hysteria = {
 	auth = server.hy2_auth,
 	tls = (server.tls_host) and {
 		sni = server.tls_host,
-		alpn = server.tls_alpn or nil,
+		--alpn = server.tls_alpn or nil,
 		--sni = server.tls_host or (server.tls_host and server.tls_alpn) or nil,
 		insecure = (server.insecure == "1") and true or false,
 		pinSHA256 = (server.insecure == "1") and server.pinsha256 or nil
