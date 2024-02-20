@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 311eb20..a009929 100644
+index 311eb20..440cfd0 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,9 +14,11 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -14,7 +14,7 @@ index 311eb20..a009929 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,12 +37,17 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,7 +37,7 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -23,16 +23,18 @@ index 311eb20..a009929 100644
  	+microsocks +resolveip +tcping +unzip
  
  define Package/$(PKG_NAME)/config
- menu "Configuration"
+@@ -67,6 +69,11 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+ 	depends on PACKAGE_$(PKG_NAME)
+ 	default y if PACKAGE_firewall4
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
 +	bool "Include DNS2TCP"
 +	select PACKAGE_dns2tcp
 +	default y
 +
- config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
- 	bool "Iptables Transparent Proxy"
- 	select PACKAGE_dnsmasq-full
+ config PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy
+ 	bool "Include Haproxy"
+ 	select PACKAGE_haproxy
 @@ -83,6 +90,11 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
  	select PACKAGE_naiveproxy
  	default n
