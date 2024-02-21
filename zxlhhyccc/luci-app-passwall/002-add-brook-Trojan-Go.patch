@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 440cfd0..002320b 100644
+index 6882d13..9ddb641 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,6 +14,7 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -18,30 +18,44 @@ index 440cfd0..002320b 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_tuic_client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Geodata \
-@@ -69,6 +71,11 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+@@ -39,6 +41,7 @@ LUCI_PKGARCH:=all
+ LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
+ 	+chinadns-ng +dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
+ 	+microsocks +resolveip +tcping +unzip \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_Brook:brook \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
+@@ -54,6 +57,7 @@ LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_SingBox:sing-box \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_GO:trojan-go \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus:trojan-plus \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_tuic_client:tuic-client \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Geodata:v2ray-geoip \
+@@ -91,6 +95,10 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
  	depends on PACKAGE_$(PKG_NAME)
  	default y if PACKAGE_firewall4
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_Brook
 +	bool "Include Brook"
-+	select PACKAGE_brook
 +	default n
 +
  config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
  	bool "Include DNS2TCP"
- 	select PACKAGE_dns2tcp
-@@ -139,6 +146,11 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
- 	select PACKAGE_sing-box
+ 	default y
+@@ -146,6 +154,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
+ 	bool "Include Sing-Box"
  	default y if aarch64||arm||i386||x86_64
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_GO
 +	bool "Include Trojan-GO"
-+	select PACKAGE_trojan-go
 +	default n
 +
  config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus
  	bool "Include Trojan-Plus"
- 	select PACKAGE_trojan-plus
+ 	default y
 diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 index 176315a..8ed0397 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
