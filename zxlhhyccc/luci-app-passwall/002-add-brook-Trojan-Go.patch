@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 6882d13..9ddb641 100644
+index 5a027ab..15be522 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,6 +14,7 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -104,7 +104,7 @@ index 891513d..53ff953 100644
  	table.insert(hysteria2_type, s)
 diff --git a/luasrc/model/cbi/passwall/client/type/brook.lua b/luasrc/model/cbi/passwall/client/type/brook.lua
 new file mode 100644
-index 0000000..9755ca6
+index 0000000..f6a275e
 --- /dev/null
 +++ b/luasrc/model/cbi/passwall/client/type/brook.lua
 @@ -0,0 +1,40 @@
@@ -150,7 +150,7 @@ index 0000000..9755ca6
 +api.luci_types(arg[1], m, s, type_name, option_prefix)
 diff --git a/luasrc/model/cbi/passwall/client/type/trojan-go.lua b/luasrc/model/cbi/passwall/client/type/trojan-go.lua
 new file mode 100644
-index 0000000..5e1e3d6
+index 0000000..6d86c13
 --- /dev/null
 +++ b/luasrc/model/cbi/passwall/client/type/trojan-go.lua
 @@ -0,0 +1,119 @@
@@ -275,7 +275,7 @@ index 0000000..5e1e3d6
 +api.luci_types(arg[1], m, s, type_name, option_prefix)
 diff --git a/luasrc/model/cbi/passwall/server/type/brook.lua b/luasrc/model/cbi/passwall/server/type/brook.lua
 new file mode 100644
-index 0000000..ca76116
+index 0000000..a3f5e86
 --- /dev/null
 +++ b/luasrc/model/cbi/passwall/server/type/brook.lua
 @@ -0,0 +1,41 @@
@@ -322,7 +322,7 @@ index 0000000..ca76116
 +api.luci_types(arg[1], m, s, type_name, option_prefix)
 diff --git a/luasrc/model/cbi/passwall/server/type/trojan-go.lua b/luasrc/model/cbi/passwall/server/type/trojan-go.lua
 new file mode 100644
-index 0000000..195fc2b
+index 0000000..5d8464e
 --- /dev/null
 +++ b/luasrc/model/cbi/passwall/server/type/trojan-go.lua
 @@ -0,0 +1,159 @@
@@ -872,7 +872,7 @@ index 2540f66..762bb6e 100644
  			var m = parseNodeUrl(ssrurl);
  			var password = m.passwd;
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 89d65a1..de1b486 100644
+index 72530eb..321d013 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -916,6 +916,9 @@ msgstr "%s 程序路径"
@@ -899,10 +899,10 @@ index 89d65a1..de1b486 100644
  msgstr "Naiveproxy协议"
  
 diff --git a/root/usr/share/passwall/0_default_config b/root/usr/share/passwall/0_default_config
-index 8c202ed..0faaece 100644
+index a6f77a5..76388af 100644
 --- a/root/usr/share/passwall/0_default_config
 +++ b/root/usr/share/passwall/0_default_config
-@@ -76,6 +76,8 @@ config global_rules
+@@ -80,6 +80,8 @@ config global_rules
  config global_app
  	option singbox_file '/usr/bin/sing-box'
  	option xray_file '/usr/bin/xray'
@@ -912,7 +912,7 @@ index 8c202ed..0faaece 100644
  	option chinadns_ng '/usr/bin/chinadns-ng'
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 65fd519..f022c26 100755
+index 7df24a4..992513f 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -608,6 +608,10 @@ run_socks() {
@@ -975,7 +975,7 @@ index 65fd519..f022c26 100755
  		ssr)
  			lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type ssr-redir)" "ssr-redir" $log_file -c "$config_file" -v -U
-@@ -866,6 +898,16 @@ run_redir() {
+@@ -876,6 +908,16 @@ run_redir() {
  			}
  			run_xray flag=$_flag node=$node tcp_redir_port=$local_port config_file=$config_file log_file=$log_file ${_args}
  		;;
@@ -992,7 +992,7 @@ index 65fd519..f022c26 100755
  		trojan*)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-use_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -881,6 +923,19 @@ run_redir() {
+@@ -891,6 +933,19 @@ run_redir() {
  			lua $UTIL_NAIVE gen_config -node $node -run_type redir -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type naive)" naive $log_file "$config_file"
  		;;
@@ -1012,7 +1012,7 @@ index 65fd519..f022c26 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1791,8 +1846,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -1805,8 +1860,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  
@@ -1024,7 +1024,7 @@ index 65fd519..f022c26 100755
  [ -f "${RESOLVFILE}" ] && [ -s "${RESOLVFILE}" ] || RESOLVFILE=/tmp/resolv.conf.auto
  
 diff --git a/root/usr/share/passwall/subscribe.lua b/root/usr/share/passwall/subscribe.lua
-index bb28e71..cad9894 100755
+index 3be410b..2d22f2c 100755
 --- a/root/usr/share/passwall/subscribe.lua
 +++ b/root/usr/share/passwall/subscribe.lua
 @@ -27,6 +27,7 @@ local has_ss_rust = api.is_finded("sslocal")
@@ -1125,12 +1125,12 @@ index bb28e71..cad9894 100755
  		end
  	elseif szType == "ssd" then
  		result.type = "SS"
-@@ -1142,7 +1218,7 @@ local function parse_link(raw, add_mode, add_from)
- 					local node = trim(v)
- 					local dat = split(node, "://")
- 					if dat and dat[1] and dat[2] then
--						if dat[1] == 'ss' or dat[1] == 'trojan' then
-+						if dat[1] == 'ss' or dat[1] == 'trojan' or dat[1] == 'trojan-go' then
- 							result = processData(dat[1], dat[2], add_mode, add_from)
- 						else
- 							result = processData(dat[1], base64Decode(dat[2]), add_mode, add_from)
+@@ -1143,7 +1219,7 @@ local function parse_link(raw, add_mode, add_from)
+ 						local node = trim(v)
+ 						local dat = split(node, "://")
+ 						if dat and dat[1] and dat[2] then
+-							if dat[1] == 'ss' or dat[1] == 'trojan' then
++							if dat[1] == 'ss' or dat[1] == 'trojan' or dat[1] == 'trojan-go' then
+ 								result = processData(dat[1], dat[2], add_mode, add_from)
+ 							else
+ 								result = processData(dat[1], base64Decode(dat[2]), add_mode, add_from)
