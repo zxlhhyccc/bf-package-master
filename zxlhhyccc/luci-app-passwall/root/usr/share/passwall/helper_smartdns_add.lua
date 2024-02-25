@@ -7,6 +7,7 @@ local SMARTDNS_CONF = var["-SMARTDNS_CONF"]
 local LOCAL_GROUP = var["-LOCAL_GROUP"]
 local REMOTE_GROUP = var["-REMOTE_GROUP"]
 local REMOTE_PROXY_SERVER = var["-REMOTE_PROXY_SERVER"]
+local REMOTE_EXCLUDE = var["-REMOTE_EXCLUDE"]
 local TUN_DNS = var["-TUN_DNS"]
 local TCP_NODE = var["-TCP_NODE"]
 local USE_DIRECT_LIST = var["-USE_DIRECT_LIST"]
@@ -145,7 +146,7 @@ end
 
 local cache_text = ""
 local new_rules = luci.sys.exec("echo -n $(find /usr/share/passwall/rules -type f | xargs md5sum)")
-local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. TUN_DNS .. USE_DIRECT_LIST .. USE_PROXY_LIST .. USE_BLOCK_LIST .. USE_GFW_LIST .. CHN_LIST .. DEFAULT_PROXY_MODE .. NO_PROXY_IPV6 .. new_rules
+local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. REMOTE_EXCLUDE .. TUN_DNS .. USE_DIRECT_LIST .. USE_PROXY_LIST .. USE_BLOCK_LIST .. USE_GFW_LIST .. CHN_LIST .. DEFAULT_PROXY_MODE .. NO_PROXY_IPV6 .. new_rules
 if fs.access(CACHE_TEXT_FILE) then
 	for line in io.lines(CACHE_TEXT_FILE) do
 		cache_text = line
@@ -174,7 +175,11 @@ if not fs.access(CACHE_DNS_FILE) then
 	if true then
 		string.gsub(TUN_DNS, '[^' .. "|" .. ']+', function(w)
 			local server_dns = w
-			local server_param = string.format("server %s -group %s -exclude-default-group -proxy %s", "%s", REMOTE_GROUP, proxy_server_name)
+			local server_param = string.format("server %s -group %s -proxy %s", "%s", REMOTE_GROUP, proxy_server_name)
+
+			if REMOTE_EXCLUDE == "1" then
+				server_param = server_param .. " -exclude-default-group"
+			end
 
 			local isHTTPS = w:find("https://")
 			if isHTTPS and isHTTPS == 1 then

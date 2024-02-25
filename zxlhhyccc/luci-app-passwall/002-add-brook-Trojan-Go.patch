@@ -875,7 +875,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 72530eb..321d013 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -916,6 +916,9 @@ msgstr "%s 程序路径"
+@@ -922,6 +922,9 @@ msgstr "%s 程序路径"
  msgid "%s Client App Path"
  msgstr "%s 客户端程序路径"
  
@@ -885,7 +885,7 @@ index 72530eb..321d013 100644
  msgid "alternate API URL for version checking"
  msgstr "用于版本检查的 API URL"
  
-@@ -1135,6 +1138,12 @@ msgstr "插件名称"
+@@ -1141,6 +1144,12 @@ msgstr "插件名称"
  msgid "Plugin Arguments"
  msgstr "插件参数"
  
@@ -1012,7 +1012,7 @@ index 7df24a4..992513f 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1805,8 +1860,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -1806,8 +1861,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  

@@ -302,6 +302,10 @@ if api.is_finded("smartdns") then
 		end
 		return DynamicList.write(self, section, t)
 	end
+
+	o = s:taboption("DNS", Flag, "smartdns_exclude_default_group", translate("Exclude Default Group"), translate("Exclude DNS Server from default group."))
+	o.default = "0"
+	o:depends("dns_shunt", "smartdns")
 end
 
 ---- DNS Forward Mode
