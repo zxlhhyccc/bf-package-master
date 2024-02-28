@@ -2931,9 +2931,6 @@ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
 msgid "(Support Vless By Pinyun)"
 msgstr "(由品云提供，支持 Vless)"
 
-msgid "(Support Vless)"
-msgstr "(支持 Vless)"
-
 msgid "Meta Settings"
 msgstr "Meta 设置"
 
@@ -3242,6 +3239,9 @@ msgstr "大陆域名 DNS 服务器"
 
 msgid "Specify DNS Server For CN Domain Lists, Only One IP Server Address Support"
 msgstr "指定大陆域名的 DNS 服务器，只支持填写一个IP地址"
+
+msgid "Warning: Dnsmasq Work is Unnormal, Setting The Firewall DNS Hijacking Rules..."
+msgstr "警告：检测到 Dnsmasq 工作异常，设置防火墙 DNS 劫持规则..."
 
 msgid "Tip: Dnsmasq Work is Normal, Restore The Firewall DNS Hijacking Rules..."
 msgstr "提示：检测到 Dnsmasq 正常工作，还原防火墙 DNS 劫持规则..."
