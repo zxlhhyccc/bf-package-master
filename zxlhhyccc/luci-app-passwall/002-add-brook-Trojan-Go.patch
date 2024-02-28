@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 5a027ab..15be522 100644
+index ce6d885..75f562f 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,6 +14,7 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -34,8 +34,8 @@ index 5a027ab..15be522 100644
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus:trojan-plus \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_tuic_client:tuic-client \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Geodata:v2ray-geoip \
-@@ -91,6 +95,10 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
- 	depends on PACKAGE_$(PKG_NAME)
+@@ -90,6 +94,10 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+ 	select PACKAGE_kmod-nft-nat
  	default y if PACKAGE_firewall4
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_Brook
@@ -45,7 +45,7 @@ index 5a027ab..15be522 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
  	bool "Include DNS2TCP"
  	default y
-@@ -146,6 +154,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
+@@ -145,6 +153,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
  	bool "Include Sing-Box"
  	default y if aarch64||arm||i386||x86_64
  
@@ -626,7 +626,7 @@ index 848b689..9961e81 100644
  end
  
 diff --git a/luasrc/view/passwall/node_list/link_share_man.htm b/luasrc/view/passwall/node_list/link_share_man.htm
-index 2540f66..762bb6e 100644
+index 22be258..535b0ca 100644
 --- a/luasrc/view/passwall/node_list/link_share_man.htm
 +++ b/luasrc/view/passwall/node_list/link_share_man.htm
 @@ -140,6 +140,12 @@ local api = require "luci.passwall.api"
@@ -642,7 +642,7 @@ index 2540f66..762bb6e 100644
  		} else if (v_type === "Hysteria2") {
  			dom_prefix = "hysteria2_"
  			protocol = "hysteria2"
-@@ -340,6 +346,74 @@ local api = require "luci.passwall.api"
+@@ -348,6 +354,74 @@ local api = require "luci.passwall.api"
  				params = params.substring(1);
  			}
  			url += params;
@@ -717,7 +717,7 @@ index 2540f66..762bb6e 100644
  		} else if ((v_type === "Hysteria2") || (v_type === "sing-box" && opt.get(dom_prefix + "protocol").value === "hysteria2")) {
  			protocol = "hysteria2"
  			var v_port = opt.get(dom_prefix + "port");
-@@ -651,6 +725,9 @@ local api = require "luci.passwall.api"
+@@ -659,6 +733,9 @@ local api = require "luci.passwall.api"
  					queryParam[decodeURIComponent(params[0]).toLowerCase()] = decodeURIComponent(params[1] || '');
  				}
  			}
@@ -727,7 +727,7 @@ index 2540f66..762bb6e 100644
  			opt.set(dom_prefix + 'address', m.hostname);
  			opt.set(dom_prefix + 'port', m.port || "443");
  			opt.set(dom_prefix + 'password', decodeURIComponent(password));
-@@ -660,6 +737,80 @@ local api = require "luci.passwall.api"
+@@ -668,6 +745,80 @@ local api = require "luci.passwall.api"
  			if (m.hash) {
  				opt.set('remarks', decodeURI(m.hash.substr(1)));
  			}
@@ -808,7 +808,7 @@ index 2540f66..762bb6e 100644
  		}
  		if (ssu[0] === "vmess") {
  			var sstr = b64DecodeUnicode(ssu[1]);
-@@ -811,6 +962,62 @@ local api = require "luci.passwall.api"
+@@ -855,6 +1006,62 @@ local api = require "luci.passwall.api"
  				opt.set('remarks', decodeURI(m.hash.substr(1)));
  			}
  		}
@@ -872,7 +872,7 @@ index 2540f66..762bb6e 100644
  			var m = parseNodeUrl(ssrurl);
  			var password = m.passwd;
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 72530eb..321d013 100644
+index 0922428..aad8931 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -922,6 +922,9 @@ msgstr "%s 程序路径"
@@ -912,7 +912,7 @@ index a6f77a5..76388af 100644
  	option chinadns_ng '/usr/bin/chinadns-ng'
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 7df24a4..992513f 100755
+index ed01571..f53e38a 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -608,6 +608,10 @@ run_socks() {
@@ -1024,7 +1024,7 @@ index 7df24a4..992513f 100755
  [ -f "${RESOLVFILE}" ] && [ -s "${RESOLVFILE}" ] || RESOLVFILE=/tmp/resolv.conf.auto
  
 diff --git a/root/usr/share/passwall/subscribe.lua b/root/usr/share/passwall/subscribe.lua
-index 3be410b..2d22f2c 100755
+index bc68928..dbf7e64 100755
 --- a/root/usr/share/passwall/subscribe.lua
 +++ b/root/usr/share/passwall/subscribe.lua
 @@ -27,6 +27,7 @@ local has_ss_rust = api.is_finded("sslocal")
@@ -1035,7 +1035,7 @@ index 3be410b..2d22f2c 100755
  local has_hysteria2 = api.finded_com("hysteria")
  local allowInsecure_default = nil
  local ss_aead_type_default = uci:get(appname, "@global_subscribe[0]", "ss_aead_type") or "shadowsocks-libev"
-@@ -605,7 +606,23 @@ local function processData(szType, content, add_mode, add_from)
+@@ -620,7 +621,23 @@ local function processData(szType, content, add_mode, add_from)
  			local peer, sni = nil, ""
  			if params.peer then peer = params.peer end
  			sni = params.sni and params.sni or ""
@@ -1059,7 +1059,7 @@ index 3be410b..2d22f2c 100755
  			result.tls = '1'
  			result.tls_serverName = peer and peer or sni
  			if params.allowinsecure then
-@@ -627,6 +644,65 @@ local function processData(szType, content, add_mode, add_from)
+@@ -642,6 +659,65 @@ local function processData(szType, content, add_mode, add_from)
  		elseif trojan_type_default == "xray" and has_xray then
  			result.type = 'Xray'
  			result.protocol = 'trojan'
@@ -1125,7 +1125,7 @@ index 3be410b..2d22f2c 100755
  		end
  	elseif szType == "ssd" then
  		result.type = "SS"
-@@ -1143,7 +1219,7 @@ local function parse_link(raw, add_mode, add_from)
+@@ -1173,7 +1249,7 @@ local function parse_link(raw, add_mode, add_from)
  						local node = trim(v)
  						local dat = split(node, "://")
  						if dat and dat[1] and dat[2] then
