@@ -1,0 +1,15 @@
+{
+	"luci-app-alpha-config": {
+		"description": "Grant access to alpha config",
+		"read": {
+			"uci": [ "alpha" ]
+		},
+		"write": {
+			"file": {
+				"/www/luci-static/alpha/background/*": [ "write" ],
+				"/bin/chmod *": [ "exec" ]
+			},
+			"uci": [ "alpha" ]
+		}
+	}
+}
