@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index ce6d885..75f562f 100644
+index 9c240cd..4d98378 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,6 +14,7 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -34,8 +34,8 @@ index ce6d885..75f562f 100644
  	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus:trojan-plus \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_tuic_client:tuic-client \
  	+PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Geodata:v2ray-geoip \
-@@ -90,6 +94,10 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
- 	select PACKAGE_kmod-nft-nat
+@@ -91,6 +95,10 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+ 	depends on PACKAGE_$(PKG_NAME)
  	default y if PACKAGE_firewall4
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_Brook
@@ -45,7 +45,7 @@ index ce6d885..75f562f 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
  	bool "Include DNS2TCP"
  	default y
-@@ -145,6 +153,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
+@@ -146,6 +154,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
  	bool "Include Sing-Box"
  	default y if aarch64||arm||i386||x86_64
  
@@ -872,10 +872,10 @@ index 22be258..535b0ca 100644
  			var m = parseNodeUrl(ssrurl);
  			var password = m.passwd;
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 0922428..aad8931 100644
+index 2ac33a4..6ecec5a 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -922,6 +922,9 @@ msgstr "%s 程序路径"
+@@ -931,6 +931,9 @@ msgstr "%s 程序路径"
  msgid "%s Client App Path"
  msgstr "%s 客户端程序路径"
  
@@ -885,7 +885,7 @@ index 0922428..aad8931 100644
  msgid "alternate API URL for version checking"
  msgstr "用于版本检查的 API URL"
  
-@@ -1141,6 +1144,12 @@ msgstr "插件名称"
+@@ -1150,6 +1153,12 @@ msgstr "插件名称"
  msgid "Plugin Arguments"
  msgstr "插件参数"
  
@@ -912,7 +912,7 @@ index a6f77a5..76388af 100644
  	option chinadns_ng '/usr/bin/chinadns-ng'
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index ed01571..f53e38a 100755
+index fbc6a37..c8203de 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -608,6 +608,10 @@ run_socks() {
@@ -975,7 +975,7 @@ index ed01571..f53e38a 100755
  		ssr)
  			lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type ssr-redir)" "ssr-redir" $log_file -c "$config_file" -v -U
-@@ -876,6 +908,16 @@ run_redir() {
+@@ -868,6 +900,16 @@ run_redir() {
  			}
  			run_xray flag=$_flag node=$node tcp_redir_port=$local_port config_file=$config_file log_file=$log_file ${_args}
  		;;
@@ -992,7 +992,7 @@ index ed01571..f53e38a 100755
  		trojan*)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-use_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -891,6 +933,19 @@ run_redir() {
+@@ -883,6 +925,19 @@ run_redir() {
  			lua $UTIL_NAIVE gen_config -node $node -run_type redir -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type naive)" naive $log_file "$config_file"
  		;;
@@ -1012,7 +1012,7 @@ index ed01571..f53e38a 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1806,8 +1861,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -1798,8 +1853,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  

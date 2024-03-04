@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 12f3a64..ce6d885 100644
+index 86b0471..9c240cd 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,9 +14,11 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -14,7 +14,7 @@ index 12f3a64..ce6d885 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,8 +37,30 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,12 +37,33 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -47,8 +47,23 @@ index 12f3a64..ce6d885 100644
  
  define Package/$(PKG_NAME)/config
  menu "Configuration"
-@@ -66,96 +90,84 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+-	depends on PACKAGE_$(PKG_NAME)
+ 
+ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
+ 	bool "Iptables Transparent Proxy"
+@@ -54,6 +77,7 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
+ 	select PACKAGE_iptables-mod-socket
+ 	select PACKAGE_iptables-mod-tproxy
+ 	select PACKAGE_kmod-ipt-nat
++	depends on PACKAGE_$(PKG_NAME)
+ 	default y if ! PACKAGE_firewall4
+ 
+ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+@@ -64,98 +88,87 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+ 	select PACKAGE_kmod-nft-socket
+ 	select PACKAGE_kmod-nft-tproxy
  	select PACKAGE_kmod-nft-nat
++	depends on PACKAGE_$(PKG_NAME)
  	default y if PACKAGE_firewall4
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
@@ -153,7 +168,7 @@ index 12f3a64..ce6d885 100644
  
  endmenu
 diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index 972b3af..a5b6329 100644
+index 26572b9..736efe4 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -311,7 +311,10 @@ end
@@ -199,7 +214,7 @@ index 2b62674..176315a 100644
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 576f1c8..0922428 100644
+index c91dce8..2ac33a4 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -274,6 +274,12 @@ msgstr "关闭（不使用）"
@@ -216,10 +231,10 @@ index 576f1c8..0922428 100644
  msgstr "默认代理模式"
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 5bb7218..ed01571 100755
+index 9c2a4d9..fbc6a37 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1269,6 +1269,12 @@ start_dns() {
+@@ -1261,6 +1261,12 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -232,7 +247,7 @@ index 5bb7218..ed01571 100755
  	dns2tcp)
  		use_tcp_node_resolve_dns=1
  		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1276,8 +1282,14 @@ start_dns() {
+@@ -1268,8 +1274,14 @@ start_dns() {
  	;;
  	udp)
  		use_udp_node_resolve_dns=1
@@ -247,7 +262,7 @@ index 5bb7218..ed01571 100755
  	;;
  	esac
  
-@@ -1316,6 +1328,74 @@ start_dns() {
+@@ -1308,6 +1320,74 @@ start_dns() {
  		-NO_LOGIC_LOG ${NO_LOGIC_LOG:-0}
  }
  
@@ -322,7 +337,7 @@ index 5bb7218..ed01571 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1718,7 +1798,7 @@ LOCALHOST_UDP_PROXY_MODE=$(config_t_get global localhost_udp_proxy_mode default)
+@@ -1710,7 +1790,7 @@ LOCALHOST_UDP_PROXY_MODE=$(config_t_get global localhost_udp_proxy_mode default)
  [ "${LOCALHOST_UDP_PROXY_MODE}" != "disable" ] && LOCALHOST_UDP_PROXY_MODE="proxy"
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
