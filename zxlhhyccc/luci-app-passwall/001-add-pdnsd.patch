@@ -234,7 +234,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index 9c2a4d9..fbc6a37 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1261,6 +1261,12 @@ start_dns() {
+@@ -1253,6 +1253,12 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -247,7 +247,7 @@ index 9c2a4d9..fbc6a37 100755
  	dns2tcp)
  		use_tcp_node_resolve_dns=1
  		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1268,8 +1274,14 @@ start_dns() {
+@@ -1260,8 +1266,14 @@ start_dns() {
  	;;
  	udp)
  		use_udp_node_resolve_dns=1
@@ -262,7 +262,7 @@ index 9c2a4d9..fbc6a37 100755
  	;;
  	esac
  
-@@ -1308,6 +1320,74 @@ start_dns() {
+@@ -1300,6 +1312,74 @@ start_dns() {
  		-NO_LOGIC_LOG ${NO_LOGIC_LOG:-0}
  }
  

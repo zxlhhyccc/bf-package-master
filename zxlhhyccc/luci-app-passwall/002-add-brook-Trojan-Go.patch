@@ -915,7 +915,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index fbc6a37..c8203de 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -608,6 +608,10 @@ run_socks() {
+@@ -607,6 +607,10 @@ run_socks() {
  		[ -n "$relay_port" ] && _args="${_args} -server_host $server_host -server_port $port"
  		run_xray flag=$flag node=$node socks_port=$socks_port config_file=$config_file log_file=$log_file ${_args}
  	;;
@@ -926,7 +926,7 @@ index fbc6a37..c8203de 100755
  	trojan*)
  		lua $UTIL_TROJAN gen_config -node $node -run_type client -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type ${type})" "${type}" $log_file -c "$config_file"
-@@ -616,6 +620,21 @@ run_socks() {
+@@ -615,6 +619,21 @@ run_socks() {
  		lua $UTIL_NAIVE gen_config -node $node -run_type socks -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type naive)" naive $log_file "$config_file"
  	;;
@@ -948,7 +948,7 @@ index fbc6a37..c8203de 100755
  	ssr)
  		lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type ssr-local)" "ssr-local" $log_file -c "$config_file" -v -u
-@@ -714,6 +733,11 @@ run_redir() {
+@@ -713,6 +732,11 @@ run_redir() {
  		xray)
  			run_xray flag=UDP node=$node udp_redir_port=$local_port config_file=$config_file log_file=$log_file
  		;;
@@ -960,7 +960,7 @@ index fbc6a37..c8203de 100755
  		trojan*)
  			local loglevel=$(config_t_get global trojan_loglevel "2")
  			lua $UTIL_TROJAN gen_config -node $node -run_type nat -local_addr "0.0.0.0" -local_port $local_port -loglevel $loglevel > $config_file
-@@ -722,6 +746,14 @@ run_redir() {
+@@ -721,6 +745,14 @@ run_redir() {
  		naiveproxy)
  			echolog "Naiveproxy不支持UDP转发！"
  		;;
@@ -975,7 +975,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type ssr-redir)" "ssr-redir" $log_file -c "$config_file" -v -U
-@@ -868,6 +900,16 @@ run_redir() {
+@@ -867,6 +899,16 @@ run_redir() {
  			}
  			run_xray flag=$_flag node=$node tcp_redir_port=$local_port config_file=$config_file log_file=$log_file ${_args}
  		;;
@@ -992,7 +992,7 @@ index fbc6a37..c8203de 100755
  		trojan*)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-use_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -883,6 +925,19 @@ run_redir() {
+@@ -882,6 +924,19 @@ run_redir() {
  			lua $UTIL_NAIVE gen_config -node $node -run_type redir -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type naive)" naive $log_file "$config_file"
  		;;
