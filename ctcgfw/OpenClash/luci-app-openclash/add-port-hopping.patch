@@ -1,5 +1,3 @@
-diff --git a/luasrc/model/cbi/openclash/servers-config.lua b/luasrc/model/cbi/openclash/servers-config.lua
-index 47e930f..b16da65 100644
 --- a/luasrc/model/cbi/openclash/servers-config.lua
 +++ b/luasrc/model/cbi/openclash/servers-config.lua
 @@ -81,6 +81,10 @@ local hysteria_protocols = {
@@ -139,8 +137,6 @@ index 47e930f..b16da65 100644
  o:depends("type", "tuic")
  
  -- [[ TFO ]]--
-diff --git a/root/usr/share/openclash/yml_proxys_get.sh b/root/usr/share/openclash/yml_proxys_get.sh
-index 0cfe1a8..da34b85 100644
 --- a/root/usr/share/openclash/yml_proxys_get.sh
 +++ b/root/usr/share/openclash/yml_proxys_get.sh
 @@ -1027,7 +1027,8 @@ do
@@ -331,8 +327,6 @@ index 0cfe1a8..da34b85 100644
 -del_lock
 \ No newline at end of file
 +del_lock
-diff --git a/root/usr/share/openclash/yml_proxys_set.sh b/root/usr/share/openclash/yml_proxys_set.sh
-index 2da4b1c..b9b1bd7 100644
 --- a/root/usr/share/openclash/yml_proxys_set.sh
 +++ b/root/usr/share/openclash/yml_proxys_set.sh
 @@ -246,6 +246,7 @@ yml_servers_set()
@@ -407,3 +401,21 @@ index 2da4b1c..b9b1bd7 100644
  EOF
        fi
     fi
+--- a/po/zh-cn/openclash.zh-cn.po
++++ b/po/zh-cn/openclash.zh-cn.po
+@@ -768,6 +768,15 @@ msgstr "服务器节点配置"
+ msgid "Edit Rule Providers"
+ msgstr "编辑规则集配置"
+ 
++msgid "Enable Port Hopping"
++msgstr "启用端口跃迁"
++
++msgid "Enable Transport Protocol Settings"
++msgstr "启用传输协议设置"
++
++msgid "Hysterir QUIC parameters"
++msgstr "QUIC 参数"
++
+ msgid "Rule Providers Type"
+ msgstr "规则集类型"
+ 
