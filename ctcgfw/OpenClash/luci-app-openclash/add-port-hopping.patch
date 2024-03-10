@@ -1,0 +1,409 @@
+diff --git a/luasrc/model/cbi/openclash/servers-config.lua b/luasrc/model/cbi/openclash/servers-config.lua
+index 47e930f..b16da65 100644
+--- a/luasrc/model/cbi/openclash/servers-config.lua
++++ b/luasrc/model/cbi/openclash/servers-config.lua
+@@ -81,6 +81,10 @@ local hysteria_protocols = {
+ 	"faketcp"
+ }
+ 
++local hysteria2_protocols = {
++	"udp"
++}
++
+ local obfs = {
+ 	"plain",
+ 	"http_simple",
+@@ -157,12 +161,19 @@ o.datatype = "port"
+ o.rmempty = false
+ o.default = "443"
+ 
++o = s:option(Flag, "flag_port_hopping", translate("Enable Port Hopping"))
++o:depends("type", "hysteria")
++o:depends("type", "hysteria2")
++o.rmempty = true
++o.default = "0"
++
+ o = s:option(Value, "ports", translate("Port Hopping"))
+ o.datatype = "portrange"
+ o.rmempty = true
+ o.default = "20000-40000"
+ o.placeholder = translate("20000-40000")
+-o:depends("type", "hysteria")
++o:depends({type = "hysteria", flag_port_hopping = true})
++o:depends({type = "hysteria2", flag_port_hopping = true})
+ 
+ o = s:option(Value, "password", translate("Password"))
+ o.password = true
+@@ -170,6 +181,7 @@ o.rmempty = false
+ o:depends("type", "ss")
+ o:depends("type", "ssr")
+ o:depends("type", "trojan")
++--o:depends("type", "hysteria")
+ o:depends("type", "hysteria2")
+ 
+ -- [[ Tuic ]]--
+@@ -278,10 +290,21 @@ o.default = "1420"
+ o.placeholder = translate("1420")
+ o:depends("type", "wireguard")
+ 
++o = s:option(Flag, "flag_transport", translate("Enable Transport Protocol Settings"))
++o:depends("type", "hysteria")
++o:depends("type", "hysteria2")
++o.rmempty = true
++o.default = "0"
++
+ o = s:option(ListValue, "hysteria_protocol", translate("Protocol"))
+ for _, v in ipairs(hysteria_protocols) do o:value(v) end
+ o.rmempty = false
+-o:depends("type", "hysteria")
++o:depends({type = "hysteria", flag_transport = true})
++
++o = s:option(ListValue, "hysteria2_protocol", translate("Protocol"))
++for _, v in ipairs(hysteria2_protocols) do o:value(v) end
++o.rmempty = false
++o:depends({type = "hysteria2", flag_transport = true})
+ 
+ o = s:option(Value, "hysteria_up", translate("up"))
+ o.rmempty = false
+@@ -682,18 +705,47 @@ o:depends("type", "hysteria")
+ o:depends("type", "hysteria2")
+ 
+ -- [[ recv_window_conn ]]--
++o = s:option(Flag, "flag_quicparam", translate("Hysterir QUIC parameters"))
++o:depends("type", "hysteria")
++--o:depends("type", "hysteria2")
++o.rmempty = true
++o.default = "0"
++
+ o = s:option(Value, "recv_window_conn", translate("recv_window_conn"))
+ o.rmempty = true
+ o.placeholder = translate("QUIC stream receive window")
+ o.datatype = "uinteger"
+-o:depends("type", "hysteria")
++o:depends({type = "hysteria", flag_quicparam = true})
++--o:depends({type = "hysteria2", flag_quicparam = true})
+ 
+ -- [[ recv_window ]]--
+ o = s:option(Value, "recv_window", translate("recv_window"))
+ o.rmempty = true
+ o.placeholder = translate("QUIC connection receive window")
+ o.datatype = "uinteger"
+-o:depends("type", "hysteria")
++o:depends({type = "hysteria", flag_quicparam = true})
++--o:depends({type = "hysteria2", flag_quicparam = true})
++
++-- [[ maxidletimeout ]]--
++--o = s:option(Value, "maxidletimeout", translate("QUIC maxIdleTimeout(Unit:second)"))
++--o:depends({type = "hysteria2", flag_quicparam = "1"})
++--o.rmempty = true
++--o.datatype = "uinteger"
++--o.default = "30"
++
++--o = s:option(Value, "keepaliveperiod", translate("The keep-alive period.(Unit:second)"))
++--o:depends({type = "hysteria2", flag_quicparam = "1"})
++--o.rmempty = true
++--o.datatype = "uinteger"
++--o.default = "10"
++
++-- [[ hop_interval ]]--
++o = s:option(Value, "hop_interval", translate("Hop Interval"))
++o.rmempty = true
++o.default = "10"
++o:depends({type = "hysteria", flag_transport = true, flag_port_hopping = true})
++--o:depends({type = "hysteria2", flag_transport = true, flag_port_hopping = true})
++o:depends({type = "hysteria2", flag_port_hopping = true})
+ 
+ -- [[ disable_mtu_discovery ]]--
+ o = s:option(ListValue, "disable_mtu_discovery", translate("disable_mtu_discovery"))
+@@ -701,13 +753,8 @@ o.rmempty = true
+ o:value("true")
+ o:value("false")
+ o.default = "false"
+-o:depends("type", "hysteria")
+-
+--- [[ hop_interval ]]--
+-o = s:option(Value, "hop_interval", translate("Hop Interval"))
+-o.rmempty = true
+-o.default = "10"
+-o:depends("type", "hysteria")
++o:depends({type = "hysteria", flag_quicparam = true})
++---o:depends({type = "hysteria2", flag_quicparam = true})
+ 
+ o = s:option(ListValue, "packet-addr", translate("Packet-Addr")..translate("(Only Meta Core)"))
+ o.rmempty = true
+@@ -742,6 +789,7 @@ o.default = "true"
+ o:value("true")
+ o:value("false")
+ o:depends("type", "hysteria")
++--o:depends("type", "hysteria2")
+ o:depends("type", "tuic")
+ 
+ -- [[ TFO ]]--
+diff --git a/root/usr/share/openclash/yml_proxys_get.sh b/root/usr/share/openclash/yml_proxys_get.sh
+index 0cfe1a8..da34b85 100644
+--- a/root/usr/share/openclash/yml_proxys_get.sh
++++ b/root/usr/share/openclash/yml_proxys_get.sh
+@@ -1027,7 +1027,8 @@ do
+       }.join
+    end;
+ 
+-   if '$server_type' == 'hysteria' or '$server_type' == 'hysteria2' then
++   if '$server_type' == 'hysteria' then
++      #hysteria
+       Thread.new{
+       #hysteria_protocol
+       if Value['proxies'][$count].key?('protocol') then
+@@ -1036,6 +1037,34 @@ do
+       end
+       }.join
+ 
++   if '$server_type' == 'hysteria2' then
++      #hysteria2
++      Thread.new{
++      #hysteria2_protocol
++      if Value['proxies'][$count].key?('protocol') then
++         hysteria2_protocol = '${uci_set}hysteria2_protocol=\"' + Value['proxies'][$count]['protocol'].to_s + '\"'
++         system(hysteria2_protocol)
++      end
++      }.join
++
++   #  Thread.new{
++   #   #maxidletimeout
++   #   if Value['proxies'][$count].key?('maxidletimeout') then
++   #      maxidletimeout = '${uci_set}maxidletimeout=\"' + Value['proxies'][$count]['maxidletimeout'].to_s + '\"'
++   #      system(maxidletimeout)
++   #   end
++   #   }.join
++
++   #   Thread.new{
++   #   #keepaliveperiod
++   #   if Value['proxies'][$count].key?('keepaliveperiod') then
++   #      keepaliveperiod = '${uci_set}keepaliveperiod=\"' + Value['proxies'][$count]['keepaliveperiod'].to_s + '\"'
++   #      system(keepaliveperiod)
++   #   end
++   #   }.join
++
++   if '$server_type' == 'hysteria' or '$server_type' == 'hysteria2' then
++      #hysteria  hysteria2
+       Thread.new{
+       #hysteria_up
+       if Value['proxies'][$count].key?('up') then
+@@ -1044,6 +1073,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #hysteria_down
+       if Value['proxies'][$count].key?('down') then
+@@ -1052,6 +1082,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #skip-cert-verify
+       if Value['proxies'][$count].key?('skip-cert-verify') then
+@@ -1060,6 +1091,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #sni
+       if Value['proxies'][$count].key?('sni') then
+@@ -1068,6 +1100,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #alpn
+       if Value['proxies'][$count].key?('alpn') then
+@@ -1085,6 +1118,7 @@ do
+       end;
+       }.join
+ 
++      #hysteria
+       Thread.new{
+       #recv_window_conn
+       if Value['proxies'][$count].key?('recv-window-conn') then
+@@ -1093,6 +1127,7 @@ do
+       end
+       }.join
+ 
++      #hysteria
+       Thread.new{
+       #recv_window
+       if Value['proxies'][$count].key?('recv-window') then
+@@ -1101,6 +1136,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #hysteria_obfs
+       if Value['proxies'][$count].key?('obfs') then
+@@ -1109,6 +1145,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #hysteria_obfs_password
+       if Value['proxies'][$count].key?('obfs-password') then
+@@ -1117,6 +1154,7 @@ do
+       end
+       }.join
+ 
++      #hysteria
+       Thread.new{
+       #hysteria_auth
+       if Value['proxies'][$count].key?('auth') then
+@@ -1125,6 +1163,7 @@ do
+       end
+       }.join
+ 
++      #hysteria
+       Thread.new{
+       #hysteria_auth_str
+       if Value['proxies'][$count].key?('auth-str') then
+@@ -1133,6 +1172,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #hysteria_ca
+       if Value['proxies'][$count].key?('ca') then
+@@ -1141,6 +1181,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #hysteria_ca_str
+       if Value['proxies'][$count].key?('ca-str') then
+@@ -1149,6 +1190,7 @@ do
+       end
+       }.join
+ 
++      #hysteria
+       Thread.new{
+       #disable_mtu_discovery
+       if Value['proxies'][$count].key?('disable-mtu-discovery') then
+@@ -1157,6 +1199,7 @@ do
+       end
+       }.join
+ 
++      #hysteria
+       Thread.new{
+       #fast_open
+       if Value['proxies'][$count].key?('fast-open') then
+@@ -1165,6 +1208,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #fingerprint
+       if Value['proxies'][$count].key?('fingerprint') then
+@@ -1173,6 +1217,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #ports
+       if Value['proxies'][$count].key?('ports') then
+@@ -1181,6 +1226,7 @@ do
+       end
+       }.join
+ 
++      #hysteria  hysteria2
+       Thread.new{
+       #hop-interval
+       if Value['proxies'][$count].key?('hop-interval') then
+@@ -1573,4 +1619,4 @@ SLOG_CLEAN
+ rm -rf /tmp/match_servers.list 2>/dev/null
+ rm -rf /tmp/match_provider.list 2>/dev/null
+ rm -rf /tmp/yaml_other_group.yaml 2>/dev/null
+-del_lock
+\ No newline at end of file
++del_lock
+diff --git a/root/usr/share/openclash/yml_proxys_set.sh b/root/usr/share/openclash/yml_proxys_set.sh
+index 2da4b1c..b9b1bd7 100644
+--- a/root/usr/share/openclash/yml_proxys_set.sh
++++ b/root/usr/share/openclash/yml_proxys_set.sh
+@@ -246,6 +246,7 @@ yml_servers_set()
+    config_get "vless_flow" "$section" "vless_flow" ""
+    config_get "http_headers" "$section" "http_headers" ""
+    config_get "hysteria_protocol" "$section" "hysteria_protocol" ""
++   config_get "hysteria2_protocol" "$section" "hysteria2_protocol" ""
+    config_get "hysteria_up" "$section" "hysteria_up" ""
+    config_get "hysteria_down" "$section" "hysteria_down" ""
+    config_get "hysteria_alpn" "$section" "hysteria_alpn" ""
+@@ -256,6 +257,8 @@ yml_servers_set()
+    config_get "hysteria_ca_str" "$section" "hysteria_ca_str" ""
+    config_get "recv_window_conn" "$section" "recv_window_conn" ""
+    config_get "recv_window" "$section" "recv_window" ""
++   #config_get "maxidletimeout" "$section" "maxidletimeout" ""
++   #config_get "keepaliveperiod" "$section" "keepaliveperiod" ""
+    config_get "disable_mtu_discovery" "$section" "disable_mtu_discovery" ""
+    config_get "xudp" "$section" "xudp" ""
+    config_get "packet_encoding" "$section" "packet_encoding" ""
+@@ -974,9 +977,54 @@ cat >> "$SERVER_FILE" <<-EOF
+     ca-str: "$hysteria_ca_str"
+ EOF
+       fi
++#      if [ -n "$recv_window_conn" ]; then
++#cat >> "$SERVER_FILE" <<-EOF
++#    recv-window-conn: "$recv_window_conn"
++#EOF
++#      fi
++#      if [ -n "$recv_window" ]; then
++#cat >> "$SERVER_FILE" <<-EOF
++#    recv-window: "$recv_window"
++#EOF
++#      fi
++#      if [ -n "$maxidletimeout" ]; then
++#cat >> "$SERVER_FILE" <<-EOF
++#    maxidletimeout: "$maxidletimeout"
++#EOF
++#      fi
++#      if [ -n "$keepaliveperiod" ]; then
++#cat >> "$SERVER_FILE" <<-EOF
++#    keepaliveperiod: "$keepaliveperiod"
++#EOF
++#      fi
++#      if [ -n "$disable_mtu_discovery" ]; then
++#cat >> "$SERVER_FILE" <<-EOF
++#    disable-mtu-discovery: $disable_mtu_discovery
++#EOF
++#      fi
++#      if [ -n "$fast_open" ]; then
++#cat >> "$SERVER_FILE" <<-EOF
++#    fast-open: $fast_open
++#EOF
++#      fi
+       if [ -n "$fingerprint" ]; then
+ cat >> "$SERVER_FILE" <<-EOF
+     fingerprint: "$fingerprint"
++EOF
++      fi
++      if [ -n "$ports" ]; then
++cat >> "$SERVER_FILE" <<-EOF
++    ports: $ports
++EOF
++      fi
++      if [ -n "$hysteria2_protocol" ]; then
++cat >> "$SERVER_FILE" <<-EOF
++    protocol: $hysteria2_protocol
++EOF
++      fi
++      if [ -n "$hop_interval" ]; then
++cat >> "$SERVER_FILE" <<-EOF
++    hop-interval: $hop_interval
+ EOF
+       fi
+    fi

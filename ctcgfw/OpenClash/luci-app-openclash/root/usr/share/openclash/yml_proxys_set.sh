@@ -246,6 +246,7 @@ yml_servers_set()
    config_get "vless_flow" "$section" "vless_flow" ""
    config_get "http_headers" "$section" "http_headers" ""
    config_get "hysteria_protocol" "$section" "hysteria_protocol" ""
+   config_get "hysteria2_protocol" "$section" "hysteria2_protocol" ""
    config_get "hysteria_up" "$section" "hysteria_up" ""
    config_get "hysteria_down" "$section" "hysteria_down" ""
    config_get "hysteria_alpn" "$section" "hysteria_alpn" ""
@@ -256,6 +257,8 @@ yml_servers_set()
    config_get "hysteria_ca_str" "$section" "hysteria_ca_str" ""
    config_get "recv_window_conn" "$section" "recv_window_conn" ""
    config_get "recv_window" "$section" "recv_window" ""
+   #config_get "maxidletimeout" "$section" "maxidletimeout" ""
+   #config_get "keepaliveperiod" "$section" "keepaliveperiod" ""
    config_get "disable_mtu_discovery" "$section" "disable_mtu_discovery" ""
    config_get "xudp" "$section" "xudp" ""
    config_get "packet_encoding" "$section" "packet_encoding" ""
@@ -974,9 +977,54 @@ cat >> "$SERVER_FILE" <<-EOF
     ca-str: "$hysteria_ca_str"
 EOF
       fi
+#      if [ -n "$recv_window_conn" ]; then
+#cat >> "$SERVER_FILE" <<-EOF
+#    recv-window-conn: "$recv_window_conn"
+#EOF
+#      fi
+#      if [ -n "$recv_window" ]; then
+#cat >> "$SERVER_FILE" <<-EOF
+#    recv-window: "$recv_window"
+#EOF
+#      fi
+#      if [ -n "$maxidletimeout" ]; then
+#cat >> "$SERVER_FILE" <<-EOF
+#    maxidletimeout: "$maxidletimeout"
+#EOF
+#      fi
+#      if [ -n "$keepaliveperiod" ]; then
+#cat >> "$SERVER_FILE" <<-EOF
+#    keepaliveperiod: "$keepaliveperiod"
+#EOF
+#      fi
+#      if [ -n "$disable_mtu_discovery" ]; then
+#cat >> "$SERVER_FILE" <<-EOF
+#    disable-mtu-discovery: $disable_mtu_discovery
+#EOF
+#      fi
+#      if [ -n "$fast_open" ]; then
+#cat >> "$SERVER_FILE" <<-EOF
+#    fast-open: $fast_open
+#EOF
+#      fi
       if [ -n "$fingerprint" ]; then
 cat >> "$SERVER_FILE" <<-EOF
     fingerprint: "$fingerprint"
+EOF
+      fi
+      if [ -n "$ports" ]; then
+cat >> "$SERVER_FILE" <<-EOF
+    ports: $ports
+EOF
+      fi
+      if [ -n "$hysteria2_protocol" ]; then
+cat >> "$SERVER_FILE" <<-EOF
+    protocol: $hysteria2_protocol
+EOF
+      fi
+      if [ -n "$hop_interval" ]; then
+cat >> "$SERVER_FILE" <<-EOF
+    hop-interval: $hop_interval
 EOF
       fi
    fi
