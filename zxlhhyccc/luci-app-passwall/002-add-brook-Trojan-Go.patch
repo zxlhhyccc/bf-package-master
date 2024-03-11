@@ -66,7 +66,7 @@ index 176315a..8ed0397 100644
  local has_xray = api.finded_com("xray")
 +local has_trojan_go = api.finded_com("trojan-go")
  local has_hysteria2 = api.finded_com("hysteria")
- local ss_aead_type = {}
+ local ss_type = {}
  local trojan_type = {}
 @@ -38,6 +39,10 @@ if has_xray then
  	table.insert(vmess_type, s)
@@ -89,7 +89,7 @@ index 891513d..53ff953 100644
  local has_xray = api.finded_com("xray")
 +local has_trojan_go = api.finded_com("trojan-go")
  local has_hysteria2 = api.finded_com("hysteria")
- local ss_aead_type = {}
+ local ss_type = {}
  local trojan_type = {}
 @@ -38,6 +39,10 @@ if has_xray then
  	table.insert(vmess_type, s)
@@ -1034,8 +1034,8 @@ index bc68928..dbf7e64 100755
 +local has_trojan_go = api.finded_com("trojan-go")
  local has_hysteria2 = api.finded_com("hysteria")
  local allowInsecure_default = nil
- local ss_aead_type_default = uci:get(appname, "@global_subscribe[0]", "ss_aead_type") or "shadowsocks-libev"
-@@ -620,7 +621,23 @@ local function processData(szType, content, add_mode, add_from)
+ local ss_type_default = uci:get(appname, "@global_subscribe[0]", "ss_type") or "shadowsocks-libev"
+@@ -618,7 +619,23 @@ local function processData(szType, content, add_mode, add_from)
  			local peer, sni = nil, ""
  			if params.peer then peer = params.peer end
  			sni = params.sni and params.sni or ""
@@ -1059,7 +1059,7 @@ index bc68928..dbf7e64 100755
  			result.tls = '1'
  			result.tls_serverName = peer and peer or sni
  			if params.allowinsecure then
-@@ -642,6 +659,65 @@ local function processData(szType, content, add_mode, add_from)
+@@ -640,6 +657,65 @@ local function processData(szType, content, add_mode, add_from)
  		elseif trojan_type_default == "xray" and has_xray then
  			result.type = 'Xray'
  			result.protocol = 'trojan'
@@ -1125,7 +1125,7 @@ index bc68928..dbf7e64 100755
  		end
  	elseif szType == "ssd" then
  		result.type = "SS"
-@@ -1173,7 +1249,7 @@ local function parse_link(raw, add_mode, add_from)
+@@ -1171,7 +1247,7 @@ local function parse_link(raw, add_mode, add_from)
  						local node = trim(v)
  						local dat = split(node, "://")
  						if dat and dat[1] and dat[2] then
