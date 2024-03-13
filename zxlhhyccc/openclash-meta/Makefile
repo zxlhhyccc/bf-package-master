@@ -37,8 +37,8 @@ GO_PKG_LDFLAGS_X:= \
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/../feeds/packages/lang/golang/golang-package.mk
 
-TAR_OPTIONS+= --strip-components 1
-TAR_CMD:=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+# TAR_OPTIONS+= --strip-components 1
+# TAR_CMD:=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 
 define Package/$(PKG_NAME)/template
 	SECTION:=net
