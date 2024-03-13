@@ -105,8 +105,8 @@ endif
 endef
 
 define Package/openclash-premium/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash_tun $(1)/etc/openclash/core/clash_tun
+	$(INSTALL_DIR) $(1)/etc/openclash/core
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/clash_tun $(1)/etc/openclash/core
 endef
 
 $(eval $(call BuildPackage,openclash-premium))
