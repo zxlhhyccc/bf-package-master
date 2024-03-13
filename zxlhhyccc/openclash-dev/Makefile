@@ -1,25 +1,25 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-dev
-PKG_VERSION:=1.18.0-13
+PKG_BASE_VERSION:=1.18.0-13
 PKG_RELEASE:=1
-PKG_REV=d034a40
-# PKG_REV=e7ac74d
+PKG_REV:=d034a40
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-g$(PKG_REV).tar.gz
-PKG_SOURCE_URL:=https://github.com/Dreamacro/clash.git
+PKG_SOURCE_URL:=https://github.com/zxlhhyccc/openclash-dev.git
+# PKG_SOURCE_URL:=https://github.com/Dreamacro/clash.git
 # PKG_SOURCE_URL:=https://github.com/Kuingsmile/clash-core.git
 # PKG_SOURCE_URL:=https://github.com/MerlinKodo/clash-rev.git
 # PKG_SOURCE_VERSION:=e7ac74df95665f2f0f1cf4ed54ece204558865cb
-PKG_SOURCE_VERSION:=d034a408be42815e98f3aea80be24949946aea83
-PKG_MIRROR_HASH:=309d7c5fbbd9071ea6ccff5bb09f0ca24db0c415ed2a1d7b22a0de0eaf9cf3a5
+PKG_SOURCE_VERSION:=f23685871cff1c603890c1b326ef75d6e2fec53b
+PKG_MIRROR_HASH:=edd04d2de21ebe3eb58f1ef9241a478b2c71c476595b00521f2a45e30e897aee
+
+PKG_VERSION:=$(PKG_BASE_VERSION)-$(call version_abbrev,$(PKG_SOURCE_VERSION))
 
 PKG_MAINTAINER:=EkkoG <beijiu572@gmail.om>
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
@@ -34,10 +34,13 @@ GO_PKG:=github.com/Dreamacro/clash
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/constant.Version=v$(PKG_VERSION)-g$(PKG_REV)
+	$(GO_PKG)/constant.Version=v$(PKG_BASE_VERSION)-g$(PKG_REV)
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/../feeds/packages/lang/golang/golang-package.mk
+
+# TAR_OPTIONS+= --strip-components 1
+# TAR_CMD:=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 
 define Package/$(PKG_NAME)/template
 	SECTION:=net
@@ -73,7 +76,14 @@ ifneq ($(CONFIG_CLASH-DEV_COMPRESS_GOPROXY),)
       export GOPROXY=https://goproxy.baidu.com
 endif
 
+define Build/UpdateDependencies
+	cd $(PKG_BUILD_DIR) && \
+		go get -u && \
+		go mod tidy
+endef
+
 define Build/Compile
+	$(call Build/UpdateDependencies)
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_CLASH-DEV_COMPRESS_UPX),y)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/clash
