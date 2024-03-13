@@ -12,8 +12,6 @@
  	google.golang.org/protobuf v1.33.0
  )
  
-diff --git a/go.sum b/go.sum
-index 3fa956f..b0cbfb7 100644
 --- a/go.sum
 +++ b/go.sum
 @@ -157,8 +157,8 @@ github.com/vishvananda/netns v0.0.4 h1:Oeaw1EM2JMxD51g9uhtC0D7erkIjgmj8+JZc26m1Y
