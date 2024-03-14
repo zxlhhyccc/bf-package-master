@@ -1017,7 +1017,7 @@ cat >> "$SERVER_FILE" <<-EOF
     ports: $ports
 EOF
       fi
-     if [ -n "$hysteria2_protocol" ]; then
+      if [ -n "$hysteria2_protocol" ]; then
 cat >> "$SERVER_FILE" <<-EOF
     protocol: $hysteria2_protocol
 EOF

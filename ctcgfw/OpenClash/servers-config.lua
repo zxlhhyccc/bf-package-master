@@ -181,6 +181,7 @@ o.rmempty = false
 o:depends("type", "ss")
 o:depends("type", "ssr")
 o:depends("type", "trojan")
+--o:depends("type", "hysteria")
 o:depends("type", "hysteria2")
 
 -- [[ Tuic ]]--
