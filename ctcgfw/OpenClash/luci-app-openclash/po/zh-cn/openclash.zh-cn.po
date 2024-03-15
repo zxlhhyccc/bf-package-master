@@ -780,7 +780,7 @@ msgstr "下行链路容量（默认：Mbps）"
 msgid "Hop Interval (Unit:second)"
 msgstr "跳跃间隔（单位：秒）"
 
-msgid "Obfs"
+msgid "obfs"
 msgstr "混淆插件"
 
 msgid "Obfs param (optional)"
