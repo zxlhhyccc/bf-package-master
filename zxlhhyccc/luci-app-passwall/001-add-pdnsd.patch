@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 86b0471..9c240cd 100644
+index 58218dc..c2cf4b1 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,9 +14,11 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -14,12 +14,13 @@ index 86b0471..9c240cd 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,12 +37,33 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,16 +37,37 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
--	+chinadns-ng +dns2socks +dns2tcp +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
--	+microsocks +resolveip +tcping +unzip
+-	+chinadns-ng +dns2socks +dns2tcp +dnsmasq-full +ip-full \
+-	+libuci-lua +lua +luci-compat +luci-lib-jsonc \
+-	+microsocks +resolveip +tcping
 +	+chinadns-ng +dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
 +	+microsocks +resolveip +tcping +unzip \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
@@ -51,7 +52,11 @@ index 86b0471..9c240cd 100644
  
  config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
  	bool "Iptables Transparent Proxy"
-@@ -54,6 +77,7 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
++	select PACKAGE_dnsmasq-full
+ 	select PACKAGE_ipset
+ 	select PACKAGE_ipt2socks
+ 	select PACKAGE_iptables
+@@ -54,108 +77,98 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -59,7 +64,10 @@ index 86b0471..9c240cd 100644
  	default y if ! PACKAGE_firewall4
  
  config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
-@@ -64,98 +88,87 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
+ 	bool "Nftables Transparent Proxy"
++	select PACKAGE_dnsmasq-full
+ 	select PACKAGE_ipt2socks
+ 	select PACKAGE_nftables
  	select PACKAGE_kmod-nft-socket
  	select PACKAGE_kmod-nft-tproxy
  	select PACKAGE_kmod-nft-nat
@@ -159,6 +167,7 @@ index 86b0471..9c240cd 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_Xray
  	bool "Include Xray"
 -	select PACKAGE_xray-core
+-	select PACKAGE_unzip
  	default y if aarch64||arm||i386||x86_64
  
  config PACKAGE_$(PKG_NAME)_INCLUDE_Xray_Plugin
@@ -168,10 +177,10 @@ index 86b0471..9c240cd 100644
  
  endmenu
 diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index 26572b9..736efe4 100644
+index 4bd30a6..b51b16c 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -311,7 +311,10 @@ end
+@@ -326,7 +326,10 @@ end
  ---- DNS Forward Mode
  dns_mode = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
  if api.is_finded("dns2tcp") then
@@ -183,7 +192,7 @@ index 26572b9..736efe4 100644
  end
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
-@@ -377,6 +380,7 @@ o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
+@@ -392,6 +395,7 @@ o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "dns2tcp"})
@@ -191,7 +200,7 @@ index 26572b9..736efe4 100644
  o:depends({dns_mode = "udp"})
  o:depends({xray_dns_mode = "tcp"})
  o:depends({xray_dns_mode = "tcp+doh"})
-@@ -423,6 +427,8 @@ end
+@@ -438,6 +442,8 @@ end
  o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
  o.default = "1"
  o:depends({dns_mode = "dns2socks"})
@@ -201,7 +210,7 @@ index 26572b9..736efe4 100644
  o:depends({dns_mode = "xray"})
  o.rmempty = false
 diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-index 2b62674..176315a 100644
+index 9682502..1508d55 100644
 --- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
 +++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
 @@ -148,7 +148,7 @@ o.validate = function(self, value, t)
@@ -214,7 +223,7 @@ index 2b62674..176315a 100644
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index c91dce8..2ac33a4 100644
+index 58db80d..84f293a 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -274,6 +274,12 @@ msgstr "关闭（不使用）"
@@ -231,7 +240,7 @@ index c91dce8..2ac33a4 100644
  msgstr "默认代理模式"
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 9c2a4d9..fbc6a37 100755
+index 7bd079c..46db9ab 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
 @@ -1253,6 +1253,12 @@ start_dns() {
@@ -337,7 +346,7 @@ index 9c2a4d9..fbc6a37 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1709,7 +1789,7 @@ LOCALHOST_UDP_PROXY_MODE=$(config_t_get global localhost_udp_proxy_mode default)
+@@ -1709,7 +1789,7 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
