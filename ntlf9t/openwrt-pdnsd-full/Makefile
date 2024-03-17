@@ -14,7 +14,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 PKG_FIXUP:=autoreconf
 # PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16
+PKG_BUILD_FLAGS:=no-mips16 lto
 PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -46,8 +46,8 @@ TARGET_CFLAGS += -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
 
 # Use Link time optimization
-TARGET_CFLAGS += -flto
-TARGET_LDFLAGS += -Wl,-flto
+# TARGET_CFLAGS += -flto
+# TARGET_LDFLAGS += -Wl,-flto
 
 define Package/pdnsd-full/install
 	$(INSTALL_DIR) $(1)/usr/sbin

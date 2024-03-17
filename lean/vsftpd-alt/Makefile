@@ -17,6 +17,8 @@ PKG_HASH:=26b602ae454b0ba6d99ef44a09b6b9e0dfa7f67228106736df1f278c70bc91d3
 PKG_LICENSE:=GPLv2
 PKG_CPE_ID:=cpe:/a:vsftpd_project:vsftpd
 
+PKG_BUILD_FLAGS:=gc-sections lto
+
 BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/vsftpd-$(PKG_VERSION)
 
@@ -33,8 +35,11 @@ define Package/vsftpd-alt/Default
   #+PACKAGE_libpam:libpam 
 endef
 
-TARGET_CFLAGS += -ffunction-sections -fdata-sections -flto
-TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed,--no-undefined,--no-allow-shlib-undefined
+# TARGET_CFLAGS += -ffunction-sections -fdata-sections -flto
+# TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed,--no-undefined,--no-allow-shlib-undefined
+
+TARGET_CFLAGS += -D_GNU_SOURCE -include fcntl.h
+TARGET_LDFLAGS += -Wl,--as-needed,--no-undefined,--no-allow-shlib-undefined
 
 define Package/vsftpd-alt/conffiles
 /etc/vsftpd.conf

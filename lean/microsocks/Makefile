@@ -19,6 +19,8 @@ PKG_MAINTAINER:=Mateusz Korniak <matkorgithubcom@ant.gliwice.pl>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 
+PKG_BUILD_FLAGS:=gc-sections lto
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/microsocks
@@ -37,8 +39,10 @@ define Package/microsocks/conffiles
 /etc/config/microsocks
 endef
 
-TARGET_CFLAGS+= -flto
-TARGET_LDFLAGS+= -flto -Wl,--gc-sections,--as-needed
+# TARGET_CFLAGS+= -flto
+# TARGET_LDFLAGS+= -flto -Wl,--gc-sections,--as-needed
+
+TARGET_LDFLAGS+= -Wl,--as-needed
 
 define Package/microsocks/install
 	$(INSTALL_DIR) $(1)/usr/bin
