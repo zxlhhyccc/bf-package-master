@@ -20,7 +20,7 @@ function update() {
 	line="$(awk "/PKG_VERSION:=/ {print NR}" "$CURDIR/Makefile")"
 	sed -i -e "$((line))s/PKG_VERSION:=.*/PKG_VERSION:=$tag/" "$CURDIR/Makefile"
 
-	sha="$(curl -sL https://codeload.github.com/txthinking/brook/tar.gz/v$tag | shasum -a 256 | awk '{print $1}')"
+	sha="$(curl -sL https://codeload.github.com/$repo/tar.gz/v$tag | shasum -a 256 | awk '{print $1}')"
 	[ -n "$sha" ] || return 1
 	
 	old_sha="$(awk -F 'PKG_MIRROR_HASH:=' '/PKG_MIRROR_HASH:/{gsub("\"","",$2);print $2}' "$CURDIR/Makefile")"
@@ -29,7 +29,7 @@ function update() {
 	
 	   sed -i -e "$((line))s/PKG_MIRROR_HASH:=.*/PKG_MIRROR_HASH:=$sha/" "$CURDIR/Makefile"
 
-	  commit="$(git ls-remote https://github.com/txthinking/brook.git HEAD | cut -f1)"
+	  commit="$(git ls-remote https://github.com/$repo.git HEAD | cut -f1)"
 }
 
 update "brook" "txthinking/brook" "brook-"$(awk -F 'PKG_VERSION:=' '/PKG_VERSION:/{gsub("\"","",$2);print $2}' "$CURDIR/Makefile")"" 

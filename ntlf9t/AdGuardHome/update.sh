@@ -32,7 +32,7 @@ function update() {
 	   sed -i -e "$((line))s/PKG_HASH:=.*/PKG_HASH:=$sha/" "$CURDIR/Makefile"
 
 	# 获取AdGuardHome-frontend值
-	frontend_sha="$(curl -sL https://github.com/AdguardTeam/AdGuardHome/releases/download/v$tag/AdGuardHome_frontend.tar.gz | shasum -a 256 | awk '{print $1}')"
+	frontend_sha="$(curl -sL https://github.com/$repo/releases/download/v$tag/AdGuardHome_frontend.tar.gz | shasum -a 256 | awk '{print $1}')"
 	[ -n "$frontend_sha" ] || return 1
 	
         frontend_old_sha="$(awk -F 'HASH:=' '/HASH:/{gsub("\"","",$2);print $2}' "$CURDIR/Makefile")"
