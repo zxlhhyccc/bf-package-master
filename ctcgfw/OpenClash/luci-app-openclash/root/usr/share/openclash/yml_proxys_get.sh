@@ -1036,6 +1036,7 @@ do
          system(hysteria_protocol)
       end
       }.join
+   end;
 
    if '$server_type' == 'hysteria2' then
       #hysteria2
@@ -1046,7 +1047,9 @@ do
          system(hysteria2_protocol)
       end
       }.join
+   end;
 
+   # if '$server_type' == 'hysteria2' then
    #  Thread.new{
    #   #maxidletimeout
    #   if Value['proxies'][$count].key?('maxidletimeout') then
@@ -1062,6 +1065,7 @@ do
    #      system(keepaliveperiod)
    #   end
    #   }.join
+   # end;
 
    if '$server_type' == 'hysteria' or '$server_type' == 'hysteria2' then
       #hysteria  hysteria2

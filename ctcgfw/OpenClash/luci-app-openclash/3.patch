@@ -1,3 +1,5 @@
+diff --git a/luasrc/model/cbi/openclash/servers-config.lua b/luasrc/model/cbi/openclash/servers-config.lua
+index 1b88b24..cde21be 100644
 --- a/luasrc/model/cbi/openclash/servers-config.lua
 +++ b/luasrc/model/cbi/openclash/servers-config.lua
 @@ -706,6 +706,7 @@ o:depends("type", "hysteria2")
@@ -36,7 +38,7 @@
 +--o.default = "10"
  
  -- [[ hop_interval ]]--
- o = s:option(Value, "hop_interval", translate("Hop Interval"))
+ o = s:option(Value, "hop_interval", translate("Hop Interval (Unit:second)"))
  o.rmempty = true
  o.default = "10"
  o:depends({type = "hysteria", flag_transport = true, flag_port_hopping = true})
@@ -60,12 +62,15 @@
  o:depends("type", "tuic")
  
  -- [[ TFO ]]--
+diff --git a/root/usr/share/openclash/yml_proxys_get.sh b/root/usr/share/openclash/yml_proxys_get.sh
+index 9bb3ec7..a97ee32 100644
 --- a/root/usr/share/openclash/yml_proxys_get.sh
 +++ b/root/usr/share/openclash/yml_proxys_get.sh
-@@ -1047,6 +1047,22 @@ do
-       end
+@@ -1049,6 +1049,24 @@ do
        }.join
+    end;
  
++   # if '$server_type' == 'hysteria2' then
 +   #  Thread.new{
 +   #   #maxidletimeout
 +   #   if Value['proxies'][$count].key?('maxidletimeout') then
@@ -81,10 +86,13 @@
 +   #      system(keepaliveperiod)
 +   #   end
 +   #   }.join
++   # end;
 +
     if '$server_type' == 'hysteria' or '$server_type' == 'hysteria2' then
        #hysteria  hysteria2
        Thread.new{
+diff --git a/root/usr/share/openclash/yml_proxys_set.sh b/root/usr/share/openclash/yml_proxys_set.sh
+index 149cdce..49e5a17 100644
 --- a/root/usr/share/openclash/yml_proxys_set.sh
 +++ b/root/usr/share/openclash/yml_proxys_set.sh
 @@ -257,6 +257,8 @@ yml_servers_set()
