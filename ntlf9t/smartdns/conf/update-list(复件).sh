@@ -20,6 +20,17 @@
 
 #wget --no-check-certificate https://raw.githubusercontent.com/privacy-protection-tools/anti-AD/master/anti-ad-smartdns.conf -nv -O /tmp/smartdns/anti-ad-smartdns.conf
 
+||adapi.yynetwk.com^
+||adashbc.ut.taobao.com^ 使用sed命令改为：address /域名/#:
+sed -i 's/^||\(.*\)\^/address \/\1\/#/g;/^address/!d' input.txt
+
+||youxi.kugou.com^
+||zeus.ad.xiaomi.com^
+/*-ad-*.byteimg.com/
+/*-ad-sign.byteimg.com/ 使用sed命令将开头的||和结尾的^及将开头的/和结尾的/改为：address /域名/#:
+sed -i 's/^||\(.*\)\^/address \/\1\/#/g; s|^\(.*\)/$|address \1/#|g; /^address/!d'  input.txt 其中：/^address/!d 删除不替换部分
+
+
 #rm -rf /tmp/smartdns/
 
 # Anti-ad Download Link
