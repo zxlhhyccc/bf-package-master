@@ -243,7 +243,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index 7bd079c..46db9ab 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1253,6 +1253,12 @@ start_dns() {
+@@ -1257,6 +1257,12 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -256,7 +256,7 @@ index 7bd079c..46db9ab 100755
  	dns2tcp)
  		use_tcp_node_resolve_dns=1
  		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1260,8 +1266,14 @@ start_dns() {
+@@ -1264,8 +1270,14 @@ start_dns() {
  	;;
  	udp)
  		use_udp_node_resolve_dns=1
@@ -271,7 +271,7 @@ index 7bd079c..46db9ab 100755
  	;;
  	esac
  
-@@ -1300,6 +1312,74 @@ start_dns() {
+@@ -1304,6 +1316,74 @@ start_dns() {
  		-NO_LOGIC_LOG ${NO_LOGIC_LOG:-0}
  }
  
@@ -346,7 +346,7 @@ index 7bd079c..46db9ab 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1709,7 +1789,7 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -1713,7 +1793,7 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"

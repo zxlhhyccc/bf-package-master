@@ -629,7 +629,7 @@ diff --git a/luasrc/view/passwall/node_list/link_share_man.htm b/luasrc/view/pas
 index 22be258..535b0ca 100644
 --- a/luasrc/view/passwall/node_list/link_share_man.htm
 +++ b/luasrc/view/passwall/node_list/link_share_man.htm
-@@ -140,6 +140,12 @@ local api = require "luci.passwall.api"
+@@ -149,6 +149,12 @@ local api = require "luci.passwall.api"
  		} else if (v_type === "Trojan-Plus") {
  			dom_prefix = "trojan_plus_"
  			protocol = "trojan"
@@ -642,7 +642,7 @@ index 22be258..535b0ca 100644
  		} else if (v_type === "Hysteria2") {
  			dom_prefix = "hysteria2_"
  			protocol = "hysteria2"
-@@ -348,6 +354,74 @@ local api = require "luci.passwall.api"
+@@ -357,6 +363,74 @@ local api = require "luci.passwall.api"
  				params = params.substring(1);
  			}
  			url += params;
@@ -717,7 +717,7 @@ index 22be258..535b0ca 100644
  		} else if ((v_type === "Hysteria2") || (v_type === "sing-box" && opt.get(dom_prefix + "protocol").value === "hysteria2")) {
  			protocol = "hysteria2"
  			var v_port = opt.get(dom_prefix + "port");
-@@ -659,6 +733,9 @@ local api = require "luci.passwall.api"
+@@ -679,6 +753,9 @@ local api = require "luci.passwall.api"
  					queryParam[decodeURIComponent(params[0]).toLowerCase()] = decodeURIComponent(params[1] || '');
  				}
  			}
@@ -727,7 +727,7 @@ index 22be258..535b0ca 100644
  			opt.set(dom_prefix + 'address', m.hostname);
  			opt.set(dom_prefix + 'port', m.port || "443");
  			opt.set(dom_prefix + 'password', decodeURIComponent(password));
-@@ -668,6 +745,80 @@ local api = require "luci.passwall.api"
+@@ -688,6 +765,80 @@ local api = require "luci.passwall.api"
  			if (m.hash) {
  				opt.set('remarks', decodeURI(m.hash.substr(1)));
  			}
@@ -808,7 +808,7 @@ index 22be258..535b0ca 100644
  		}
  		if (ssu[0] === "vmess") {
  			var sstr = b64DecodeUnicode(ssu[1]);
-@@ -855,6 +1006,62 @@ local api = require "luci.passwall.api"
+@@ -875,6 +1026,62 @@ local api = require "luci.passwall.api"
  				opt.set('remarks', decodeURI(m.hash.substr(1)));
  			}
  		}
@@ -875,7 +875,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 2ac33a4..6ecec5a 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -937,6 +937,9 @@ msgstr "%s 程序路径"
+@@ -940,6 +940,9 @@ msgstr "%s 程序路径"
  msgid "%s Client App Path"
  msgstr "%s 客户端程序路径"
  
@@ -885,7 +885,7 @@ index 2ac33a4..6ecec5a 100644
  msgid "alternate API URL for version checking"
  msgstr "用于版本检查的 API URL"
  
-@@ -1156,6 +1159,12 @@ msgstr "插件名称"
+@@ -1159,6 +1162,12 @@ msgstr "插件名称"
  msgid "Plugin Arguments"
  msgstr "插件参数"
  
@@ -1012,7 +1012,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1797,8 +1852,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -1801,8 +1856,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  
@@ -1125,7 +1125,7 @@ index bc68928..dbf7e64 100755
  		end
  	elseif szType == "ssd" then
  		result.type = "SS"
-@@ -1173,7 +1249,7 @@ local function parse_link(raw, add_mode, add_from)
+@@ -1171,7 +1247,7 @@ local function parse_link(raw, add_mode, add_from)
  						local node = trim(v)
  						local dat = split(node, "://")
  						if dat and dat[1] and dat[2] then
