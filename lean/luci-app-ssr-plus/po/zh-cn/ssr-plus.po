@@ -134,14 +134,14 @@ msgstr "国外域名 DNS"
 msgid "custom_dns_remote_domains"
 msgstr "国外域名规则"
 
+msgid "custom_dokodemo_door_dns_address"
+msgstr "查询非 A 和 AAAA 记录 DNS"
+
 msgid "custom_nonIPQuery"
 msgstr "非 A 和 AAAA 记录处理方式"
 
 msgid "custom_nonIPQuery_outbound_tag"
 msgstr "非 A 和 AAAA 记录查询方式"
-
-msgid "custom_dokodemo_door_dns_address"
-msgstr "查询非 A 和 AAAA 记录 DNS"
 
 
 msgid "custom_log"
