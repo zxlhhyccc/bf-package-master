@@ -20,13 +20,12 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 include $(INCLUDE_DIR)/package.mk
 
 define KernelPackage/usb-net-rtl8152-vendor
-  VERSION:=$(LINUX_VERSION)+$(PKG_VERSION)-$(BOARD)-$(PKG_RELEASE)
-  TITLE:=Realtek RTL8152/RTL8153/RTL8154/RTL8156 driver
+  TITLE:=Kernel module for USB-to-Ethernet Realtek convertors
   SUBMENU:=USB Support
   DEPENDS:=+kmod-usb-net
-  FILES:=$(PKG_BUILD_DIR)/src/r8152.ko
-  AUTOLOAD:=$(call AutoProbe,r8152)
   CONFLICTS:=kmod-usb-net-rtl8152
+  FILES:= $(PKG_BUILD_DIR)/r8152.ko
+  AUTOLOAD:=$(call AutoProbe,r8152)
 endef
 
 define KernelPackage/usb-net-rtl8152-vendor/description
