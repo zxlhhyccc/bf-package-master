@@ -39,12 +39,12 @@ function update() {
 
 	[ "$frontend_sha" != "$frontend_old_sha" ] || return 3
 	
-	line="$(awk "/FILE:=\\$\(FRONTEND_FILE\)/ {print NR}" "$CURDIR/Makefile")"
+	line="$(awk "/FILE:=\\$\(${res}_FILE\)/ {print NR}" "$CURDIR/Makefile")"
 	sed -i -e "$((line + 1))s/HASH:=.*/HASH:=$frontend_sha/" "$CURDIR/Makefile"
 
 	# 获取commit值
 	  commit="$(git ls-remote  https://github.com/$repo.git beta-v0.107 | cut -f1)"
 }
 
-update "AdGuardHome" "AdguardTeam/AdGuardHome" "AdGuardHome-"$(awk -F 'PKG_VERSION:=' '/PKG_VERSION:/{gsub("\"","",$2);print $2}' "$CURDIR/Makefile")""
+update "AdGuardHome" "AdguardTeam/AdGuardHome" "FRONTEND"
 
