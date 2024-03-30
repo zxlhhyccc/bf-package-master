@@ -629,7 +629,7 @@ diff --git a/luasrc/view/passwall/node_list/link_share_man.htm b/luasrc/view/pas
 index 22be258..535b0ca 100644
 --- a/luasrc/view/passwall/node_list/link_share_man.htm
 +++ b/luasrc/view/passwall/node_list/link_share_man.htm
-@@ -149,6 +149,12 @@ local api = require "luci.passwall.api"
+@@ -154,6 +154,12 @@ local api = require "luci.passwall.api"
  		} else if (v_type === "Trojan-Plus") {
  			dom_prefix = "trojan_plus_"
  			protocol = "trojan"
@@ -642,7 +642,7 @@ index 22be258..535b0ca 100644
  		} else if (v_type === "Hysteria2") {
  			dom_prefix = "hysteria2_"
  			protocol = "hysteria2"
-@@ -357,6 +363,74 @@ local api = require "luci.passwall.api"
+@@ -362,6 +367,74 @@ local api = require "luci.passwall.api"
  				params = params.substring(1);
  			}
  			url += params;
@@ -717,7 +717,7 @@ index 22be258..535b0ca 100644
  		} else if ((v_type === "Hysteria2") || (v_type === "sing-box" && opt.get(dom_prefix + "protocol").value === "hysteria2")) {
  			protocol = "hysteria2"
  			var v_port = opt.get(dom_prefix + "port");
-@@ -679,6 +753,9 @@ local api = require "luci.passwall.api"
+@@ -684,6 +758,9 @@ local api = require "luci.passwall.api"
  					queryParam[decodeURIComponent(params[0]).toLowerCase()] = decodeURIComponent(params[1] || '');
  				}
  			}
@@ -727,7 +727,7 @@ index 22be258..535b0ca 100644
  			opt.set(dom_prefix + 'address', m.hostname);
  			opt.set(dom_prefix + 'port', m.port || "443");
  			opt.set(dom_prefix + 'password', decodeURIComponent(password));
-@@ -688,6 +765,80 @@ local api = require "luci.passwall.api"
+@@ -693,6 +770,80 @@ local api = require "luci.passwall.api"
  			if (m.hash) {
  				opt.set('remarks', decodeURI(m.hash.substr(1)));
  			}
@@ -808,7 +808,7 @@ index 22be258..535b0ca 100644
  		}
  		if (ssu[0] === "vmess") {
  			var sstr = b64DecodeUnicode(ssu[1]);
-@@ -875,6 +1026,62 @@ local api = require "luci.passwall.api"
+@@ -880,6 +1031,62 @@ local api = require "luci.passwall.api"
  				opt.set('remarks', decodeURI(m.hash.substr(1)));
  			}
  		}
@@ -1035,7 +1035,7 @@ index bc68928..dbf7e64 100755
  local has_hysteria2 = api.finded_com("hysteria")
  local allowInsecure_default = nil
  local ss_type_default = uci:get(appname, "@global_subscribe[0]", "ss_type") or "shadowsocks-libev"
-@@ -620,7 +621,23 @@ local function processData(szType, content, add_mode, add_from)
+@@ -622,7 +623,23 @@ local function processData(szType, content, add_mode, add_from)
  			local peer, sni = nil, ""
  			if params.peer then peer = params.peer end
  			sni = params.sni and params.sni or ""
@@ -1059,7 +1059,7 @@ index bc68928..dbf7e64 100755
  			result.tls = '1'
  			result.tls_serverName = peer and peer or sni
  			if params.allowinsecure then
-@@ -642,6 +659,65 @@ local function processData(szType, content, add_mode, add_from)
+@@ -644,6 +661,65 @@ local function processData(szType, content, add_mode, add_from)
  		elseif trojan_type_default == "xray" and has_xray then
  			result.type = 'Xray'
  			result.protocol = 'trojan'
@@ -1125,7 +1125,7 @@ index bc68928..dbf7e64 100755
  		end
  	elseif szType == "ssd" then
  		result.type = "SS"
-@@ -1171,7 +1247,7 @@ local function parse_link(raw, add_mode, add_from)
+@@ -1175,7 +1251,7 @@ local function parse_link(raw, add_mode, add_from)
  						local node = trim(v)
  						local dat = split(node, "://")
  						if dat and dat[1] and dat[2] then
