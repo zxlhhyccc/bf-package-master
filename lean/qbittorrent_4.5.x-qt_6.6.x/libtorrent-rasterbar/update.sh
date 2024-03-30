@@ -10,7 +10,7 @@ function update() {
 	local res="$3"
 	local tag ver sha old_hash line commit
 
-	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/tags" | jq -r ".[1].name" | sed 's/release-//')"
+	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/releases/latest" | jq -r ".tag_name" | sed 's/v//')"
 	[ -n "$tag" ] || return 1
 
         ver="$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
@@ -20,7 +20,7 @@ function update() {
 	line="$(awk "/PKG_VERSION:=/ {print NR}" "$CURDIR/Makefile")"
 	sed -i -e "$((line))s/PKG_VERSION:=.*/PKG_VERSION:=$tag/" "$CURDIR/Makefile"
 
-	sha="$(curl -sL https://codeload.github.com/$repo/tar.gz/release-${tag} | sha256sum | awk '{print $1}')"
+	sha="$(curl -sL https://github.com/arvidn/libtorrent/releases/download/v${tag}/${type}-${tag}.tar.gz | sha256sum | awk '{print $1}')"
 	[ -n "$sha" ] || return 1
 
 	old_hash="$(awk -F "PKG_HASH:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
@@ -32,4 +32,4 @@ function update() {
 	  commit="$(git ls-remote https://github.com/$repo.git HEAD | cut -f1)"
 }
 
-update "qBittorrent" "qbittorrent/qBittorrent" "qBittorrent-"$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"" 
+update "libtorrent-rasterbar" "arvidn/libtorrent" "libtorrent-rasterbar-"$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"" 
