@@ -3,7 +3,7 @@ XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "network", "syncdial", "statu
 	function(x, data) {
 		var tb = document.getElementById('syncdial_status');
 		if (data && tb) {
-			tb.innerHTML = '<b><%:当前在线接口数量：%> ' + data.num_online + '</b>';
+			tb.innerHTML = '<b style=color:green><%:当前在线接口数量：%> ' + data.num_online + '</b>';
 		}
 	}
 );
