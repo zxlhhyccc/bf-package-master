@@ -34,7 +34,7 @@ define Package/shadowsocksr-libev/Default
     SUBMENU:=Web Servers/Proxies
     TITLE:=shadowsocksr-libev ssr-$(1)
     URL:=https://github.com/shadowsocksrr/shadowsocksr-libev
-    DEPENDS:=+libev +libsodium +libopenssl +libpthread +libpcre2 +libudns +zlib
+    DEPENDS:=+libev +libsodium +libopenssl +libpthread +libpcre2 +libudns +zlib +PACKAGE_libopenssl-legacy:libopenssl-legacy
   endef
 
   define Package/shadowsocksr-libev-ssr-$(1)/install
@@ -60,14 +60,6 @@ CONFIGURE_ARGS += \
 # TARGET_CFLAGS += -flto
 # TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 TARGET_LDFLAGS += -Wl,--as-needed
-
-ifeq ($(CONFIG_GCC_VERSION_12),y)
-	TARGET_CFLAGS += -Wno-error=use-after-free
-endif
-
-ifeq ($(CONFIG_GCC_VERSION_13),y)
-	TARGET_CFLAGS += -Wno-error=use-after-free
-endif
 
 $(foreach component,$(SHADOWSOCKSR_COMPONENTS), \
   $(eval $(call BuildPackage,shadowsocksr-libev-ssr-$(component))) \
