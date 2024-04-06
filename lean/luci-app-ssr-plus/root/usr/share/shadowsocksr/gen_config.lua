@@ -72,9 +72,13 @@ function wireguard()
 			{
 				publicKey = server.peer_pubkey,
 				preSharedKey = server.preshared_key,
-				endpoint = server.server .. ":" .. server.server_port
+				endpoint = server.server .. ":" .. server.server_port,
+				keepAlive = tonumber(server.heartbeat),
+				allowedIPs = (server.allowedips) or nil,
 			}
 		},
+		kernelMode = (server.kernelmode == "1") and true or false,
+		reserved = {server.reserved} or nil,
 		mtu = tonumber(server.mtu)
 	}
 end
@@ -172,7 +176,7 @@ local Xray = {
 		protocol = server.v2ray_protocol,
 		settings = outbound_settings,
 		-- 底层传输配置
-		streamSettings = {
+		streamSettings = (server.v2ray_protocol ~= "wireguard") and {
 			network = server.transport or "tcp",
 			security = (server.tls == '1') and "tls" or (server.reality == '1') and "reality" or nil,
 			tlsSettings = (server.tls == '1') and {
@@ -258,14 +262,14 @@ local Xray = {
 				tcpNoDelay = (server.mptcp == "1") and true or false, -- MPTCP
 				tcpcongestion = server.custom_tcpcongestion -- 连接服务器节点的 TCP 拥塞控制算法
 			}
-		},
-		mux = {
+		} or nil,
+		mux = (server.v2ray_protocol ~= "wireguard") and {
 			-- mux
 			enabled = (server.mux == "1") and true or false, -- Mux
 			concurrency = tonumber(server.concurrency), -- TCP 最大并发连接数
 			xudpConcurrency = tonumber(server.xudpConcurrency), -- UDP 最大并发连接数
 			xudpProxyUDP443 = server.xudpProxyUDP443 -- 对被代理的 UDP/443 流量处理方式
-		}
+		} or nil
 	}
 }
 local cipher = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:AES128-SHA:AES256-SHA:DES-CBC3-SHA"

@@ -1,0 +1,133 @@
+--- a/luasrc/model/cbi/shadowsocksr/client-config.lua
++++ b/luasrc/model/cbi/shadowsocksr/client-config.lua
+@@ -533,7 +533,9 @@ o.default = "cubic"
+ o.rmempty = true
+ 
+ o = s:option(Value, "heartbeat", translate("Heartbeat interval(second)"))
++o.description = translate("Default value 0 indicatesno heartbeat.")
+ o:depends("type", "tuic")
++o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
+ o.datatype = "uinteger"
+ o.default = "3"
+ o.rmempty = true
+@@ -845,11 +847,22 @@ o:depends("transport", "kcp")
+ o.rmempty = true
+ 
+ -- [[ WireGuard 部分 ]]--
++o = s:option(Flag, "kernelmode", translate("Enabled Kernel virtual NIC TUN(optional)"))
++o.description = translate("Virtual NIC TUN of Linux kernel can be used only when system supports and have root permission. If used, IPv6 routing table 1023 is occupied.")
++o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
++o.default = "0"
++o.rmempty = true
++
+ o = s:option(DynamicList, "local_addresses", translate("Local addresses"))
+ o.datatype = "cidr"
+ o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
+ o.rmempty = true
+ 
++o = s:option(DynamicList, "reserved", translate("Reserved bytes(optional)"))
++o.description = translate("Wireguard reserved bytes.")
++o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
++o.rmempty = true
++
+ o = s:option(Value, "private_key", translate("Private key"))
+ o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
+ o.password = true
+@@ -864,6 +877,13 @@ o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
+ o.password = true
+ o.rmempty = true
+ 
++o = s:option(DynamicList, "allowedips", translate("allowedIPs(optional)"))
++o.description = translate("Wireguard allows only traffic from specific source IP.")
++o.datatype = "cidr"
++o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
++o.default = "0.0.0.0/0"
++o.rmempty = true
++
+ -- [[ TLS ]]--
+ o = s:option(Flag, "tls", translate("TLS"))
+ o.rmempty = true
+--- a/po/zh-cn/ssr-plus.po
++++ b/po/zh-cn/ssr-plus.po
+@@ -971,9 +971,21 @@ msgstr "写入缓冲区大小"
+ msgid "Congestion"
+ msgstr "拥塞控制"
+ 
++msgid "Enabled Kernel virtual NIC TUN(optional)"
++msgstr "启用内核的虚拟网卡 TUN（可选）"
++
++msgid "Virtual NIC TUN of Linux kernel can be used only when system supports and have root permission. If used, IPv6 routing table 1023 is occupied."
++msgstr "需要系统支持且有 root 权限才能使用 Linux 内核的虚拟网卡 TUN，使用后会占用 IPv6 的 1023 号路由表。"
++
+ msgid "Local addresses"
+ msgstr "本地地址"
+ 
++msgid "Reserved bytes(optional)"
++msgstr "保留字节（可选）"
++
++msgid "Wireguard reserved bytes."
++msgstr "Wireguard 保留字节。"
++
+ msgid "Private key"
+ msgstr "私钥"
+ 
+@@ -983,6 +995,15 @@ msgstr "节点公钥"
+ msgid "Pre-shared key"
+ msgstr "预共享密钥"
+ 
++msgid "Default value 0 indicatesno heartbeat."
++msgstr "默认为 0 表示无心跳。"
++
++msgid "allowedIPs(optional)"
++msgstr "allowedIPs（可选）"
++
++msgid "Wireguard allows only traffic from specific source IP."
++msgstr "Wireguard 仅允许特定源 IP 的流量。"
++
+ msgid "Packet Encoding"
+ msgstr "数据包编码"
+ 
+--- a/root/usr/share/shadowsocksr/gen_config.lua
++++ b/root/usr/share/shadowsocksr/gen_config.lua
+@@ -72,9 +72,13 @@ function wireguard()
+ 			{
+ 				publicKey = server.peer_pubkey,
+ 				preSharedKey = server.preshared_key,
+-				endpoint = server.server .. ":" .. server.server_port
++				endpoint = server.server .. ":" .. server.server_port,
++				keepAlive = tonumber(server.heartbeat),
++				allowedIPs = (server.allowedips) or nil,
+ 			}
+ 		},
++		kernelMode = (server.kernelmode == "1") and true or false,
++		reserved = {server.reserved} or nil,
+ 		mtu = tonumber(server.mtu)
+ 	}
+ end
+@@ -172,7 +176,7 @@ local Xray = {
+ 		protocol = server.v2ray_protocol,
+ 		settings = outbound_settings,
+ 		-- 底层传输配置
+-		streamSettings = {
++		streamSettings = (server.v2ray_protocol ~= "wireguard") and {
+ 			network = server.transport or "tcp",
+ 			security = (server.tls == '1') and "tls" or (server.reality == '1') and "reality" or nil,
+ 			tlsSettings = (server.tls == '1') and {
+@@ -258,14 +262,14 @@ local Xray = {
+ 				tcpNoDelay = (server.mptcp == "1") and true or false, -- MPTCP
+ 				tcpcongestion = server.custom_tcpcongestion -- 连接服务器节点的 TCP 拥塞控制算法
+ 			}
+-		},
+-		mux = {
++		} or nil,
++		mux = (server.v2ray_protocol ~= "wireguard") and {
+ 			-- mux
+ 			enabled = (server.mux == "1") and true or false, -- Mux
+ 			concurrency = tonumber(server.concurrency), -- TCP 最大并发连接数
+ 			xudpConcurrency = tonumber(server.xudpConcurrency), -- UDP 最大并发连接数
+ 			xudpProxyUDP443 = server.xudpProxyUDP443 -- 对被代理的 UDP/443 流量处理方式
+-		}
++		} or nil
+ 	}
+ }
+ local cipher = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:AES128-SHA:AES256-SHA:DES-CBC3-SHA"
