@@ -49,7 +49,6 @@ function _update() {
 }
 
 _update "aarch64-linux-musl" "zfl9/chinadns-ng" "generic" "v8a"
-_update "arm-linux-musleabi" "zfl9/chinadns-ng" "generic" "v6+soft_float"
 _update "arm-linux-musleabihf" "zfl9/chinadns-ng" "generic" "v7a"
 _update "mips-linux-musl" "zfl9/chinadns-ng" "mips32" "soft_float"
 _update "mipsel-linux-musl" "zfl9/chinadns-ng" "mips32" "soft_float"
