@@ -346,7 +346,7 @@ index 7bd079c..46db9ab 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1713,7 +1793,7 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -1712,7 +1792,7 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"

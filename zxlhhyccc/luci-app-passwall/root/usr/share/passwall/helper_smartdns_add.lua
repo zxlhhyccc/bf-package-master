@@ -145,8 +145,9 @@ local function check_excluded_domain(domain)
 end
 
 local cache_text = ""
+local nodes_address_md5 = luci.sys.exec("echo -n $(uci show passwall | grep '\\.address') | md5sum")
 local new_rules = luci.sys.exec("echo -n $(find /usr/share/passwall/rules -type f | xargs md5sum)")
-local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. REMOTE_EXCLUDE .. TUN_DNS .. USE_DIRECT_LIST .. USE_PROXY_LIST .. USE_BLOCK_LIST .. USE_GFW_LIST .. CHN_LIST .. DEFAULT_PROXY_MODE .. NO_PROXY_IPV6 .. new_rules
+local new_text = SMARTDNS_CONF .. LOCAL_GROUP .. REMOTE_GROUP .. REMOTE_PROXY_SERVER .. REMOTE_EXCLUDE .. TUN_DNS .. USE_DIRECT_LIST .. USE_PROXY_LIST .. USE_BLOCK_LIST .. USE_GFW_LIST .. CHN_LIST .. DEFAULT_PROXY_MODE .. NO_PROXY_IPV6 .. nodes_address_md5 .. new_rules
 if fs.access(CACHE_TEXT_FILE) then
 	for line in io.lines(CACHE_TEXT_FILE) do
 		cache_text = line
@@ -226,6 +227,7 @@ if not fs.access(CACHE_DNS_FILE) then
 	--始终用国内DNS解析节点域名
 	uci:foreach(appname, "nodes", function(t)
 		local address = t.address
+		if address == "engage.cloudflareclient.com" then return end
 		if datatypes.hostname(address) then
 			set_domain_group(address, LOCAL_GROUP)
 			set_domain_ipset(address, "#4:" .. setflag .. "passwall_vpslist,#6:" .. setflag .. "passwall_vpslist6")
