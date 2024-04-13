@@ -582,6 +582,7 @@ o.rmempty = true
 
 -- Tuic settings for the local inbound socks5 server
 o = s:option(Flag, "tuic_dual_stack", translate("Dual-stack Listening Socket"))
+o.description = translate("If this option is not set, the socket behavior is platform dependent.")
 o:depends("type", "tuic")
 o.default = "0"
 o.rmempty = true
@@ -955,7 +956,8 @@ o:depends("reality", true)
 o.rmempty = true
 
 o = s:option(DynamicList, "tls_alpn", translate("TLS ALPN"))
-o:depends({type = "tuic", tls = true})
+o:depends("type", "tuic")
+o.default = "h3"
 o.rmempty = true
 
 -- [[ allowInsecure ]]--
