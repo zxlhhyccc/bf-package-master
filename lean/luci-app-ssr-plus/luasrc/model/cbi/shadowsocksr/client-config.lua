@@ -412,7 +412,9 @@ o.datatype = "uinteger"
 o.default = "30"
 
 o = s:option(Value, "keepaliveperiod", translate("The keep-alive period.(Unit:second)"))
+o.description = translate("Default value 0 indicatesno heartbeat.")
 o:depends({type = "hysteria", flag_quicparam = "1"})
+o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
 o.rmempty = true
 o.datatype = "uinteger"
 o.default = "10"
@@ -533,9 +535,7 @@ o.default = "cubic"
 o.rmempty = true
 
 o = s:option(Value, "heartbeat", translate("Heartbeat interval(second)"))
-o.description = translate("Default value 0 indicatesno heartbeat.")
 o:depends("type", "tuic")
-o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
 o.datatype = "uinteger"
 o.default = "3"
 o.rmempty = true
