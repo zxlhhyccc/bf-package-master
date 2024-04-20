@@ -63,6 +63,8 @@ define Package/luci-app-control-vlmcsd/install
 	$(INSTALL_DATA) ./root/etc/vlmcsd.ini $(1)/etc/
 	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
 	$(INSTALL_DATA) ./root/acl.d/* $(1)/usr/share/rpcd/acl.d/
+	$(INSTALL_DIR) $(1)/usr/share/ucitrack
+	$(INSTALL_DATA) ./root/ucitrack/* $(1)/usr/share/ucitrack/
 endef
 
 $(eval $(call BuildPackage,luci-app-control-vlmcsd))

@@ -1,5 +1,6 @@
 #!/bin/sh 
 
+[ -e "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@aliddns[-1]
 	add ucitrack aliddns
@@ -8,3 +9,4 @@ uci -q batch <<-EOF >/dev/null
 EOF
 
 exit 0
+}

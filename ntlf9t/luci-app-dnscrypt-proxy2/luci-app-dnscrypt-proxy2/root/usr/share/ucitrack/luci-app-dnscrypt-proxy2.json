@@ -1,0 +1,8 @@
+{
+	"config": "dnscrypt-proxy",
+	"init": "dnscrypt-proxy",
+	"exec": "/etc/init.d/dnscrypt-proxy_resolvers",
+	"affects": [
+		"public-resolvers"
+	]
+}
