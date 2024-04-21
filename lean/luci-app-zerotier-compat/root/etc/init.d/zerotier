@@ -27,8 +27,8 @@ start_instance() {
 		return 1
 	fi
   
-  [ -d /etc/config/zero ] || mkdir -p /etc/config/zero
-  config_path=/etc/config/zero
+	[ -d /etc/config/zero ] || mkdir -p /etc/config/zero
+	config_path=/etc/config/zero
   
 	config_get_bool port $cfg 'port'
 	config_get secret $cfg 'secret'
@@ -92,7 +92,7 @@ start_service() {
 }
 
 stop_instance() {
-  rm -f /tmp/zero.log
+	rm -f /tmp/zero.log
 	local cfg="$1"
 
 	/etc/zerotier.stop > /tmp/zero.log 2>&1 &

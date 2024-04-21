@@ -1,10 +1,12 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
+	[ -e "/etc/config/ucitrack" ] && {
 	delete ucitrack.@unblockneteasemusic[-1]
 	add ucitrack unblockneteasemusic
 	set ucitrack.@unblockneteasemusic[-1].init=unblockneteasemusic
 	commit ucitrack
+	}
 	delete firewall.unblockneteasemusic
 	set firewall.unblockneteasemusic=include
 	set firewall.unblockneteasemusic.type=script

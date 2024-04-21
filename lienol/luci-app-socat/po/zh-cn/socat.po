@@ -51,3 +51,9 @@ msgstr "目标端口"
 
 msgid "Open firewall port"
 msgstr "打开防火墙端口"
+
+msgid "Not Running"
+msgstr "未运行"
+
+msgid "Running"
+msgstr "运行中"

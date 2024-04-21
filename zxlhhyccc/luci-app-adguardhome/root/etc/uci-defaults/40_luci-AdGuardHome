@@ -1,5 +1,6 @@
 #!/bin/sh
 
+[ -e "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null 2>&1
 	delete ucitrack.@AdGuardHome[-1]
 	add ucitrack AdGuardHome
@@ -7,6 +8,7 @@ uci -q batch <<-EOF >/dev/null 2>&1
 	commit ucitrack
 	delete AdGuardHome.AdGuardHome.ucitracktest
 EOF
+}
 
 rm -f /tmp/luci-indexcache
 exit 0

@@ -1,10 +1,12 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
+	[ -e "/etc/config/ucitrack" ] && {
 	delete ucitrack.@ssocksd[-1]
 	add ucitrack ssocksd
 	set ucitrack.@ssocksd[-1].init=ssocksd
 	commit ucitrack
+	}
 	delete firewall.ssocksd
 	set firewall.ssocksd=include
 	set firewall.ssocksd.type=script

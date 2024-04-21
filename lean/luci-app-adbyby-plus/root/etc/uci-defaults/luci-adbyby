@@ -1,10 +1,12 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
+	[ -e "/etc/config/ucitrack" ] && {
 	delete ucitrack.@adbyby[-1]
 	add ucitrack adbyby
 	set ucitrack.@adbyby[-1].init=adbyby
 	commit ucitrack
+	}
 
 	delete firewall.adbyby
 	set firewall.adbyby=include

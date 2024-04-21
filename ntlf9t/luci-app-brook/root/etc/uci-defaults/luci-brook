@@ -1,10 +1,12 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
+	[ -e "/etc/config/ucitrack" ] && {
 	delete ucitrack.@brook[-1]
 	add ucitrack brook
 	set ucitrack.@brook[-1].init=brook
 	commit ucitrack
+	}
 	delete firewall.brook
 	set firewall.brook=include
 	set firewall.brook.type=script

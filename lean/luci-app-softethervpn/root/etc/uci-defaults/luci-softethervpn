@@ -8,12 +8,14 @@ uci -q batch <<-EOF >/dev/null
 	set firewall.softethervpn.reload=1
 EOF
 
+[ -e "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@softethervpn[-1]
 	add ucitrack softethervpn
 	set ucitrack.@softethervpn[-1].init=softethervpn
 	commit ucitrack
 EOF
+}
 
 /etc/init.d/softethervpnbridge disable && /etc/init.d/softethervpnbridge stop
 /etc/init.d/softethervpnclient disable && /etc/init.d/softethervpnclient stop

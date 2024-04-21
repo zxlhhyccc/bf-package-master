@@ -15,12 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+[ -e "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@smartdns[-1]
 	add ucitrack smartdns
 	set ucitrack.@smartdns[-1].init=smartdns
 	commit ucitrack
 EOF
+}
 
 rm -f /tmp/luci-indexcache
 exit 0

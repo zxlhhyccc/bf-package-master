@@ -1,7 +1,7 @@
 local d = require "luci.dispatcher"
 local e = luci.model.uci.cursor()
 
-m = Map("socat")
+m = Map("luci_socat")
 m.title = translate("Socat")
 m.description = translate("Socat is a relay for bidirectional data transfer between two independent data channels.")
 

@@ -1,8 +1,10 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
+	[ -e "/etc/config/ucitrack" ] && {
 	delete ucitrack.@zerotier[-1]
 	commit ucitrack
+	}
 
 	delete firewall.zerotier
 	commit firewall

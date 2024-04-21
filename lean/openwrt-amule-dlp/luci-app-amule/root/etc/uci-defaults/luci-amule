@@ -1,11 +1,13 @@
 #!/bin/sh
 
+[ -e "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@amule[-1]
 	add ucitrack amule
 	set ucitrack.@amule[-1].init=amule
 	commit ucitrack
 EOF
+}
 
 while [ ! $(grep -e "amule" ${IPKG_INSTROOT}/etc/passwd) ]
 do 

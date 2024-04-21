@@ -8,12 +8,14 @@ uci -q batch <<-EOF >/dev/null
 	set firewall.v2ray_server.reload=1
 EOF
 
+[ -e "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@v2ray_server[-1]
 	add ucitrack v2ray_server
 	set ucitrack.@v2ray_server[-1].init=v2ray_server
 	commit ucitrack
 EOF
+}
 
 chmod a+x /usr/share/v2ray_server/* >/dev/null 2>&1
 

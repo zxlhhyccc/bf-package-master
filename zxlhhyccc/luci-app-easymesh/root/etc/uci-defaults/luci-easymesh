@@ -1,11 +1,13 @@
 #!/bin/sh
 
+[ -e "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@easymesh[-1]
 	add ucitrack easymesh
 	set ucitrack.@easymesh[-1].init=easymesh
 	commit ucitrack
 EOF
+}
 
 rm -f /tmp/luci-indexcache
 exit 0

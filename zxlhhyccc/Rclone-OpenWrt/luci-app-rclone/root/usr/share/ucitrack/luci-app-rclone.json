@@ -1,0 +1,4 @@
+{
+	"config": "rclone",
+	"init": "rclone"
+}

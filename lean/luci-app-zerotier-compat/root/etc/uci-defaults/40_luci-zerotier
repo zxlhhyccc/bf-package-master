@@ -1,11 +1,13 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
+	[ -e "/etc/config/ucitrack" ] && {
 	delete ucitrack.@zerotier[-1]
 	add ucitrack zerotier
 	set ucitrack.@zerotier[-1].init=zerotier
 	commit ucitrack
-  delete firewall.zerotier
+	}
+	delete firewall.zerotier
 	set firewall.zerotier=include
 	set firewall.zerotier.type=script
 	set firewall.zerotier.path=/etc/zerotier.start
