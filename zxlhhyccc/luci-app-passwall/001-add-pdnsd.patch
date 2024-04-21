@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 58218dc..c2cf4b1 100644
+index 0ba5c5e..af89557 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -14,9 +14,11 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
@@ -177,7 +177,7 @@ index 58218dc..c2cf4b1 100644
  
  endmenu
 diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index 4bd30a6..b51b16c 100644
+index 31efd01..a952173 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -326,7 +326,10 @@ end
@@ -223,10 +223,10 @@ index 9682502..1508d55 100644
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 58db80d..84f293a 100644
+index 840765d..478b8f5 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -274,6 +274,12 @@ msgstr "关闭（不使用）"
+@@ -271,6 +271,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -240,10 +240,10 @@ index 58db80d..84f293a 100644
  msgstr "默认代理模式"
  
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 7bd079c..46db9ab 100755
+index 5f21126..5d96637 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1261,6 +1261,12 @@ start_dns() {
+@@ -1325,6 +1325,12 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -256,7 +256,7 @@ index 7bd079c..46db9ab 100755
  	dns2tcp)
  		use_tcp_node_resolve_dns=1
  		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-@@ -1268,8 +1274,14 @@ start_dns() {
+@@ -1332,8 +1338,14 @@ start_dns() {
  	;;
  	udp)
  		use_udp_node_resolve_dns=1
@@ -266,12 +266,12 @@ index 7bd079c..46db9ab 100755
 +			echolog "  - 域名解析：pdnsd + 使用(UDP节点)解析域名..."
 +		else
  		TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
- 		echolog "  - 域名解析：使用UDP协议请求DNS（$TUN_DNS）..."
+ 		echolog "  - udp://${TUN_DNS}"
 +		fi
  	;;
  	esac
- 
-@@ -1308,6 +1320,74 @@ start_dns() {
+ 	
+@@ -1378,6 +1390,73 @@ start_dns() {
  		-NO_LOGIC_LOG ${NO_LOGIC_LOG:-0}
  }
  
@@ -318,7 +318,6 @@ index 7bd079c..46db9ab 100755
 +			proc_limit = 2;
 +			procq_limit = 8;
 +		}
-+
 +	EOF
 +	echolog "  + [$?]Pdnsd (127.0.0.1:${listen_port})..."
 +
@@ -346,7 +345,7 @@ index 7bd079c..46db9ab 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1716,7 +1796,7 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -1788,7 +1867,7 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"

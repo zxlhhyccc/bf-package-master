@@ -215,15 +215,6 @@ if not fs.access(CACHE_DNS_FILE) then
 	local setflag= (NFTFLAG == "1") and "inet#fw4#" or ""
 	local set_type= (NFTFLAG == "1") and "-nftset" or "-ipset"
 
-	--屏蔽列表
-	if USE_BLOCK_LIST == "1" then
-		for line in io.lines("/usr/share/passwall/rules/block_host") do
-			if line ~= "" and not line:find("#") then
-				set_domain_address(line, "-")
-			end
-		end
-	end
-
 	--始终用国内DNS解析节点域名
 	uci:foreach(appname, "nodes", function(t)
 		local address = t.address
@@ -235,34 +226,49 @@ if not fs.access(CACHE_DNS_FILE) then
 	end)
 	log(string.format("  - 节点列表中的域名(vpslist)使用分组：%s", LOCAL_GROUP or "默认"))
 
-	--直连（白名单）列表
-	if USE_DIRECT_LIST == "1" then
-		for line in io.lines("/usr/share/passwall/rules/direct_host") do
-			if line ~= "" and not line:find("#") then
-				add_excluded_domain(line)
-				set_domain_group(line, LOCAL_GROUP)
-				set_domain_ipset(line, "#4:" .. setflag .. "passwall_whitelist,#6:" .. setflag .. "passwall_whitelist6")
+	--屏蔽列表
+	if USE_BLOCK_LIST == "1" then
+		if fs.access("/usr/share/passwall/rules/block_host") then
+			for line in io.lines("/usr/share/passwall/rules/block_host") do
+				if line ~= "" and not line:find("#") then
+					set_domain_address(line, "-")
+				end
 			end
 		end
-		log(string.format("  - 域名白名单(whitelist)使用分组：%s", LOCAL_GROUP or "默认"))
+	end
+
+	--直连（白名单）列表
+	if USE_DIRECT_LIST == "1" then
+		if fs.access("/usr/share/passwall/rules/direct_host") then
+			for line in io.lines("/usr/share/passwall/rules/direct_host") do
+				if line ~= "" and not line:find("#") then
+					add_excluded_domain(line)
+					set_domain_group(line, LOCAL_GROUP)
+					set_domain_ipset(line, "#4:" .. setflag .. "passwall_whitelist,#6:" .. setflag .. "passwall_whitelist6")
+				end
+			end
+			log(string.format("  - 域名白名单(whitelist)使用分组：%s", LOCAL_GROUP or "默认"))
+		end
 	end
 
 	--代理（黑名单）列表
 	if USE_PROXY_LIST == "1" then
-		for line in io.lines("/usr/share/passwall/rules/proxy_host") do
-			if line ~= "" and not line:find("#") then
-				add_excluded_domain(line)
-				local ipset_flag = "#4:" .. setflag .. "passwall_blacklist,#6:" .. setflag .. "passwall_blacklist6"
-				if NO_PROXY_IPV6 == "1" then
-					set_domain_address(line, "#6")
-					ipset_flag = "#4:" .. setflag .. "passwall_blacklist"
+		if fs.access("/usr/share/passwall/rules/proxy_host") then
+			for line in io.lines("/usr/share/passwall/rules/proxy_host") do
+				if line ~= "" and not line:find("#") then
+					add_excluded_domain(line)
+					local ipset_flag = "#4:" .. setflag .. "passwall_blacklist,#6:" .. setflag .. "passwall_blacklist6"
+					if NO_PROXY_IPV6 == "1" then
+						set_domain_address(line, "#6")
+						ipset_flag = "#4:" .. setflag .. "passwall_blacklist"
+					end
+					set_domain_group(line, REMOTE_GROUP)
+					set_domain_ipset(line, ipset_flag)
+					set_domain_extra_param(line, "-no-serve-expired")
 				end
-				set_domain_group(line, REMOTE_GROUP)
-				set_domain_ipset(line, ipset_flag)
-				set_domain_extra_param(line, "-no-serve-expired")
 			end
+			log(string.format("  - 代理域名表(blacklist)使用分组：%s", REMOTE_GROUP or "默认"))
 		end
-		log(string.format("  - 代理域名表(blacklist)使用分组：%s", REMOTE_GROUP or "默认"))
 	end
 
 	--GFW列表
