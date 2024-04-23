@@ -90,8 +90,6 @@ function parseShareLink(uri, features) {
 				tls_sni: params.get('sni'),
 				tls_insecure: params.get('insecure') ? '1' : '0'
 			};
-
-			break;
 		case 'socks':
 		case 'socks4':
 		case 'socks4a':
@@ -367,6 +365,12 @@ return view.extend({
 		var m, s, o, ss, so;
 		var main_node = uci.get(data[0], 'config', 'main_node');
 		var routing_mode = uci.get(data[0], 'config', 'routing_mode');
+		var proxy_nodes = {};
+		uci.sections(data[0], 'node', (res) => {
+			proxy_nodes[res['.name']] =
+				String.format('[%s] %s', res.type, res.label || (stubValidator.apply('ip6addr', res.address || '') ?
+					String.format('[%s]', res.address) : res.address) + ':' + res.port);
+		});
 		var features = data[1];
 
 		m = new form.Map('homeproxy', _('Edit nodes'));
@@ -520,16 +524,18 @@ return view.extend({
 			so.value('wireguard', _('WireGuard'));
 		so.value('vless', _('VLESS'));
 		so.value('vmess', _('VMess'));
+		so.value('selector', _('Selector'));
+		so.value('urltest', _('URLTest'));
 		so.rmempty = false;
 
 		so = ss.option(form.Value, 'address', _('Address'));
 		so.datatype = 'host';
-		so.depends({'type': 'direct', '!reverse': true});
+		so.depends({'type': /^(direct|selector|urltest)$/, '!reverse': true});
 		so.rmempty = false;
 
 		so = ss.option(form.Value, 'port', _('Port'));
 		so.datatype = 'port';
-		so.depends({'type': 'direct', '!reverse': true});
+		so.depends({'type': /^(direct|selector|urltest)$/, '!reverse': true});
 		so.rmempty = false;
 
 		so = ss.option(form.Value, 'username', _('Username'));
@@ -541,11 +547,11 @@ return view.extend({
 		so = ss.option(form.Value, 'password', _('Password'));
 		so.password = true;
 		so.depends('type', 'http');
-		so.depends('type', 'hysteria2');
 		so.depends('type', 'shadowsocks');
 		so.depends('type', 'ssh');
 		so.depends('type', 'trojan');
 		so.depends('type', 'tuic');
+		so.depends('type', 'hysteria2');
 		so.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
 		so.depends({'type': 'shadowtls', 'shadowtls_version': '3'});
 		so.depends({'type': 'socks', 'socks_version': '5'});
@@ -580,7 +586,7 @@ return view.extend({
 		so.datatype = 'port';
 		so.depends('type', 'direct');
 
-		/* Hysteria (2) config start */
+		/* Hysteria(2) config start */
 		so = ss.option(form.ListValue, 'hysteria_protocol', _('Protocol'));
 		so.value('udp');
 		/* WeChat-Video / FakeTCP are unsupported by sing-box currently
@@ -593,14 +599,17 @@ return view.extend({
 		so.modalonly = true;
 
 		so = ss.option(form.ListValue, 'hysteria_auth_type', _('Authentication type'));
-		so.value('', _('Disable'));
+		so.value('disabled', _('Disable'));
 		so.value('base64', _('Base64'));
 		so.value('string', _('String'));
+		so.default = 'disabled';
 		so.depends('type', 'hysteria');
+		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'hysteria_auth_payload', _('Authentication payload'));
-		so.depends({'type': 'hysteria', 'hysteria_auth_type': /[\s\S]/});
+		so.depends({'type': 'hysteria', 'hysteria_auth_type': 'base64'});
+		so.depends({'type': 'hysteria', 'hysteria_auth_type': 'string'});
 		so.rmempty = false;
 		so.modalonly = true;
 
@@ -646,7 +655,21 @@ return view.extend({
 		so.default = so.disabled;
 		so.depends('type', 'hysteria');
 		so.modalonly = true;
-		/* Hysteria (2) config end */
+
+		so = ss.option(form.ListValue, 'hysteria_network', _('Enabled network'));
+		so.value('', _('Default'));
+		so.value('tcp', _('TCP'));
+		so.value('udp', _('UDP'));
+		so.default = '';
+		so.depends('type', 'hysteria2');
+		so.modalonly = true;
+
+		so = ss.option(form.Flag, 'hysteria_brutal_debug', _('Debug Hysteria Brutal CC'),
+			_('Enable debug information logging for Hysteria Brutal CC.'));
+		so.default = so.disabled;
+		so.depends('type', 'hysteria2');
+		so.modalonly = true;
+		/* Hysteria(2) config end */
 
 		/* Shadowsocks config start */
 		so = ss.option(form.ListValue, 'shadowsocks_encrypt_method', _('Encrypt method'));
@@ -811,6 +834,54 @@ return view.extend({
 		so.modalonly = true;
 		/* VMess config end */
 
+		/* Selector config start */
+		so = ss.option(form.DynamicList, 'node_outbounds', _('Outbounds'),
+			_('List of outbound tags.'));
+		for (var i in proxy_nodes)
+			so.value(i, proxy_nodes[i]);
+		so.depends('type', 'selector');
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'selector_default', _('Default outbound'),
+			_('The default outbound tag. The first outbound will be used if empty.'));
+		so.value('', _('Default'));
+		for (var i in proxy_nodes)
+			so.value(i, proxy_nodes[i]);
+		so.default = '';
+		so.depends('type', 'selector');
+		so.modalonly = true;
+		/* Selector config end */
+
+		/* URLTest config start */
+		so = ss.option(form.Value, 'urltest_url', _('URLTest url'),
+			_('The URL to test. https://www.gstatic.com/generate_204 will be used if empty.'));
+		so.value('', _('Default'));
+		so.default = 'https://www.gstatic.com/generate_204';
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_interval', _('URLTest interval'),
+			_('The test interval. 1m will be used if empty.'));
+		so.value('', _('Default'));
+		so.default = '1m';
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Value, 'urltest_tolerance', _('URLTest tolerance'),
+			_('The test tolerance in milliseconds. 50 will be used if empty.'));
+		so.datatype = 'uinteger';
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+
+		so = ss.option(form.Flag, 'node_interrupt_exist_connections', _('Interrupt existing connections'),
+			_('Interrupt existing connections when the selected outbound has changed.'));
+		so.default = so.disabled;
+		so.depends('type', 'selector');
+		so.depends('type', 'urltest');
+		so.modalonly = true;
+		/* URLTest config end */
+
 		/* Transport config start */
 		so = ss.option(form.ListValue, 'transport', _('Transport'),
 			_('No TCP transport, plain HTTP is merged into the HTTP transport.'));
@@ -936,10 +1007,9 @@ return view.extend({
 		/* Transport config end */
 
 		/* Wireguard config start */
-		so = ss.option(form.Flag, 'wireguard_gso', _('Generic segmentation offload'));
+		so = ss.option(form.Flag, 'wireguard_gso', _('Try to enable generic segmentation offload'));
 		so.default = so.disabled;
 		so.depends('type', 'wireguard');
-		so.rmempty = false;
 		so.modalonly = true;
 
 		so = ss.option(form.DynamicList, 'wireguard_local_address', _('Local address'),
@@ -1026,20 +1096,18 @@ return view.extend({
 		so.depends('multiplex', '1');
 		so.modalonly = true;
 
-		so = ss.option(form.Flag, 'multiplex_brutal', _('Enable TCP Brutal'),
-			_('Enable TCP Brutal congestion control algorithm'));
+		// brutal
+		so = ss.option(form.Flag, 'multiplex_brutal', _('Enable TCP Brutal'));
 		so.default = so.disabled;
 		so.depends('multiplex', '1');
 		so.modalonly = true;
 
-		so = ss.option(form.Value, 'multiplex_brutal_down', _('Download bandwidth'),
-			_('Download bandwidth in Mbps.'));
+		so = ss.option(form.Value, 'multiplex_brutal_up_mbps', _('Max upload speed'));
 		so.datatype = 'uinteger';
 		so.depends('multiplex_brutal', '1');
 		so.modalonly = true;
 
-		so = ss.option(form.Value, 'multiplex_brutal_up', _('Upload bandwidth'),
-			_('Upload bandwidth in Mbps.'));
+		so = ss.option(form.Value, 'multiplex_brutal_down_mbps', _('Max download speed'));
 		so.datatype = 'uinteger';
 		so.depends('multiplex_brutal', '1');
 		so.modalonly = true;
@@ -1163,22 +1231,22 @@ return view.extend({
 			so = ss.option(form.ListValue, 'tls_utls', _('uTLS fingerprint'),
 				_('uTLS is a fork of "crypto/tls", which provides ClientHello fingerprinting resistance.'));
 			so.value('', _('Disable'));
-			so.value('360');
-			so.value('android');
-			so.value('chrome');
-			so.value('chrome_psk');
-			so.value('chrome_psk_shuffle');
-			so.value('chrome_padding_psk_shuffle');
-			so.value('chrome_pq');
-			so.value('chrome_pq_psk');
-			so.value('edge');
-			so.value('firefox');
-			so.value('ios');
-			so.value('qq');
-			so.value('random');
-			so.value('randomized');
-			so.value('safari');
-			so.depends({'tls': '1', 'type': /^((?!hysteria2?$).)+$/});
+			so.value('360', _('360'));
+			so.value('android', _('Android'));
+			so.value('chrome', _('Chrome'));
+			so.value('chrome_psk', _('Chrome_psk'));
+			so.value('chrome_psk_shuffle', _('Chrome_psk_shuffle'));
+			so.value('chrome_padding_psk_shuffle', _('Chrome_padding_psk_shuffle'));
+			so.value('chrome_pq', _('Chrome_pq'));
+			so.value('chrome_pq_psk', _('Chrome'));
+			so.value('edge', _('Edge'));
+			so.value('firefox', _('Firefox'));
+			so.value('ios', _('iOS'));
+			so.value('qq', _('QQ'));
+			so.value('random', _('Random'));
+			so.value('randomized', _('Randomized'));
+			so.value('safari', _('Safari'));
+			so.depends({'tls': '1', 'type': /^((?!hysteria2$).)+$/});
 			so.validate = function(section_id, value) {
 				if (section_id) {
 					let tls_reality = this.map.findElement('id', 'cbid.homeproxy.%s.tls_reality'.format(section_id)).firstElementChild;
@@ -1213,15 +1281,18 @@ return view.extend({
 		/* Extra settings start */
 		so = ss.option(form.Flag, 'tcp_fast_open', _('TCP fast open'));
 		so.default = so.disabled;
+		so.depends({'type': /^(selector|urltest)$/, '!reverse': true});
 		so.modalonly = true;
 
-		so = ss.option(form.Flag, 'tcp_multi_path', _('MultiPath TCP'));
+		so = ss.option(form.Flag, 'tcp_multi_path', _('Enable TCP Multi Path'));
 		so.default = so.disabled;
+		so.depends({'type': /^(selector|urltest)$/, '!reverse': true});
 		so.modalonly = true;
 
 		so = ss.option(form.Flag, 'udp_fragment', _('UDP Fragment'),
 			_('Enable UDP fragmentation.'));
 		so.default = so.disabled;
+		so.depends({'type': /^(selector|urltest)$/, '!reverse': true});
 		so.modalonly = true;
 
 		so = ss.option(form.Flag, 'udp_over_tcp', _('UDP over TCP'),
@@ -1244,7 +1315,7 @@ return view.extend({
 		s.tab('subscription', _('Subscriptions'));
 
 		o = s.taboption('subscription', form.Flag, 'auto_update', _('Auto update'),
-			_('Auto update subscriptions.'));
+			_('Auto update subscriptions, GeoIP and GeoSite.'));
 		o.default = o.disabled;
 		o.rmempty = false;
 

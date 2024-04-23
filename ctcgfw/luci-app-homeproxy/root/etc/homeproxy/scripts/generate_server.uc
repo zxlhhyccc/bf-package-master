@@ -67,6 +67,7 @@ uci.foreach(uciconfig, uciserver, (cfg) => {
 		disable_mtu_discovery: strToBool(cfg.hysteria_disable_mtu_discovery),
 		ignore_client_bandwidth: strToBool(cfg.hysteria_ignore_client_bandwidth),
 		masquerade: cfg.hysteria_masquerade,
+		brutal_debug: strToBool(cfg.hysteria_brutal_debug),
 
 		/* Shadowsocks */
 		method: (cfg.type === 'shadowsocks') ? cfg.shadowsocks_encrypt_method : null,
@@ -78,7 +79,7 @@ uci.foreach(uciconfig, uciserver, (cfg) => {
 		zero_rtt_handshake: strToBool(cfg.tuic_enable_zero_rtt),
 		heartbeat: cfg.tuic_heartbeat ? (cfg.tuic_heartbeat + 's') : null,
 
-		/* HTTP / Hysteria (2) / Socks / Trojan / Tuic / VLESS / VMess */
+		/* HTTP / Hysteria(2) / Socks / Trojan / Tuic / VLESS / VMess */
 		users: (cfg.type !== 'shadowsocks') ? [
 			{
 				name: !(cfg.type in ['http', 'socks']) ? 'cfg-' + cfg['.name'] + '-server' : null,
@@ -103,8 +104,8 @@ uci.foreach(uciconfig, uciserver, (cfg) => {
 			padding: (cfg.multiplex_padding === '1'),
 			brutal: (cfg.multiplex_brutal === '1') ? {
 				enabled: true,
-				up_mbps: strToInt(cfg.multiplex_brutal_up),
-				down_mbps: strToInt(cfg.multiplex_brutal_down)
+				up_mbps: cfg.multiplex_brutal_up,
+				down_mbps: cfg.multiplex_brutal_down
 			} : null
 		} : null,
 

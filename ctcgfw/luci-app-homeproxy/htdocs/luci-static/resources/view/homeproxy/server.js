@@ -135,36 +135,32 @@ return view.extend({
 		o = s.option(form.Value, 'password', _('Password'));
 		o.password = true;
 		o.depends({'type': /^(http|naive|socks)$/, 'username': /[\s\S]/});
-		o.depends('type', 'hysteria2');
 		o.depends('type', 'shadowsocks');
 		o.depends('type', 'trojan');
 		o.depends('type', 'tuic');
+		o.depends('type', 'hysteria2');
 		o.validate = function(section_id, value) {
 			if (section_id) {
 				var type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
-				var required_type = [ 'http', 'naive', 'socks', 'shadowsocks' ];
-
-				if (required_type.includes(type)) {
-					if (type === 'shadowsocks') {
-						var encmode = this.map.lookupOption('shadowsocks_encrypt_method', section_id)[0].formvalue(section_id);
-						if (encmode === 'none')
-							return true;
-						else if (encmode === '2022-blake3-aes-128-gcm')
-							return hp.validateBase64Key(24, section_id, value);
-						else if (['2022-blake3-aes-256-gcm', '2022-blake3-chacha20-poly1305'].includes(encmode))
-							return hp.validateBase64Key(44, section_id, value);
-					}
-
-					if (!value)
-						return _('Expecting: %s').format(_('non-empty value'));
+				if (type === 'shadowsocks') {
+					var encmode = this.map.lookupOption('shadowsocks_encrypt_method', section_id)[0].formvalue(section_id);
+					if (encmode === 'none')
+						return true;
+					else if (encmode === '2022-blake3-aes-128-gcm')
+						return hp.validateBase64Key(24, section_id, value);
+					else if (['2022-blake3-aes-256-gcm', '2022-blake3-chacha20-poly1305'].includes(encmode))
+						return hp.validateBase64Key(44, section_id, value);
 				}
+
+				if (!value)
+					return _('Expecting: %s').format(_('non-empty value'));
 			}
 
 			return true;
 		}
 		o.modalonly = true;
 
-		/* Hysteria (2) config start */
+		/* Hysteria(2) config start */
 		o = s.option(form.ListValue, 'hysteria_protocol', _('Protocol'));
 		o.value('udp');
 		/* WeChat-Video / FakeTCP are unsupported by sing-box currently
@@ -191,14 +187,17 @@ return view.extend({
 		o.modalonly = true;
 
 		o = s.option(form.ListValue, 'hysteria_auth_type', _('Authentication type'));
-		o.value('', _('Disable'));
+		o.value('disabled', _('Disable'));
 		o.value('base64', _('Base64'));
 		o.value('string', _('String'));
+		o.default = 'disabled';
 		o.depends('type', 'hysteria');
+		o.rmempty = false;
 		o.modalonly = true;
 
 		o = s.option(form.Value, 'hysteria_auth_payload', _('Authentication payload'));
-		o.depends({'type': 'hysteria', 'hysteria_auth_type': /[\s\S]/});
+		o.depends({'type': 'hysteria', 'hysteria_auth_type': 'base64'});
+		o.depends({'type': 'hysteria', 'hysteria_auth_type': 'string'});
 		o.rmempty = false;
 		o.modalonly = true;
 
@@ -240,17 +239,23 @@ return view.extend({
 		o.depends('type', 'hysteria');
 		o.modalonly = true;
 
-		o = s.option(form.Flag, 'hysteria_ignore_client_bandwidth', _('Ignore client bandwidth'),
-			_('Tell the client to use the BBR flow control algorithm instead of Hysteria CC.'));
+		o = s.option(form.Flag, 'hysteria_ignore_client_bandwidth', _('Commands the client to use the BBR flow control algorithm instead of Hysteria CC'),
+			_('Conflict with up_mbps and down_mbps.'));
 		o.default = o.disabled;
 		o.depends({'type': 'hysteria2', 'hysteria_down_mbps': '', 'hysteria_up_mbps': ''});
 		o.modalonly = true;
 
-		o = s.option(form.Value, 'hysteria_masquerade', _('Masquerade'),
-			_('HTTP3 server behavior when authentication fails.<br/>A 404 page will be returned if empty.'));
+		o = s.option(form.Value, 'hysteria_masquerade', _('HTTP3 server behavior when authentication fails'),
+			_('A 404 page will be returned if empty.'));
 		o.depends('type', 'hysteria2');
 		o.modalonly = true;
-		/* Hysteria (2) config end */
+
+		o = s.option(form.Flag, 'hysteria_brutal_debug', _('Debug Hysteria Brutal CC'),
+			_('Enable debug information logging for Hysteria Brutal CC.'));
+		o.default = s.disabled;
+		o.depends('type', 'hysteria2');
+		o.modalonly = true;
+		/* Hysteria(2) config end */
 
 		/* Shadowsocks config */
 		o = s.option(form.ListValue, 'shadowsocks_encrypt_method', _('Encrypt method'));
@@ -706,7 +711,7 @@ return view.extend({
 		o.depends({'network': 'udp', '!reverse': true});
 		o.modalonly = true;
 
-		o = s.option(form.Flag, 'tcp_multi_path', _('MultiPath TCP'));
+		o = s.option(form.Flag, 'tcp_multi_path', _('Enable TCP Multi Path'));
 		o.default = o.disabled;
 		o.depends({'network': 'udp', '!reverse': true});
 		o.modalonly = true;
