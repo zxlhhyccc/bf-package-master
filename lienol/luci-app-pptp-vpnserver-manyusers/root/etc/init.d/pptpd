@@ -104,7 +104,8 @@ setup_config() {
 start_pptpd() {
 	mkdir -p $RUN_D
 	for m in arc4 sha1_generic slhc crc-ccitt ppp_generic ppp_async ppp_mppe; do
-		insmod $m >/dev/null 2>&1
+		# insmod $m >/dev/null 2>&1
+		modprobe $m >/dev/null 2>&1
 	done
 	ln -sfn $CHAP_SECRETS /etc/ppp/chap-secrets
 	chmod 600 /etc/ppp/*-secrets

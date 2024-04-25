@@ -295,14 +295,19 @@ initialize_qos()
 	# Now, load/insert necessary kernel modules
 	# The following packages are required for the modules:
 	rmmod  imq >&- 2>&-
-	insmod imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >&- 2>&-
+	#insmod imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >&- 2>&-
+	modprobe imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >&- 2>&-
 	ip link set dev imq0 mtu 1500
 
 	# Make sure the other kernel modules we need are loaded
-	insmod cls_fw >&- 2>&-
-	insmod cls_flow >&- 2>&-
-	insmod sch_hfsc >&- 2>&-
-	insmod sch_sfq >&- 2>&-
+	#insmod cls_fw >&- 2>&-
+	#insmod cls_flow >&- 2>&-
+	#insmod sch_hfsc >&- 2>&-
+	#insmod sch_sfq >&- 2>&-
+	modprobe cls_fw >&- 2>&-
+	modprobe cls_flow >&- 2>&-
+	modprobe sch_hfsc >&- 2>&-
+	modprobe sch_sfq >&- 2>&-
 
 	#Deciding how to set sfq_depth is not straight forward. Too high and we burn up RAM
 	#needlessly on low memory routers. Too low and our maximum bandwidth gets limited.

@@ -27,14 +27,22 @@ have_cm() {
 load_sfe() {
 	local kernel_version=$(uname -r)
 
-	[ -d "/sys/module/shortcut_fe" ] || insmod /lib/modules/$kernel_version/shortcut-fe.ko
-	[ -d "/sys/module/shortcut_fe_ipv6" ] || insmod /lib/modules/$kernel_version/shortcut-fe-ipv6.ko
+	#[ -d "/sys/module/shortcut_fe" ] || insmod /lib/modules/$kernel_version/shortcut-fe.ko
+	#[ -d "/sys/module/shortcut_fe_ipv6" ] || insmod /lib/modules/$kernel_version/shortcut-fe-ipv6.ko
+	[ -d "/sys/module/shortcut_fe" ] || modprobe /lib/modules/$kernel_version/shortcut-fe.ko
+	[ -d "/sys/module/shortcut_fe_ipv6" ] || modprobe /lib/modules/$kernel_version/shortcut-fe-ipv6.ko
 
+	#[ -e "/lib/modules/$kernel_version/shortcut-fe-cm.ko" ] && {
+	#	[ -d /sys/module/shortcut_fe_cm ] || insmod /lib/modules/$kernel_version/shortcut-fe-cm.ko
+	#}
+	#[ -e "/lib/modules/$kernel_version/fast-classifier.ko" ] && {
+	#	[ -d /sys/module/fast_classifier ] || insmod /lib/modules/$kernel_version/fast-classifier.ko
+	#}
 	[ -e "/lib/modules/$kernel_version/shortcut-fe-cm.ko" ] && {
-		[ -d /sys/module/shortcut_fe_cm ] || insmod /lib/modules/$kernel_version/shortcut-fe-cm.ko
+		[ -d /sys/module/shortcut_fe_cm ] || modprobe /lib/modules/$kernel_version/shortcut-fe-cm.ko
 	}
 	[ -e "/lib/modules/$kernel_version/fast-classifier.ko" ] && {
-		[ -d /sys/module/fast_classifier ] || insmod /lib/modules/$kernel_version/fast-classifier.ko
+		[ -d /sys/module/fast_classifier ] || modprobe /lib/modules/$kernel_version/fast-classifier.ko
 	}
 }
 

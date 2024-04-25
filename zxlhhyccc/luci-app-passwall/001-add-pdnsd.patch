@@ -278,7 +278,7 @@ index 9ee7b06..7135268 100644
  	option udp_node 'nil'
  	option tcp_node_socks_port '1070'
  	option filter_proxy_ipv6 '1'
-+	# option dns_mode 'tcp'
++	# option dns_mode 'pdnsd'
  	option dns_mode 'tcp'
  	option remote_dns '1.1.1.1'
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'

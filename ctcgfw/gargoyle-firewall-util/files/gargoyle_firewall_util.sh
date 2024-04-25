@@ -471,14 +471,18 @@ initialize_quota_qos()
 	#echo "num_down_bands=$num_down_bands"
 
 	if [ -n "$wan_if" ] && [ $num_up_bands -gt 1 ] && [ $num_down_bands -gt 1 ] ; then
-		insmod sch_prio  >/dev/null 2>&1
-		insmod sch_tbf   >/dev/null 2>&1
-		insmod cls_fw    >/dev/null 2>&1
+		#insmod sch_prio  >/dev/null 2>&1
+		#insmod sch_tbf   >/dev/null 2>&1
+		#insmod cls_fw    >/dev/null 2>&1
+		modprobe sch_prio  >/dev/null 2>&1
+		modprobe sch_tbf   >/dev/null 2>&1
+		modprobe cls_fw    >/dev/null 2>&1
 
 		ifconfig imq0 down  >/dev/null 2>&1
 		ifconfig imq1 down  >/dev/null 2>&1
 		rmmod  imq          >/dev/null 2>&1
-		insmod imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >/dev/null 2>&1
+		#insmod imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >/dev/null 2>&1
+		modprobe imq numdevs=1 hook_chains="INPUT,FORWARD" hook_tables="mangle,mangle" >/dev/null 2>&1
 		ip link set imq0 up
 
 		#egress/upload
