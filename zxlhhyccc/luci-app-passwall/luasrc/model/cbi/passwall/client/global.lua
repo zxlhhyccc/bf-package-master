@@ -453,7 +453,7 @@ o:depends({dns_mode = "udp"})
 o:depends({dns_mode = "sing-box", remote_fakedns = false})
 o:depends({dns_mode = "xray"})
 o.rmempty = false
---]]
+]]--
 
 if api.is_finded("chinadns-ng") then
 	o = s:taboption("DNS", Flag, "chinadns_ng", translate("ChinaDNS-NG"), translate("The effect is better, recommend."))
