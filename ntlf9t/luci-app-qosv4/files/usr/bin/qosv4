@@ -33,41 +33,23 @@
 
 . /lib/functions.sh
 
-#load_modules(){
-	#rmmod imq
-        #insmod imq numdevs=1 
-        #insmod cls_fw 
-        #insmod sch_hfsc 
-        #insmod sch_sfq 
-        #insmod sch_red 
-        #insmod sch_htb 
-        #insmod sch_prio 
-        #insmod ipt_multiport 
-        #insmod ipt_CONNMARK
-        #insmod ipt_length 
-        #insmod ipt_IMQ 
-        #insmod ipt_hashlimit
-        #insmod cls_u32
-	    	#insmod xt_connlimit
-	    	#insmod xt_connbytes
-#}
 load_modules(){
 	rmmod imq
-        modprobe imq numdevs=1 
-        modprobe cls_fw 
-        modprobe sch_hfsc 
-        modprobe sch_sfq 
-        modprobe sch_red 
-        modprobe sch_htb 
-        modprobe sch_prio 
-        modprobe ipt_multiport 
-        modprobe ipt_CONNMARK
-        modprobe ipt_length 
-        modprobe ipt_IMQ 
-        modprobe ipt_hashlimit
-        modprobe cls_u32
-	    	modprobe xt_connlimit
-	    	modprobe xt_connbytes
+        insmod imq numdevs=1 
+        insmod cls_fw 
+        insmod sch_hfsc 
+        insmod sch_sfq 
+        insmod sch_red 
+        insmod sch_htb 
+        insmod sch_prio 
+        insmod ipt_multiport 
+        insmod ipt_CONNMARK
+        insmod ipt_length 
+        insmod ipt_IMQ 
+        insmod ipt_hashlimit
+        insmod cls_u32
+	    	insmod xt_connlimit
+	    	insmod xt_connbytes
 }
 
 lan_net(){

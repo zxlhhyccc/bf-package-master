@@ -33,8 +33,7 @@ start_service(){
 		fi
 	fi
 	gen_class.sh /tmp/feature.cfg
-	#insmod oaf
-	modprobe oaf
+	insmod oaf
 	/usr/bin/oaf_rule reload
 	procd_open_instance
 	procd_set_param respawn 60 5 5
