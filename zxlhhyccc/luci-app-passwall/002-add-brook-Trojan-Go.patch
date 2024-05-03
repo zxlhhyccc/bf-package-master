@@ -875,7 +875,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 2ac33a4..6ecec5a 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -943,6 +943,9 @@ msgstr "%s 程序路径"
+@@ -949,6 +949,9 @@ msgstr "%s 程序路径"
  msgid "%s Client App Path"
  msgstr "%s 客户端程序路径"
  
@@ -885,7 +885,7 @@ index 2ac33a4..6ecec5a 100644
  msgid "alternate API URL for version checking"
  msgstr "用于版本检查的 API URL"
  
-@@ -1159,6 +1162,12 @@ msgstr "插件名称"
+@@ -1165,6 +1168,12 @@ msgstr "插件名称"
  msgid "Plugin Arguments"
  msgstr "插件参数"
  
@@ -917,7 +917,7 @@ index fbc6a37..c8203de 100755
 +++ b/root/usr/share/passwall/app.sh
 @@ -678,6 +678,10 @@ run_socks() {
  		[ -n "$relay_port" ] && _args="${_args} server_host=$server_host server_port=$port"
- 		run_xray flag=$flag node=$node socks_port=$socks_port config_file=$config_file log_file=$log_file ${_args}
+ 		run_xray flag=$flag node=$node socks_address=$bind socks_port=$socks_port config_file=$config_file log_file=$log_file ${_args}
  	;;
 +	trojan-go)
 +		lua $UTIL_TROJAN gen_config -node $node -run_type client -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
@@ -946,7 +946,7 @@ index fbc6a37..c8203de 100755
 +		ln_run "$(first_type $(config_t_get global_app brook_file) brook)" "brook_SOCKS_${flag}" $log_file "$protocol" --socks5 "$bind:$socks_port" -s "${server_host}:${port}${ws_path}" -p "$(config_n_get $node password)"
 +	;;
  	ssr)
- 		lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $socks_port -server_host $server_host -server_port $port > $config_file
+ 		lua $UTIL_SS gen_config -node $node -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type ssr-local)" "ssr-local" $log_file -c "$config_file" -v -u
 @@ -782,6 +801,11 @@ run_redir() {
  		xray)
@@ -975,7 +975,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type ssr-redir)" "ssr-redir" $log_file -c "$config_file" -v -U
-@@ -936,6 +968,16 @@ run_redir() {
+@@ -939,6 +971,16 @@ run_redir() {
  			}
  			run_xray flag=$_flag node=$node tcp_redir_port=$local_port config_file=$config_file log_file=$log_file ${_args}
  		;;
@@ -992,7 +992,7 @@ index fbc6a37..c8203de 100755
  		trojan*)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-use_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -951,6 +993,19 @@ run_redir() {
+@@ -954,6 +996,19 @@ run_redir() {
  			lua $UTIL_NAIVE gen_config -node $node -run_type redir -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type naive)" naive $log_file "$config_file"
  		;;
@@ -1012,7 +1012,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1883,8 +1938,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -1890,8 +1945,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  

@@ -257,19 +257,17 @@ if has_singbox or has_xray then
 	tcp_node_http_port.datatype = "port"
 end
 ]]--
-
+tcp_node_socks_bind_local = s:taboption("Main", Flag, "tcp_node_socks_bind_local", translate("TCP Node") .. " Socks " .. translate("Bind Local"), translate("When selected, it can only be accessed localhost."))
+tcp_node_socks_bind_local.default = "1"
+tcp_node_socks_bind_local:depends({ tcp_node = "nil", ["!reverse"] = true })
 
 s:tab("DNS", translate("DNS"))
 
 dns_shunt = s:taboption("DNS", ListValue, "dns_shunt", "DNS " .. translate("Shunt"))
 dns_shunt:value("dnsmasq", "Dnsmasq")
 dns_shunt:value("chinadns-ng", "Dnsmasq + ChinaDNS-NG")
-
 if api.is_finded("smartdns") then
-	dns_shunt = s:taboption("DNS", ListValue, "dns_shunt", translate("DNS Shunt"))
-	dns_shunt:value("dnsmasq", "Dnsmasq")
 	dns_shunt:value("smartdns", "SmartDNS")
-
 	group_domestic = s:taboption("DNS", Value, "group_domestic", translate("Domestic group name"))
 	group_domestic.placeholder = "local"
 	group_domestic:depends("dns_shunt", "smartdns")
@@ -338,7 +336,7 @@ if api.is_finded("dns2tcp") then
 end
 if api.is_finded("pdnsd") then
 	dns_mode:value("pdnsd", "pdnsd " .. translatef("Requery DNS By %s", translate("TCP Node")))
- end
+end
 if api.is_finded("dns2socks") then
 	dns_mode:value("dns2socks", "dns2socks")
 end
@@ -533,7 +531,7 @@ o = s:taboption("Proxy", Flag, "localhost_proxy", translate("Localhost Proxy"), 
 o.default = "1"
 o.rmempty = false
 
-o = s:taboption("Proxy", Flag, "client_proxy", translate("Client Proxy"), translate("When selected, devices in LAN can transparent proxy. Otherwise, it will not be proxy."))
+o = s:taboption("Proxy", Flag, "client_proxy", translate("Client Proxy"), translate("When selected, devices in LAN can transparent proxy. Otherwise, it will not be proxy. But you can still use access control to allow the designated device to proxy."))
 o.default = "1"
 o.rmempty = false
 
