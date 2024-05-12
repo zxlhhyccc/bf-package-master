@@ -201,7 +201,7 @@ index 1de5d7d..ffdbb99 100644
  end
 +--dns_mode:value("udp", translatef("Requery DNS By %s", "UDP"))
  if api.is_finded("smartdns") then
- 	dns_mode:depends("dns_shunt", "dnsmasq")
+ 	dns_mode:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
  end
 @@ -391,6 +400,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9-Recommended)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")

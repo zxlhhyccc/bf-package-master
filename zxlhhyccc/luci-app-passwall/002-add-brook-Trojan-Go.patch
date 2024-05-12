@@ -875,7 +875,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 2ac33a4..6ecec5a 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -949,6 +949,9 @@ msgstr "%s 程序路径"
+@@ -943,6 +943,9 @@ msgstr "%s 程序路径"
  msgid "%s Client App Path"
  msgstr "%s 客户端程序路径"
  
@@ -885,7 +885,7 @@ index 2ac33a4..6ecec5a 100644
  msgid "alternate API URL for version checking"
  msgstr "用于版本检查的 API URL"
  
-@@ -1165,6 +1168,12 @@ msgstr "插件名称"
+@@ -1159,6 +1162,12 @@ msgstr "插件名称"
  msgid "Plugin Arguments"
  msgstr "插件参数"
  

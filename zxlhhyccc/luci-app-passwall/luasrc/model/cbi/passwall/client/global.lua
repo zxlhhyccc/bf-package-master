@@ -348,7 +348,7 @@ if has_xray then
 end
 --dns_mode:value("udp", translatef("Requery DNS By %s", "UDP"))
 if api.is_finded("smartdns") then
-	dns_mode:depends("dns_shunt", "dnsmasq")
+	dns_mode:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
 end
 
 o = s:taboption("DNS", ListValue, "xray_dns_mode", translate("Request protocol"))
