@@ -55,8 +55,3 @@ restart(){
 	fi
 	start_service
 }
-
-
-
-
-

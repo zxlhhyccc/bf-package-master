@@ -19,7 +19,7 @@ define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   TITLE:=FCGI wrapper for CGI
-  DEPENDS:=+libpcre +spawn-fcgi +fcgi
+  DEPENDS:=+libpcre2 +spawn-fcgi +fcgi
   MAINTAINER:=Tobias Waldvogel <tobias.waldvogel@gmail.com>
 endef
 
