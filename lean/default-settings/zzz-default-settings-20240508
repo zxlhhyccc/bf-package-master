@@ -20,6 +20,8 @@ uci -q set vsftpd.@listen[0].enable4='0'
 uci -q commit vsftpd
 # /etc/init.d/vsftpd stop
 
+ln -sf "/sbin/ip" "/usr/bin/ip"
+
 sed -i 's/root:::0:99999:7:::/root:$1$gSikykrC$1dqepKd6Exe8BOxn9JffZ0:0:0:99999:7:::/g' /etc/shadow
 [ ! -e "/bin/bash" ] || sed -i "s|root:x:0:0:root:/root:/bin/ash|root:x:0:0:root:/root:/bin/bash|g" "/etc/passwd"
 
@@ -29,8 +31,6 @@ wifi up
 
 sed -i "/log-facility/d" "/etc/dnsmasq.conf"
 echo "log-facility=/dev/null" >> "/etc/dnsmasq.conf"
-
-ln -sf "/sbin/ip" "/usr/bin/ip"
 
 rm -rf "/tmp/luci-modulecache"
 rm -f "/tmp/luci-indexcache"
