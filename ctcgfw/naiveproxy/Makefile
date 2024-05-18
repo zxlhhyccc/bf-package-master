@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=naiveproxy
-PKG_VERSION:=124.0.6367.54-3
+PKG_VERSION:=125.0.6422.35-1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/klzgrad/naiveproxy/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=db26a2feb7de79dc2256938441e575e03fcd2c566e2257be2a594e350281eb46
+PKG_HASH:=fd1fdab08aa00f19fb6ca1cb80cc132ab5a8d2bd3c95fa4ba41b3d79fbc88ebd
 
 PKG_LICENSE:=BSD 3-Clause
 PKG_LICENSE_FILES:=LICENSE
@@ -56,31 +56,31 @@ ifneq ($(CONFIG_CCACHE),)
   export naive_ccache_flags=cc_wrapper="$(CCACHE)"
 endif
 
-CLANG_VER:=19-init-2941-ga0b3dbaf-22
+CLANG_VER:=19-init-8091-gab037c4f-1
 CLANG_FILE:=clang-llvmorg-$(CLANG_VER).tgz
 define Download/CLANG
 	URL:=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64
 	URL_FILE:=$(CLANG_FILE)
 	FILE:=$(CLANG_FILE)
-	HASH:=6741cc1083f935795330b6e04617ac891a7b5d2b5647b664c5b0fccc354adb43
+	HASH:=6b797d118cc593eca0f2e568169295a5a9b65ddabed2de34b9a201a4bb7990f5
 endef
 
-GN_VER:=22581fb46c0c0c9530caa67149ee4dd8811063cf
+GN_VER:=d823fd85da3fb83146f734377da454473b93a2b2
 GN_FILE:=gn-git_revision-$(GN_VER).zip
 define Download/GN_TOOL
 	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+
 	URL_FILE:=git_revision:$(GN_VER)
 	FILE:=$(GN_FILE)
-	HASH:=8a1a1c56845a4fe16e233b83a81acff1b1821ede151ea64f433959b650a6c5f9
+	HASH:=c98d61bc850197308b59177e9259fbf7952086309ed246342661dfc0565ce7ed
 endef
 
-PGO_VER:=6367-1712914789-36623db069723c624e3493cb591ef002f569ac07-6fd0ad4338d3d9993dc892b5bc43c5f64866b48d
+PGO_VER:=6422-1715102072-9bdbfa29f2bb1ff28f0f031b98501a1193b8d03b-13cfbf145656b369f9c23bff70ab2fb07e1e2fdb
 PGO_FILE:=chrome-linux-$(PGO_VER).profdata
 define Download/PGO_PROF
 	URL:=https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles
 	URL_FILE:=$(PGO_FILE)
 	FILE:=$(PGO_FILE)
-	HASH:=2d4f2ef0d6235c4ca617d22b2b1ba28d042518a1811c0378896b6ed79913a7b9
+	HASH:=5a0b3d3f75c536cade97f15a71c17424c868948fa26a8267488bd588756b66af
 endef
 
 # define Build/Prepare
@@ -152,7 +152,7 @@ define Package/naiveproxy/install
 endef
 
 $(eval $(call Download,CLANG))
-#$(eval $(call Download,GN_TOOL))
+# $(eval $(call Download,GN_TOOL))
 $(eval $(call Download,PGO_PROF))
 
 $(eval $(call BuildPackage,naiveproxy))
