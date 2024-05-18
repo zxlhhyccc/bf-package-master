@@ -1,0 +1,11 @@
+--- a/src/service/local.rs
++++ b/src/service/local.rs
+@@ -576,7 +576,7 @@ pub fn define_command_line_options(mut app: Command) -> Command {
+ /// Create `Runtime` and `main` entry
+ pub fn create(matches: &ArgMatches) -> Result<(Runtime, impl Future<Output = ExitCode>), ExitCode> {
+     #[cfg_attr(not(feature = "local-online-config"), allow(unused_mut))]
+-    let (mut config, service_config, runtime) = {
++    let (mut config, _service_config, runtime) = {
+         let config_path_opt = matches.get_one::<PathBuf>("CONFIG").cloned().or_else(|| {
+             if !matches.contains_id("SERVER_CONFIG") {
+                 match crate::config::get_default_config_path("local.json") {
