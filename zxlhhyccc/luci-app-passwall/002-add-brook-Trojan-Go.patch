@@ -875,7 +875,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 2ac33a4..6ecec5a 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -943,6 +943,9 @@ msgstr "%s 程序路径"
+@@ -964,6 +964,9 @@ msgstr "%s 程序路径"
  msgid "%s Client App Path"
  msgstr "%s 客户端程序路径"
  
@@ -885,7 +885,7 @@ index 2ac33a4..6ecec5a 100644
  msgid "alternate API URL for version checking"
  msgstr "用于版本检查的 API URL"
  
-@@ -1159,6 +1162,12 @@ msgstr "插件名称"
+@@ -1180,6 +1183,12 @@ msgstr "插件名称"
  msgid "Plugin Arguments"
  msgstr "插件参数"
  
@@ -902,7 +902,7 @@ diff --git a/root/usr/share/passwall/0_default_config b/root/usr/share/passwall/
 index a6f77a5..76388af 100644
 --- a/root/usr/share/passwall/0_default_config
 +++ b/root/usr/share/passwall/0_default_config
-@@ -83,6 +83,8 @@ config global_rules
+@@ -82,6 +82,8 @@ config global_rules
  config global_app
  	option singbox_file '/usr/bin/sing-box'
  	option xray_file '/usr/bin/xray'
@@ -1012,7 +1012,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1890,8 +1945,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -1918,8 +1973,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  
@@ -1125,7 +1125,7 @@ index bc68928..dbf7e64 100755
  		end
  	elseif szType == "ssd" then
  		result.type = "SS"
-@@ -1208,7 +1284,7 @@ local function parse_link(raw, add_mode, add_from)
+@@ -1215,7 +1291,7 @@ local function parse_link(raw, add_mode, add_from)
  						local node = trim(v)
  						local dat = split(node, "://")
  						if dat and dat[1] and dat[2] then
