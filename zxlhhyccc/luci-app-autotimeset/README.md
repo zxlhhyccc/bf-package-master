@@ -1,10 +1,21 @@
-[![若部分图片无法正常显示，请挂上机场浏览或点这里到末尾看修复教程](https://visitor-badge.glitch.me/badge?page_id=sirpdboy-visitor-badge)](#解决-github-网页上图片显示失败的问题) [![](https://img.shields.io/badge/TG群-点击加入-FFFFFF.svg)](https://t.me/joinchat/AAAAAEpRF88NfOK5vBXGBQ)
+[![若部分图片无法正常显示，请挂上机场浏览或点这里到末尾看修复教程](https://visitor-badge-deno.deno.dev/sirpdboy.sirpdboy.svg)](#解决-github-网页上图片显示失败的问题) [![](https://img.shields.io/badge/TG群-点击加入-FFFFFF.svg)](https://t.me/joinchat/AAAAAEpRF88NfOK5vBXGBQ)
 
 [autotimeset  定时设置插件](https://github.com/sirpdboy/luci-app-autotimeset)
-======================
+
+![screenshots](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/说明1.jpg)
+
 请 **认真阅读完毕** 本页面，本页面包含注意事项和如何使用。
 
 ## 功能说明：
+
+### 定时设置2.0版
+#### 2023.5.23 定时设置2.0版：定时执行任务设置和开机启动任务设置二合一版，并增加自定义脚本功能。
+
+### 定时设置1.9版
+#### 2023.4.1 定时设置1.9版：加入定时断网重连、定时检测WAN3重启等服务。
+
+### 定时设置1.6版
+#### 2023.1.15 定时设置1.6版：重新代码制作优化。在之前的版本上新增加：定时清理内存、定时清理系统垃圾、定时断网、定时重启网络共享、定时重拨 等 8大功能
 
 ### 定时设置1.4版
 #### 2021.2.7 新增功能定时重启网络。现包括：定时重启、定时关机、定时重启网络，各功能可一起使用。
@@ -56,41 +67,47 @@
 
 源码来源：https://github.com/sirpdboy/luci-app-autotimeset
 
-你可以随意使用其中的源码，但请注明出处。
-============================
+
+
+## 使用与授权相关说明
+ 
+- 本人开源的所有源码，任何引用需注明本处出处，如需修改二次发布必告之本人，未经许可不得做于任何商用用途。
+
 
 # My other project
-网络速度测试 ：https://github.com/sirpdboy/NetSpeedTest
 
-定时设置插件 : https://github.com/sirpdboy/luci-app-autotimeset
+- 网络速度测试 ：https://github.com/sirpdboy/NetSpeedTest
 
-关机功能插件 : https://github.com/sirpdboy/luci-app-poweroffdevice
+- 任务设置（定时和开机二合一）插件 : https://github.com/sirpdboy/luci-app-autotimeset
 
-opentopd主题 : https://github.com/sirpdboy/luci-theme-opentopd
+- 关机功能插件 : https://github.com/sirpdboy/luci-app-poweroffdevice
 
-opentoks 主题: https://github.com/sirpdboy/luci-theme-opentoks [仿KOOLSAHRE主题]
+- opentopd主题 : https://github.com/sirpdboy/luci-theme-opentopd
 
-btmob 主题: https://github.com/sirpdboy/luci-theme-btmob
+- kucat 主题: https://github.com/sirpdboy/luci-theme-kucat
 
-系统高级设置 : https://github.com/sirpdboy/luci-app-advanced
+- 家长控制: https://github.com/sirpdboy/luci-theme-parentcontrol
 
-## 捐助 [![](https://img.shields.io/badge/-捐助-F5F5F5.svg)](#捐助-) 
+- 系统高级设置 : https://github.com/sirpdboy/luci-app-advanced
 
-**如果你觉得此项目对你有帮助，请捐助我们，以使项目能持续发展，更加完善。··请作者喝杯咖啡~~~**
+- ddns-go动态域名: https://github.com/sirpdboy/luci-app-ddns-go
 
-**你们的支持就是我的动力！**
+- 进阶设置（系统高级设置+主题设置kucat/agron/opentopd）: https://github.com/sirpdboy/luci-app-advancedplus
 
-### 捐助方式
+- 设置向导: https://github.com/sirpdboy/luci-app-wizard
+
+- 分区扩容: https://github.com/sirpdboy/luci-app-partexp
+
+- lukcy大吉: https://github.com/sirpdboy/luci-app-lukcy
+
+## 捐助
+
+![screenshots](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/说明3.jpg)
 
 |     <img src="https://img.shields.io/badge/-支付宝-F5F5F5.svg" href="#赞助支持本项目-" height="25" alt="图飞了😂"/>  |  <img src="https://img.shields.io/badge/-微信-F5F5F5.svg" height="25" alt="图飞了😂" href="#赞助支持本项目-"/>  | 
 | :-----------------: | :-------------: |
-|<img src="https://img.vim-cn.com/fd/8e2793362ac3510094961b04407beec569b2b4.png" width="150" height="150" alt="图飞了😂" href="#赞助支持本项目-"/>|<img src="https://img.vim-cn.com/c7/675730a88accebf37a97d9e84e33529322b6e9.png" width="150" height="150" alt="图飞了😂" href="#赞助支持本项目-"/>|
+|![xm1](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/支付宝.png) | ![xm1](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/微信.png) |
 
 <a href="#readme">
     <img src="https://img.shields.io/badge/-返回顶部-orange.svg" alt="图飞了😂" title="返回顶部" align="right"/>
 </a>
-
-###### [解决 Github 网页上图片显示失败的问题](https://blog.csdn.net/qq_38232598/article/details/91346392)
-
-[![](https://img.shields.io/badge/TG群-点击加入-FFFFFF.svg)](https://t.me/joinchat/AAAAAEpRF88NfOK5vBXGBQ)
-

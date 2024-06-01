@@ -3,115 +3,120 @@
 
 START=95
 STOP=10
-
+TMP=/etc/autotimeset
+LOG=$TMP/autotimeset.log
+TT=/etc/init.d/autotimesetrun
+CR=/etc/crontabs/root
+[ ! -d $TMP ] && mkdir -p $TMP 2>/dev/null
+[ -s $LOG ] && echo -e '' >> $LOG
 run_autotimeset()
 {
-	config_get_bool enable $1 enable
-    if [ $enable = 1 ] ; then
-		config_get stype $1 stype
-		config_get week $1 week
-		config_get minute $1 minute
-		config_get hour $1 hour
-		[ "$minute" -eq 0 ] && minute="00"
-		[ "$week" -eq 7 ] && week="*"
-
-		if [ $stype = 1 ] ; then
-			local cmd="$minute $hour * * $week sleep 5 && touch /etc/banner && reboot" 
-			if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
-				sed -i '/reboot/d' /etc/crontabs/root >/dev/null 2>&1
-				echo "$cmd" >> /etc/crontabs/root
-				
-			fi
-			echo "Auto REBOOT has started.."
-
-		fi
-		if [ $stype = 2 ] ; then
-			local cmd="$minute $hour * * $week sleep 5 && touch /etc/banner && poweroff" 
-			if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
-				sed -i '/poweroff/d' /etc/crontabs/root >/dev/null 2>&1
-				echo "$cmd" >> /etc/crontabs/root
-				
-			fi
-			echo "Auto poweroff has started.."	
-		fi
-		if [ $stype = 3 ] ; then
-			local cmd="$minute $hour * * $week sleep 5 && touch /etc/banner && /etc/init.d/network restart" 
-			if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
-				sed -i '/network restart/d' /etc/crontabs/root >/dev/null 2>&1
-				echo "$cmd" >> /etc/crontabs/root
-				
-			fi
-			echo "Auto network restart has started."
-		fi
-     else
-			del_cru
+ssum=$(grep -c stime /etc/config/autotimeset)
+[  `uci -q get autotimeset.@global[0].customscript  |  wc -l ` > 0 ] && uci -q get autotimeset.@global[0].customscript > /etc/autotimeset/timesetcustomscript
+[  `uci -q get autotimeset.@global[0].customscript2  |  wc -l ` > 0 ] && uci -q get autotimeset.@global[0].customscript2 > /etc/autotimeset/timesetcustomscript2
+for i in $(seq 0 $((ssum-1)))
+do
+	enable=$(uci -q get autotimeset.@stime[$i].enable )
+	if [ "x$enable" = "x1" ]; then
+		month=$(uci -q get autotimeset.@stime[$i].month ) || month="*"
+		stype=$(uci -q get autotimeset.@stime[$i].stype )
+		week=$(uci -q get autotimeset.@stime[$i].week ) || week="*"
+		minute=$(uci -q get autotimeset.@stime[$i].minute ) || minute="00"
+		hour=$(uci -q get autotimeset.@stime[$i].hour )  || hour="*"
+		ttype=$(uci -q get autotimeset.@stime[$i].ttype )  || ttype=0
+		delay=$(uci -q get autotimeset.@stime[$i].delay )  || delay=10
+		[ "x$hour" = "x0" ] && hour="00"
+		[ "x$minute" = "x0" ] && minute="00"
+		case "$stype" in
+			1)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler reboot Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler reboot Startup_task" >>$TT
+				;;
+			2)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler poweroff Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler poweroff  Startup_task" >>$TT
+				;;
+			3)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler network Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||   echo  "sleep $delay &&  /usr/bin/timesethandler network  Startup_task" >>$TT
+				;;
+			4)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler restartsamba Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler restartsamba  Startup_task" >>$TT
+				;;
+			5)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler restartwan Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||   echo  "sleep $delay &&  /usr/bin/timesethandler restartwan  Startup_task" >>$TT
+				;;
+			6)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler closewan Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler closewan  Startup_task" >>$TT
+				;;
+			7)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler clearmem Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler clearmem  Startup_task" >>$TT
+				;;
+			8)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler sysfree Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler reboot  Startup_task" >>$TT
+				;;
+			9)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler disreconn Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR || echo  "sleep $delay &&  /usr/bin/timesethandler disreconn  Startup_task" >>$TT
+				;;
+			10)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler disrereboot Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR || echo  "sleep $delay &&  /usr/bin/timesethandler disrereboot  Startup_task" >>$TT
+				;;
+			11)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler restartmwan3 Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR || echo  "sleep $delay &&  /usr/bin/timesethandler restartmwan3  Startup_task" >>$TT
+				;;
+			12)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler customscript Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler customscript  Startup_task" >>$TT
+				;;
+			13)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler upwifi Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR || echo  "sleep $delay &&  /usr/bin/timesethandler upwifi  Startup_task" >>$TT
+				;;
+			14)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler downwifi Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR || echo  "sleep $delay &&  /usr/bin/timesethandler downwifi Startup_task" >>$TT
+				;;
+			15)
+				local cmd="$minute $hour * $month $week /usr/bin/timesethandler customscript2 Scheduled_task" 
+				[ $ttype = '0' ] && echo "$cmd" >> $CR ||  echo  "sleep $delay &&  /usr/bin/timesethandler customscript2  Startup_task" >>$TT
+				;;
+		esac
     fi
-}
-
-
-add_cru()
-{
-	local enable=$(uci get autotimeset.@login[0].enable)
-    if [ $enable = 1 ] ; then
-	local stype=$(uci get autotimeset.@login[0].stype)
-	local week=$(uci get autotimeset.@login[0].week)
-	local minute=$(uci get autotimeset.@login[0].minute)
-	local hour=$(uci get autotimeset.@login[0].hour)
-		if [ $stype = 1 ] ; then
-			local cmd="$minute $hour * * $week sleep 5 && touch /etc/banner && reboot" 
-			if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
-				sed -i '/reboot/d' /etc/crontabs/root >/dev/null 2>&1
-				echo "$cmd" >> /etc/crontabs/root
-				
-			fi
-			echo "Auto REBOOT has started."
-		fi
-		if [ $stype = 2 ] ; then
-			local cmd="$minute $hour * * $week sleep 5 && touch /etc/banner && poweroff" 
-			if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
-				sed -i '/poweroff/d' /etc/crontabs/root >/dev/null 2>&1
-				echo "$cmd" >> /etc/crontabs/root
-				
-			fi
-			echo "Auto poweroff has started."
-		fi
-		if [ $stype = 3 ] ; then
-			local cmd="$minute $hour * * $week sleep 5 && touch /etc/banner && /etc/init.d/network restart" 
-			if [ ! -f "/etc/crontabs/root" ] || [ $(cat /etc/crontabs/root | grep "$cmd" | wc -l) -eq 0 ]; then
-				sed -i '/network/d' /etc/crontabs/root >/dev/null 2>&1
-				echo "$cmd" >> /etc/crontabs/root
-				
-			fi
-			echo "Auto network restart has started."
-		fi
-    else
-       	del_cru
-	fi
+ done
 }
 
 start()
-{       
-	config_load autotimeset
-	config_foreach run_autotimeset login
-	add_cru
+{
+	del_cru
+	[ -n "`tail -c1 $CR`" ] && echo >> $CR
+	run_autotimeset
+	echo '}'  >>$TT
+	/etc/init.d/cron reload
 }
 
 stop()
 {
     del_cru
-	echo "Auto set has stop."
+    echo '}'  >>$TT
+    /etc/init.d/cron reload
+}
+
+restart()
+{
+	start
 }
 
 del_cru()
-{
-	if [ -f "/etc/crontabs/root" ] && [ $(cat /etc/crontabs/root | grep reboot | wc -l) -ne 0 ]; then
-		sed -i '/reboot/d' /etc/crontabs/root >/dev/null 2>&1
-	fi
-	if [ -f "/etc/crontabs/root" ] && [ $(cat /etc/crontabs/root | grep poweroff | wc -l) -ne 0 ]; then
-		sed -i '/poweroff/d' /etc/crontabs/root >/dev/null 2>&1
-	fi
-	if [ -f "/etc/crontabs/root" ] && [ $(cat /etc/crontabs/root | grep network | wc -l) -ne 0 ]; then
-		sed -i '/network/d' /etc/crontabs/root >/dev/null 2>&1
-	fi
+{   
+    echo -e '#!/bin/sh /etc/rc.common\n\nSTART=99\nstart(){\necho "Service autotimesetrun started! " >> $LOG\n' > $TT
+    sed -i '/timesethandler/d' $CR >/dev/null 2>&1
 }
 
