@@ -1,6 +1,6 @@
 --- a/src/app/application.cpp
 +++ b/src/app/application.cpp
-@@ -324,6 +324,42 @@ Application::~Application()
+@@ -325,6 +325,42 @@ Application::~Application()
      // we still need to call cleanup()
      // in case the App failed to start
      cleanup();
@@ -43,7 +43,7 @@
  }
  
  #ifndef DISABLE_GUI
-@@ -1260,47 +1296,15 @@ void Application::cleanup()
+@@ -1261,47 +1297,15 @@ void Application::cleanup()
      }
  #endif // DISABLE_GUI
  
