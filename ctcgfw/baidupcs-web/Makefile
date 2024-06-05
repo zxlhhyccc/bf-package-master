@@ -10,8 +10,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/zxlhhyccc/BaiduPCS-Go.git
-PKG_SOURCE_VERSION:=ee2d75bacc1453b088a0cb9aed58e29026ceec92
-PKG_MIRROR_HASH:=771a3459f9e9c982c1b5808f71addf9313d9075afe988e9fdf3cd53dd27e9ee0
+PKG_SOURCE_VERSION:=ff0f4736c9482b57d3b70fbc2b7d2ba73ddb9275
+PKG_MIRROR_HASH:=0fb1e2582e002b545fcb86fe485cfe9a072e7ae7261035810fbf7589809bd522
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -65,15 +65,15 @@ define Build/Prepare
 	$(call Build/Prepare/Default)
 endef
 
-define Build/UpdateDependencies
-	cd $(PKG_BUILD_DIR) && \
-		go get -u && \
-		go mod tidy && \
-		go mod vendor
-endef
+#define Build/UpdateDependencies
+#	cd $(PKG_BUILD_DIR) && \
+#		go get -u && \
+#		go mod tidy && \
+#		go mod vendor
+#endef
 
 define Build/Compile
-	$(call Build/UpdateDependencies)
+	#$(call Build/UpdateDependencies)
 	( \
 		pushd "$(PKG_BUILD_DIR)/internal/pcsweb" ; \
 		rice embed-go ; \
