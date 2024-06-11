@@ -20,7 +20,7 @@ function update() {
 	line="$(awk "/PKG_VERSION:=/ {print NR}" "$CURDIR/Makefile")"
 	sed -i -e "$((line))s/PKG_VERSION:=.*/PKG_VERSION:=$tag/" "$CURDIR/Makefile"
 
-	sha="$(curl -sL https://codeload.github.com/$repo/tar.gz/v$tag | sha256sum | awk '{print $1}')"
+	sha="$(curl -sL https://codeload.github.com/$repo/tar.gz/$tag | sha256sum | awk '{print $1}')"
 	[ -n "$sha" ] || return 1
 
 	old_hash="$(awk -F "PKG_HASH:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
