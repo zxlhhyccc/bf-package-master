@@ -44,10 +44,29 @@ define Package/syncthing/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=File Transfer
-  TITLE:=Continuous file synchronization program
   DEPENDS:=$(GO_ARCH_DEPENDS)
   URL:=https://syncthing.net
+endef
+
+define Package/syncthing
+  $(call Package/syncthing/Default)
+  TITLE:=Continuous file synchronization program
   USERID:=syncthing=499:syncthing=499
+endef
+
+define Package/syncthing-master
+  $(call Package/syncthing/Default)
+  TITLE:=Continuous file synchronization program
+  USERID:=syncthing=499:syncthing=499
+endef
+
+define Package/syncthing/conffiles
+/etc/config/syncthing
+/etc/syncthing
+endef
+
+define Package/syncthing-master/conffiles
+  $(call Package/syncthing/conffiles)
 endef
 
 define Package/syncthing/Default/description
@@ -58,28 +77,11 @@ define Package/syncthing/Default/description
 endef
 
 define Package/syncthing/description
-$(call Package/syncthing/Default/description)
+  $(call Package/syncthing/Default/description)
 endef
 
 define Package/syncthing-master/description
-$(call Package/syncthing/Default/description)
-endef
-
-define Package/syncthing
-  $(call Package/syncthing/Default)
-endef
-
-define Package/syncthing-master
-  $(call Package/syncthing/Default)
-endef
-
-define Package/syncthing/conffiles
-/etc/config/syncthing
-/etc/syncthing
-endef
-
-define Package/syncthing-master/conffiles
-$(call Package/syncthing/conffiles)
+  $(call Package/syncthing/Default/description)
 endef
 
 define Package/syncthing/config
@@ -94,13 +96,15 @@ define Package/syncthing/config
 endef
 
 ifeq ($(CONFIG_SYNCTHING_COMPRESS_GOPROXY),y)
-export GO111MODULE=on
-export GOPROXY=https://goproxy.io
+	export GO111MODULE=on
+	export GOPROXY=https://goproxy.io
 endif
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
 endef
+
+Package/syncthing-master/config=$(Package/syncthing/config)
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
