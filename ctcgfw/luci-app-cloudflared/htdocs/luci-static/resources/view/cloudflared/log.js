@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-3.0-only
+/* This is free software, licensed under the Apache License, Version 2.0
  *
  * Copyright (C) 2024 Hilman Maulana <hilman0.0maulana@gmail.com>
  */
@@ -9,14 +9,8 @@
 'require view';
 'require poll';
 
-function formatDate(dateTime) {
-	var date = new Date(dateTime);
-	var formattedDate = date.toISOString().slice(0, 10);
-	var formattedTime = date.toISOString().slice(11, 19);
-	return formattedDate + ' ' + formattedTime;
-}
-
 function formatLogEntry(logObj) {
+	var formattedTime = new Date(logObj.time).toISOString().replace('T', ' ').split('.')[0];
 	var tunnelIDMessage = logObj.tunnelID ? ', ID: ' + logObj.tunnelID : '';
 	var errorMessage = logObj.error ? ', Error: ' + logObj.error : '';
 	var ipMessage = logObj.ip ? ', IP: ' + logObj.ip : '';
@@ -24,7 +18,8 @@ function formatLogEntry(logObj) {
 	var connectionMessage = logObj.connection ? ', Connection: ' + JSON.stringify(logObj.connection) : '';
 	var locationMessage = logObj.location ? ', Location: ' + logObj.location : '';
 	var protocolMessage = logObj.protocol ? ', Protocol: ' + logObj.protocol : '';
-	return '[' + formatDate(logObj.time) + '] [' + logObj.level + '] : ' + logObj.message + ipMessage + tunnelIDMessage + errorMessage + configMessage + connectionMessage + locationMessage + protocolMessage;
+
+	return '[' + formattedTime + '] [' + logObj.level + '] : ' + logObj.message + ipMessage + tunnelIDMessage + errorMessage + configMessage + connectionMessage + locationMessage + protocolMessage;
 }
 
 return view.extend({
@@ -46,6 +41,7 @@ return view.extend({
 							? formatLogEntry(logObj)
 							: '';
 					} catch (error) {
+						console.error('Error parsing log entry:', error);
 						return '';
 					}
 				});
@@ -86,13 +82,13 @@ return view.extend({
 	},
 	render: function(info) {
 		return E([], [
-			E('h2', { 'class': 'section-title' }, _('Cloudflared Logs')),
+			E('h2', { 'class': 'section-title' }, _('Log')),
 			E('div', { 'id': 'logs' }, [
-				E('label', { 'for': 'filter-level', 'style': 'margin-right: 8px;' }, _('Filter Log:')),
+				E('label', { 'for': 'filter-level', 'style': 'margin-right: 8px;' }, _('Filter Level:')),
 				E('select', { 'id': 'filter-level', 'style': 'margin-right: 8px;' }, [
 					E('option', { 'value': 'all', 'selected': 'selected' }, _('All')),
-					E('option', { 'value': 'info' }, _('Information')),
-					E('option', { 'value': 'warn' }, _('Warning')),
+					E('option', { 'value': 'info' }, _('Info')),
+					E('option', { 'value': 'warn' }, _('Warn')),
 					E('option', { 'value': 'error' }, _('Error')),
 				]),
 				E('label', { 'for': 'log-direction', 'style': 'margin-right: 8px;' }, _('Log Direction:')),
@@ -103,12 +99,13 @@ return view.extend({
 				E('button', {
 					'id': 'download-log',
 					'class': 'cbi-button cbi-button-save',
-					'click': L.bind(this.handleDownloadLog, this)
+					'click': L.bind(this.handleDownloadLog, this),
+					'style': 'margin-bottom: 8px;'
 				}, _('Download Log')),
 				E('textarea', {
 					'id': 'syslog',
 					'class': 'cbi-input-textarea',
-					'style': 'height: 500px; overflow-y: scroll; margin-top: 8px;',
+					'style': 'height: 500px; overflow-y: scroll;',
 					'readonly': 'readonly',
 					'wrap': 'off',
 					'rows': 1
