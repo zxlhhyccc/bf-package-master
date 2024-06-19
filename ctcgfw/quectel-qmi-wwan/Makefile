@@ -5,7 +5,12 @@ PKG_VERSION:=1.2.6
 PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=@IMMORTALWRT
+PKG_SOURCE_URL:= \
+		https://mirror01.download.immortalwrt.eu.org \
+		https://mirror2.immortalwrt.org/sources \
+		https://mirror.immortalwrt.org/sources \
+		https://sources-cdn.immortalwrt.org \
+		https://sources.immortalwrt.org \
 PKG_HASH:=9fc83f9fdb168bc562e87676919081bb9f582baa3db98ab9b56d77e6295abb6b
 
 PKG_LICENSE:=GPL-2.0-only
