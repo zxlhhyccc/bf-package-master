@@ -17,6 +17,9 @@ cp /tmp/easyrsa3/pki/private/server.key /etc/openvpn/ || return 1
 cp /tmp/easyrsa3/pki/dh.pem /etc/openvpn/ || return 1
 cp /tmp/easyrsa3/pki/issued/client.crt /etc/openvpn/ || return 1
 cp /tmp/easyrsa3/pki/private/client.key /etc/openvpn/ || return 1
+# DEPRECATED OPTION: The option --secret is deprecated.
+# Using --genkey --secret filename is DEPRECATED.  Use --genkey secret filename instead.
+# [ -n "$(uci -q get openvpn.myvpn.tls_auth)" ] && (openvpn --genkey --secret /etc/openvpn/ta.key || return 1) || return 0
 [ -n "$(uci -q get openvpn.myvpn.tls_auth)" ] && (openvpn --genkey --secret /etc/openvpn/ta.key || return 1) || return 0
 )
 if [ $? -eq 0 ]; then

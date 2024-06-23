@@ -1,0 +1,9 @@
+#!/bin/sh
+
+rm -rf /tmp/luci-modulecache /tmp/luci-indexcache*
+# DEPRECATED OPTION: The option --secret is deprecated.
+# Using --genkey --secret filename is DEPRECATED.  Use --genkey secret filename instead.
+# [ -s /etc/openvpn/ta.key ] || openvpn --genkey --secret /etc/openvpn/ta.key
+[ -s /etc/openvpn/ta.key ] || openvpn --genkey secret /etc/openvpn/ta.key
+
+exit 0
