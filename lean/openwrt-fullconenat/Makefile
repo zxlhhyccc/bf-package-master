@@ -28,7 +28,7 @@ define Package/iptables-mod-fullconenat
   SECTION:=net
   CATEGORY:=Network
   TITLE:=FULLCONENAT iptables extension
-  DEPENDS:=+iptables +kmod-ipt-fullconenat
+  DEPENDS:=+libxtables +kmod-ipt-fullconenat
 endef
 
 define Package/ip6tables-mod-fullconenat
@@ -36,7 +36,7 @@ define Package/ip6tables-mod-fullconenat
   SECTION:=net
   CATEGORY:=Network
   TITLE:=FULLCONENAT ip6tables extension
-  DEPENDS:=ip6tables +kmod-nf-nat6 +kmod-ipt-fullconenat +ip6tables-mod-nat
+  DEPENDS:=ip6tables +libxtables +kmod-nf-nat6 +kmod-ipt-fullconenat +ip6tables-mod-nat
 endef
 
 define KernelPackage/ipt-fullconenat
@@ -47,6 +47,7 @@ define KernelPackage/ipt-fullconenat
 	CONFIG_NF_CONNTRACK_EVENTS=y \
 	CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
   FILES:=$(PKG_BUILD_DIR)/xt_FULLCONENAT.ko
+  AUTOLOAD:=$(call AutoProbe,xt_FULLCONENAT)
 endef
 
 include $(INCLUDE_DIR)/kernel-defaults.mk
@@ -69,6 +70,7 @@ define Package/ip6tables-mod-fullconenat/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libip6t_FULLCONENAT.so $(1)/usr/lib/iptables
 endef
 
+$(eval $(call KernelPackage,ipt-fullconenat))
 $(eval $(call BuildPackage,iptables-mod-fullconenat))
 $(eval $(call BuildPackage,ip6tables-mod-fullconenat))
-$(eval $(call KernelPackage,ipt-fullconenat))
+
