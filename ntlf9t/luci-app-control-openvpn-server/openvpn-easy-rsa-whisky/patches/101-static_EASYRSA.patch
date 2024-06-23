@@ -1,26 +1,44 @@
 --- a/easyrsa3/easyrsa
 +++ b/easyrsa3/easyrsa
-@@ -5643,10 +5643,19 @@ select_vars() {
+@@ -5643,8 +5643,17 @@ select_vars() {
  			fi
  		fi
  
-+		# User specified Custom:"/etc/easy-rsa"; if vars exists, use it ONLY
-+		if [ "/etc/easy-rsa" ]; then
-+			if [ -e "/etc/easy-rsa/vars" ]; then
-+				verbose "select_vars: /etc/easy-rsa/vars"
-+				set_var EASYRSA_VARS_FILE "/etc/easy-rsa/vars"
++		# User specified "$PWD/pki"; if vars exists, use it ONLY
++		if [ "$PWD/pki" ]; then
++			if [ -e "$PWD/pki/vars" ]; then
++				verbose "select_vars: PWD/pki/vars"
++				set_var EASYRSA_VARS_FILE "$PWD/pki/vars"
 +			fi
 +		fi
 +
  		# Default PKI; if vars exists, use it ONLY
- 		if [ -e "$PWD/pki/vars" ] && \
+-		if [ -e "$PWD/pki/vars" ] && \
++		if [ -e "/etc/easy-rsa/vars" ] && \
++			[ -z "$PWD/pki" ] && \
  			[ -z "$EASYRSA_PKI" ] && \
--			[ -z "$EASYRSA" ]
-+			[ -z "$EASYRSA" ] && \
-+			[ -z "/etc/easy-rsa" ]
+ 			[ -z "$EASYRSA" ]
  		then
- 			# Prevent vars from changing expected PKI.
- 			# A vars in the PKI MUST always imply EASYRSA_PKI
+@@ -5663,14 +5672,14 @@ select_vars() {
+ 			#set_var EASYRSA "$PWD"
+ 			#set_var EASYRSA_PKI "$EASYRSA/pki"
+ 
+-			verbose "select_vars: PWD/pki/vars"
+-			set_var EASYRSA_VARS_FILE "$PWD/pki/vars"
++			verbose "select_vars: /etc/easy-rsa/vars"
++			set_var EASYRSA_VARS_FILE "/etc/easy-rsa/vars"
+ 		fi
+ 
+ 		# Default working dir; if vars exists, use it ONLY
+-		if [ -e "$PWD/vars" ]; then
+-			verbose "select_vars: PWD/vars"
+-			set_var EASYRSA_VARS_FILE "$PWD/vars"
++		if [ -e "/etc/easy-rsa/vars" ]; then
++			verbose "select_vars: /etc/easy-rsa/vars"
++			set_var EASYRSA_VARS_FILE "/etc/easy-rsa/vars"
+ 		fi
+ 	fi
+ 
 @@ -5773,7 +5782,7 @@ default_vars() {
  	# Set defaults, preferring existing env-vars if present
  	set_var EASYRSA					"$PWD"
