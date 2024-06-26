@@ -168,7 +168,6 @@ function parse_uri(uri) {
 				) : null,
 				hysteria_obfs_type: params.obfs,
 				hysteria_obfs_password: params['obfs-password'],
-				hysteria_brutal_debug: params.brutal_debug,
 				tls: '1',
 				tls_insecure: params.insecure ? '1' : '0',
 				tls_sni: params.sni
