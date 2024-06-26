@@ -1563,7 +1563,7 @@ if [ -n "$FW4" ]; then
 
    #intranet allowed
    if [ "$intranet_allowed" -eq 1 ]; then
-      if [ -n "$intranet_allowed_wan_name" ]; then
+      if [ -n "$intranet_allowed_wan_name" ] && [ "$intranet_allowed_wan_name" != "0" ]; then
          config_load "openclash"
          config_list_foreach "config" "intranet_allowed_wan_name" wan_name_add
       else
@@ -2213,7 +2213,7 @@ if [ -n "$FW4" ]; then
 
       #intranet allowed
       if [ "$intranet_allowed" -eq 1 ]; then
-         if [ -n "$intranet_allowed_wan_name" ]; then
+         if [ -n "$intranet_allowed_wan_name" ] && [ "$intranet_allowed_wan_name" != "0" ]; then
             config_load "openclash"
             config_list_foreach "config" "intranet_allowed_wan_name" wan6_name_add
          else
@@ -2338,7 +2338,7 @@ if [ -z "$FW4" ]; then
 
    #intranet allowed
    if [ "$intranet_allowed" -eq 1 ]; then
-      if [ -n "$intranet_allowed_wan_name" ]; then
+      if [ -n "$intranet_allowed_wan_name" ] && [ "$intranet_allowed_wan_name" != "0" ]; then
          config_load "openclash"
          config_list_foreach "config" "intranet_allowed_wan_name" wan_name_add
       else
@@ -3001,7 +3001,7 @@ if [ -z "$FW4" ]; then
 
       #intranet allowed
       if [ "$intranet_allowed" -eq 1 ]; then
-         if [ -n "$intranet_allowed_wan_name" ]; then
+         if [ -n "$intranet_allowed_wan_name" ] && [ "$intranet_allowed_wan_name" != "0" ]; then
             config_load "openclash"
             config_list_foreach "config" "intranet_allowed_wan_name" wan6_name_add
          else
