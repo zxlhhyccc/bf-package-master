@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nps
-PKG_VERSION:=0.26.18
+PKG_VERSION:=0.26.19
 PKG_RELEASE:=1
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -16,8 +16,8 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 #PKG_SOURCE_URL:=https://github.com/ehang-io/nps.git
 PKG_SOURCE_URL:=https://github.com/yisier/nps.git
-PKG_SOURCE_VERSION:=83a5e8eb995426f63bbd2e64e1a7226f71a265a4
-PKG_MIRROR_HASH:=2b071b36bcae51e3cb5884cdc7018bc5ad1db7f9c32a96ae0f1a21a7ea9dd9ae
+PKG_SOURCE_VERSION:=a1894ca8980c2e4772cdd497d2b99a433876a995
+PKG_MIRROR_HASH:=bbadd4775178c7692d824bef55474d8a5c91e188b0b3890c5a603ff74566588f
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_NPS_$(1)_PROVIDE_NPSVIP \
@@ -89,10 +89,10 @@ define nps/templates
   endef
 endef
 
-define Build/UpdateDependencies
-	cd $(PKG_BUILD_DIR) && \
-		go mod tidy
-endef
+# define Build/UpdateDependencies
+#	cd $(PKG_BUILD_DIR) && \
+#		go mod tidy
+# endef
 
 NPS_COMPONENTS:=npc nps
 
