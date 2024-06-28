@@ -24,6 +24,9 @@ GO_PKG:=github.com/alist-org/alist/v3
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/internal/conf.Version=$(PKG_VERSION) \
 	$(GO_PKG)/internal/conf.WebVersion=$(PKG_VERSION)
+ifeq ($(filter aarch64 x86_64, $(ARCH)),)
+  GO_PKG_EXCLUDES:=drivers/lark
+endif
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
