@@ -19,10 +19,6 @@
 
 精力有限，如需要钉钉推送、飞书推送、Bark 推送等请尝试另一个分支 https://github.com/zzsj0928/luci-app-pushbot ，或使用自定义 API 设置
 
-因插件一开始只支持 Server酱，故此插件命名为 luci-app-serverchan，但后续已经越来越臃肿，想改很久了，趁这次升级 js， 插件更名为 luci-app-wechatpush
-
-v3.0.0 安装时会自动从 luci-app-serverchan 移植配置信息，并删除原插件，如有缺漏，请在 /etc/config/serverchan.bak 查看，安装后可能需刷新浏览器页面，否则 luci 页面入口不会更换为新插件 URL（此功能择期移除）
-
 v2.06.2 之后的版本不再支持 LuCI 18.06，如需编译，请使用 openwrt-18.06 分支，拉取源码时请使用 `git clone -b openwrt-18.06 https://github.com/tty228/luci-app-wechatpush.git` 命令
 
 
@@ -52,6 +48,7 @@ v2.06.2 之后的版本不再支持 LuCI 18.06，如需编译，请使用 openwr
 - 使用设备名备注
 - 在高级设置处配置从光猫获取
 - 开启 MAC 设备数据库
+- 安装 samba*-server 或 samba*-client，使程序可以通过 NetBIOS 查询主机名
 
 
 **关于设备在线状态：**
