@@ -875,7 +875,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 2ac33a4..6ecec5a 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -964,6 +964,9 @@ msgstr "%s 程序路径"
+@@ -985,6 +985,9 @@ msgstr "%s 程序路径"
  msgid "%s Client App Path"
  msgstr "%s 客户端程序路径"
  
@@ -885,18 +885,18 @@ index 2ac33a4..6ecec5a 100644
  msgid "alternate API URL for version checking"
  msgstr "用于版本检查的 API URL"
  
-@@ -1180,6 +1183,12 @@ msgstr "插件名称"
+@@ -1201,6 +1204,12 @@ msgstr "插件名称"
  msgid "Plugin Arguments"
  msgstr "插件参数"
  
 +msgid "Brook Protocol"
-+msgstr "Brook协议"
++msgstr "Brook 协议"
 +
 +msgid "Use TLS"
-+msgstr "使用TLS"
++msgstr "使用 TLS"
 +
  msgid "Naiveproxy Protocol"
- msgstr "Naiveproxy协议"
+ msgstr "Naiveproxy 协议"
  
 diff --git a/root/usr/share/passwall/0_default_config b/root/usr/share/passwall/0_default_config
 index a6f77a5..76388af 100644
@@ -915,7 +915,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index fbc6a37..c8203de 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -678,6 +678,10 @@ run_socks() {
+@@ -707,6 +707,10 @@ run_socks() {
  		[ -n "$relay_port" ] && _args="${_args} server_host=$server_host server_port=$port"
  		run_xray flag=$flag node=$node socks_address=$bind socks_port=$socks_port config_file=$config_file log_file=$log_file ${_args}
  	;;
@@ -926,7 +926,7 @@ index fbc6a37..c8203de 100755
  	trojan*)
  		lua $UTIL_TROJAN gen_config -node $node -run_type client -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type ${type})" "${type}" $log_file -c "$config_file"
-@@ -686,6 +690,21 @@ run_socks() {
+@@ -715,6 +719,21 @@ run_socks() {
  		lua $UTIL_NAIVE gen_config -node $node -run_type socks -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type naive)" naive $log_file "$config_file"
  	;;
@@ -948,7 +948,7 @@ index fbc6a37..c8203de 100755
  	ssr)
  		lua $UTIL_SS gen_config -node $node -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type ssr-local)" "ssr-local" $log_file -c "$config_file" -v -u
-@@ -782,6 +801,11 @@ run_redir() {
+@@ -811,6 +830,11 @@ run_redir() {
  		xray)
  			run_xray flag=UDP node=$node udp_redir_port=$local_port config_file=$config_file log_file=$log_file
  		;;
@@ -960,7 +960,7 @@ index fbc6a37..c8203de 100755
  		trojan*)
  			local loglevel=$(config_t_get global trojan_loglevel "2")
  			lua $UTIL_TROJAN gen_config -node $node -run_type nat -local_addr "0.0.0.0" -local_port $local_port -loglevel $loglevel > $config_file
-@@ -790,6 +814,14 @@ run_redir() {
+@@ -819,6 +843,14 @@ run_redir() {
  		naiveproxy)
  			echolog "Naiveproxy不支持UDP转发！"
  		;;
@@ -975,7 +975,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type ssr-redir)" "ssr-redir" $log_file -c "$config_file" -v -U
-@@ -939,6 +971,16 @@ run_redir() {
+@@ -976,6 +1008,16 @@ run_redir() {
  			}
  			run_xray flag=$_flag node=$node tcp_redir_port=$local_port config_file=$config_file log_file=$log_file ${_args}
  		;;
@@ -992,7 +992,7 @@ index fbc6a37..c8203de 100755
  		trojan*)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-use_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -954,6 +996,19 @@ run_redir() {
+@@ -991,6 +1033,19 @@ run_redir() {
  			lua $UTIL_NAIVE gen_config -node $node -run_type redir -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type naive)" naive $log_file "$config_file"
  		;;
@@ -1012,7 +1012,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1918,8 +1973,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -1971,8 +2026,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  
@@ -1035,7 +1035,7 @@ index bc68928..dbf7e64 100755
  local has_hysteria2 = api.finded_com("hysteria")
  local allowInsecure_default = nil
  local ss_type_default = uci:get(appname, "@global_subscribe[0]", "ss_type") or "shadowsocks-libev"
-@@ -655,7 +656,23 @@ local function processData(szType, content, add_mode, add_from)
+@@ -657,7 +658,23 @@ local function processData(szType, content, add_mode, add_from)
  			local peer, sni = nil, ""
  			if params.peer then peer = params.peer end
  			sni = params.sni and params.sni or ""
@@ -1059,7 +1059,7 @@ index bc68928..dbf7e64 100755
  			result.tls = '1'
  			result.tls_serverName = peer and peer or sni
  			if params.allowinsecure then
-@@ -677,6 +694,65 @@ local function processData(szType, content, add_mode, add_from)
+@@ -679,6 +696,65 @@ local function processData(szType, content, add_mode, add_from)
  		elseif trojan_type_default == "xray" and has_xray then
  			result.type = 'Xray'
  			result.protocol = 'trojan'
@@ -1125,7 +1125,7 @@ index bc68928..dbf7e64 100755
  		end
  	elseif szType == "ssd" then
  		result.type = "SS"
-@@ -1215,7 +1291,7 @@ local function parse_link(raw, add_mode, add_from)
+@@ -1221,7 +1297,7 @@ local function parse_link(raw, add_mode, add_from)
  						local node = trim(v)
  						local dat = split(node, "://")
  						if dat and dat[1] and dat[2] then
