@@ -15,21 +15,10 @@ for i in $(jq -r '.assets[].browser_download_url | select(contains("chinadns-ng%
 	i="$(urldecode "$i")"
 
 	arch="$(awk -F '@' '{printf "%s@%s", $2, $3}' <<< "$i")"
-	line="$(sed -n "/.*wolfssl@$arch@/=" "$CURDIR/Makefile")"
+	line="$(sed -n "/PKG_ARCH:=.*$arch@/=" "$CURDIR/Makefile")"
 	[ -n "$line" ] || continue
 
 	sha256="$(curl -fsSL "$i" | sha256sum | awk '{print $1}')" || exit 1
-	sed -i "$((line + 1))s/PKG_HASH:=.*/PKG_HASH:=$sha256/" "$CURDIR/Makefile"
-done
-
-for url in $(jq -r '.assets[].browser_download_url | select(contains("chinadns-ng%2Bwolfssl_noasm%40"))' <<< "$TAG_INFO"); do
-	decoded_url="$(urldecode "$url")"
-
-	arch="$(awk -F '@' '{printf "%s@%s", $2, $3}' <<< "$decoded_url")"
-	line="$(sed -n "/.*noasm@$arch@/=" "$CURDIR/Makefile")"
-	[ -n "$line" ] || continue
-
-	sha256="$(curl -fsSL "$decoded_url" | sha256sum | awk '{print $1}')" || exit 1
 	sed -i "$((line + 1))s/PKG_HASH:=.*/PKG_HASH:=$sha256/" "$CURDIR/Makefile"
 done
 
