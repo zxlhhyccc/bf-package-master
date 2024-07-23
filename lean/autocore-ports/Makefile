@@ -35,7 +35,7 @@ define Package/autocore-ports/install
 	$(CP) ./files/generic/luci $(1)/etc/rpcd_luci
 
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/generic/60-autocore-reload-rpcd $(1)/etc/uci-defaults/
+	#$(INSTALL_BIN) ./files/generic/60-autocore-reload-rpcd $(1)/etc/uci-defaults/
 	$(INSTALL_BIN) ./files/generic/090-cover-index_files $(1)/etc/uci-defaults/
 
 ifneq ($(filter i386 i686 x86_64, $(ARCH)),)
