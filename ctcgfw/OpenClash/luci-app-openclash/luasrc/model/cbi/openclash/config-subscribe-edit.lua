@@ -106,6 +106,7 @@ o:value("https://v.id9.cc/sub", translate("v.id9.cc")..translate("(Support Vless
 o:value("https://sub.id9.cc/sub", translate("sub.id9.cc"))
 o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
 o:value("https://api.api88.cloudns.org/sub", translate("api.api88.cloudns.org")..translate("(Support Vless)"))
+o:value("https://sub.sub88.cloudns.be/sub", translate("sub.sub88.cloudns.be")..translate("(Support Vless By Cloudflare)"))
 o.default = "https://api.dler.io/sub"
 o.placeholder = "https://api.dler.io/sub"
 
