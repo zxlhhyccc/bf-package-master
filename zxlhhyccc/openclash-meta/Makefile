@@ -50,7 +50,7 @@ define Package/$(PKG_NAME)
 	$(call Package/$(PKG_NAME)/template)
 	TITLE:=A rule-based tunnel in Go
 	URL:=https://github.com/MetaCubeX/Clash.Meta
-	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+	DEPENDS:=$(GO_ARCH_DEPENDS)
 endef
 
 define Package/$(PKG_NAME)/description
