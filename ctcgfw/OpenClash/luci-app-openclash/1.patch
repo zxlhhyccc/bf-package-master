@@ -51,7 +51,7 @@
  o:value("https://sub.id9.cc/sub", translate("sub.id9.cc"))
  o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
 +o:value("https://api.api88.cloudns.org/sub", translate("api.api88.cloudns.org")..translate("(Support Vless)"))
-+o:value("https://sub.sub88.cloudns.be/sub", translate("sub.sub88.cloudns.be")..translate("(Support Vless By Cloudflare)"))
++o:value("https://api.api88.cloudns.be/sub", translate("api.api88.cloudns.be")..translate("(Support Vless By Cloudflare)"))
  o.default = "https://api.dler.io/sub"
  o.placeholder = "https://api.dler.io/sub"
  
@@ -76,7 +76,7 @@
 +msgstr "(支持 Vless)"
 +
 +msgid "(Support Vless By Cloudflare)"
-+msgstr "(在Cloudflare搭建项目，支持 Vless)"
++msgstr "(Cloudflare项目，支持 Vless)"
 +
  msgid "Meta Settings"
  msgstr "Meta 设置"
