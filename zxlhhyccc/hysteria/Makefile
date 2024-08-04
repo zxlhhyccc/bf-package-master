@@ -19,6 +19,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/apernet/hysteria.git
 PKG_SOURCE_VERSION:=b563f3981fc63eadb6710f50eecb92922b8ae1ce
 PKG_MIRROR_HASH:=15677a534e1d87fd9fb0e7085dde99f309bcfa3f4c365a36daddaf2d9592ff05
+PKG_SOURCE_VERSION:=app/v$(PKG_VERSION)
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_HYSTERIA_COMPRESS_GOPROXY \
@@ -37,18 +38,20 @@ GO_PKG:=github.com/apernet/hysteria
 GO_PKG_BUILD_PKG:=$(GO_PKG)/app/v2
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_LDFLAGS_X = \
-	$(GO_PKG)/app/v2/cmd.appVersion=v$(PKG_VERSION) \
-	$(GO_PKG)/app/v2/cmd.appType=release \
-	$(GO_PKG)/app/v2/cmd.appPlatform=$(GO_OS) \
-	$(GO_PKG)/app/v2/cmd.appArch=$(GO_ARCH)
+	$(GO_PKG_BUILD_PKG)/cmd.appDate=$(shell date -u '+%F.%T') \
+	$(GO_PKG_BUILD_PKG)/cmd.appVersion=v$(PKG_VERSION) \
+	$(GO_PKG_BUILD_PKG)/cmd.appCommit=$(PKG_SOURCE_VERSION) \
+	$(GO_PKG_BUILD_PKG)/cmd.appPlatform=linux \
+	$(GO_PKG_BUILD_PKG)/cmd.appType=release \
+	$(GO_PKG_BUILD_PKG)/cmd.appArch=$(GO_ARCH)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-TAR_OPTIONS+= --strip-components 1
-TAR_CMD=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
+# TAR_OPTIONS+= --strip-components 1
+# TAR_CMD=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 
-define Package/hysteria
+define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
@@ -57,14 +60,14 @@ define Package/hysteria
 	URL:=https://github.com/apernet/hysteria
 endef
 
-define Package/hysteria/description
+define Package/$(PKG_NAME)/description
   Hysteria is a feature-packed network utility optimized for networks
   of poor quality (e.g. satellite connections, congested public Wi-Fi,
   connecting from China to servers abroad) powered by a custom version
   of QUIC protocol.
 endef
 
-define Package/hysteria/config
+define Package/$(PKG_NAME)/config
 
 menu "Configuration"
 	depends on PACKAGE_$(PKG_NAME)
@@ -94,12 +97,12 @@ ifeq ($(CONFIG_HYSTERIA_COMPRESS_UPX),y)
 endif
 endef
 
-define Package/hysteria/install
+define Package/$(PKG_NAME)/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 
-	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/app $(1)/usr/bin/hysteria
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/app $(1)/usr/bin/$(PKG_NAME)
 endef
 
-$(eval $(call GoBinPackage,hysteria))
-$(eval $(call BuildPackage,hysteria))
+$(eval $(call GoBinPackage,$(PKG_NAME)))
+$(eval $(call BuildPackage,$(PKG_NAME)))
