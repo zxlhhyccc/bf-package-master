@@ -2968,7 +2968,7 @@ msgid "(Support Vless)"
 msgstr "(支持 Vless)"
 
 msgid "(Support Vless By Cloudflare)"
-msgstr "(在Cloudflare搭建项目，支持 Vless)"
+msgstr "(Cloudflare项目，支持 Vless)"
 
 msgid "Meta Settings"
 msgstr "Meta 设置"
