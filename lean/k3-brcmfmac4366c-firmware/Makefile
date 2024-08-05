@@ -8,14 +8,14 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=k3wifi
 PKG_VERSION:=1
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
 	TITLE:=k3wifi
-	DEPENDS:=@TARGET_bcm53xx_generic_DEVICE_phicomm_k3
-	URL:=http://www.k3wifi.com/
+	DEPENDS:=
+	URL:=https://github.com/xiangfeidexiaohuo/Phicomm-K3_Wireless-Firmware
 endef
 
 define Package/$(PKG_NAME)/description
@@ -36,7 +36,16 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/lib
 	$(INSTALL_DIR) $(1)/lib/firmware
 	$(INSTALL_DIR) $(1)/lib/firmware/brcm
-	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_69027 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_ac88.48260 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_ac88_1 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_ac88_2 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_ac88_3 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_asus-dhd24 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_ea9500_175339 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_ea9500_179240 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_k3 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
+#	$(INSTALL_DATA) ./files/lib/firmware/brcm/brcmfmac4366c-pcie.bin_r8500 $(1)/lib/firmware/brcm/brcmfmac4366c-pcie.bin
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
