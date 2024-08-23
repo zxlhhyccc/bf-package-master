@@ -1,0 +1,2157 @@
+diff --git a/luasrc/controller/openclash.lua b/luasrc/controller/openclash.lua
+index a0a5feb..5aa1131 100644
+--- a/luasrc/controller/openclash.lua
++++ b/luasrc/controller/openclash.lua
+@@ -112,8 +112,12 @@ end
+ 
+ local core_path_mode = uci:get("openclash", "config", "small_flash_memory")
+ if core_path_mode ~= "1" then
++	dev_core_path="/etc/openclash/core/clash"
++	tun_core_path="/etc/openclash/core/clash_tun"
+ 	meta_core_path="/etc/openclash/core/clash_meta"
+ else
++	dev_core_path="/tmp/etc/openclash/core/clash"
++	tun_core_path="/tmp/etc/openclash/core/clash_tun"
+ 	meta_core_path="/tmp/etc/openclash/core/clash_meta"
+ end
+ 
+@@ -125,6 +129,10 @@ local function is_web()
+ 	return luci.sys.call("pidof clash >/dev/null") == 0
+ end
+ 
++local function restricted_mode()
++	return uci:get("openclash", "config", "restricted_mode")
++end
++
+ local function is_watchdog()
+ 	return process_status("openclash_watchdog.sh")
+ end
+@@ -153,6 +161,14 @@ local function lhie1()
+ 	return os.date("%Y-%m-%d %H:%M:%S",fs.mtime("/usr/share/openclash/res/lhie1.yaml"))
+ end
+ 
++local function ConnersHua()
++	return os.date("%Y-%m-%d %H:%M:%S",fs.mtime("/usr/share/openclash/res/ConnersHua.yaml"))
++end
++
++local function ConnersHua_return()
++	return os.date("%Y-%m-%d %H:%M:%S",fs.mtime("/usr/share/openclash/res/ConnersHua_return.yaml"))
++end
++
+ local function chnroute()
+ 	return os.date("%Y-%m-%d %H:%M:%S",fs.mtime("/etc/openclash/china_ip_route.ipset"))
+ end
+@@ -225,13 +241,29 @@ local function coremodel()
+ end
+ 
+ local function check_core()
+-	if not nixio.fs.access(meta_core_path) then
++	if not nixio.fs.access(dev_core_path) and not nixio.fs.access(tun_core_path) and not nixio.fs.access(meta_core_path) then
+ 		return "0"
+ 	else
+ 		return "1"
+ 	end
+ end
+ 
++local function corecv()
++	if not nixio.fs.access(dev_core_path) then
++		return "0"
++	else
++		return luci.sys.exec(string.format("%s -v 2>/dev/null |awk -F ' ' '{print $2}'", dev_core_path))
++	end
++end
++
++local function coretuncv()
++	if not nixio.fs.access(tun_core_path) then
++		return "0"
++	else
++		return luci.sys.exec(string.format("%s -v 2>/dev/null |awk -F ' ' '{print $2}'", tun_core_path))
++	end
++end
++
+ local function coremetacv()
+ 	if not nixio.fs.access(meta_core_path) then
+ 		return "0"
+@@ -242,8 +274,10 @@ end
+ 
+ local function corelv()
+ 	luci.sys.call("bash /usr/share/openclash/clash_version.sh")
++	local core_lv = luci.sys.exec("sed -n 1p /tmp/clash_last_version 2>/dev/null")
++	local core_tun_lv = luci.sys.exec("sed -n 2p /tmp/clash_last_version 2>/dev/null")
+ 	local core_meta_lv = luci.sys.exec("sed -n 3p /tmp/clash_last_version 2>/dev/null")
+-	return core_meta_lv
++	return core_lv .. "," .. core_tun_lv .. "," .. core_meta_lv
+ end
+ 
+ local function opcv()
+@@ -323,9 +357,13 @@ function core_download()
+ 	local cdn_url = luci.http.formvalue("url")
+ 	if cdn_url then
+ 		luci.sys.call(string.format("rm -rf /tmp/clash_last_version 2>/dev/null && bash /usr/share/openclash/clash_version.sh '%s' >/dev/null 2>&1", cdn_url))
++		luci.sys.call(string.format("bash /usr/share/openclash/openclash_core.sh 'Dev' '%s' >/dev/null 2>&1 &", cdn_url))
++		luci.sys.call(string.format("bash /usr/share/openclash/openclash_core.sh 'TUN' '%s' >/dev/null 2>&1 &", cdn_url))
+ 		luci.sys.call(string.format("bash /usr/share/openclash/openclash_core.sh 'Meta' '%s' >/dev/null 2>&1 &", cdn_url))
+ 	else
+ 		luci.sys.call("rm -rf /tmp/clash_last_version 2>/dev/null && bash /usr/share/openclash/clash_version.sh >/dev/null 2>&1")
++		luci.sys.call("bash /usr/share/openclash/openclash_core.sh 'Dev' >/dev/null 2>&1 &")
++		luci.sys.call("bash /usr/share/openclash/openclash_core.sh 'TUN' >/dev/null 2>&1 &")
+ 		luci.sys.call("bash /usr/share/openclash/openclash_core.sh 'Meta' >/dev/null 2>&1 &")
+ 	end
+ 
+@@ -716,7 +754,7 @@ function action_rule_mode()
+ 		local daip = daip()
+ 		local dase = dase() or ""
+ 		local cn_port = cn_port()
+-		core_type = uci:get("openclash", "config", "core_type") or "Meta"
++		core_type = uci:get("openclash", "config", "core_type") or "Dev"
+ 		if not daip or not cn_port then return end
+ 		info = json.parse(luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/configs', dase, daip, cn_port)))
+ 		if info then
+@@ -738,7 +776,9 @@ function action_switch_rule_mode()
+ 		local daip = daip()
+ 		local dase = dase() or ""
+ 		local cn_port = cn_port()
++		local core_type = uci:get("openclash", "config", "core_type") or "Dev"
+ 		mode = luci.http.formvalue("rule_mode")
++		if mode == script and core_type ~= "TUN" then luci.http.status(500, "Switch Faild") return end
+ 		if not daip or not cn_port then luci.http.status(500, "Switch Faild") return end
+ 		info = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPATCH http://"%s":"%s"/configs -d \'{\"mode\": \"%s\"}\'', dase, daip, cn_port, mode))
+ 		if info ~= "" then
+@@ -1044,7 +1084,8 @@ function action_status()
+ 		db_forward_ssl = db_foward_ssl(),
+ 		web = is_web(),
+ 		cn_port = cn_port(),
+-		core_type = uci:get("openclash", "config", "core_type") or "Meta";
++		restricted_mode = restricted_mode(),
++		core_type = uci:get("openclash", "config", "core_type") or "Dev";
+ 	})
+ end
+ 
+@@ -1052,6 +1093,8 @@ function action_state()
+ 	luci.http.prepare_content("application/json")
+ 	luci.http.write_json({
+ 		lhie1 = lhie1(),
++		ConnersHua = ConnersHua(),
++		ConnersHua_return = ConnersHua_return(),
+ 		ipdb = ipdb(),
+ 		geosite = geosite(),
+ 		historychecktime = historychecktime(),
+@@ -1077,6 +1120,8 @@ end
+ function action_update()
+ 	luci.http.prepare_content("application/json")
+ 	luci.http.write_json({
++			corecv = corecv(),
++			coretuncv = coretuncv(),
+ 			coremetacv = coremetacv(),
+ 			coremodel = coremodel(),
+ 			opcv = opcv(),
+diff --git a/luasrc/model/cbi/openclash/rule-providers-settings.lua b/luasrc/model/cbi/openclash/rule-providers-settings.lua
+index ff9e6a2..8bfb8ca 100644
+--- a/luasrc/model/cbi/openclash/rule-providers-settings.lua
++++ b/luasrc/model/cbi/openclash/rule-providers-settings.lua
+@@ -42,7 +42,7 @@ function IsYmlFile(e)
+ end
+ 
+ -- [[ Edit Game Rule ]] --
+-s = m:section(TypedSection, "game_config", translate("Game Rules Append"))
++s = m:section(TypedSection, "game_config", translate("Game Rules Append (Only TUN & Meta Core Support)"))
+ s.anonymous = true
+ s.addremove = true
+ s.sortable = true
+@@ -118,7 +118,7 @@ o:value("REJECT")
+ o.rmempty = true
+ 
+ -- [[ Edit Other Rule Provider ]] --
+-s = m:section(TypedSection, "rule_provider_config", translate("Other Rule Providers Append"))
++s = m:section(TypedSection, "rule_provider_config", translate("Other Rule Providers Append (Only TUN & Meta Core Support)"))
+ s.anonymous = true
+ s.addremove = true
+ s.sortable = true
+@@ -204,7 +204,7 @@ o:value("0", translate("Priority Match"))
+ o:value("1", translate("Extended Match"))
+ 
+ -- [[ Edit Custom Rule Provider ]] --
+-s = m:section(TypedSection, "rule_providers", translate("Custom Rule Providers Append"))
++s = m:section(TypedSection, "rule_providers", translate("Custom Rule Providers Append (Only TUN & Meta Core Support)"))
+ s.anonymous = true
+ s.addremove = true
+ s.sortable = true
+diff --git a/luasrc/model/cbi/openclash/servers-config.lua b/luasrc/model/cbi/openclash/servers-config.lua
+index 1607540..1b88b24 100644
+--- a/luasrc/model/cbi/openclash/servers-config.lua
++++ b/luasrc/model/cbi/openclash/servers-config.lua
+@@ -140,7 +140,7 @@ o:value("trojan", translate("trojan"))
+ o:value("vless", translate("Vless ")..translate("(Only Meta Core)"))
+ o:value("hysteria", translate("Hysteria ")..translate("(Only Meta Core)"))
+ o:value("hysteria2", translate("Hysteria2 ")..translate("(Only Meta Core)"))
+-o:value("wireguard", translate("WireGuard")..translate("(Only Meta Core)"))
++o:value("wireguard", translate("WireGuard")..translate("(TUN&Meta Core)"))
+ o:value("tuic", translate("Tuic")..translate("(Only Meta Core)"))
+ o:value("snell", translate("Snell"))
+ o:value("socks5", translate("Socks5"))
+diff --git a/luasrc/model/cbi/openclash/settings.lua b/luasrc/model/cbi/openclash/settings.lua
+index a1aec6c..2b796dd 100644
+--- a/luasrc/model/cbi/openclash/settings.lua
++++ b/luasrc/model/cbi/openclash/settings.lua
+@@ -38,8 +38,7 @@ m.description = translate("Note: To restore the default configuration, try acces
+ "<br/>"..font_green..translate("Note: Game proxy please use nodes except VMess")..font_off..
+ "<br/>"..font_green..translate("Note: If you need to perform client access control in Fake-IP mode, please change the DNS hijacking mode to firewall forwarding")..font_off..
+ "<br/>"..translate("Note: The default proxy routes local traffic, BT, PT download, etc., please use Redir-Host mode as much as possible and pay attention to traffic avoidance")..
+-"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..translate("Click to the page").."</a>"..
+-"<br/>"..font_green..translate("For More Useful Meta Core Functions Go Wiki")..": "..font_off.."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/\")'>"..translate("https://wiki.metacubex.one/").."</a>"
++"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..translate("Click to the page").."</a>"
+ 
+ s = m:section(TypedSection, "openclash")
+ s.anonymous = true
+@@ -60,6 +59,10 @@ s:tab("developer", translate("Developer Settings"))
+ s:tab("debug", translate("Debug Logs"))
+ s:tab("dlercloud", translate("Dler Cloud"))
+ 
++o = s:taboption("op_mode", Flag, "enable_meta_core", font_red..bold_on..translate("Enable Meta Core")..bold_off..font_off)
++o.description = font_green..bold_on..translate("For More Useful Meta Core Functions Go Wiki")..": "..bold_off..font_off.."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/\")'>"..translate("https://wiki.metacubex.one").."</a>"
++o.default = 0
++
+ o = s:taboption("op_mode", ListValue, "en_mode", font_red..bold_on..translate("Select Mode")..bold_off..font_off)
+ o.description = translate("Select Mode For OpenClash Work, Try Flush DNS Cache If Network Error")
+ if op_mode == "redir-host" then
+@@ -96,6 +99,7 @@ o.description = translate("Select Proxy Mode")
+ o:value("rule", translate("Rule Proxy Mode"))
+ o:value("global", translate("Global Proxy Mode"))
+ o:value("direct", translate("Direct Proxy Mode"))
++o:value("script", translate("Script Proxy Mode (Tun Core Only)"))
+ o.default = "rule"
+ 
+ o = s:taboption("op_mode", Value, "delay_start", translate("Delay Start (s)"))
+diff --git a/luasrc/view/openclash/status.htm b/luasrc/view/openclash/status.htm
+index 50b0b0c..a2fea8a 100644
+--- a/luasrc/view/openclash/status.htm
++++ b/luasrc/view/openclash/status.htm
+@@ -36,7 +36,17 @@
+ 	    <tr>
+ 	  	<td colspan="4" width="100%">
+ 	  		<p style="margin: 10px 0; text-align: center">
+-				<img id="_logo" src="/luci-static/resources/openclash/img/meta.png?<%=random%>" loading="lazy" width="150px" height="150px" onload="return logo_check(this,this.src,'https://raw.githubusercontent.com/vernesong/OpenClash/<%=RELEASE_BRANCH%>/img/meta.png')" onerror="return logo_error(this,'/luci-static/resources/openclash/img/meta.png?<%=random%>')" title="Hello, World!" alt="OpenClash" onclick="return homepage()" />
++				<%
++					if uci:get("openclash", "config", "enable_meta_core") ~= '1' then
++				%>
++	      				<img id="_logo" src="/luci-static/resources/openclash/img/logo.png?<%=random%>" loading="lazy" width="150px" height="150px" onload="return logo_check(this,this.src,'https://raw.githubusercontent.com/vernesong/OpenClash/<%=RELEASE_BRANCH%>/img/logo.png')" onerror="return logo_error(this,'/luci-static/resources/openclash/img/logo.png?<%=random%>')" title="Hello, World!" alt="OpenClash" onclick="return homepage()" />
++				<%
++					else
++				%>
++						<img id="_logo" src="/luci-static/resources/openclash/img/meta.png?<%=random%>" loading="lazy" width="150px" height="150px" onload="return logo_check(this,this.src,'https://raw.githubusercontent.com/vernesong/OpenClash/<%=RELEASE_BRANCH%>/img/meta.png')" onerror="return logo_error(this,'/luci-static/resources/openclash/img/meta.png?<%=random%>')" title="Hello, World!" alt="OpenClash" onclick="return homepage()" />
++				<%
++					end
++				%>
+ 			</p>
+ 	  		<p id="_clashversion" style="margin: 10px 0; text-align: center">
+ 				<img src="/luci-static/resources/openclash/img/version.svg?<%=random%>" alt="currentversion" height="21px" onclick="return go_update()">
+@@ -175,6 +185,7 @@
+ 			</p>
+ 		</td></tr>
+ 		<tr><td width="25%"><%:Node Select Backup%></td><td width="25%" align="left" id="_historychecktime"><%:Collecting data...%></td><td width="25%"><%:lhie1 Rule Update%></td><td width="25%" align="left" id="_lhie1"><%:Collecting data...%></td></tr>
++		<tr><td width="25%"><%:ConnersHua Rule Update%></td><td width="25%" align="left" id="_ConnersHua"><%:Collecting data...%></td><td width="25%"><%:ConnersHua Return Rule Update%></td><td width="25%" align="left" id="_ConnersHua_return"><%:Collecting data...%></td></tr>
+ 		<tr><td width="25%"><%:Mainland IP Update%></td><td width="25%" align="left" id="_chnroute"><%:Collecting data...%></td><td width="25%"><%: Mainland IPv6 Update%></td><td width="25%" align="left" id="_chnroutev6"><%:Collecting data...%></td></tr>
+ 		<tr><td width="25%"><%:GEOIP Data Update%></td><td width="25%" align="left" id="_ipdb"><%:Collecting data...%></td><td width="25%"><%:GeoSite Data Update%></td><td width="25%" align="left" id="_geosite"><%:Collecting data...%></td></tr>
+ 	</table>
+@@ -202,6 +213,8 @@
+ 	var ipdb = document.getElementById('_ipdb');
+ 	var geosite = document.getElementById('_geosite');
+ 	var lhie1 = document.getElementById('_lhie1');
++	var ConnersHua = document.getElementById('_ConnersHua');
++	var ConnersHua_return = document.getElementById('_ConnersHua_return');
+ 	var chnroute = document.getElementById('_chnroute');
+ 	var chnroutev6 = document.getElementById('_chnroutev6');
+ 	var historychecktime = document.getElementById('_historychecktime');
+@@ -237,7 +250,14 @@
+ 
+ 	XHR.poll(3, '<%=luci.dispatcher.build_url("admin", "services", "openclash", "status")%>', null, function(x, status) {
+ 		if ( x && x.status == 200 ) {
+-			clash.innerHTML = status.clash ? '<b style=color:green>' + status.core_type +'&nbsp;&nbsp;&nbsp;<%:Running%></b>' : '<b style=color:red><%:Not Running%></b>';
++			if ( status.restricted_mode != "1" )
++			{
++			   clash.innerHTML = status.clash ? '<b style=color:green>' + status.core_type +'&nbsp;&nbsp;&nbsp;<%:Running%></b>' : '<b style=color:red><%:Not Running%></b>';
++			}
++			else
++			{
++			   clash.innerHTML = status.clash ? '<b style=color:green>' + status.core_type +'&nbsp;&nbsp;&nbsp;<%:Running%>&nbsp;&nbsp;&nbsp;<%:<Limited State>%></b>' : '<b style=color:red><%:Not Running%></b>';
++			}
+ 			watchdog.innerHTML = status.watchdog ? '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<%:Daemons%>:&nbsp;&nbsp;&nbsp;<b style=color:green><%:Running%></b>' : '&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<%:Daemons%>:&nbsp;&nbsp;&nbsp;<b style=color:red><%:Not Running%></b>';
+ 			dase.innerHTML = status.dase ? "<b style=color:green>"+status.dase+"</b>" : "<b style=color:red>"+"<%:Not Set%>"+"</b>";
+ 			web.innerHTML = status.web ? '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Yacd Control Panel%>" onclick="return ycad_dashboard(this)"/>' : '<b style=color:red><%:Not Running%></b>';
+@@ -524,6 +544,8 @@
+ 				ipdb.innerHTML = status.ipdb ? "<b style=color:green>"+status.ipdb+"</b>" : "<b style=color:red>"+"<%:File Not Exist%>"+"</b>";
+ 				geosite.innerHTML = status.geosite ? "<b style=color:green>"+status.geosite+"</b>" : "<b style=color:red>"+"<%:File Not Exist%>"+"</b>";
+ 				lhie1.innerHTML = status.lhie1 ? "<b style=color:green>"+status.lhie1+"</b>" : "<b style=color:red>"+"<%:File Not Exist%>"+"</b>";
++				ConnersHua.innerHTML = status.ConnersHua ? "<b style=color:green>"+status.ConnersHua+"</b>" : "<b style=color:red>"+"<%:File Not Exist%>"+"</b>";
++				ConnersHua_return.innerHTML = status.ConnersHua_return ? "<b style=color:green>"+status.ConnersHua_return+"</b>" : "<b style=color:red>"+"<%:File Not Exist%>"+"</b>";
+ 				chnroute.innerHTML = status.chnroute ? "<b style=color:green>"+status.chnroute+"</b>" : "<b style=color:red>"+"<%:File Not Exist%>"+"</b>";
+ 				chnroutev6.innerHTML = status.chnroutev6 ? "<b style=color:green>"+status.chnroutev6+"</b>" : "<b style=color:red>"+"<%:File Not Exist%>"+"</b>";
+ 				if ( status.historychecktime != "0" ) {
+diff --git a/luasrc/view/openclash/update.htm b/luasrc/view/openclash/update.htm
+index fb1b3a5..51c3d47 100644
+--- a/luasrc/view/openclash/update.htm
++++ b/luasrc/view/openclash/update.htm
+@@ -38,6 +38,20 @@
+ 			<td width="25%"><%:Last Check Update%></td><td width="25%" align="left" id="CHECKTIME"><%:Collecting data...%></td>
+ 		</tr>
+ 	  <tr><td width="100%" colspan="4">
++	    <p align="center">
++	  		<b><%:Core path:%>/etc/openclash/core/clash</b>
++	  	</p>
++	  </td></tr>
++		<tr><td width="25%">[Dev] <%:Current Core%></td><td width="25%" align="left" id="CORE_CV"><%:Collecting data...%></td><td width="25%">[Dev] <%:Latest Core%></td><td width="25%" align="left" id="CORE_LV"><%:Collecting data...%></td></tr>
++		<tr><td width="25%"><%:Update Core%></td><td width="25%" align="left" id="core_up"><%:Collecting data...%></td><td width="25%"><%:Download Latest Core%></td><td width="25%" align="left" id="ma_core_up"><%:Collecting data...%></td></tr>
++		<tr><td width="100%" colspan="4">
++	    <p align="center">
++	  		<b><%:Core path:%>/etc/openclash/core/clash_tun</b>
++	  	</p>
++	  </td></tr>
++		<tr><td width="25%">[TUN] <%:Current Core%></td><td width="25%" align="left" id="CORE_TUN_CV"><%:Collecting data...%></td><td width="25%">[TUN] <%:Latest Core%></td><td width="25%" align="left" id="CORE_TUN_LV"><%:Collecting data...%></td></tr>
++		<tr><td width="25%"><%:Update Core%></td><td width="25%" align="left" id="core_tun_up"><%:Collecting data...%></td><td width="25%"><%:Download Latest Core%></td><td width="25%" align="left" id="ma_core_tun_up"><%:Collecting data...%></td></tr>
++		<tr><td width="100%" colspan="4">
+ 	    <p align="center">
+ 	  		<b><%:Core path:%>/etc/openclash/core/clash_meta</b>
+ 	  	</p>
+@@ -131,13 +145,21 @@
+ 	var core_version = document.getElementById('CORE_VERSION');
+  	var checktime = document.getElementById('CHECKTIME');
+ 	var cpu_model = document.getElementById('CPU_MODEL');
++	var core_cv = document.getElementById('CORE_CV');
++	var core_lv = document.getElementById('CORE_LV');
++	var core_tun_cv = document.getElementById('CORE_TUN_CV');
++	var core_tun_lv = document.getElementById('CORE_TUN_LV');
+ 	var core_meta_cv = document.getElementById('CORE_META_CV');
+ 	var core_meta_lv = document.getElementById('CORE_META_LV');
+ 	var op_cv = document.getElementById('OP_CV');
+ 	var op_lv = document.getElementById('OP_LV');
++	var core_up = document.getElementById('core_up');
++	var core_tun_up = document.getElementById('core_tun_up');
+ 	var core_meta_up = document.getElementById('core_meta_up');
+ 	var op_up = document.getElementById('op_up');
+ 	var update_tip = document.getElementById('update_tip');
++	var ma_core_up = document.getElementById('ma_core_up');
++	var ma_core_tun_up = document.getElementById('ma_core_tun_up');
+ 	var ma_core_meta_up = document.getElementById('ma_core_meta_up');
+ 	var ma_op_up = document.getElementById('ma_op_up');
+ 	var restore = document.getElementById('restore');
+@@ -151,8 +173,12 @@
+ 	var one_key_update_cdn = document.getElementById('one_key_update_cdn');
+ 	var remove_core = document.getElementById('remove_core');
+ 	var release_branch = document.getElementById('RELEASE_BRANCH');
++	core_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Check And Update%>" onclick="return core_update(this,\'Dev\')"/>';
++	core_tun_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Check And Update%>" onclick="return core_update(this,\'TUN\')"/>';
+ 	core_meta_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Check And Update%>" onclick="return core_update(this,\'Meta\')"/>';
+ 	op_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Check And Update%>" onclick="return op_update(this)"/>';
++	ma_core_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Download%>" onclick="return ma_core_update(this,\'Dev\')"/>';
++	ma_core_tun_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Download%>" onclick="return ma_core_update(this,\'TUN\')"/>';
+ 	ma_core_meta_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Download%>" onclick="return ma_core_update(this,\'Meta\')"/>';
+ 	ma_op_up.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reload" value="<%:Download%>" onclick="return ma_op_update(this)"/>';
+ 	restore.innerHTML = '<input type="button" class="btn cbi-button cbi-button-reset" value="<%:Restore Default Config%>" onclick="return restore_config(this)"/>';
+@@ -196,6 +222,24 @@
+ 			else {
+ 				checktime.innerHTML = "<b style=color:red><%:Check Failed%></b>";
+ 			}
++			if ( status.corecv == "0" ) {
++				core_cv.innerHTML = "<b style=color:red><%:File Not Exist%></b>";
++			}
++			else if (status.corecv != "") {
++				core_cv.innerHTML = "<b style=color:green>"+status.corecv+"</b>";
++			}
++			else {
++				core_cv.innerHTML = "<b style=color:red><%:Unknown%></b>";
++			}
++			if ( status.coretuncv == "0" ) {
++				core_tun_cv.innerHTML = "<b style=color:red><%:File Not Exist%></b>";
++			}
++			else if (status.coretuncv != "") {
++				core_tun_cv.innerHTML = "<b style=color:green>"+status.coretuncv+"</b>";
++			}
++			else {
++				core_tun_cv.innerHTML = "<b style=color:red><%:Unknown%></b>";
++			}
+ 			if ( status.coremetacv == "0" ) {
+ 				core_meta_cv.innerHTML = "<b style=color:red><%:File Not Exist%></b>";
+ 			}
+@@ -205,7 +249,29 @@
+ 			else {
+ 				core_meta_cv.innerHTML = "<b style=color:red><%:Unknown%></b>";
+ 			}
+-			var coremetalvis = status.corelv;
++			var corelv = status.corelv;
++			var arr_core = corelv.split(",");
++			var corelvis = arr_core[0];
++			var coretunlvis = arr_core[1];
++			var coremetalvis = arr_core[2];
++			if (corelvis != status.corecv && corelvis != "" && corelvis != "\n") {
++			   core_lv.innerHTML = "<b style=color:green>"+corelvis+"<%:<New>%></b>";
++			}
++			else if (corelvis != "" && corelvis == status.corecv && corelvis != "\n") {
++			   core_lv.innerHTML = "<b style=color:green>"+corelvis+"</b>";
++			}
++			else {
++			   core_lv.innerHTML = "<b style=color:red><%:Unknown%></b>";
++			}
++			if (coretunlvis != status.coretuncv && coretunlvis != "" && coretunlvis != "\n") {
++			   core_tun_lv.innerHTML = "<b style=color:green>"+coretunlvis+"<%:<New>%></b>";
++			}
++			else if (coretunlvis != "" && coretunlvis == status.coretuncv && coretunlvis != "\n") {
++			   core_tun_lv.innerHTML = "<b style=color:green>"+coretunlvis+"</b>";
++			}
++			else {
++			   core_tun_lv.innerHTML = "<b style=color:red><%:Unknown%></b>";
++			}
+ 			if (coremetalvis != status.coremetacv && coremetalvis != "" && coremetalvis != "\n") {
+ 			   core_meta_lv.innerHTML = "<b style=color:green>"+coremetalvis+"<%:<New>%></b>";
+ 			}
+@@ -319,6 +385,22 @@
+ 			XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "update_ma")%>', status.corever, function(x, status) {
+ 			if ( x && x.status == 200 ) {
+ 				if ( status.corever != "0" ) {
++					if (type == "Dev") {
++						url1='https://raw.githubusercontent.com/vernesong/OpenClash/core/'+r+'/dev/clash-'+status.corever+'.tar.gz';
++						window.location.href=url1;
++					}
++					if (type == "TUN") {
++						var corelv = status.corelv;
++						var arr_core = corelv.split(",");
++						var coretunlvis = arr_core[1];
++					if ( coretunlvis != "" ) {
++						url3='https://raw.githubusercontent.com/vernesong/OpenClash/core/'+r+'/premium/clash-'+status.corever+'-'+coretunlvis+'.gz';
++					window.location.href=url3;
++					}
++					else {
++					alert('<%:Failed to get the latest version. Please try again later!%>')
++					}
++					}
+ 					if (type == "Meta") {
+ 						url4='https://raw.githubusercontent.com/vernesong/OpenClash/core/'+r+'/meta/clash-'+status.corever+'.tar.gz';
+ 						window.location.href=url4;
+diff --git a/luasrc/view/openclash/upload.htm b/luasrc/view/openclash/upload.htm
+index 3c5ac15..b02b425 100644
+--- a/luasrc/view/openclash/upload.htm
++++ b/luasrc/view/openclash/upload.htm
+@@ -5,6 +5,8 @@
+ 		<option value="config" selected="selected"><%:Config File%> (.yaml)</option>
+ 		<option value="proxy-provider"><%:Proxy Provider File%></option>
+ 		<option value="rule-provider"><%:Rule Provider File%></option>
++		<option value="clash">[Dev] <%:Core File%> (.tar.gz)</option>
++		<option value="clash_tun">[TUN] <%:Core File%> (.gz)</option>
+ 		<option value="clash_meta">[Meta] <%:Core File%> (.tar.gz)</option>
+ 		<option value="backup-file"><%:Backup File%> (.tar.gz)</option>
+ 	</select>
+diff --git a/po/zh-cn/openclash.zh-cn.po b/po/zh-cn/openclash.zh-cn.po
+index 8bde9bc..ef86070 100644
+--- a/po/zh-cn/openclash.zh-cn.po
++++ b/po/zh-cn/openclash.zh-cn.po
+@@ -26,14 +26,14 @@ msgstr "覆写设置"
+ msgid "Rule Providers Append"
+ msgstr "规则附加"
+ 
+-msgid "Game Rules Append"
+-msgstr "游戏规则附加"
++msgid "Game Rules Append (Only TUN & Meta Core Support)"
++msgstr "游戏规则附加（仅 TUN & Meta 内核）"
+ 
+-msgid "Other Rule Providers Append"
+-msgstr "第三方规则集附加"
++msgid "Other Rule Providers Append (Only TUN & Meta Core Support)"
++msgstr "第三方规则集附加（仅 TUN & Meta 内核）"
+ 
+-msgid "Custom Rule Providers Append"
+-msgstr "自定义规则集附加"
++msgid "Custom Rule Providers Append (Only TUN & Meta Core Support)"
++msgstr "自定义规则集附加（仅 TUN & Meta 内核）"
+ 
+ msgid "General Settings"
+ msgstr "常规设置"
+@@ -155,6 +155,9 @@ msgstr "Global【全局代理（需前往控制面板手动指定节点）】"
+ msgid "Direct Proxy Mode"
+ msgstr "Direct【全局直连】"
+ 
++msgid "Script Proxy Mode (Tun Core Only)"
++msgstr "Script【脚本模式 - 仅TUN内核】"
++
+ msgid "Select Stack Type"
+ msgstr "网络栈类型"
+ 
+@@ -482,6 +485,15 @@ msgstr "将覆盖配置文件内的所有规则 (不包括自定义规则)，启
+ msgid "lhie1 Rules"
+ msgstr "lhie1 规则"
+ 
++msgid "ConnersHua Rules"
++msgstr "ConnersHua 规则"
++
++msgid "ConnersHua(Provider-type) Rules"
++msgstr "ConnersHua(规则集) 规则"
++
++msgid "ConnersHua Return Rules"
++msgstr "ConnersHua 回国规则"
++
+ msgid "Auto Update Other Rules"
+ msgstr "正在使用第三方规则时更新设置才会生效"
+ 
+@@ -1218,6 +1230,9 @@ msgstr "组件的状态显示，运行前请确保各项目显示正常，需要
+ msgid "Node Select Backup"
+ msgstr "策略组节点选择 备份日期"
+ 
++msgid "ConnersHua Rule Update"
++msgstr "ConnersHua 规则更新日期"
++
+ msgid "Mainland IP Update"
+ msgstr "大陆 IP 白名单 更新日期"
+ 
+@@ -1227,6 +1242,9 @@ msgstr "大陆 IPv6 白名单 更新日期"
+ msgid "lhie1 Rule Update"
+ msgstr "lhie1 规则更新日期"
+ 
++msgid "ConnersHua Return Rule Update"
++msgstr "ConnersHua 回国规则更新日期"
++
+ msgid "GEOIP Data Update"
+ msgstr "GEOIP 数据库日期"
+ 
+@@ -1239,6 +1257,9 @@ msgstr "暂未备份"
+ msgid "Backup"
+ msgstr "备份"
+ 
++msgid "<Limited State>"
++msgstr "<受限状态>"
++
+ msgid "Enhance"
+ msgstr "增强"
+ 
+@@ -1935,9 +1956,15 @@ msgstr "读取完成！"
+ msgid "Write Successful!"
+ msgstr "写入完成！"
+ 
++msgid "Creating By Using Connershua (rule set) Rules..."
++msgstr "使用 ConnersHua(规则集) 规则创建中..."
++
+ msgid "Creating By Using lhie1 Rules..."
+ msgstr "使用 lhie1 规则创建中..."
+ 
++msgid "Creating By Using ConnersHua Return Rules..."
++msgstr "使用 ConnersHua 回国规则创建中..."
++
+ msgid "Created Successful, Updating Proxies, Proxy-providers, Groups..."
+ msgstr "创建完成，正在更新服务器、代理集、策略组信息..."
+ 
+@@ -1953,6 +1980,12 @@ msgstr "错误：丢失或未指定第三方规则中的部分策略组，停止
+ msgid "Tip: Detected That The nameserver DNS Option Has No Server Set, Starting To Complete..."
+ msgstr "提示：检测到DNS选项下的 Nameserver 未设置服务器，开始补全..."
+ 
++msgid "Error: Failed To Download Proxy-providers, Please Check The Log Page For Detailed error information!"
++msgstr "错误：代理集文件下载失败，请到日志页面查看详细错误信息！"
++
++msgid "Error: Failed To Download Rule-providers, Please Check The Log Page For Detailed error information!"
++msgstr "错误：规则集文件下载失败，请到日志页面查看详细错误信息！"
++
+ msgid "Error: Nameserver Option Must Be Setted, Stop Customing DNS Servers"
+ msgstr "错误：配置文件DNS选项下的 Nameserver 必须设置服务器，已停止设置自定义DNS服务器！"
+ 
+@@ -1965,6 +1998,21 @@ msgstr "错误：缺少配置文件，请上传或更新配置文件！"
+ msgid "Error: Config File Format Validation Failed..."
+ msgstr "错误：配置文件格式校验失败..."
+ 
++msgid "Tip: Detected The Exclusive Function of The TUN Core, Use TUN Core to Start..."
++msgstr "提示：检测到配置了 TUN 内核专属功能，调用 TUN 内核启动..."
++
++msgid "Tip: Detected The Exclusive Function of The Meta Core, Use Meta Core to Start..."
++msgstr "提示：检测到配置了 Meta 内核专属功能，调用 Meta 内核启动..."
++
++msgid "Tip: No Special Configuration Detected, Use Dev Core to Start..."
++msgstr "提示：未检测到特殊配置，调用 Dev 内核启动..."
++
++msgid "Tip: Detected that the Dev Core is not Installed, Use TUN Core to Start..."
++msgstr "提示：检测到 Dev 内核未安装，调用 TUN 内核启动..."
++
++msgid "Tip: Detected that the Dev Core is not Installed, Use Meta Core to Start..."
++msgstr "提示：检测到 Dev 内核未安装，调用 Meta 内核启动..."
++
+ msgid "Tip: Detected that the GEOIP Database is not Installed, Ready to Download..."
+ msgstr "提示：检测到 GEOIP 数据库文件不存在，准备开始下载..."
+ 
+@@ -1989,9 +2037,24 @@ msgstr "错误：Capsh 异常，请尝试重新安装依赖【libcap】和相应
+ msgid "Tip: You Could Download And Re-Install The libcap & libcap-bin Library From The Address Give"
+ msgstr "提示：你可以尝试从给出的地址中查找、下载并重新安装架构对应的 libcap 和 libcap-bin 依赖"
+ 
++msgid "Error: Get DNS 'listen' Option Error, OpenClash Can Not Start With Raw Config File"
++msgstr "错误：无法获取 DNS 部分的监听端口设置, OpenClash 使用原始配置文件启动失败"
++
++msgid "Error: Get DNS 'enhanced-mode' Option Error, OpenClash Can Not Start With Raw Config File"
++msgstr "错误：无法获取 DNS 部分的运行模式设置, OpenClash 使用原始配置文件启动失败"
++
++msgid "Error: Get General 'redir-port' Option Error, OpenClash Can Not Start With Raw Config File"
++msgstr "错误：无法获取 General 部分的转发端口设置, OpenClash 使用原始配置文件启动失败"
++
+ msgid "Error: OpenClash Can Not Start, Please Check The Error Info And Try Again!"
+ msgstr "错误：OpenClash 启动失败，请到日志页面查看详细错误信息！"
+ 
++msgid "Error: OpenClash Can Not Start, Try Use Raw Config Restart Again..."
++msgstr "错误：OpenClash 启动失败，尝试使用原始配置文件启动..."
++
++msgid "Error: OpenClash Can Not Start, Try Use Backup Rules Start Again..."
++msgstr "错误：OpenClash 启动失败，尝试还原第三方规则并重新启动 Clash 主程序..."
++
+ msgid "Found 53 Port Hijacked, Clean Up Firewall Rules..."
+ msgstr "发现 53 端口被劫持，清理防火墙规则..."
+ 
+@@ -2016,14 +2079,17 @@ msgstr "第四步: 启动主程序..."
+ msgid "Step 5: Check The Core Status..."
+ msgstr "第五步: 检查内核启动状态..."
+ 
+-msgid "Step 6: Set Firewall Rules..."
+-msgstr "第六步: 设置防火墙规则..."
++msgid "Step 6: Wait For The File Downloading..."
++msgstr "第六步: 等待主程序下载外部文件..."
+ 
+-msgid "Step 7: Restart Dnsmasq..."
+-msgstr "第七步: 重启 Dnsmasq 程序..."
++msgid "Step 7: Set Firewall Rules..."
++msgstr "第七步: 设置防火墙规则..."
+ 
+-msgid "Step 8: Add Cron Rules, Start Daemons..."
+-msgstr "第八步: 添加计划任务,启动进程守护程序..."
++msgid "Step 8: Restart Dnsmasq..."
++msgstr "第八步: 重启 Dnsmasq 程序..."
++
++msgid "Step 9: Add Cron Rules, Start Daemons..."
++msgstr "第九步: 添加计划任务,启动进程守护程序..."
+ 
+ msgid "OpenClash Start Successful!"
+ msgstr "OpenClash 启动成功，请等待服务器上线！"
+@@ -2031,6 +2097,9 @@ msgstr "OpenClash 启动成功，请等待服务器上线！"
+ msgid "Warning: OpenClash Start Successful, Please Note That Network May Abnormal With IPv6's DHCP Server"
+ msgstr "警告：OpenClash 启动成功，检测到您启用了IPv6的DHCP服务，可能会造成连接异常！"
+ 
++msgid "Warning: OpenClash Start Successful With Raw Config File, Please Note That It's Restricted Mode Now"
++msgstr "警告：OpenClash 使用原始配置文件启动成功，部分设置可能未生效！"
++
+ msgid "OpenClash Stoping..."
+ msgstr "OpenClash 开始关闭..."
+ 
+@@ -2322,6 +2391,12 @@ msgstr "错误：设置防回环规则失败，"
+ msgid "Error: Set lhie1 Rules Failed,"
+ msgstr "错误：设置第三方规则（lhie1）失败，"
+ 
++msgid "Error: Set ConnersHua Rules Failed,"
++msgstr "错误：设置第三方规则（ConnersHua）失败，"
++
++msgid "Error: Set ConnersHua Return Rules Failed,"
++msgstr "错误：设置第三方规则（ConnersHua 回国）失败，"
++
+ msgid "Error: Filter Proxies Failed,"
+ msgstr "错误：节点筛选失败，"
+ 
+@@ -2346,6 +2421,9 @@ msgstr "错误：规则集 Rule-Set 规则添加失败，"
+ msgid "Error: Custom Rule Provider Merge Failed,"
+ msgstr "错误：规则集 Rule Provider 合并失败，"
+ 
++msgid "Error: Restore Backup Rules Failed,"
++msgstr "错误：还原默认规则失败，"
++
+ msgid "Error: Resolve Proxy-providers Failed,"
+ msgstr "错误：解析代理集失败，"
+ 
+@@ -2874,6 +2952,9 @@ msgstr "错误：多个脚本运行中，退出..."
+ msgid "Error: Streaming DNS Prefetch Could not Work Because of Router-Self Proxy Disabled, Exiting..."
+ msgstr "错误：因为禁用了代理路由器自身流量，预解析无法工作，退出..."
+ 
++msgid "Enable Meta Core"
++msgstr "*使用 Meta 内核"
++
+ msgid "Enable Sniffer"
+ msgstr "*启用流量（域名）探测"
+ 
+@@ -2955,6 +3036,9 @@ msgstr "（仅 TUN 内核）"
+ msgid "(TUN&Meta Core)"
+ msgstr "（TUN&Meta 内核）"
+ 
++msgid "Warning: Only Meta Core Support QUIC Type DNS, Skip"
++msgstr "警告：仅 Meta 内核支持 QUIC 类型的 DNS，跳过"
++
+ msgid "Will Override Dns Queries If Domains in The List"
+ msgstr "列表中的域名将会强制进行探测（嗅探）"
+ 
+@@ -2988,6 +3072,9 @@ msgstr "天"
+ msgid "Douyin"
+ msgstr "抖音（Douyin）"
+ 
++msgid "Warning: Skip the Custom Rule that Core not Support"
++msgstr "警告：跳过核心不支持的自定义规则"
++
+ msgid "Specific Interface"
+ msgstr "指定接口"
+ 
+@@ -3000,12 +3087,24 @@ msgstr "指定策略组（支持正则匹配）"
+ msgid "Group Use For Proxy The DNS"
+ msgstr "用于代理此 DNS 的策略组"
+ 
++msgid "Warning: Only Meta Core Support Specific Group, Skip Setting"
++msgstr "警告：仅 Meta 内核支持指定 DNS 的策略组，跳过设置"
++
+ msgid "Node Domain Resolve"
+ msgstr "节点域名解析"
+ 
+ msgid "Use For Node Domain Resolve"
+ msgstr "用于解析节点域名的 IP 地址"
+ 
++msgid "Warning: Only Meta Core Support proxy-server-nameserver, Skip Setting"
++msgstr "警告：仅 Meta 内核支持设置解析节点域名的 DNS，跳过设置"
++
++msgid "Warning: Meta Core not Support Specific Interface, Skip Setting"
++msgstr "警告：Meta 内核不支持设置指定 DNS 的出口，跳过设置"
++
++msgid "Warning: Only Meta Core Support Force HTTP/3 to connect, Skip Setting"
++msgstr "警告：仅 Meta 内核支持 DOH 强制启用 HTTP/3，跳过设置"
++
+ msgid "Lan Bypassed Port List"
+ msgstr "绕过核心的来源端口"
+ 
+@@ -3162,6 +3261,9 @@ msgstr "下载失败："
+ msgid "Tip: Waiting for TUN Interface Start..."
+ msgstr "提示：正在等待 TUN 接口启动..."
+ 
++msgid "Tip: You Can Try to Restart With Meta Core"
++msgstr "提示：您可以尝试使用 Meta 内核启动"
++
+ msgid "Warning: Dnsmasq not Support nftset, Use ipset..."
+ msgstr "警告：Dnsmasq 不支持 nftset, 使用 ipset 代替..."
+ 
+@@ -3345,6 +3447,9 @@ msgstr "提示：IPv6 代理模式为 TUN..."
+ msgid "Tip: IPv6 Proxy Mode is TProxy..."
+ msgstr "提示：IPv6 代理模式为 TProxy..."
+ 
++msgid "Warning: Only Meta Core Support IPv6 Tun Mode, Use TProxy Instead..."
++msgstr "提示：只有 Meta 内核支持 IPv6 Tun 模式，使用 TProxy 模式代替..."
++
+ msgid "Warning: Can't Settting Only Intranet Allowed Function, Get IPv4 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
+ msgstr "警告：设置仅允许内网功能失败，无法获取 IPv4 的 WAN 接口名称，请确保防火墙设置中 IPv4 WAN 区域的名称为 wan，如设备无 WAN 口请忽略此提示..."
+ 
+@@ -3378,6 +3483,9 @@ msgstr "请在此编辑您的附加配置"
+ msgid "Error: Config Not Found, Switch Config File to"
+ msgstr "错误：未找到配置文件，切换至配置文件"
+ 
++msgid "Warning: Skip the nameserver-policy that Core not Support"
++msgstr "警告：跳过核心不支持的 nameserver-policy 规则"
++
+ msgid "Enable Unified Delay"
+ msgstr "*启用统一延迟"
+ 
+@@ -3454,4 +3562,4 @@ msgid "Select LAN Interface Name"
+ msgstr "指定正确的 LAN 接口名称"
+ 
+ msgid "For More Useful Meta Core Functions Go Wiki"
+-msgstr "如需要了解更多关于 Meta 内核的功能，请前往 Wiki"
+\ No newline at end of file
++msgstr "如需要了解更多关于 Meta 内核的功能，请前往 Wiki"
+diff --git a/root/etc/config/openclash b/root/etc/config/openclash
+index d80d456..9652741 100644
+--- a/root/etc/config/openclash
++++ b/root/etc/config/openclash
+@@ -57,6 +57,7 @@ config openclash 'config'
+ 	option delay_start '0'
+ 	option router_self_proxy '1'
+ 	option release_branch 'master'
++	option enable_meta_core '0'
+ 	option dashboard_type 'Official'
+ 	option yacd_type 'Official'
+ 	option append_default_dns '0'
+diff --git a/root/etc/init.d/openclash b/root/etc/init.d/openclash
+index 53362e9..62f7dbe 100644
+--- a/root/etc/init.d/openclash
++++ b/root/etc/init.d/openclash
+@@ -219,6 +219,55 @@ start_fail()
+    exit 0
+ }
+ 
++#检查集文件防止启动失败
++yml_provider_check()
++{
++provider_path_line=$(ruby_read "$1" ".key?('$2')")
++local provider_path_check
++if "$provider_path_line"; then
++   while :;
++   do
++      provider_path_check=$(ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
++      Value = YAML.load_file('$1');
++      Value['$2'].values.each{|x,v|
++      if not x['path'].empty? then
++         if x['path'].split('/')[0] == '.' then
++            v = '/etc/openclash/'+x['path'].split('./')[1]
++         else
++            v = x['path']
++         end
++      end;
++      if File::exist?(v) then
++         if not YAML.load_file(v).key?('$3') then
++            puts false
++            break
++         end
++      else
++         puts false
++         break
++      end
++      }
++      " 2>/dev/null)
++      if [ "$provider_path_check" == "false" ] && [ -n "$(pidof clash)" ]; then
++         sleep 2
++      else
++         break
++      fi
++   done
++fi
++
++if [ -z "$(pidof clash)" ] && [ "$provider_path_check" == "false" ]; then
++   if [ "$2" = "proxy-providers" ]; then
++      LOG_OUT "Error: Failed To Download Proxy-providers, Please Check The Log Page For Detailed error information!"
++   else
++      LOG_OUT "Error: Failed To Download Rule-providers, Please Check The Log Page For Detailed error information!"
++   fi
++   LOG_ALERT
++   LOG_OUT "Tip: You Can Try to Restart With Meta Core"
++   start_fail
++fi
++}
++
+ #获取订阅配置
+ sub_info_get()
+ {
+@@ -316,10 +365,28 @@ elif [ ! -f "$TMP_CONFIG_FILE" ] || [ ! -s "$TMP_CONFIG_FILE" ]; then
+ fi
+ }
+ 
++yml_other_rules_get()
++{
++   local section="$1"
++   local enabled config
++   config_get_bool "enabled" "$section" "enabled" "1"
++   config_get "config" "$section" "config" ""
++
++   if [ "$enabled" = "0" ] || [ "$config" != "$2" ]; then
++      return
++   fi
++
++   if [ -n "$rule_name" ]; then
++      return
++   fi
++
++   config_get "rule_name" "$section" "rule_name" ""
++}
++
+ check_run_quick()
+ {
+    quick_start=true
+-   check_file="$(echo $RAW_CONFIG_FILE | tr " " "?") /etc/openclash/custom/openclash_custom_domain_dns.list /etc/openclash/custom/openclash_custom_domain_dns_policy.list /etc/openclash/custom/openclash_custom_fake_filter.list /etc/openclash/custom/openclash_custom_fallback_filter.yaml /etc/openclash/custom/openclash_custom_hosts.list /etc/openclash/custom/openclash_custom_rules.list /etc/openclash/custom/openclash_custom_rules_2.list $meta_core_path $ipdb_path $geosite_path $geoip_path $chnr_path $chnr6_path /usr/share/openclash/res/lhie1.yaml /etc/openclash/custom/openclash_force_sniffing_domain.yaml /etc/openclash/custom/openclash_sniffing_domain_filter.yaml /etc/openclash/custom/openclash_sniffing_ports_filter.yaml /etc/openclash/custom/openclash_custom_localnetwork_ipv4.list /etc/openclash/custom/openclash_custom_localnetwork_ipv6.list /etc/openclash/custom/openclash_custom_chnroute_pass.list /etc/openclash/custom/openclash_custom_chnroute6_pass.list $cndomain_path /etc/openclash/custom/openclash_custom_overwrite.sh"
++   check_file="$(echo $RAW_CONFIG_FILE | tr " " "?") /etc/openclash/custom/openclash_custom_domain_dns.list /etc/openclash/custom/openclash_custom_domain_dns_policy.list /etc/openclash/custom/openclash_custom_fake_filter.list /etc/openclash/custom/openclash_custom_fallback_filter.yaml /etc/openclash/custom/openclash_custom_hosts.list /etc/openclash/custom/openclash_custom_rules.list /etc/openclash/custom/openclash_custom_rules_2.list $dev_core_path $tun_core_path $meta_core_path $ipdb_path $geosite_path $geoip_path $chnr_path $chnr6_path /usr/share/openclash/res/ConnersHua.yaml /usr/share/openclash/res/ConnersHua_return.yaml /usr/share/openclash/res/lhie1.yaml /etc/openclash/custom/openclash_force_sniffing_domain.yaml /etc/openclash/custom/openclash_sniffing_domain_filter.yaml /etc/openclash/custom/openclash_sniffing_ports_filter.yaml /etc/openclash/custom/openclash_custom_localnetwork_ipv4.list /etc/openclash/custom/openclash_custom_localnetwork_ipv6.list /etc/openclash/custom/openclash_custom_chnroute_pass.list /etc/openclash/custom/openclash_custom_chnroute6_pass.list $cndomain_path /etc/openclash/custom/openclash_custom_overwrite.sh"
+ 	 if [ ! -f "$CONFIG_FILE" ] || [ ! -f "/tmp/openclash_config.tmp" ] || [ ! -f "/tmp/openclash.change" ]; then
+ 	    quick_start=false
+ 	    return
+@@ -355,6 +422,22 @@ write_run_quick()
+ 	 fi
+ }
+ 
++custom_rule_provider()
++{
++   local section="$1"
++   local enabled config
++   config_get "config" "$section" "config" ""
++   config_get_bool "enabled" "$section" "enabled" "1"
++
++   if [ "$enabled" = "0" ]; then
++      return
++   fi
++
++   if [ "$config" = "all" ] || [ "$config" = "$CONFIG_NAME" ]; then
++      config_set_custom_rule_provider=1
++   fi
++}
++
+ #运行模式处理
+ do_run_mode()
+ {
+@@ -397,6 +480,8 @@ do_run_file()
+    }
+ 
+    if [ "$small_flash_memory" != "1" ]; then
++      dev_core_path="/etc/openclash/core/clash"
++      tun_core_path="/etc/openclash/core/clash_tun"
+       meta_core_path="/etc/openclash/core/clash_meta"
+       ipdb_path="/etc/openclash/Country.mmdb"
+       chnr_path="/etc/openclash/china_ip_route.ipset"
+@@ -415,6 +500,8 @@ do_run_file()
+          rm -rf "/tmp/etc/openclash" 2>/dev/null
+       fi
+    else
++      dev_core_path="/tmp/etc/openclash/core/clash"
++      tun_core_path="/tmp/etc/openclash/core/clash_tun"
+       meta_core_path="/tmp/etc/openclash/core/clash_meta"
+       ipdb_path="/tmp/etc/openclash/Country.mmdb"
+       chnr_path="/tmp/etc/openclash/china_ip_route.ipset"
+@@ -434,14 +521,66 @@ do_run_file()
+    rm -rf "/etc/openclash/cache.db" 2>/dev/null
+    rm -rf "/etc/openclash/clash" 2>/dev/null
+ 
+-   ln -s "$meta_core_path" /etc/openclash/clash 2>/dev/null
+-   core_type="Meta"
++   if [ "$enable_meta_core" != "1" ]; then
++      if [ -n "$en_mode_tun" ]; then
++         ln -s "$tun_core_path" /etc/openclash/clash 2>/dev/null
++         core_type="TUN"
++         core_start_log="Tip: Detected The Exclusive Function of The TUN Core, Use TUN Core to Start..."
++      fi
++
++      if [ "$rule_source" != "0" ]; then
++         config_load "openclash"
++         config_foreach yml_other_rules_get "other_rules" "$CONFIG_NAME"
++      fi
++
++      config_load "openclash"
++      config_set_custom_rule_provider=0
++      for i in "rule_provider_config" "rule_provider_config" "rule_providers" "game_config"; do
++         config_foreach custom_rule_provider "$i"
++         if [ "$config_set_custom_rule_provider" -eq 1 ]; then
++         	break
++         fi
++      done 2>/dev/null
++
++      if [ "$proxy_mode" = "script" ] || [ "$config_set_custom_rule_provider" -eq 1 ] || [ "$rule_name" = "ConnersHua" ] || [ "$rule_name" = "lhie1" ] || [ -n "$(ruby_read "$RAW_CONFIG_FILE" "['rules'].grep(/(^RULE-SET,|^SCRIPT,)/)")" ] || [ -n "$(ruby_read "/etc/openclash/custom/openclash_custom_rules.list" "['rules'].grep(/(^RULE-SET,|^SCRIPT,)/)")" ] || [ -n "$(ruby_read "/etc/openclash/custom/openclash_custom_rules_2.list" "['rules'].grep(/(^RULE-SET,|^SCRIPT,)/)")" ]; then
++         if [ -z "$en_mode_tun" ]; then
++            ln -s "$tun_core_path" /etc/openclash/clash 2>/dev/null
++            core_type="TUN"
++            core_start_log="Tip: Detected The Exclusive Function of The TUN Core, Use TUN Core to Start..."
++         fi
++      fi
++   else
++      ln -s "$meta_core_path" /etc/openclash/clash 2>/dev/null
++      core_type="Meta"
++      core_start_log="Tip: Detected The Exclusive Function of The Meta Core, Use Meta Core to Start..."
++   fi
++
++   if [ ! -f "/etc/openclash/clash" ] && [ -f "$dev_core_path" ] && [ -z "$core_type" ]; then
++      ln -s "$dev_core_path" /etc/openclash/clash 2>/dev/null
++      core_start_log="Tip: No Special Configuration Detected, Use Dev Core to Start..."
++   fi
++
++   if [ ! -f "/etc/openclash/clash" ] && [ -f "$tun_core_path" ] && [ -z "$core_type" ]; then
++      ln -s "$tun_core_path" /etc/openclash/clash 2>/dev/null
++      core_type="TUN"
++      core_start_log="Tip: Detected that the Dev Core is not Installed, Use TUN Core to Start..."
++   fi
++
++   if [ ! -f "/etc/openclash/clash" ] && [ -f "$meta_core_path" ] && [ -z "$core_type" ]; then
++      ln -s "$meta_core_path" /etc/openclash/clash 2>/dev/null
++      core_type="Meta"
++      core_start_log="Tip: Detected that the Dev Core is not Installed, Use Meta Core to Start..."
++   fi
+ 
+    [ ! -f "$CLASH" ] && {
+       LOG_OUT "Tip: Detected that the Core is not Installed, Ready to Download..."
+       rm -rf "/tmp/clash_last_version"
+       /usr/share/openclash/openclash_core.sh "$core_type"
+-      if [ "$core_type" == "Meta" ] && [ ! -f "$meta_core_path" ]; then
++      if [ "$core_type" == "TUN" ] && [ ! -f "$tun_core_path" ]; then
++         start_fail
++      elif [ "$core_type" == "Meta" ] && [ ! -f "$meta_core_path" ]; then
++         start_fail
++      elif [ -z "$core_type" ] && [ ! -f "$dev_core_path" ]; then
+          start_fail
+       else
+          del_lock
+@@ -458,7 +597,7 @@ do_run_file()
+       fi
+    }
+ 
+-   [ ! -f "$geosite_path" ] && {
++   [ ! -f "$geosite_path" ] && [ "$enable_meta_core" = "1" ] && {
+       LOG_OUT "Tip: Detected that the GEOSITE Database is not Installed, Ready to Download..."
+       /usr/share/openclash/openclash_geosite.sh
+       if [ ! -f "$geosite_path" ]; then
+@@ -508,6 +647,8 @@ do_run_file()
+       fi
+    fi
+ 
++   [ ! -x "$tun_core_path" ] && chmod 4755 "$tun_core_path" 2>/dev/null
++   [ ! -x "$dev_core_path" ] && chmod 4755 "$dev_core_path" 2>/dev/null
+    [ ! -x "$meta_core_path" ] && chmod 4755 "$meta_core_path" 2>/dev/null
+ 
+    [ -f "$ipdb_path" ] && [ "$small_flash_memory" = "1" ] && {
+@@ -624,6 +765,7 @@ config_test()
+ 
+ start_run_core()
+ {
++   LOG_OUT "$core_start_log"
+    ulimit -SHn 65535 2>/dev/null
+    ulimit -v unlimited 2>/dev/null
+    modprobe tun >/dev/null 2>&1
+@@ -636,20 +778,26 @@ start_run_core()
+       LOG_OUT "Error: Config File Tested Faild, Please Check The Log Infos!"
+       start_fail
+    fi
+-
+-   kill_clash
+-   #防止赋权失败
+-   touch "/tmp/openclash.log" 2>/dev/null
+-   chmod o+w /etc/openclash/proxy_provider/* 2>/dev/null
+-   chmod o+w /etc/openclash/rule_provider/* 2>/dev/null
+-   chmod o+w /etc/openclash/history/* 2>/dev/null
+-   chmod o+w /etc/openclash/cache.db 2>/dev/null
+-   chmod o+w /tmp/openclash.log 2>/dev/null
+-   chown nobody:nogroup /etc/openclash/core/* 2>/dev/null
+-   #使用nobody启动内核方便代理路由自身流量
+-   capabilties="cap_sys_resource,cap_dac_override,cap_net_raw,cap_net_bind_service,cap_net_admin,cap_sys_ptrace,cap_sys_admin"
+-   capsh --caps="${capabilties}+eip" -- -c "capsh --user=nobody --addamb='${capabilties}' -- -c 'nohup $CLASH -d $CLASH_CONFIG -f \"$CONFIG_FILE\" >> $LOG_FILE 2>&1 &'" >> $LOG_FILE 2>&1
+-
++   config_reload=$(uci -q get openclash.config.config_reload)
++   if [ -n "$(pidof clash)" ] && [ "$core_type" != "TUN" ] && [ "$core_type" != "Meta" ] && [ "$config_reload" != "0" ]; then
++      reload_status=$(curl -s --connect-timeout 5 -m 5 -o /dev/null -w %{http_code} -H 'Content-Type: application/json' -H "Authorization: Bearer ${da_password}" -XPUT http://"$lan_ip":"$cn_port"/configs?force=true -d "{\"path\": \"$CONFIG_FILE\"}" 2>/dev/null)
++   fi
++   if [ "$reload_status" != "204" ] || [ -z "$(pidof clash)" ] || [ "$core_type" = "TUN" ] || [ "$core_type" = "Meta" ] || [ "$config_reload" = "0" ]; then
++      kill_clash
++      #防止赋权失败
++      touch "/tmp/openclash.log" 2>/dev/null
++      chmod o+w /etc/openclash/proxy_provider/* 2>/dev/null
++      chmod o+w /etc/openclash/rule_provider/* 2>/dev/null
++      chmod o+w /etc/openclash/history/* 2>/dev/null
++      chmod o+w /etc/openclash/cache.db 2>/dev/null
++      chmod o+w /tmp/openclash.log 2>/dev/null
++      chown nobody:nogroup /etc/openclash/core/* 2>/dev/null
++      #使用nobody启动内核方便代理路由自身流量
++      capabilties="cap_sys_resource,cap_dac_override,cap_net_raw,cap_net_bind_service,cap_net_admin,cap_sys_ptrace,cap_sys_admin"
++      capsh --caps="${capabilties}+eip" -- -c "capsh --user=nobody --addamb='${capabilties}' -- -c 'nohup $CLASH -d $CLASH_CONFIG -f \"$CONFIG_FILE\" >> $LOG_FILE 2>&1 &'" >> $LOG_FILE 2>&1
++   fi
++   uci -q set openclash.config.config_reload=1
++   uci -q commit openclash
+ }
+ 
+ check_core_status()
+@@ -665,6 +813,107 @@ check_core_status()
+    fi
+ }
+ 
++#不修改配置文件启动
++raw_config_start()
++{
++   cp "$RAW_CONFIG_FILE" "$CONFIG_FILE"
++   dns_port=$(ruby_read "$CONFIG_FILE" "['dns']['listen'].split(':')[1]")
++   en_mode=$(ruby_read "$CONFIG_FILE" "['dns']['enhanced-mode']")
++   proxy_port=$(ruby_read "$CONFIG_FILE" "['redir-port']")
++
++   if [ -z "$dns_port" ] || [ -z "$en_mode" ] || [ -z "$proxy_port" ]; then
++      if [ -z "$dns_port" ]; then
++         LOG_OUT "Error: Get DNS 'listen' Option Error, OpenClash Can Not Start With Raw Config File"
++      fi
++      if [ -z "$en_mode" ]; then
++         LOG_OUT "Error: Get DNS 'enhanced-mode' Option Error, OpenClash Can Not Start With Raw Config File"
++      fi
++      if [ -z "$proxy_port" ]; then
++         LOG_OUT "Error: Get General 'redir-port' Option Error, OpenClash Can Not Start With Raw Config File"
++      fi
++      start_fail
++   fi
++
++   start_run_core
++   check_core_status
++
++   if ! pidof clash >/dev/null; then
++      LOG_OUT "Error: OpenClash Can Not Start, Please Check The Error Info And Try Again!"
++      start_fail
++   fi
++
++   if [ "$en_mode" = "redir-host" ]; then
++      case $en_mode_tun in
++      "1")
++         uci -q set openclash.config.en_mode=redir-host-tun
++      ;;
++      "2")
++         uci -q set openclash.config.en_mode=redir-host-mix
++      ;;
++      *)
++         uci -q set openclash.config.en_mode=redir-host
++      esac
++   elif [ "$en_mode" = "fake-ip" ]; then
++   	case $en_mode_tun in
++      "1")
++         uci -q set openclash.config.en_mode=fake-ip-tun
++      ;;
++      "2")
++         uci -q set openclash.config.en_mode=fake-ip-mix
++      ;;
++      *)
++         uci -q set openclash.config.en_mode=fake-ip
++      esac
++   fi
++
++   dase=$(ruby_read "$CONFIG_FILE" "['secret']")
++   uci -q set openclash.config.dashboard_password="$dase"
++
++   cn_port=$(ruby_read "$CONFIG_FILE" "['external-controller'].split(':')[1]")
++   uci -q set openclash.config.cn_port="$cn_port"
++
++   uci -q set openclash.config.proxy_port="$proxy_port"
++   uci -q set openclash.config.restricted_mode=1
++
++   uci commit openclash
++}
++
++try_restore_start()
++{
++   if [ -z "$(pidof clash)" ]; then
++      if [ "$rule_source" = 0 ] && [ "$enable_custom_clash_rules" = 0 ]; then
++         LOG_OUT "Error: OpenClash Can Not Start, Try Use Raw Config Restart Again..."
++         raw_config_start
++      else
++         LOG_OUT "Error: OpenClash Can Not Start, Try Use Backup Rules Start Again..."
++         ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
++         begin
++            Value = YAML.load_file('$RAW_CONFIG_FILE');
++            Value_1 = YAML.load_file('$CONFIG_FILE');
++            if Value.has_key?('rule-providers') then
++               Value_1['rule-providers'] = Value.select {|x| 'rule-providers' == x}['rule-providers'];
++            end;
++            if Value.has_key?('script') then
++               Value_1['script'] = Value.select {|x| 'script' == x}['script'];
++            end;
++            if Value.has_key?('rules') then
++               Value_1['rules'] = Value.select {|x| 'rules' == x}['rules'];
++            end;
++            File.open('$CONFIG_FILE','w') {|f| YAML.dump(Value_1, f)};
++         rescue Exception => e
++            puts '${LOGTIME} Error: Restore Backup Rules Failed,【' + e.message + '】';
++         end
++         " 2>/dev/null >> $LOG_FILE
++         start_run_core
++         check_core_status
++         if ! pidof clash >/dev/null; then
++            LOG_OUT "Error: OpenClash Can Not Start, Try Use Raw Config Restart Again..."
++            raw_config_start
++         fi
++      fi
++   fi
++}
++
+ #防火墙设置部分
+ nft_ac_add()
+ {
+@@ -1064,9 +1313,11 @@ set_tun_tap()
+       TUN_RESTART=1
+ 
+       if [ -n "$(pidof clash)" ] && [ -n "$1" ] && [ "$(ip -6 route list |grep utun |wc -l)" -ne 2 ] && [ -n "$(ifconfig utun)" ]; then
+-         ip -6 addr add fdfe:dcba:9876::1/126 dev utun >/dev/null 2>&1
+-         ip -6 route add fdfe:dcba:9876::/126 dev utun proto kernel metric 256 pref medium >/dev/null 2>&1
+-         ip -6 route add fe80::/64 dev utun proto kernel metric 256 pref medium >/dev/null 2>&1
++         if [ "$enable_meta_core" = "1" ]; then
++            ip -6 addr add fdfe:dcba:9876::1/126 dev utun >/dev/null 2>&1
++            ip -6 route add fdfe:dcba:9876::/126 dev utun proto kernel metric 256 pref medium >/dev/null 2>&1
++            ip -6 route add fe80::/64 dev utun proto kernel metric 256 pref medium >/dev/null 2>&1
++         fi
+          ip -6 route replace default dev utun table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
+          ip -6 rule add fwmark "$PROXY_FWMARK" table "$PROXY_ROUTE_TABLE" >/dev/null 2>&1
+       fi
+@@ -1105,7 +1356,7 @@ set_tun_tap()
+          fi
+       fi
+ 
+-      if [ -n "$1" ]; then
++      if [ -n "$1" ] && [ "$enable_meta_core" = "1" ]; then
+          ip -6 rule del oif utun table 2022 >/dev/null 2>&1
+          ip -6 route del default dev utun table 2022 >/dev/null 2>&1
+       fi
+@@ -1163,6 +1414,11 @@ case $enable_redirect_dns in
+    LOG_OUT "Tip: DNS Hijacking is Disabled..."
+ esac
+ 
++if [ "$ipv6_mode" -eq 2 ] && [ "$enable_meta_core" -ne 1 ]; then
++   LOG_OUT "Warning: Only Meta Core Support IPv6 Tun Mode, Use TProxy Instead..."
++   ipv6_mode=0
++fi
++
+ if [ "$ipv6_enable" -eq 1 ]; then
+    case $ipv6_mode in
+       "1")
+@@ -2996,6 +3252,7 @@ get_config()
+    bypass_gateway_compatible=$(uci -q get openclash.config.bypass_gateway_compatible || echo 0)
+    core_version=$(uci -q get openclash.config.core_version || echo 0)
+    router_self_proxy=$(uci -q get openclash.config.router_self_proxy || echo 1)
++   enable_meta_core=$(uci -q get openclash.config.enable_meta_core || echo 0)
+    enable_meta_sniffer=$(uci -q get openclash.config.enable_meta_sniffer || echo 0)
+    enable_meta_sniffer_custom=$(uci -q get openclash.config.enable_meta_sniffer_custom || echo 0)
+    geodata_loader=$(uci -q get openclash.config.geodata_loader || echo 0)
+@@ -3012,7 +3269,7 @@ get_config()
+    proxy_dns_group=$(uci -q get openclash.config.proxy_dns_group || echo "Disable")
+    intranet_allowed_wan_name=$(uci -q get openclash.config.intranet_allowed_wan_name || echo "0")
+    [ -z "$dns_port" ] && dns_port=7874 && uci -q set openclash.config.dns_port=7874
+-   uci -q commit openclash
++   uci -q set openclash.config.restricted_mode=0 && uci -q commit openclash
+ }
+ 
+ start()
+@@ -3038,8 +3295,8 @@ start()
+    if ! $quick_start; then
+       LOG_OUT "Step 3: Modify The Config File..."
+       config_check
+-      /usr/share/openclash/yml_change.sh 2>/dev/null "$en_mode" "$da_password" "$cn_port" "$proxy_port" "$TMP_CONFIG_FILE" "$ipv6_enable" "$http_port" "$socks_port" "$log_level" "$proxy_mode" "$en_mode_tun" "$stack_type" "$dns_port" "$mixed_port" "$tproxy_port" "$ipv6_dns" "$store_fakeip" "$stream_domains_prefetch" "$enable_meta_sniffer" "$enable_geoip_dat" "$geodata_loader" "$enable_meta_sniffer_custom" "$interface_name" "$enable_tcp_concurrent" "$core_type" "$append_default_dns" "$enable_meta_sniffer_pure_ip" "$find_process_mode" "$fakeip_range" "$global_client_fingerprint" "$ipv6_mode" "$stack_type_v6" "$enable_unified_delay" "$keep_alive_interval" "$proxy_dns_group"
+-      /usr/share/openclash/yml_rules_change.sh 2>/dev/null "$rule_source" "$enable_custom_clash_rules" "$TMP_CONFIG_FILE" "$enable_rule_proxy" "$CONFIG_NAME" "$router_self_proxy" "$lan_ip" "$proxy_port" "$tproxy_port" "$enable_redirect_dns" "$fakeip_range" "$en_mode"
++      /usr/share/openclash/yml_change.sh 2>/dev/null "$en_mode" "$da_password" "$cn_port" "$proxy_port" "$TMP_CONFIG_FILE" "$ipv6_enable" "$http_port" "$socks_port" "$log_level" "$proxy_mode" "$en_mode_tun" "$stack_type" "$dns_port" "$mixed_port" "$tproxy_port" "$ipv6_dns" "$store_fakeip" "$stream_domains_prefetch" "$enable_meta_core" "$enable_meta_sniffer" "$enable_geoip_dat" "$geodata_loader" "$enable_meta_sniffer_custom" "$interface_name" "$enable_tcp_concurrent" "$core_type" "$append_default_dns" "$enable_meta_sniffer_pure_ip" "$find_process_mode" "$fakeip_range" "$global_client_fingerprint" "$ipv6_mode" "$stack_type_v6" "$enable_unified_delay" "$keep_alive_interval" "$proxy_dns_group"
++      /usr/share/openclash/yml_rules_change.sh 2>/dev/null "$rule_source" "$enable_custom_clash_rules" "$TMP_CONFIG_FILE" "$enable_rule_proxy" "$CONFIG_NAME" "$router_self_proxy" "$lan_ip" "$proxy_port" "$tproxy_port" "$enable_meta_core" "$enable_redirect_dns" "$fakeip_range" "$en_mode"
+       /usr/share/openclash/openclash_custom_domain_dns.sh >/dev/null 2>&1
+       #Custom overwrite
+       if [ -f "/etc/openclash/custom/openclash_custom_overwrite.sh" ]; then
+@@ -3054,19 +3311,32 @@ start()
+    LOG_OUT "Step 5: Check The Core Status..."
+    check_core_status
+ 
+-   LOG_OUT "Step 6: Set Firewall Rules..."
++   #检测proxy_provider配置文件状态
++   LOG_OUT "Step 6: Wait For The File Downloading..."
++   if [ "$enable_meta_core" != "1" ]; then
++      yml_provider_check "$CONFIG_FILE" "proxy-providers" "proxies"
++      yml_provider_check "$CONFIG_FILE" "rule-providers" "payload"
++   fi
++
++   try_restore_start
++
++   LOG_OUT "Step 7: Set Firewall Rules..."
+    set_firewall
+-   LOG_OUT "Step 7: Restart Dnsmasq..."
++   LOG_OUT "Step 8: Restart Dnsmasq..."
+    change_dns "$enable_redirect_dns" "$disable_masq_cache"
+ 
+-   LOG_OUT "Step 8: Add Cron Rules, Start Daemons..."
++   LOG_OUT "Step 9: Add Cron Rules, Start Daemons..."
+    add_cron
+-   if [ -z "$(uci -q get dhcp.lan.dhcpv6)" ] || [ "$(uci -q get dhcp.lan.dhcpv6)" == "disabled" ]; then
+-      LOG_OUT "OpenClash Start Successful!"
+-   elif [ "$ipv6_enable" -eq 0 ]; then
+-      LOG_OUT "Warning: OpenClash Start Successful, Please Note That Network May Abnormal With IPv6's DHCP Server"
++   if [ "$(uci -q get openclash.config.restricted_mode)" != "1" ]; then
++      if [ -z "$(uci -q get dhcp.lan.dhcpv6)" ] || [ "$(uci -q get dhcp.lan.dhcpv6)" == "disabled" ]; then
++         LOG_OUT "OpenClash Start Successful!"
++      elif [ "$ipv6_enable" -eq 0 ]; then
++         LOG_OUT "Warning: OpenClash Start Successful, Please Note That Network May Abnormal With IPv6's DHCP Server"
++      else
++         LOG_OUT "OpenClash Start Successful!"
++      fi
+    else
+-      LOG_OUT "OpenClash Start Successful!"
++      LOG_OUT "Warning: OpenClash Start Successful With Raw Config File, Please Note That It's Restricted Mode Now"
+    fi
+    echo "OpenClash Already Start!"
+    write_run_quick
+diff --git a/root/etc/openclash/custom/openclash_custom_rules.list b/root/etc/openclash/custom/openclash_custom_rules.list
+index d35c371..aed0a88 100644
+--- a/root/etc/openclash/custom/openclash_custom_rules.list
++++ b/root/etc/openclash/custom/openclash_custom_rules.list
+@@ -1,4 +1,25 @@
++script:
++##  shortcuts:
++##    Notice: The core timezone is UTC
++##    CST 20:00-24:00 = time.now().hour > 12 and time.now().hour < 16
++##    内核时区为UTC,故以下time.now()函数的取值需要根据本地时区进行转换
++##    北京时间(CST) 20:00-24:00 = time.now().hour > 12 and time.now().hour < 16
++##    quic: network == 'udp' and dst_port == 443 and (geoip(resolve_ip(host)) != 'CN' or geoip(dst_ip) != 'CN')
++##    time-limit: in_cidr(src_ip,'192.168.1.2/32') and time.now().hour < 20 or time.now().hour > 21
++##    time-limit: src_ip == '192.168.1.2' and time.now().hour < 20 or time.now().hour > 21
++
++##  code: |
++##    def main(ctx, metadata):
++##        directkeywordlist = ["baidu"]
++##        for directkeyword in directkeywordlist:
++##          if directkeyword in metadata["host"]:
++##            ctx.log('[Script] matched keyword %s use direct' % directkeyword)
++##            return "DIRECT"
++
+ rules:
++##- SCRIPT,quic,REJECT #shortcuts rule
++##- SCRIPT,time-limit,REJECT #shortcuts rule
++
+ ##- PROCESS-NAME,curl,DIRECT #匹配路由自身进程(curl直连)
+ ##- DOMAIN-SUFFIX,google.com,Proxy #匹配域名后缀(交由Proxy代理服务器组)
+ ##- DOMAIN-KEYWORD,google,Proxy #匹配域名关键字(交由Proxy代理服务器组)
+diff --git a/root/etc/openclash/custom/openclash_custom_rules_2.list b/root/etc/openclash/custom/openclash_custom_rules_2.list
+index 59812f2..0f41b09 100644
+--- a/root/etc/openclash/custom/openclash_custom_rules_2.list
++++ b/root/etc/openclash/custom/openclash_custom_rules_2.list
+@@ -1,4 +1,18 @@
++script:
++##  shortcuts:
++##    common_port: dst_port not in [21, 22, 23, 53, 80, 123, 143, 194, 443, 465, 587, 853, 993, 995, 998, 2052, 2053, 2082, 2083, 2086, 2095, 2096, 5222, 5228, 5229, 5230, 8080, 8443, 8880, 8888, 8889]
++
++##  code: |
++##    def main(ctx, metadata):
++##        directkeywordlist = ["baidu"]
++##        for directkeyword in directkeywordlist:
++##          if directkeyword in metadata["host"]:
++##            ctx.log('[Script] matched keyword %s use direct' % directkeyword)
++##            return "DIRECT"
++
+ rules:
++##- SCRIPT,common_port,DIRECT #shortcuts rule
++
+ ##- DOMAIN-SUFFIX,google.com,Proxy #匹配域名后缀(交由Proxy代理服务器组)
+ ##- DOMAIN-KEYWORD,google,Proxy #匹配域名关键字(交由Proxy代理服务器组)
+ ##- DOMAIN,google.com,Proxy #匹配域名(交由Proxy代理服务器组)
+diff --git a/root/usr/share/openclash/openclash_core.sh b/root/usr/share/openclash/openclash_core.sh
+index 817a2a4..883a436 100644
+--- a/root/usr/share/openclash/openclash_core.sh
++++ b/root/usr/share/openclash/openclash_core.sh
+@@ -15,7 +15,7 @@ if [ -n "$2" ] && [ "$2" != "one_key_update" ]; then
+ fi
+ CORE_TYPE="$1"
+ C_CORE_TYPE=$(uci -q get openclash.config.core_type)
+-[ -z "$CORE_TYPE" ] && CORE_TYPE="Meta"
++[ -z "$CORE_TYPE" ] && CORE_TYPE="Dev"
+ small_flash_memory=$(uci -q get openclash.config.small_flash_memory)
+ CPU_MODEL=$(uci -q get openclash.config.core_version)
+ RELEASE_BRANCH=$(uci -q get openclash.config.release_branch || echo "master")
+@@ -33,61 +33,159 @@ if [ ! -f "/tmp/clash_last_version" ]; then
+ fi
+ 
+ if [ "$small_flash_memory" != "1" ]; then
++   dev_core_path="/etc/openclash/core/clash"
++   tun_core_path="/etc/openclash/core/clash_tun"
+    meta_core_path="/etc/openclash/core/clash_meta"
+    mkdir -p /etc/openclash/core
+ else
++   dev_core_path="/tmp/etc/openclash/core/clash"
++   tun_core_path="/tmp/etc/openclash/core/clash_tun"
+    meta_core_path="/tmp/etc/openclash/core/clash_meta"
+    mkdir -p /tmp/etc/openclash/core
+ fi
+ 
+-CORE_CV=$($meta_core_path -v 2>/dev/null |awk -F ' ' '{print $3}' |head -1)
+-CORE_LV=$(sed -n 3p /tmp/clash_last_version 2>/dev/null)
+-
++case $CORE_TYPE in
++	"TUN")
++   CORE_CV=$($tun_core_path -v 2>/dev/null |awk -F ' ' '{print $2}')
++   CORE_LV=$(sed -n 2p /tmp/clash_last_version 2>/dev/null)
++   if [ -z "$CORE_LV" ]; then
++      LOG_OUT "Error: 【"$CORE_TYPE"】Core Version Check Error, Please Try Again Later..."
++      SLOG_CLEAN
++      exit 0
++   fi
++   ;;
++   "Meta")
++   CORE_CV=$($meta_core_path -v 2>/dev/null |awk -F ' ' '{print $3}' |head -1)
++   CORE_LV=$(sed -n 3p /tmp/clash_last_version 2>/dev/null)
++   ;;
++   *)
++   CORE_CV=$($dev_core_path -v 2>/dev/null |awk -F ' ' '{print $2}')
++   CORE_LV=$(sed -n 1p /tmp/clash_last_version 2>/dev/null)
++esac
+    
+ [ "$C_CORE_TYPE" = "$CORE_TYPE" ] || [ -z "$C_CORE_TYPE" ] && if_restart=1
+ 
+ if [ "$CORE_CV" != "$CORE_LV" ] || [ -z "$CORE_CV" ]; then
+    if [ "$CPU_MODEL" != 0 ]; then
+-      LOG_OUT "【Meta】Core Downloading, Please Try to Download and Upload Manually If Fails"
+-      if [ "$github_address_mod" != "0" ]; then
+-         if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
+-            curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"gh/vernesong/OpenClash@core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
+-         elif [ "$github_address_mod" == "https://raw.fastgit.org/" ]; then
+-            curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.fastgit.org/vernesong/OpenClash/core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
+-         else
+-            curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
+-         fi
+-      else
+-         curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
+-      fi
++      case $CORE_TYPE in
++         "TUN")
++            LOG_OUT "【TUN】Core Downloading, Please Try to Download and Upload Manually If Fails"
++            if [ "$github_address_mod" != "0" ]; then
++               if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
++                  curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"gh/vernesong/OpenClash@core/"$RELEASE_BRANCH"/premium/clash-"$CPU_MODEL"-"$CORE_LV".gz -o /tmp/clash_tun.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_tun.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++               elif [ "$github_address_mod" == "https://raw.fastgit.org/" ]; then
++                  curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.fastgit.org/vernesong/OpenClash/core/"$RELEASE_BRANCH"/premium/clash-"$CPU_MODEL"-"$CORE_LV".gz -o /tmp/clash_tun.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_tun.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++               else
++                  curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/premium/clash-"$CPU_MODEL"-"$CORE_LV".gz -o /tmp/clash_tun.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_tun.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++               fi
++            else
++			      curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/premium/clash-"$CPU_MODEL"-"$CORE_LV".gz -o /tmp/clash_tun.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_tun.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++			   fi
+ 
+-      if [ "${PIPESTATUS[0]}" -eq 0 ]; then
+-         gzip -t /tmp/clash_meta.tar.gz >/dev/null 2>&1
+-      fi
++            if [ "${PIPESTATUS[0]}" -eq 0 ]; then
++               gzip -t /tmp/clash_tun.gz >/dev/null 2>&1
++            fi
++			   ;;
++         "Meta")
++            LOG_OUT "【Meta】Core Downloading, Please Try to Download and Upload Manually If Fails"
++            if [ "$github_address_mod" != "0" ]; then
++               if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
++                  curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"gh/vernesong/OpenClash@core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++               elif [ "$github_address_mod" == "https://raw.fastgit.org/" ]; then
++                  curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.fastgit.org/vernesong/OpenClash/core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++               else
++                  curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++               fi
++            else
++               curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/meta/clash-"$CPU_MODEL".tar.gz -o /tmp/clash_meta.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash_meta.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++            fi
++
++            if [ "${PIPESTATUS[0]}" -eq 0 ]; then
++			      gzip -t /tmp/clash_meta.tar.gz >/dev/null 2>&1
++			   fi
++			   ;;
++			   *)
++			      LOG_OUT "【Dev】Core Downloading, Please Try to Download and Upload Manually If Fails"
++			      if [ "$github_address_mod" != "0" ]; then
++                  if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
++                     curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"gh/vernesong/OpenClash@core/"$RELEASE_BRANCH"/dev/clash-"$CPU_MODEL".tar.gz -o /tmp/clash.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++                  elif [ "$github_address_mod" == "https://raw.fastgit.org/" ]; then
++                     curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.fastgit.org/vernesong/OpenClash/core/"$RELEASE_BRANCH"/dev/clash-"$CPU_MODEL".tar.gz -o /tmp/clash.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++                  else
++                     curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 "$github_address_mod"https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/dev/clash-"$CPU_MODEL".tar.gz -o /tmp/clash.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++                  fi
++               else
++			         curl -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 https://raw.githubusercontent.com/vernesong/OpenClash/core/"$RELEASE_BRANCH"/dev/clash-"$CPU_MODEL".tar.gz -o /tmp/clash.tar.gz 2>&1 |sed ':a;N;$!ba; s/\n/ /g' | awk -v time="$(date "+%Y-%m-%d %H:%M:%S")" -v file="/tmp/clash.tar.gz" '{print time "【" file "】Download Failed:【"$0"】"}' >> "$LOG_FILE"
++			      fi
++
++               if [ "${PIPESTATUS[0]}" -eq 0 ]; then
++			         gzip -t /tmp/clash.tar.gz >/dev/null 2>&1
++			      fi
++			esac
+ 
+       if [ "$?" == "0" ]; then
+          LOG_OUT "【"$CORE_TYPE"】Core Download Successful, Start Update..."
+-         [ -s "/tmp/clash_meta.tar.gz" ] && {
+-            rm -rf "$meta_core_path" >/dev/null 2>&1
+-            tar zxvf /tmp/clash_meta.tar.gz -C /tmp
+-            mv /tmp/clash /tmp/clash_meta >/dev/null 2>&1
+-            rm -rf /tmp/clash_meta.tar.gz >/dev/null 2>&1
+-            chmod 4755 /tmp/clash_meta >/dev/null 2>&1
+-            /tmp/clash_meta -v >/dev/null 2>&1
+-         }
+-			   
++	      case $CORE_TYPE in
++         "TUN")
++            [ -s "/tmp/clash_tun.gz" ] && {
++               gzip -d /tmp/clash_tun.gz >/dev/null 2>&1
++               rm -rf /tmp/clash_tun.gz >/dev/null 2>&1
++               rm -rf "$tun_core_path" >/dev/null 2>&1
++               chmod 4755 /tmp/clash_tun >/dev/null 2>&1
++               /tmp/clash_tun -v >/dev/null 2>&1
++            }
++			   ;;
++         "Meta")
++            [ -s "/tmp/clash_meta.tar.gz" ] && {
++               rm -rf "$meta_core_path" >/dev/null 2>&1
++               tar zxvf /tmp/clash_meta.tar.gz -C /tmp
++               mv /tmp/clash /tmp/clash_meta >/dev/null 2>&1
++               rm -rf /tmp/clash_meta.tar.gz >/dev/null 2>&1
++               chmod 4755 /tmp/clash_meta >/dev/null 2>&1
++               /tmp/clash_meta -v >/dev/null 2>&1
++            }
++			   ;;
++			   *)
++            [ -s "/tmp/clash.tar.gz" ] && {
++               rm -rf "$dev_core_path" >/dev/null 2>&1
++               tar zxvf /tmp/clash.tar.gz -C /tmp
++               rm -rf /tmp/clash.tar.gz >/dev/null 2>&1
++               chmod 4755 /tmp/clash >/dev/null 2>&1
++               /tmp/clash -v >/dev/null 2>&1
++            }
++         esac
+          if [ "$?" != "0" ]; then
+             LOG_OUT "【"$CORE_TYPE"】Core Update Failed. Please Make Sure Enough Flash Memory Space or Selected Correct Core Platform And Try Again!"
+-            rm -rf /tmp/clash_meta >/dev/null 2>&1
++            case $CORE_TYPE in
++            "TUN")
++               rm -rf /tmp/clash_tun >/dev/null 2>&1
++            ;;
++            "Meta")
++               rm -rf /tmp/clash_meta >/dev/null 2>&1
++            ;;
++            *)
++               rm -rf /tmp/clash >/dev/null 2>&1
++            esac
+             SLOG_CLEAN
+             exit 0
+          fi
+ 
+-         mv /tmp/clash_meta "$meta_core_path" >/dev/null 2>&1
+-
++         case $CORE_TYPE in
++         "TUN")
++            mv /tmp/clash_tun "$tun_core_path" >/dev/null 2>&1
++         ;;
++         "Meta")
++            mv /tmp/clash_meta "$meta_core_path" >/dev/null 2>&1
++         ;;
++         *)
++            mv /tmp/clash "$dev_core_path" >/dev/null 2>&1
++         esac
++			   
+          if [ "$?" == "0" ]; then
+             LOG_OUT "【"$CORE_TYPE"】Core Update Successful!"
+             if [ "$if_restart" -eq 1 ]; then
++                  uci -q set openclash.config.config_reload=0
++         	      uci -q commit openclash
+                if ([ -z "$2" ] || ([ -n "$2" ] && [ "$2" != "one_key_update" ])) && [ "$(find /tmp/lock/ |grep -v "openclash.lock" |grep -c "openclash")" -le 1 ] && [ "$(unify_ps_prevent)" -eq 0 ]; then
+                   /etc/init.d/openclash restart >/dev/null 2>&1 &
+                fi
+@@ -111,5 +209,13 @@ else
+    SLOG_CLEAN
+ fi
+ 
+-rm -rf /tmp/clash_meta >/dev/null 2>&1
+-
++case $CORE_TYPE in
++"TUN")
++   rm -rf /tmp/clash_tun >/dev/null 2>&1
++;;
++"Meta")
++   rm -rf /tmp/clash_meta >/dev/null 2>&1
++;;
++*)
++   rm -rf /tmp/clash >/dev/null 2>&1
++esac
+diff --git a/root/usr/share/openclash/openclash_update.sh b/root/usr/share/openclash/openclash_update.sh
+index df68df8..bfb1f8f 100644
+--- a/root/usr/share/openclash/openclash_update.sh
++++ b/root/usr/share/openclash/openclash_update.sh
+@@ -41,9 +41,13 @@ if [ "$1" = "one_key_update" ]; then
+       LOG_OUT "Tip: If the download fails, try setting the CDN in Overwrite Settings - General Settings - Github Address Modify Options"
+    fi
+    if [ -n "$2" ]; then
++      /usr/share/openclash/openclash_core.sh "Dev" "$1" "$2" >/dev/null 2>&1 &
++      /usr/share/openclash/openclash_core.sh "TUN" "$1" "$2" >/dev/null 2>&1 &
+       /usr/share/openclash/openclash_core.sh "Meta" "$1" "$2" >/dev/null 2>&1 &
+       github_address_mod="$2"
+    else
++      /usr/share/openclash/openclash_core.sh "Dev" "$1" >/dev/null 2>&1 &
++      /usr/share/openclash/openclash_core.sh "TUN" "$1" >/dev/null 2>&1 &
+       /usr/share/openclash/openclash_core.sh "Meta" "$1" >/dev/null 2>&1 &
+    fi
+    
+@@ -75,7 +79,11 @@ if [ -n "$OP_CV" ] && [ -n "$OP_LV" ] && [ "$(expr "$OP_LV" \> "$OP_CV")" -eq 1
+       
+       if [ -z "$(opkg install /tmp/openclash.ipk --noaction 2>/dev/null |grep 'Upgrading luci-app-openclash on root' 2>/dev/null)" ]; then
+          LOG_OUT "【OpenClash - v$LAST_VER】Pre Update Test Failed, The File is Saved in /tmp/openclash.ipk, Please Try to Update Manually!"
+-         SLOG_CLEAN
++         if [ "$(uci -q get openclash.config.config_reload)" -eq 0 ]; then
++      	    /etc/init.d/openclash restart >/dev/null 2>&1 &
++         else
++            SLOG_CLEAN
++         fi
+          del_lock
+          exit 0
+       fi
+@@ -126,6 +134,11 @@ EOF
+    else
+       LOG_OUT "【OpenClash - v$LAST_VER】Download Failed, Please Check The Network or Try Again Later!"
+       rm -rf /tmp/openclash.ipk >/dev/null 2>&1
++      if [ "$(uci -q get openclash.config.config_reload)" -eq 0 ]; then
++      	 /etc/init.d/openclash restart >/dev/null 2>&1 &
++      else
++         SLOG_CLEAN
++      fi
+    fi
+ else
+    if [ ! -f "$LAST_OPVER" ] || [ -z "$OP_CV" ] || [ -z "$OP_LV" ]; then
+@@ -133,6 +146,10 @@ else
+    else
+       LOG_OUT "OpenClash Has not Been Updated, Stop Continuing!"
+    fi
++   if [ "$(uci -q get openclash.config.config_reload)" -eq 0 ]; then
++      /etc/init.d/openclash restart >/dev/null 2>&1 &
++   else
++      SLOG_CLEAN
++   fi
+ fi
+-SLOG_CLEAN
+ del_lock
+diff --git a/root/usr/share/openclash/yml_change.sh b/root/usr/share/openclash/yml_change.sh
+index bd0a30e..824f3f8 100644
+--- a/root/usr/share/openclash/yml_change.sh
++++ b/root/usr/share/openclash/yml_change.sh
+@@ -12,8 +12,9 @@ core_type=$(uci -q get openclash.config.core_type)
+ enable_custom_dns=$(uci -q get openclash.config.enable_custom_dns)
+ append_wan_dns=$(uci -q get openclash.config.append_wan_dns || echo 0)
+ custom_fallback_filter=$(uci -q get openclash.config.custom_fallback_filter || echo 0)
++enable_meta_core=$(uci -q get openclash.config.enable_meta_core || echo 0)
+ china_ip_route=$(uci -q get openclash.config.china_ip_route || echo 0)
+-proxy_dns_group=${35}
++proxy_dns_group=${36}
+ 
+ lan_block_google_dns=$(uci -q get openclash.config.lan_block_google_dns_ips || uci -q get openclash.config.lan_block_google_dns_macs || echo 0)
+ 
+@@ -32,8 +33,8 @@ else
+ fi
+ 
+ if [ -z "${12}" ]; then
+-   if [ -n "${32}" ]; then
+-      stack_type=${32}
++   if [ -n "${33}" ]; then
++      stack_type=${33}
+    else
+       stack_type=system
+    fi
+@@ -215,7 +216,12 @@ yml_dns_get()
+       return
+    fi
+ 
+-   if [ "$specific_group" != "Disable" ] && [ -n "$specific_group" ]; then
++   if [ "$type" == "quic" ] && [ "$enable_meta_core" != "1" ]; then
++      LOG_OUT "Warning: Only Meta Core Support QUIC Type DNS, Skip【$dns_type$dns_address】"
++      return
++   fi
++
++   if [ "$specific_group" != "Disable" ] && [ -n "$specific_group" ] && [ "$enable_meta_core" = "1" ]; then
+       group_check=$(ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+       begin
+          Thread.new{
+@@ -239,38 +245,44 @@ yml_dns_get()
+       else
+          specific_group=""
+       fi
++      
++   elif [ "$specific_group" != "Disable" ] && [ -n "$specific_group" ]; then
++      LOG_OUT "Warning: Only Meta Core Support Specific Group, Skip Setting【$dns_type$dns_address】"
++      specific_group=""
+    else
+       specific_group=""
+    fi
+ 
+-   if [ "$interface" != "Disable" ] && [ -n "$interface" ]; then
+-      if [ -n "$specific_group" ]; then
+-         interface="&$interface"
+-      else
+-         interface="#$interface"
+-      fi
++   if [ "$interface" != "Disable" ] && [ -n "$interface" ] && [ "$enable_meta_core" != "1" ]; then
++      interface="#$interface"
++   elif [ "$interface" != "Disable" ] && [ -n "$interface" ]; then
++      LOG_OUT "Warning: Meta Core not Support Specific Interface, Skip Setting【$dns_type$dns_address】"
++      interface=""
+    else
+       interface=""
+    fi
+ 
+-   if [ "$http3" = "1" ]; then
+-      if [ -n "$specific_group" ] || [ -n "$interface" ]; then
+-         http3="&h3=true"
+-      else
+-         http3="#h3=true"
+-      fi
++   if [ "$http3" = "1" ] && [ "$enable_meta_core" = "1" ] && [ -n "$specific_group" ]; then
++      http3="&h3=true"
++   elif [ "$http3" = "1" ] && [ "$enable_meta_core" = "1" ] && [ -z "$specific_group" ]; then
++      http3="#h3=true"
++   elif [ "$http3" = "1" ] && [ "$enable_meta_core" != "1" ]; then
++      LOG_OUT "Warning: Only Meta Core Support Force HTTP/3 to connect, Skip Setting【$dns_type$dns_address】"
++      http3=""
+    else
+       http3=""
+    fi
+ 
+-   if [ "$node_resolve" = "1" ]; then
++   if [ "$node_resolve" = "1" ] && [ "$enable_meta_core" = "1" ]; then
+       if [ -z "$(grep "^ \{0,\}proxy-server-nameserver:$" /tmp/yaml_config.proxynamedns.yaml 2>/dev/null)" ]; then
+          echo "  proxy-server-nameserver:" >/tmp/yaml_config.proxynamedns.yaml
+       fi
+       echo "    - \"$dns_type$dns_address$specific_group$http3\"" >>/tmp/yaml_config.proxynamedns.yaml
++   elif [ "$node_resolve" = "1" ]; then
++      LOG_OUT "Warning: Only Meta Core Support proxy-server-nameserver, Skip Setting【$dns_type$dns_address$specific_group$http3】"
+    fi
+ 
+-   dns_address="$dns_address$specific_group$interface$http3"
++   dns_address="$dns_address$interface$specific_group$http3"
+ 
+    if [ -n "$group" ]; then
+       if [ "$group" = "nameserver" ]; then
+@@ -356,32 +368,32 @@ Thread.new{
+    else
+       Value['ipv6']=false;
+    end;
+-   if '${23}' != '0' then
+-      Value['interface-name']='${23}';
+-   end;
+-
+-   if '${20}' == '1' then
+-      Value['geodata-mode']=true;
+-   end;
+-   if '${21}' != '0' then
+-      Value['geodata-loader']='${21}';
+-   end;
+-   if '${24}' == '1' then
+-      Value['tcp-concurrent']=true;
+-   end;
+-   if '${33}' == '1' then
+-      Value['unified-delay']=true;
+-   end;
+-   if '${34}' != '0' then
+-      Value['keep-alive-interval']=${34};
+-   end;
+-   if '${28}' != '0' then
+-      Value['find-process-mode']='${28}';
++   if '${24}' != '0' then
++      Value['interface-name']='${24}';
+    end;
+-   if '${30}' != '0' then
+-      Value['global-client-fingerprint']='${30}';
++   if ${19} == 1 then
++      if '${21}' == '1' then
++         Value['geodata-mode']=true;
++      end;
++      if '${22}' != '0' then
++         Value['geodata-loader']='${22}';
++      end;
++      if '${25}' == '1' then
++         Value['tcp-concurrent']=true;
++      end;
++      if '${34}' == '1' then
++         Value['unified-delay']=true;
++      end;
++      if '${35}' != '0' then
++         Value['keep-alive-interval']=${35};
++      end;
++      if '${29}' != '0' then
++         Value['find-process-mode']='${29}';
++      end;
++      if '${31}' != '0' then
++         Value['global-client-fingerprint']='${31}';
++      end;
+    end;
+-
+    if not Value.key?('dns') or Value['dns'].nil? then
+       Value_1={'dns'=>{'enable'=>true}};
+       Value['dns']=Value_1['dns'];
+@@ -395,28 +407,29 @@ Thread.new{
+       Value['dns']['ipv6']=false;
+    end;
+    
+-   if '$1' == 'redir-host' then
++   #dev&tun core force fake-ip
++   if ${19} == 1 and '$1' == 'redir-host' then
+       Value['dns']['enhanced-mode']='redir-host';
+       Value['dns'].delete('fake-ip-range');
+    else
+       Value['dns']['enhanced-mode']='fake-ip';
+-      Value['dns']['fake-ip-range']='${29}';
++      Value['dns']['fake-ip-range']='${30}';
+    end;
+ 
+    Value['dns']['listen']='0.0.0.0:${13}';
+    
+    #meta only
+-   if ${19} == 1 then
++   if ${19} == 1 and ${20} == 1 then
+       Value_sniffer={'sniffer'=>{'enable'=>true}};
+       Value['sniffer']=Value_sniffer['sniffer'];
+       if '$1' == 'redir-host' then
+          Value['sniffer']['force-dns-mapping']=true;
+       end;
+-      if ${27} == 1 then
++      if ${28} == 1 then
+          Value['sniffer']['parse-pure-ip']=true;
+       end;
+       if File::exist?('/etc/openclash/custom/openclash_force_sniffing_domain.yaml') then
+-         if ${22} == 1 then
++         if ${23} == 1 then
+             Value_7 = YAML.load_file('/etc/openclash/custom/openclash_force_sniffing_domain.yaml');
+             if Value_7 != false and not Value_7['force-domain'].to_a.empty? then
+                Value['sniffer']['force-domain']=Value_7['force-domain'];
+@@ -425,7 +438,7 @@ Thread.new{
+          end;
+       end;
+       if File::exist?('/etc/openclash/custom/openclash_sniffing_domain_filter.yaml') then
+-         if ${22} == 1 then
++         if ${23} == 1 then
+             Value_7 = YAML.load_file('/etc/openclash/custom/openclash_sniffing_domain_filter.yaml');
+             if Value_7 != false and not Value_7['skip-sni'].to_a.empty? then
+                Value['sniffer']['skip-domain']=Value_7['skip-sni'];
+@@ -438,14 +451,14 @@ Thread.new{
+          end;
+       end;
+       if File::exist?('/etc/openclash/custom/openclash_sniffing_ports_filter.yaml') then
+-         if ${22} == 1 then
++         if ${23} == 1 then
+             Value_7 = YAML.load_file('/etc/openclash/custom/openclash_sniffing_ports_filter.yaml');
+             if Value_7 != false and not Value_7['sniff'].to_a.empty? then
+                Value['sniffer']['sniff']=Value_7['sniff'];
+             end;
+          end;
+       else
+-         if File::exist?('/etc/openclash/custom/openclash_sniffing_port_filter.yaml') and ${22} == 1 then
++         if File::exist?('/etc/openclash/custom/openclash_sniffing_port_filter.yaml') and ${23} == 1 then
+             Value_7 = YAML.load_file('/etc/openclash/custom/openclash_sniffing_port_filter.yaml');
+             if Value_7 != false and not Value_7['port-whitelist'].to_a.empty? then
+                Value['sniffer']['port-whitelist']=Value_7['port-whitelist'];
+@@ -456,7 +469,7 @@ Thread.new{
+          Value['sniffer'].merge!(Value_sniffer);
+       end;
+    else
+-      if '${25}' == 'TUN' then
++      if '${26}' == 'TUN' then
+          Value_tun_sniff={'experimental'=>{'sniff-tls-sni'=>true}};
+          Value['experimental'] = Value_tun_sniff['experimental'];
+       else
+@@ -466,10 +479,12 @@ Thread.new{
+       end;
+    end;
+    Value_2={'tun'=>{'enable'=>true}};
+-   if $en_mode_tun != 0 or ${31} == 2 then
++   if $en_mode_tun != 0 or ${32} == 2 then
+       Value['tun']=Value_2['tun'];
+       Value['tun']['stack']='$stack_type';
+-      Value['tun']['device']='utun';
++      if ${19} == 1 then
++         Value['tun']['device']='utun';
++      end;
+       Value_2={'dns-hijack'=>['tcp://any:53']};
+       Value['tun']['auto-route']=false;
+       Value['tun']['auto-detect-interface']=false;
+@@ -549,7 +564,7 @@ end;
+ # proxy fallback dns
+ begin
+ Thread.new{
+-   if '${proxy_dns_group}' == 'Disable' or '${proxy_dns_group}'.nil? then
++   if '${proxy_dns_group}' == 'Disable' or '${proxy_dns_group}'.nil? or ${19} != 1 then
+       Thread.exit;
+    end;
+    if Value.key?('proxy-groups') then
+@@ -589,9 +604,14 @@ Thread.new{
+          end;
+       end;
+    end;
+-   if ${26} == 1 then
+-      reg = /(^https:\/\/|^tls:\/\/|^quic:\/\/)?((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?/;
+-      reg6 = /(^https:\/\/|^tls:\/\/|^quic:\/\/)?(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))|\[(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))\](?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?/i;
++   if ${27} == 1 then
++      if ${19} == 1 then
++         reg = /(^https:\/\/|^tls:\/\/|^quic:\/\/)?((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?/;
++         reg6 = /(^https:\/\/|^tls:\/\/|^quic:\/\/)?(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))|\[(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))\](?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?/i;
++      else
++         reg = /^((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$/;
++         reg6 = /^(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))|\[(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))\](?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$/i;
++      end;
+       if Value['dns'].has_key?('fallback') then
+          Value_1=Value['dns']['nameserver'] | Value['dns']['fallback'];
+       else
+@@ -648,6 +668,14 @@ Thread.new{
+       if File::exist?('/etc/openclash/custom/openclash_custom_domain_dns_policy.list') then
+          Value_6 = YAML.load_file('/etc/openclash/custom/openclash_custom_domain_dns_policy.list');
+          if Value_6 != false and not Value_6.nil? then
++            if ${19} != 1 then
++               Value_6.each{|k,v|
++                  if v.class == "Array" then
++                     Value_6.delete(k);
++                     puts '${LOGTIME} Warning: Skip the nameserver-policy that Core not Support【' + k + '】'
++                  end;
++               }
++            end;
+             if Value['dns'].has_key?('nameserver-policy') and not Value['dns']['nameserver-policy'].to_a.empty? then
+                Value['dns']['nameserver-policy'].merge!(Value_6);
+             else
+@@ -709,6 +737,13 @@ Thread.new{
+             Value['dns'].merge!({'fake-ip-filter'=>['+.dns.google']});
+          end;
+       end;
++   elsif ${19} != 1 then
++      if Value['dns'].has_key?('fake-ip-filter') and not Value['dns']['fake-ip-filter'].to_a.empty? then
++         Value['dns']['fake-ip-filter'].insert(-1,'+.*');
++         Value['dns']['fake-ip-filter']=Value['dns']['fake-ip-filter'].uniq;
++      else
++         Value['dns'].merge!({'fake-ip-filter'=>['+.*']});
++      end;
+    end;
+ }.join;
+ rescue Exception => e
+diff --git a/root/usr/share/openclash/yml_rules_change.sh b/root/usr/share/openclash/yml_rules_change.sh
+index 30dc74f..7fb4909 100644
+--- a/root/usr/share/openclash/yml_rules_change.sh
++++ b/root/usr/share/openclash/yml_rules_change.sh
+@@ -276,7 +276,7 @@ yml_other_set()
+    config_foreach yml_rule_group_get "rule_provider_config" "$3"
+    config_foreach yml_rule_group_get "rule_providers" "$3"
+    config_foreach yml_rule_group_get "game_config" "$3"
+-   local fake_ip="$(echo "${11}" |awk -F '/' '{print $1}')"
++   local fake_ip="$(echo "${12}" |awk -F '/' '{print $1}')"
+    ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+    begin
+       Value = YAML.load_file('$3');
+@@ -363,19 +363,19 @@ yml_other_set()
+    
+    begin
+    Thread.new{
+-      if $6 == 0 and ${10} != 2 and '${12}' == 'fake-ip' then
++      if $6 == 0 and ${11} != 2 and '${13}' == 'fake-ip' then
+          if Value.has_key?('rules') and not Value['rules'].to_a.empty? then
+             if Value['rules'].to_a.grep(/(?=.*SRC-IP-CIDR,'${fake_ip}')/).empty? then
+-               Value['rules']=Value['rules'].to_a.insert(0,'SRC-IP-CIDR,${11},DIRECT');
++               Value['rules']=Value['rules'].to_a.insert(0,'SRC-IP-CIDR,${12},DIRECT');
+             end
+             if Value['rules'].to_a.grep(/(?=.*SRC-IP-CIDR,'$7')/).empty? and not '$7'.empty? then
+                Value['rules']=Value['rules'].to_a.insert(0,'SRC-IP-CIDR,$7/32,DIRECT');
+             end;
+          else
+-            Value['rules']=['SRC-IP-CIDR,${11},DIRECT','SRC-IP-CIDR,$7/32,DIRECT'];
++            Value['rules']=['SRC-IP-CIDR,${12},DIRECT','SRC-IP-CIDR,$7/32,DIRECT'];
+          end;
+       elsif Value.has_key?('rules') and not Value['rules'].to_a.empty? then
+-         Value['rules'].delete('SRC-IP-CIDR,${11},DIRECT');
++         Value['rules'].delete('SRC-IP-CIDR,${12},DIRECT');
+          Value['rules'].delete('SRC-IP-CIDR,$7/32,DIRECT');
+       end;
+    }.join;
+@@ -487,6 +487,56 @@ yml_other_set()
+    begin
+    Thread.new{
+    if $2 == 1 then
++   #script
++      if ${10} != 1 then
++         for i in ['/etc/openclash/custom/openclash_custom_rules.list','/etc/openclash/custom/openclash_custom_rules_2.list'] do
++            if File::exist?(i) then
++               Value_1 = YAML.load_file(i);
++               if Value_1 != false then
++                  if Value_1.class.to_s == 'Hash' then
++                     if Value_1['script'] and Value_1['script'].class.to_s != 'Array' then
++                        if Value.key?('script') and not Value_1['script'].to_a.empty? then
++                           if Value['script'].key?('code') and Value_1['script'].key?('code') then
++                              if not Value['script']['code'].include?('def main(ctx, metadata):') then
++                                 Value['script']['code'] = Value_1['script']['code'];
++                              else
++                                 if i == '/etc/openclash/custom/openclash_custom_rules.list' then
++                                    if not Value_1['script']['code'].include?('def main(ctx, metadata):') then
++                                       Value['script']['code'].gsub!('def main(ctx, metadata):', \"def main(ctx, metadata):\n\" + Value_1['script']['code']);
++                                    else
++                                       Value['script']['code'].gsub!('def main(ctx, metadata):', Value_1['script']['code']);
++                                    end;
++                                 else
++                                    insert_index = Value['script']['code'].index(/ctx.geoip/);
++                                    insert_index ||= Value['script']['code'].rindex(/return/);
++                                    insert_index ||= -1;
++                                    if insert_index != -1 then
++                                       insert_index  = Value['script']['code'].rindex(\"\n\", insert_index) + 1;
++                                    end
++                                    if not Value_1['script']['code'].include?('def main(ctx, metadata):') then
++                                       Value['script']['code'].insert(insert_index, Value_1['script']['code']);
++                                    else
++                                       Value['script']['code'].insert(insert_index, Value_1['script']['code'].gsub('def main(ctx, metadata):', ''));
++                                    end;
++                                 end;
++                              end;
++                           elsif Value_1['script'].key?('code') then
++                              Value['script']['code'] = Value_1['script']['code'];
++                           end;
++                           if Value['script'].key?('shortcuts') and Value_1['script'].key?('shortcuts') and not Value_1['script']['shortcuts'].to_a.empty? then
++                              Value['script']['shortcuts'].merge!(Value_1['script']['shortcuts']).uniq;
++                           elsif Value_1['script'].key?('shortcuts') and not Value_1['script']['shortcuts'].to_a.empty? then
++                              Value['script']['shortcuts'] = Value_1['script']['shortcuts'];
++                           end;
++                        else
++                           Value['script'] = Value_1['script'];
++                        end;
++                     end;
++                  end;
++               end;
++            end;
++         end;
++      end;
+    #rules
+       if Value.has_key?('rules') and not Value['rules'].to_a.empty? then
+          if File::exist?('/etc/openclash/custom/openclash_custom_rules.list') then
+@@ -501,6 +551,12 @@ yml_other_set()
+                end;
+                if defined? Value_2 then
+                   Value_2.each{|x|
++                     if ${10} != 1 then
++                        if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^IN-USER,|^IN-NAME,|^NETWORK,|^UID,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
++                           puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
++                           next
++                        end;
++                     end;
+                      Value['rules'].insert(0,x);
+                   };
+                   Value['rules'] = Value['rules'].uniq;
+@@ -529,6 +585,12 @@ yml_other_set()
+                      Value_4 = Value_4.reverse!;
+                   end;
+                   Value_4.each{|x|
++                     if ${10} != 1 then
++                        if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
++                           puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
++                           next
++                        end;
++                     end;
+                      Value['rules'].insert(ruby_add_index,x);
+                   };
+                   Value['rules'] = Value['rules'].uniq;
+@@ -540,11 +602,27 @@ yml_other_set()
+             Value_1 = YAML.load_file('/etc/openclash/custom/openclash_custom_rules.list');
+             if Value_1 != false then
+                if Value_1.class.to_s == 'Hash' then
+-                  if not Value_1['rules'].to_a.empty? and Value_1['rules'].class.to_s == 'Array' then
+-                     Value['rules'] = Value_1['rules'];
+-                     Value['rules'] = Value['rules'].uniq;
+-                  end;
++                 if not Value_1['rules'].to_a.empty? and Value_1['rules'].class.to_s == 'Array' then
++                     Value_1['rules'].each{|x|
++                     if ${10} != 1 then
++                        if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
++                           puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
++                           Value_1.delete(x);
++                        end;
++                     end;
++                     };
++                    Value['rules'] = Value_1['rules'];
++                    Value['rules'] = Value['rules'].uniq;
++                 end;
+                elsif Value_1.class.to_s == 'Array' then
++                  Value_1.each{|x|
++                     if ${10} != 1 then
++                        if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
++                           puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
++                           Value_1.delete(x);
++                        end;
++                     end;
++                  };
+                   Value['rules'] = Value_1;
+                   Value['rules'] = Value['rules'].uniq;
+                end;
+@@ -556,10 +634,26 @@ yml_other_set()
+                if Value['rules'].to_a.empty? then
+                   if Value_2.class.to_s == 'Hash' then
+                      if not Value_2['rules'].to_a.empty? and Value_2['rules'].class.to_s == 'Array' then
++                        Value_2['rules'].each{|x|
++                           if ${10} != 1 then
++                              if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
++                                 puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
++                                 Value_2.delete(x);
++                              end;
++                           end;
++                        };
+                         Value['rules'] = Value_2['rules'];
+                         Value['rules'] = Value['rules'].uniq;
+                      end;
+                   elsif Value_2.class.to_s == 'Array' then
++                     Value_2.each{|x|
++                        if ${10} != 1 then
++                           if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
++                              puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
++                              Value_2.delete(x);
++                           end;
++                        end;
++                     };
+                      Value['rules'] = Value_2;
+                      Value['rules'] = Value['rules'].uniq;
+                   end;
+@@ -583,6 +677,12 @@ yml_other_set()
+                         Value_3 = Value_3.reverse!;
+                      end
+                      Value_3.each{|x|
++                        if ${10} != 1 then
++                           if x =~ /(^GEOSITE,|^AND,|^OR,|^NOT,|^IP-SUFFIX,|^SRC-IP-SUFFIX,|^IN-TYPE,|^SUB-RULE,|PORT,[0-9]+\/+|PORT,[0-9]+-+)/ or x.split(',')[-1] == 'tcp' or x.split(',')[-1] == 'udp' then
++                              puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【' + x + '】'
++                              next
++                           end;
++                        end;
+                         Value['rules'].insert(ruby_add_index,x);
+                      };
+                      Value['rules'] = Value['rules'].uniq;
+@@ -598,7 +698,11 @@ yml_other_set()
+             if Value_1 != false then
+                if Value_1.class.to_s == 'Hash' then
+                   if not Value_1['sub-rules'].to_a.empty? and Value_1['sub-rules'].class.to_s == 'Hash' then
+-                     Value['sub-rules'] = Value['sub-rules'].merge!(Value_1['sub-rules']);
++                     if ${10} == 1 then
++                        Value['sub-rules'] = Value['sub-rules'].merge!(Value_1['sub-rules']);
++                     else
++                        puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【sub-rules】'
++                     end;
+                   end;
+                end;
+             end;
+@@ -608,7 +712,11 @@ yml_other_set()
+             if Value_2 != false then
+                if Value_2.class.to_s == 'Hash' then
+                   if not Value_2['sub-rules'].to_a.empty? and Value_2['sub-rules'].class.to_s == 'Hash' then
+-                     Value['sub-rules'] = Value['sub-rules'].merge!(Value_2['sub-rules']);
++                     if ${10} == 1 then
++                        Value['sub-rules'] = Value['sub-rules'].merge!(Value_2['sub-rules']);
++                     else
++                        puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【sub-rules】'
++                     end;
+                   end;
+                end;
+             end;
+@@ -619,7 +727,11 @@ yml_other_set()
+             if Value_1 != false then
+                if Value_1.class.to_s == 'Hash' then
+                   if not Value_1['sub-rules'].to_a.empty? and Value_1['sub-rules'].class.to_s == 'Hash' then
+-                     Value['sub-rules'] = Value_1['sub-rules'];
++                     if ${10} == 1 then
++                        Value['sub-rules'] = Value_1['sub-rules'];
++                     else
++                        puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【sub-rules】'
++                     end;
+                   end;
+                end;
+             end;
+@@ -629,7 +741,11 @@ yml_other_set()
+             if Value_2 != false then
+                if Value_2.class.to_s == 'Hash' then
+                   if not Value_2['sub-rules'].to_a.empty? and Value_2['sub-rules'].class.to_s == 'Hash' then
+-                     Value['sub-rules'] = Value_2['sub-rules'];
++                     if ${10} == 1 then 
++                        Value['sub-rules'] = Value_2['sub-rules'];
++                     else
++                        puts '${LOGTIME} Warning: Skip the Custom Rule that Core not Support【sub-rules】'
++                     end;
+                   end;
+                end;
+             end;
+@@ -646,7 +762,7 @@ yml_other_set()
+    Thread.new{
+       if Value.has_key?('rules') and not Value['rules'].to_a.empty? then
+          if Value['rules'].to_a.grep(/(?=.*'${fake_ip}')(?=.*REJECT)/).empty? then
+-            Value['rules']=Value['rules'].to_a.insert(0,'IP-CIDR,${11},REJECT,no-resolve');
++            Value['rules']=Value['rules'].to_a.insert(0,'IP-CIDR,${12},REJECT,no-resolve');
+          end;
+          if Value['rules'].to_a.grep(/(?=.*DST-PORT,'$8',REJECT)/).empty? then
+             Value['rules']=Value['rules'].to_a.insert(0,'DST-PORT,$8,REJECT');
+@@ -655,7 +771,7 @@ yml_other_set()
+             Value['rules']=Value['rules'].to_a.insert(0,'DST-PORT,$9,REJECT');
+          end;
+       else
+-         Value['rules']=['IP-CIDR,${11},REJECT,no-resolve','DST-PORT,$8,REJECT','DST-PORT,$9,REJECT'];
++         Value['rules']=['IP-CIDR,${12},REJECT,no-resolve','DST-PORT,$8,REJECT','DST-PORT,$9,REJECT'];
+       end;
+    }.join;
+    rescue Exception => e
+@@ -828,7 +944,7 @@ if [ "$1" != "0" ]; then
+    config_load "openclash"
+    config_foreach yml_other_rules_get "other_rules" "$5"
+    if [ -z "$rule_name" ]; then
+-      yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}"
++      yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"
+       exit 0
+    #判断策略组是否存在
+    elif [ "$rule_name" = "lhie1" ]; then
+@@ -863,13 +979,13 @@ if [ "$1" != "0" ]; then
+     || [ -z "$(grep -F "$GoogleFCM" /tmp/Proxy_Group)" ]\
+     || [ -z "$(grep -F "$Domestic" /tmp/Proxy_Group)" ]; then
+          LOG_OUT "Warning: Because of The Different Porxy-Group's Name, Stop Setting The Other Rules!"
+-         yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}"
++         yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"
+          exit 0
+        fi
+    fi
+    if [ -z "$Proxy" ]; then
+       LOG_OUT "Error: Missing Porxy-Group's Name, Stop Setting The Other Rules!"
+-      yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}"
++      yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"
+       exit 0
+    else
+       if [ "$rule_name" = "lhie1" ]; then
+@@ -965,4 +1081,4 @@ if [ "$1" != "0" ]; then
+    fi
+ fi
+ 
+-yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}"
++yml_other_set "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" "${13}"

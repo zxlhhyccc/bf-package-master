@@ -524,8 +524,6 @@ Thread.new{
       end;
    end;
 
-
-
    if Value.key?('routing-mark') then
       Value.delete('routing-mark');
    end;

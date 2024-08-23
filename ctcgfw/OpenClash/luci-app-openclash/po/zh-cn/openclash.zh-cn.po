@@ -2955,9 +2955,6 @@ msgstr "错误：因为禁用了代理路由器自身流量，预解析无法工
 msgid "Enable Meta Core"
 msgstr "*使用 Meta 内核"
 
-msgid "Some Premium Core Features are Unavailable, For Other More Useful Functions Go Wiki:"
-msgstr "Meta 内核还未支持 Premium 内核的全部功能，要了解其独有功能，请前往Wiki:"
-
 msgid "Enable Sniffer"
 msgstr "*启用流量（域名）探测"
 
@@ -2970,8 +2967,8 @@ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
 msgid "(Support Vless By Pinyun)"
 msgstr "(由品云提供，支持 Vless)"
 
-msgid "(Support Vless)"
-msgstr "(支持 Vless)"
+msgid "(Support Vless By Oneself)"
+msgstr "(自建项目，支持 Vless)"
 
 msgid "(Support Vless By Cloudflare)"
 msgstr "(Cloudflare 项目，支持 Vless)"
@@ -3569,6 +3566,9 @@ msgstr "LAN 接口名称"
 
 msgid "Select LAN Interface Name"
 msgstr "指定正确的 LAN 接口名称"
+
+msgid "For More Useful Meta Core Functions Go Wiki"
+msgstr "如需要了解更多关于 Meta 内核的功能，请前往 Wiki"
 
 msgid "Select outbound interface for eBPF to apply traffic management"
 msgstr "为 eBPF 指定流量出站接口"
