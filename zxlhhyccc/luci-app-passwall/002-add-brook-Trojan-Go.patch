@@ -507,7 +507,7 @@ index 4322781..9e98b37 100644
  _M.hysteria = {
  	name = "Hysteria",
  	repo = "HyNetwork/hysteria",
-@@ -23,6 +34,22 @@ _M.hysteria = {
+@@ -24,6 +35,22 @@ _M.hysteria = {
  	}
  }
  
@@ -626,7 +626,7 @@ index 848b689..9961e81 100644
  end
  
 diff --git a/luasrc/view/passwall/node_list/link_share_man.htm b/luasrc/view/passwall/node_list/link_share_man.htm
-index 22be258..535b0ca 100644
+index a3bbbfa..b7161d6 100644
 --- a/luasrc/view/passwall/node_list/link_share_man.htm
 +++ b/luasrc/view/passwall/node_list/link_share_man.htm
 @@ -154,6 +154,12 @@ local api = require "luci.passwall.api"
@@ -642,7 +642,7 @@ index 22be258..535b0ca 100644
  		} else if (v_type === "Hysteria2") {
  			dom_prefix = "hysteria2_"
  			protocol = "hysteria2"
-@@ -362,6 +367,74 @@ local api = require "luci.passwall.api"
+@@ -475,6 +481,74 @@ local api = require "luci.passwall.api"
  				params = params.substring(1);
  			}
  			url += params;
@@ -717,7 +717,7 @@ index 22be258..535b0ca 100644
  		} else if ((v_type === "Hysteria2") || (v_type === "sing-box" && opt.get(dom_prefix + "protocol").value === "hysteria2")) {
  			protocol = "hysteria2"
  			var v_port = opt.get(dom_prefix + "port");
-@@ -684,6 +758,9 @@ local api = require "luci.passwall.api"
+@@ -910,6 +984,9 @@ local api = require "luci.passwall.api"
  					queryParam[decodeURIComponent(params[0]).toLowerCase()] = decodeURIComponent(params[1] || '');
  				}
  			}
@@ -727,9 +727,9 @@ index 22be258..535b0ca 100644
  			opt.set(dom_prefix + 'address', m.hostname);
  			opt.set(dom_prefix + 'port', m.port || "443");
  			opt.set(dom_prefix + 'password', decodeURIComponent(password));
-@@ -693,6 +770,80 @@ local api = require "luci.passwall.api"
+@@ -964,6 +1041,80 @@ local api = require "luci.passwall.api"
  			if (m.hash) {
- 				opt.set('remarks', decodeURI(m.hash.substr(1)));
+ 				opt.set('remarks', decodeURIComponent(m.hash.substr(1)));
  			}
 +		} if (ssu[0] === "trojan-go") {
 +			dom_prefix = "trojan_go_"
@@ -808,8 +808,8 @@ index 22be258..535b0ca 100644
  		}
  		if (ssu[0] === "vmess") {
  			var sstr = b64DecodeUnicode(ssu[1]);
-@@ -880,6 +1031,62 @@ local api = require "luci.passwall.api"
- 				opt.set('remarks', decodeURI(m.hash.substr(1)));
+@@ -1155,6 +1306,62 @@ local api = require "luci.passwall.api"
+ 				opt.set('remarks', decodeURIComponent(m.hash.substr(1)));
  			}
  		}
 +		if (ssu[0] === "brook") {
@@ -915,7 +915,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index fbc6a37..c8203de 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -707,6 +707,10 @@ run_socks() {
+@@ -740,6 +740,10 @@ run_socks() {
  		[ -n "$relay_port" ] && _args="${_args} server_host=$server_host server_port=$port"
  		run_xray flag=$flag node=$node socks_address=$bind socks_port=$socks_port config_file=$config_file log_file=$log_file ${_args}
  	;;
@@ -926,7 +926,7 @@ index fbc6a37..c8203de 100755
  	trojan*)
  		lua $UTIL_TROJAN gen_config -node $node -run_type client -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type ${type})" "${type}" $log_file -c "$config_file"
-@@ -715,6 +719,21 @@ run_socks() {
+@@ -748,6 +752,21 @@ run_socks() {
  		lua $UTIL_NAIVE gen_config -node $node -run_type socks -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type naive)" naive $log_file "$config_file"
  	;;
@@ -948,7 +948,7 @@ index fbc6a37..c8203de 100755
  	ssr)
  		lua $UTIL_SS gen_config -node $node -local_addr $bind -local_port $socks_port -server_host $server_host -server_port $port > $config_file
  		ln_run "$(first_type ssr-local)" "ssr-local" $log_file -c "$config_file" -v -u
-@@ -811,6 +830,11 @@ run_redir() {
+@@ -844,6 +863,11 @@ run_redir() {
  		xray)
  			run_xray flag=UDP node=$node udp_redir_port=$local_port config_file=$config_file log_file=$log_file
  		;;
@@ -960,7 +960,7 @@ index fbc6a37..c8203de 100755
  		trojan*)
  			local loglevel=$(config_t_get global trojan_loglevel "2")
  			lua $UTIL_TROJAN gen_config -node $node -run_type nat -local_addr "0.0.0.0" -local_port $local_port -loglevel $loglevel > $config_file
-@@ -819,6 +843,14 @@ run_redir() {
+@@ -852,6 +876,14 @@ run_redir() {
  		naiveproxy)
  			echolog "Naiveproxy不支持UDP转发！"
  		;;
@@ -975,7 +975,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			lua $UTIL_SS gen_config -node $node -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type ssr-redir)" "ssr-redir" $log_file -c "$config_file" -v -U
-@@ -976,6 +1008,16 @@ run_redir() {
+@@ -1039,6 +1071,16 @@ run_redir() {
  			}
  			run_xray flag=$_flag node=$node tcp_redir_port=$local_port config_file=$config_file log_file=$log_file ${_args}
  		;;
@@ -992,7 +992,7 @@ index fbc6a37..c8203de 100755
  		trojan*)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-use_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -991,6 +1033,19 @@ run_redir() {
+@@ -1054,6 +1096,19 @@ run_redir() {
  			lua $UTIL_NAIVE gen_config -node $node -run_type redir -local_addr "0.0.0.0" -local_port $local_port > $config_file
  			ln_run "$(first_type naive)" naive $log_file "$config_file"
  		;;
@@ -1012,7 +1012,7 @@ index fbc6a37..c8203de 100755
  		ssr)
  			[ "$tcp_proxy_way" = "tproxy" ] && lua_tproxy_arg="-tcp_tproxy true"
  			[ "$TCP_UDP" = "1" ] && {
-@@ -1971,8 +2026,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
+@@ -2099,8 +2154,8 @@ USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
  FILTER_PROXY_IPV6=$(config_t_get global filter_proxy_ipv6 0)
  dns_listen_port=${DNS_PORT}
  

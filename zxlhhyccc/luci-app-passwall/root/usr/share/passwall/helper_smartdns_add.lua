@@ -171,6 +171,7 @@ if not REMOTE_GROUP or REMOTE_GROUP == "nil" then
 end
 
 if not fs.access(CACHE_DNS_FILE) then
+	sys.exec(string.format('echo "server %s -bootstrap-dns" >> %s', "114.114.114.114", CACHE_DNS_FILE))
 	local proxy_server_name = "passwall-proxy-server"
 	sys.call(string.format('echo "proxy-server socks5://%s -name %s" >> %s', REMOTE_PROXY_SERVER, proxy_server_name, CACHE_DNS_FILE))
 	if true then
@@ -212,7 +213,7 @@ if not fs.access(CACHE_DNS_FILE) then
 		end)
 	end
 
-	local setflag= (NFTFLAG == "1") and "inet#fw4#" or ""
+	local setflag= (NFTFLAG == "1") and "inet#passwall#" or ""
 	local set_type= (NFTFLAG == "1") and "-nftset" or "-ipset"
 
 	--始终用国内DNS解析节点域名
@@ -423,5 +424,5 @@ if not fs.access(CACHE_DNS_FILE) then
 	f_out:close()
 end
 fs.symlink(CACHE_DNS_FILE, SMARTDNS_CONF)
-sys.call(string.format('echo "conf-file %s" >> /etc/smartdns/custom.conf', SMARTDNS_CONF))
+sys.call(string.format('echo "conf-file %s" >> /etc/smartdns/custom.conf', string.gsub(SMARTDNS_CONF, appname, appname .. "*")))
 log("  - 请让SmartDNS作为Dnsmasq的上游或重定向！")
