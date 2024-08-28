@@ -105,6 +105,7 @@ o:value("https://api.dler.io/sub", translate("api.dler.io")..translate("(Default
 o:value("https://v.id9.cc/sub", translate("v.id9.cc")..translate("(Support Vless By Pinyun)"))
 o:value("https://sub.id9.cc/sub", translate("sub.id9.cc"))
 o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
+o:value("https://api.sub.x10.bz/sub", translate("api.sub.x10.bz")..translate("(Support Vless By Oneself)"))
 o:value("https://api.api88.cloudns.org/sub", translate("api.api88.cloudns.org")..translate("(Support Vless By Oneself)"))
 o:value("https://api.api88.cloudns.be/sub", translate("api.api88.cloudns.be")..translate("(Support Vless By Cloudflare)"))
 o.default = "https://api.dler.io/sub"

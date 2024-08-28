@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-openclash
-PKG_VERSION:=0.46.020
+PKG_VERSION:=0.46.022
 PKG_RELEASE:=beta
 PKG_MAINTAINER:=vernesong <https://github.com/vernesong/OpenClash>
 
@@ -9,28 +9,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-PKG_CONFIG_DEPENDS:= \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DEV \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_META
-
 define Package/$(PKG_NAME)/config
-menu "Configuration"
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_DEV
-	bool "Include OPENCLASH-DEV"
-	default n
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM
-	bool "Include OPENCLASH-PREMIUM"
-	default n
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_META
-	bool "Include OPENCLASH-META"
-	default n
-
-endmenu
-
 	config PACKAGE_kmod-inet-diag
 	default y if PACKAGE_$(PKG_NAME)
 
@@ -55,12 +34,8 @@ define Package/$(PKG_NAME)
 	SUBMENU:=3. Applications
 	TITLE:=LuCI support for clash
 	PKGARCH:=all
-	DEPENDS:= \
-		+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
-		+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip \
-		+PACKAGE_$(PKG_NAME)_INCLUDE_DEV:openclash-dev \
-		+PACKAGE_$(PKG_NAME)_INCLUDE_PREMIUM:openclash-premium \
-		+PACKAGE_$(PKG_NAME)_INCLUDE_META:openclash-meta
+	DEPENDS:=+dnsmasq-full +coreutils +coreutils-nohup +bash +curl +ca-certificates +ipset +ip-full \
+	+libcap +libcap-bin +ruby +ruby-yaml +kmod-tun +unzip
 	MAINTAINER:=vernesong
 endef
 
@@ -89,7 +64,6 @@ define Build/Prepare
 	cp -f "$(PKG_BUILD_DIR)/root/etc/openclash/custom/openclash_custom_domain_dns.list" "$(PKG_BUILD_DIR)/root/usr/share/openclash/backup/openclash_custom_domain_dns.list" >/dev/null 2>&1
 	cp -f "$(PKG_BUILD_DIR)/root/etc/openclash/custom/openclash_custom_domain_dns_policy.list" "$(PKG_BUILD_DIR)/root/usr/share/openclash/backup/openclash_custom_domain_dns_policy.list" >/dev/null 2>&1
 	cp -f "$(PKG_BUILD_DIR)/root/etc/openclash/custom/openclash_custom_fallback_filter.yaml" "$(PKG_BUILD_DIR)/root/usr/share/openclash/backup/openclash_custom_fallback_filter.yaml" >/dev/null 2>&1
-	cp -f "$(PKG_BUILD_DIR)/root/etc/openclash/custom/openclash_custom_netflix_domains.list" "$(PKG_BUILD_DIR)/root/usr/share/openclash/backup/openclash_custom_netflix_domains.list" >/dev/null 2>&1
 	cp -f "$(PKG_BUILD_DIR)/root/etc/openclash/custom/openclash_force_sniffing_domain.yaml" "$(PKG_BUILD_DIR)/root/usr/share/openclash/backup/openclash_force_sniffing_domain.yaml" >/dev/null 2>&1
 	cp -f "$(PKG_BUILD_DIR)/root/etc/openclash/custom/openclash_sniffing_domain_filter.yaml" "$(PKG_BUILD_DIR)/root/usr/share/openclash/backup/openclash_sniffing_domain_filter.yaml" >/dev/null 2>&1
 	cp -f "$(PKG_BUILD_DIR)/root/etc/openclash/custom/openclash_sniffing_ports_filter.yaml" "$(PKG_BUILD_DIR)/root/usr/share/openclash/backup/openclash_sniffing_ports_filter.yaml" >/dev/null 2>&1
@@ -157,7 +131,6 @@ define Package/$(PKG_NAME)/postrm
 	rm -rf ${dnsmasqconfdir}/dnsmasq_openclash_custom_domain.conf >/dev/null 2>&1
 	rm -rf ${dnsmasqconfdir}/dnsmasq_openclash_chnroute_pass.conf >/dev/null 2>&1
 	rm -rf ${dnsmasqconfdir}/dnsmasq_openclash_chnroute6_pass.conf >/dev/null 2>&1
-	rm -rf ${dnsmasqconfdir}/dnsmasq_accelerated-domains.china.conf >/dev/null 2>&1
 	rm -rf /tmp/dler* >/dev/null 2>&1
 	rm -rf /tmp/etc/openclash >/dev/null 2>&1
 	rm -rf /tmp/openclash_edit_file_name >/dev/null 2>&1
