@@ -2,7 +2,7 @@
 module("luci.controller.openvpn-client", package.seeall)
 
 function index()
-    if not nixio.fs.access("/etc/config/openvpn-client") then return end
+    if not nixio.fs.access("/etc/config/luci-app-openvpn-client") then return end
 
     entry({"admin", "vpn"}, firstchild(), "VPN", 45).dependent = false
     entry({"admin", "vpn", "openvpn-client"}, cbi("openvpn-client/settings"), _("OpenVPN Client"), 50).acl_depends = { "luci-app-openvpn-client" }

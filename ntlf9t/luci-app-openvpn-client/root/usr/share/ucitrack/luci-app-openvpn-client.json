@@ -1,4 +1,4 @@
 {
-	"config": "openvpn-client",
-	"init": "openvpn-client"
+	"config": "luci-app-openvpn-client",
+	"init": "luci-app-openvpn-client"
 }

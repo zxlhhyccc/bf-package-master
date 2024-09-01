@@ -1,7 +1,7 @@
 local d = require "luci.dispatcher"
 local sys = require "luci.sys"
 
-m = Map("openvpn-client", translate("OpenVPN Client"))
+m = Map("luci-app-openvpn-client", translate("OpenVPN Client"))
 m.apply_on_parse = true
 
 s = m:section(TypedSection, "clients", translate("Client List"))
@@ -55,9 +55,9 @@ function updown.cfgvalue(self, section)
 end
 function updown.write(self, section, value)
 	if self.option == "stop" then
-		sys.call("/etc/init.d/openvpn-client stop %s" % section)
+		sys.call("/etc/init.d/luci-app-openvpn-client stop %s" % section)
 	else
-		sys.call("/etc/init.d/openvpn-client start %s" % section)
+		sys.call("/etc/init.d/luci-app-openvpn-client start %s" % section)
 	end
 	luci.http.redirect( self.redirect )
 end
