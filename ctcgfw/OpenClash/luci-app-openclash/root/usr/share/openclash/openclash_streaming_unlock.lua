@@ -17,7 +17,7 @@ local now_name, group_name, group_type, group_show, status, ip, port, passwd, gr
 local groups = {}
 local proxies = {}
 local tested_proxy = {}
-local unlock_cache_file = "/tmp/openclash_streaming_cache_region"
+local unlock_cache_file = "/etc/openclash/history/streaming_unlock_cache"
 local unlock_cache = FS.readfile(unlock_cache_file)
 local unlock_cache_info = {}
 if unlock_cache then
@@ -723,7 +723,7 @@ function table_sort_by_cache(t)
 		end
 	end
 	if #tab > 0 then
-		print(os.date("%Y-%m-%d %H:%M:%S").." "..type.." ".."Group Cached Compliant Nodes Number: ".."【"..#(tab).."】"..", Cached Non-compliant Nodes Number: ".."【"..#(tab_b).."】"..", Prioritize Testing With Cached Compliant Nodes ...")
+		print(os.date("%Y-%m-%d %H:%M:%S").." 【"..type.."】".."Group Cached Compliant Nodes Number:".."【"..#(tab).."】"..", Cached Non-compliant Nodes Number:".."【"..#(tab_b).."】"..", Prioritize Testing With Cached Compliant Nodes...")
 	end
 	for k,v in pairs(tab_b) do table.insert(tab, v) end
 	return tab
