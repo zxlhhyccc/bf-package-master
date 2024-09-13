@@ -15,7 +15,6 @@ custom_fallback_filter=$(uci -q get openclash.config.custom_fallback_filter || e
 china_ip_route=$(uci -q get openclash.config.china_ip_route); [[ "$china_ip_route" != "0" && "$china_ip_route" != "1" && "$china_ip_route" != "2" ]] && china_ip_route=0
 china_ip6_route=$(uci -q get openclash.config.china_ip6_route); [[ "$china_ip6_route" != "0" && "$china_ip6_route" != "1" && "$china_ip6_route" != "2" ]] && china_ip6_route=0
 enable_redirect_dns=$(uci -q get openclash.config.enable_redirect_dns)
-proxy_dns_group=${34}
 
 if [ -n "$(ruby_read "$5" "['tun']")" ]; then
    uci -q set openclash.config.config_reload=0
@@ -177,7 +176,7 @@ sys_dns_append()
 yml_dns_get()
 {
    local section="$1" regex='^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$'
-   local enabled port type ip group dns_type dns_address interface specific_group
+   local enabled port type ip group dns_type dns_address interface specific_group node_resolve http3 ecs_subnet ecs_override
    config_get_bool "enabled" "$section" "enabled" "1"
    config_get "port" "$section" "port" ""
    config_get "type" "$section" "type" ""
@@ -187,6 +186,8 @@ yml_dns_get()
    config_get "specific_group" "$section" "specific_group" ""
    config_get_bool "node_resolve" "$section" "node_resolve" "0"
    config_get_bool "http3" "$section" "http3" "0"
+   config_get_bool "ecs_override" "$section" "ecs_override" "0"
+   config_get "ecs_subnet" "$section" "ecs_subnet" ""
 
    if [ "$enabled" = "0" ]; then
       return
@@ -243,8 +244,6 @@ yml_dns_get()
 
       if [ "$group_check" != "return" ] && [ -n "$group_check" ]; then
          specific_group="#$group_check"
-      elif [ "$proxy_dns_group" != "Disable" ] && [ -n "$proxy_dns_group" ] && [ "$group" = "fallback" ]; then
-         specific_group="#$proxy_dns_group"
       else
          specific_group=""
       fi
@@ -272,6 +271,22 @@ yml_dns_get()
       http3=""
    fi
 
+   if [ -n "$ecs_subnet" ]; then
+      if [ -n "$specific_group" ] || [ -n "$interface" ] || [ "$http3" = "1" ]; then
+         ecs_subnet="&ecs=$ecs_subnet"
+      else
+         ecs_subnet="#ecs=$ecs_subnet"
+      fi
+      if [ "$ecs_override" = "1" ]; then
+         ecs_override="&ecs-override=true"
+      else
+         ecs_override=""
+      fi
+   else
+      ecs_subnet=""
+      ecs_override=""
+   fi
+
    if [ "$node_resolve" = "1" ]; then
       if [ -z "$(grep "^ \{0,\}proxy-server-nameserver:$" /tmp/yaml_config.proxynamedns.yaml 2>/dev/null)" ]; then
          echo "  proxy-server-nameserver:" >/tmp/yaml_config.proxynamedns.yaml
@@ -279,7 +294,7 @@ yml_dns_get()
       echo "    - \"$dns_type$dns_address$specific_group$http3\"" >>/tmp/yaml_config.proxynamedns.yaml
    fi
 
-   dns_address="$dns_address$specific_group$interface$http3"
+   dns_address="$dns_address$specific_group$interface$http3$ecs_subnet$ecs_override"
 
    if [ -n "$group" ]; then
       if [ "$group" = "nameserver" ]; then
@@ -415,6 +430,10 @@ Thread.new{
    Value['dns']['listen']='0.0.0.0:${13}';
    
    #meta only
+   if '${34}' == '1' then
+      Value['dns']['respect-rules']=true;
+   end;
+   
    if ${18} == 1 then
       Value_sniffer={'sniffer'=>{'enable'=>true}};
       Value['sniffer']=Value_sniffer['sniffer'];
@@ -547,42 +566,12 @@ begin
 Thread.new{
    if not Value['dns'].key?('nameserver') or Value['dns']['nameserver'].to_a.empty? then
       puts '${LOGTIME} Tip: Detected That The nameserver DNS Option Has No Server Set, Starting To Complete...';
-      Value_1={'nameserver'=>['114.114.114.114','119.29.29.29','223.5.5.5','https://doh.pub/dns-query','https://223.5.5.5/dns-query']};
-      Value_2={'fallback'=>['https://dns.cloudflare.com/dns-query','https://public.dns.iij.jp/dns-query','https://jp.tiar.app/dns-query','https://jp.tiarap.org/dns-query']};
+      Value_1={'nameserver'=>['system']};
+      Value_2={'fallback'=>['https://dns.cloudflare.com/dns-query','https://dns.google/dns-query']};
       Value['dns'].merge!(Value_1);
       Value['dns'].merge!(Value_2);
    end;
 }.join;
-end;
-
-# proxy fallback dns
-begin
-Thread.new{
-   if '${proxy_dns_group}' == 'Disable' or '${proxy_dns_group}'.nil? then
-      Thread.exit;
-   end;
-   if Value.key?('proxy-groups') then
-      Value['proxy-groups'].each{|x,y|
-         if x['name'] =~ /${proxy_dns_group}/ then
-            y = x['name'];
-            if Value['dns'].has_key?('fallback') and not Value['dns']['fallback'].to_a.empty? then
-               Value['dns']['fallback'].each{|z|
-                  if z =~ /#h3/ then
-                     z.gsub!(/#h3/, '#' + y + '&h3');
-                  elsif z =~ /#/ then
-                     next;
-                  else
-                     z << '#' + y;
-                  end;
-               };
-            end;
-            break;
-         end;
-      };
-   end;
-}.join;
-rescue Exception => e
-   puts '${LOGTIME} Error: Set Fallback DNS Proxy Group Failed,【' + e.message + '】';
 end;
 
 #default-nameserver
@@ -599,15 +588,14 @@ Thread.new{
       end;
    end;
    if ${25} == 1 then
-      reg = /(^https:\/\/|^tls:\/\/|^quic:\/\/)?((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?/;
-      reg6 = /(^https:\/\/|^tls:\/\/|^quic:\/\/)?(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))|\[(?:(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))\](?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?/i;
+      reg = /([0-9a-zA-Z-]{1,}\.)+([a-zA-Z]{2,})/;
       if Value['dns'].has_key?('fallback') then
          Value_1=Value['dns']['nameserver'] | Value['dns']['fallback'];
       else
          Value_1=Value['dns']['nameserver'];
       end;
       Value_1.each{|x|
-         if x =~ reg or x =~ reg6 then
+         if not x =~ reg then
             if Value['dns'].has_key?('default-nameserver') then
                Value['dns']['default-nameserver']=Value['dns']['default-nameserver'].to_a.insert(-1,x).uniq;
             else
@@ -777,6 +765,11 @@ Thread.new{
    if File::exist?('/tmp/yaml_openclash_auth') then
       Value_1 = YAML.load_file('/tmp/yaml_openclash_auth');
       Value['authentication']=Value_1
+      if Value.key?('skip-auth-prefixes') and not Value['skip-auth-prefixes'].nil? then
+         Value['skip-auth-prefixes'].merge!(['127.0.0.1/8','::1/128','10.0.0.0/8','192.168.0.0/16','172.16.0.0/12']);
+      else
+         Value['skip-auth-prefixes']=['127.0.0.1/8','::1/128','10.0.0.0/8','192.168.0.0/16','172.16.0.0/12'];
+      end;
    elsif Value.key?('authentication') then
        Value.delete('authentication');
    end;
