@@ -95,7 +95,7 @@ diff --git a/root/usr/share/openclash/yml_proxys_set.sh b/root/usr/share/opencla
 index 149cdce..49e5a17 100644
 --- a/root/usr/share/openclash/yml_proxys_set.sh
 +++ b/root/usr/share/openclash/yml_proxys_set.sh
-@@ -257,6 +257,8 @@ yml_servers_set()
+@@ -262,6 +262,8 @@ yml_servers_set()
     config_get "hysteria_ca_str" "$section" "hysteria_ca_str" ""
     config_get "recv_window_conn" "$section" "recv_window_conn" ""
     config_get "recv_window" "$section" "recv_window" ""
@@ -104,7 +104,7 @@ index 149cdce..49e5a17 100644
     config_get "disable_mtu_discovery" "$section" "disable_mtu_discovery" ""
     config_get "xudp" "$section" "xudp" ""
     config_get "packet_encoding" "$section" "packet_encoding" ""
-@@ -975,6 +977,36 @@ cat >> "$SERVER_FILE" <<-EOF
+@@ -980,6 +982,36 @@ cat >> "$SERVER_FILE" <<-EOF
      ca-str: "$hysteria_ca_str"
  EOF
        fi
