@@ -10,7 +10,7 @@ function update() {
 	local res="$3"
 	local tag ver sha old_hash line commit
 
-	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/tags" | jq -r ".[1].name" | sed 's/release-//')"
+	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/tags" | jq -r ".[2].name" | sed 's/release-//')"
 	[ -n "$tag" ] || return 1
 
         ver="$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
