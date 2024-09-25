@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-turboacc
-PKG_RELEASE:=$(COMMITCOUNT)
+PKG_RELEASE:=1
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org> & Lean <coolsnowwolf@gmail.com>
@@ -73,15 +73,17 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_BBRPLUS
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_NANQINLANG
 	bool "Include BBR CCA NANQINLANG"
+	depends on !LINUX_6_6
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMI
 	bool "Include BBR CCA TSUNAMI"
+	depends on !LINUX_6_6
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMIO
 	bool "Include BBR CCA TSUNAMIO"
-	depends on (LINUX_5_4||LINUX_5_10||LINUX_5_15)
+	depends on !(LINUX_6_1||LINUX_6_6)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
