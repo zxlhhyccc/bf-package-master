@@ -62,8 +62,9 @@ define Package/smartdns/install
 	$(INSTALL_CONF) $(PKG_BUILD_DIR)/package/openwrt/domain-forwarding.list $(1)/etc/smartdns/domain-forwarding.list
 	$(INSTALL_CONF) $(CURDIR)/conf/smartdns.conf $(1)/etc/config/smartdns
 	$(INSTALL_CONF) $(CURDIR)/conf/whitelist-ip.conf $(1)/etc/smartdns/whitelist-ip.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/gfwlist.conf $(1)/etc/smartdns/domain-set/gfwlist.conf
-	$(INSTALL_CONF) $(CURDIR)/conf/chinalist.conf $(1)/etc/smartdns/domain-set/chinalist.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/proxy-domain-list.conf $(1)/etc/smartdns/domain-set/proxy-domain-list.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/direct-domain-list.conf $(1)/etc/smartdns/domain-set/direct-domain-list.conf
+	$(INSTALL_CONF) $(CURDIR)/conf/hosts.conf $(1)/etc/smartdns/domain-set/hosts.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/anti-ad.conf $(1)/etc/smartdns/conf.d/anti-ad.conf
 	$(INSTALL_CONF) $(CURDIR)/conf/ipv4list.list $(1)/etc/smartdns/ip-set/ipv4list.list
 	$(INSTALL_BIN) $(CURDIR)/conf/update-list.sh $(1)/usr/share/smartdns/update-list.sh
