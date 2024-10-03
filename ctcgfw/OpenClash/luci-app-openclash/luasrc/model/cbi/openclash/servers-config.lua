@@ -706,7 +706,6 @@ o:depends("type", "hysteria2")
 -- [[ recv_window_conn ]]--
 o = s:option(Flag, "flag_quicparam", translate("Hysterir QUIC parameters"))
 o:depends("type", "hysteria")
---o:depends("type", "hysteria2")
 o.rmempty = true
 o.default = "0"
 
@@ -715,7 +714,6 @@ o.rmempty = true
 o.placeholder = translate("QUIC stream receive window")
 o.datatype = "uinteger"
 o:depends({type = "hysteria", flag_quicparam = true})
---o:depends({type = "hysteria2", flag_quicparam = true})
 
 -- [[ recv_window ]]--
 o = s:option(Value, "recv_window", translate("recv_window"))
@@ -723,27 +721,12 @@ o.rmempty = true
 o.placeholder = translate("QUIC connection receive window")
 o.datatype = "uinteger"
 o:depends({type = "hysteria", flag_quicparam = true})
---o:depends({type = "hysteria2", flag_quicparam = true})
-
--- [[ maxidletimeout ]]--
---o = s:option(Value, "maxidletimeout", translate("QUIC maxIdleTimeout(Unit:second)"))
---o:depends({type = "hysteria2", flag_quicparam = "1"})
---o.rmempty = true
---o.datatype = "uinteger"
---o.default = "30"
-
---o = s:option(Value, "keepaliveperiod", translate("The keep-alive period.(Unit:second)"))
---o:depends({type = "hysteria2", flag_quicparam = "1"})
---o.rmempty = true
---o.datatype = "uinteger"
---o.default = "10"
 
 -- [[ hop_interval ]]--
 o = s:option(Value, "hop_interval", translate("Hop Interval (Unit:second)"))
 o.rmempty = true
 o.default = "10"
 o:depends({type = "hysteria", flag_transport = true, flag_port_hopping = true})
---o:depends({type = "hysteria2", flag_transport = true, flag_port_hopping = true})
 o:depends({type = "hysteria2", flag_port_hopping = true})
 
 -- [[ disable_mtu_discovery ]]--
@@ -753,7 +736,6 @@ o:value("true")
 o:value("false")
 o.default = "false"
 o:depends({type = "hysteria", flag_quicparam = true})
----o:depends({type = "hysteria2", flag_quicparam = true})
 
 o = s:option(ListValue, "packet-addr", translate("Packet-Addr")..translate("(Only Meta Core)"))
 o.rmempty = true
@@ -788,7 +770,6 @@ o.default = "true"
 o:value("true")
 o:value("false")
 o:depends("type", "hysteria")
---o:depends("type", "hysteria2")
 o:depends("type", "tuic")
 
 -- [[ TFO ]]--
