@@ -1,0 +1,52 @@
+--- a/src/corelib/global/archdetect.cpp
++++ b/src/corelib/global/archdetect.cpp
+@@ -7,6 +7,8 @@
+ // main part: processor type
+ #if defined(Q_PROCESSOR_ALPHA)
+ #  define ARCH_PROCESSOR "alpha"
++#elif defined(Q_PROCESSOR_ARC)
++#  define ARCH_PROCESSOR "arc"
+ #elif defined(Q_PROCESSOR_ARM_32)
+ #  define ARCH_PROCESSOR "arm"
+ #elif defined(Q_PROCESSOR_ARM_64)
+--- a/src/corelib/global/qprocessordetection.h
++++ b/src/corelib/global/qprocessordetection.h
+@@ -125,6 +125,17 @@
+ #endif
+ 
+ /*
++    Argonaut RISC Core
++*/
++#elif defined(__arc__) || defined(__ARC64__)
++#  define Q_PROCESSOR_ARC
++#  if defined(__LITTLE_ENDIAN__)
++#    define Q_BYTE_ORDER Q_LITTLE_ENDIAN
++#  else
++#    define Q_BYTE_ORDER Q_BIG_ENDIAN
++#  endif
++
++/*
+     AVR32 family, no revisions or variants
+ 
+     AVR32 is big-endian.
+--- a/src/corelib/plugin/qelfparser_p.cpp
++++ b/src/corelib/plugin/qelfparser_p.cpp
+@@ -109,6 +109,8 @@ struct ElfMachineCheck
+             // nothing
+ #elif defined(Q_PROCESSOR_ALPHA)
+             EM_ALPHA
++#elif defined(Q_PROCESSOR_ARC)
++            EM_ARC
+ #elif defined(Q_PROCESSOR_ARM_32)
+             EM_ARM
+ #elif defined(Q_PROCESSOR_ARM_64)
+@@ -380,6 +380,9 @@ Q_DECL_UNUSED Q_DECL_COLD_FUNCTION static QDebug &operator<<(QDebug &d, ElfHeade
+     // list definitely not exhaustive!
+     case EM_NONE:       d << ", no machine"; break;
+     case EM_ALPHA:      d << ", Alpha"; break;
++#ifdef EM_ARC
++    case EM_ARC:        d << ", Arc"; break;
++#endif
+     case EM_68K:        d << ", MC68000"; break;
+     case EM_ARM:        d << ", ARM"; break;
+     case EM_AARCH64:    d << ", AArch64"; break;
