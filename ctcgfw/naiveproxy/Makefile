@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=naiveproxy
-PKG_VERSION:=129.0.6668.81-2
+PKG_VERSION:=130.0.6723.40-1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/klzgrad/naiveproxy/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=c66ac95b0a685fb84f931a267873979cd59708e8966fb9764c53fe2deb24227e
+PKG_HASH:=307b334020bccf1e02b676318bfff82f6bc7c0cfccad8fd8347027ef0c50e9e8
 
 PKG_LICENSE:=BSD 3-Clause
 PKG_LICENSE_FILES:=LICENSE
@@ -56,31 +56,31 @@ ifneq ($(CONFIG_CCACHE),)
   export naive_ccache_flags=cc_wrapper="$(CCACHE)"
 endif
 
-CLANG_VER:=20-init-1009-g7088a5ed-10
+CLANG_VER:=20-init-3847-g69c43468-28
 CLANG_FILE:=clang-llvmorg-$(CLANG_VER).tar.xz
 define Download/CLANG
 	URL:=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64
 	URL_FILE:=$(CLANG_FILE)
 	FILE:=$(CLANG_FILE)
-	HASH:=32ac9d9864a6bd99242f1a97778b3a074ac1151ce3eca369903f2ef5337c787a
+	HASH:=6a30f7bc7c5f0eac02a40a4ec9a1ab906ddff2adacf2c9ff065916047c79f0fb
 endef
 
-GN_VER:=d010e218ca7077928ad7c9e9cc02fe43b5a8a0ad
+GN_VER:=20806f79c6b4ba295274e3a589d85db41a02fdaa
 GN_FILE:=gn-git_revision-$(GN_VER).zip
 define Download/GN_TOOL
 	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+
 	URL_FILE:=git_revision:$(GN_VER)
 	FILE:=$(GN_FILE)
-	HASH:=8f15b61929c1696242c22bb392160f06a6786926ec6be54a8eb639885ab4904b
+	HASH:=ca4072c3105c2b67903a201b7bf7621b302f33147baef3bd2afad70768840fb2
 endef
 
-PGO_VER:=1723053597-b7a6f793b48020befd6a1e60819840a456c519b3-98f747673cbba839fedf299e6c76ac032fad32f0
-PGO_FILE:=chrome-linux-main-$(PGO_VER).profdata
+PGO_VER:=6723-1728387217-9f5646f93bc4ba3a2a9310010e81c26b70db13b1-f044eaa32696eb5c9c4d3ffede525cf50c8cc3e9
+PGO_FILE:=chrome-linux-$(PGO_VER).profdata
 define Download/PGO_PROF
 	URL:=https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles
 	URL_FILE:=$(PGO_FILE)
 	FILE:=$(PGO_FILE)
-	HASH:=f4df544116e10c5495148ee9afedbb07f4ee2659e461dbf0f69755b8d338ceec
+	HASH:=157240225fdd60edcc09ea28a861add344641eff5dd726c437fe241a44c92bd2
 endef
 
 # define Build/Prepare
