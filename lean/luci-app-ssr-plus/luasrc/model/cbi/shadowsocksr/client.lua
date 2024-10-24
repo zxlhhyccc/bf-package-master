@@ -136,7 +136,7 @@ o.description = translate("Custom DNS Server for MosDNS")
 o = s:option(Flag, "mosdns_disable_ipv6", translate("Disable IPv6 in MosDNS query mode (only for Non-CN domain)"))
 o:depends("pdnsd_enable", "3")
 o.rmempty = false
-o.default = "0"
+o.default = "1"
 
 if is_finded("chinadns-ng") then
 	o = s:option(Value, "chinadns_forward", translate("Domestic DNS Server"))
