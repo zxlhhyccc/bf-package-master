@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=naiveproxy
-PKG_VERSION:=130.0.6723.40-1
+PKG_VERSION:=130.0.6723.40-5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/klzgrad/naiveproxy/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=307b334020bccf1e02b676318bfff82f6bc7c0cfccad8fd8347027ef0c50e9e8
+PKG_HASH:=c65e1388efb4f7b2e767e1614a5be5ebe09313f66255bb36c6e0d54428b3dcc7
 
 PKG_LICENSE:=BSD 3-Clause
 PKG_LICENSE_FILES:=LICENSE
