@@ -7,7 +7,8 @@
 		"write": {
 			"file": {
 				"/www/luci-static/alpha/background/*": [ "write" ],
-				"/bin/chmod *": [ "exec" ]
+				"/www/luci-static/alpha/gaya/icon/navbar/*": [ "write" ],
+				"/bin/chmod": [ "exec" ]
 			},
 			"uci": [ "alpha" ]
 		}
