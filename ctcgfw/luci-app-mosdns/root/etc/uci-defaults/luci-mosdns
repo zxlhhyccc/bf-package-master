@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ -e "/etc/config/ucitrack" ] && {
+[ -f "/etc/config/ucitrack" ] && {
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@mosdns[-1]
 	add ucitrack mosdns
