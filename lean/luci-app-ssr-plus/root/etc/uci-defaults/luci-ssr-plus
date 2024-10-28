@@ -1,7 +1,7 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
-	[ -e "/etc/config/ucitrack" ] && {
+	[ -f "/etc/config/ucitrack" ] && {
 	delete ucitrack.@shadowsocksr[-1]
 	add ucitrack shadowsocksr
 	set ucitrack.@shadowsocksr[-1].init=shadowsocksr
