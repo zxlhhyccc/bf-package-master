@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright (C) 2023 ImmortalWrt.org
-
+https://github.com/qwerttvv/list
 #mkdir -p /tmp/smartdns/
 
 #wget --no-check-certificate https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf  -nv -O /tmp/smartdns/china.conf 
