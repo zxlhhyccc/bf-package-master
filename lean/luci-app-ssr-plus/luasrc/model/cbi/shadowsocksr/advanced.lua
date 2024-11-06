@@ -52,6 +52,7 @@ o:value("https://fastly.jsdelivr.net/gh/YW5vbnltb3Vz/domain-list-community@relea
 o:value("https://fastly.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/gfw.txt", translate("Loyalsoldier/v2ray-rules-dat"))
 o:value("https://fastly.jsdelivr.net/gh/Loukky/gfwlist-by-loukky/gfwlist.txt", translate("Loukky/gfwlist-by-loukky"))
 o:value("https://fastly.jsdelivr.net/gh/gfwlist/gfwlist/gfwlist.txt", translate("gfwlist/gfwlist"))
+o:value("https://fastly.jsdelivr.net/gh/qwerttvv/list/router.txt", translate("qwerttvv/list"))
 o.default = "https://fastly.jsdelivr.net/gh/YW5vbnltb3Vz/domain-list-community@release/gfwlist.txt"
 
 o = s:option(Value, "chnroute_url", translate("Chnroute Update url"))
