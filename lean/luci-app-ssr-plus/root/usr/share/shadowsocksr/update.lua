@@ -9,7 +9,15 @@ require "luci.model.uci"
 local icount = 0
 local args = arg[1]
 local uci = luci.model.uci.cursor()
-local TMP_DNSMASQ_PATH = "${DNSMASQ_CONF_DIR%*/}/dnsmasq-ssrplus.d"
+-- 获取 dnsmasq 配置文件路径
+--local DEFAULT_DNSMASQ_CFGID = luci.sys.exec("uci show dhcp.@dnsmasq[0] | awk -F '.' '{print $2}' | awk -F '=' '{print $1}' | head -1"):gsub("%s+", "")
+--local DNSMASQ_CONF_PATH = luci.sys.exec("grep -l '^conf-dir=' '/tmp/etc/dnsmasq.conf." .. DEFAULT_DNSMASQ_CFGID .. "'"):gsub("%s+", "")
+
+--local DNSMASQ_CONF_PATH = luci.sys.exec("ls /tmp/etc/dnsmasq.conf.* 2>/dev/null | head -n 1"):gsub("%s+", "")
+--local DNSMASQ_CONF_DIR = luci.sys.exec("grep '^conf-dir=' '" .. DNSMASQ_CONF_PATH .. "' | cut -d'=' -f2 | head -n 1"):gsub("%s+", "")
+--local TMP_DNSMASQ_PATH = DNSMASQ_CONF_DIR:match("^(.-)/?$") .. "/dnsmasq-ssrplus.d"
+
+local TMP_DNSMASQ_PATH = luci.sys.exec("find /tmp/dnsmasq.*/dnsmasq-ssrplus.d -print 2>/dev/null | head -n 1"):gsub("%s+", "")
 local TMP_PATH = "/var/etc/ssrplus"
 -- match comments/title/whitelist/ip address/excluded_domain
 local comment_pattern = "^[!\\[@]+"
