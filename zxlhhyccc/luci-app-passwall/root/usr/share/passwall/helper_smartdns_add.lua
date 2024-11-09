@@ -231,6 +231,7 @@ if not fs.access(CACHE_DNS_FILE) then
 	if USE_BLOCK_LIST == "1" then
 		if fs.access("/usr/share/passwall/rules/block_host") then
 			for line in io.lines("/usr/share/passwall/rules/block_host") do
+				line = api.get_std_domain(line)
 				if line ~= "" and not line:find("#") then
 					set_domain_address(line, "-")
 				end
@@ -242,6 +243,7 @@ if not fs.access(CACHE_DNS_FILE) then
 	if USE_DIRECT_LIST == "1" then
 		if fs.access("/usr/share/passwall/rules/direct_host") then
 			for line in io.lines("/usr/share/passwall/rules/direct_host") do
+				line = api.get_std_domain(line)
 				if line ~= "" and not line:find("#") then
 					add_excluded_domain(line)
 					set_domain_group(line, LOCAL_GROUP)
@@ -256,6 +258,7 @@ if not fs.access(CACHE_DNS_FILE) then
 	if USE_PROXY_LIST == "1" then
 		if fs.access("/usr/share/passwall/rules/proxy_host") then
 			for line in io.lines("/usr/share/passwall/rules/proxy_host") do
+				line = api.get_std_domain(line)
 				if line ~= "" and not line:find("#") then
 					add_excluded_domain(line)
 					local ipset_flag = "#4:" .. setflag .. "passwall_blacklist,#6:" .. setflag .. "passwall_blacklist6"
@@ -356,6 +359,7 @@ if not fs.access(CACHE_DNS_FILE) then
 						if line:find("domain:") or line:find("full:") then
 							line = string.match(line, ":([^:]+)$")
 						end
+						line = api.get_std_domain(line)
 						add_excluded_domain(line)
 						
 						if no_ipv6 then
@@ -369,7 +373,7 @@ if not fs.access(CACHE_DNS_FILE) then
 					end
 				end
 				if _node_id ~= "_direct" then
-					log(string.format("  - V2ray/Xray分流规则(%s)使用分组：%s", s.remarks, fwd_group or "默认"))
+					log(string.format("  - Sing-Box/Xray分流规则(%s)使用分组：%s", s.remarks, fwd_group or "默认"))
 				end
 			end
 		end)
