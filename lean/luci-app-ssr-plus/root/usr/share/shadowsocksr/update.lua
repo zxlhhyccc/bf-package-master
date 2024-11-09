@@ -17,7 +17,7 @@ local uci = luci.model.uci.cursor()
 --local DNSMASQ_CONF_DIR = luci.sys.exec("grep '^conf-dir=' '" .. DNSMASQ_CONF_PATH .. "' | cut -d'=' -f2 | head -n 1"):gsub("%s+", "")
 --local TMP_DNSMASQ_PATH = DNSMASQ_CONF_DIR:match("^(.-)/?$") .. "/dnsmasq-ssrplus.d"
 
-local TMP_DNSMASQ_PATH = luci.sys.exec("find /tmp/dnsmasq*/dnsmasq-ssrplus.d -type d -print -quit 2>/dev/null")
+local TMP_DNSMASQ_PATH = luci.sys.exec("find /tmp/dnsmasq.*/dnsmasq-ssrplus.d -type d -print 2>/dev/null")
 local TMP_PATH = "/var/etc/ssrplus"
 -- match comments/title/whitelist/ip address/excluded_domain
 local comment_pattern = "^[!\\[@]+"
