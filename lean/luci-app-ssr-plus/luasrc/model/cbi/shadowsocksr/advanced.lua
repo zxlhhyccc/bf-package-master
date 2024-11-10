@@ -59,6 +59,7 @@ o = s:option(Value, "chnroute_url", translate("Chnroute Update url"))
 o:value("https://ispip.clang.cn/all_cn.txt", translate("Clang.CN"))
 o:value("https://ispip.clang.cn/all_cn_cidr.txt", translate("Clang.CN.CIDR"))
 o:value("https://fastly.jsdelivr.net/gh/gaoyifan/china-operator-ip@ip-lists/china.txt", translate("china-operator-ip"))
+o:value("https://fastly.jsdelivr.net/gh/metowolf/iplist/data/special/china.txt", translate("Special.iplist"))
 o.default = "https://ispip.clang.cn/all_cn.txt"
 
 o = s:option(Flag, "netflix_enable", translate("Enable Netflix Mode"))
