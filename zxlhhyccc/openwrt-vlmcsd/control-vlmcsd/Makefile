@@ -21,15 +21,16 @@ PKG_BUILD_PARALLEL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/control-vlmcsd
-	SECTION:=net
-	CATEGORY:=Network
-	TITLE:=vlmcsd for OpenWRT
-	URL:=http://forums.mydigitallife.info/threads/50234
-	DEPENDS:=+libpthread
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=A KMS Emulator in C
+  URL:=http://forums.mydigitallife.info/threads/50234
+  DEPENDS:=+libpthread
 endef
 
 define Package/control-vlmcsd/description
-	vlmcsd is a KMS Emulator in C.
+  KMS Emulator in C (currently runs on Linux including Android, FreeBSD,
+  Solaris, Minix, Mac OS, iOS, Windows with or without Cygwin)
 endef
 
 define Build/Compile
