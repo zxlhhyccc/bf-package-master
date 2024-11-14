@@ -13,7 +13,8 @@ PKG_RELEASE:=10
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_LINUX_5_4 \
-	CONFIG_TARGET_ramips
+	CONFIG_TARGET_ramips \
+	CONFIG_USB_SUPPORT
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -23,9 +24,9 @@ define Package/automount
   DEPENDS:= \
 	+block-mount \
 	+e2fsprogs \
-	+kmod-usb-storage \
-	+kmod-usb-storage-extras \
-	+!TARGET_ramips:kmod-usb-storage-uas \
+	+USB_SUPPORT:kmod-usb-storage \
+	+USB_SUPPORT:kmod-usb-storage-extras \
+	+(!TARGET_ramips&&USB_SUPPORT):kmod-usb-storage-uas \
 	+kmod-fs-ext4 \
 	+kmod-fs-exfat \
 	+LINUX_5_4:kmod-fs-exfat0 \
