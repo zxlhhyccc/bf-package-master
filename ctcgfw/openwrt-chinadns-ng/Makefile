@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=chinadns-ng
-PKG_VERSION:=2024.11.17
+PKG_VERSION:=2024.11
 PKG_RELEASE:=1
 
 ifeq ($(ARCH),aarch64)
@@ -20,8 +20,8 @@ else ifeq ($(ARCH),arm)
   # Referred to golang/golang-values.mk
   ARM_CPU_FEATURES:=$(word 2,$(subst +,$(space),$(call qstrip,$(CONFIG_CPU_TYPE))))
   ifeq ($(ARM_CPU_FEATURES),)
-    PKG_ARCH:=$(PKG_NAME)+wolfssl@arm-linux-musleabi@generic+v5t+soft_float@fast+lto
-    PKG_HASH:=9adfe309a41f21156cc5597333c42c36bc9e4e42eb1a71d18b92c39aed0340b2
+    PKG_ARCH:=$(PKG_NAME)@arm-linux-musleabi@generic+v5t+soft_float@fast+lto
+    PKG_HASH:=425b2265842030c64836653dbb15ff9747ac72b8790a491142f7f9406ad89c61
   else ifneq ($(filter $(ARM_CPU_FEATURES),vfp vfpv2),)
     PKG_ARCH:=$(PKG_NAME)+wolfssl@arm-linux-musleabi@generic+v6+soft_float@fast+lto
     PKG_HASH:=511f9700e38b1f4ba65fefccd7c4f4a77773a8ebad0600c89e315286561e9288
