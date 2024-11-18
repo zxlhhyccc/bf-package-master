@@ -43,7 +43,7 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Package/v2ray-v5/template
-  TITLE:=A platform for building proxies to bypass network restrictions
+  TITLE:=A proxy platform to bypass network restrictions
   SECTION:=net
   CATEGORY:=Network
   URL:=https://www.v2fly.org
