@@ -14,6 +14,10 @@ LUCI_DEPENDS:=+rclone-config \
               +PACKAGE_$(PKG_NAME)_INCLUDE_rclone-ng:rclone-ng
 LUCI_PKGARCH:=all
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_rclone-webui \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_rclone-ng
+
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_MAINTAINER:=ElonH <elonhhuang@gmail.com>
 
