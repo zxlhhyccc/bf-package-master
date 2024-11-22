@@ -9,6 +9,7 @@ local DNS_LOCAL = var["-DNS_LOCAL"]
 local DNS_TRUST = var["-DNS_TRUST"]
 local USE_DIRECT_LIST = var["-USE_DIRECT_LIST"]
 local USE_PROXY_LIST = var["-USE_PROXY_LIST"]
+local USE_BLOCK_LIST = var["-USE_BLOCK_LIST"]
 local GFWLIST = var["-GFWLIST"]
 local CHNLIST = var["-CHNLIST"]
 local NO_IPV6_TRUST = var["-NO_IPV6_TRUST"]
@@ -52,17 +53,41 @@ local function insert_unique(dest_table, value, lookup_table)
 	end
 end
 
-local function merge_array(lines1, lines2)
-	for i, line in ipairs(lines2) do
-		table.insert(lines1, #lines1 + 1, line)
+local function merge_array(array1, array2)
+	for i, line in ipairs(array2) do
+		table.insert(array1, #array1 + 1, line)
 	end
 end
 
-if not fs.access(TMP_ACL_PATH) then
-	fs.mkdir(TMP_ACL_PATH, 493)
+local function insert_array_before(array1, array2, target) --将array2插入到array1的target前面，target不存在则追加
+	for i, line in ipairs(array1) do
+		if line == target then
+			for j = #array2, 1, -1 do
+				table.insert(array1, i, array2[j])
+			end
+			return
+		end
+	end
+	merge_array(array1, array2)
 end
 
-local setflag= (NFTFLAG == "1") and "inet@passwall@" or ""
+local function insert_array_after(array1, array2, target) --将array2插入到array1的target后面，target不存在则追加
+	for i, line in ipairs(array1) do
+		if line == target then
+			for j = 1, #array2 do
+				table.insert(array1, i + j, array2[j])
+			end
+			return
+		end
+	end
+	merge_array(array1, array2)
+end
+
+if not fs.access(TMP_ACL_PATH) then
+	fs.mkdir(TMP_ACL_PATH)
+end
+
+local setflag = (NFTFLAG == "1") and "inet@passwall@" or ""
 
 config_lines = {
 	--"verbose",
@@ -72,6 +97,37 @@ config_lines = {
 	"trust-dns " .. DNS_TRUST,
 	"filter-qtype 65"
 }
+
+for i = 1, 6 do
+	table.insert(config_lines, "#--" .. i)
+end
+
+--自定义规则组，后声明的组具有更高优先级
+--屏蔽列表
+local file_block_host = TMP_ACL_PATH .. "/block_host"
+if USE_BLOCK_LIST == "1" and not fs.access(file_block_host) then   --对自定义列表进行清洗
+	local block_domain, lookup_block_domain = {}, {}
+	for line in io.lines(RULES_PATH .. "/block_host") do
+		line = api.get_std_domain(line)
+		if line ~= "" and not line:find("#") then
+			insert_unique(block_domain, line, lookup_block_domain)
+		end
+	end
+	if #block_domain > 0 then
+		local f_out = io.open(file_block_host, "w")
+		for i = 1, #block_domain do
+			f_out:write(block_domain[i] .. "\n")
+		end
+		f_out:close()
+	end
+end
+if USE_BLOCK_LIST == "1" and is_file_nonzero(file_block_host) then
+	tmp_lines = {
+		"group null",
+		"group-dnl " .. file_block_host
+	}
+	insert_array_after(config_lines, tmp_lines, "#--5")
+end
 
 --始终用国内DNS解析节点域名
 local file_vpslist = TMP_ACL_PATH .. "/vpslist"
@@ -93,15 +149,14 @@ if is_file_nonzero(file_vpslist) then
 		"group-upstream " .. DNS_LOCAL,
 		"group-ipset " .. setflag .. "passwall_vpslist," .. setflag .. "passwall_vpslist6"
 	}
-	merge_array(config_lines, tmp_lines)
+	insert_array_after(config_lines, tmp_lines, "#--6")
 	log(string.format("  - 节点列表中的域名(vpslist)：%s", DNS_LOCAL or "默认"))
 end
 
 --直连（白名单）列表
 local file_direct_host = TMP_ACL_PATH .. "/direct_host"
 if USE_DIRECT_LIST == "1" and not fs.access(file_direct_host) then   --对自定义列表进行清洗
-	local direct_domain = {}
-	local lookup_direct_domain = {}
+	local direct_domain, lookup_direct_domain = {}, {}
 	for line in io.lines(RULES_PATH .. "/direct_host") do
 		line = api.get_std_domain(line)
 		if line ~= "" and not line:find("#") then
@@ -123,15 +178,14 @@ if USE_DIRECT_LIST == "1" and is_file_nonzero(file_direct_host) then
 		"group-upstream " .. DNS_LOCAL,
 		"group-ipset " .. setflag .. "passwall_whitelist," .. setflag .. "passwall_whitelist6"
 	}
-	merge_array(config_lines, tmp_lines)
+	insert_array_after(config_lines, tmp_lines, "#--4")
 	log(string.format("  - 域名白名单(whitelist)：%s", DNS_LOCAL or "默认"))
 end
 
 --代理（黑名单）列表
 local file_proxy_host = TMP_ACL_PATH .. "/proxy_host"
 if USE_PROXY_LIST == "1" and not fs.access(file_proxy_host) then   --对自定义列表进行清洗
-	local proxy_domain = {}
-	local lookup_proxy_domain = {}
+	local proxy_domain, lookup_proxy_domain = {}, {}
 	for line in io.lines(RULES_PATH .. "/proxy_host") do
 		line = api.get_std_domain(line)
 		if line ~= "" and not line:find("#") then
@@ -153,19 +207,20 @@ if USE_PROXY_LIST == "1" and is_file_nonzero(file_proxy_host) then
 		"group-upstream " .. DNS_TRUST,
 		"group-ipset " .. setflag .. "passwall_blacklist," .. setflag .. "passwall_blacklist6"
 	}
-	merge_array(config_lines, tmp_lines)
-	if NO_IPV6_TRUST == "1" then table.insert(config_lines, "no-ipv6 tag:proxylist") end
+	if NO_IPV6_TRUST == "1" then table.insert(tmp_lines, "no-ipv6 tag:proxylist") end
+	insert_array_after(config_lines, tmp_lines, "#--3")
 	log(string.format("  - 代理域名表(blacklist)：%s", DNS_TRUST or "默认"))
 end
 
+--内置组(chn/gfw)优先级在自定义组后
 --GFW列表
 if GFWLIST == "1" and is_file_nonzero(RULES_PATH .. "/gfwlist") then
 	tmp_lines = {
 		"gfwlist-file " .. RULES_PATH .. "/gfwlist",
 		"add-taggfw-ip " .. setflag .. "passwall_gfwlist," .. setflag .. "passwall_gfwlist6"
 	}
+	if NO_IPV6_TRUST == "1" then table.insert(tmp_lines, "no-ipv6 tag:gfw") end
 	merge_array(config_lines, tmp_lines)
-	if NO_IPV6_TRUST == "1" then table.insert(config_lines, "no-ipv6 tag:gfw") end
 	log(string.format("  - 防火墙域名表(gfwlist)：%s", DNS_TRUST or "默认"))
 end
 
@@ -191,18 +246,16 @@ if CHNLIST ~= "0" and is_file_nonzero(RULES_PATH .. "/chnlist") then
 			"group-upstream " .. DNS_TRUST,
 			"group-ipset " .. setflag .. "passwall_chnroute," .. setflag .. "passwall_chnroute6"
 		}
-		merge_array(config_lines, tmp_lines)
-		if NO_IPV6_TRUST == "1" then table.insert(config_lines, "no-ipv6 tag:chn_proxy") end
+		if NO_IPV6_TRUST == "1" then table.insert(tmp_lines, "no-ipv6 tag:chn_proxy") end
+		insert_array_after(config_lines, tmp_lines, "#--1")
 		log(string.format("  - 中国域名表(chnroute)：%s", DNS_TRUST or "默认"))
 	end
 end
 
 --分流规则
 if uci:get(appname, TCP_NODE, "protocol") == "_shunt" then
-	local white_domain = {}
-	local shunt_domain = {}
-	local lookup_white_domain = {}
-	local lookup_shunt_domain = {}
+	local white_domain, lookup_white_domain = {}, {}
+	local shunt_domain, lookup_shunt_domain = {}, {}
 	local file_white_host = TMP_ACL_PATH .. "/white_host"
 	local file_shunt_host = TMP_ACL_PATH .. "/shunt_host"
 
@@ -222,6 +275,7 @@ if uci:get(appname, TCP_NODE, "protocol") == "_shunt" then
 						line = string.match(line, ":([^:]+)$")
 					end
 					line = api.get_std_domain(line)
+
 					if _node_id == "_direct" then
 						if line ~= "" and not line:find("#") then
 							insert_unique(white_domain, line, lookup_white_domain)
@@ -261,13 +315,12 @@ if uci:get(appname, TCP_NODE, "protocol") == "_shunt" then
 	end
 
 	if is_file_nonzero(file_white_host) then
-		tmp_lines = {
-			"group whitelist",
-			"group-dnl " .. file_white_host,
-			"group-upstream " .. DNS_LOCAL,
-			"group-ipset " .. setflag .. "passwall_whitelist," .. setflag .. "passwall_whitelist6"
-		}
-		merge_array(config_lines, tmp_lines)
+		for i, v in ipairs(config_lines) do   --添加到白名单组一同处理
+			if v == "group-dnl " .. file_direct_host then
+				config_lines[i] = "group-dnl " .. file_direct_host .. "," .. file_white_host
+				break
+			end
+		end
 	end
 
 	if is_file_nonzero(file_shunt_host) then
@@ -277,9 +330,10 @@ if uci:get(appname, TCP_NODE, "protocol") == "_shunt" then
 			"group-upstream " .. DNS_TRUST,
 			"group-ipset " .. setflag .. "passwall_shuntlist," .. setflag .. "passwall_shuntlist6"
 		}
-		merge_array(config_lines, tmp_lines)
-		if NO_IPV6_TRUST == "1" then table.insert(config_lines, "no-ipv6 tag:shuntlist") end
+		if NO_IPV6_TRUST == "1" then table.insert(tmp_lines, "no-ipv6 tag:shuntlist") end
+		insert_array_after(config_lines, tmp_lines, "#--2")
 	end
+
 end
 
 --只使用gfwlist模式，GFW列表以外的域名及默认使用本地DNS
@@ -291,7 +345,9 @@ if CHNLIST == "proxy" then DEFAULT_TAG = "chn" end
 --全局模式，默认使用远程DNS
 if DEFAULT_MODE == "proxy" and CHNLIST == "0" and GFWLIST == "0" then
 	DEFAULT_TAG = "gfw"
-	if NO_IPV6_TRUST == "1" then table.insert(config_lines, "no-ipv6") end
+	if NO_IPV6_TRUST == "1" and uci:get(appname, TCP_NODE, "protocol") ~= "_shunt" then 
+		table.insert(config_lines, "no-ipv6")
+	end
 end
 
 --是否接受直连 DNS 空响应
@@ -307,9 +363,24 @@ if DEFAULT_TAG == "none" then
 	table.insert(config_lines, "verdict-cache 5000")
 end
 
+table.insert(config_lines, "hosts")
+
+if DEFAULT_TAG == "chn" then
+	log(string.format("  - 默认：%s", DNS_LOCAL))
+elseif  DEFAULT_TAG == "gfw" then
+	log(string.format("  - 默认：%s", DNS_TRUST))
+else
+	log(string.format("  - 默认：%s", "智能匹配"))
+end
+
 --输出配置文件
 if #config_lines > 0 then
 	for i = 1, #config_lines do
-		print(config_lines[i])
+		line = config_lines[i]
+		if line ~= "" and not line:find("^#--") then
+			print(line)
+		end
 	end
 end
+
+log("  - ChinaDNS-NG已作为Dnsmasq上游，如果你自行配置了错误的DNS流程，将会导致域名(直连/代理域名)分流失效！！！")

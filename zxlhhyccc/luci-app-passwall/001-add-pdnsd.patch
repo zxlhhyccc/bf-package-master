@@ -2,7 +2,7 @@ diff --git a/Makefile b/Makefile
 index 3a6461b..ddf19ae 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -14,9 +14,11 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
+@@ -12,9 +12,11 @@ PKG_VERSION:=$(PKG_VERSION)-smartdns-dev
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
@@ -14,7 +14,7 @@ index 3a6461b..ddf19ae 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,16 +37,37 @@ PKG_CONFIG_DEPENDS:= \
+@@ -33,16 +35,37 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -56,7 +56,7 @@ index 3a6461b..ddf19ae 100644
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -54,108 +77,98 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
+@@ -52,108 +75,98 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -180,7 +180,7 @@ diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/pass
 index 93b0758..14b196c 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -409,6 +409,14 @@ dns_mode:value("tcp", translatef("Requery DNS By %s", "TCP"))
+@@ -405,6 +405,14 @@ dns_mode:value("tcp", translatef("Requery DNS By %s", "TCP"))
  if chinadns_tls == 0 then
  	dns_mode:value("dot", translatef("Requery DNS By %s", "DoT"))
  end
@@ -195,7 +195,7 @@ index 93b0758..14b196c 100644
  if api.is_finded("dns2socks") then
  	dns_mode:value("dns2socks", "dns2socks")
  end
-@@ -418,6 +426,7 @@ end
+@@ -414,6 +422,7 @@ end
  if has_xray then
  	dns_mode:value("xray", "Xray")
  end
@@ -203,7 +203,7 @@ index 93b0758..14b196c 100644
  if api.is_finded("smartdns") then
  	dns_mode:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
  end
-@@ -472,6 +481,8 @@ o:value("149.112.112.112", "149.112.112.112 (Quad9)")
+@@ -468,6 +477,8 @@ o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
@@ -212,7 +212,7 @@ index 93b0758..14b196c 100644
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({xray_dns_mode = "tcp"})
-@@ -533,6 +544,17 @@ o.validate = function(self, value, t)
+@@ -529,6 +540,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -257,7 +257,7 @@ index 46aca81..fa0ac10 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -307,6 +310,12 @@ msgstr "关闭（不使用）"
+@@ -310,6 +313,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -286,7 +286,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index 4e86d3d..3c04d01 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1459,11 +1459,26 @@ start_dns() {
+@@ -1480,11 +1480,26 @@ start_dns() {
  			fi
  		fi
  	;;
@@ -313,7 +313,7 @@ index 4e86d3d..3c04d01 100755
  		else
  			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
  			echolog "  - udp://${TUN_DNS}"
-@@ -1474,9 +1489,9 @@ start_dns() {
+@@ -1495,9 +1510,9 @@ start_dns() {
  		if [ "$DNS_SHUNT" = "chinadns-ng" ] && [ -n "$(first_type chinadns-ng)" ]; then
  			local china_ng_listen_port=${dns_listen_port}
  			local china_ng_trust_dns="tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/:/#/g')"
@@ -326,7 +326,7 @@ index 4e86d3d..3c04d01 100755
  		fi
  	;;
  	esac
-@@ -1531,6 +1546,73 @@ start_dns() {
+@@ -1553,6 +1568,73 @@ start_dns() {
  		-NO_LOGIC_LOG ${NO_LOGIC_LOG:-0}
  }
  
@@ -400,7 +400,7 @@ index 4e86d3d..3c04d01 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -1973,7 +2055,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -1995,7 +2077,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
