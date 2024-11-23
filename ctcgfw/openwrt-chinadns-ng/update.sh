@@ -40,7 +40,7 @@ done
 # 更新版本号
 sed -i "s,PKG_VERSION:=.*,PKG_VERSION:=$VERSION,g" "$CURDIR/Makefile"
 
-# 仅获取 armv 5的 2024.10.14 版本
+# 仅获取 armv5 的 2024.10.14 版本
 DOWN_VERSION="$(awk -F ':=' '/DOWN_VERSION*:/{count++; if (count == 2) print $2}' "$CURDIR/Makefile" | xargs)"
 if [ -n "$DOWN_VERSION" ]; then
     # 获取指定版本的信息
