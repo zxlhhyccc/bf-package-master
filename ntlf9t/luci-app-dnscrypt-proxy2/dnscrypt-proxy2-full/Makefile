@@ -20,7 +20,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
-# PKG_USE_MIPS16:=0
+PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 PKG_CONFIG_DEPENDS:= \
@@ -39,8 +39,8 @@ GO_PKG_BUILD_VARS+= GO111MODULE=off
 define Package/dnscrypt-proxy2-full
   SECTION:=net
   CATEGORY:=Network
-  SUBMENU:=Web Servers/Proxies
   TITLE:=Flexible DNS proxy with encrypted DNS protocols
+  SUBMENU:=IP Addresses and Names
   DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
   URL:=https://github.com/DNSCrypt/dnscrypt-proxy
 endef
