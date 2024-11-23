@@ -315,7 +315,7 @@ function import_ssr_url(btn, urlname, sid) {
 			document.getElementsByName('cbid.shadowsocksr.' + sid + '.server')[0].value = url.hostname;
 			document.getElementsByName('cbid.shadowsocksr.' + sid + '.server_port')[0].value = url.port || "80";
 			document.getElementsByName('cbid.shadowsocksr.' + sid + '.vmess_id')[0].value = url.username;
-document.getElementsByName('cbid.shadowsocksr.' + sid + '.transport')[0].value = 
+			document.getElementsByName('cbid.shadowsocksr.' + sid + '.transport')[0].value = 
 				params.get("type") == "http" ? "h2" : 
 				(params.get("type") == "raw" ? "raw" : 
 				(params.get("type") || "tcp"));
