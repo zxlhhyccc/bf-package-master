@@ -213,6 +213,10 @@ if args then
 		update(uci:get_first("shadowsocksr", "global", "chnroute_url"), "/etc/ssrplus/china_ssr.txt", args, TMP_PATH .. "/china_ssr.txt")
 		os.exit(0)
 	end
+	if args == "apple_data" then
+		update(uci:get_first("shadowsocksr", "global", "apple_url"), "/etc/ssrplus/applechina.conf", args, TMP_PATH .. "/applechina.conf")
+		os.exit(0)
+	end
 	if args == "ad_data" then
 		update(uci:get_first("shadowsocksr", "global", "adblock_url"), "/etc/ssrplus/ad.conf", args, TMP_DNSMASQ_PATH .. "/ad.conf")
 		os.exit(0)
@@ -236,9 +240,17 @@ else
 	update(uci:get_first("shadowsocksr", "global", "gfwlist_url"), "/etc/ssrplus/gfw_list.conf", "gfw_data", TMP_DNSMASQ_PATH .. "/gfw_list.conf")
 	log("正在更新【国内IP段】数据库")
 	update(uci:get_first("shadowsocksr", "global", "chnroute_url"), "/etc/ssrplus/china_ssr.txt", "ip_data", TMP_PATH .. "/china_ssr.txt")
+	if uci:get_first("shadowsocksr", "global", "apple_optimization", "0") == "1" then
+		log("正在更新【Apple域名】数据库")
+		update(uci:get_first("shadowsocksr", "global", "apple_url"), "/etc/ssrplus/applechina.conf", "apple_data", TMP_DNSMASQ_PATH .. "/applechina.conf")
+	end
 	if uci:get_first("shadowsocksr", "global", "adblock", "0") == "1" then
 		log("正在更新【广告屏蔽】数据库")
 		update(uci:get_first("shadowsocksr", "global", "adblock_url"), "/etc/ssrplus/ad.conf", "ad_data", TMP_DNSMASQ_PATH .. "/ad.conf")
+	end
+	if uci:get_first("shadowsocksr", "global", "netflix_enable", "0") == "1" then
+		log("正在更新【Netflix IP段】数据库")
+		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", "nfip_data", TMP_DNSMASQ_PATH .. "/netflixip.list")
 	end
 	-- log("正在更新【Netflix IP段】数据库")
 	-- update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", "nfip_data")

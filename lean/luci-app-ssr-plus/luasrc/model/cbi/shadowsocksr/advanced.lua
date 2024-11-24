@@ -115,6 +115,11 @@ o = s:option(Flag, "apple_optimization", translate("Apple domains optimization")
 o.rmempty = false
 o.default = "1"
 
+o = s:option(Value, "apple_url", translate("Apple Domains Update url"))
+o:value("https://fastly.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/apple.china.conf", translate("felixonmars/dnsmasq-china-list"))
+o.default = "https://fastly.jsdelivr.net/gh/felixonmars/dnsmasq-china-list/apple.china.conf"
+o:depends("apple_optimization", "1")
+
 o = s:option(Flag, "adblock", translate("Enable adblock"))
 o.rmempty = false
 
