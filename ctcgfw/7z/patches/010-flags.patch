@@ -36,7 +36,7 @@
  endif
  
  LFLAGS_ALL = $(LFLAGS_STRIP) $(MY_ARCH_2) $(LDFLAGS) $(FLAGS_FLTO) $(LD_arch) $(OBJS) $(MY_LIBS) $(LIB2)
-@@ -1285,7 +1285,7 @@ predef_cc:
+@@ -1340,7 +1340,7 @@ predef_cc:
  	$(CC) $(CFLAGS) -E $(SHOW_PREDEF)  ../../../../C/CpuArch.c > predef_cc_log
  #	$(CC) $(CFLAGS) -E -dM -  < /dev/null
  predef_cxx:

@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=7z
-PKG_VERSION:=23.01
+PKG_VERSION:=23.08
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)$(subst .,,$(PKG_VERSION))-src.tar.xz
 PKG_SOURCE_URL:=https://7-zip.org/a/
-PKG_HASH:=356071007360e5a1824d9904993e8b2480b51b570e8c9faf7c0f58ebe4bf9f74
+PKG_HASH:=aa04aac906a04df59e7301f4c69e9f48808e6c8ecae4eb697703a47bfb0ac042
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=LGPL-2.1-or-later BSD-3-Clause unRAR
