@@ -485,6 +485,12 @@ msgstr "广告屏蔽更新 URL"
 msgid "Apple Domains Update url"
 msgstr "Apple 域名更新 URL"
 
+msgid "Apple Domains DNS"
+msgstr "Apple 域名 DNS"
+
+msgid "If empty, Not change Apple domains parsing DNS (Default is empty)"
+msgstr "如果为空，则不更改 Apple 域名解析 DNS（默认为空）"
+
 msgid "gfwlist Update url"
 msgstr "GFW 列表更新 URL"
 

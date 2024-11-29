@@ -50,11 +50,16 @@ local TMP_PATH = "/var/etc/ssrplus"
 local comment_pattern = "^[!\\[@]+"
 local ip_pattern = "^%d+%.%d+%.%d+%.%d+"
 local domain_pattern = "([%w%-%_]+%.[%w%.%-%_]+)[%/%*]*"
-local excluded_domain = {"apple.com", "sina.cn", "sina.com.cn", "baidu.com", "byr.cn", "jlike.com", "weibo.com", "zhongsou.com", "youdao.com", "sogou.com", "so.com", "soso.com", "aliyun.com", "taobao.com", "jd.com", "qq.com"}
+local excluded_domain = {
+    "apple.com", "sina.cn", "sina.com.cn", "baidu.com", "byr.cn", "jlike.com", 
+    "weibo.com", "zhongsou.com", "youdao.com", "sogou.com", "so.com", "soso.com", 
+    "aliyun.com", "taobao.com", "jd.com", "qq.com"
+}
 -- gfwlist parameter
 local mydnsip = '127.0.0.1'
 local mydnsport = '5335'
 local ipsetname = 'gfwlist'
+local new_appledns = uci:get_first("shadowsocksr", "global", "apple_dns")
 local bc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 -- base64decoding
 local function base64_dec(data)
@@ -108,6 +113,29 @@ local function generate_gfwlist(type)
     os.remove("/tmp/ssr-update.tmp")
 end
 
+-- 更换 Apple dns
+local function generate_apple(type)
+	local domains, domains_map = {}, {}
+	local out = io.open("/tmp/ssr-update." .. type, "w")
+	for line in io.lines("/tmp/ssr-update.tmp") do
+		if not (string.find(line, comment_pattern)) then
+			local start, finish, match = string.find(line, domain_pattern)
+			if start and not domains_map[match] then
+				domains_map[match] = true
+				match = string.gsub(match, "%s", "") --从域名中去除所有空白字符
+				table.insert(domains, match)
+			end
+		end
+	end
+	for _, domain in ipairs(domains) do
+        if new_appledns and new_appledns ~= "" then
+            out:write(string.format("address=/%s/%s\n", domain, new_appledns))
+        end
+	end
+	out:close()
+	os.remove("/tmp/ssr-update.tmp")
+end
+
 -- adblock转码至dnsmasq格式
 local function generate_adblock(type)
 	local domains, domains_map = {}, {}
@@ -154,6 +182,22 @@ local function update(url, file, type, file2)
 			gfwlist:close()
 			generate_gfwlist(type)
 			Num = 2
+		end
+		if type == "apple_data" then
+			local apple = io.open("/tmp/ssr-update." .. type, "r")
+			local decode = apple:read("*a")
+			if decode:find("address=") then
+				apple:close()
+			else
+				apple:close()
+				-- 写回applechina
+				apple = io.open("/tmp/ssr-update.tmp", "w")
+				apple:write(decode)
+				apple:close()
+				if new_appledns and new_appledns ~= "" then
+					generate_apple(type)
+				end
+			end
 		end
 		if type == "ad_data" then
 			local adblock = io.open("/tmp/ssr-update." .. type, "r")
