@@ -214,7 +214,7 @@ if args then
 		os.exit(0)
 	end
 	if args == "apple_data" then
-		update(uci:get_first("shadowsocksr", "global", "apple_url"), "/etc/ssrplus/applechina.conf", args, TMP_PATH .. "/applechina.conf")
+		update(uci:get_first("shadowsocksr", "global", "apple_url"), "/etc/ssrplus/applechina.conf", args, TMP_DNSMASQ_PATH .. "/applechina.conf")
 		os.exit(0)
 	end
 	if args == "ad_data" then
@@ -222,7 +222,7 @@ if args then
 		os.exit(0)
 	end
 	if args == "nfip_data" then
-		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", args)
+		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", TMP_DNSMASQ_PATH .. "/netflixip.list")
 		os.exit(0)
 	end
 	if args == "geo_data" then
