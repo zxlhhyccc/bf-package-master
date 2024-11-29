@@ -222,7 +222,7 @@ if args then
 		os.exit(0)
 	end
 	if args == "nfip_data" then
-		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", TMP_DNSMASQ_PATH .. "/netflixip.list")
+		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", args, TMP_DNSMASQ_PATH .. "/netflixip.list")
 		os.exit(0)
 	end
 	if args == "geo_data" then
