@@ -7,6 +7,8 @@ uci -q batch <<-EOF >/dev/null
 	set ucitrack.@aliddns[-1].init=aliddns
 	commit ucitrack
 EOF
-
-exit 0
 }
+
+rm -rf /tmp/luci-modulecache /tmp/luci-indexcache
+exit 0
+
