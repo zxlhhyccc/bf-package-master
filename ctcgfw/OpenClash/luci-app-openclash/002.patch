@@ -12,7 +12,7 @@
  
 --- a/luasrc/model/cbi/openclash/settings.lua
 +++ b/luasrc/model/cbi/openclash/settings.lua
-@@ -38,7 +38,7 @@ m.description = translate("Note: To restore the default configuration, try acces
+@@ -26,7 +26,7 @@ m.description = translate("Note: To restore the default configuration, try acces
  "<br/>"..font_green..translate("Note: Game proxy please use nodes except VMess")..font_off..
  "<br/>"..font_green..translate("Note: If you need to perform client access control in Fake-IP mode, please change the DNS hijacking mode to firewall forwarding")..font_off..
  "<br/>"..translate("Note: The default proxy routes local traffic, BT, PT download, etc., please use Redir-Host mode as much as possible and pay attention to traffic avoidance")..

@@ -1,0 +1,109 @@
+diff --git a/luasrc/view/openclash/myip.htm b/luasrc/view/openclash/myip.htm
+index db4be40..7955bed 100644
+--- a/luasrc/view/openclash/myip.htm
++++ b/luasrc/view/openclash/myip.htm
+@@ -7,13 +7,13 @@
+     <meta http-equiv="x-dns-prefetch-control" content="on">
+     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+     <link rel="dns-prefetch" href="//whois.pconline.com.cn">
+-    <link rel="dns-prefetch" href="//pubstatic.b0.upaiyun.com">
++    <link rel="dns-prefetch" href="//myip.ipip.net">
+     <link rel="dns-prefetch" href="//api-ipv4.ip.sb">
+     <link rel="dns-prefetch" href="//api.ipify.org">
+     <link rel="dns-prefetch" href="//api.ttt.sh">
+     <link rel="dns-prefetch" href="//qqwry.api.skk.moe">
+     <link rel="dns-prefetch" href="//d.skk.moe">
+-    <link rel="preconnect" href="https://pubstatic.b0.upaiyun.com">
++    <link rel="preconnect" href="https://myip.ipip.net">
+     <link rel="preconnect" href="https://whois.pconline.com.cn">
+     <link rel="preconnect" href="https://api-ipv4.ip.sb">
+     <link rel="preconnect" href="https://api.ipify.org">
+@@ -143,7 +143,7 @@
+                 <span style="float: right;"><img src="/luci-static/resources/openclash/img/eye-light.svg" height="20px" title="<%:Hide IP%>" alt="<%:Hide IP%>" id="eye-icon" onclick="return privacy_my_ip(this)" /></span>
+             </p>
+             <p style="margin: 10px -2% 0 8%; text-align: left; padding-left: 0px !important; padding-right: 0px !important;">
+-                <span class="ip-title">UpaiYun:</span><span class="ip-result" id="ip-upaiyun"></span> <span class="ip-geo" id="ip-upaiyun-geo"></span>
++                <span class="ip-title">IPIPNET:</span><span class="ip-result" id="ip-ipipnet"></span> <span class="ip-geo" id="ip-ipipnet-geo"></span>
+             </p>
+             <p style="margin: 10px -2% 0 8%; text-align: left; padding-left: 0px !important; padding-right: 0px !important;">
+                 <span class="ip-title">PConline:</span><span class="ip-result" id="ip-pcol"></span> <span class="ip-geo" id="ip-pcol-geo"></span>
+@@ -174,7 +174,7 @@
+         </div>
+     </div>
+     <div>
+-        <p style="float: right; margin: 0.5% 2.5% 0 0; font-size:15px; line-height: 20px; padding-left: 0px !important; padding-right: 0px !important;">Powered by <a style="text-decoration: none; color: #666" onclick="return ip_skk()" href="javascript:void(0);">ip.skk.moe</a></p>
++        <p style="float: right; margin: 0.5% 2.5% 0 0; font-size:15px; line-height: 20px; padding-left: 0px !important; padding-right: 0px !important;">Powered by <a style="text-decoration: none; color: #FF0000; font-weight: bold;" onclick="return ip_skk()" href="javascript:void(0);">ip.skk.moe</a></p>
+     </div>
+     </td></tr>
+ 	</table>
+@@ -198,13 +198,13 @@
+         const $$ = document;
+         var ip_pcol_ip;
+         var ip_ipsb_ip;
+-        var ip_upaiyun_ip;
++        var ip_ipipnet_ip;
+         var ip_ipify_ip;
+         var refresh_http;
+         var refresh_ip;
+         $$.getElementById('ip-pcol').innerHTML = '<%:Querying...%>';
+         $$.getElementById('ip-ipify').innerHTML = '<%:Querying...%>';
+-        $$.getElementById('ip-upaiyun').innerHTML = '<%:Querying...%>';
++        $$.getElementById('ip-ipipnet').innerHTML = '<%:Querying...%>';
+         $$.getElementById('ip-ipsb').innerHTML = '<%:Querying...%>';
+         let random = parseInt(Math.random() * 100000000);
+         let IP = {
+@@ -426,7 +426,7 @@
+             mypage.appendChild(sbipScript);
+             
+             //HTTP.runcheck();
+-            IP.getUpaiIP();
++            IP.getIpipnetIP();
+             IP.getIpifyIP();
+         };
+ 
+@@ -438,11 +438,11 @@
+                 $$.getElementById('eye-icon').alt='<%:Show IP%>';
+                 ip_pcol_ip = $$.getElementById('ip-pcol').innerHTML;
+                 ip_ipsb_ip = $$.getElementById('ip-ipsb').innerHTML;
+-                ip_upaiyun_ip = $$.getElementById('ip-upaiyun').innerHTML;
++                ip_ipipnet_ip = $$.getElementById('ip-ipipnet').innerHTML;
+                 ip_ipify_ip = $$.getElementById('ip-ipify').innerHTML;
+                 $$.getElementById('ip-pcol').innerHTML = '***.***.***.***';
+                 $$.getElementById('ip-ipsb').innerHTML = '***.***.***.***';
+-                $$.getElementById('ip-upaiyun').innerHTML = '***.***.***.***';
++                $$.getElementById('ip-ipipnet').innerHTML = '***.***.***.***';
+                 $$.getElementById('ip-ipify').innerHTML = '***.***.***.***';
+                 addTitleOnOverflow();
+             }
+@@ -463,11 +463,11 @@
+                 imgobj.alt='<%:Show IP%>';
+                 ip_pcol_ip = $$.getElementById('ip-pcol').innerHTML;
+                 ip_ipsb_ip = $$.getElementById('ip-ipsb').innerHTML;
+-                ip_upaiyun_ip = $$.getElementById('ip-upaiyun').innerHTML;
++                ip_ipipnet_ip = $$.getElementById('ip-ipipnet').innerHTML;
+                 ip_ipify_ip = $$.getElementById('ip-ipify').innerHTML;
+                 $$.getElementById('ip-pcol').innerHTML = '***.***.***.***';
+                 $$.getElementById('ip-ipsb').innerHTML = '***.***.***.***';
+-                $$.getElementById('ip-upaiyun').innerHTML = '***.***.***.***';
++                $$.getElementById('ip-ipipnet').innerHTML = '***.***.***.***';
+                 $$.getElementById('ip-ipify').innerHTML = '***.***.***.***';
+                 addTitleOnOverflow();
+             }
+@@ -477,7 +477,7 @@
+                 imgobj.alt='<%:Hide IP%>';
+                 $$.getElementById('ip-pcol').innerHTML = ip_pcol_ip;
+                 $$.getElementById('ip-ipsb').innerHTML = ip_ipsb_ip;
+-                $$.getElementById('ip-upaiyun').innerHTML = ip_upaiyun_ip;
++                $$.getElementById('ip-ipipnet').innerHTML = ip_ipipnet_ip;
+                 $$.getElementById('ip-ipify').innerHTML = ip_ipify_ip;
+                 localStorage.removeItem('privacy_my_ip');
+                 myip_Load();
+@@ -497,7 +497,7 @@
+ 
+         HTTP.runcheck();
+         IP.getIpifyIP();
+-        IP.getUpaiIP();
++        IP.getIpipnetIP();
+         show_my_ip();
+     </script>
+     <script type="text/javascript">
