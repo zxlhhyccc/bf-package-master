@@ -129,7 +129,7 @@ local function generate_apple(type)
 	end
 	for _, domain in ipairs(domains) do
         if new_appledns and new_appledns ~= "" then
-            out:write(string.format("address=/%s/%s\n", domain, new_appledns))
+            out:write(string.format("server=/%s/%s\n", domain, new_appledns))
         end
 	end
 	out:close()
@@ -186,17 +186,16 @@ local function update(url, file, type, file2)
 		if type == "apple_data" then
 			local apple = io.open("/tmp/ssr-update." .. type, "r")
 			local decode = apple:read("*a")
-			if decode:find("address=") then
-				apple:close()
-			else
-				apple:close()
-				-- 写回applechina
-				apple = io.open("/tmp/ssr-update.tmp", "w")
-				apple:write(decode)
-				apple:close()
-				if new_appledns and new_appledns ~= "" then
-					generate_apple(type)
-				end
+			if not decode:find("apple") then
+				decode = base64_dec(decode)
+			end
+			apple:close()
+			-- 写回applechina
+			apple = io.open("/tmp/ssr-update.tmp", "w")
+			apple:write(decode)
+			apple:close()
+			if new_appledns and new_appledns ~= "" then
+				generate_apple(type)
 			end
 		end
 		if type == "ad_data" then

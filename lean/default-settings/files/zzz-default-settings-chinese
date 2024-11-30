@@ -7,6 +7,8 @@ if ! uci -q get system.@imm_init[0].system_chn > "/dev/null"; then
 		set system.@system[0].timezone="CST-8"
 		set system.@system[0].zonename="Asia/Shanghai"
 
+		set system.@system[0].zram_comp_algo="zstd"
+
 		delete system.ntp.server
 		add_list system.ntp.server="ntp.tencent.com"
 		add_list system.ntp.server="ntp1.aliyun.com"
