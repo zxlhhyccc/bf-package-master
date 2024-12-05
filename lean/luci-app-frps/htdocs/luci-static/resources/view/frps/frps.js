@@ -133,7 +133,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 		var webport = (uci.get(data[0], 'common', 'dashboard_port'));
 
 		m = new form.Map('frps', _('frp Server'),

@@ -181,7 +181,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 		var webport = (uci.get(data[0], 'common', 'admin_port'));
 
 		m = new form.Map('frpc', _('frp Client'),

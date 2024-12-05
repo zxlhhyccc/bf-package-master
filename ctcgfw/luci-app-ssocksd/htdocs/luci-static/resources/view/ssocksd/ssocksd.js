@@ -44,7 +44,7 @@ function renderStatus(isRunning) {
 
 return view.extend({
 	render: function() {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('ssocksd', _('sSocksd Server'));
 		m.description = _("sSocksd Server is a simple, small, and easy-to-use Socks5 server program, but supports TCP on IPv4 only.");
