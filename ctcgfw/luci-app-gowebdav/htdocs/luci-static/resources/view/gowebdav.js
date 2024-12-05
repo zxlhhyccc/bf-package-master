@@ -7,7 +7,7 @@
 'require uci';
 'require view';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -38,7 +38,7 @@ function renderStatus(isRunning) {
 
 return view.extend({
 	render: function() {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('gowebdav', _('GoWebDav'),
 			_('Simple WebDav server written in Go.'));

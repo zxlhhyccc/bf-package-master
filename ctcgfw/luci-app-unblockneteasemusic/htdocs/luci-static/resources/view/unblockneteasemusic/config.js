@@ -23,7 +23,7 @@ var CBIStaticList = form.DynamicList.extend({
 	}
 });
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -79,7 +79,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('unblockneteasemusic', _('解除网易云音乐播放限制'),
 			_('原理：采用 [Bilibili/JOOX/酷狗/酷我/咪咕/pyncmd/QQ/Youtube] 等音源，替换网易云音乐 无版权/收费 歌曲链接<br/>' +

@@ -19,7 +19,7 @@ return view.extend({
 	},
 
 	render: function () {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('mosdns', _('Update GeoIP & GeoSite databases'),
 			_('Automatically update GeoIP and GeoSite databases as well as ad filtering rules through scheduled tasks.'));

@@ -27,7 +27,7 @@
 'require ui';
 
 var conf = 'smartdns';
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -92,9 +92,9 @@ return view.extend({
 		]);
 	},
 	render: function (stats) {
-		var m, s, o;
-		var ss, so;
-		var servers, download_files;
+		let m, s, o;
+		let ss, so;
+		let servers, download_files;
 
 		m = new form.Map('smartdns', _('SmartDNS'));
 		m.title = _("SmartDNS Server");

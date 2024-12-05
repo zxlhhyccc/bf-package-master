@@ -6,7 +6,7 @@
 
 return view.extend({
 	render: function () {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map("mosdns", _("Rule Settings"),
 			_('The list of rules only apply to \'Default Config\' profiles.'));

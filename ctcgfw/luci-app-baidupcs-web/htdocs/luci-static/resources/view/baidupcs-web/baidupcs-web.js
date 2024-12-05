@@ -11,7 +11,7 @@
 'require ui';
 'require uci';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -51,7 +51,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 		var webport = (uci.get(data[0], 'config', 'port'));
 
 		m = new form.Map('baidupcs-web', _('BaiduPCS-Web'));

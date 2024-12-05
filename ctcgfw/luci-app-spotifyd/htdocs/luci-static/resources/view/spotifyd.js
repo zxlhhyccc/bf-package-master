@@ -5,7 +5,7 @@
 'require uci';
 'require view';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -36,7 +36,7 @@ function renderStatus(isRunning) {
 
 return view.extend({
 	render: function() {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('spotifyd', _('Spotifyd'),
 			_('An open source Spotify client running as a UNIX daemon.'));

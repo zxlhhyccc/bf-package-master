@@ -7,7 +7,7 @@
 'require uci';
 'require view';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -46,7 +46,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 		var webport = (uci.get(data[0], 'config', 'address') || '0.0.0.0:2023').split(':').slice(-1)[0];
 
 		m = new form.Map('daed', _('daed'),

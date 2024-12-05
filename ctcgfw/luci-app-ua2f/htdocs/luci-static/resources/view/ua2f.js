@@ -5,7 +5,7 @@
 'require uci';
 'require view';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -42,7 +42,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('ua2f', _('UA2F'), _('Change User-Agent to F-words.'));
 

@@ -7,7 +7,7 @@
 'require uci';
 'require view';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -44,7 +44,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('dae', _('dae'),
 			_('eBPF-based Linux high-performance transparent proxy solution.'));

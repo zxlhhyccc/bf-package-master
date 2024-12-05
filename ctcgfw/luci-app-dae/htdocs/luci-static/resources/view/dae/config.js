@@ -8,7 +8,7 @@
 
 return view.extend({
 	render: function() {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('dae', _('Configuration'),
 			_('Here you can edit dae configuration. It will be hot-reloaded automatically after apply.'));

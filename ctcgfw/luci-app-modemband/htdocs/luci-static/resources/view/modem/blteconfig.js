@@ -20,7 +20,7 @@ return view.extend({
 	},
 
 	render: function(devs) {
-		var m, s, o;
+		let m, s, o;
 		m = new form.Map('modemband', _('Configuration modemband'), _('Configuration panel for modemband and gui application.'));
 
 		s = m.section(form.TypedSection, 'modemband', '', null);

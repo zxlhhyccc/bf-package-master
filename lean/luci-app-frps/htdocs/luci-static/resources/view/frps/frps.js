@@ -93,7 +93,7 @@ function defOpts(s, opts, params) {
 	}
 }
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],

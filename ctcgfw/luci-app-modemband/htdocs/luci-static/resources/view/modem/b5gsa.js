@@ -224,7 +224,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 
 		if (data != null){
 		try {

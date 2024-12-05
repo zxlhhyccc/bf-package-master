@@ -10,7 +10,7 @@
 'require uci';
 'require view';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -47,7 +47,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		var m, s, o;
+		let m, s, o;
 
 		m = new form.Map('bitsrunlogin-go', _('BitSrunLogin-Go'),
 			_('Bit Srun auto login tool.'));
