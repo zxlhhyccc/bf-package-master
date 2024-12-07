@@ -58,7 +58,7 @@
  
 +	config_get list_update_week_time "$section" "list_update_week_time" "*"
 +	config_get list_update_day_time "$section" "list_update_day_time" "2"
-+	config_get list_update_min_time "$section" "lsit_update_min_time" "30"
++	config_get list_update_min_time "$section" "list_update_min_time" "30"
  	config_get auto_update_week_time "$section" "auto_update_week_time" "*"
  	config_get auto_update_day_time "$section" "auto_update_day_time" "5"
 +	config_get auto_update_min_time "$section" "auto_update_min_time" "0"

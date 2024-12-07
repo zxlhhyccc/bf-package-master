@@ -1,130 +1,133 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0-only
 #
-# Copyright (C) 2023 ImmortalWrt.org
-
-# 更新 Smartdns GFWlist 规则
-# Configuration
-GFW_LIST="gfwlist.txt"
-
-CONFIG_FOLDER="/etc/smartdns/domain-set"
-GFWLIST_CONFIG_FILE="gfwlist.conf"
-GFWLIST_OUTPUT_FILE="$CONFIG_FOLDER/$GFWLIST_CONFIG_FILE"
+# Copyright (C) 2024 OpenWrt.org
 
 CUR_DIR=$(pwd)
-TMP_DIR=$(mktemp -d /tmp/gfwlist.XXXXXX)
+TMP_DIR=$(mktemp -d /tmp/list.XXXXXX)
 
-# Function to fetch GFW list data
-function fetch_gfwlist_data() {
+IP_CONFIG_FOLDER="/etc/smartdns"
+LIST_CONFIG_FOLDER="/etc/smartdns/domain-set"
+
+# 确保存放config的文件夹存在
+mkdir -p "$(dirname "$IP_CONFIG_FOLDER")"
+mkdir -p "$(dirname "$LIST_CONFIG_FOLDER")"
+
+# 更新 Smartdns China List 规则
+# 配置
+CHINA_LIST="chinalist.txt"
+
+CHINALIST_CONFIG_FILE="chinaList.conf"
+CHINALIST_OUTPUT_FILE="$LIST_CONFIG_FOLDER/direct-domain-list.conf"
+
+# 获取中国域名列表数据
+function fetch_chinalist() {
+    echo "Fetching China domain list data..."
+    cd "$TMP_DIR" || exit 1
+
+    # 获取IP列表
+    curl -sSl https://fastly.jsdelivr.net/gh/zxlhhyccc/smartdns-list-scripts/direct-domain-list.conf > "$CHINA_LIST"
+
+    # 等待所有后台进程完成
+    wait
+
+    echo "Download successful, updating..."
+    cd "$CUR_DIR" || exit 1
+}
+
+# 生成中国域名列表
+function gen_chinalist() {
+    echo "Generating China domain list..."
+    cd "$TMP_DIR" || exit 1
+
+    # 清空旧列表
+    cat /dev/null > "$CHINALIST_OUTPUT_FILE"
+
+    # 删除空行和无效行并输出到最终列表
+    sed -e '/^$/d' "$CHINA_LIST" > "$CHINALIST_CONFIG_FILE"
+
+    # 将结果写入最终的配置文件
+    cat "$CHINALIST_CONFIG_FILE" >> "$CHINALIST_OUTPUT_FILE"
+
+    cd "$CUR_DIR" || exit 1
+    echo "China domain list generation completed."
+}
+
+# 执行函数
+fetch_chinalist
+gen_chinalist
+
+# 更新 Smartdns GFWlist 规则
+# 配置
+GFW_LIST="temp_gfwlist.txt"
+
+GFWLIST_CONFIG_FILE="gfwlist.conf"
+GFWLIST_OUTPUT_FILE="$LIST_CONFIG_FOLDER/proxy-domain-list.conf"
+
+# 获取 GFW 列表数据
+function fetch_gfwlist() {
   echo "Fetching GFW lists..."
   cd "$TMP_DIR" || exit 1
 
-  # Parallel downloads
-  curl -sS https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt | \
-    base64 -d | sort -u | sed '/^$\|@@/d' | sed 's#!.\+##; s#|##g; s#@##g; s#http:\/\/##; s#https:\/\/##;' | \
-    sed '/apple\.com/d; /sina\.cn/d; /sina\.com\.cn/d; /baidu\.com/d; /qq\.com/d' | \
-    sed '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/d' | grep '^[0-9a-zA-Z\.-]\+$' | \
-    grep '\.' | sed 's#^\.\+##' | sort -u > temp_gfwlist1 &
+  # 下载
+  curl -sSl https://fastly.jsdelivr.net/gh/zxlhhyccc/smartdns-list-scripts/proxy-domain-list.conf > "$GFW_LIST"
 
-  curl -sS https://raw.githubusercontent.com/hq450/fancyss/master/rules/gfwlist.conf | \
-    sed 's/ipset=\/\.//g; s/\/gfwlist//g; /^server/d' > temp_gfwlist2 &
-
-  curl -sS https://testingcf.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/proxy-list.txt | \
-    sed "/^$/d;s/\r//g;s/^[ ]*$//g;/^#/d;/regexp:/d;s/full://g" > temp_gfwlist3 &
-
-  curl -sS https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt > temp_gfwlist4 &
-
-  curl -sS https://raw.githubusercontent.com/ixmu/smartdns-conf/refs/heads/main/script/cust_gfwdomain.conf > temp_gfwlist5 &
-
-  # Wait for all background processes to finish
+  # 等待所有后台进程完成
   wait
 
   echo "Download successful, updating..."
   cd "$CUR_DIR" || exit 1
 }
 
-# Ensure configuration folder exists
-mkdir -p "$CONFIG_FOLDER"
-
-# Function to generate the final GFW list
+# 生成最终的GFW列表
 function gen_gfwlist() {
   echo "Generating GFW list..."
   cd "$TMP_DIR" || exit 1
 
-  cat /dev/null > $CONFIG_FOLDER/proxy-domain-list.conf
+  # 清空旧列表
+  cat /dev/null > "$GFWLIST_OUTPUT_FILE"
 
-  # Combine all temp files, clean up, and save to the output file
-  cat temp_gfwlist1 temp_gfwlist2 temp_gfwlist3 temp_gfwlist4 temp_gfwlist5 | \
-    sort -u | sed 's/^\s*//g; s/\s*$//g' > "$GFW_LIST"
+  # 删除空行并输出到最终配置
+  sed -e '/^$/d' "$GFW_LIST" > "$GFWLIST_CONFIG_FILE"
 
-  # Remove empty lines and output to final configuration
-  sed -e '/^$/d' "$GFW_LIST" > "$GFWLIST_OUTPUT_FILE"
-
-  # Append to proxy-domain-list.conf
-  cat "$GFWLIST_OUTPUT_FILE" >> "$CONFIG_FOLDER/proxy-domain-list.conf"
+  # 添加到proxy-domain-list.conf
+  cat "$GFWLIST_CONFIG_FILE" >> "$GFWLIST_OUTPUT_FILE"
   cd "$CUR_DIR" || exit 1
 
-  echo "GFW list generated at $GFWLIST_OUTPUT_FILE"
+  echo "GFW list generation completed."
 }
 
-# Function to clean up temporary files
-function clean_gfwlist_up() {
-  echo "Cleaning up..."
-  rm -rf "$TMP_DIR"
-  rm -f "$GFWLIST_OUTPUT_FILE"
-  echo "[gfwlist]: OK."
-}
-
-# Run the script steps
-fetch_gfwlist_data
+# 执行函数
+fetch_gfwlist
 gen_gfwlist
-clean_gfwlist_up
 
-# 更新 Smartdns chnroute 黑白名单
-# China IP4 Download Link
-# Smartdns Config File Path
+# 更新 Smartdns 白名单列表
+# 配置
+CLANG_LIST="tmp_whitelist.txt"
 
-# Configuration
-FILE_IPV4="tmp/chnroute.txt"
-NAME_IPV4="$(basename "$FILE_IPV4")"
+WHITELIST_CONFIG_FOLDER="/etc/smartdns"
+WHITELIST_CONFIG_FILE="whitelist.conf"
+WHITELIST_OUTPUT_FILE="$IP_CONFIG_FOLDER/whitelist-ip.conf"
 
-CLANG_LIST="clang.txt"
-
-CONFIG_FOLDER="/etc/smartdns"
-WHITELIST_CONFIG_FILE="whitelist-chnroute.conf"
-BLACKLIST_CONFIG_FILE="blacklist-chnroute.conf"
-
-WHITELIST_OUTPUT_FILE="$CONFIG_FOLDER/$WHITELIST_CONFIG_FILE"
-BLACKLIST_OUTPUT_FILE="$CONFIG_FOLDER/$BLACKLIST_CONFIG_FILE"
-
-CUR_DIR=$(pwd)
-TMP_DIR=$(mktemp -d /tmp/chnroute.XXXXXX)
-
-# Function to fetch China IP route data
-function fetch_chnroute_data() {
-  echo "Fetching China route data..."
+# 获取白名单数据
+function fetch_whitelist() {
+  echo "Fetching Whitelist Data..."
   cd "$TMP_DIR" || exit 1
 
-  # Fetching different IP lists
-  qqwry=$(curl -kLfsm 5 https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt)
-  ipipnet=$(curl -kLfsm 5 https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt)
-  clang=$(curl -kLfsm 5 https://ispip.clang.cn/all_cn.txt)
+  # 获取IP列表
+  curl -sSl https://fastly.jsdelivr.net/gh/zxlhhyccc/smartdns-list-scripts/whitelist-ip.conf > "$CLANG_LIST"
 
-  # Combine and process IP lists, remove empty lines and duplicates
-  iplist="${qqwry}\n${ipipnet}\n${clang}"
-  echo -e "$iplist" | sort -u | sed -e '/^$/d' > "$CLANG_LIST"
-
-  # Wait for all background processes to finish
+  # 等待所有后台进程完成
   wait
 
   echo "Download successful, updating..."
   cd "$CUR_DIR" || exit 1
 }
 
-# Ensure config folder exists
-mkdir -p "$CONFIG_FOLDER"
+# 清空旧列表
+cat /dev/null > "$WHITELIST_OUTPUT_FILE"
 
-# Pre-populate whitelist and blacklist config files
+# 预填充白名单配置文件
 cat > "$WHITELIST_OUTPUT_FILE" <<EOF
 # Add IP whitelist which you want to filtering from some DNS server here.
 # The example below filtering ip from the result of DNS server which is configured with -whitelist-ip.
@@ -132,6 +135,50 @@ cat > "$WHITELIST_OUTPUT_FILE" <<EOF
 # whitelist-ip 254.0.0.1/16
 EOF
 
+# 生成白名单列表
+function gen_whitelist() {
+  echo "Generating Whitelist..."
+  cd "$TMP_DIR" || exit 1
+
+  # 处理IP列表，删除空行
+  sed -e '/^$/d' "$CLANG_LIST" > "$WHITELIST_CONFIG_FILE"
+
+  # 将结果写入最终的配置文件
+  cat "$WHITELIST_CONFIG_FILE" >> "$WHITELIST_OUTPUT_FILE"
+
+  cd "$CUR_DIR" || exit 1
+  echo "Whitelist generation completed."
+}
+
+# 执行函数
+fetch_whitelist
+gen_whitelist
+
+# 更新 Smartdns 黑名单列表
+BLACK_LIST="tmp_blacklist.txt"
+
+BLACKLIST_CONFIG_FILE="blacklist.conf"
+BLACKLIST_OUTPUT_FILE="$IP_CONFIG_FOLDER/blacklist-ip.conf"
+
+# 获取黑名单数据
+function fetch_blacklist() {
+    echo "Fetching BlackList Data..."
+    cd "$TMP_DIR" || exit 1
+
+    # 获取IP列表
+    curl -sSl https://fastly.jsdelivr.net/gh/zxlhhyccc/smartdns-list-scripts/blacklist-ip.conf > "$BLACK_LIST"
+
+    # 等待所有后台进程完成
+    wait
+
+    echo "Download successful, updating..."
+    cd "$CUR_DIR" || exit 1
+}
+
+# 清空旧列表
+cat /dev/null > "$BLACKLIST_OUTPUT_FILE"
+
+# 预填充黑名单配置文件
 cat > "$BLACKLIST_OUTPUT_FILE" <<EOF
 # Add IP blacklist which you want to filtering from some DNS server here.
 # The example below filtering ip from the result of DNS server which is configured with -blacklist-ip.
@@ -139,108 +186,37 @@ cat > "$BLACKLIST_OUTPUT_FILE" <<EOF
 # blacklist-ip 254.0.0.1/16
 EOF
 
-# Function to generate IPv4 routes for China
-function gen_ipv4_chnroute() {
-  echo "Generating IPv4 chnroute..."
-  cd "$TMP_DIR" || exit 1
+# 生成黑名单列表
+function gen_blacklist() {
+    echo "Generating BlackList..."
+    cd "$TMP_DIR" || exit 1
 
-  # Aggregate IP ranges and process
-  aggregate -q < "$CLANG_LIST" > "$NAME_IPV4"
+    # 删除空行和无效行并输出到最终列表
+    sed -e '/^$/d' "$BLACK_LIST" > "$BLACKLIST_CONFIG_FILE"
 
-  # Append to whitelist and blacklist configuration files
-  while read -r line; do
-    echo "whitelist-ip $line" >> "$WHITELIST_OUTPUT_FILE"
-    echo "blacklist-ip $line" >> "$BLACKLIST_OUTPUT_FILE"
-  done < "$NAME_IPV4"
+    # 将结果写入最终的配置文件
+    cat "$BLACKLIST_CONFIG_FILE" >> "$BLACKLIST_OUTPUT_FILE"
 
-  # Write the results to the final configuration files
-  cp "$WHITELIST_OUTPUT_FILE" "$CONFIG_FOLDER/whitelist-ip.conf"
-  cp "$BLACKLIST_OUTPUT_FILE" "$CONFIG_FOLDER/blacklist-ip.conf"
-
-  cd "$CUR_DIR" || exit 1
-  echo "Chnroute generation completed."
+    cd "$CUR_DIR" || exit 1
+    echo "BlackList Generation Completed."
 }
 
-# Function to clean up temporary files and directories
-function clean_chnroute_up() {
-  echo "Cleaning up..."
-  rm -rf "$TMP_DIR"
-  rm -f "$WHITELIST_OUTPUT_FILE" "$BLACKLIST_OUTPUT_FILE"
-  echo "[chnroute]: OK."
-}
-
-# Execute the functions
-fetch_chnroute_data
-gen_ipv4_chnroute
-clean_chnroute_up
+# 执行函数
+fetch_blacklist
+gen_blacklist
 
 # chmod 644 $WHITELIST_OUTPUT_FILE $BLACKLIST_OUTPUT_FILE
 
-# 更新 Smartdns China List 规则
-# Configuration
-CHINA_LIST="chinalist.txt"
-
-CONFIG_FOLDER="/etc/smartdns/domain-set"
-CHINALIST_CONFIG_FILE="chinaList.conf"
-CHINALIST_OUTPUT_FILE="$CONFIG_FOLDER/$CHINALIST_CONFIG_FILE"
-
-CUR_DIR=$(pwd)
-TMP_DIR=$(mktemp -d /tmp/chinalist.XXXXXX)
-
-# Function to fetch China domain list data
-function fetch_chinalist_data() {
-  echo "Fetching China domain list data..."
-  cd "$TMP_DIR" || exit 1
-
-  # Fetch accelerated domains and direct domains
-  accelerated_domains=$(curl -kLfsm 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf)
-
-  curl -sS https://testingcf.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/direct-list.txt | \
-    sed "/^$/d;s/\r//g;s/^[ ]*$//g;/^#/d;/regexp:/d;s/full://g" > temp_direct_domains
-
-  # Wait for all background processes to finish
-  wait
-
-  echo "Download successful, updating..."
-  cd "$CUR_DIR" || exit 1
-}
-
-# Ensure the config folder exists
-mkdir -p "$CONFIG_FOLDER"
-
-# Function to generate the China domain list
-function gen_chinalist() {
-  echo "Generating China domain list..."
-  cd "$TMP_DIR" || exit 1
-
-  # Prepare the list by combining, sorting, and cleaning the domains
-  direct_domains=$(cat temp_direct_domains)
-  domain_list="${accelerated_domains}\n${direct_domains}"
-
-  echo -e "$domain_list" | \
-    sort | uniq | \
-    sed -e 's/#.*//g' -e '/^$/d' -e 's/server=\///g' -e 's/\/114.114.114.114//g' | \
-    sort -u > "$CHINALIST_OUTPUT_FILE"
-
-  # Append the final list to the output config
-  cp "$CHINALIST_OUTPUT_FILE" "$CONFIG_FOLDER/direct-domain-list.conf"
-
-  cd "$CUR_DIR" || exit 1
-  echo "China domain list generation completed."
-}
-
-# Function to clean up temporary files
-function clean_chinalist_up() {
+# 清理临时文件
+function clean_up() {
   echo "Cleaning up..."
   rm -rf "$TMP_DIR"
-  rm -f "$CHINALIST_OUTPUT_FILE"
-  echo "[chinalist]: OK."
+  echo "[list]: OK."
 }
 
-# Execute the functions
-fetch_chinalist_data
-gen_chinalist
-clean_chinalist_up
+# 清理并重启 Smartdns
+clean_up
 
-/etc/init.d/smartdns reload
+# 重启 SmartDNS 服务
+/etc/init.d/smartdns restart
 
