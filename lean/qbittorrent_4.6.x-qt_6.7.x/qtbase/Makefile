@@ -162,6 +162,7 @@ CMAKE_OPTIONS += \
 	-DFEATURE_sql_mimer=OFF \
 	\
 	-DFEATURE_xml=ON \
+	-DFEATURE_xkbcommon=OFF \
 	\
 	-DQT_BUILD_EXAMPLES=OFF \
 	-DQT_BUILD_TESTS=OFF \
