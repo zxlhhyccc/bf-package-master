@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openclash-meta
+PKG_NAME:=openclash_meta
 PKG_BASE_VERSION:=alpha
 PKG_RELEASE:=1
 
@@ -8,7 +8,7 @@ PKG_SOURCE_PROTO:=git
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-g$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/MetaCubeX/mihomo.git
 PKG_SOURCE_VERSION:=5d9d8f4d3bb6563563f37bef56fb1a09906995c6
-PKG_MIRROR_HASH:=6e39f4d39889eefabf0231427fbcbe5c09f2535725414c77bc96cd2a77416230
+PKG_MIRROR_HASH:=28439fc8475e830006af7ce52d19adf97f0100b4b903cc7954fbeec68c727e78
 
 PKG_REV:=$(shell git rev-parse --short=7 $(PKG_SOURCE_VERSION))
 # PKG_REV:=$(shell echo $(PKG_SOURCE_VERSION) | cut -c1-7)
