@@ -14,12 +14,8 @@ if ! uci -q get system.@imm_init[0].system_chn > "/dev/null"; then
 		add_list system.ntp.server="cn.ntp.org.cn"
 
 		set system.@imm_init[0].system_chn="1"
+		commit system
 	EOF
-
-	if [ -f "/etc/init.d/zram" ]; then
-		uci -q set system.@system[0].zram_comp_algo="zstd"
-	fi
-		uci commit system
 fi
 
 sed -i.bak "s,downloads.immortalwrt.org,mirrors.vsean.net/openwrt,g" "/etc/opkg/distfeeds.conf"
