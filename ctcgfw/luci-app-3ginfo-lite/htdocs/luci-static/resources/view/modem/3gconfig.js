@@ -22,7 +22,7 @@ return view.extend({
 	},
 
 	render: function(devs) {
-		let m, s, o;
+		var m, s, o;
 		m = new form.Map('3ginfo', _('Configuration 3ginfo-lite'), _('Configuration panel for the 3ginfo-lite application.'));
 
 		s = m.section(form.TypedSection, '3ginfo', '', null);

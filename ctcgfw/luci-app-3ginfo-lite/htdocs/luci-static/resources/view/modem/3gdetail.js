@@ -463,7 +463,7 @@ simDialog: baseclass.extend({
 	},
 
 	render: function(data) {
-		let m, s, o;
+		var m, s, o;
 
 		active_select();
 
