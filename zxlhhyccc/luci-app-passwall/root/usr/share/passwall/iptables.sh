@@ -214,11 +214,11 @@ load_acl() {
 			[ "$tcp_redir_ports" = "default" ] && tcp_redir_ports=$TCP_REDIR_PORTS
 			[ "$udp_redir_ports" = "default" ] && udp_redir_ports=$UDP_REDIR_PORTS
 
-			[ -n $(get_cache_var "ACL_${sid}_tcp_node") ] && tcp_node=$(get_cache_var "ACL_${sid}_tcp_node")
-			[ -n $(get_cache_var "ACL_${sid}_udp_node") ] && udp_node=$(get_cache_var "ACL_${sid}_udp_node")
-			[ -n $(get_cache_var "ACL_${sid}_tcp_port") ] && tcp_port=$(get_cache_var "ACL_${sid}_tcp_port")
-			[ -n $(get_cache_var "ACL_${sid}_udp_port") ] && udp_port=$(get_cache_var "ACL_${sid}_udp_port")
-			[ -n $(get_cache_var "ACL_${sid}_dns_port") ] && dns_redirect_port=$(get_cache_var "ACL_${sid}_dns_port")
+			[ -n "$(get_cache_var "ACL_${sid}_tcp_node")" ] && tcp_node=$(get_cache_var "ACL_${sid}_tcp_node")
+			[ -n "$(get_cache_var "ACL_${sid}_udp_node")" ] && udp_node=$(get_cache_var "ACL_${sid}_udp_node")
+			[ -n "$(get_cache_var "ACL_${sid}_tcp_port")" ] && tcp_port=$(get_cache_var "ACL_${sid}_tcp_port")
+			[ -n "$(get_cache_var "ACL_${sid}_udp_port")" ] && udp_port=$(get_cache_var "ACL_${sid}_udp_port")
+			[ -n "$(get_cache_var "ACL_${sid}_dns_port")" ] && dns_redirect_port=$(get_cache_var "ACL_${sid}_dns_port")
 
 			use_shunt_tcp=0
 			use_shunt_udp=0
@@ -640,7 +640,6 @@ load_acl() {
 				}
 
 				echolog "     - ${msg2}"
-				udp_flag=1
 			}
 		fi
 		$ipt_m -A PSW $(comment "默认") -p udp -j RETURN
@@ -1015,8 +1014,6 @@ add_firewall_rule() {
 	
 	[ "$TCP_UDP" = "1" ] && [ "$UDP_NODE" = "nil" ] && UDP_NODE=$TCP_NODE
 
-	filter_direct_node_list
-
 	[ "$ENABLED_DEFAULT_ACL" == 1 ] && {
 		local ipt_tmp=$ipt_n
 		if [ -n "${is_tproxy}" ]; then
@@ -1220,6 +1217,8 @@ add_firewall_rule() {
 	#  加载ACLS
 	load_acl
 
+	filter_direct_node_list
+
 	[ -d "${TMP_IFACE_PATH}" ] && {
 		for iface in $(ls ${TMP_IFACE_PATH}); do
 			$ipt_n -I PSW_OUTPUT -o $iface -j RETURN
@@ -1230,16 +1229,6 @@ add_firewall_rule() {
 	$ipt_n -I PREROUTING $(comment "PSW") -m mark --mark 1 -j RETURN
 	$ip6t_n -I PREROUTING $(comment "PSW") -m mark --mark 1 -j RETURN
 
-	[ -n "${is_tproxy}" -o -n "${udp_flag}" ] && {
-		bridge_nf_ipt=$(sysctl -e -n net.bridge.bridge-nf-call-iptables)
-		set_cache_var "origin_bridge_nf_ipt" "$bridge_nf_ipt"
-		sysctl -w net.bridge.bridge-nf-call-iptables=0 >/dev/null 2>&1
-		[ "$PROXY_IPV6" == "1" ] && {
-			bridge_nf_ip6t=$(sysctl -e -n net.bridge.bridge-nf-call-ip6tables)
-			set_cache_var "origin_bridge_nf_ip6t" "$bridge_nf_ip6t"
-			sysctl -w net.bridge.bridge-nf-call-ip6tables=0 >/dev/null 2>&1
-		}
-	}
 	echolog "防火墙规则加载完成！"
 }
 
