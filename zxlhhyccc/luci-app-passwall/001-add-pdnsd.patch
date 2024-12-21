@@ -186,7 +186,7 @@ diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/pass
 index 93b0758..14b196c 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -403,6 +403,14 @@ dns_mode:value("tcp", translatef("Requery DNS By %s", "TCP"))
+@@ -416,6 +416,14 @@ dns_mode:value("tcp", translatef("Requery DNS By %s", "TCP"))
  if chinadns_tls == 0 then
  	o:value("dot", translatef("Requery DNS By %s", "DoT"))
  end
@@ -201,7 +201,7 @@ index 93b0758..14b196c 100644
  if api.is_finded("dns2socks") then
  	o:value("dns2socks", "dns2socks")
  end
-@@ -412,6 +420,7 @@ end
+@@ -425,6 +433,7 @@ end
  if has_xray then
  	o:value("xray", "Xray")
  end
@@ -209,7 +209,7 @@ index 93b0758..14b196c 100644
  if api.is_finded("smartdns") then
  	o:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
  end
-@@ -466,6 +475,8 @@ o:value("149.112.112.112", "149.112.112.112 (Quad9)")
+@@ -479,6 +488,8 @@ o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
  o:depends({dns_mode = "dns2socks"})
@@ -218,7 +218,7 @@ index 93b0758..14b196c 100644
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({xray_dns_mode = "tcp"})
-@@ -527,6 +538,17 @@ o.validate = function(self, value, t)
+@@ -540,6 +551,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -332,7 +332,7 @@ index 4e86d3d..3c04d01 100755
  		fi
  	;;
  	esac
-@@ -1628,6 +1643,73 @@ start_dns() {
+@@ -1630,6 +1645,73 @@ start_dns() {
  	fi
  }
  
@@ -406,7 +406,7 @@ index 4e86d3d..3c04d01 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2103,7 +2185,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -2117,7 +2199,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
