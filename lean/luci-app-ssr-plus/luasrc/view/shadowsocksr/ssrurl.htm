@@ -242,7 +242,7 @@ function import_ssr_url(btn, urlname, sid) {
 			document.getElementsByName('cbid.shadowsocksr.' + sid + '.transport')[0].value = 
 				params.get("type") == "http" ? "h2" : 
 				(["tcp", "raw"].includes(params.get("type")) ? "raw" : 
-				(params.get("type") || "tcp"));
+				(params.get("type") || "raw"));
 			document.getElementsByName('cbid.shadowsocksr.' + sid + '.transport')[0].dispatchEvent(event);
 			switch (params.get("type")) {
 			case "ws":
