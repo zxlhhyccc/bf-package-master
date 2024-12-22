@@ -218,7 +218,7 @@ index 93b0758..14b196c 100644
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
  o:depends({xray_dns_mode = "tcp"})
-@@ -540,6 +551,17 @@ o.validate = function(self, value, t)
+@@ -541,6 +552,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -253,7 +253,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 46aca81..fa0ac10 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -169,6 +169,9 @@ msgstr "远程 DNS DoH"
+@@ -166,6 +166,9 @@ msgstr "远程 DNS DoH"
  msgid "Remote DNS DoT"
  msgstr "远程 DNS DoT"
  
@@ -263,7 +263,7 @@ index 46aca81..fa0ac10 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -307,6 +310,12 @@ msgstr "关闭（不使用）"
+@@ -298,6 +301,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -332,7 +332,7 @@ index 4e86d3d..3c04d01 100755
  		fi
  	;;
  	esac
-@@ -1630,6 +1645,73 @@ start_dns() {
+@@ -1635,6 +1650,73 @@ start_dns() {
  	fi
  }
  
@@ -406,7 +406,7 @@ index 4e86d3d..3c04d01 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2117,7 +2199,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -2124,7 +2206,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
