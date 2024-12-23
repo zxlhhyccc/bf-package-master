@@ -165,6 +165,14 @@ if nixio.fs.access("/usr/bin/kcptun-client") then
 	end
 end
 
+s = m:field(Button, "Restart", translate("Restart ShadowSocksR Plus+"))
+s.inputtitle = translate("Restart Service")
+s.inputstyle = "reload"
+s.write = function()
+	luci.sys.call("/etc/init.d/shadowsocksr restart >/dev/null 2>&1 &")
+	luci.http.redirect(luci.dispatcher.build_url("admin", "services", "shadowsocksr", "client"))
+end
+
 s = m:field(DummyValue, "google", translate("Google Connectivity"))
 s.value = translate("No Check")
 s.template = "shadowsocksr/check"
