@@ -292,7 +292,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index 4e86d3d..3c04d01 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1536,11 +1536,26 @@ start_dns() {
+@@ -1537,11 +1537,26 @@ start_dns() {
  			fi
  		fi
  	;;
@@ -319,7 +319,7 @@ index 4e86d3d..3c04d01 100755
  		else
  			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
  			echolog "  - udp://${TUN_DNS}"
-@@ -1551,9 +1566,9 @@ start_dns() {
+@@ -1552,9 +1567,9 @@ start_dns() {
  		if [ "$DNS_SHUNT" = "chinadns-ng" ] && [ -n "$(first_type chinadns-ng)" ]; then
  			local china_ng_listen_port=${dns_listen_port}
  			local china_ng_trust_dns="tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/:/#/g')"
@@ -332,7 +332,7 @@ index 4e86d3d..3c04d01 100755
  		fi
  	;;
  	esac
-@@ -1647,6 +1662,73 @@ start_dns() {
+@@ -1648,6 +1663,73 @@ start_dns() {
  	fi
  }
  
@@ -406,7 +406,7 @@ index 4e86d3d..3c04d01 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2136,7 +2218,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -2137,7 +2219,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
