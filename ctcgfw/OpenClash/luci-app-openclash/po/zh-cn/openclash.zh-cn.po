@@ -915,7 +915,7 @@ msgstr "文件名"
 msgid "Grammar Check"
 msgstr "语法检查"
 
-msgid "Switch"
+msgid "SwiTch"
 msgstr "切换"
 
 msgid "Size"
@@ -3455,3 +3455,6 @@ msgstr "内部端口"
 
 msgid "Target"
 msgstr "对象"
+
+msgid "Error: Network Anomaly, Suspend Unlock Detection..."
+msgstr "错误：网络异常，暂停解锁检测..."
