@@ -28,9 +28,6 @@ else ifeq ($(ARCH),arm)
   else
     PKG_ARCH:=$(PKG_NAME)+wolfssl@arm-linux-musleabihf@generic+v7a@fast+lto
     PKG_HASH:=e7a42ed517c73c56bdd7ddf52b5e1263b7aea488ceb82c303278fc7760353b90
-  else
-    PKG_ARCH:=$(PKG_NAME)+wolfssl@arm-linux-musleabi@generic+v5te+soft_float@fast+lto
-    PKG_HASH:=8c4578085c1d265f9ec461aea53699b1f7619abd69850dec036298935c92a24c
   endif
 else ifeq ($(ARCH),mips)
   PKG_ARCH:=$(PKG_NAME)+wolfssl@mips-linux-musl@mips32+soft_float@fast+lto
