@@ -6,6 +6,8 @@ if not api.finded_com("xray") then
 	return
 end
 
+local fs = api.fs
+
 local type_name = "Xray"
 
 local option_prefix = "xray_"
@@ -174,7 +176,7 @@ o.default = m:get(s.section, "tls_certificateFile") or "/etc/config/ssl/" .. arg
 o:depends({ [_n("tls")] = true, [_n("reality")] = false })
 o.validate = function(self, value, t)
 	if value and value ~= "" then
-		if not nixio.fs.access(value) then
+		if not fs.access(value) then
 			return nil, translate("Can't find this file!")
 		else
 			return value
@@ -188,7 +190,7 @@ o.default = m:get(s.section, "tls_keyFile") or "/etc/config/ssl/" .. arg[1] .. "
 o:depends({ [_n("tls")] = true, [_n("reality")] = false })
 o.validate = function(self, value, t)
 	if value and value ~= "" then
-		if not nixio.fs.access(value) then
+		if not fs.access(value) then
 			return nil, translate("Can't find this file!")
 		else
 			return value
@@ -201,7 +203,6 @@ o = s:option(ListValue, _n("transport"), translate("Transport"))
 o:value("raw", "RAW")
 o:value("mkcp", "mKCP")
 o:value("ws", "WebSocket")
-o:value("h2", "HTTP/2")
 o:value("ds", "DomainSocket")
 o:value("quic", "QUIC")
 o:value("grpc", "gRPC")
@@ -244,14 +245,6 @@ o:depends({ [_n("transport")] = "xhttp" })
 o = s:option(Value, _n("xhttp_maxconcurrentuploads"), translate("maxConcurrentUploads"))
 o.default = "10"
 o:depends({ [_n("transport")] = "xhttp" })
-
--- [[ HTTP/2部分 ]]--
-
-o = s:option(Value, _n("h2_host"), translate("HTTP/2 Host"))
-o:depends({ [_n("transport")] = "h2" })
-
-o = s:option(Value, _n("h2_path"), translate("HTTP/2 Path"))
-o:depends({ [_n("transport")] = "h2" })
 
 -- [[ TCP部分 ]]--
 

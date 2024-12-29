@@ -3,8 +3,6 @@
 ------------------------------------------------
 -- @author William Chan <root@williamchan.me>
 ------------------------------------------------
-require 'nixio'
-require 'luci.model.uci'
 require 'luci.util'
 require 'luci.jsonc'
 require 'luci.sys'
@@ -19,7 +17,8 @@ local ssub, slen, schar, sbyte, sformat, sgsub = string.sub, string.len, string.
 local split = api.split
 local jsonParse, jsonStringify = luci.jsonc.parse, luci.jsonc.stringify
 local base64Decode = api.base64Decode
-local uci = luci.model.uci.cursor()
+local uci = api.libuci
+local fs = api.fs
 uci:revert(appname)
 
 local has_ss = api.is_finded("ss-redir")
@@ -229,7 +228,7 @@ do
 				set = function(o)
 					for kk, vv in pairs(CONFIG) do
 						if (vv.remarks == id .. "备用节点的列表") then
-							uci:set_list(appname, id, "autoswitch_backup_node", vv.new_nodes)
+							api.uci_set_list(uci, appname, id, "autoswitch_backup_node", vv.new_nodes)
 						end
 					end
 				end
@@ -300,8 +299,8 @@ do
 						if (vv.remarks == "Xray负载均衡节点[" .. node_id .. "]列表") then
 							uci:foreach(appname, "nodes", function(node2)
 								if node2[".name"] == node[".name"] then
-									local section = uci:section(appname, "nodes", node_id)
-									uci:set_list(appname, section, "balancing_node", vv.new_nodes)
+									local section = api.uci_section(uci, appname, "nodes", node_id)
+									api.uci_set_list(uci, appname, section, "balancing_node", vv.new_nodes)
 								end
 							end)
 						end
@@ -466,7 +465,12 @@ local function processData(szType, content, add_mode, add_from)
 		elseif result.type == "Xray" and info.net == "tcp" then
 			info.net = "raw"
 		end
-		result.transport = info.net
+		if info.net == 'h2' or info.net == 'http' then
+			info.net = "http"
+			result.transport = (result.type == "Xray") and "xhttp" or "http"
+		else
+			result.transport = info.net
+		end
 		if info.net == 'ws' then
 			result.ws_host = info.host
 			result.ws_path = info.path
@@ -486,9 +490,15 @@ local function processData(szType, content, add_mode, add_from)
 				end
 			end
 		end
-		if info.net == 'h2' then
-			result.h2_host = info.host
-			result.h2_path = info.path
+		if info.net == "http" then
+			if result.type == "Xray" then
+				result.xhttp_mode = "stream-one"
+				result.xhttp_host = info.host
+				result.xhttp_path = info.path
+			else
+				result.http_host = info.host
+				result.http_path = info.path
+			end
 		end
 		if info.net == 'raw' or info.net == 'tcp' then
 			if info.type and info.type ~= "http" then
@@ -668,7 +678,12 @@ local function processData(szType, content, add_mode, add_from)
 				elseif result.type == "Xray" and params.type == "tcp" then
 					params.type = "raw"
 				end
-				result.transport = params.type
+				if params.type == "h2" or params.type == "http" then
+					params.type = "http"
+					result.transport = (result.type == "Xray") and "xhttp" or "http"
+				else
+					result.transport = params.type
+				end
 				if result.type ~= "SS-Rust" and result.type ~= "SS" then
 					if params.type == 'ws' then
 						result.ws_host = params.host
@@ -689,15 +704,16 @@ local function processData(szType, content, add_mode, add_from)
 							end
 						end
 					end
-					if params.type == 'h2' or params.type == 'http' then
+					if params.type == "http" then
 						if result.type == "sing-box" then
 							result.transport = "http"
 							result.http_host = params.host
 							result.http_path = params.path
-						elseif result.type == "xray" then
-							result.transport = "h2"
-							result.h2_host = params.host
-							result.h2_path = params.path
+						elseif result.type == "Xray" then
+							result.transport = "xhttp"
+							result.xhttp_mode = "stream-one"
+							result.xhttp_host = params.host
+							result.xhttp_path = params.path
 						end
 					end
 					if params.type == 'raw' or params.type == 'tcp' then
@@ -815,7 +831,12 @@ local function processData(szType, content, add_mode, add_from)
 			elseif result.type == "Xray" and params.type == "tcp" then
 				params.type = "raw"
 			end
-			result.transport = params.type
+			if params.type == "h2" or params.type == "http" then
+				params.type = "http"
+				result.transport = (result.type == "Xray") and "xhttp" or "http"
+			else
+				result.transport = params.type
+			end
 			if params.type == 'ws' then
 				result.ws_host = params.host
 				result.ws_path = params.path
@@ -835,15 +856,16 @@ local function processData(szType, content, add_mode, add_from)
 					end
 				end
 			end
-			if params.type == 'h2' or params.type == 'http' then
+			if params.type == "http" then
 				if result.type == "sing-box" then
 					result.transport = "http"
 					result.http_host = params.host
 					result.http_path = params.path
-				elseif result.type == "xray" then
-					result.transport = "h2"
-					result.h2_host = params.host
-					result.h2_path = params.path
+				elseif result.type == "Xray" then
+					result.transport = "xhttp"
+					result.xhttp_mode = "stream-one"
+					result.xhttp_host = params.host
+					result.xhttp_path = params.path
 				end
 			end
 			if params.type == 'raw' or params.type == 'tcp' then
@@ -955,7 +977,12 @@ local function processData(szType, content, add_mode, add_from)
 			elseif result.type == "Xray" and params.type == "tcp" then
 				params.type = "raw"
 			end
-			result.transport = params.type
+			if params.type == "h2" or params.type == "http" then
+				params.type = "http"
+				result.transport = (result.type == "Xray") and "xhttp" or "http"
+			else
+				result.transport = params.type
+			end
 			if params.type == 'ws' then
 				result.ws_host = params.host
 				result.ws_path = params.path
@@ -975,15 +1002,16 @@ local function processData(szType, content, add_mode, add_from)
 					end
 				end
 			end
-			if params.type == 'h2' or params.type == 'http' then
+			if params.type == "http" then
 				if result.type == "sing-box" then
 					result.transport = "http"
 					result.http_host = params.host
 					result.http_path = params.path
-				elseif result.type == "xray" then
-					result.transport = "h2"
-					result.h2_host = params.host
-					result.h2_path = params.path
+				elseif result.type == "Xray" then
+					result.transport = "xhttp"
+					result.xhttp_mode = "stream-one"
+					result.xhttp_host = params.host
+					result.xhttp_path = params.path
 				end
 			end
 			if params.type == 'raw' or params.type == 'tcp' then
@@ -1427,7 +1455,7 @@ local function update_node(manual)
 		local remark = v["remark"]
 		local list = v["list"]
 		for _, vv in ipairs(list) do
-			local cfgid = uci:section(appname, "nodes", api.gen_short_uuid())
+			local cfgid = api.uci_section(uci, appname, "nodes", api.gen_short_uuid())
 			for kkk, vvv in pairs(vv) do
 				uci:set(appname, cfgid, kkk, vvv)
 				-- sing-box 域名解析策略
@@ -1476,7 +1504,7 @@ local function update_node(manual)
 	end
 
 	if arg[3] == "cron" then
-		if not nixio.fs.access("/var/lock/" .. appname .. ".lock") then
+		if not fs.access("/var/lock/" .. appname .. ".lock") then
 			luci.sys.call("touch /tmp/lock/" .. appname .. "_cron.lock")
 		end
 	end

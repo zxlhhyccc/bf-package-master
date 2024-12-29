@@ -1,6 +1,6 @@
 local api = require "luci.passwall.api"
 local appname = "passwall"
-local uci = api.uci
+local uci = api.libuci
 local datatypes = api.datatypes
 local has_singbox = api.finded_com("singbox")
 local has_xray = api.finded_com("xray")
@@ -347,6 +347,7 @@ o:value("180.184.1.1")
 o:value("180.184.2.2")
 o:value("114.114.114.114")
 o:value("114.114.115.115")
+o:value("119.28.28.28")
 o:depends("direct_dns_mode", "tcp")
 
 o = s:taboption("DNS", Value, "direct_dns_dot", translate("Direct DNS DoT"))
@@ -364,50 +365,6 @@ o:depends("direct_dns_mode", "dot")
 
 o = s:taboption("DNS", Flag, "filter_proxy_ipv6", translate("Filter Proxy Host IPv6"), translate("Experimental feature."))
 o.default = "0"
-
-if api.is_finded("smartdns") then
-	o = s:taboption("DNS", DynamicList, "smartdns_remote_dns", translate("Remote DNS"))
-	o:value("tcp://1.1.1.1")
-	o:value("tcp://8.8.4.4")
-	o:value("tcp://8.8.8.8")
-	o:value("tcp://9.9.9.9")
-	o:value("tcp://208.67.222.222")
-	o:value("tls://1.1.1.1")
-	o:value("tls://8.8.4.4")
-	o:value("tls://8.8.8.8")
-	o:value("tls://9.9.9.9")
-	o:value("tls://208.67.222.222")
-	o:value("https://1.1.1.1/dns-query")
-	o:value("https://8.8.4.4/dns-query")
-	o:value("https://8.8.8.8/dns-query")
-	o:value("https://9.9.9.9/dns-query")
-	o:value("https://208.67.222.222/dns-query")
-	o:value("https://dns.adguard.com/dns-query,176.103.130.130")
-	o:value("https://doh.libredns.gr/dns-query,116.202.176.26")
-	o:value("https://doh.libredns.gr/ads,116.202.176.26")
-	o:depends("dns_shunt", "smartdns")
-	o.cfgvalue = function(self, section)
-		return m:get(section, self.option) or {"tcp://1.1.1.1"}
-	end
-	function o.write(self, section, value)
-		local t = {}
-		local t2 = {}
-		if type(value) == "table" then
-			local x
-			for _, x in ipairs(value) do
-				if x and #x > 0 then
-					if not t2[x] then
-						t2[x] = x
-						t[#t+1] = x
-					end
-				end
-			end
-		else
-			t = { value }
-		end
-		return DynamicList.write(self, section, t)
-	end
-end
 
 ---- DNS Forward Mode
 o = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
@@ -438,15 +395,71 @@ if api.is_finded("smartdns") then
 	o:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
 end
 
+---- SmartDNS Forward Mode
+if api.is_finded("smartdns") then
+	o = s:taboption("DNS", ListValue, "smartdns_dns_mode", translate("Filter Mode"))
+	o:value("socks", "Socks")
+	if has_singbox then
+		o:value("sing-box", "Sing-Box")
+	end
+	if has_xray then
+		o:value("xray", "Xray")
+	end
+	o:depends({ dns_shunt = "smartdns" })
+
+	o = s:taboption("DNS", DynamicList, "smartdns_remote_dns", translate("Remote DNS"))
+	o:value("tcp://1.1.1.1")
+	o:value("tcp://8.8.4.4")
+	o:value("tcp://8.8.8.8")
+	o:value("tcp://9.9.9.9")
+	o:value("tcp://208.67.222.222")
+	o:value("tls://1.1.1.1")
+	o:value("tls://8.8.4.4")
+	o:value("tls://8.8.8.8")
+	o:value("tls://9.9.9.9")
+	o:value("tls://208.67.222.222")
+	o:value("https://1.1.1.1/dns-query")
+	o:value("https://8.8.4.4/dns-query")
+	o:value("https://8.8.8.8/dns-query")
+	o:value("https://9.9.9.9/dns-query")
+	o:value("https://208.67.222.222/dns-query")
+	o:value("https://dns.adguard.com/dns-query,176.103.130.130")
+	o:value("https://doh.libredns.gr/dns-query,116.202.176.26")
+	o:value("https://doh.libredns.gr/ads,116.202.176.26")
+	o:depends({ dns_shunt = "smartdns", smartdns_dns_mode = "socks" })
+	o.cfgvalue = function(self, section)
+		return m:get(section, self.option) or {"tcp://1.1.1.1"}
+	end
+	function o.write(self, section, value)
+		local t = {}
+		local t2 = {}
+		if type(value) == "table" then
+			local x
+			for _, x in ipairs(value) do
+				if x and #x > 0 then
+					if not t2[x] then
+						t2[x] = x
+						t[#t+1] = x
+					end
+				end
+			end
+		else
+			t = { value }
+		end
+		return DynamicList.write(self, section, t)
+	end
+end
+
 o = s:taboption("DNS", ListValue, "xray_dns_mode", translate("Request protocol"))
 o:value("tcp", "TCP")
 o:value("tcp+doh", "TCP + DoH (" .. translate("A/AAAA type") .. ")")
 o:depends("dns_mode", "xray")
+o:depends("smartdns_dns_mode", "xray")
 o.cfgvalue = function(self, section)
 	return m:get(section, "v2ray_dns_mode")
 end
 o.write = function(self, section, value)
-	if s.fields["dns_mode"]:formvalue(section) == "xray" then
+	if s.fields["dns_mode"]:formvalue(section) == "xray" or s.fields["smartdns_dns_mode"]:formvalue(section) == "xray" then
 		return m:set(section, "v2ray_dns_mode", value)
 	end
 end
@@ -455,11 +468,12 @@ o = s:taboption("DNS", ListValue, "singbox_dns_mode", translate("Request protoco
 o:value("tcp", "TCP")
 o:value("doh", "DoH")
 o:depends("dns_mode", "sing-box")
+o:depends("smartdns_dns_mode", "sing-box")
 o.cfgvalue = function(self, section)
 	return m:get(section, "v2ray_dns_mode")
 end
 o.write = function(self, section, value)
-	if s.fields["dns_mode"]:formvalue(section) == "sing-box" then
+	if s.fields["dns_mode"]:formvalue(section) == "sing-box" or s.fields["smartdns_dns_mode"]:formvalue(section) == "sing-box" then
 		return m:set(section, "v2ray_dns_mode", value)
 	end
 end
@@ -473,6 +487,8 @@ o.validate = function(self, value, t)
 	end
 	return value
 end
+o:depends({dns_mode = "dns2tcp"})
+o:depends({dns_mode = "pdnsd"})
 o:depends({dns_mode = "dns2socks"})
 
 ---- DNS Forward
@@ -487,9 +503,9 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
 o:value("149.112.112.112", "149.112.112.112 (Quad9)")
 o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
 o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
-o:depends({dns_mode = "dns2socks"})
 o:depends({dns_mode = "dns2tcp"})
 o:depends({dns_mode = "pdnsd"})
+o:depends({dns_mode = "dns2socks"})
 o:depends({dns_mode = "tcp"})
 o:depends({dns_mode = "udp"})
 o:depends({xray_dns_mode = "tcp"})
@@ -535,16 +551,20 @@ o.description = translate("Notify the DNS server when the DNS query is notified,
 o.datatype = "ipaddr"
 o:depends({dns_mode = "sing-box"})
 o:depends({dns_mode = "xray"})
+o:depends("smartdns_dns_mode", "sing-box")
+o:depends("smartdns_dns_mode", "xray")
 
 o = s:taboption("DNS", Flag, "remote_fakedns", "FakeDNS", translate("Use FakeDNS work in the shunt domain that proxy."))
 o.default = "0"
 o:depends({dns_mode = "sing-box", dns_shunt = "dnsmasq"})
 o:depends({dns_mode = "sing-box", dns_shunt = "chinadns-ng"})
+o:depends({smartdns_dns_mode = "sing-box", dns_shunt = "smartdns"})
 o:depends({dns_mode = "xray", dns_shunt = "dnsmasq"})
 o:depends({dns_mode = "xray", dns_shunt = "chinadns-ng"})
+o:depends({smartdns_dns_mode = "xray", dns_shunt = "smartdns"})
 o.validate = function(self, value, t)
 	if value and value == "1" then
-		local _dns_mode = s.fields["dns_mode"]:formvalue(t)
+		local _dns_mode = s.fields["dns_mode"]:formvalue(t) or s.fields["smartdns_dns_mode"]:formvalue(t)
 		local _tcp_node = s.fields["tcp_node"]:formvalue(t)
 		if _dns_mode and _tcp_node then
 			if m:get(_tcp_node, "type"):lower() ~= _dns_mode then

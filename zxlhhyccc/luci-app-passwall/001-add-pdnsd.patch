@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index c87e4d0..e5a523b 100644
+index 12dc85f..86e2958 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -12,9 +12,11 @@ PKG_RELEASE:=1
@@ -18,7 +18,7 @@ index c87e4d0..e5a523b 100644
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
--	+chinadns-ng +dns2socks +dns2tcp +dnsmasq-full +ip-full \
+-	+chinadns-ng +dns2socks +dnsmasq-full +ip-full \
 -	+libuci-lua +lua +luci-compat +luci-lib-jsonc \
 -	+microsocks +resolveip +tcping
 +	+chinadns-ng +dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
@@ -183,10 +183,10 @@ index c87e4d0..e5a523b 100644
  
  endmenu
 diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index 93b0758..14b196c 100644
+index ba3363e..0366c25 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -416,6 +416,14 @@ dns_mode:value("tcp", translatef("Requery DNS By %s", "TCP"))
+@@ -373,6 +373,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
  if chinadns_tls == 0 then
  	o:value("dot", translatef("Requery DNS By %s", "DoT"))
  end
@@ -201,7 +201,7 @@ index 93b0758..14b196c 100644
  if api.is_finded("dns2socks") then
  	o:value("dns2socks", "dns2socks")
  end
-@@ -425,6 +433,7 @@ end
+@@ -382,6 +390,7 @@ end
  if has_xray then
  	o:value("xray", "Xray")
  end
@@ -209,16 +209,25 @@ index 93b0758..14b196c 100644
  if api.is_finded("smartdns") then
  	o:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
  end
-@@ -479,6 +488,8 @@ o:value("149.112.112.112", "149.112.112.112 (Quad9)")
- o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
- o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
- o:depends({dns_mode = "dns2socks"})
+@@ -478,6 +487,8 @@ o.validate = function(self, value, t)
+ 	end
+ 	return value
+ end
 +o:depends({dns_mode = "dns2tcp"})
 +o:depends({dns_mode = "pdnsd"})
+ o:depends({dns_mode = "dns2socks"})
+ 
+ ---- DNS Forward
+@@ -492,6 +503,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+ o:value("149.112.112.112", "149.112.112.112 (Quad9)")
+ o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
+ o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
++o:depends({dns_mode = "dns2tcp"})
++o:depends({dns_mode = "pdnsd"})
+ o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
- o:depends({xray_dns_mode = "tcp"})
-@@ -544,6 +555,17 @@ o.validate = function(self, value, t)
+@@ -562,6 +575,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -250,7 +259,7 @@ index 05581ad..d7bd2df 100644
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 46aca81..fa0ac10 100644
+index 42884cf..d69470f 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -166,6 +166,9 @@ msgstr "远程 DNS DoH"
@@ -277,7 +286,7 @@ index 46aca81..fa0ac10 100644
  msgstr "默认代理模式"
  
 diff --git a/root/usr/share/passwall/0_default_config b/root/usr/share/passwall/0_default_config
-index 3a48f1e..4a4f6a4 100644
+index 551c824..f866f29 100644
 --- a/root/usr/share/passwall/0_default_config
 +++ b/root/usr/share/passwall/0_default_config
 @@ -5,6 +5,7 @@ config global
@@ -289,50 +298,66 @@ index 3a48f1e..4a4f6a4 100644
  	option remote_dns '1.1.1.1'
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 4e86d3d..3c04d01 100755
+index 1c7611b..6da4b73 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1537,11 +1537,26 @@ start_dns() {
- 			fi
+@@ -1358,6 +1358,12 @@ start_dns() {
+ 				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
+ 				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
+ 				dns_listen_port=$(expr $dns_listen_port + 1)
++			} || {
++				LOCAL_DNS="127.0.0.1#${dns_listen_port}"
++				dns_listen_port=$(expr $dns_listen_port + 1)
++				ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${LOCAL_DNS}" -R "$(get_first_dns DIRECT_DNS 53)" -v
++				echolog "  - dns2tcp(${LOCAL_DNS}) -> tcp://$(get_first_dns DIRECT_DNS 53 | sed 's/#/:/g')"
++				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
+ 			}
+ 		;;
+ 		dot)
+@@ -1503,6 +1509,19 @@ start_dns() {
+ 			}
  		fi
  	;;
 +	pdnsd)
 +		use_tcp_node_resolve_dns=1
++		REMOTE_DNS="1.1.1.1"
 +		gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
 +		ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
 +		echolog "  - 域名解析：pdnsd + 使用(TCP节点)解析域名..."
 +	;;
 +	dns2tcp)
 +		use_tcp_node_resolve_dns=1
++		REMOTE_DNS="1.1.1.1"
 +		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
 +		echolog "  - dns2tcp(${TUN_DNS}) -> tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/#/:/g')"
 +	;;
  	udp)
  		use_udp_node_resolve_dns=1
- 		if [ "$DNS_SHUNT" = "chinadns-ng" ] && [ -n "$(first_type chinadns-ng)" ]; then
- 			local china_ng_listen_port=${dns_listen_port}
- 			local china_ng_trust_dns="udp://$(get_first_dns REMOTE_DNS 53 | sed 's/:/#/g')"
+ 		local china_ng_listen_port=${dns_listen_port}
+@@ -1512,6 +1531,11 @@ start_dns() {
+ 			local no_ipv6_trust="-N"
+ 			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
+ 			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
 +		elif [ -f "$(first_type pdnsd)" ];then
++			REMOTE_DNS="1.1.1.1"
 +			gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
 +			ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
 +			echolog "  - 域名解析：pdnsd + 使用(UDP节点)解析域名..."
  		else
  			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
  			echolog "  - udp://${TUN_DNS}"
-@@ -1552,9 +1567,9 @@ start_dns() {
- 		if [ "$DNS_SHUNT" = "chinadns-ng" ] && [ -n "$(first_type chinadns-ng)" ]; then
- 			local china_ng_listen_port=${dns_listen_port}
- 			local china_ng_trust_dns="tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/:/#/g')"
--		else
--			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
--			echolog "  - dns2tcp(${TUN_DNS}) -> tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/#/:/g')"
-+		# else
-+		#	ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
-+		#	echolog "  - dns2tcp(${TUN_DNS}) -> tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/#/:/g')"
- 		fi
+@@ -1525,6 +1548,10 @@ start_dns() {
+ 			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
+ 			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
+ 			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
++		} || {
++			REMOTE_DNS="1.1.1.1"
++			ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
++			echolog "  - dns2tcp(${TUN_DNS}) -> tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/#/:/g')"
+ 		}
  	;;
  	esac
-@@ -1648,6 +1663,73 @@ start_dns() {
+@@ -1644,6 +1671,73 @@ start_dns() {
  	fi
  }
  
@@ -406,14 +431,13 @@ index 4e86d3d..3c04d01 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2137,7 +2219,9 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
+@@ -2140,7 +2234,8 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
  CLIENT_PROXY=$(config_t_get global client_proxy 1)
  DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
 -DNS_MODE=$(config_t_get global dns_mode tcp)
 +#DNS_MODE=$(config_t_get global dns_mode tcp)
 +DNS_MODE=$(config_t_get global dns_mode pdnsd)
-+#DNS_CACHE=$(config_t_get global dns_cache 0)
+ SMARTDNS_DNS_MODE=$(config_t_get global smartdns_dns_mode socks)
+ [ "$DNS_SHUNT" = "smartdns" ] && DNS_MODE=$SMARTDNS_DNS_MODE
  DNS_CACHE=0
- REMOTE_DNS=$(config_t_get global remote_dns 1.1.1.1:53 | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')
- USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
