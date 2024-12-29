@@ -21,12 +21,17 @@ function index()
 	entry({"admin", "services", "shadowsocksr", "subscribe"}, call("subscribe"))
 	entry({"admin", "services", "shadowsocksr", "checkport"}, call("check_port"))
 	entry({"admin", "services", "shadowsocksr", "log"}, form("shadowsocksr/log"), _("Log"), 80).leaf = true
+	entry({"admin", "services", "shadowsocksr", "get_log"}, call("get_log")).leaf = true
+	entry({"admin", "services", "shadowsocksr", "clear_log"}, call("clear_log")).leaf = true
 	entry({"admin", "services", "shadowsocksr", "run"}, call("act_status"))
 	entry({"admin", "services", "shadowsocksr", "ping"}, call("act_ping"))
 	entry({"admin", "services", "shadowsocksr", "reset"}, call("act_reset"))
 	entry({"admin", "services", "shadowsocksr", "restart"}, call("act_restart"))
 	entry({"admin", "services", "shadowsocksr", "delete"}, call("act_delete"))
 	entry({"admin", "services", "shadowsocksr", "cache"}, call("act_cache"))
+		--[[Backup]]
+	entry({"admin", "services", "shadowsocksr", "backup"}, call("create_backup")).leaf = true
+	
 end
 
 function subscribe()
@@ -108,9 +113,9 @@ function check_port()
 		ret = socket:connect(s.server, s.server_port)
 		if tostring(ret) == "true" then
 			socket:close()
-			retstring = retstring .. "<font color = 'green'>[" .. server_name .. "] OK.</font><br />"
+			retstring = retstring .. "<font><b style='color:green'>[" .. server_name .. "] OK.</b></font><br />"
 		else
-			retstring = retstring .. "<font color = 'red'>[" .. server_name .. "] Error.</font><br />"
+			retstring = retstring .. "<font><b style='color:red'>[" .. server_name .. "] Error.</b></font><br />"
 		end
 		if iret == 0 then
 			luci.sys.call("ipset del ss_spec_wan_ac " .. s.server)
@@ -121,7 +126,7 @@ function check_port()
 end
 
 function act_reset()
-	luci.sys.call("/etc/init.d/shadowsocksr reset &")
+	luci.sys.call("/etc/init.d/shadowsocksr reset >/dev/null 2>&1")
 	luci.http.redirect(luci.dispatcher.build_url("admin", "services", "shadowsocksr"))
 end
 
@@ -140,4 +145,29 @@ function act_cache()
 	e.ret = luci.sys.call("pdnsd-ctl -c /var/etc/ssrplus/pdnsd empty-cache >/dev/null")
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(e)
+end
+
+function get_log()
+	luci.http.write(luci.sys.exec("[ -f '/var/log/ssrplus.log' ] && cat /var/log/ssrplus.log"))
+end
+	
+function clear_log()
+	luci.sys.call("echo '' > /var/log/ssrplus.log")
+end
+
+function create_backup()
+	local backup_files = {
+		"/etc/config/shadowsocksr",
+		"/etc/ssrplus/*"
+	}
+	local date = os.date("%Y%m%d")
+	local tar_file = "/tmp/shadowsocksr-" .. date .. "-backup.tar.gz"
+	nixio.fs.remove(tar_file)
+	local cmd = "tar -czf " .. tar_file .. " " .. table.concat(backup_files, " ")
+	luci.sys.call(cmd)
+	luci.http.header("Content-Disposition", "attachment; filename=shadowsocksr-" .. date .. "-backup.tar.gz")
+	luci.http.header("X-Backup-Filename", "shadowsocksr-" .. date .. "-backup.tar.gz")
+	luci.http.prepare_content("application/octet-stream")
+	luci.http.write(nixio.fs.readfile(tar_file))
+	nixio.fs.remove(tar_file)
 end
