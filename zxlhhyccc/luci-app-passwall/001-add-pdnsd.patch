@@ -1,12 +1,13 @@
 diff --git a/Makefile b/Makefile
-index 12dc85f..86e2958 100644
+index 6653f5f..62c1ed5 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -12,9 +12,11 @@ PKG_RELEASE:=1
+@@ -12,10 +12,12 @@ PKG_RELEASE:=1
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
 +	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Geoview \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
@@ -79,6 +80,11 @@ index 12dc85f..86e2958 100644
 +	bool "Include DNS2TCP"
 +	default y
 +
+ config PACKAGE_$(PKG_NAME)_INCLUDE_Geoview
+ 	bool "Include Geoview"
+-	select PACKAGE_geoview
+ 	default y if aarch64||arm||i386||x86_64
+ 
  config PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy
  	bool "Include Haproxy"
 -	select PACKAGE_haproxy
@@ -160,11 +166,6 @@ index 12dc85f..86e2958 100644
 -	select PACKAGE_v2ray-geosite
  	default n
  
- config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Geoview
- 	bool "Include V2ray_Geoview"
--	select PACKAGE_geoview
- 	default y if aarch64||arm||i386||x86_64
- 
  config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray_Plugin
  	bool "Include V2ray-Plugin (Shadowsocks Plugin)"
 -	select PACKAGE_v2ray-plugin
@@ -183,7 +184,7 @@ index 12dc85f..86e2958 100644
  
  endmenu
 diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index ba3363e..0366c25 100644
+index 3f6dd8c..2656874 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -373,6 +373,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
@@ -259,7 +260,7 @@ index 05581ad..d7bd2df 100644
  o.cfgvalue = function(t, n)
  	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 42884cf..d69470f 100644
+index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -166,6 +166,9 @@ msgstr "远程 DNS DoH"
@@ -286,7 +287,7 @@ index 42884cf..d69470f 100644
  msgstr "默认代理模式"
  
 diff --git a/root/usr/share/passwall/0_default_config b/root/usr/share/passwall/0_default_config
-index 551c824..f866f29 100644
+index acacfed..1705bea 100644
 --- a/root/usr/share/passwall/0_default_config
 +++ b/root/usr/share/passwall/0_default_config
 @@ -5,6 +5,7 @@ config global
@@ -298,55 +299,55 @@ index 551c824..f866f29 100644
  	option remote_dns '1.1.1.1'
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 1c7611b..6da4b73 100755
+index 57b989b..00fbed6 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1358,6 +1358,12 @@ start_dns() {
+@@ -1359,6 +1359,12 @@ start_dns() {
  				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
- 				dns_listen_port=$(expr $dns_listen_port + 1)
+ 				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
 +			} || {
-+				LOCAL_DNS="127.0.0.1#${dns_listen_port}"
-+				dns_listen_port=$(expr $dns_listen_port + 1)
++				LOCAL_DNS="127.0.0.1#${NEXT_DNS_LISTEN_PORT}"
++				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
 +				ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${LOCAL_DNS}" -R "$(get_first_dns DIRECT_DNS 53)" -v
 +				echolog "  - dns2tcp(${LOCAL_DNS}) -> tcp://$(get_first_dns DIRECT_DNS 53 | sed 's/#/:/g')"
 +				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  			}
  		;;
  		dot)
-@@ -1503,6 +1509,19 @@ start_dns() {
+@@ -1506,6 +1512,19 @@ start_dns() {
  			}
  		fi
  	;;
 +	pdnsd)
-+		use_tcp_node_resolve_dns=1
++		UDP_PROXY_DNS=1
 +		REMOTE_DNS="1.1.1.1"
-+		gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
++		gen_pdnsd_config "${NEXT_DNS_LISTEN_PORT}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
 +		ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
 +		echolog "  - 域名解析：pdnsd + 使用(TCP节点)解析域名..."
 +	;;
 +	dns2tcp)
-+		use_tcp_node_resolve_dns=1
++		TCP_PROXY_DNS=1
 +		REMOTE_DNS="1.1.1.1"
 +		ln_run "$(first_type dns2tcp)" dns2tcp "/dev/null" -L "${TUN_DNS}" -R "$(get_first_dns REMOTE_DNS 53)" -v
 +		echolog "  - dns2tcp(${TUN_DNS}) -> tcp://$(get_first_dns REMOTE_DNS 53 | sed 's/#/:/g')"
 +	;;
  	udp)
- 		use_udp_node_resolve_dns=1
- 		local china_ng_listen_port=${dns_listen_port}
-@@ -1512,6 +1531,11 @@ start_dns() {
+ 		UDP_PROXY_DNS=1
+ 		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
+@@ -1515,6 +1534,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
 +		elif [ -f "$(first_type pdnsd)" ];then
 +			REMOTE_DNS="1.1.1.1"
-+			gen_pdnsd_config "${dns_listen_port}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
++			gen_pdnsd_config "${NEXT_DNS_LISTEN_PORT}" "${REMOTE_DNS}" "${DNS_CACHE}" "${DNS_MODE}"
 +			ln_run "$(first_type pdnsd)" pdnsd "/dev/null" --daemon -c "${TMP_PATH}/pdnsd/pdnsd.conf" -d
 +			echolog "  - 域名解析：pdnsd + 使用(UDP节点)解析域名..."
  		else
  			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
  			echolog "  - udp://${TUN_DNS}"
-@@ -1525,6 +1548,10 @@ start_dns() {
+@@ -1528,6 +1552,10 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -357,7 +358,7 @@ index 1c7611b..6da4b73 100755
  		}
  	;;
  	esac
-@@ -1644,6 +1671,73 @@ start_dns() {
+@@ -1647,6 +1675,73 @@ start_dns() {
  	fi
  }
  
@@ -431,13 +432,13 @@ index 1c7611b..6da4b73 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2140,7 +2234,8 @@ LOCALHOST_PROXY=$(config_t_get global localhost_proxy 1)
- CLIENT_PROXY=$(config_t_get global client_proxy 1)
- DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
- [ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
--DNS_MODE=$(config_t_get global dns_mode tcp)
-+#DNS_MODE=$(config_t_get global dns_mode tcp)
-+DNS_MODE=$(config_t_get global dns_mode pdnsd)
- SMARTDNS_DNS_MODE=$(config_t_get global smartdns_dns_mode socks)
- [ "$DNS_SHUNT" = "smartdns" ] && DNS_MODE=$SMARTDNS_DNS_MODE
- DNS_CACHE=0
+@@ -2145,7 +2240,8 @@ get_config() {
+ 	CLIENT_PROXY=$(config_t_get global client_proxy 1)
+ 	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
+ 	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
+-	DNS_MODE=$(config_t_get global dns_mode tcp)
++	#DNS_MODE=$(config_t_get global dns_mode tcp)
++	DNS_MODE=$(config_t_get global dns_mode pdnsd)
+ 	[ "$DNS_SHUNT" = "smartdns" ] && DNS_MODE=$(config_t_get global smartdns_dns_mode socks)
+ 	REMOTE_DNS=$(config_t_get global remote_dns 1.1.1.1:53 | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')
+ 	USE_DEFAULT_DNS=$(config_t_get global use_default_dns direct)
