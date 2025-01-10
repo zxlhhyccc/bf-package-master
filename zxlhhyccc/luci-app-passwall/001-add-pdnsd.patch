@@ -358,7 +358,7 @@ index 57b989b..00fbed6 100755
  		}
  	;;
  	esac
-@@ -1647,6 +1675,73 @@ start_dns() {
+@@ -1646,6 +1674,73 @@ start_dns() {
  	fi
  }
  
@@ -432,7 +432,7 @@ index 57b989b..00fbed6 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2145,7 +2240,8 @@ get_config() {
+@@ -2144,7 +2239,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
