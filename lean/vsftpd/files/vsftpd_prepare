@@ -130,7 +130,7 @@ mkdir -p $CHROOT_DIR
 config_load vsftpd
 
 # listen
-output_const "background" YES
+output_const "background" NO
 output_field listen port "listen_port" 21
 output_field listen dataport "ftp_data_port" 20
 output_field listen pasv_min_port "pasv_min_port" 50000
