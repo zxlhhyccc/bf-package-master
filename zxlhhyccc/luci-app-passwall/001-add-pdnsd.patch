@@ -246,19 +246,6 @@ index 3f6dd8c..2656874 100644
  o = s:taboption("DNS", ListValue, "chinadns_ng_default_tag", translate("Default DNS"))
  o.default = "none"
  o:value("gfw", translate("Remote DNS"))
-diff --git a/luasrc/model/cbi/passwall/client/node_subscribe.lua b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-index 05581ad..d7bd2df 100644
---- a/luasrc/model/cbi/passwall/client/node_subscribe.lua
-+++ b/luasrc/model/cbi/passwall/client/node_subscribe.lua
-@@ -155,7 +155,7 @@ o.validate = function(self, value, t)
- 	end
- end
- 
--o = s:option(DummyValue, "_node_count")
-+o = s:option(DummyValue, "_node_count",translate("Node num"))
- o.rawhtml = true
- o.cfgvalue = function(t, n)
- 	local remark = m:get(n, "remark") or ""
 diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
