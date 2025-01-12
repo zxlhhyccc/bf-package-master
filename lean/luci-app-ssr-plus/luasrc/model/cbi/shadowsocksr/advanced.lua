@@ -265,7 +265,7 @@ o.default = 0
 s = m:section(TypedSection, "xray_noise_packets", translate("Xray Noise Packets"))
 s.description = translate(
     "<font style='color:red'>" .. translate("To send noise packets, select \"Noise\" in Xray Settings.") .. "</font>" ..
-    "<br/><font><b>" .. translate("For specific usage, See: ") .. "</b></font>" ..
+    "<br/><font><b>" .. translate("For specific usage, see:") .. "</b></font>" ..
     "<a href='https://xtls.github.io/config/outbounds/freedom.html' target='_blank'>" ..
     "<font style='color:green'><b>" .. translate("Click to the page") .. "</b></font></a>")
 s.template = "cbi/tblsection"

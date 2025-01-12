@@ -976,7 +976,7 @@ msgstr "UDP 噪声，在某些情况下可以绕过一些针对 UDP 协议的限
 msgid "To send noise packets, select \"Noise\" in Xray Settings."
 msgstr "在 Xray 设置中勾选 “噪声” 以发送噪声包。"
 
-msgid "For specific usage, See: "
+msgid "For specific usage, see:"
 msgstr "具体使用方法，请参见："
 
 msgid "Click to the page"
@@ -1063,14 +1063,11 @@ msgstr "启用此选项配置 XHTTP 附加项（JSON 格式）。"
 msgid "XHTTP Extra"
 msgstr "XHTTP 附加项"
 
-msgid "Configure XHTTP Extra Settings (JSON format), See: "
-msgstr "配置 XHTTP 额外设置（JSON 格式），参见："
+msgid "Configure XHTTP Extra Settings (JSON format), see:"
+msgstr "配置 XHTTP 额外设置（JSON 格式），请参见："
 
 msgid "Invalid JSON format"
 msgstr "无效的 JSON 格式"
-
-msgid "Go to XHTTP Extra Object"
-msgstr "前往 XHTTP 附加对象"
 
 msgid "HTTP/2 Host"
 msgstr "HTTP/2 主机名"

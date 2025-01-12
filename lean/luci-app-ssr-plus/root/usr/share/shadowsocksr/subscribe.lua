@@ -198,24 +198,17 @@ local function processData(szType, content)
 			result.xhttp_host = info.host
 			result.xhttp_path = info.path
 			-- 检查 extra 参数是否存在且非空
-			if info.extra and info.extra:match("%S") then
-			    result.enable_xhttp_extra = true
-			    result.xhttp_extra = info.extra
-				-- 尝试解析 JSON 数据
-				local success, Data = pcall(jsonParse, info.extra)
-				if success and Data then
-					local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
-						or (Data.downloadSettings and Data.downloadSettings.address)
-					result.download_address = address and address ~= "" and address or nil
-				else
-					-- 如果解析失败，清空下载地址
-					result.download_address = nil
-				end
-			--else
-				-- 当 extra 不存在或为空时
-				--result.enable_xhttp_extra = false
-				--result.xhttp_extra = nil
-				--result.download_address = nil
+			result.enable_xhttp_extra = (info.extra and info.extra ~= "") and "1" or nil
+			result.xhttp_extra = (info.extra and info.extra ~= "") and info.extra or nil
+			-- 尝试解析 JSON 数据
+			local success, Data = pcall(jsonParse, info.extra)
+			if success and Data then
+				local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
+					or (Data.downloadSettings and Data.downloadSettings.address)
+				result.download_address = address and address ~= "" and address or nil
+			else
+				-- 如果解析失败，清空下载地址
+				result.download_address = nil
 			end
 		end
 		if info.net == 'h2' then
@@ -423,24 +416,17 @@ local function processData(szType, content)
 				result.xhttp_mode = params.mode or "auto"
 				result.xhttp_path = params.path and UrlDecode(params.path) or "/"
 				-- 检查 extra 参数是否存在且非空
-				if params.extra and params.extra:match("%S") then
-					result.enable_xhttp_extra = true
-					result.xhttp_extra = params.extra or ""
-					-- 尝试解析 JSON 数据
-					local success, Data = pcall(jsonParse, params.extra)
-					if success and Data then
-						local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
-							or (Data.downloadSettings and Data.downloadSettings.address)
-						result.download_address = address and address ~= "" and address or nil
-					else
-						-- 如果解析失败，清空下载地址
-						result.download_address = nil
-					end
-				--else
-					-- 当 extra 不存在或为空时
-					--result.enable_xhttp_extra = false
-					--result.xhttp_extra = nil
-					--result.download_address = nil
+				result.enable_xhttp_extra = (params.extra and params.extra ~= "") and "1" or nil
+				result.xhttp_extra = (params.extra and params.extra ~= "") and params.extra or nil
+				-- 尝试解析 JSON 数据
+				local success, Data = pcall(jsonParse, params.extra)
+				if success and Data then
+					local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
+						or (Data.downloadSettings and Data.downloadSettings.address)
+					result.download_address = address and address ~= "" and address or nil
+				else
+					-- 如果解析失败，清空下载地址
+					result.download_address = nil
 				end
 			elseif result.transport == "http" or result.transport == "h2" then
 				result.transport = "h2"
@@ -505,24 +491,17 @@ local function processData(szType, content)
 			result.xhttp_mode = params.mode or "auto"
 			result.xhttp_path = params.path and UrlDecode(params.path) or "/"
 			-- 检查 extra 参数是否存在且非空
-			if params.extra and params.extra:match("%S") then
-				result.enable_xhttp_extra = true
-				result.xhttp_extra = params.extra or ""
-				-- 尝试解析 JSON 数据
-				local success, Data = pcall(jsonParse, params.extra)
-				if success and Data then
-					local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
-						or (Data.downloadSettings and Data.downloadSettings.address)
-					result.download_address = address and address ~= "" and address or nil
-				else
-					-- 如果解析失败，清空下载地址
-					result.download_address = nil
-				end
-			--else
-				-- 当 extra 不存在或为空时
-				--result.enable_xhttp_extra = false
-				--result.xhttp_extra = nil
-				--result.download_address = nil
+			result.enable_xhttp_extra = (params.extra and params.extra ~= "") and "1" or nil
+			result.xhttp_extra = (params.extra and params.extra ~= "") and params.extra or nil
+			-- 尝试解析 JSON 数据
+			local success, Data = pcall(jsonParse, params.extra)
+			if success and Data then
+				local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
+					or (Data.downloadSettings and Data.downloadSettings.address)
+				result.download_address = address and address ~= "" and address or nil
+			else
+				-- 如果解析失败，清空下载地址
+				result.download_address = nil
 			end
 		-- make it compatible with bullshit, "h2" transport is non-existent at all
 		elseif result.transport == "http" or result.transport == "h2" then

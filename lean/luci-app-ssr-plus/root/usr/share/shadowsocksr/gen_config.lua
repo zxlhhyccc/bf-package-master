@@ -225,7 +225,7 @@ end
 					minVersion = "1.3"
 				} or nil,
 				realitySettings = (server.reality == '1') and {
-					alpn =  (server.transport == "xhttp") and server.xhttp_alpn or nil,
+					alpn =  (server.transport == "xhttp" and server.xhttp_alpn ~= "") and server.xhttp_alpn or nil,
 					publicKey = server.reality_publickey,
 					shortId = server.reality_shortid,
 					spiderX = server.reality_spiderx,

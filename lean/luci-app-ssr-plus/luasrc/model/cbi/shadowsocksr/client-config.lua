@@ -756,11 +756,10 @@ o:depends("transport", "xhttp")
 
 o = s:option(TextValue, "xhttp_extra", translate("XHTTP Extra"))
 o.description = translate(
-    "<b>Configure XHTTP Extra Settings (JSON format), See: </b>" ..
-    "<a href='https://xtls.github.io/config/transports/splithttp.html#extra' target='_blank'>" ..
-    "<font style='color:green'><b>Go to XHTTP Extra Object</b></font></a>"
-)
-o:depends({transport = "xhttp", enable_xhttp_extra = true})
+    "<font><b>" .. translate("Configure XHTTP Extra Settings (JSON format), see:") .. "</b></font>" ..
+    " <a href='https://xtls.github.io/config/transports/splithttp.html#extra' target='_blank'>" ..
+    "<font style='color:green'><b>" .. translate("Click to the page") .. "</b></font></a>")
+o:depends("enable_xhttp_extra", true)
 o.rmempty = true
 o.rows = 10
 o.wrap = "off"
