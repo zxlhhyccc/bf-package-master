@@ -194,7 +194,7 @@ if proto and proto:find("tcp") and socks_port ~= "0" then
 					pass = socks_server.socks5_pass
 				}
 			} or nil
-		}or nil
+		} or nil
     })
 end
 
