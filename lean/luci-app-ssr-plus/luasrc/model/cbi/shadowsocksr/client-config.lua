@@ -748,13 +748,13 @@ o.placeholder = "/"
 o:depends("transport", "xhttp")
 o.rmempty = true
 
-o = s:option(Flag, "enable_xhttp_extra", translate("Enable XHTTP Extra"))
+o = s:option(Flag, "enable_xhttp_extra", translate("XHTTP Extra"))
 o.description = translate("Enable this option to configure XHTTP Extra (JSON format).")
 o.default = "0"
 o.rmempty = false
 o:depends("transport", "xhttp")
 
-o = s:option(TextValue, "xhttp_extra", translate("XHTTP Extra"))
+o = s:option(TextValue, "xhttp_extra", " ")
 o.description = translate(
     "<font><b>" .. translate("Configure XHTTP Extra Settings (JSON format), see:") .. "</b></font>" ..
     " <a href='https://xtls.github.io/config/transports/splithttp.html#extra' target='_blank'>" ..

@@ -1054,14 +1054,11 @@ msgstr "XHTTP 主机名"
 msgid "XHTTP Path"
 msgstr "XHTTP 路径"
 
-msgid "Enable XHTTP Extra"
-msgstr "启用 XHTTP 附加项"
+msgid "XHTTP Extra"
+msgstr "XHTTP 附加项"
 
 msgid "Enable this option to configure XHTTP Extra (JSON format)."
 msgstr "启用此选项配置 XHTTP 附加项（JSON 格式）。"
-
-msgid "XHTTP Extra"
-msgstr "XHTTP 附加项"
 
 msgid "Configure XHTTP Extra Settings (JSON format), see:"
 msgstr "配置 XHTTP 额外设置（JSON 格式），请参见："
