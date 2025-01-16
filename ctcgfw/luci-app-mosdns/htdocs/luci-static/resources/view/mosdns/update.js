@@ -19,7 +19,7 @@ return view.extend({
 	},
 
 	render: function () {
-		let m, s, o;
+		var m, s, o;
 
 		m = new form.Map('mosdns', _('Update GeoIP & GeoSite databases'),
 			_('Automatically update GeoIP and GeoSite databases as well as ad filtering rules through scheduled tasks.'));
@@ -59,8 +59,7 @@ return view.extend({
 
 		o = s.option(form.Value, 'github_proxy', _('GitHub Proxy'),
 			_('Update data files with GitHub Proxy, leave blank to disable proxy downloads.'));
-		o.value('https://hub.gitmirror.com', _('https://hub.gitmirror.com'));
-		o.value('https://mirror.ghproxy.com', _('https://mirror.ghproxy.com'));
+		o.value('https://gh-proxy.com', _('https://gh-proxy.com'));
 		o.rmempty = true;
 		o.default = '';
 

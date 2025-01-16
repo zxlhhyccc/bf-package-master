@@ -6,7 +6,7 @@
 
 return view.extend({
 	render: function () {
-		let m, s, o;
+		var m, s, o;
 
 		m = new form.Map("mosdns", _("Rule Settings"),
 			_('The list of rules only apply to \'Default Config\' profiles.'));
@@ -244,6 +244,7 @@ return view.extend({
 	},
 
 	handleSaveApply: function (ev) {
+		var m = this.map;
 		onclick = L.bind(this.handleSave, this, m);
 		return fs.exec('/etc/init.d/mosdns', ['restart']);
 	},

@@ -7,7 +7,7 @@
 'require ui';
 'require view';
 
-const callServiceList = rpc.declare({
+var callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -90,7 +90,7 @@ return view.extend({
 	},
 
 	render: function (basic) {
-		let m, s, o, v;
+		var m, s, o, v;
 		v = '';
 
 		if (basic[0] && basic[0].code === 0) {
