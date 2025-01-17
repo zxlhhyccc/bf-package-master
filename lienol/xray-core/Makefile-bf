@@ -2,7 +2,8 @@
 
 #https://github.com/XTLS/Xray-core/commit/5af90684c44d88036b99fbd441f3ad96847992a2
 #https://github.com/XTLS/Xray-core/commit/369d8944cf3773300eb8dad3f909957e5705fc49
-https://github.com/XTLS/Xray-core/commit/4ce65fc74c4c50919b10b3faff9725f75bba5d73
+#https://github.com/XTLS/Xray-core/commit/4ce65fc74c4c50919b10b3faff9725f75bba5d73
+#https://github.com/XTLS/Xray-core/commit/66dd7808b69088d847617164fbcd94254f49f8e4
 
 include $(TOPDIR)/rules.mk
 
