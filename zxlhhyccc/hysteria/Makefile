@@ -18,8 +18,8 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/apernet/hysteria.git
 PKG_SOURCE_VERSION:=8c0521759079884530ad24a4b9056c00fe93d371
-PKG_MIRROR_HASH:=debf49cb813d5aa7c8b1060eaebb0f0ad303c063ba8bd72f7c60960c45317480
-PKG_SOURCE_VERSION:=app/v$(PKG_VERSION)
+PKG_MIRROR_HASH:=271eddf039fadd47011bca36589b9e7ce5f5c4702ab0acdc849dac7d01eef134
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_HYSTERIA_COMPRESS_GOPROXY \
@@ -41,8 +41,8 @@ GO_PKG_LDFLAGS_X = \
 	$(GO_PKG_BUILD_PKG)/cmd.appDate=$(shell date -u '+%F.%T') \
 	$(GO_PKG_BUILD_PKG)/cmd.appVersion=v$(PKG_VERSION) \
 	$(GO_PKG_BUILD_PKG)/cmd.appCommit=$(PKG_SOURCE_VERSION) \
-	$(GO_PKG_BUILD_PKG)/cmd.appPlatform=linux \
 	$(GO_PKG_BUILD_PKG)/cmd.appType=release \
+	$(GO_PKG_BUILD_PKG)/cmd.appPlatform=$(GO_OS) \
 	$(GO_PKG_BUILD_PKG)/cmd.appArch=$(GO_ARCH)
 
 include $(INCLUDE_DIR)/package.mk
