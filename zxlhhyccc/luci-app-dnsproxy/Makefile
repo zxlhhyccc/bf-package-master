@@ -1,11 +1,10 @@
-# Copyright (C) 2023 muink <https://github.com/muink>
+# SPDX-License-Identifier: Apache-2.0
 #
-# This is free software, licensed under the Apache License, Version 2.0
+# Copyright (C) 2023-2025 muink <https://github.com/muink>
 
 include $(TOPDIR)/rules.mk
 
 LUCI_NAME:=luci-app-dnsproxy
-PKG_VERSION:=20231105
 
 LUCI_TITLE:=LuCI Support for dnsproxy
 LUCI_PKGARCH:=all
