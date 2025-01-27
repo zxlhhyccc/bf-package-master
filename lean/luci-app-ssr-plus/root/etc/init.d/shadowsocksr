@@ -642,6 +642,31 @@ shunt_dns_command() {
 	esac
 }
 
+shunt_dns_config_file_port() {
+    if [ "$LOCAL_SERVER" == "$SHUNT_SERVER" ]; then
+        # NetFlix 和 全局socks 节点相同
+        if [ "$(uci_get_by_type socks5_proxy socks5_auth nil)" != "noauth" ]; then
+            # 全局socks 有密码，NetFlix 不能使用 auth 验证，需更换为新端口并使用无密码的 socks 配置用于分流
+            # 新增NetFlix dns 使用端口
+            local port=$tmp_shunt_local_port
+			jq --arg port "$port" '.inbounds |= .[0:1] + [{"protocol":"socks","port":($port | tonumber),"settings":{"udp":true,"auth":"noauth"}}] + .[1:]' "$shunt_config_file" > "$shunt_config_file.tmp" && mv "$shunt_config_file.tmp" $shunt_config_file
+            echo "$port"  # 返回端口号
+            return 0  # 成功返回
+        fi
+    else
+        # NetFlix 和 全局 socks 节点不相同
+        if [ "$(uci_get_by_type socks5_proxy socks5_auth nil)" != "noauth" ]; then
+            # 全局socks 有密码，NetFlix不能使用auth验证，需设置为无密码的socks配置用于分流
+            # 删除 NetFlix dns 端口密码验证
+            sed -i -e 's/"auth"\s*:\s*"password"/\"auth\": \"noauth\"/g' \
+                   -e '/"accounts": \[/,/\]/d' $shunt_config_file
+        fi
+    fi
+    # 使用传入的端口
+    echo "$1"  # 返回传入的端口号
+    return 0  # 成功返回
+}
+
 start_shunt() {
 	local type=$(uci_get_by_name $SHUNT_SERVER type)
 	case "$type" in
@@ -661,9 +686,13 @@ start_shunt() {
 	v2ray)
 		local tmp_port=${tmp_local_port:-$tmp_shunt_local_port}
 		gen_config_file $SHUNT_SERVER $type 3 $tmp_shunt_port $tmp_port
-		if grep -q '"auth"\s*:\s*"password"' $shunt_config_file; then
-			sed -i -e 's/"auth"\s*:\s*"password"/\"auth\": \"noauth\"/g' \
-			       -e '/"accounts": \[/,/\]/d' $shunt_config_file
+		# 处理配置文件中的 NetFlix 端口
+		if [ "$LOCAL_SERVER" == "$SHUNT_SERVER" ]; then
+			# NetFlix 和 全局socks 节点相同
+			tmp_port=$(shunt_dns_config_file_port "$tmp_port")
+		else
+			# NetFlix 和 全局 socks 节点不相同
+			shunt_dns_config_file_port "$tmp_port"
 		fi
 		ln_start_bin $(first_type xray v2ray) v2ray run -c $shunt_config_file
 		shunt_dns_command $tmp_port
@@ -702,10 +731,6 @@ start_shunt() {
 			local tmp_port=$tmp_shunt_local_port
 			gen_config_file $SHUNT_SERVER $type 3 $tmp_shunt_port $tmp_port
 		fi
-		if grep -q '"auth"\s*:\s*"password"' $shunt_config_file; then
-			sed -i -e 's/"auth"\s*:\s*"password"/\"auth\": \"noauth\"/g' \
-			       -e '/"accounts": \[/,/\]/d' $shunt_config_file
-		fi
 		ln_start_bin $(first_type hysteria) hysteria client --config $shunt_config_file
 		shunt_dns_command $tmp_port
 		# echolog "shunt:$($(first_type hysteria) version | awk '{print $1,$2}') Started!"
@@ -735,10 +760,6 @@ start_shunt() {
 		local chain_type=$(uci_get_by_name $SHUNT_SERVER chain_type)
 		case ${chain_type} in
 		vmess)
-			if grep -q '"auth"\s*:\s*"password"' $shunt_config_file; then
-				sed -i -e 's/"auth"\s*:\s*"password"/\"auth\": \"noauth\"/g' \
-				       -e '/"accounts": \[/,/\]/d' $shunt_config_file
-			fi
 			ln_start_bin $(first_type xray v2ray) v2ray run -c $shunt_config_file
 			echolog "Netflix Separated Shunt Server:shadow-tls chain-to$($(first_type xray) --version) Started!"
 			;;
@@ -1298,3 +1319,4 @@ reset() {
 	cp /usr/share/shadowsocksr/shadowsocksr.config /etc/config/shadowsocksr
 	unset_lock
 }
+
