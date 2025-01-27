@@ -649,7 +649,7 @@ shunt_dns_config_file_port() {
             # 全局socks 有密码，NetFlix 不能使用 auth 验证，需更换为新端口并使用无密码的 socks 配置用于分流
             # 新增NetFlix dns 使用端口
             local port=$tmp_shunt_local_port
-			jq --arg port "$port" '.inbounds |= .[0:1] + [{"protocol":"socks","port":($port | tonumber),"settings":{"udp":true,"auth":"noauth"}}] + .[1:]' "$shunt_config_file" > "$shunt_config_file.tmp" && mv "$shunt_config_file.tmp" $shunt_config_file
+                   jq --arg port "$port" '.inbounds |= .[0:1] + [{"protocol":"socks","port":($port | tonumber),"settings":{"udp":true,"auth":"noauth"}}] + .[1:]' "$shunt_config_file" > "$shunt_config_file.tmp" && mv "$shunt_config_file.tmp" $shunt_config_file
             echo "$port"  # 返回端口号
             return 0  # 成功返回
         fi
