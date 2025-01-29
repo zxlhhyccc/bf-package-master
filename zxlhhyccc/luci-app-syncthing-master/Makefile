@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 LUCI_TITLE:=LuCI support for syncthing
 LUCI_DEPENDS:=+syncthing-master
 LUCI_PKGARCH:=all
-PKG_RELEASE:=$(COMMITCOUNT)
+PKG_RELEASE:=1
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
