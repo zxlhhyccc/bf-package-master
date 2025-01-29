@@ -70,10 +70,10 @@ define Package/syncthing-master/conffiles
 endef
 
 define Package/syncthing/Default/description
-		Syncthing replaces proprietary sync and cloud services with something
-		open, trustworthy and decentralized. Your data is your data alone and
-		you deserve to choose where it is stored, if it is shared with some
-		third party and how it's transmitted over the Internet.
+	Syncthing replaces proprietary sync and cloud services with something
+	open, trustworthy and decentralized. Your data is your data alone and
+	you deserve to choose where it is stored, if it is shared with some
+	third party and how it's transmitted over the Internet.
 endef
 
 define Package/syncthing/description
@@ -121,10 +121,10 @@ endef
 
 define Package/syncthing-master/install
 	$(call GoPackage/Package/Install/Bin,$(1))
-
 	$(CP) ./files/* $(1)/
 endef
 
 $(eval $(call GoBinPackage,syncthing))
 $(eval $(call BuildPackage,syncthing))
 $(eval $(call BuildPackage,syncthing-master))
+
