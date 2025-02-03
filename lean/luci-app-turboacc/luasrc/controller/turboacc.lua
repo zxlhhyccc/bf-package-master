@@ -11,6 +11,7 @@ function index()
 	page.acl_depends = { "luci-app-turboacc" }
 	
 	entry({"admin", "network", "turboacc", "status"}, call("action_status"))
+	entry({"admin", "network", "turboacc", "check_adguardhome"}, call("check_adguardhome"))
 end
 
 local function fastpath_status()
@@ -42,4 +43,11 @@ function action_status()
 		dnscaching_state = dnscaching_status(),
 		adguardhome_state = adguardhome_status()
 	})
+end
+
+-- 在 turboacc.lua 中添加一个接口
+function check_adguardhome()
+    local result = nixio.fs.access("/usr/bin/AdGuardHome") -- 检查二进制文件是否存在
+    luci.http.prepare_content("application/json")
+    luci.http.write_json({ exists = result }) -- 返回检查结果
 end
