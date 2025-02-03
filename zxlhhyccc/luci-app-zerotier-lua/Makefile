@@ -9,22 +9,22 @@ include $(TOPDIR)/rules.mk
 LUCI_TITLE:=LuCI for Zerotier
 LUCI_DEPENDS:=+zerotier +luci-compat
 LUCI_PKGARCH:=all
-PKG_VERSION:=1.2.0-1
-PKG_RELEASE:=
+PKG_VERSION:=1.2.0
+PKG_RELEASE:=1
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
 define Package/luci-app-zerotier-lua/prerm
 #!/bin/sh
 
-/etc/init.d/zerotier enable
+/etc/init.d/luci_zerotier enable
 /etc/init.d/luci_zerotier disable
 /etc/init.d/luci_zerotier stop
 exit 0
 endef
 
 define Package/luci-app-zerotier-lua/conffiles
-/etc/config/zero
+/etc/config/zerotier
 endef
 
 # call BuildPackage - OpenWrt buildroot signature
