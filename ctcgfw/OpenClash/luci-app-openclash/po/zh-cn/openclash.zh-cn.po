@@ -1608,8 +1608,11 @@ msgstr "开始下载"
 msgid "Download Successful, Start Pre Update Test..."
 msgstr "下载成功，开始进行更新前测试..."
 
-msgid "Pre Update Test Failed, The File is Saved in /tmp/openclash.ipk, Please Try to Update Manually!"
-msgstr "更新前测试失败，文件保存在 /tmp/openclash.ipk，请尝试手动更新！"
+msgid "Pre Update Test Failed, The File is Saved in /tmp/openclash.apk, Please Try to Update Manually With"
+msgstr "更新前测试失败，文件保存在 /tmp/openclash.apk，请尝试以下命令手动更新"
+
+msgid "Pre Update Test Failed, The File is Saved in /tmp/openclash.ipk, Please Try to Update Manually With"
+msgstr "更新前测试失败，文件保存在 /tmp/openclash.ipk，请尝试以下命令手动更新"
 
 msgid "Pre Update Test Passed, Ready to Update and Please Do not Refresh The Page and Other Operations..."
 msgstr "更新前测试通过，准备开始更新，更新过程请不要刷新页面和进行其他操作..."
@@ -2039,9 +2042,6 @@ msgstr "重置 OpenClash 防火墙规则..."
 
 msgid "Warning: OpenClash Now Disabled, Need Start From Luci Page, Exit..."
 msgstr "警告：OpenClash 目前处于未启用状态，请从插件页面启动本插件，脚本退出..."
-
-msgid "Warning: Multiple Restart Scripts Running, Exit..."
-msgstr "警告：多个 OpenClash 启动脚本运行中，此脚本退出..."
 
 msgid "Watchdog: Log Size Limit, Clean Up All Log Records..."
 msgstr "守护程序：因日志大小限制，清理所有日志内容..."
@@ -3099,8 +3099,8 @@ msgstr "测速（连通性）间隔修改"
 msgid "Modify The URL-Test Interval In The Config"
 msgstr "修改配置文件中的测速（连通性）间隔"
 
-msgid "Whether to Enable Process Rules, If You Are Not Sure, Please Choose off Which Useful in Router Environment"
-msgstr "是否启用进程规则，在路由环境下保持关闭可以提升性能"
+msgid "Whether to Enable Process Rules, Only Works on Routerself, If You Are Not Sure, Please Choose off Which Useful in Router Environment, Depend on kmod-inet-diag"
+msgstr "是否启用进程规则，仅能匹配路由器自身进程，在路由环境下保持关闭可以提升性能，依赖 kmod-inet-diag"
 
 msgid "Enable Process Rule"
 msgstr "启用进程规则"
@@ -3457,4 +3457,7 @@ msgid "UpDate"
 msgstr "更新"
 
 msgid "Local Network"
-msgstr "常用内部网络地址"
+msgstr "内部网络地址"
+
+msgid "Error: LAN IP Address Get Error, Please Check The LAN Interface Setting or Choose the Correct Interface in the Setting!"
+msgstr "错误：LAN IP 地址获取失败，请检查 LAN 接口设置或在插件设置中选择正确的 LAN 接口名称"
