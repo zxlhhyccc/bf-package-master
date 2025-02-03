@@ -1,0 +1,11 @@
+{
+ 	"luci-app-zerotier-lua": {
+ 		"description": "Grant UCI access for luci-app-zerotier-lua",
+ 		"read": {
+ 			"uci": [ "zerotier" ]
+ 		},
+ 		"write": {
+ 			"uci": [ "zerotier" ]
+ 		}
+ 	}
+}
