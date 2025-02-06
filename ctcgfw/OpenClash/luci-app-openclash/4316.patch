@@ -1,0 +1,205 @@
+From 24d4fdfbfd14fafedbea6f82c2600f2751e55225 Mon Sep 17 00:00:00 2001
+From: zxl hhyccc <45259624+zxlhhyccc@users.noreply.github.com>
+Date: Thu, 6 Feb 2025 21:57:23 +0800
+Subject: [PATCH 1/4] add receive window config for hy2
+
+See: https://github.com/MetaCubeX/mihomo/commit/fc233184fd048d0ced500d146235d11ebf6c6a4f
+---
+ .../model/cbi/openclash/servers-config.lua    | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/luasrc/model/cbi/openclash/servers-config.lua b/luasrc/model/cbi/openclash/servers-config.lua
+index 9d296b6c74..c270c1da54 100644
+--- a/luasrc/model/cbi/openclash/servers-config.lua
++++ b/luasrc/model/cbi/openclash/servers-config.lua
+@@ -736,6 +736,7 @@ o:depends("type", "hysteria2")
+ -- [[ recv_window_conn ]]--
+ o = s:option(Flag, "flag_quicparam", translate("Hysterir QUIC parameters"))
+ o:depends("type", "hysteria")
++o:depends("type", "hysteria2")
+ o.rmempty = true
+ o.default = "0"
+ 
+@@ -752,6 +753,34 @@ o.placeholder = translate("QUIC connection receive window")
+ o.datatype = "uinteger"
+ o:depends({type = "hysteria", flag_quicparam = true})
+ 
++-- [[ initial_stream_receive_window ]]--
++o = s:option(Value, "initial_stream_receive_window", translate("initial_stream_receive_window"))
++o.rmempty = true
++o.placeholder = translate("QUIC init stream receive window")
++o.datatype = "uinteger"
++o:depends({type = "hysteria2", flag_quicparam = true})
++
++-- [[ max_stream_receive_window ]]--
++o = s:option(Value, "max_stream_receive_window", translate("max_stream_receive_window"))
++o.rmempty = true
++o.placeholder = translate("QUIC max stream receive window")
++o.datatype = "uinteger"
++o:depends({type = "hysteria2", flag_quicparam = true})
++
++-- [[ initial_connection_receive_window ]]--
++o = s:option(Value, "initial_connection_receive_window", translate("initial_connection_receive_window"))
++o.rmempty = true
++o.placeholder = translate("QUIC init connection receive window")
++o.datatype = "uinteger"
++o:depends({type = "hysteria2", flag_quicparam = true})
++
++-- [[ max_connection_receive_window ]]--
++o = s:option(Value, "max_connection_receive_window", translate("max_connection_receive_window"))
++o.rmempty = true
++o.placeholder = translate("QUIC max connection receive window")
++o.datatype = "uinteger"
++o:depends({type = "hysteria2", flag_quicparam = true})
++
+ -- [[ hop_interval ]]--
+ o = s:option(Value, "hop_interval", translate("Hop Interval (Unit:second)"))
+ o.rmempty = true
+
+From 9125cc444965960dde8f8fdf7a24d9d94ca2666e Mon Sep 17 00:00:00 2001
+From: zxl hhyccc <45259624+zxlhhyccc@users.noreply.github.com>
+Date: Thu, 6 Feb 2025 22:00:38 +0800
+Subject: [PATCH 2/4] add receive window config for hy2
+
+See: https://github.com/MetaCubeX/mihomo/commit/fc233184fd048d0ced500d146235d11ebf6c6a4f
+---
+ .../usr/share/openclash/yml_proxys_get.sh     | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/root/usr/share/openclash/yml_proxys_get.sh b/root/usr/share/openclash/yml_proxys_get.sh
+index ea872dcc8b..f43d4e9c59 100644
+--- a/root/usr/share/openclash/yml_proxys_get.sh
++++ b/root/usr/share/openclash/yml_proxys_get.sh
+@@ -996,6 +996,38 @@ ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+                end
+                };
+ 
++               #hysteria2
++               threads << Thread.new{
++               #initial_stream_receive_window
++               if x.key?('initial-stream-receive-window') then
++                  uci_commands << uci_set + 'initial_stream_receive_window=\"' + x['initial-stream-receive-window'].to_s + '\"'
++               end
++               };
++
++               #hysteria2
++               threads << Thread.new{
++               #max_stream_receive_window
++               if x.key?('max-stream-receive-window') then
++                  uci_commands << uci_set + 'max_stream_receive_window=\"' + x['max-stream-receive-window'].to_s + '\"'
++               end
++               };
++
++               #hysteria2
++               threads << Thread.new{
++               #initial_connection_receive_window
++               if x.key?('initial-connection-receive-window') then
++                  uci_commands << uci_set + 'initial_connection_receive_window=\"' + x['initial-connection-receive-window'].to_s + '\"'
++               end
++               };
++
++               #hysteria2
++               threads << Thread.new{
++               #max_connection_receive_window
++               if x.key?('max-connection-receive-window') then
++                  uci_commands << uci_set + 'max_connection_receive_window=\"' + x['max-connection-receive-window'].to_s + '\"'
++               end
++               };
++
+                #hysteria  hysteria2
+                threads << Thread.new{
+                #hysteria_obfs
+
+From ab4a37b3531af6fee248d80460961aa55c849b9b Mon Sep 17 00:00:00 2001
+From: zxl hhyccc <45259624+zxlhhyccc@users.noreply.github.com>
+Date: Thu, 6 Feb 2025 22:05:15 +0800
+Subject: [PATCH 3/4] add receive window config for hy2
+
+See: https://github.com/MetaCubeX/mihomo/commit/fc233184fd048d0ced500d146235d11ebf6c6a4f
+---
+ .../usr/share/openclash/yml_proxys_set.sh     | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/root/usr/share/openclash/yml_proxys_set.sh b/root/usr/share/openclash/yml_proxys_set.sh
+index 7fa0c4508b..c4cc3acf91 100644
+--- a/root/usr/share/openclash/yml_proxys_set.sh
++++ b/root/usr/share/openclash/yml_proxys_set.sh
+@@ -263,6 +263,10 @@ yml_servers_set()
+    config_get "recv_window_conn" "$section" "recv_window_conn" ""
+    config_get "recv_window" "$section" "recv_window" ""
+    config_get "disable_mtu_discovery" "$section" "disable_mtu_discovery" ""
++   config_get "initial_stream_receive_window" "$section" "initial_stream_receive_window" ""
++   config_get "max_stream_receive_window" "$section" "max_stream_receive_window" ""
++   config_get "initial_connection_receive_window" "$section" "initial_connection_receive_window" ""
++   config_get "max_connection_receive_window" "$section" "max_connection_receive_window" ""
+    config_get "xudp" "$section" "xudp" ""
+    config_get "packet_encoding" "$section" "packet_encoding" ""
+    config_get "global_padding" "$section" "global_padding" ""
+@@ -1012,6 +1016,26 @@ EOF
+       if [ -n "$hysteria_ca_str" ]; then
+ cat >> "$SERVER_FILE" <<-EOF
+     ca-str: "$hysteria_ca_str"
++EOF
++      fi
++      if [ -n "$initial_stream_receive_window" ]; then
++cat >> "$SERVER_FILE" <<-EOF
++    initial-stream-receive-window: "$initial_stream_receive_window"
++EOF
++      fi
++      if [ -n "$max_stream_receive_window" ]; then
++cat >> "$SERVER_FILE" <<-EOF
++    max_stream_receive_window: "$max_stream_receive_window"
++EOF
++      fi
++      if [ -n "$initial_connection_receive_window" ]; then
++cat >> "$SERVER_FILE" <<-EOF
++    initial-connection-receive-window: "$initial_connection_receive_window"
++EOF
++      fi
++      if [ -n "$max_connection_receive_window" ]; then
++cat >> "$SERVER_FILE" <<-EOF
++    max-connection-receive-window: "$max_connection_receive_window"
+ EOF
+       fi
+       if [ -n "$fingerprint" ]; then
+
+From 9e7c3af7fd4cb06625d10ee4e9756208e742355e Mon Sep 17 00:00:00 2001
+From: zxl hhyccc <45259624+zxlhhyccc@users.noreply.github.com>
+Date: Thu, 6 Feb 2025 22:13:49 +0800
+Subject: [PATCH 4/4] add receive window config for hy2
+
+See: https://github.com/MetaCubeX/mihomo/commit/fc233184fd048d0ced500d146235d11ebf6c6a4f
+---
+ po/zh-cn/openclash.zh-cn.po | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/po/zh-cn/openclash.zh-cn.po b/po/zh-cn/openclash.zh-cn.po
+index d10a2419b4..9aa036faaf 100644
+--- a/po/zh-cn/openclash.zh-cn.po
++++ b/po/zh-cn/openclash.zh-cn.po
+@@ -789,6 +789,18 @@ msgstr "启用传输协议设置"
+ msgid "Hysterir QUIC parameters"
+ msgstr "QUIC 参数"
+ 
++msgid "QUIC init stream receive window"
++msgstr "QUIC 初始流接收窗口大小"
++
++msgid "QUIC max stream receive window"
++msgstr "QUIC 最大的流接收窗口大小"
++
++msgid "QUIC init connection receive window"
++msgstr "QUIC 初始的连接接收窗口大小"
++
++msgid "QUIC max connection receive window"
++msgstr "QUIC 最大的连接接收窗口大小"
++
+ msgid "Edit Rule Providers"
+ msgstr "编辑规则集配置"
+ 
+@@ -3463,4 +3475,4 @@ msgid "Local Network"
+ msgstr "内部网络地址"
+ 
+ msgid "Error: LAN IP Address Get Error, Please Check The LAN Interface Setting or Choose the Correct Interface in the Setting!"
+-msgstr "错误：LAN IP 地址获取失败，请检查 LAN 接口设置或在插件设置中选择正确的 LAN 接口名称"
+\ No newline at end of file
++msgstr "错误：LAN IP 地址获取失败，请检查 LAN 接口设置或在插件设置中选择正确的 LAN 接口名称"
