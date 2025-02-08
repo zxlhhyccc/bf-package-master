@@ -33,7 +33,7 @@ msgstr "允许 ZeroTier 客户端访问您的局域网。"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:292
 msgid "Allow ZeroTier to set DNS servers. Default No."
-msgstr "允许 ZeroTier 设置DNS服务器。默认为 No"
+msgstr "允许 ZeroTier 设置 DNS 服务器。默认为 No"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:277
 msgid ""
@@ -65,7 +65,7 @@ msgstr "客户端 Secret"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:164
 msgid "Client secret (leave blank to generate a secret on first run)"
-msgstr "客户端 Secret （留空时将在第一次运行时生成秘密）"
+msgstr "客户端 Secret（留空时将在第一次运行时生成秘密）"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:138
 msgid "Collecting data ..."
@@ -140,12 +140,14 @@ msgstr "网络接口信息"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:218
 msgid ""
-"Network configuration, you can have as many configurations as networks you "
-"want to join. see documentation at https://docs.zerotier.com/config/#network-"
-"specific-configuration"
+"<strong>Network configuration, you can have as many configurations as networks you "
+"want to join. See documentation at <a href=\"https://docs.zerotier.com/config/#network-specific-"
+"configuration\" target=\"_blank\" style=\"color: green; font-weight: bold; "
+"display: inline-block;\">Network Specific Configuration</a></strong>"
 msgstr ""
-"网络配置，可以设置多个想要加入的网络。详见文档https://docs.zerotier.com/"
-"config/#network-specific-configuration"
+"<strong>网络配置，可以设置多个想要加入的网络。详见文档: <a href=\"https://docs.zerotier.com/config/#"
+"network-specific-configuration\" target=\"_blank\" style=\"color: green; font-weight: bold; "
+"display: inline-block;\">网络特定配置</a></strong>"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:216
 msgid "Networks"
@@ -161,11 +163,14 @@ msgstr "打开网站"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:174
 msgid ""
-"Path of the optional file local.conf (see documentation at https://docs."
-"zerotier.com/config#local-configuration-options)"
+"Path of the optional file local.conf (see documentation at <a href=\"https://docs."
+"zerotier.com/config#local-configuration-options\" target=\"_blank\" "
+"style=\"color: green; font-weight: bold; display: inline-block;\">"
+"Local Configuration Options</a>)"
 msgstr ""
-"可选文件 local.conf 的路径（详见文档https://docs.zerotier.com/config#local-"
-"configuration-options）"
+"可选文件 local.conf 的路径（详见文档: <a href=\"https://docs.zerotier.com/config#"
+"local-configuration-options\" target=\"_blank\" style=\"color: green; "
+"font-weight: bold; display: inline-block;\">本地配置选项</a>）"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:181
 msgid "Persistent Configuration Path"
@@ -183,7 +188,7 @@ msgstr "运行中"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:155
 msgid "Sets the ZeroTier listening port (default 9993; set to 0 for random)"
-msgstr "设置 ZeroTier 监听端口(默认为9993；为0时将随机设置端口)"
+msgstr "设置 ZeroTier 监听端口（默认为: 9993；为 0 时将随机设置端口）"
 
 #: applications/luci-app-zerotier/htdocs/luci-static/resources/view/zerotier/base.js:147
 msgid "Sets whether ZeroTier is enabled or not"

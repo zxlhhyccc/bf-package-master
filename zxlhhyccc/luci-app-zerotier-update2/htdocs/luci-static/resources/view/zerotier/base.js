@@ -108,7 +108,7 @@ return view.extend({
 			'local_conf_path',
 			_('Local Configuration Path'),
 			_(
-				'Path of the optional file local.conf (see documentation at https://docs.zerotier.com/config#local-configuration-options)'
+				'Path of the optional file local.conf (see documentation at <a href="https://docs.zerotier.com/config#local-configuration-options" target="_blank" style="color: green; font-weight: bold; display: inline-block;">Local Configuration Options</a>)'
 			)
 		);
 
@@ -150,7 +150,7 @@ return view.extend({
 			'network',
 			_('Networks'),
 			_(
-				'Network configuration, you can have as many configurations as networks you want to join. see documentation at https://docs.zerotier.com/config/#network-specific-configuration'
+				'<strong>Network configuration, you can have as many configurations as networks you want to join. See documentation at <a href="https://docs.zerotier.com/config/#network-specific-configuration" target="_blank" style="color: green; font-weight: bold; display: inline-block;">Network Specific Configuration</a></strong>'
 			)
 		);
 		s.anonymous = true;
