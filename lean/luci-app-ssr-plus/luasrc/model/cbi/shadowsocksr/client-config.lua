@@ -1225,9 +1225,9 @@ end
 
 o = s:option(Value, "certpath", translate("Current Certificate Path"))
 o:depends("certificate", 1)
-o:value("/etc/ssl/private/ca.pem")
+o:value("/etc/ssl/private/ca.crt")
 o.description = translate("Please confirm the current certificate path")
-o.default = "/etc/ssl/private/ca.pem"
+o.default = "/etc/ssl/private/ca.crt"
 
 o = s:option(Flag, "fast_open", translate("TCP Fast Open"), translate("Enabling TCP Fast Open Requires Server Support."))
 o.rmempty = true
