@@ -1623,7 +1623,9 @@ if [ -n "$FW4" ]; then
                [ "$enable_redirect_dns" != "2" ] && rule="$rule ip daddr != @china_ip_route_pass"
                nft "add rule inet fw4 openclash_mangle_output $rule counter return"
             fi
-            nft add rule inet fw4 openclash_mangle_output meta l4proto { udp } mark set "$PROXY_FWMARK" counter accept
+            if [ "$router_self_proxy" = "1" ] && [ "$enable_udp_proxy" -eq 1 ]; then
+               nft add rule inet fw4 openclash_mangle_output meta l4proto { udp } mark set "$PROXY_FWMARK" counter accept
+            fi
             nft 'add rule inet fw4 mangle_output meta nfproto {ipv4} ip protocol udp counter jump openclash_mangle_output'
          fi
 
@@ -1678,7 +1680,7 @@ if [ -n "$FW4" ]; then
          nft 'add rule inet fw4 openclash_mangle_output skgid == 65534 counter return'
          nft 'add rule inet fw4 openclash_mangle_output ip daddr @localnetwork counter return'
          nft 'add rule inet fw4 openclash_mangle_output ct direction reply counter return'
-         nft add rule inet fw4 openclash_mangle_output meta l4proto {tcp,udp} ip daddr { "$fakeip_range" }mark set "$PROXY_FWMARK" counter
+         nft add rule inet fw4 openclash_mangle_output meta l4proto {tcp,udp} ip daddr { "$fakeip_range" } mark set "$PROXY_FWMARK" counter
          if [ "$en_mode" = "redir-host" ]; then
             nft 'add rule inet fw4 openclash_mangle_output meta l4proto {tcp,udp} th dport != @common_ports counter return'
          fi
@@ -1693,11 +1695,11 @@ if [ -n "$FW4" ]; then
                [ "$enable_redirect_dns" != "2" ] && rule="$rule ip daddr != @china_ip_route_pass"
                nft "add rule inet fw4 openclash_mangle_output $rule counter return"
             fi
-         fi
-         if [ "$en_mode_tun" -eq 1 ]; then
-            nft add rule inet fw4 openclash_mangle_output meta l4proto {tcp,udp} meta mark set "$PROXY_FWMARK" counter
-         else
-            nft add rule inet fw4 openclash_mangle_output meta l4proto { udp } meta mark set "$PROXY_FWMARK" counter
+            if [ "$en_mode_tun" -eq 1 ]; then
+               nft add rule inet fw4 openclash_mangle_output meta l4proto {tcp,udp} meta mark set "$PROXY_FWMARK" counter
+            else
+               nft add rule inet fw4 openclash_mangle_output meta l4proto { udp } meta mark set "$PROXY_FWMARK" counter
+            fi
          fi
          nft 'add rule inet fw4 mangle_output meta nfproto {ipv4} meta l4proto {tcp,udp} counter jump openclash_mangle_output'
       fi
@@ -2359,7 +2361,9 @@ if [ -z "$FW4" ]; then
                [ "$enable_redirect_dns" != "2" ] && rule="$rule -m set ! --match-set china_ip_route_pass dst"
                iptables -t mangle -A openclash_output $rule -j RETURN >/dev/null 2>&1
             fi
-            iptables -t mangle -A openclash_output -p udp -j MARK --set-mark "$PROXY_FWMARK"
+            if [ "$router_self_proxy" = "1" ] && [ "$enable_udp_proxy" -eq 1 ]; then
+               iptables -t mangle -A openclash_output -p udp -j MARK --set-mark "$PROXY_FWMARK"
+            fi
             iptables -t mangle -A OUTPUT -p udp -j openclash_output
          fi
 
@@ -2428,12 +2432,11 @@ if [ -z "$FW4" ]; then
                [ "$enable_redirect_dns" != "2" ] && rule="$rule -m set ! --match-set china_ip_route_pass dst"
                iptables -t mangle -A openclash_output $rule -j RETURN >/dev/null 2>&1
             fi
-         fi
-
-         if [ "$en_mode_tun" -eq 1 ]; then
-            iptables -t mangle -A openclash_output -j MARK --set-mark "$PROXY_FWMARK"
-         else
-            iptables -t mangle -A openclash_output -p udp -j MARK --set-mark "$PROXY_FWMARK"
+            if [ "$en_mode_tun" -eq 1 ]; then
+               iptables -t mangle -A openclash_output -j MARK --set-mark "$PROXY_FWMARK"
+            else
+               iptables -t mangle -A openclash_output -p udp -j MARK --set-mark "$PROXY_FWMARK"
+            fi
          fi
          iptables -t mangle -A OUTPUT -j openclash_output
       fi
@@ -2965,6 +2968,7 @@ get_config()
    intranet_allowed_wan_name=$(uci -q get openclash.config.intranet_allowed_wan_name || echo 0)
    custom_fakeip_filter_mode=$(uci -q get openclash.config.custom_fakeip_filter_mode || echo "blacklist")
    iptables_compat=$(iptables -m owner -h 2>/dev/null | grep "owner match options" || command -v fw4 || echo 0)
+   disable_quic_go_gso=$(uci -q get openclash.config.disable_quic_go_gso || echo 0)
    [ -z "$dns_port" ] && dns_port=7874 && uci -q set openclash.config.dns_port=7874
    uci -q commit openclash
 }
@@ -2990,7 +2994,7 @@ start_service()
    if ! $quick_start; then
       LOG_OUT "Step 3: Modify The Config File..."
       config_check
-      /usr/share/openclash/yml_change.sh 2>/dev/null "$en_mode" "$da_password" "$cn_port" "$proxy_port" "$TMP_CONFIG_FILE" "$ipv6_enable" "$http_port" "$socks_port" "$log_level" "$proxy_mode" "$en_mode_tun" "$stack_type" "$dns_port" "$mixed_port" "$tproxy_port" "$ipv6_dns" "$store_fakeip" "$enable_meta_sniffer" "$enable_geoip_dat" "$geodata_loader" "$enable_meta_sniffer_custom" "$interface_name" "$enable_tcp_concurrent" "$core_type" "$append_default_dns" "$enable_meta_sniffer_pure_ip" "$find_process_mode" "$fakeip_range" "$global_client_fingerprint" "$ipv6_mode" "$stack_type_v6" "$enable_unified_delay" "$enable_respect_rules" "$custom_fakeip_filter_mode" "$iptables_compat"
+      /usr/share/openclash/yml_change.sh 2>/dev/null "$en_mode" "$da_password" "$cn_port" "$proxy_port" "$TMP_CONFIG_FILE" "$ipv6_enable" "$http_port" "$socks_port" "$log_level" "$proxy_mode" "$en_mode_tun" "$stack_type" "$dns_port" "$mixed_port" "$tproxy_port" "$ipv6_dns" "$store_fakeip" "$enable_meta_sniffer" "$enable_geoip_dat" "$geodata_loader" "$enable_meta_sniffer_custom" "$interface_name" "$enable_tcp_concurrent" "$core_type" "$append_default_dns" "$enable_meta_sniffer_pure_ip" "$find_process_mode" "$fakeip_range" "$global_client_fingerprint" "$ipv6_mode" "$stack_type_v6" "$enable_unified_delay" "$enable_respect_rules" "$custom_fakeip_filter_mode" "$iptables_compat" "$disable_quic_go_gso"
       /usr/share/openclash/yml_rules_change.sh 2>/dev/null "$rule_source" "$enable_custom_clash_rules" "$TMP_CONFIG_FILE" "$enable_rule_proxy" "$CONFIG_NAME" "$router_self_proxy" "$lan_ip" "$enable_redirect_dns" "$en_mode"
       #Custom overwrite
       if [ -f "/etc/openclash/custom/openclash_custom_overwrite.sh" ]; then
@@ -3048,16 +3052,6 @@ stop_service()
    for streaming_unlock_pid in $streaming_unlock_pids; do
       kill -9 "$streaming_unlock_pid" >/dev/null 2>&1
    done >/dev/null 2>&1
-
-   openclash_stop_pids=$(unify_ps_pids "/etc/init.d/openclash stop")
-   openclash_pids=$(unify_ps_pids "/etc/init.d/openclash")
-   if [ -n "$openclash_stop_pids" ]; then
-      for openclash_pid in $openclash_pids; do
-         if [ "$openclash_pid" != "$$" ]; then
-            kill -9 "$openclash_pid" >/dev/null 2>&1
-         fi
-      done >/dev/null 2>&1
-   fi
 
    LOG_OUT "Step 4: Close The Clash Core Process..."
    if [ "$enable" != "1" ]; then
