@@ -23,7 +23,7 @@
  s = m:section(TypedSection, "openclash")
 --- a/po/zh-cn/openclash.zh-cn.po
 +++ b/po/zh-cn/openclash.zh-cn.po
-@@ -2796,6 +2796,12 @@ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
+@@ -2787,6 +2787,12 @@ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
  msgid "(Support Vless By Pinyun)"
  msgstr "(由品云提供，支持 Vless)"
  
