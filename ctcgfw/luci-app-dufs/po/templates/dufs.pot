@@ -37,32 +37,24 @@ msgstr ""
 msgid "Auth roles"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:84
-msgid "Certificate privkey path"
-msgstr ""
-
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:81
-msgid "Certificate pubkey path"
-msgstr ""
-
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:64
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:66
 msgid "Collecting data…"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:31
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:33
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:50
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:32
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:34
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:52
 #: applications/luci-app-dufs/root/usr/share/luci/menu.d/luci-app-dufs.json:3
 msgid "Dufs"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:51
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:53
 msgid ""
 "Dufs is a distinctive utility file server that supports static serving, "
 "uploading, searching, accessing control, webdav..."
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:70
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:72
 msgid "Enable"
 msgstr ""
 
@@ -86,11 +78,11 @@ msgstr ""
 msgid "High"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:74
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:76
 msgid "Listen address"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:77
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:79
 msgid "Listen port"
 msgstr ""
 
@@ -102,7 +94,7 @@ msgstr ""
 msgid "Medium"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:33
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:34
 msgid "NOT RUNNING"
 msgstr ""
 
@@ -110,24 +102,24 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:30
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:31
 msgid "Open Web Interface"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:82
-msgid "Path to an SSL/TLS certificate to serve with HTTPS."
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:83
+msgid "Path Prefix"
 msgstr ""
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:85
-msgid "Path to the SSL/TLS certificate's private key."
-msgstr ""
-
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:31
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:32
 msgid "RUNNING"
 msgstr ""
 
 #: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:91
 msgid "Serve path"
+msgstr ""
+
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:84
+msgid "Specify a (URL) path prefix"
 msgstr ""
 
 #: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:117

@@ -44,33 +44,25 @@ msgstr "允许生成 zip 压缩包"
 msgid "Auth roles"
 msgstr "认证用户"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:84
-msgid "Certificate privkey path"
-msgstr "证书私钥目录"
-
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:81
-msgid "Certificate pubkey path"
-msgstr "证书公钥目录"
-
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:64
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:66
 msgid "Collecting data…"
-msgstr "收集数据中…"
+msgstr "正在收集数据中…"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:31
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:33
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:50
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:32
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:34
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:52
 #: applications/luci-app-dufs/root/usr/share/luci/menu.d/luci-app-dufs.json:3
 msgid "Dufs"
 msgstr "Dufs"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:51
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:53
 msgid ""
 "Dufs is a distinctive utility file server that supports static serving, "
 "uploading, searching, accessing control, webdav..."
 msgstr ""
 "Dufs 是一个独特的文件服务器，支持静态服务、上传、搜索、访问控制、WebDav……"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:70
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:72
 msgid "Enable"
 msgstr "启用"
 
@@ -94,11 +86,11 @@ msgstr "从目录列表中隐藏路径，如：%s。"
 msgid "High"
 msgstr "高"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:74
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:76
 msgid "Listen address"
 msgstr "监听地址"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:77
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:79
 msgid "Listen port"
 msgstr "监听端口"
 
@@ -110,7 +102,7 @@ msgstr "低"
 msgid "Medium"
 msgstr "中"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:33
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:34
 msgid "NOT RUNNING"
 msgstr "未运行"
 
@@ -118,25 +110,25 @@ msgstr "未运行"
 msgid "None"
 msgstr "无"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:30
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:31
 msgid "Open Web Interface"
 msgstr "打开 Web 界面"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:82
-msgid "Path to an SSL/TLS certificate to serve with HTTPS."
-msgstr "用于 HTTPS 服务的 SSL/TLS 证书路径。"
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:83
+msgid "Path Prefix"
+msgstr "路径前缀"
 
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:85
-msgid "Path to the SSL/TLS certificate's private key."
-msgstr "SSL/TLS 证书私钥路径。"
-
-#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:31
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:32
 msgid "RUNNING"
 msgstr "运行中"
 
 #: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:91
 msgid "Serve path"
 msgstr "挂载路径"
+
+#: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:84
+msgid "Specify a (URL) path prefix"
+msgstr "指定一个（URL）路径前缀"
 
 #: applications/luci-app-dufs/htdocs/luci-static/resources/view/dufs.js:117
 msgid "Zip compression level"
