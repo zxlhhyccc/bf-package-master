@@ -1,26 +1,25 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-07-17 22:44+0000\n"
-"Last-Translator: ssantos <ssantos@web.de>\n"
-"Language-Team: German <https://hosted.weblate.org/projects/openwrt/"
-"luciapplicationssmartdns/de/>\n"
-"Language: de\n"
+"PO-Revision-Date: 2025-01-25 22:43+0000\n"
+"Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
+"Language-Team: Tamil <https://hosted.weblate.org/projects/openwrt/"
+"luciapplicationssmartdns/ta/>\n"
+"Language: ta\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7-dev\n"
+"X-Generator: Weblate 5.10-dev\n"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1046
 msgid "Additional Args for upstream dns servers"
-msgstr "Zusätzliche Argumente für Upstream-DNS-Server"
+msgstr "மேலோடை டிஎன்எச் சேவையகங்களுக்கான கூடுதல் ஆர்க்ச்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1376
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1580
 msgid ""
 "Additional Flags for rules, read help on domain-rule for more information."
 msgstr ""
-"Zusätzliche Flags für Regeln. Weitere Informationen finden Sie in der Hilfe "
-"zu Domänenregeln."
+"கூடுதல் கொடிகள் விதிகளுக்கான, மேலும் தகவலுக்கு டொமைன்-விதியில் உதவியைப் படியுங்கள்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1677
 msgid "Additional Flags for rules, read help on ip-rule for more information."
@@ -30,34 +29,33 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1579
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1676
 msgid "Additional Rule Flag"
-msgstr "Zusätzliches Regel-Flag"
+msgstr "கூடுதல் விதி கொடி"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:482
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:638
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1045
 msgid "Additional Server Args"
-msgstr "Zusätzliche Server Parameter"
+msgstr "கூடுதல் சேவையக ஆர்க்ச்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:483
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:639
 msgid ""
 "Additional server args, refer to the help description of the bind option."
-msgstr ""
-"Zusätzliche Server-Argumente, siehe die Hilfebeschreibung der Option bind."
+msgstr "கூடுதல் சேவையக ஆர்க்ச், பிணைப்பு விருப்பத்தின் உதவி விளக்கத்தைப் பார்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:136
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:892
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1059
 msgid "Advanced Settings"
-msgstr "Erweiterte Einstellungen"
+msgstr "மேம்பட்ட அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:344
 msgid ""
 "Attempts to serve old responses from cache with a TTL of 0 in the response "
 "without waiting for the actual resolution to finish."
 msgstr ""
-"Versuche, eine alte Antwort vom Cache mit TTL 0 zurückzugeben, ohne auf die "
-"eigentliche Auflösung zu warten."
+"உண்மையான தீர்மானம் முடிவடையும் வரை காத்திருக்காமல் பதிலில் 0 இன் டி.டி.எல் உடன் கேச் "
+"இருந்து பழைய பதில்களை வழங்குவதற்கான முயற்சிகள்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:864
 msgid "Audit Log File"
@@ -81,11 +79,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:166
 msgid "Automatically Set Dnsmasq"
-msgstr "Dnsmasq automatisch setzen"
+msgstr "தானாகவே dnsmasq ஐ அமைக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:166
 msgid "Automatically set as upstream of dnsmasq when port changes."
-msgstr "Setze automatisch als Upstream von dnsmasq when sich der Port ändert."
+msgstr "துறைமுகம் மாறும்போது தானாகவே DNSMASQ இன் அப்ச்ட்ரீமாக அமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:142
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:142
@@ -98,11 +96,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:320
 msgid "Bind Device"
-msgstr "Bind-Gerät"
+msgstr "சாதனம் பிணைக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:325
 msgid "Bind Device Name"
-msgstr "Bind-Gerätename"
+msgstr "சாதனத்தின் பெயரை பிணைக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1655
 msgid "Blacklist IP"
@@ -114,11 +112,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1488
 msgid "Block domain"
-msgstr "Domain blockieren"
+msgstr "தொகுதி டொமைன்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1488
 msgid "Block domain."
-msgstr "Domain blockieren."
+msgstr "தொகுதி டொமைன்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1665
 msgid "Bogus nxdomain"
@@ -126,11 +124,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:353
 msgid "Cache Persist"
-msgstr "Cache Speicher"
+msgstr "கேச் தொடர்ந்து"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:349
 msgid "Cache Size"
-msgstr "Zwischenspeichergröße"
+msgstr "கேச் அளவு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:98
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:108
@@ -170,7 +168,7 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:82
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:125
 msgid "Collecting data ..."
-msgstr "Sammeln von Daten ..."
+msgstr "தரவு சேகரித்தல் ..."
 
 #: applications/luci-app-smartdns/root/usr/share/luci/menu.d/luci-app-smartdns.json:14
 msgid "Configuration"
@@ -181,20 +179,20 @@ msgid ""
 "Configure IP blacklists that will be filtered from the results of specific "
 "DNS server."
 msgstr ""
-"Definition einer IP basierten Blockierliste, welche Ergebnisse eines "
-"spezifischen DNS Servers filtert."
+"குறிப்பிட்ட டிஎன்எச் சேவையகத்தின் முடிவுகளிலிருந்து வடிகட்டப்படும் ஐபி பிளாக்லிச்ட்களை "
+"உள்ளமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1419
 msgid "Configure block domain list."
-msgstr "Block-Domänenliste konfigurieren."
+msgstr "தொகுதி டொமைன் பட்டியலை உள்ளமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1440
 msgid "Configure domain rule list."
-msgstr "Konfigurieren der Domänenregel-Liste."
+msgstr "டொமைன் விதி பட்டியலை உள்ளமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1390
 msgid "Configure forwarding domain name list."
-msgstr "Konfigurieren der Liste der Weiterleitungsdomänennamen."
+msgstr "ஃபார்வர்டிங் டொமைன் பெயர் பட்டியலை உள்ளமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1620
 msgid "Configure ip rule list."
@@ -202,46 +200,46 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:141
 msgid "Custom Settings"
-msgstr "Benutzerdefinierte Einstellungen"
+msgstr "தனிப்பயன் அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1060
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1251
 msgid "DNS Block Setting"
-msgstr "DNS Block Einstellungen"
+msgstr "டிஎன்எச் தொகுதி அமைப்பு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1250
 msgid "DNS Forwarding Setting"
-msgstr "DNS-Weiterleitungseinstellung"
+msgstr "டி.என்.எச் பகிர்தல் அமைப்பு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:901
 msgid "DNS Server Name"
-msgstr "DNS Server Name"
+msgstr "டிஎன்எச் சேவையக பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:929
 msgid "DNS Server group"
-msgstr "DNS-Servergruppe"
+msgstr "டிஎன்எச் சேவையக குழு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1099
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1258
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1457
 msgid "DNS Server group belongs to, such as office, home."
-msgstr "DNS Server zu dem die Gruppe gehört. Bsp.: Büro, Zu Hause."
+msgstr "டிஎன்எச் சேவையக குழு அலுவலகம், வீடு போன்றவற்றைச் சேர்ந்தது."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:904
 msgid "DNS Server ip"
-msgstr "DNS-Server IP"
+msgstr "டிஎன்எச் சர்வர் ஐபி"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:909
 msgid "DNS Server port"
-msgstr "DNS-Server-Port"
+msgstr "டிஎன்எச் சர்வர் துறைமுகம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:919
 msgid "DNS Server type"
-msgstr "DNS-Server Typ"
+msgstr "டிஎன்எச் சேவையக வகை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:349
 msgid "DNS domain result cache size"
-msgstr "DNS Domain Ergebnisspeichergröße"
+msgstr "டிஎன்எச் டொமைன் முடிவு கேச் அளவு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:646
 msgid "DNS64"
@@ -249,7 +247,7 @@ msgstr "DNS64"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:138
 msgid "DNS64 Server Settings"
-msgstr "DNS64 Server Einstellungen"
+msgstr "DNS64 சேவையக அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:283
 msgid "DOH Server"
@@ -269,19 +267,19 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:751
 msgid "Description"
-msgstr "Beschreibung"
+msgstr "விவரம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:81
 msgid "Dnsmasq Forwarded To Smartdns Failure"
-msgstr "Dnsmasq weitergeleitet zu Smartdns Fehler"
+msgstr "DNSMASQ அறிவுள்ள டிஎன்எச் தோல்விக்கு அனுப்பப்பட்டது"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:973
 msgid "Do not check certificate."
-msgstr "Zertifikat nicht prüfen."
+msgstr "சான்றிதழை சரிபார்க்க வேண்டாம்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:547
 msgid "Do not check speed."
-msgstr "Geschwindigkeit nicht testen."
+msgstr "வேகத்தை சரிபார்க்க வேண்டாம்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1660
 msgid "Do not use these IP addresses."
@@ -289,84 +287,83 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1253
 msgid "Domain Address"
-msgstr "Domain Adresse"
+msgstr "டொமைன் முகவரி"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1390
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1419
 msgid "Domain List"
-msgstr "Domänen Liste"
+msgstr "டொமைன் பட்டியல்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1235
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1381
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1411
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1481
 msgid "Domain List File"
-msgstr "Domänen Liste Datei"
+msgstr "டொமைன் பட்டியல் கோப்பு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1252
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1439
 msgid "Domain Rule List"
-msgstr "Domänen Regel Liste"
+msgstr "டொமைன் விதி பட்டியல்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1455
 msgid "Domain Rule Name"
-msgstr "Domänen Regel Name"
+msgstr "டொமைன் விதி பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1246
 msgid "Domain Rules"
-msgstr "Domänen Regeln"
+msgstr "டொமைன் விதிகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1246
 msgid "Domain Rules Settings"
-msgstr "Domänen Regeln Einstellungen"
+msgstr "டொமைன் விதிகள் அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:460
 msgid "Domain TTL"
-msgstr "Domäne TTL"
+msgstr "டொமைன் TTL"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:472
 msgid "Domain TTL Max"
-msgstr "Domäne TTL Max"
+msgstr "டொமைன் TTL அதிகபட்சம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:464
 msgid "Domain TTL Min"
-msgstr "Domäne TTL Min"
+msgstr "டொமைன் TTL மணித்துளி"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:337
 msgid "Domain prefetch"
-msgstr "Vorabruf der Domäne"
+msgstr "டொமைன் முன்னுரிமை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1725
 msgid "Donate"
-msgstr "Spenden"
+msgstr "நன்கொடை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1724
 msgid "Donate to smartdns"
-msgstr "An smartdns spenden"
+msgstr "அறிவுள்ள டின்களுக்கு நன்கொடை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:715
 msgid "Download Files"
-msgstr "Download Dateien"
+msgstr "கோப்புகளைப் பதிவிறக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:139
 msgid "Download Files Setting"
-msgstr "Download Datei Einstellungen"
+msgstr "கோப்புகள் அமைப்பைப் பதிவிறக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:139
 msgid ""
 "Download domain list files for domain-rule and include config files, please "
 "refresh the page after download to take effect."
 msgstr ""
-"Domänen Listen Dateien herunterladen für Domänen Regeln und "
-"Konfigurationsdateien einschließen. Bitte die Seite nach dem Download neu "
-"laden damit es wirksam wird."
+"டொமைன்-விதிக்கான டொமைன் பட்டியல் கோப்புகளைப் பதிவிறக்கி, கட்டமைப்பு கோப்புகளைச் "
+"சேர்க்கவும், தயவுசெய்து பதிவிறக்கம் செய்த பிறகு பக்கத்தைப் புதுப்பிக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:331
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1164
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1323
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1497
 msgid "Dual-stack IP Selection"
-msgstr "Dual-Stack-IP-Auswahl"
+msgstr "இரட்டை-அடுக்கு ஐபி தேர்வு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:147
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:521
@@ -375,7 +372,7 @@ msgstr "Dual-Stack-IP-Auswahl"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1449
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1629
 msgid "Enable"
-msgstr "Aktivieren"
+msgstr "இயக்கு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:842
 msgid "Enable Audit Log"
@@ -383,7 +380,7 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:654
 msgid "Enable Auto Update"
-msgstr "Auto Update einschalten"
+msgstr "ஆட்டோ புதுப்பிப்பை இயக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:283
 msgid "Enable DOH DNS Server"
@@ -398,16 +395,16 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1324
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1498
 msgid "Enable IP selection between IPV4 and IPV6"
-msgstr "Aktiviere Wahl zwischen IPv4 und IPv6"
+msgstr "IPv4 மற்றும் IPv6 க்கு இடையில் ஐபி தேர்வை இயக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:315
 msgid "Enable IPV6 DNS Server"
-msgstr "Aktivere IPv6 DNS-Server"
+msgstr "IPV6 DNS சேவையகத்தை இயக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:266
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:534
 msgid "Enable TCP DNS Server"
-msgstr "Aktiviere TCP DNS Server"
+msgstr "TCP DNS சேவையகத்தை இயக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:654
 msgid "Enable daily (weekly) auto update."
@@ -415,17 +412,15 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:338
 msgid "Enable domain prefetch, accelerate domain response speed."
-msgstr ""
-"Aktivieren Sie Domänen-Prefetch, um die Reaktionsgeschwindigkeit der Domäne "
-"zu beschleunigen."
+msgstr "டொமைன் முன்னுரிமையை இயக்கவும், டொமைன் மறுமொழி வேகத்தை துரிதப்படுத்தவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:522
 msgid "Enable or disable second DNS server."
-msgstr "Aktivieren oder deaktivieren des zweiten DNS-Servers."
+msgstr "இரண்டாவது டிஎன்எச் சேவையகத்தை இயக்கவும் அல்லது முடக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:147
 msgid "Enable or disable smartdns server"
-msgstr "Aktivieren oder deaktivieren des Smartdns-Servers"
+msgstr "அறிவுள்ள டிஎன்எச் சேவையகத்தை இயக்கவும் அல்லது முடக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:177
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:660
@@ -469,11 +464,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:948
 msgid "Exclude DNS Server from default group."
-msgstr "DNS Server von der standard Gruppe ausschließen."
+msgstr "இயல்புநிலை குழுவிலிருந்து டிஎன்எச் சேவையகத்தை விலக்குங்கள்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:948
 msgid "Exclude Default Group"
-msgstr "Standard Gruppe ausschließen"
+msgstr "இயல்புநிலை குழுவை விலக்கு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:105
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:105
@@ -482,27 +477,27 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:262
 msgid "Fastest IP"
-msgstr "Schnellste IP"
+msgstr "வேகமான ஐபி"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:263
 msgid "Fastest Response"
-msgstr "Schnellste Antwort"
+msgstr "விரைவான பதில்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:724
 msgid "File Name"
-msgstr "Dateiname"
+msgstr "கோப்பு பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:743
 msgid "File Type"
-msgstr "Dateityp"
+msgstr "கோப்பு வகை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:956
 msgid "Filtering IP with blacklist"
-msgstr "Filtern von IP mit negativ-Liste"
+msgstr "பிளாக்லிச்ட்டுடன் ஐபி வடிகட்டுதல்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:261
 msgid "First Ping"
-msgstr "erster Ping"
+msgstr "முதல் பிங்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:368
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:586
@@ -510,7 +505,7 @@ msgstr "erster Ping"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1332
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1546
 msgid "Force AAAA SOA"
-msgstr "Erzwinge AAAA SOA"
+msgstr "படை AAAA SOA"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:368
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:586
@@ -518,45 +513,45 @@ msgstr "Erzwinge AAAA SOA"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1332
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1546
 msgid "Force AAAA SOA."
-msgstr "Erzwinge AAAA SOA."
+msgstr "படை AAAA SOA."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:373
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:591
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1175
 msgid "Force HTTPS SOA"
-msgstr "Erzwinge HTTPS SOA"
+msgstr "Https soa ஐ கட்டாயப்படுத்துங்கள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:373
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:591
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1175
 msgid "Force HTTPS SOA."
-msgstr "Erzwinge HTTPS SOA."
+msgstr "Https soa ஐ கட்டாயப்படுத்துங்கள்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:132
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:135
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:891
 msgid "General Settings"
-msgstr "Allgemeine Einstellungen"
+msgstr "பொது அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:790
 msgid "Generate Coredump"
-msgstr "Generiere Coredump"
+msgstr "கோர்டம்பை உருவாக்குங்கள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:791
 msgid ""
 "Generate Coredump file when smartdns crash, coredump file is located at /tmp/"
 "smartdns.xxx.core."
 msgstr ""
-"Erzeugt eine Coredump-Datei, wenn smartdns abstürzt. Die Coredump-Datei "
-"befindet sich unter /tmp/smartdns.xxx.core."
+"கோர்டம்ப் கோப்பை உருவாக்குங்கள் அறிவுள்ள டிஎன்எச் செயலிழக்கும்போது, கோர்டம்ப் கோப்பு /tmp/"
+"smartdns.xxx.core இல் அமைந்துள்ளது."
 
 #: applications/luci-app-smartdns/root/usr/share/rpcd/acl.d/luci-app-smartdns.json:3
 msgid "Grant access to LuCI app smartdns"
-msgstr "Zugriff auf die LuCI-App smartdns gewähren"
+msgstr "லூசி ஆப் அறிவுள்ள டிஎன்எச் அணுகலை வழங்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:991
 msgid "HTTP Host"
-msgstr "HTTP-Host"
+msgstr "HTTP புரவலன்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:503
 msgid "Hosts File"
@@ -574,11 +569,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1614
 msgid "IP Blacklist"
-msgstr "IP Negativ-Liste"
+msgstr "ஐபி பிளாக்லிச்ட்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:955
 msgid "IP Blacklist Filtering"
-msgstr "Filterung von IP-Blacklists"
+msgstr "ஐபி பிளாக்லிச்ட் வடிகட்டுதல்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1613
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1619
@@ -611,7 +606,7 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:315
 msgid "IPV6 Server"
-msgstr "IPV6-Server"
+msgstr "ஐபிவி 6 சேவையகம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:378
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:599
@@ -619,7 +614,7 @@ msgstr "IPV6-Server"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1336
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1552
 msgid "IPset Name"
-msgstr "IPset Name"
+msgstr "Ipset பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:378
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:599
@@ -627,7 +622,7 @@ msgstr "IPset Name"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1336
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1552
 msgid "IPset name."
-msgstr "IPset Name."
+msgstr "Ipset பெயர்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1067
 msgid ""
@@ -644,9 +639,7 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1704
 msgid "If you like this software, please buy me a cup of coffee."
-msgstr ""
-"Wenn Ihnen diese Software gefällt, spendieren Sie mir bitte eine Tasse "
-"Kaffee."
+msgstr "இந்த மென்பொருளை நீங்கள் விரும்பினால், தயவுசெய்து எனக்கு ஒரு கப் காபி வாங்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1660
 msgid "Ignore IP"
@@ -655,7 +648,7 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:489
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1221
 msgid "Include Config Files<br>/etc/smartdns/conf.d"
-msgstr "Config Dateien einschließen<br>/etc/smartdns/conf.d"
+msgstr "கட்டமைப்பு கோப்புகளைச் சேர்க்கவும் <br> /etc/smartdns/conf.d"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:503
 msgid "Include hosts file."
@@ -667,23 +660,20 @@ msgid ""
 "Include other config files from /etc/smartdns/conf.d or custom path, can be "
 "downloaded from the download page."
 msgstr ""
-"Andere Konfigurationsdateien aus /etc/smartdns/conf.d oder einem "
-"benutzerdefinierten Pfad können von der Download-Seite heruntergeladen "
-"werden."
+"/Etc/smartdns/conf.d அல்லது தனிப்பயன் பாதையிலிருந்து பிற கட்டமைப்பு கோப்புகளைச் "
+"சேர்க்கவும், பதிவிறக்க பக்கத்திலிருந்து பதிவிறக்கம் செய்யலாம்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:399
 msgid "Ipset name, Add domain result to ipset when speed check fails."
-msgstr ""
-"Ipset-Name, Domänenergebnis zu ipset hinzufügen, wenn "
-"Geschwindigkeitsprüfung fehlschlägt."
+msgstr "IPSET பெயர், வேக சோதனை தோல்வியுற்றால் டொமைன் முடிவை IPSET இல் சேர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:716
 msgid "List of files to download."
-msgstr "Liste der Dateien zum Herunterladen."
+msgstr "பதிவிறக்க வேண்டிய கோப்புகளின் பட்டியல்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:320
 msgid "Listen only on the specified interfaces."
-msgstr "Nur an den angegebenen Schnittstellen lauschen."
+msgstr "குறிப்பிட்ட இடைமுகங்களில் மட்டுமே கேளுங்கள்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:80
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:80
@@ -693,19 +683,19 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:158
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:527
 msgid "Local Port"
-msgstr "Lokaler Port"
+msgstr "உள்ளக துறைமுகம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:826
 msgid "Log File"
-msgstr "Protokolldatei"
+msgstr "பதிவு கோப்பு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:798
 msgid "Log Level"
-msgstr "Protokollierungslevel"
+msgstr "பதிவு நிலை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:821
 msgid "Log Number"
-msgstr "Protokollnummer"
+msgstr "பதிவு எண்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:810
 msgid "Log Output Mode"
@@ -717,7 +707,7 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:816
 msgid "Log Size"
-msgstr "Log Größe"
+msgstr "பதிவு அளவு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:127
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:127
@@ -742,15 +732,15 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1011
 msgid "Marking Packets"
-msgstr "Pakete Markieren"
+msgstr "பாக்கெட்டுகளைக் குறிக்கும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:473
 msgid "Maximum TTL for all domain result."
-msgstr "Maximale TTL für alle Ergebnisse der Domäne."
+msgstr "அனைத்து டொமைன் முடிவுகளுக்கும் அதிகபட்ச டி.டி.எல்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:465
 msgid "Minimum TTL for all domain result."
-msgstr "Minimale TTL für alle Ergebnisse der Domäne."
+msgstr "அனைத்து டொமைன் முடிவுகளுக்கும் குறைந்தபட்ச டி.டி.எல்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:419
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:618
@@ -758,7 +748,7 @@ msgstr "Minimale TTL für alle Ergebnisse der Domäne."
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1355
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1558
 msgid "NFTset Name"
-msgstr "NFTset Name"
+msgstr "Nftset பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:431
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:452
@@ -767,7 +757,8 @@ msgstr "NFTset Name"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1367
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1571
 msgid "NFTset name format error, format: [#[4|6]:[family#table#set]]"
-msgstr "NFTset-Namensformatfehler, Format: [#[4|6]:[family#table#set]]"
+msgstr ""
+"NFTSET பெயர் வடிவமைப்பு பிழை, வடிவம்: [#[4 | 6]: [குடும்பம்#அட்டவணை#தொகுப்பு]]"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:419
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:618
@@ -775,40 +766,40 @@ msgstr "NFTset-Namensformatfehler, Format: [#[4|6]:[family#table#set]]"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1355
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1558
 msgid "NFTset name, format: [#[4|6]:[family#table#set]]"
-msgstr "NFTset-Name, Format: [#[4|6]:[family#table#set]]"
+msgstr "Nftset பெயர், வடிவம்: [#[4 | 6]: [குடும்பம்#அட்டவணை#தொகுப்பு]]"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:67
 msgid "NOT RUNNING"
-msgstr "LÄUFT NICHT"
+msgstr "ஓடவில்லை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:325
 msgid "Name of device name listen on."
-msgstr "Name des Geräts, auf das gehört werden soll."
+msgstr "சாதன பெயரின் பெயர் கேளுங்கள்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:440
 msgid ""
 "Nftset name, Add domain result to nftset when speed check fails, format: "
 "[#[4|6]:[family#table#set]]"
 msgstr ""
-"Nftset-Name, Hinzufügen des Domänenergebnisses zum Nftset, wenn die "
-"Geschwindigkeitsprüfung fehlschlägt, Format: [#[4|6]:[family#table#set]]"
+"NFTSET பெயர், வேக சோதனை தோல்வியுற்றால் NFTSET க்கு டொமைன் முடிவைச் சேர்க்கவும், வடிவம்: "
+"[#[4 | 6]: [குடும்ப#அட்டவணை#தொகுப்பு]]"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1330
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1504
 msgid "No"
-msgstr "Nein"
+msgstr "இல்லை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:398
 msgid "No Speed IPset Name"
-msgstr "Keine Geschwindigkeit IPset-Name"
+msgstr "வேக இப்செட் பெயர் இல்லை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:439
 msgid "No Speed NFTset Name"
-msgstr "Keine Geschwindigkeit NFTset Name"
+msgstr "வேக NFTSET பெயர் இல்லை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:972
 msgid "No check certificate"
-msgstr "Kein Check der Zertifikate"
+msgstr "காசோலை சான்றிதழ் இல்லை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:224
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1132
@@ -816,11 +807,11 @@ msgstr "Kein Check der Zertifikate"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1490
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1515
 msgid "None"
-msgstr "Keine"
+msgstr "எதுவுமில்லை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1038
 msgid "Only socks5 proxy support udp server."
-msgstr "Nur der Socks5 Proxy unterstützt einen udp-Server."
+msgstr "சாக்ச் 5 பதிலாள் உதவி யுடிபி சேவையகம் மட்டுமே."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:69
 msgid "Please check the system logs and check if the configuration is valid."
@@ -828,34 +819,35 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1034
 msgid "Please set proxy server first."
-msgstr "Bitte stelle zuerst den Proxy-Server ein."
+msgstr "முதலில் பதிலாள் சேவையகத்தை அமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:758
 msgid "Proxy Server"
-msgstr "Proxy-Server"
+msgstr "பதிலாள் சேவையகம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:140
 msgid "Proxy Server Settings"
-msgstr "Proxy Server Einstellungen"
+msgstr "பதிலாள் சேவையக அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:758
 msgid "Proxy Server URL, format: [socks5|http]://user:pass@ip:port."
-msgstr "Proxy-Server-URL, Format: [socks5|http]://user:pass@ip:port."
+msgstr ""
+"பதிலாள் சேவையக முகவரி, வடிவம்: [SOCKS5 | http]: // பயனர்: பாச்@ஐபி: துறைமுகம்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:766
 msgid ""
 "Proxy server URL format error, format: [socks5|http]://user:pass@ip:port."
 msgstr ""
-"Proxyserver-URL-Formatfehler, Format: [socks5|http]://user:pass@ip:port."
+"பதிலாள் சேவையக முகவரி வடிவமைப்பு பிழை, வடிவம்: [SOCKS5 | http]: // பயனர்: "
+"பாச்@ஐபி: துறைமுகம்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:540
 msgid "Query DNS through specific dns server group, such as office, home."
-msgstr ""
-"Abfrage von DNS über eine bestimmte DNS-Servergruppe, z. B. Büro, Zuhause."
+msgstr "அலுவலகம், வீடு போன்ற குறிப்பிட்ட டிஎன்எச் சேவையக குழு மூலம் டிஎன்எச் வினவல்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:65
 msgid "RUNNING"
-msgstr "LÄUFT"
+msgstr "இயங்கும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:151
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:151
@@ -864,24 +856,24 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:477
 msgid "Reply Domain TTL Max"
-msgstr "Max TTL der Antwortdomäne"
+msgstr "பதில் டொமைன் TTL அதிகபட்சம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:478
 msgid "Reply maximum TTL for all domain result."
-msgstr "Maximale Antwort-TTL für alle Domänen-Ergebnisse."
+msgstr "அனைத்து டொமைன் முடிவுகளுக்கும் அதிகபட்ச TTL க்கு பதிலளிக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1716
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1717
 msgid "Report bugs"
-msgstr "Bugs melden"
+msgstr "பிழைகள் புகாரளிக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:358
 msgid "Resolve Local Hostnames"
-msgstr "Lokale Hostnamen auflösen"
+msgstr "உள்ளக புரவலன் பெயர்களை தீர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:358
 msgid "Resolve local hostnames by reading Dnsmasq lease file."
-msgstr "Lokale Hostnamen durch Lesen der Dnsmasq-Lease-Datei auflösen."
+msgstr "DNSMASQ குத்தகை கோப்பைப் படிப்பதன் மூலம் உள்ளக ஓச்ட்பெயர்களை தீர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:363
 msgid "Resolve local network hostname via mDNS protocol."
@@ -889,15 +881,15 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:256
 msgid "Response Mode"
-msgstr "Antwortmodus"
+msgstr "மறுமொழி முறை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1740
 msgid "Restart"
-msgstr "Neustart"
+msgstr "மறுதொடக்கம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1731
 msgid "Restart Service"
-msgstr "Dienst neu starten"
+msgstr "சேவையை மறுதொடக்கம் செய்யுங்கள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1665
 msgid "Return SOA when the requested result contains a specified IP address."
@@ -905,11 +897,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:137
 msgid "Second Server Settings"
-msgstr "Einstellungen für den zweiten Server"
+msgstr "இரண்டாவது சேவையக அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:343
 msgid "Serve expired"
-msgstr "Serve abgelaufen"
+msgstr "பணி காலாவதியானது"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:294
 msgid "Server Cert"
@@ -928,17 +920,17 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1258
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1457
 msgid "Server Group"
-msgstr "Servergruppe"
+msgstr "சேவையக குழு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1119
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1278
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1477
 msgid "Server Group %s not exists"
-msgstr "Server-Gruppe %s nicht vorhanden"
+msgstr "சேவையக குழு %s இல்லை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:152
 msgid "Server Name"
-msgstr "Servername"
+msgstr "சேவையக பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:294
 msgid "Server certificate file path."
@@ -954,15 +946,15 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1253
 msgid "Set Specific domain ip address."
-msgstr "Spezifische Domänen-IP-Adresse einstellen."
+msgstr "குறிப்பிட்ட டொமைன் ஐபி முகவரியை அமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1252
 msgid "Set Specific domain rule list."
-msgstr "Liste der spezifischen Domänenregeln festlegen."
+msgstr "குறிப்பிட்ட டொமைன் விதி பட்டியலை அமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1614
 msgid "Set Specific ip blacklist."
-msgstr "Spezifische IP-Blacklist einstellen."
+msgstr "குறிப்பிட்ட ஐபி தடுப்புப்பட்டியலை அமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1613
 msgid "Set Specific ip rule list."
@@ -970,49 +962,47 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:963
 msgid "Set TLS hostname to verify."
-msgstr "TLS-Hostname zur Überprüfung einstellen."
+msgstr "சரிபார்க்க TLS ஓச்ட்பெயரை அமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1012
 msgid "Set mark on packets."
-msgstr "Markierung der Pakete setzen."
+msgstr "பாக்கெட்டுகளில் அடையாளத்தை அமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:992
 msgid ""
 "Set the HTTP host used for the query. Use this parameter when the host of "
 "the URL address is an IP address."
 msgstr ""
-"Legt den für die Abfrage verwendeten HTTP-Host fest. Verwenden Sie diesen "
-"Parameter, wenn der Host der URL-Adresse eine IP-Adresse ist."
+"வினவலுக்குப் பயன்படுத்தப்படும் HTTP ஓச்டை அமைக்கவும். முகவரி முகவரியின் புரவலன் ஒரு ஐபி "
+"முகவரியாக இருக்கும்போது இந்த அளவுருவைப் பயன்படுத்தவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:982
 msgid "Sets the server name indication for query. '-' for disable SNI name."
-msgstr ""
-"Legt die Angabe des Servernamens für die Abfrage fest. '-' für SNI-Name "
-"deaktivieren."
+msgstr "வினவலுக்கான சேவையக பெயர் குறிப்பை அமைக்கிறது. '-' SNI பெயரை முடக்க."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:132
 msgid "Settings"
-msgstr "Einstellungen"
+msgstr "அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:552
 msgid "Skip Address Rules"
-msgstr "Adressregeln überspringen"
+msgstr "முகவரி விதிகளைத் தவிர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:581
 msgid "Skip Cache"
-msgstr "Cache überspringen"
+msgstr "தற்காலிக சேமிப்பைத் தவிர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:581
 msgid "Skip Cache."
-msgstr "Cache überspringen."
+msgstr "தற்காலிக சேமிப்பைத் தவிர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:575
 msgid "Skip Dualstack Selection"
-msgstr "Dualstack-Auswahl überspringen"
+msgstr "டூயல்ச்டாக் தேர்வைத் தவிர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:576
 msgid "Skip Dualstack Selection."
-msgstr "Dualstack-Auswahl überspringen."
+msgstr "டூயல்ச்டாக் தேர்வைத் தவிர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:595
 msgid "Skip IP Alias"
@@ -1020,57 +1010,57 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:564
 msgid "Skip Ipset Rule"
-msgstr "Ipset-Regel überspringen"
+msgstr "Ipset விதியைத் தவிர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:558
 msgid "Skip Nameserver Rule"
-msgstr "Nameserver-Regel überspringen"
+msgstr "பெயர்சர்வர் விதியைத் தவிர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:570
 msgid "Skip SOA Address Rule"
-msgstr "SOA-Adressregel überspringen"
+msgstr "SOA முகவரி விதியைத் தவிர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:571
 msgid "Skip SOA address rules."
-msgstr "SOA-Adressregeln überspringen."
+msgstr "SOA முகவரி விதிகளைத் தவிர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:546
 msgid "Skip Speed Check"
-msgstr "Geschwindigkeitsprüfung überspringen"
+msgstr "வேக சோதனையைத் தவிர்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:553
 msgid "Skip address rules."
-msgstr "Adressregeln überspringen."
+msgstr "முகவரி விதிகளைத் தவிர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:565
 msgid "Skip ipset rules."
-msgstr "ipset-Regeln überspringen."
+msgstr "Ipset விதிகளைத் தவிர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:559
 msgid "Skip nameserver rules."
-msgstr "Nameserver-Regeln überspringen."
+msgstr "பெயர்செவர் விதிகளைத் தவிர்க்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:99
 #: applications/luci-app-smartdns/root/usr/share/luci/menu.d/luci-app-smartdns.json:3
 msgid "SmartDNS"
-msgstr "SmartDNS"
+msgstr "அறிவுள்ள"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:100
 msgid "SmartDNS Server"
-msgstr "SmartDNS-Server"
+msgstr "அறிவுள்ள டிஎன்எச் சேவையகம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:101
 msgid ""
 "SmartDNS is a local high-performance DNS server, supports finding fastest "
 "IP, supports ad filtering, and supports avoiding DNS poisoning."
 msgstr ""
-"SmartDNS ist ein lokaler Hochleistungs-DNS-Server, der die Suche nach der "
-"schnellsten IP unterstützt, die Filterung von Werbung und die Vermeidung von "
-"DNS-Poisoning ermöglicht."
+"அறிவுள்ள டிஎன்எச் என்பது உள்ளக உயர் செயல்திறன் கொண்ட டிஎன்எச் சேவையகமாகும், வேகமான ஐபி "
+"கண்டுபிடிப்பதை ஆதரிக்கிறது, விளம்பர வடிகட்டலை ஆதரிக்கிறது, மேலும் டிஎன்எச் விசத்தைத் "
+"தவிர்ப்பதை ஆதரிக்கிறது."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1708
 msgid "SmartDNS official website"
-msgstr "Offizielle Website von SmartDNS"
+msgstr "அறிவுள்ள டிஎன்எச் அதிகாரப்பூர்வ வலைத்தளம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:287
 msgid "Smartdns DOH server port."
@@ -1082,35 +1072,34 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:527
 msgid "Smartdns local server port"
-msgstr "Lokaler Smartdns-Serverport"
+msgstr "அறிவுள்ள டிஎன்எச் உள்ளக சேவையக துறைமுகம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:159
 msgid ""
 "Smartdns local server port, smartdns will be automatically set as main dns "
 "when the port is 53."
 msgstr ""
-"Lokaler Smartdns-Serverport, smartdns wird automatisch als Haupt-DNS "
-"eingestellt, wenn 53 der Port ist."
+"அறிவுள்ள டிஎன்எச் உள்ளக சேவையக துறைமுகம், அறிவுள்ள டிஎன்எச் துறைமுகம் 53 ஆக "
+"இருக்கும்போது தானாகவே முதன்மையான டிஎன்எச் என அமைக்கப்படும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:257
 msgid ""
 "Smartdns response mode, First Ping: return the first ping IP, Fastest IP: "
 "return the fastest IP, Fastest Response: return the fastest DNS response."
 msgstr ""
-"Smartdns-Antwortmodus, First Ping: Rückgabe der ersten Ping-IP, Schnellste "
-"IP: Rückgabe der schnellsten IP, Schnellste Antwort: Rückgabe der "
-"schnellsten DNS-Antwort."
+"அறிவுள்ள டிஎன்எச் மறுமொழி பயன்முறை, முதல் பிங்: முதல் பிங் ஐபி, வேகமான ஐபி: வேகமான "
+"ஐபி, வேகமான பதிலைத் தரவும்: வேகமான டிஎன்எச் பதிலைத் தரவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:152
 msgid "Smartdns server name"
-msgstr "Smartdns-Servername"
+msgstr "அறிவுள்ள டிஎன்எச் சேவையக பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:216
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1124
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1283
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1506
 msgid "Smartdns speed check mode."
-msgstr "Smartdns-Geschwindigkeitsprüfungsmodus."
+msgstr "அறிவுள்ள டிஎன்எச் வேக சோதனை முறை."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1590
 msgid ""
@@ -1118,64 +1107,63 @@ msgid ""
 "in the domains are never forwarded and always replied to with the specified "
 "IP address which may be IPv4 or IPv6."
 msgstr ""
-"Geben Sie eine IP-Adresse an, die für einen beliebigen Host in den "
-"angegebenen Domänen zurückgegeben werden soll. Abfragen in den Domänen "
-"werden nie weitergeleitet und immer mit der angegebenen IP-Adresse "
-"beantwortet, die IPv4 oder IPv6 sein kann."
+"கொடுக்கப்பட்ட களங்களில் எந்தவொரு ஓச்டுக்கும் திரும்புவதற்கு ஒரு ஐபி முகவரியைக் "
+"குறிப்பிடவும், களங்களில் உள்ள வினவல்கள் ஒருபோதும் அனுப்பப்படாது, எப்போதும் ஐபிவி 4 அல்லது "
+"ஐபிவி 6 ஆக இருக்கும் குறிப்பிட்ட ஐபி முகவரியுடன் பதிலளிக்கப்படுகின்றன."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:216
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1124
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1283
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1506
 msgid "Speed Check Mode"
-msgstr "Geschwindigkeitsüberprüfungsmodus"
+msgstr "வேக சோதனை முறை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:249
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1157
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1316
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1540
 msgid "Speed check mode is invalid."
-msgstr "Geschwindigkeitsprüfmodus ist ungültig."
+msgstr "வேக சோதனை முறை தவறானது."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:266
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:534
 msgid "TCP Server"
-msgstr "TCP-Server"
+msgstr "TCP சேவையகம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:243
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1151
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1310
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1534
 msgid "TCP port is empty"
-msgstr "TCP-Port ist leer"
+msgstr "டி.சி.பி துறைமுகம் காலியாக உள்ளது"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:962
 msgid "TLS Hostname Verify"
-msgstr "Überprüfung des TLS-Hostnamens"
+msgstr "TLS ஓச்ட்பெயர் சரிபார்க்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:981
 msgid "TLS SNI name"
-msgstr "TLS-SNI-Name"
+msgstr "Tls sni பெயர்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1000
 msgid "TLS SPKI Pinning"
-msgstr "TLS-SPKI-Pinning"
+msgstr "TLS SPKI பின்னிங்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:460
 msgid "TTL for all domain result."
-msgstr "TTL für alle Domänenergebnisse."
+msgstr "அனைத்து டொமைன் முடிவுகளுக்கும் TTL."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1703
 msgid "Technical Support"
-msgstr "Technische Unterstützung"
+msgstr "தொழில்நுட்ப உதவி"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:728
 msgid "URL"
-msgstr "URL"
+msgstr "முகவரி"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:737
 msgid "URL format error, format: http:// or https://"
-msgstr "URL-Formatfehler, Format: http:// oder https://"
+msgstr "முகவரி வடிவமைப்பு பிழை, வடிவம்: http: // அல்லது https: //"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:129
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:129
@@ -1185,11 +1173,11 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:209
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:712
 msgid "Update"
-msgstr "Aktualisierung"
+msgstr "புதுப்பிப்பு"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:703
 msgid "Update Files"
-msgstr "Update-Dateien"
+msgstr "கோப்புகளைப் புதுப்பிக்கவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:194
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:677
@@ -1216,11 +1204,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:683
 msgid "Upload Config File"
-msgstr "Konfigurationsdatei Hochladen"
+msgstr "கட்டமைப்பு கோப்பைப் பதிவேற்றவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:690
 msgid "Upload Domain List File"
-msgstr "Domainlisten-Datei Hochladen"
+msgstr "டொமைன் பட்டியல் கோப்பைப் பதிவேற்றவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:697
 msgid "Upload File"
@@ -1236,7 +1224,7 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:691
 msgid "Upload domain list file to /etc/smartdns/domain-set"
-msgstr "Domainlisten-Datei zu /etc/smartdns/domain-set Hochladen"
+msgstr "டொமைன் பட்டியல் கோப்பை/etc/stardns/domain-set க்கு பதிவேற்றவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1382
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1482
@@ -1244,38 +1232,37 @@ msgid ""
 "Upload domain list file, or configure auto download from Download File "
 "Setting page."
 msgstr ""
-"Domainlisten-Datei Hochladen oder Autiomatischen Download von "
-"Dateieinstellungsseite Konfigurieren."
+"டொமைன் பட்டியல் கோப்பைப் பதிவேற்றவும் அல்லது பதிவிறக்க கோப்பு அமைத்தல் பக்கத்திலிருந்து "
+"தானாக பதிவிறக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1235
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1411
 msgid "Upload domain list file."
-msgstr "Domainlisten-Datei Hochladen."
+msgstr "டொமைன் பட்டியல் கோப்பைப் பதிவேற்றவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:684
 msgid "Upload smartdns config file to /etc/smartdns/conf.d"
-msgstr "Smartdns Konfigurationsdatei zu /etc/smartdns/conf.d hochladen"
+msgstr "அறிவுள்ள டிஎன்எச் கட்டமைப்பு கோப்பை /etc/smartdns/conf.d க்கு பதிவேற்றவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:884
 msgid "Upstream Servers"
-msgstr "Upstream-Server"
+msgstr "மேலோடை சேவையகங்கள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:885
 msgid ""
 "Upstream Servers, support UDP, TCP protocol. Please configure multiple DNS "
 "servers, including multiple foreign DNS servers."
 msgstr ""
-"Upstream-Server, die die Protokolle UDP und TCP unterstützen. Bitte "
-"konfigurieren Sie mehrere DNS-Server, einschließlich mehrerer ausländischer "
-"DNS-Server."
+"மேலோடை சேவையகங்கள், யுடிபி, டி.சி.பி நெறிமுறை உதவி. பல வெளிநாட்டு டிஎன்எச் "
+"சேவையகங்கள் உட்பட பல டிஎன்எச் சேவையகங்களை உள்ளமைக்கவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1019
 msgid "Use Proxy"
-msgstr "Proxy verwenden"
+msgstr "ப்ராக்சியைப் பயன்படுத்தவும்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1020
 msgid "Use proxy to connect to upstream DNS server."
-msgstr "Proxy für die Verbindung zu einem Upstream DNS-Server verwenden."
+msgstr "மேலோடை டிஎன்எச் சேவையகத்துடன் இணைக்க ப்ராக்சியைப் பயன்படுத்தவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1001
 msgid ""
@@ -1283,9 +1270,9 @@ msgid ""
 "SPKI fingerprint, leaving blank to indicate that the validity of TLS is not "
 "verified."
 msgstr ""
-"Wird verwendet, um die Gültigkeit des TLS-Servers zu überprüfen. Der Wert "
-"ist ein Base64-kodierter SPKI-Fingerabdruck, leer lassen bedeutet, dass die "
-"Gültigkeit von TLS nicht überprüft wird."
+"TLS சேவையகத்தின் செல்லுபடியை சரிபார்க்கப் பயன்படுகிறது, மதிப்பு BASE64 குறியிடப்பட்ட "
+"SPKI கைரேகை, TLS இன் செல்லுபடியாகும் தன்மை சரிபார்க்கப்படவில்லை என்பதைக் குறிக்க "
+"காலியாக உள்ளது."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:869
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:877
@@ -1307,13 +1294,12 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:353
 msgid "Write cache to disk on exit and load on startup."
-msgstr ""
-"Cache beim Beenden auf die Festplatte schreiben und beim Starten laden."
+msgstr "வெளியேறும்போது வட்டுக்கு கேச் எழுதி தொடக்கத்தில் ஏற்றவும்."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1329
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1503
 msgid "Yes"
-msgstr "Ja"
+msgstr "ஆம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:219
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:260
@@ -1324,11 +1310,11 @@ msgstr "Ja"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1502
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1510
 msgid "default"
-msgstr "Standard"
+msgstr "இயல்புநிலை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:744
 msgid "domain list (/etc/smartdns/domain-set)"
-msgstr "Domain-Liste (/etc/smartdns/domain-set)"
+msgstr "டொமைன் பட்டியல் (/etc/stardns/domain-set)"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:812
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:813
@@ -1351,7 +1337,7 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1192
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1348
 msgid "ipset name format error, format: [#[4|6]:]ipsetname"
-msgstr "Fehler des ipset-Namensformats, format: [#[4|6]:]ipsetname"
+msgstr "ipset பெயர் வடிவமைப்பு பிழை, வடிவம்: [#[4 | 6]:] ipsetName"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:363
 msgid "mDNS Lookup"
@@ -1359,7 +1345,7 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1709
 msgid "open website"
-msgstr "Webseite öffnen"
+msgstr "திறந்த வலைத்தளம்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:747
 msgid "other file (/etc/smartdns/download)"
@@ -1367,11 +1353,11 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:745
 msgid "smartdns config (/etc/smartdns/conf.d)"
-msgstr "Smartdns Konfiguration (/etc/smartdns/conf.d)"
+msgstr "அறிவுள்ள டிஎன்எச் கட்டமைப்பு (/etc/smartdns/conf.d)"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:776
 msgid "smartdns custom settings"
-msgstr "Benutzerdefinierte SmartDNS-Einstellungen"
+msgstr "அறிவுள்ள டிஎன்எச் தனிப்பயன் அமைப்புகள்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:814
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:851
@@ -1380,39 +1366,19 @@ msgstr ""
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:922
 msgid "tcp"
-msgstr "tcp"
+msgstr "டி.சி.பி."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:923
 msgid "tls"
-msgstr "tls"
+msgstr "டி.எல்.எச்"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:743
 msgid "type"
-msgstr "Typ"
+msgstr "வகை"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:921
 msgid "udp"
-msgstr "udp"
-
-#~ msgid "ip"
-#~ msgstr "IP"
-
-#~ msgid "port"
-#~ msgstr "Port"
+msgstr "யுடிபி"
 
 #~ msgid "Enable daily auto update."
-#~ msgstr "Tägliches auto update einschalten."
-
-#~ msgid ""
-#~ "DNS Server group belongs to, used with nameserver, such as office, home."
-#~ msgstr ""
-#~ "DNS-Server-Gruppe, zu jener der Nameserver gehört, z. B. Büro, Zuhause."
-
-#~ msgid "Dnsmasq Forwared To Smartdns Failure"
-#~ msgstr "Fehler der Dnsmasq-Weiterleitung an Smartdns"
-
-#~ msgid "Sets the server name indication for query."
-#~ msgstr "Legt die Anzeige des Servernamens für die Abfrage fest."
-
-#~ msgid "none"
-#~ msgstr "kein"
+#~ msgstr "நாள்தோறும் ஆட்டோ புதுப்பிப்பை இயக்கவும்."

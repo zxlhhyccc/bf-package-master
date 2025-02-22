@@ -22,8 +22,7 @@ msgid ""
 msgstr "额外的规则标识，具体参考 domain-rule 的帮助说明。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1677
-msgid ""
-"Additional Flags for rules, read help on ip-rule for more information."
+msgid "Additional Flags for rules, read help on ip-rule for more information."
 msgstr "额外的规则标识，具体参考 ip-rule 的帮助说明。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1375
@@ -50,6 +49,20 @@ msgstr "额外的服务器参数，参考 bind 选项的帮助说明。"
 msgid "Advanced Settings"
 msgstr "高级设置"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:344
+msgid ""
+"Attempts to serve old responses from cache with a TTL of 0 in the response "
+"without waiting for the actual resolution to finish."
+msgstr "查询性能优化，有请求时尝试回应 TTL 为 0 的过期记录，以避免查询等待。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:864
+msgid "Audit Log File"
+msgstr "审计日志文件路径"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:859
+msgid "Audit Log Number"
+msgstr "审计日志数量"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:847
 msgid "Audit Log Output Mode"
 msgstr "审计日志输出模式"
@@ -58,19 +71,9 @@ msgstr "审计日志输出模式"
 msgid "Audit Log Size"
 msgstr "审计日志大小"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:859
-msgid "Audit Log Number"
-msgstr "审计日志数量"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:864
-msgid "Audit Log File"
-msgstr "审计日志文件路径"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:344
-msgid ""
-"Attempts to serve old responses from cache with a TTL of 0 in the response "
-"without waiting for the actual resolution to finish."
-msgstr "查询性能优化，有请求时尝试回应 TTL 为 0 的过期记录，以避免查询等待。"
+#: applications/luci-app-smartdns/root/usr/share/luci/menu.d/luci-app-smartdns.json:22
+msgid "Audit Logs"
+msgstr "审计日志"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:166
 msgid "Automatically Set Dnsmasq"
@@ -80,17 +83,14 @@ msgstr "自动设置 Dnsmasq"
 msgid "Automatically set as upstream of dnsmasq when port changes."
 msgstr "端口更改时自动设为 Dnsmasq 的上游。"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:142
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:142
+msgid "Back SmartDNS"
+msgstr "返回 SmartDNS"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1058
 msgid "Basic Settings"
 msgstr "基本设置"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1655
-msgid "Blacklist IP"
-msgstr "黑名单"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1655
-msgid "Blacklist IP Rule, Decline IP addresses within the range."
-msgstr "黑名单规则，拒绝指定范围的 IP 地址。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:320
 msgid "Bind Device"
@@ -100,9 +100,13 @@ msgstr "绑定到设备"
 msgid "Bind Device Name"
 msgstr "绑定的设备名称"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1665
-msgid "Bogus nxdomain"
-msgstr "假冒 IP"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1655
+msgid "Blacklist IP"
+msgstr "黑名单"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1655
+msgid "Blacklist IP Rule, Decline IP addresses within the range."
+msgstr "黑名单规则，拒绝指定范围的 IP 地址。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1488
 msgid "Block domain"
@@ -112,6 +116,10 @@ msgstr "屏蔽域名"
 msgid "Block domain."
 msgstr "屏蔽域名。"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1665
+msgid "Bogus nxdomain"
+msgstr "假冒 IP"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:353
 msgid "Cache Persist"
 msgstr "持久化缓存"
@@ -120,9 +128,19 @@ msgstr "持久化缓存"
 msgid "Cache Size"
 msgstr "缓存大小"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1054
-msgid "Client Rules"
-msgstr "客户端规则"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:98
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:108
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:112
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:98
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:108
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:112
+msgid "Clear Logs"
+msgstr "清除日志"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:92
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:92
+msgid "Clear Logs..."
+msgstr "清除日志..."
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1066
 msgid "Client Address"
@@ -133,12 +151,26 @@ msgid "Client Address File"
 msgstr "客户端地址文件"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1054
+msgid "Client Rules"
+msgstr "客户端规则"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1054
 msgid "Client Rules Settings, can achieve parental control functionality."
 msgstr "客户端规则设置，可以实现家长控制功能。"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1088
+msgid "Client address format error, please input ip adress or mac address."
+msgstr "客户端地址格式错误，请输入 IP 地址或 mac 地址。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:82
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:82
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:125
 msgid "Collecting data ..."
 msgstr "正在收集数据..."
+
+#: applications/luci-app-smartdns/root/usr/share/luci/menu.d/luci-app-smartdns.json:14
+msgid "Configuration"
+msgstr "配置"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1686
 msgid ""
@@ -165,26 +197,6 @@ msgstr "配置 IP 规则列表"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:141
 msgid "Custom Settings"
 msgstr "自定义设置"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1660
-msgid "Do not use these IP addresses."
-msgstr "忽略这些 IP 地址"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:283
-msgid "DOH Server"
-msgstr "DOH 服务器"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:287
-msgid "DOH Server Port"
-msgstr "DOH 服务器端口"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:271
-msgid "DOT Server"
-msgstr "DOT 服务器"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:275
-msgid "DOT Server Port"
-msgstr "DOT 服务器端口"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1060
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1251
@@ -233,16 +245,21 @@ msgstr "DNS64"
 msgid "DNS64 Server Settings"
 msgstr "DNS64 服务器配置"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:219
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:260
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:801
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1127
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1286
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1328
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1502
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1510
-msgid "default"
-msgstr "默认"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:283
+msgid "DOH Server"
+msgstr "DOH 服务器"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:287
+msgid "DOH Server Port"
+msgstr "DOH 服务器端口"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:271
+msgid "DOT Server"
+msgstr "DOT 服务器"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:275
+msgid "DOT Server Port"
+msgstr "DOT 服务器端口"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:751
 msgid "Description"
@@ -259,6 +276,10 @@ msgstr "不校验证书的合法性。"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:547
 msgid "Do not check speed."
 msgstr "禁用测速。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1660
+msgid "Do not use these IP addresses."
+msgstr "忽略这些 IP 地址"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1253
 msgid "Domain Address"
@@ -277,6 +298,7 @@ msgid "Domain List File"
 msgstr "域名列表文件"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1252
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1439
 msgid "Domain Rule List"
 msgstr "域名规则列表"
 
@@ -308,7 +330,6 @@ msgstr "域名 TTL 最小值"
 msgid "Domain prefetch"
 msgstr "域名预加载"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1723
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1725
 msgid "Donate"
 msgstr "捐助"
@@ -348,9 +369,21 @@ msgstr "双栈 IP 优选"
 msgid "Enable"
 msgstr "启用"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:842
+msgid "Enable Audit Log"
+msgstr "启用审计日志"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:654
 msgid "Enable Auto Update"
 msgstr "启用自动更新"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:283
+msgid "Enable DOH DNS Server"
+msgstr "启用 DOH 服务器"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:271
+msgid "Enable DOT DNS Server"
+msgstr "启用 DOT 服务器"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:332
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1165
@@ -372,58 +405,6 @@ msgstr "启用 TCP DNS 服务器"
 msgid "Enable daily (weekly) auto update."
 msgstr "启用每日（每周）自动更新。"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:283
-msgid "Enable DOH DNS Server"
-msgstr "启用 DOH 服务器"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:271
-msgid "Enable DOT DNS Server"
-msgstr "启用 DOT 服务器"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:842
-msgid "Enable Audit Log"
-msgstr "启用审计日志"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:177
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:660
-msgid "Every Day"
-msgstr "每天"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:178
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:661
-msgid "Every Monday"
-msgstr "每周一"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:179
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:662
-msgid "Every Tuesday"
-msgstr "每周二"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:180
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:663
-msgid "Every Wednesday"
-msgstr "每周三"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:181
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:664
-msgid "Every Thursday"
-msgstr "每周四"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:182
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:665
-msgid "Every Friday"
-msgstr "每周五"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:183
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:666
-msgid "Every Saturday"
-msgstr "每周六"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:184
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:667
-msgid "Every Sunday"
-msgstr "每周日"
-
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:338
 msgid "Enable domain prefetch, accelerate domain response speed."
 msgstr "启用域名预加载，加速域名响应速度。"
@@ -436,6 +417,46 @@ msgstr "是否启用第二 DNS 服务器。"
 msgid "Enable or disable smartdns server"
 msgstr "启用或禁用 SmartDNS 服务"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:177
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:660
+msgid "Every Day"
+msgstr "每天"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:182
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:665
+msgid "Every Friday"
+msgstr "每周五"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:178
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:661
+msgid "Every Monday"
+msgstr "每周一"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:183
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:666
+msgid "Every Saturday"
+msgstr "每周六"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:184
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:667
+msgid "Every Sunday"
+msgstr "每周日"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:181
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:664
+msgid "Every Thursday"
+msgstr "每周四"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:179
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:662
+msgid "Every Tuesday"
+msgstr "每周二"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:180
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:663
+msgid "Every Wednesday"
+msgstr "每周三"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:948
 msgid "Exclude DNS Server from default group."
 msgstr "从 default 默认服务器组中排除。"
@@ -444,10 +465,10 @@ msgstr "从 default 默认服务器组中排除。"
 msgid "Exclude Default Group"
 msgstr "从默认组中排除"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:813
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:850
-msgid "file"
-msgstr "文件"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:105
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:105
+msgid "Failed to clear log."
+msgstr "清除日志失败。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:262
 msgid "Fastest IP"
@@ -522,17 +543,24 @@ msgstr ""
 msgid "Grant access to LuCI app smartdns"
 msgstr "授予访问 LuCI 应用 SmartDNS 的权限"
 
-#: applications/luci-app-smartdns/root/usr/share/rpcd/acl.d/luci-app-smartdns.json:503
-msgid "Hosts File"
-msgstr "Hosts 文件"
-
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:991
 msgid "HTTP Host"
 msgstr "HTTP 主机"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:172
-msgid "If required domestic ip segment whitelist,then in the custom settings Remove the # sign before 'conf-file'."
-msgstr "如需使用国内 IP 段白名单，则在自定义设置中去除 conf-file 前面的 # 号。"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:503
+msgid "Hosts File"
+msgstr "Hosts 文件"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1670
+msgid ""
+"IP Address Mapping, Can be used for CDN acceleration with Anycast IP, such "
+"as Cloudflare's CDN."
+msgstr ""
+"IP 地址映射，可用于支持 AnyCast IP 的 CDN 加速，比如 Cloudflare 的 CDN。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1645
+msgid "IP Addresses"
+msgstr "IP 地址"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1614
 msgid "IP Blacklist"
@@ -541,34 +569,6 @@ msgstr "IP 黑名单"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:955
 msgid "IP Blacklist Filtering"
 msgstr "IP 黑名单过滤"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:315
-msgid "IPV6 Server"
-msgstr "IPV6 服务器"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1670
-msgid "IP alias"
-msgstr "IP 别名"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1645
-msgid "IP Addresses"
-msgstr "IP 地址"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1670
-msgid "IP Address Mapping, Can be used for CDN acceleration with Anycast IP, such as Cloudflare's CDN."
-msgstr "IP 地址映射，可用于支持 AnyCast IP 的 CDN 加速，比如 Cloudflare 的 CDN。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1362
-msgid "Ignore IP"
-msgstr "忽略 IP"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1660
-msgid "IP Rules"
-msgstr "IP 规则"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1660
-msgid "IP Rules Settings"
-msgstr "IP 规则设置"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1613
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1619
@@ -579,13 +579,29 @@ msgstr "IP 规则列表"
 msgid "IP Rule Name"
 msgstr "IP 规则名称"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1341
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1609
+msgid "IP Rules"
+msgstr "IP 规则"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1609
+msgid "IP Rules Settings"
+msgstr "IP 规则设置"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1639
 msgid "IP Set File"
 msgstr "IP 集合列表文件"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1639
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1645
 msgid "IP addresses, CIDR format."
 msgstr "IP 地址，CIDR 格式。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1670
+msgid "IP alias"
+msgstr "IP 别名"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:315
+msgid "IPV6 Server"
+msgstr "IPV6 服务器"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:378
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:599
@@ -605,15 +621,26 @@ msgstr "IPset 名称。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1067
 msgid ""
-"If a client address is specified, only that client will apply this "
-"rule. You can enter an IP address, such as 1.2.3.4, or a MAC address, "
-"such as aa:bb:cc:dd:ee:ff."
+"If a client address is specified, only that client will apply this rule. You "
+"can enter an IP address, such as 1.2.3.4, or a MAC address, such as aa:bb:cc:"
+"dd:ee:ff."
 msgstr ""
-"如果指定了客户端，那么对应的客户端会应用相应的规则，可以输入 IP 地址，如：1.2.3.4，或 MAC 地址，如：aa:bb:cc:dd:ee:ff。"
+"如果指定了客户端，那么对应的客户端会应用相应的规则，可以输入 IP 地址，如："
+"1.2.3.4，或 MAC 地址，如：aa:bb:cc:dd:ee:ff。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:172
+msgid ""
+"If required domestic ip segment whitelist,then in the custom settings Remove "
+"the # sign before 'conf-file'."
+msgstr "如需使用国内 IP 段白名单，则在自定义设置中去除 conf-file 前面的 # 号。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1704
 msgid "If you like this software, please buy me a cup of coffee."
 msgstr "如果本软件对你有帮助，请给作者加个蛋。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1660
+msgid "Ignore IP"
+msgstr "忽略 IP"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:489
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1221
@@ -645,39 +672,60 @@ msgstr "下载文件列表。"
 msgid "Listen only on the specified interfaces."
 msgstr "监听在指定的设备上，避免非本地网络的 DNS 查询请求。"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:80
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:80
+msgid "Loading..."
+msgstr "加载中..."
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:158
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:527
 msgid "Local Port"
 msgstr "本地端口"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:810
-msgid "Log Output Mode"
-msgstr "日志输出模式"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:816
-msgid "Log Size"
-msgstr "日志大小"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:826
+msgid "Log File"
+msgstr "日志文件路径"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:798
 msgid "Log Level"
 msgstr "日志级别"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:821
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:859
 msgid "Log Number"
 msgstr "日志数量"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:826
-msgid "Log File"
-msgstr "日志文件路径"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:810
+msgid "Log Output Mode"
+msgstr "日志输出模式"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:142
 msgid "Log Settings"
 msgstr "日志设置"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:363
-msgid "mDNS Lookup"
-msgstr "mDNS 查询"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:816
+msgid "Log Size"
+msgstr "日志大小"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:127
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:127
+msgid "Log file does not exist."
+msgstr "日志文件不存在。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:101
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:119
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:101
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:119
+msgid "Log is clean."
+msgstr "日志已清除。"
+
+#: applications/luci-app-smartdns/root/usr/share/luci/menu.d/luci-app-smartdns.json:30
+msgid "Logs"
+msgstr "日志"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:95
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:95
+msgid "Logs cleared successfully!"
+msgstr "日志清除成功！"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1011
 msgid "Marking Packets"
@@ -704,6 +752,7 @@ msgstr "NFTSet 名称"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:630
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1212
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1367
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1571
 msgid "NFTset name format error, format: [#[4|6]:[family#table#set]]"
 msgstr "NFTSet 名称格式错误，格式：[#[4|6]:[family#table#set]]"
 
@@ -793,6 +842,11 @@ msgstr "使用指定服务器组查询，比如 office, home。"
 msgid "RUNNING"
 msgstr "运行中"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:151
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:151
+msgid "Refresh every %s seconds."
+msgstr "每 %s 秒刷新。"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:477
 msgid "Reply Domain TTL Max"
 msgstr "回应的域名 TTL 最大值"
@@ -805,10 +859,6 @@ msgstr "设置返回给客户端的域名 TTL 最大值。"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1717
 msgid "Report bugs"
 msgstr "报告 BUG"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1665
-msgid "Return SOA when the requested result contains a specified IP address."
-msgstr "当结果包含对应范围的 IP 时，返回 SOA。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:358
 msgid "Resolve Local Hostnames"
@@ -834,30 +884,29 @@ msgstr "重启"
 msgid "Restart Service"
 msgstr "重启服务"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:814
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:851
-msgid "syslog"
-msgstr "系统日志"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1665
+msgid "Return SOA when the requested result contains a specified IP address."
+msgstr "当结果包含对应范围的 IP 时，返回 SOA。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:137
 msgid "Second Server Settings"
 msgstr "第二 DNS 服务器"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:294
-msgid "Server certificate file path."
-msgstr "服务器证书文件路径。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:301
-msgid "Server certificate key file path."
-msgstr "服务器证书私钥文件路径。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:308
-msgid "Server certificate key file password."
-msgstr "服务器证书私钥文件密码。"
-
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:343
 msgid "Serve expired"
 msgstr "缓存过期服务"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:294
+msgid "Server Cert"
+msgstr "服务器证书"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:301
+msgid "Server Cert Key"
+msgstr "服务器证书私钥"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:308
+msgid "Server Cert Key Pass"
+msgstr "服务器证书私钥密码"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:539
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1099
@@ -877,16 +926,16 @@ msgid "Server Name"
 msgstr "服务器名称"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:294
-msgid "Server Cert"
-msgstr "服务器证书"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:301
-msgid "Server Cert Key"
-msgstr "服务器证书私钥"
+msgid "Server certificate file path."
+msgstr "服务器证书文件路径。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:308
-msgid "Server Cert Key Pass"
-msgstr "服务器证书私钥密码"
+msgid "Server certificate key file password."
+msgstr "服务器证书私钥文件密码。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:301
+msgid "Server certificate key file path."
+msgstr "服务器证书私钥文件路径。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1253
 msgid "Set Specific domain ip address."
@@ -923,7 +972,7 @@ msgstr ""
 msgid "Sets the server name indication for query. '-' for disable SNI name."
 msgstr "设置服务器 SNI 名称，‘-’表示禁用 SNI 名称。"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:135
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:132
 msgid "Settings"
 msgstr "设置"
 
@@ -988,14 +1037,6 @@ msgstr "跳过 Nameserver 规则。"
 msgid "SmartDNS"
 msgstr "SmartDNS"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:287
-msgid "Smartdns DOH server port."
-msgstr "Smartdns DOH 服务器端口号。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:275
-msgid "Smartdns DOT server port."
-msgstr "Smartdns DOT 服务器端口号。"
-
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:100
 msgid "SmartDNS Server"
 msgstr "SmartDNS 服务器"
@@ -1009,6 +1050,14 @@ msgstr "SmartDNS 是一个本地高性能 DNS 服务器，支持返回最快 IP�
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1708
 msgid "SmartDNS official website"
 msgstr "SmartDNS 官方网站"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:287
+msgid "Smartdns DOH server port."
+msgstr "Smartdns DOH 服务器端口号。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:275
+msgid "Smartdns DOT server port."
+msgstr "Smartdns DOT 服务器端口号。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:527
 msgid "Smartdns local server port"
@@ -1037,6 +1086,7 @@ msgstr "SmartDNS 的服务器名称，默认为 smartdns，留空为主机名"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:216
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1124
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1283
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1506
 msgid "Smartdns speed check mode."
 msgstr "SmartDNS 测速模式。"
 
@@ -1052,6 +1102,7 @@ msgstr ""
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:216
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1124
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1283
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1506
 msgid "Speed Check Mode"
 msgstr "测速模式"
 
@@ -1102,28 +1153,19 @@ msgstr "URL"
 msgid "URL format error, format: http:// or https://"
 msgstr "URL 格式错误，格式：http:// 或 https://"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:129
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:129
+msgid "Unknown error: %s"
+msgstr "未知错误：%s"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:209
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:712
 msgid "Update"
 msgstr "更新"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:171
-msgid "Update domestic blacklist And whitelist"
-msgstr "自动更新国内黑白名单"
-
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:703
 msgid "Update Files"
 msgstr "更新文件"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:188
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:671
-msgid "Update time (every day)"
-msgstr "更新时间(每天)"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:176
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:659
-msgid "Update Time (Every Week)"
-msgstr "更新时间(每周)"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:194
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:677
@@ -1134,9 +1176,19 @@ msgstr "更新间隔(分钟)"
 msgid "Update List"
 msgstr "更新列表"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1092
-msgid "Upload client address file, same as Client Address function."
-msgstr "上传客户端地址文件，与客户端地址功能相同。"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:176
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:659
+msgid "Update Time (Every Week)"
+msgstr "更新时间 (每周)"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:171
+msgid "Update domestic blacklist And whitelist"
+msgstr "自动更新国内黑白名单"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:188
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:671
+msgid "Update time (every day)"
+msgstr "更新时间 (每天)"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:683
 msgid "Upload Config File"
@@ -1145,6 +1197,18 @@ msgstr "上传配置文件"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:690
 msgid "Upload Domain List File"
 msgstr "上传域名列表文件"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:697
+msgid "Upload File"
+msgstr "上传文件"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1639
+msgid "Upload IP set file."
+msgstr "上传 IP 集合列表文件。"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1092
+msgid "Upload client address file, same as Client Address function."
+msgstr "上传客户端地址文件，与客户端地址功能相同。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:691
 msgid "Upload domain list file to /etc/smartdns/domain-set"
@@ -1161,14 +1225,6 @@ msgstr "上传域名列表文件，或在下载文件设置页面设置自动下
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1411
 msgid "Upload domain list file."
 msgstr "上传域名列表文件。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:697
-msgid "Upload File"
-msgstr "上传文件"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1639
-msgid "Upload IP set file."
-msgstr "上传 IP 集合列表文件。"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:684
 msgid "Upload smartdns config file to /etc/smartdns/conf.d"
@@ -1203,15 +1259,15 @@ msgstr ""
 "用于校验 TLS 服务器的有效性，数值为 Base64 编码的 SPKI 指纹，留空表示不验证 "
 "TLS 的合法性。"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:831
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:839
-msgid "View Log"
-msgstr "查看日志"
-
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:869
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:877
 msgid "View Audit Log"
 msgstr "查看审计日志"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:831
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:839
+msgid "View Log"
+msgstr "查看日志"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1650
 msgid "Whitelist IP"
@@ -1230,19 +1286,32 @@ msgstr "退出时保存 Cache 到磁盘，启动时加载。"
 msgid "Yes"
 msgstr "是"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:219
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:260
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:801
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1127
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1286
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1328
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1502
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1510
+msgid "default"
+msgstr "默认"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:744
 msgid "domain list (/etc/smartdns/domain-set)"
 msgstr "域名列表（/etc/smartdns/domain-set）"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:747
-msgid "other file (/etc/smartdns/download)"
-msgstr "其它文件（/etc/smartdns/download）"
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:812
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:813
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:849
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:850
+msgid "file"
+msgstr "文件"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:924
 msgid "https"
 msgstr "https"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:837
 # msgid "ip"
 # msgstr "ip"
 
@@ -1258,11 +1327,18 @@ msgstr "IP 集合列表文件（/etc/smartdns/ip-set）"
 msgid "ipset name format error, format: [#[4|6]:]ipsetname"
 msgstr "IPset 名称格式错误，格式：[#[4|6]:]ipsetname"
 
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:363
+msgid "mDNS Lookup"
+msgstr "mDNS 查询"
+
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:1709
 msgid "open website"
 msgstr "打开网站"
 
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:842
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:747
+msgid "other file (/etc/smartdns/download)"
+msgstr "其它文件（/etc/smartdns/download）"
+
 # msgid "port"
 # msgstr "端口"
 
@@ -1273,6 +1349,11 @@ msgstr "SmartDNS 配置文件（/etc/smartdns/conf.d）"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:776
 msgid "smartdns custom settings"
 msgstr "SmartDNS 自定义设置，具体配置参数参考指导"
+
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:814
+#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:851
+msgid "syslog"
+msgstr "系统日志"
 
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:922
 msgid "tcp"
@@ -1289,58 +1370,3 @@ msgstr "类型"
 #: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/smartdns.js:921
 msgid "udp"
 msgstr "udp"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:92
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:92
-msgid "Clear Logs..."
-msgstr "清除日志..."
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:95
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:95
-msgid "Logs cleared successfully!"
-msgstr "日志清除成功！"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:101
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:119
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:101
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:119
-msgid "Log is clean."
-msgstr "日志已清除。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:98
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:108
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:112
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:98
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:108
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:112
-msgid "Clear Logs"
-msgstr "清除日志"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:105
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:105
-msgid "Failed to clear log."
-msgstr "清除日志失败。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:127
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:127
-msgid "Log file does not exist."
-msgstr "日志文件不存在。"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:142
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:142
-msgid "Back SmartDNS"
-msgstr "返回 SmartDNS"
-
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/log.js:151
-#: applications/luci-app-smartdns/htdocs/luci-static/resources/view/smartdns/audit_log.js:151
-msgid "Refresh every %s seconds."
-msgstr "每 %s 秒刷新。"
-
-#: applications/luci-app-smartdns/root/usr/share/luci/menu.d/luci-app-smartdns.json:22
-msgid "Logs"
-msgstr "日志"
-
-#: applications/luci-app-smartdns/root/usr/share/luci/menu.d/luci-app-smartdns.json:30
-msgid "Audit Logs"
-msgstr "审计日志"
-
