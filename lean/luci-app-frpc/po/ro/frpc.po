@@ -44,6 +44,8 @@ msgid ""
 "AdminAddr specifies the address that the admin server binds to.<br />By "
 "default, this value is \"0.0.0.0\"."
 msgstr ""
+"AdminAddr specifică adresa la care se leagă serverul de administrare.<br /"
+">În mod implicit, această valoare este \"0.0.0.0\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:31
 msgid ""
@@ -459,6 +461,8 @@ msgid ""
 "ServerAddr specifies the address of the server to connect to.<br />By "
 "default, this value is \"127.0.0.1\"."
 msgstr ""
+"ServerAddr specifică adresa serverului la care trebuie să se conecteze.<br /"
+">În mod implicit, această valoare este \"127.0.0.1\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid ""
@@ -580,20 +584,6 @@ msgstr ""
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "client frp"
-
-#~ msgid ""
-#~ "AdminAddr specifies the address that the admin server binds to.<br />By "
-#~ "default, this value is \"127.0.0.1\"."
-#~ msgstr ""
-#~ "AdminAddr specifică adresa la care se leagă serverul de administrare.<br /"
-#~ ">În mod implicit, această valoare este \"127.0.0.0.1\"."
-
-#~ msgid ""
-#~ "ServerAddr specifies the address of the server to connect to.<br />By "
-#~ "default, this value is \"0.0.0.0\"."
-#~ msgstr ""
-#~ "ServerAddr specifică adresa serverului la care trebuie să se conecteze."
-#~ "<br />În mod implicit, această valoare este \"0.0.0.0\"."
 
 #~ msgid "Name can not be \"common\""
 #~ msgstr "Numele nu poate fi \"comun\""

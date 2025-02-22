@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-03-26 06:39+0000\n"
-"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
+"PO-Revision-Date: 2024-08-31 15:13+0000\n"
+"Last-Translator: Kieli Puoli <kielipuoli@gmail.com>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrpc/fi/>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12-dev\n"
+"X-Generator: Weblate 5.8-dev\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Add new proxy..."
@@ -16,7 +16,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:17
 msgid "Additional configs"
-msgstr ""
+msgstr "Lisäasetukset"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:42
 msgid "Additional settings"
@@ -305,7 +305,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
 msgid "NOT RUNNING"
-msgstr ""
+msgstr "EI KÄYNNISSÄ"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:16
 msgid ""
@@ -359,7 +359,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
 msgid "RUNNING"
-msgstr ""
+msgstr "KÄYNNISSÄ"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:125
 msgid "Refresh every %s seconds."

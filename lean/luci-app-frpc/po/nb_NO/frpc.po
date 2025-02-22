@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-08 22:54+0000\n"
+"PO-Revision-Date: 2024-01-26 16:51+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrpc/nb_NO/>\n"
@@ -8,11 +8,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 5.4-dev\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
+#, fuzzy
 msgid "Add new proxy..."
-msgstr ""
+msgstr "Legg til ny mellomtjener …"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:17
 msgid "Additional configs"
@@ -86,15 +87,16 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data ..."
-msgstr ""
+msgstr "Samler data …"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:201
 msgid "Collecting data..."
 msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:208
+#, fuzzy
 msgid "Common Settings"
-msgstr ""
+msgstr "Generelle innstillinger"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
 msgid "Compression"
@@ -110,7 +112,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
 msgid "Custom domains"
-msgstr ""
+msgstr "Egendefinerte domener"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:28
 msgid "Disable log color"
@@ -159,7 +161,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:229
 msgid "HTTP Settings"
-msgstr ""
+msgstr "HTTP-innstillinger"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:80
@@ -219,12 +221,12 @@ msgstr ""
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:234
 msgid "Local IP"
-msgstr ""
+msgstr "Lokal IP"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:235
 msgid "Local port"
-msgstr ""
+msgstr "Lokal port"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
 msgid "LocalIp specifies the IP address or host name to proxy to."
@@ -253,7 +255,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:26
 msgid "Log level"
-msgstr ""
+msgstr "Loggingsnivå"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:27
 msgid "Log max days"
@@ -305,7 +307,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
 msgid "NOT RUNNING"
-msgstr ""
+msgstr "Kjører ikke"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:16
 msgid ""
@@ -359,7 +361,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
 msgid "RUNNING"
-msgstr ""
+msgstr "Kjører"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:125
 msgid "Refresh every %s seconds."
@@ -396,7 +398,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
 msgid "Server address"
-msgstr ""
+msgstr "Tjeneradresse"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:73
 msgid "Server name"
@@ -404,7 +406,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid "Server port"
-msgstr ""
+msgstr "Tjenerport"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
 msgid ""
@@ -425,11 +427,11 @@ msgstr ""
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:209
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:213
 msgid "Startup Settings"
-msgstr ""
+msgstr "Oppstartsinnstillinger"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:60
 msgid "Subdomain"
-msgstr ""
+msgstr "Underdomene"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:35
 msgid "TCP mux"
@@ -461,7 +463,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:29
 msgid "Token"
-msgstr ""
+msgstr "Symbol"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:29
 msgid ""

@@ -1,8 +1,14 @@
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2024-01-21 20:36+0000\n"
+"Last-Translator: Abdul Muizz Bin Abdul Jalil <abmuizz@gmail.com>\n"
+"Language-Team: Malay <https://hosted.weblate.org/projects/openwrt/"
+"luciapplicationsfrpc/ms/>\n"
 "Language: ms\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.4-dev\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Add new proxy..."
@@ -10,7 +16,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:17
 msgid "Additional configs"
-msgstr ""
+msgstr "Konfig tambahan"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:42
 msgid "Additional settings"
@@ -321,7 +327,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:38
 msgid "Protocol"
-msgstr ""
+msgstr "Protokol"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:38
 msgid ""

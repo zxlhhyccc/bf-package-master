@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-10-23 17:26+0000\n"
-"Last-Translator: Amaury <y0da@live.fr>\n"
+"PO-Revision-Date: 2024-02-01 22:49+0000\n"
+"Last-Translator: ButterflyOfFire <boffire@users.noreply.hosted.weblate.org>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrpc/fr/>\n"
 "Language: fr\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.14.2-dev\n"
+"X-Generator: Weblate 5.4-dev\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Add new proxy..."
@@ -43,6 +43,8 @@ msgid ""
 "AdminAddr specifies the address that the admin server binds to.<br />By "
 "default, this value is \"0.0.0.0\"."
 msgstr ""
+"AdminAddr spécifie l'adresse à laquelle le serveur d'administration se lie."
+"<br />Par défaut, cette valeur est \"0.0.0.0\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:31
 msgid ""
@@ -97,7 +99,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data ..."
-msgstr "Recueillant les données..."
+msgstr "Collecte de données ..."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:201
 msgid "Collecting data..."
@@ -166,7 +168,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:228
 msgid "General Settings"
-msgstr "Paramètres généraux"
+msgstr "Réglages généraux"
 
 #: applications/luci-app-frpc/root/usr/share/rpcd/acl.d/luci-app-frpc.json:3
 msgid "Grant access to LuCI app frpc"
@@ -265,7 +267,7 @@ msgstr "Emplacements"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:25
 msgid "Log file"
-msgstr ""
+msgstr "Fichier journal"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:111
 msgid "Log file does not exist."
@@ -282,7 +284,7 @@ msgstr "Niveau de journalisation"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:27
 msgid "Log max days"
-msgstr ""
+msgstr "Journal max jours"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:12
 msgid "Log stderr"
@@ -298,6 +300,9 @@ msgid ""
 "be used if LogWay is set appropriately.<br />By default, this value is "
 "\"console\"."
 msgstr ""
+"LogFile spécifie un fichier dans lequel les journaux seront écrits. Cette "
+"valeur ne sera utilisée que si LogWay est défini de manière appropriée.<br /"
+">Par défaut, cette valeur est \"console\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:26
 msgid ""
@@ -315,6 +320,10 @@ msgid ""
 "before deletion. This is only used if LogWay == \"file\".<br />By default, "
 "this value is 0."
 msgstr ""
+"LogMaxDays indique le nombre maximal de jours pendant lesquels les "
+"informations du journal doivent être conservées avant d'être supprimées. "
+"Cette valeur n'est utilisée que si LogWay == \"file\".<br />Par défaut, "
+"cette valeur est 0."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:37
 msgid ""
@@ -354,11 +363,11 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
 msgid "Plugin"
-msgstr ""
+msgstr "Plugin"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:230
 msgid "Plugin Settings"
-msgstr ""
+msgstr "Réglages Plugin"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:38
 msgid "Protocol"
@@ -381,7 +390,7 @@ msgstr "Paramètres du proxy"
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:232
 msgid "Proxy name"
-msgstr ""
+msgstr "Nom du proxy"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:233
@@ -429,11 +438,11 @@ msgstr "Exécuter le démon en tant qu'utilisateur"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
 msgid "SOCKS5 password"
-msgstr ""
+msgstr "Mot de passe SOCKS5"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid "SOCKS5 user"
-msgstr ""
+msgstr "SOCKS5 utilisateur"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
 msgid "Server address"
@@ -452,6 +461,8 @@ msgid ""
 "ServerAddr specifies the address of the server to connect to.<br />By "
 "default, this value is \"127.0.0.1\"."
 msgstr ""
+"ServerAddr spécifie l'adresse du serveur auquel se connecter.<br />Par "
+"défaut, cette valeur est \"127.0.0.1\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid ""
@@ -526,7 +537,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
 msgid "Unix domain socket path"
-msgstr ""
+msgstr "Chemin de socket de domaine Unix"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:113
 msgid "Unknown error: %s"
@@ -572,20 +583,6 @@ msgstr ""
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "frp Client"
-
-#~ msgid ""
-#~ "AdminAddr specifies the address that the admin server binds to.<br />By "
-#~ "default, this value is \"127.0.0.1\"."
-#~ msgstr ""
-#~ "AdminAddr spécifie l'adresse à laquelle le serveur d'administration se "
-#~ "lie.<br />Par défaut, cette valeur est \"127.0.0.1\"."
-
-#~ msgid ""
-#~ "ServerAddr specifies the address of the server to connect to.<br />By "
-#~ "default, this value is \"0.0.0.0\"."
-#~ msgstr ""
-#~ "ServerAddr spécifie l'adresse du serveur auquel se connecter.<br />Par "
-#~ "défaut, cette valeur est \"0.0.0.0\"."
 
 #~ msgid "Name can not be \"common\""
 #~ msgstr "Le nom ne peut pas être \"commun\""

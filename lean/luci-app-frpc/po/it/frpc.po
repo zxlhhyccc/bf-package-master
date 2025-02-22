@@ -1,18 +1,18 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-10-10 21:04+0000\n"
-"Last-Translator: garis <garis94@gmail.com>\n"
+"PO-Revision-Date: 2024-07-01 12:20+0000\n"
+"Last-Translator: moreno matassini <morenomatassini95@gmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrpc/it/>\n"
 "Language: it\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 5.7-dev\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Add new proxy..."
-msgstr ""
+msgstr "Aggiungi un nuovo proxy..."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:17
 msgid "Additional configs"
@@ -24,19 +24,19 @@ msgstr "Altre impostazioni"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:30
 msgid "Admin address"
-msgstr ""
+msgstr "Indirizzo dell'amministratore"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:33
 msgid "Admin password"
-msgstr ""
+msgstr "Password di Amministratore"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:31
 msgid "Admin port"
-msgstr ""
+msgstr "Porta admin"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:32
 msgid "Admin user"
-msgstr ""
+msgstr "Utente admin"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:30
 msgid ""
@@ -86,7 +86,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data ..."
-msgstr ""
+msgstr "Caricamento dei dati in corso..."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:201
 msgid "Collecting data..."
@@ -225,7 +225,7 @@ msgstr ""
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:235
 msgid "Local port"
-msgstr ""
+msgstr "Porta locale"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
 msgid "LocalIp specifies the IP address or host name to proxy to."
@@ -254,7 +254,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:26
 msgid "Log level"
-msgstr "Livello registro eventi"
+msgstr "Livello dei log"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:27
 msgid "Log max days"
@@ -306,7 +306,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
 msgid "NOT RUNNING"
-msgstr ""
+msgstr "NON IN ESECUZIONE"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:16
 msgid ""
@@ -320,7 +320,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
 msgid "Plugin"
-msgstr ""
+msgstr "Plugin"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:230
 msgid "Plugin Settings"
@@ -360,7 +360,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
 msgid "RUNNING"
-msgstr ""
+msgstr "IN ESECUZIONE"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:125
 msgid "Refresh every %s seconds."
@@ -369,7 +369,7 @@ msgstr ""
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:236
 msgid "Remote port"
-msgstr ""
+msgstr "Porta remota"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:15
 msgid "Respawn when crashed"
@@ -385,7 +385,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:13
 msgid "Run daemon as user"
-msgstr "Esegui il daemon come utente"
+msgstr "Esegui il demone come utente"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
 msgid "SOCKS5 password"
@@ -397,15 +397,15 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
 msgid "Server address"
-msgstr ""
+msgstr "Indirizzo del server"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:73
 msgid "Server name"
-msgstr ""
+msgstr "Nome del server"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid "Server port"
-msgstr ""
+msgstr "Porta del server"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
 msgid ""
@@ -462,7 +462,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:29
 msgid "Token"
-msgstr ""
+msgstr "Token"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:29
 msgid ""
@@ -494,7 +494,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:36
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:36
 msgid ""

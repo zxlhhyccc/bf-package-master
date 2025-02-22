@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-11-02 22:11+0000\n"
-"Last-Translator: tdt-hv <hvoit@tdt.de>\n"
+"PO-Revision-Date: 2024-10-10 18:27+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrpc/de/>\n"
 "Language: de\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2-dev\n"
+"X-Generator: Weblate 5.8-dev\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Add new proxy..."
@@ -43,6 +43,8 @@ msgid ""
 "AdminAddr specifies the address that the admin server binds to.<br />By "
 "default, this value is \"0.0.0.0\"."
 msgstr ""
+"AdminAddr spezifiziert die Adresse auf der der Admin-Server lauscht.<br /"
+">Standard für diesen Wert ist \"0.0.0.0\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:31
 msgid ""
@@ -97,7 +99,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data ..."
-msgstr "Sammle Daten..."
+msgstr "Sammeln von Daten ..."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:201
 msgid "Collecting data..."
@@ -105,7 +107,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:208
 msgid "Common Settings"
-msgstr "Gemeinsame Einstellungen"
+msgstr "Allgemeine Einstellungen"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
 msgid "Compression"
@@ -121,7 +123,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
 msgid "Custom domains"
-msgstr "Benutzerdefinierte Domains"
+msgstr "Benutzerdefinierte Domänen"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:28
 msgid "Disable log color"
@@ -232,9 +234,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid "If remote_port is 0, frps will assign a random port for you"
-msgstr ""
-"Falls remote_port auf 0 gesetzt ist, wird frps einen zufälligen Port-Wert "
-"zuweisen"
+msgstr "Wenn remote_port 0 ist, weist frps Ihnen einen zufälligen Port zu"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:61
 msgid "Loading..."
@@ -252,9 +252,7 @@ msgstr "Lokaler Port"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
 msgid "LocalIp specifies the IP address or host name to proxy to."
-msgstr ""
-"LocalIp spezifiziert die IP-Adresse oder den Hostnamen der als Proxy "
-"verwendet werden soll."
+msgstr "LocalIp gibt die IP-Adresse oder den Hostnamen für den Proxy an."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
 msgid "LocalPort specifies the port to proxy to."
@@ -279,7 +277,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:26
 msgid "Log level"
-msgstr "Protokollierungsstufe"
+msgstr "Protokollierungslevel"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:27
 msgid "Log max days"
@@ -415,7 +413,7 @@ msgstr ""
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:236
 msgid "Remote port"
-msgstr "Remote-Port"
+msgstr "Entfernter Port"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:15
 msgid "Respawn when crashed"
@@ -458,6 +456,8 @@ msgid ""
 "ServerAddr specifies the address of the server to connect to.<br />By "
 "default, this value is \"127.0.0.1\"."
 msgstr ""
+"ServerAddr spezifiziert die Adresse des Servers zu dem Verbunden werden soll."
+"<br />Standardwert hierfür ist \"127.0.0.1\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid ""
@@ -474,11 +474,11 @@ msgstr "Sk"
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:209
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:213
 msgid "Startup Settings"
-msgstr "Startparameter"
+msgstr "Startup-Einstellungen"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:60
 msgid "Subdomain"
-msgstr "Subdomain"
+msgstr "Unterdomäne"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:35
 msgid "TCP mux"
@@ -559,7 +559,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:36
 msgid "User"
-msgstr "Nutzer"
+msgstr "Benutzer"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:36
 msgid ""
@@ -577,20 +577,6 @@ msgstr ""
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "frp Client"
-
-#~ msgid ""
-#~ "AdminAddr specifies the address that the admin server binds to.<br />By "
-#~ "default, this value is \"127.0.0.1\"."
-#~ msgstr ""
-#~ "AdminAddr spezifiziert die Adresse auf der der Admin-Server lauscht.<br /"
-#~ ">Standard für diesen Wert ist \"127.0.0.1\"."
-
-#~ msgid ""
-#~ "ServerAddr specifies the address of the server to connect to.<br />By "
-#~ "default, this value is \"0.0.0.0\"."
-#~ msgstr ""
-#~ "ServerAddr spezifiziert die Adresse des Servers zu dem Verbunden werden "
-#~ "soll.<br />Standardwert hierfür ist \"0.0.0.0\"."
 
 #~ msgid "Name can not be \"common\""
 #~ msgstr "Der Name kann nicht \"common\" sein"

@@ -1,22 +1,22 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-09-27 22:36+0000\n"
-"Last-Translator: Iskren Mihaylov <iskren.mihaylov91@gmail.com>\n"
+"PO-Revision-Date: 2024-02-28 14:29+0000\n"
+"Last-Translator: Boyan Alexiev <nneauu@gmail.com>\n"
 "Language-Team: Bulgarian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrpc/bg/>\n"
 "Language: bg\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 5.5-dev\n"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Add new proxy..."
-msgstr ""
+msgstr "Добавяне на ново прокси..."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:17
 msgid "Additional configs"
-msgstr ""
+msgstr "Допълнителни настройки"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:42
 msgid "Additional settings"
@@ -86,7 +86,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data ..."
-msgstr ""
+msgstr "Събиране на данни ..."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:201
 msgid "Collecting data..."
@@ -94,7 +94,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:208
 msgid "Common Settings"
-msgstr ""
+msgstr "Общи Настройки"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
 msgid "Compression"
@@ -110,7 +110,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
 msgid "Custom domains"
-msgstr ""
+msgstr "Потребителски домейни"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:28
 msgid "Disable log color"
@@ -151,7 +151,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:228
 msgid "General Settings"
-msgstr "Основни настройки"
+msgstr "Общи настройки"
 
 #: applications/luci-app-frpc/root/usr/share/rpcd/acl.d/luci-app-frpc.json:3
 msgid "Grant access to LuCI app frpc"
@@ -159,7 +159,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:229
 msgid "HTTP Settings"
-msgstr ""
+msgstr "HTTP Настройки"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:80
@@ -210,7 +210,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid "If remote_port is 0, frps will assign a random port for you"
-msgstr ""
+msgstr "Ако remote_port е 0, frps ще Ви назначи случаен порт"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:61
 msgid "Loading..."
@@ -219,20 +219,20 @@ msgstr ""
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:234
 msgid "Local IP"
-msgstr ""
+msgstr "Локалнен IP"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:235
 msgid "Local port"
-msgstr ""
+msgstr "Локален порт"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
 msgid "LocalIp specifies the IP address or host name to proxy to."
-msgstr ""
+msgstr "LocalIp указва IP адреса или хостнейм към който да пренасочва (proxy)."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
 msgid "LocalPort specifies the port to proxy to."
-msgstr ""
+msgstr "LocalPort указва порт-а към който да пренасочва (proxy)."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
 msgid "Locations"
@@ -253,7 +253,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:26
 msgid "Log level"
-msgstr ""
+msgstr "Ниво на записи"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:27
 msgid "Log max days"
@@ -305,7 +305,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
 msgid "NOT RUNNING"
-msgstr ""
+msgstr "НЕ СЕ ИЗПЪЛНЯВА"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:16
 msgid ""
@@ -359,7 +359,7 @@ msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
 msgid "RUNNING"
-msgstr ""
+msgstr "ИЗПЪЛНЕНИЕ"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:125
 msgid "Refresh every %s seconds."

@@ -43,6 +43,8 @@ msgid ""
 "AdminAddr specifies the address that the admin server binds to.<br />By "
 "default, this value is \"0.0.0.0\"."
 msgstr ""
+"AdminAddr determina o endereço a ser vinculado para uso do administrador do "
+"servidor.<br />O valor predefinido é \"0.0.0.0\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:31
 msgid ""
@@ -456,6 +458,8 @@ msgid ""
 "ServerAddr specifies the address of the server to connect to.<br />By "
 "default, this value is \"127.0.0.1\"."
 msgstr ""
+"ServerAddr determina o endereço do servidor para se conectar. <br />O valor "
+"predefinido é \"127.0.0.1\"."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid ""
@@ -575,20 +579,6 @@ msgstr ""
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "Cliente frp"
-
-#~ msgid ""
-#~ "AdminAddr specifies the address that the admin server binds to.<br />By "
-#~ "default, this value is \"127.0.0.1\"."
-#~ msgstr ""
-#~ "AdminAddr determina o endereço a ser vinculado para uso do administrador "
-#~ "do servidor.<br />O valor predefinido é \"127.0.0.0.1\"."
-
-#~ msgid ""
-#~ "ServerAddr specifies the address of the server to connect to.<br />By "
-#~ "default, this value is \"0.0.0.0\"."
-#~ msgstr ""
-#~ "ServerAddr determina o endereço do servidor para se conectar. <br />O "
-#~ "valor predefinido é \"0,0.0.0\"."
 
 #~ msgid "Name can not be \"common\""
 #~ msgstr "O nome não pode ser \"common\""
