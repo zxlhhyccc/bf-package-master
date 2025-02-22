@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-08-05 01:21+0000\n"
-"Last-Translator: Simona Iacob <s@zp1.net>\n"
+"PO-Revision-Date: 2023-04-23 07:04+0000\n"
+"Last-Translator: olimpiumarius <oliver_magnum44@yahoo.com>\n"
 "Language-Team: Romanian <https://hosted.weblate.org/projects/openwrt/"
 "luciapplicationsfrps/ro/>\n"
 "Language: ro\n"
@@ -9,21 +9,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14-dev\n"
+"X-Generator: Weblate 4.18-dev\n"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:15
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:16
 msgid "Additional configs"
 msgstr "Configurații adiționale"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:43
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:45
 msgid "Additional settings"
 msgstr "Setări adiționale"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:40
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:42
 msgid "Allow ports"
 msgstr "Permite porturi"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:40
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:42
 msgid ""
 "AllowPorts specifies a set of ports that clients are able to proxy to. If "
 "the length of this value is 0, all ports are allowed.<br />By default, this "
@@ -33,11 +33,11 @@ msgstr ""
 "la distanță. Dacă dimensiunea acestei valori este 0, toate porturile sunt "
 "permise.<br />Implicit, această valoare este o mulțime goală."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:31
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:33
 msgid "Assets dir"
 msgstr "Directorul de resurse"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:31
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:33
 msgid ""
 "AssetsDir specifies the local directory that the dashboard will load "
 "resources from. If this value is \"\", assets will be loaded from the "
@@ -47,15 +47,15 @@ msgstr ""
 "încărca resurse. Dacă valoarea este \"\", resursele vor fi încărcate din "
 "executabilul împachetat cu statik.<br />Implicit, valoarea este \"\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:19
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:21
 msgid "Bind address"
 msgstr "Adresa legată"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:20
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:22
 msgid "Bind port"
-msgstr "Portul legat"
+msgstr "Legați portul"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:19
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:21
 msgid ""
 "BindAddr specifies the address that the server binds to.<br />By default, "
 "this value is \"0.0.0.0\"."
@@ -63,7 +63,7 @@ msgstr ""
 "BindAddr specifică adresa la care se leagă serverul.<br />În mod implicit, "
 "această valoare este \"0.0.0.0\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:22
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:24
 msgid ""
 "BindKcpPort specifies the KCP port that the server listens on. If this value "
 "is 0, the server will not listen for KCP connections.<br />By default, this "
@@ -73,7 +73,7 @@ msgstr ""
 "valoare este 0, serverul nu va asculta conexiunile KCP.<br />În mod "
 "implicit, această valoare este 0."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:20
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:22
 msgid ""
 "BindPort specifies the port that the server listens on.<br />By default, "
 "this value is 7000."
@@ -81,7 +81,7 @@ msgstr ""
 "BindPort specifică portul pe care serverul ascultă.<br />În mod implicit, "
 "această valoare este 7000."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:21
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:23
 msgid ""
 "BindUdpPort specifies the UDP port that the server listens on. If this value "
 "is 0, the server will not listen for UDP connections.<br />By default, this "
@@ -91,23 +91,38 @@ msgstr ""
 "valoare este 0, serverul nu va asculta conexiuni UDP.<br />În mod implicit, "
 "această valoare este 0"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:143
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:81
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:91
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:95
+msgid "Clear Logs"
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:75
+msgid "Clear Logs..."
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:153
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:63
 msgid "Collecting data ..."
 msgstr "Colectarea datelor ..."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:151
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:160
 msgid "Common settings"
 msgstr "Setări comune"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:15
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:16
 msgid "Config files include in temporary config file"
 msgstr "Fișiere de configurare incluse în fișierul de configurare temporar"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:39
+#: applications/luci-app-frps/root/usr/share/luci/menu.d/luci-app-frps.json:15
+msgid "Configuration"
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:41
 msgid "Custom 404 page"
 msgstr "Pagina 404 personalizată"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:39
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:41
 msgid ""
 "Custom404Page specifies a path to a custom 404 page to display. If this "
 "value is \"\", a default page will be displayed.<br />By default, this value "
@@ -117,23 +132,23 @@ msgstr ""
 "să fie afișată. Dacă această valoare este \"\", va fi afișată o pagină "
 "implicită.<br />Din mod implicit, această valoare este \"\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:27
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:29
 msgid "Dashboard address"
 msgstr "Adresa tabloului de bord"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:30
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:32
 msgid "Dashboard password"
 msgstr "Parola tabloului de bord"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:28
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:30
 msgid "Dashboard port"
 msgstr "Port pentru tabloul de bord"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:29
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:31
 msgid "Dashboard user"
 msgstr "Utilizatorul tabloului de bord"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:27
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:29
 msgid ""
 "DashboardAddr specifies the address that the dashboard binds to.<br />By "
 "default, this value is \"0.0.0.0\"."
@@ -141,7 +156,7 @@ msgstr ""
 "DashboardAddr specifică adresa la care se leagă tabloul de bord.<br />În mod "
 "implicit, această valoare este \"0.0.0.0.0\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:28
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:30
 msgid ""
 "DashboardPort specifies the port that the dashboard listens on. If this "
 "value is 0, the dashboard will not be started.<br />By default, this value "
@@ -151,7 +166,7 @@ msgstr ""
 "valoare este 0, tabloul de bord nu va fi pornit.<br />În mod implicit, "
 "această valoare este 0."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:30
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:32
 msgid ""
 "DashboardPwd specifies the password that the dashboard will use for login."
 "<br />By default, this value is \"admin\"."
@@ -159,7 +174,7 @@ msgstr ""
 "DashboardPwd specifică parola pe care tabloul de bord o va utiliza pentru "
 "autentificare.<br />În mod implicit, această valoare este \"admin\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:29
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:31
 msgid ""
 "DashboardUser specifies the username that the dashboard will use for login."
 "<br />By default, this value is \"admin\"."
@@ -168,11 +183,11 @@ msgstr ""
 "utiliza pentru autentificare.<br />În mod implicit, această valoare este "
 "\"admin\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:35
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:37
 msgid "Disable log color"
 msgstr "Dezactivați culoarea jurnalului"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:35
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:37
 msgid ""
 "DisableLogColor disables log colors when LogWay == \"console\" when set to "
 "true.<br />By default, this value is false."
@@ -181,53 +196,81 @@ msgstr ""
 "\"console\" este setat la true.<br />Prin definiția implicită, această "
 "valoare este falsă."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:14
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:20
+msgid "Enable"
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:15
 msgid "Environment variable"
 msgstr "Variabila de mediu"
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:88
+msgid "Failed to clear log."
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:140
+msgid ""
+"Frp is a fast reverse proxy to help you expose a local server behind a NAT "
+"or firewall to the internet,it supports TCP and UDP, as well as HTTP and "
+"HTTPS protocols."
+msgstr ""
 
 #: applications/luci-app-frps/root/usr/share/rpcd/acl.d/luci-app-frps.json:3
 msgid "Grant access to LuCI app frps"
 msgstr "Acordarea accesului la aplicația LuCI frps"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:42
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:44
 msgid ""
 "HeartBeatTimeout specifies the maximum time to wait for a heartbeat before "
 "terminating the connection. It is not recommended to change this value.<br /"
 ">By default, this value is 90."
 msgstr ""
 "HeartBeatTimeout specifică timpul maxim de așteptare a unei bătăi de inimă "
-"înainte de a încheia conexiunea. Nu se recomandă modificarea acestei "
-"valori.<br />În mod implicit, această valoare este 90."
+"înainte de a încheia conexiunea. Nu se recomandă modificarea acestei valori."
+"<br />În mod implicit, această valoare este 90."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:42
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:44
 msgid "Heartbeat timeout"
 msgstr "Timpul limită a bătăilor inimii"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:22
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:24
 msgid "KCP bind port"
 msgstr "Port de legătură KCP"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:32
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:61
+msgid "Loading..."
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:34
 msgid "Log file"
 msgstr "Fișier jurnal"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:33
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:111
+msgid "Log file does not exist."
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:84
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:103
+msgid "Log is clean."
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:35
 msgid "Log level"
 msgstr "Nivel de jurnal"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:34
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:36
 msgid "Log max days"
 msgstr "Jurnal maxim zile"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:10
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:11
 msgid "Log stderr"
 msgstr "Jurnal stderr"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:9
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:10
 msgid "Log stdout"
 msgstr "Jurnal stdout"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:32
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:34
 msgid ""
 "LogFile specifies a file where logs will be written to. This value will only "
 "be used if LogWay is set appropriately.<br />By default, this value is "
@@ -237,7 +280,7 @@ msgstr ""
 "va fi utilizată numai dacă LogWay este setat în mod corespunzător.<br />În "
 "mod implicit, această valoare este \"console\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:33
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:35
 msgid ""
 "LogLevel specifies the minimum log level. Valid values are \"trace\", \"debug"
 "\", \"info\", \"warn\", and \"error\".<br />By default, this value is \"info"
@@ -247,7 +290,7 @@ msgstr ""
 "\"trace\", \"debug\", \"info\", \"warn\" și \"error\".<br />Prin definiție, "
 "această valoare este \"info\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:34
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:36
 msgid ""
 "LogMaxDays specifies the maximum number of days to store log information "
 "before deletion. This is only used if LogWay == \"file\".<br />By default, "
@@ -257,11 +300,19 @@ msgstr ""
 "jurnal înainte de ștergere . Acest lucru se utilizează numai dacă LogWay == "
 "\"file\".<br />În mod implicit, această valoare este 0."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:41
+#: applications/luci-app-frps/root/usr/share/luci/menu.d/luci-app-frps.json:23
+msgid "Logs"
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:78
+msgid "Logs cleared successfully!"
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:43
 msgid "Max ports per client"
 msgstr "Porturi maxime pe client"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:41
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:43
 msgid ""
 "MaxPortsPerClient specifies the maximum number of ports a single client may "
 "proxy to. If this value is 0, no limit will be applied.<br />By default, "
@@ -271,11 +322,11 @@ msgstr ""
 "client le poate accesa prin proxy. Dacă această valoare este 0, nu se va "
 "aplica nicio limită.<br />În mod implicit, această valoare este 0."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:118
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:122
 msgid "NOT RUNNING"
 msgstr "NU FUNCȚIONEAZĂ"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:14
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:15
 msgid ""
 "OS environments pass to frp for config file template, see <a href=\"https://"
 "github.com/fatedier/frp#configuration-file-template\">frp README</a>"
@@ -284,41 +335,49 @@ msgstr ""
 "configurare, vezi <a href=\"https://github.com/fatedier/frp#configuration-"
 "file-template\">frp README</a>"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:23
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:119
+msgid "Open Web Interface"
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:25
 msgid "Proxy bind address"
 msgstr "Adresa de legare a proxy-ului"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:23
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:25
 msgid ""
 "ProxyBindAddr specifies the address that the proxy binds to. This value may "
 "be the same as BindAddr.<br />By default, this value is \"0.0.0.0\"."
 msgstr ""
 "ProxyBindAddr specifică adresa la care se leagă proxy-ul. Această valoare "
-"poate fi aceeași cu BindAddr.<br />În mod implicit, această valoare este \"0."
-"0.0.0\"."
+"poate fi aceeași cu BindAddr.<br />În mod implicit, această valoare este "
+"\"0.0.0.0\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:116
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:120
 msgid "RUNNING"
 msgstr "RULARE"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:13
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:125
+msgid "Refresh every %s seconds."
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:14
 msgid "Respawn when crashed"
 msgstr "Respawn când crapă"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:12
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:13
 msgid "Run daemon as group"
 msgstr "Rularea daemonului ca grup"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:11
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:12
 msgid "Run daemon as user"
 msgstr "Rulați daemonul ca utilizator"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:152
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:156
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:161
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:165
 msgid "Startup settings"
 msgstr "Setări de pornire"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:37
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:39
 msgid ""
 "SubDomainHost specifies the domain that will be attached to sub-domains "
 "requested by the client when using Vhost proxying. For example, if this "
@@ -332,15 +391,15 @@ msgstr ""
 "subdomeniul \"test\", URL-ul rezultat va fi \"test.frps.com\".<br />În mod "
 "implicit, această valoare este \"\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:37
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:39
 msgid "Subdomain host"
 msgstr "Gazda subdomeniului"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:38
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:40
 msgid "TCP mux"
 msgstr "Mux TCP"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:38
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:40
 msgid ""
 "TcpMux toggles TCP stream multiplexing. This allows multiple requests from a "
 "client to share a single TCP connection.<br />By default, this value is true."
@@ -349,7 +408,7 @@ msgstr ""
 "cereri de la un client să partajeze o singură conexiune TCP.<br />În mod "
 "implicit, această valoare este adevărată."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:43
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:45
 msgid ""
 "This list can be used to specify some additional parameters which have not "
 "been included in this LuCI."
@@ -357,11 +416,11 @@ msgstr ""
 "Această listă poate fi utilizată pentru a specifica anumiți parametri "
 "suplimentari care nu au fost incluși în acest LuCI."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:36
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:38
 msgid "Token"
 msgstr "Token"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:36
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:38
 msgid ""
 "Token specifies the authorization token used to authenticate keys received "
 "from clients. Clients must have a matching token to be authorized to use the "
@@ -372,23 +431,27 @@ msgstr ""
 "pentru a fi autorizați să utilizeze serverul.<br />În mod implicit, această "
 "valoare este \"\"."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:21
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:23
 msgid "UDP bind port"
 msgstr "Port de legătură UDP"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:24
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:113
+msgid "Unknown error: %s"
+msgstr ""
+
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:26
 msgid "Vhost HTTP port"
 msgstr "Port HTTP Vhost"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:26
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:28
 msgid "Vhost HTTP timeout"
 msgstr "Timpul de expirare HTTP Vhost"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:25
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:27
 msgid "Vhost HTTPS port"
 msgstr "Port HTTPS Vhost"
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:24
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:26
 msgid ""
 "VhostHttpPort specifies the port that the server listens for HTTP Vhost "
 "requests. If this value is 0, the server will not listen for HTTP requests."
@@ -398,7 +461,7 @@ msgstr ""
 "HTTP Vhost. Dacă această valoare este 0, serverul nu va asculta cererile "
 "HTTP.<br />În mod implicit, această valoare este 0."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:26
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:28
 msgid ""
 "VhostHttpTimeout specifies the response header timeout for the Vhost HTTP "
 "server, in seconds.<br />By default, this value is 60."
@@ -407,7 +470,7 @@ msgstr ""
 "pentru serverul HTTP Vhost, în secunde.<br />Prin definiție, această valoare "
 "este 60."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:25
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:27
 msgid ""
 "VhostHttpsPort specifies the port that the server listens for HTTPS Vhost "
 "requests. If this value is 0, the server will not listen for HTTPS requests."
@@ -417,9 +480,9 @@ msgstr ""
 "HTTPS Vhost. Dacă această valoare este 0, serverul nu va asculta "
 "solicitările HTTPS.<br />În mod implicit, această valoare este 0."
 
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:116
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:118
-#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps.js:128
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:120
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:122
+#: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:139
 #: applications/luci-app-frps/root/usr/share/luci/menu.d/luci-app-frps.json:3
 msgid "frp Server"
 msgstr "Server frp"

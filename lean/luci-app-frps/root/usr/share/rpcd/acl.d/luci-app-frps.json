@@ -1,6 +1,6 @@
 {
 	"luci-app-frps": {
-		"description": "Grant UCI access for luci-app-frps",
+		"description": "Grant access to LuCI app frps",
 		"read": {
 			"cgi-io": [ "exec" ],
 			"file": {

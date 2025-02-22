@@ -1,26 +1,30 @@
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-06-07 10:49+0000\n"
-"Last-Translator: Sunggu Choi <dkaost@outlook.com>\n"
-"Language-Team: Korean <https://hosted.weblate.org/projects/openwrt/"
-"luciapplicationsfrps/ko/>\n"
-"Language: ko\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2024-09-26 17:16+0000\n"
+"Last-Translator: Džiugas Januševičius <dziugas1959@hotmail.com>\n"
+"Language-Team: Lithuanian <https://hosted.weblate.org/projects/openwrt/"
+"luciapplicationsfrps/lt/>\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
+"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
+"1 : 2);\n"
+"X-Generator: Weblate 5.8-dev\n"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:16
 msgid "Additional configs"
-msgstr ""
+msgstr "Papildomi konfigūravimai"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:45
 msgid "Additional settings"
-msgstr ""
+msgstr "Papildomi nustatymai"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:42
 msgid "Allow ports"
-msgstr ""
+msgstr "Leisti prievadus"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:42
 msgid ""
@@ -28,10 +32,14 @@ msgid ""
 "the length of this value is 0, all ports are allowed.<br />By default, this "
 "value is an empty set."
 msgstr ""
+"„Leisti prievadus“ („AllowPorts“) – nurodo prievadų rinkinį, kuriuo klientai "
+"gali įgalioti į. Jei šios reikšmės ilgis yra – 0-is, tada visi prievadai yra "
+"leidžiami.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – tuščias "
+"rinkinys."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:33
 msgid "Assets dir"
-msgstr ""
+msgstr "„Assets“ katalogas/vietovė"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:33
 msgid ""
@@ -39,20 +47,26 @@ msgid ""
 "resources from. If this value is \"\", assets will be loaded from the "
 "bundled executable using statik.<br />By default, this value is \"\"."
 msgstr ""
+"„„Assets“ katalogas/vietovė“ („AssetsDir“) – nurodo vietinį/-ę katalogą/"
+"vietovę, prie kurio ataskaitų skydelis įkels išteklius. Jei ši reikšmė yra – "
+"„\"\"“, ištekliai bus įkeliami iš vykdomojo failo paketo naudojant – "
+"„statik“.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – „\"\"“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:21
 msgid "Bind address"
-msgstr ""
+msgstr "Pririšti adresą"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:22
 msgid "Bind port"
-msgstr ""
+msgstr "Pririšti prievadą"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:21
 msgid ""
 "BindAddr specifies the address that the server binds to.<br />By default, "
 "this value is \"0.0.0.0\"."
 msgstr ""
+"„Pririšti adresą“ („BindAddr“) – nurodo adresą, prie kurio prisiriša "
+"serveris.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – „0.0.0.0“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:24
 msgid ""
@@ -60,12 +74,19 @@ msgid ""
 "is 0, the server will not listen for KCP connections.<br />By default, this "
 "value is 0."
 msgstr ""
+"„Pririšti „KCP“ prievadą“ („BindKcpPort“) – nurodo „KCP“ prievadą, prie "
+"kurio serveris lauks prisijungimo/jungties ryšio. Jei ši reikšmė yra – 0-is, "
+"tada serveris nelauks prisijungimo/jungties ryšio, skirta „KCP“ ryšiams.<br /"
+">Pagal numatytuosius nustatymus, ši reikšmė yra – 0-is."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:22
 msgid ""
 "BindPort specifies the port that the server listens on.<br />By default, "
 "this value is 7000."
 msgstr ""
+"„Pririšti prievadą“ („BindPort“) – nurodo prievadą, prie kurio serveris "
+"lauks prisijungimo/jungties ryšio.<br />Pagal numatytuosius nustatymus, ši "
+"reikšmė yra – 7000-čiai."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:23
 msgid ""
@@ -73,6 +94,10 @@ msgid ""
 "is 0, the server will not listen for UDP connections.<br />By default, this "
 "value is 0"
 msgstr ""
+"„Pririšti „UDP“ prievadą“ („BindUdpPort“) – nurodo „UDP“ prievadą, prie "
+"kurio serveris lauks prisijungimo/jungties ryšio. Jei ši reikšmė yra – 0-is, "
+"tada serveris nelauks prisijungimo/jungties ryšio, skirta „UDP“ ryšiams.<br /"
+">Pagal numatytuosius nustatymus, ši reikšmė yra – 0-is"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:81
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:91
@@ -87,15 +112,15 @@ msgstr ""
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:153
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:63
 msgid "Collecting data ..."
-msgstr ""
+msgstr "Renkami duomenys..."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:160
 msgid "Common settings"
-msgstr ""
+msgstr "Dažni nustatymai"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:16
 msgid "Config files include in temporary config file"
-msgstr ""
+msgstr "Konfigūracijos failai įtraukti į laikinąjį konfigūracijos failą"
 
 #: applications/luci-app-frps/root/usr/share/luci/menu.d/luci-app-frps.json:15
 msgid "Configuration"
@@ -103,7 +128,7 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:41
 msgid "Custom 404 page"
-msgstr ""
+msgstr "Pasirinktinis „404“ puslapis"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:41
 msgid ""
@@ -111,28 +136,35 @@ msgid ""
 "value is \"\", a default page will be displayed.<br />By default, this value "
 "is \"\"."
 msgstr ""
+"„Pasirinktinis „404“ puslapis“ („Custom404Page“) – nurodo kelią į "
+"pasirinktinį „404“ puslapį, kurį reikia rodyti. Jei ši reikšmė yra – „\"\"“, "
+"tada bus rodomas numatytasis puslapis.<br />Pagal numatytuosius nustatymus, "
+"ši reikšmė yra – „\"\"“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:29
 msgid "Dashboard address"
-msgstr ""
+msgstr "Ataskaitų skydelio adresas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:32
 msgid "Dashboard password"
-msgstr ""
+msgstr "Ataskaitų skydelio slaptažodis"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:30
 msgid "Dashboard port"
-msgstr ""
+msgstr "Ataskaitų skydelio prievadas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:31
 msgid "Dashboard user"
-msgstr ""
+msgstr "Ataskaitų skydelio naudotojas/vartotojas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:29
 msgid ""
 "DashboardAddr specifies the address that the dashboard binds to.<br />By "
 "default, this value is \"0.0.0.0\"."
 msgstr ""
+"„Ataskaitų skydelio adresas“ („DashboardAddr“) – nurodo adresą, prie kurio "
+"ataskaitų skydelis yra pririštas į.<br />Pagal numatytuosius nustatymus, ši "
+"reikšmė yra – „0.0.0.0“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:30
 msgid ""
@@ -140,28 +172,42 @@ msgid ""
 "value is 0, the dashboard will not be started.<br />By default, this value "
 "is 0."
 msgstr ""
+"„Ataskaitų skydelio prievadas“ („DashboardPort“) – nurodo prievadą, prie "
+"kurio ataskaitų skydelis lauks prisijungimo/jungties ryšio. Jei ši reikšmė "
+"yra – 0-is, ataskaitų skydelis nebus paleistas.<br />Pagal numatytuosius "
+"nustatymus, ši reikšmė yra – 0-is."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:32
 msgid ""
 "DashboardPwd specifies the password that the dashboard will use for login."
 "<br />By default, this value is \"admin\"."
 msgstr ""
+"„Ataskaitų skydelio slaptažodis“ („DashboardPwd“) – nurodo slaptažodį, kurį "
+"prietaisų skydelis naudos prisijungimui.<br />Pagal numatytuosius "
+"nustatymus, ši reikšmė yra – „admin“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:31
 msgid ""
 "DashboardUser specifies the username that the dashboard will use for login."
 "<br />By default, this value is \"admin\"."
 msgstr ""
+"„Ataskaitų skydelio naudotojas/vartotojas („DashboardUser“) – nurodo "
+"naudotojo/vartotojo vardą (t.y slapyvardį), prie kurio ataskaitų skydelis "
+"naudos prisijungimui.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – "
+"„admin“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:37
 msgid "Disable log color"
-msgstr ""
+msgstr "Išjungti žurnalo spalvą"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:37
 msgid ""
 "DisableLogColor disables log colors when LogWay == \"console\" when set to "
 "true.<br />By default, this value is false."
 msgstr ""
+"„Išjungti/Išgalinti žurnalo spalva/-ą“ („DisableLogColor“) – išjungia/"
+"išgalina žurnalo spalvas, kai – „LogWay == „console“, kai nustatyta į – "
+"„true“.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – „false“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:20
 msgid "Enable"
@@ -169,7 +215,7 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:15
 msgid "Environment variable"
-msgstr ""
+msgstr "Aplinkybių kintamumas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:88
 msgid "Failed to clear log."
@@ -184,7 +230,7 @@ msgstr ""
 
 #: applications/luci-app-frps/root/usr/share/rpcd/acl.d/luci-app-frps.json:3
 msgid "Grant access to LuCI app frps"
-msgstr ""
+msgstr "Duoti prieigą prie „LuCI app frps“"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:44
 msgid ""
@@ -192,14 +238,18 @@ msgid ""
 "terminating the connection. It is not recommended to change this value.<br /"
 ">By default, this value is 90."
 msgstr ""
+"„Širdies ritmo“ pasibaigusios užklausos laikas („HeartBeatTimeout“) – nurodo "
+"maksimalų laiką, per kurį reikia laukti „širdies plakimo“, prieš nutraukiant "
+"ryšį. Keisti šios reikšmės nėra rekomenduojama.<br />Pagal numatytuosius "
+"nustatymus, ši reikšmė yra – 90-imt."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:44
 msgid "Heartbeat timeout"
-msgstr ""
+msgstr "„Širdies ritmo“ pasibaigusios užklausos laikas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:24
 msgid "KCP bind port"
-msgstr ""
+msgstr "Pririšti „KCP“ prievadą"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:61
 msgid "Loading..."
@@ -207,7 +257,7 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:34
 msgid "Log file"
-msgstr "로그 파일"
+msgstr "Žurnalo failas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:111
 msgid "Log file does not exist."
@@ -220,19 +270,19 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:35
 msgid "Log level"
-msgstr ""
+msgstr "Žurnalo lygis"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:36
 msgid "Log max days"
-msgstr ""
+msgstr "Maksimalus dienų žurnalinimas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:11
 msgid "Log stderr"
-msgstr ""
+msgstr "Žurnalinti „stderr“"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:10
 msgid "Log stdout"
-msgstr ""
+msgstr "Žurnalinti „stdout“"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:34
 msgid ""
@@ -240,6 +290,9 @@ msgid ""
 "be used if LogWay is set appropriately.<br />By default, this value is "
 "\"console\"."
 msgstr ""
+"„Žurnalo failas“ („LogFile“) – nurodo failą, kuriame bus rašomi žurnalai. Ši "
+"reikšmė bus naudojama tik tada, jei – „LogWay“ bus nustatytas tinkamai.<br /"
+">Pagal numatytuosius nustatymus, ši reikšmė yra –„console“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:35
 msgid ""
@@ -247,6 +300,9 @@ msgid ""
 "\", \"info\", \"warn\", and \"error\".<br />By default, this value is \"info"
 "\"."
 msgstr ""
+"„Žurnalo lygis“ („LogLevel“) – nurodo minimalų žurnalo lygį. Tinkamos "
+"reikšmės yra – „trace“, „debug“, „info“, „warn“ ir „error“.<br />Pagal "
+"numatytuosius nustatymus, ši reikšmė yra – \"info\"."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:36
 msgid ""
@@ -254,6 +310,10 @@ msgid ""
 "before deletion. This is only used if LogWay == \"file\".<br />By default, "
 "this value is 0."
 msgstr ""
+"„Žurnalo maksimalios dienos“ („LogMaxDays“) – nurodo žurnalo maksimalų dienų "
+"skaičių, kiek dienų reikia saugoti žurnalo informaciją prieš ištrinant. Tai "
+"yra naudojama tik tada, jei – „LogWay“ == „failas“.<br />Pagal numatytuosius "
+"nustatymus, ši reikšmė yra – 0-is."
 
 #: applications/luci-app-frps/root/usr/share/luci/menu.d/luci-app-frps.json:23
 msgid "Logs"
@@ -265,7 +325,7 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:43
 msgid "Max ports per client"
-msgstr ""
+msgstr "Maksimalus prievadų skaičius klientui"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:43
 msgid ""
@@ -273,16 +333,23 @@ msgid ""
 "proxy to. If this value is 0, no limit will be applied.<br />By default, "
 "this value is 0."
 msgstr ""
+"„Maksimalūs prievadai, kiekvienam klientui“ („MaxPortsPerClient“) – nurodo "
+"maksimalų prievadų skaičių, į kurį vienas klientas gali įgalioti į. Jei ši "
+"vertė yra – 0-is, apribojimas nebus taikomas.<br />Pagal numatytuosius "
+"nustatymus ši, reikšmė yra – 0-is."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:122
 msgid "NOT RUNNING"
-msgstr ""
+msgstr "NEVEIKIA"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:15
 msgid ""
 "OS environments pass to frp for config file template, see <a href=\"https://"
 "github.com/fatedier/frp#configuration-file-template\">frp README</a>"
 msgstr ""
+"„OS“ aplinkybės yra perduodamos į – „frp“, skirtos konfigūracijos failo "
+"šablonui, žr.: <a href=\"https://github.com/fatedier/frp#configuration-file-"
+"template\">„frp README“</a>"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:119
 msgid "Open Web Interface"
@@ -290,17 +357,20 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:25
 msgid "Proxy bind address"
-msgstr ""
+msgstr "Pririšti įgaliotojo adresą"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:25
 msgid ""
 "ProxyBindAddr specifies the address that the proxy binds to. This value may "
 "be the same as BindAddr.<br />By default, this value is \"0.0.0.0\"."
 msgstr ""
+"„Įgaliotojo pririštas adresas“ („ProxyBindAddr“) – nurodo adresą, prie kurio "
+"įgaliotasis yra pririštas į. Ši reikšmė gali būti tokia pati kaip – "
+"„BindAddr“.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – „0.0.0.0“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:120
 msgid "RUNNING"
-msgstr ""
+msgstr "VYKDOMAS/-A"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:125
 msgid "Refresh every %s seconds."
@@ -308,20 +378,20 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:14
 msgid "Respawn when crashed"
-msgstr ""
+msgstr "Atkurti/Perjungti (vardžiuojamai: „Atgimti“), kai užstringa"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:13
 msgid "Run daemon as group"
-msgstr ""
+msgstr "Vykdyti „daemon“ kaip grupę"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:12
 msgid "Run daemon as user"
-msgstr ""
+msgstr "Vykdyti paslaugų teikimo sistema kaip naudotojas/vartotojas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:161
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:165
 msgid "Startup settings"
-msgstr ""
+msgstr "Paleidimo nustatymai"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:39
 msgid ""
@@ -331,30 +401,41 @@ msgid ""
 "\", the resulting URL would be \"test.frps.com\".<br />By default, this "
 "value is \"\"."
 msgstr ""
+"„Subdomeno-srities skleidėjas/vedėjas“ („SubDomainHost) – nurodo domeną-"
+"sritį, kuris bus prijungtas prie subdomenų-sričių, kurių paprašė klientas, "
+"kai naudojamas – „Vhost“ įgaliojimas. Pavyzdžiui, jei ši vertė nustatyta į – "
+"„frps.com“, o klientas paprašė subdomeno-srities – „test“, gautas „URL“ – "
+"saitas, bus – „test.frps.com“.<br />Pagal numatytuosius nustatymus, ši "
+"reikšmė yra – „\"\"“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:39
 msgid "Subdomain host"
-msgstr ""
+msgstr "Subdomeno-srities skleidėjas/vedėjas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:40
 msgid "TCP mux"
-msgstr ""
+msgstr "„TCP“ tankintuvas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:40
 msgid ""
 "TcpMux toggles TCP stream multiplexing. This allows multiple requests from a "
 "client to share a single TCP connection.<br />By default, this value is true."
 msgstr ""
+"„„TCP“ tankintuvas/-imas“ („TcpMux“) perjungia „TCP“ srauto tankinimą. Tai "
+"leidžia kelioms kliento užklausoms bendrinti vieną „TCP“ ryšį.<br />Pagal "
+"numatytuosius nustatymus, ši reikšmė yra – „true“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:45
 msgid ""
 "This list can be used to specify some additional parameters which have not "
 "been included in this LuCI."
 msgstr ""
+"Šis sąrašas gali būti naudojamas nurodyti kai kuriuos papildomus parametrus, "
+"kurie nebuvo įtraukti į šį – „LuCI“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:38
 msgid "Token"
-msgstr ""
+msgstr "Žetonas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:38
 msgid ""
@@ -362,10 +443,14 @@ msgid ""
 "from clients. Clients must have a matching token to be authorized to use the "
 "server.<br />By default, this value is \"\"."
 msgstr ""
+"„Žetonas“ (angl. „Token“) – nurodo prieigos teisių suteikiamą žetoną, kuris "
+"yra naudojamas autentifikuojant raktus, gautus iš klientų. Klientai turi "
+"turėti atitinkamą prieigos teisių suteikiamąjį žetoną, kad galėtų naudoti "
+"serverį.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – „\"\"“."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:23
 msgid "UDP bind port"
-msgstr ""
+msgstr "„UDP“ pririštas prievadas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/log.js:113
 msgid "Unknown error: %s"
@@ -373,15 +458,15 @@ msgstr ""
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:26
 msgid "Vhost HTTP port"
-msgstr ""
+msgstr "„Vhost HTTP“ prievadas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:28
 msgid "Vhost HTTP timeout"
-msgstr ""
+msgstr "„Vhost HTTP“ pasibaigusios užklausos laikas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:27
 msgid "Vhost HTTPS port"
-msgstr ""
+msgstr "„Vhost HTTPS“ prievadas"
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:26
 msgid ""
@@ -389,12 +474,21 @@ msgid ""
 "requests. If this value is 0, the server will not listen for HTTP requests."
 "<br />By default, this value is 0."
 msgstr ""
+"„„Vhost“, „HTTP“ prievadas“ („VhostHttpPort“) – nurodo prievadą, prie kurio "
+"serveris lauks prisijungimo/jungties ryšio, skirtoms „HTTP“, „Vhost“ "
+"užklausoms. Jei ši reikšmė yra – 0-is, serveris nelauks prisijungimo/"
+"jungties ryšio, „HTTP“ užklausų.<br />Pagal numatytuosius nustatymus, ši "
+"reikšmė yra – 0-is."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:28
 msgid ""
 "VhostHttpTimeout specifies the response header timeout for the Vhost HTTP "
 "server, in seconds.<br />By default, this value is 60."
 msgstr ""
+"„„Vhost“, „HTTP“ pasibaigusios užklausos laikas“ („VhostHttpTimeout“) – "
+"nurodo „Vhost“, „HTTP“ serverio atsako antraštės pasibaigusios užklausos "
+"laiką, sekundėmis.<br />Pagal numatytuosius nustatymus, ši reikšmė yra – 60-"
+"imt."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:27
 msgid ""
@@ -402,10 +496,15 @@ msgid ""
 "requests. If this value is 0, the server will not listen for HTTPS requests."
 "<br />By default, this value is 0."
 msgstr ""
+"„„Vhost“, „HTTPS“ prievadas“ – („VhostHttpsPort“) – nurodo prievadą, prie "
+"kurio serveris lauks prisijungimo/jungties ryšio , skirtoms „HTTPS“, „Vhost“ "
+"užklausoms. Jei ši reikšmė yra – 0-is, serveris nelauks prisijungimo/"
+"jungties ryšio, „HTTPS“ užklausų.<br />Pagal numatytuosius nustatymus, ši "
+"reikšmė yra – 0-is."
 
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:120
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:122
 #: applications/luci-app-frps/htdocs/luci-static/resources/view/frps/frps.js:139
 #: applications/luci-app-frps/root/usr/share/luci/menu.d/luci-app-frps.json:3
 msgid "frp Server"
-msgstr ""
+msgstr "„frp“ serveris"
