@@ -1,0 +1,99 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:95
+msgid "Allow automatic activation"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:98
+msgid "Allow connection from Internet"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:86
+msgid "Base Setting"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:78
+msgid "Collecting data…"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:87
+msgid "Configuration File"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:87
+msgid "Edit the content of the /etc/vlmcsd.ini file."
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:104
+msgid "Empty Log File"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:91
+msgid "Enable KMS Server"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:109
+msgid "Every weeks"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/root/usr/share/rpcd/acl.d/luci-app-vlmcsd.json:3
+msgid "Grant UCI access for luci-app-vlmcsd"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:42
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:44
+#: applications/luci-app-vlmcsd/root/usr/share/luci/menu.d/luci-app-vlmcsd.json:3
+msgid "KMS Server"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:60
+msgid "KMS Server Settings"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:115
+msgid "Local Port"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:88
+msgid "Log"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:148
+msgid "Log file does not exist."
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:145
+msgid "Log is empty."
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:44
+msgid "NOT RUNNING"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:42
+msgid "RUNNING"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:163
+msgid "Refresh every %s seconds."
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:62
+msgid ""
+"SA KMS Server Emulator to activate your Windows or Office<br/>Current Version"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:122
+msgid ""
+"This is the content of the file '/etc/vlmcsd.ini', you can edit it here, "
+"usually no modification is needed."
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:33
+msgid "Unknown version"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:101
+msgid "Use Config File"
+msgstr ""
