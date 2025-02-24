@@ -52,7 +52,7 @@ start_service() {
 
     # 加载配置
     config_load "$CONF"
-    
+
     # 获取配置项
     config_get_bool enabled "config" "enabled" "0"
     config_get auto_activate "config" "auto_activate" "0"
@@ -93,9 +93,9 @@ start_service() {
     fi
 
     procd_set_param file "$INI"
-	procd_set_param stdout 1
-	procd_set_param stderr 1
-	procd_set_param respawn
+    procd_set_param stdout 1
+    procd_set_param stderr 1
+    procd_set_param respawn
 
     # 配置防火墙规则
     if [ "$internet_access" -eq "1" ]; then
@@ -114,6 +114,7 @@ start_service() {
     fi
 
     procd_close_instance
+
     # 添加定时任务
     add_cron
 }
@@ -147,4 +148,3 @@ service_stopped() {
 service_triggers() {
     procd_add_reload_trigger "$CONF"
 }
-
