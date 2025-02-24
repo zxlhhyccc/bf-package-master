@@ -3,6 +3,10 @@
 START=99
 USE_PROCD=1
 
+CONF="vlmcsd"
+PROG="/usr/bin/vlmcsd"
+INI="/etc/vlmcsd.ini"
+
 # 获取 DNSMASQ 配置路径
 if [ -f /etc/openwrt_release ]; then
     DNSMASQ_UCI_CONFIG="$(uci -q show "dhcp.@dnsmasq[0]" | awk 'NR==1 {split($0, conf, /[.=]/); print conf[2]}')"
@@ -47,7 +51,9 @@ start_service() {
     local enabled auto_activate internet_access conf log port
 
     # 加载配置
-    config_load "vlmcsd"
+    config_load "$CONF"
+    
+    # 获取配置项
     config_get_bool enabled "config" "enabled" "0"
     config_get auto_activate "config" "auto_activate" "0"
     config_get internet_access "config" "internet_access" "0"
@@ -69,26 +75,27 @@ start_service() {
     fi
 
     # 使用配置文件或命令行参数启动服务
-    procd_open_instance "vlmcsd"
-    procd_set_param command /usr/bin/vlmcsd
+    procd_open_instance "$CONF"
+    procd_set_param command "$PROG"
     procd_append_param command -D
 
     if [ "$conf" -eq "1" ]; then
-        local ini="/etc/vlmcsd.ini"
         sed -i \
             -e 's/^[ \t]*\(Port.*\)/;\1/' \
             -e 's/.*\(Listen.*:\)[0-9]*/\1'"$port"'/' \
-            -e 's/.*\(LogFile[ ]*=[ ]*\).*/\1\/var\/log\/vlmcsd\.log/' "$ini"
+            -e 's/.*\(LogFile[ ]*=[ ]*\).*/\1\/var\/log\/vlmcsd\.log/' "$INI"
 
-        procd_append_param command -i "$ini"
-        procd_set_param file "$ini"
-        procd_add_jail_mount "$ini"
+        procd_append_param command -i "$INI"
+        procd_add_jail_mount "$INI"
     else
         procd_append_param command -P "$port"
         procd_append_param command -l /var/log/vlmcsd.log
     fi
 
-    procd_set_param respawn
+    procd_set_param file "$INI"
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+	procd_set_param respawn
 
     # 配置防火墙规则
     if [ "$internet_access" -eq "1" ]; then
@@ -138,5 +145,6 @@ service_stopped() {
 
 # 服务触发器
 service_triggers() {
-    procd_add_reload_trigger "vlmcsd"
+    procd_add_reload_trigger "$CONF"
 }
+
