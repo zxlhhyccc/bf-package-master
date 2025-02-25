@@ -45,36 +45,8 @@ msgid "Every weeks"
 msgstr "每週"
 
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
-msgid "Sun"
-msgstr "周日"
-
-#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
-msgid "Mon"
-msgstr "周一"
-
-#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
-msgid "Tue"
-msgstr "周二"
-
-#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
-msgid "Wed"
-msgstr "周三"
-
-#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
-msgid "Thu"
-msgstr "周四"
-
-#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
 msgid "Fri"
-msgstr "周五"
-
-#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
-msgid "Sat"
-msgstr "周六"
-
-#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
-msgid "disable"
-msgstr "停用"
+msgstr "五"
 
 #: applications/luci-app-vlmcsd/root/usr/share/rpcd/acl.d/luci-app-vlmcsd.json:3
 msgid "Grant UCI access for luci-app-vlmcsd"
@@ -106,6 +78,10 @@ msgstr "日誌檔案不存在。"
 msgid "Log is empty."
 msgstr "日誌為空。"
 
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Mon"
+msgstr "一"
+
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:44
 msgid "NOT RUNNING"
 msgstr "未運行"
@@ -123,11 +99,27 @@ msgid ""
 "SA KMS Server Emulator to activate your Windows or Office<br/>Current Version"
 msgstr "用於啟用 Windows 或 Office KMS 的 伺服模擬器<br/>當前版本"
 
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Sat"
+msgstr "六"
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Sun"
+msgstr "日"
+
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:122
 msgid ""
 "This is the content of the file '/etc/vlmcsd.ini', you can edit it here, "
 "usually no modification is needed."
 msgstr "這是 /etc/vlmcsd.ini 檔案的內容，您可以在此進行編輯，通常無需修改。"
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Thu"
+msgstr "四"
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Tue"
+msgstr "二"
 
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:33
 msgid "Unknown version"
@@ -136,6 +128,15 @@ msgstr "未知版本"
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:101
 msgid "Use Config File"
 msgstr "使用設定檔"
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Wed"
+msgstr "三"
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:108
+msgid "disable"
+msgstr "停用"
 
 #~ msgid "Enable Vlmcsd KMS Server"
 #~ msgstr "啟用 Vlmcsd KMS 伺服器"

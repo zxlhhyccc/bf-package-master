@@ -37,6 +37,10 @@ msgstr ""
 msgid "Every weeks"
 msgstr ""
 
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Fri"
+msgstr ""
+
 #: applications/luci-app-vlmcsd/root/usr/share/rpcd/acl.d/luci-app-vlmcsd.json:3
 msgid "Grant UCI access for luci-app-vlmcsd"
 msgstr ""
@@ -67,6 +71,10 @@ msgstr ""
 msgid "Log is empty."
 msgstr ""
 
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Mon"
+msgstr ""
+
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:44
 msgid "NOT RUNNING"
 msgstr ""
@@ -84,10 +92,26 @@ msgid ""
 "SA KMS Server Emulator to activate your Windows or Office<br/>Current Version"
 msgstr ""
 
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Sat"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Sun"
+msgstr ""
+
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:122
 msgid ""
 "This is the content of the file '/etc/vlmcsd.ini', you can edit it here, "
 "usually no modification is needed."
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Thu"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Tue"
 msgstr ""
 
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:33
@@ -96,4 +120,13 @@ msgstr ""
 
 #: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:101
 msgid "Use Config File"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+msgid "Wed"
+msgstr ""
+
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:106
+#: applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd/vlmcsd.js:108
+msgid "disable"
 msgstr ""

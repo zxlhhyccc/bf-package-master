@@ -5,7 +5,6 @@
 'require rpc';
 'require uci';
 'require view';
-'require dom';
 
 const callServiceList = rpc.declare({
 	object: 'service',
@@ -16,6 +15,7 @@ const callServiceList = rpc.declare({
 
 function getServiceStatus() {
 	return L.resolveDefault(callServiceList('vlmcsd'), {}).then(function (res) {
+		console.log(res);
 		var isRunning = false;
 		try {
 			isRunning = res['vlmcsd']['instances']['vlmcsd']['running'];
@@ -30,7 +30,7 @@ function getVersion() {
             if (result.code === 0) {
                 return result.stdout.trim().split(/\s+/)[1]; // 提取版本号
             }
-            return _("Unknown version");
+            return _("Unknown");
         });
 }
 
@@ -63,7 +63,6 @@ return view.extend({
 				+ ": <b><font style=\"color:green\">" + version + "</font></b>";
 		});
 
-		// 服务状态
 		s = m.section(form.NamedSection, '_status');
 		s.anonymous = true;
 		s.render = function (section_id) {
@@ -75,11 +74,10 @@ return view.extend({
 			});
 
 			return E('div', { class: 'cbi-section', id: 'status_bar' }, [
-					E('p', { id: 'service_status' }, _('Collecting data…'))
+					E('p', { id: 'service_status' }, _('Collecting data...'))
 			]);
 		}
 
-		// 主要配置
 		s = m.section(form.NamedSection, 'config', 'vlmcsd');
 		s.anonymous = true;
 		
@@ -87,8 +85,7 @@ return view.extend({
 		s.tab('config_file', _('Configuration File'), _('Edit the content of the /etc/vlmcsd.ini file.'));
 		s.tab('logview', _('Log'));
 
-		// 基本设置
-		o = s.taboption('base', form.Flag, 'enabled', _('Enable KMS Server'));
+		o = s.taboption('base', form.Flag, 'enabled', _('Enable'));
 		o.rmempty = false;
 		o.default = o.disabled;
 
@@ -103,12 +100,12 @@ return view.extend({
 
 		o = s.taboption('base', form.ListValue, 'log', _('Empty Log File'));
 		o.default = 7;
-		const days = {7: _("disable"), 0: _("Sun"), 1: _("Mon"), 2: _("Tue"), 3: _("Wed"), 4: _("Thu"), 5: _("Fri"), 6: _("Sat")};
+		const days = {7: "disable",0: "Sun",1: "Mon",2: "Tue",3: "Wed",4: "Thu",5: "Fri",6: "Sat"};
 		for (const [i, v] of Object.entries(days)) {
-			if (v !== _("disable")) {
-				o.value(i, _("Every weeks") + v);
+			if (v !== "disable") {
+				o.value(i, _("Every") + _(v));
 			} else {
-				o.value(i, v);
+				o.value(i, _(v));
 			}
 		}
 
@@ -116,7 +113,6 @@ return view.extend({
 		o.datatype = 'port';
 		o.placeholder = '1688';
 
-		// 配置文件编辑
 		o = s.taboption('config_file', form.TextValue, '_tmpl',
 			null,
 			_("This is the content of the file '/etc/vlmcsd.ini', you can edit it here, usually no modification is needed."));
@@ -125,45 +121,11 @@ return view.extend({
 		o.load = () => fs.trimmed('/etc/vlmcsd.ini');
 		o.write = (_, value) => fs.write('/etc/vlmcsd.ini', value.trim().replace(/\r\n/g, '\n') + '\n');
 
-		// **日志查看**
+		// **日志部分，改为加载 `log.js`**
 		o = s.taboption('logview', form.TextValue, '_logview');
 		o.monospace = true;
 		o.render = function() {
-			// 创建日志框
-			var log_textarea = E('div', { 'id': 'log_textarea', 'style': 'max-height: 400px; overflow-y: auto; margin-top: 10px; background-color: #f7f7f7;' }, [
-				E('pre', {
-					'style': 'color: #333; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: Consolas, Menlo, Monaco, monospace; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;'
-				})
-			]);
-
-			var logContent = log_textarea.firstChild;
-
-			// 读取日志
-			function updateLog() {
-				fs.read('/var/log/vlmcsd.log', 'text')
-					.then(res => {
-						logContent.textContent = res.trim() || _('Log is empty.');
-					})
-					.catch(() => {
-						logContent.textContent = _('Log file does not exist.');
-					});
-			}
-
-			// 初次加载时显示日志
-			updateLog();
-
-			// 轮询日志更新
-			poll.add(updateLog);
-
-			// 返回包含日志区域的HTML结构
-			return E('div', { 'class': 'cbi-map' }, [
-				E('div', { 'class': 'cbi-section' }, [
-					log_textarea,
-					E('div', { 'style': 'text-align:right' },
-						E('small', {}, _('Refresh every %s seconds.').format(L.env.pollinterval))
-					)
-				])
-			]);
+			return L.require("view.log").then(log => log.render());
 		};
 
 		return m.render();
