@@ -82,13 +82,14 @@ start_service() {
         procd_append_param command -i "$INI"
     else
         procd_append_param command -P "$port"
-        procd_append_param command -l /var/log/vlmcsd.log
     fi
 
+    procd_append_param command -l /var/log/vlmcsd.log
     procd_set_param file "$INI"
     procd_set_param stdout 1
     procd_set_param stderr 1
     procd_set_param respawn
+    procd_add_jail_mount "$INI"
 
     # 配置防火墙规则
     if [ "$internet_access" -eq "1" ]; then
@@ -122,7 +123,7 @@ unload_service() {
     config_get auto_activate "config" "auto_activate" "0"
 
     # 停止进程
-    kill -9 $(pgrep "$PROG") 2>/dev/null
+    killall "$PROG" 2>/dev/null
 
     # 如果服务未启用，停止服务并清理资源
     [ "$enabled" -eq "0" ] && del_cron
