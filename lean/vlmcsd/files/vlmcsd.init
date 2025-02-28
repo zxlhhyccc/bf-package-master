@@ -52,8 +52,6 @@ start_service() {
 
     # 加载配置
     config_load "$CONF"
-
-    # 获取配置项
     config_get_bool enabled "config" "enabled" "0"
     config_get auto_activate "config" "auto_activate" "0"
     config_get internet_access "config" "internet_access" "0"
@@ -61,20 +59,17 @@ start_service() {
     config_get log "config" "log" "0"
     config_get port "config" "port" "1688"
 
-    # 如果服务未启用，停止并清理
-    [ "$enabled" -eq "1" ] || {
-        stop_service
-        return 1
-    }
+    # 如果服务未启用，直接返回
+    [ "$enabled" -eq "1" ] || return 1
 
     # 自动激活配置
     if [ "$auto_activate" -eq "1" ]; then
         hostname="$(uci -q get system.@system[0].hostname)"
         [ -n "$hostname" ] && echo "srv-host=_vlmcs._tcp,$hostname,$port,0,100" > "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq restart >/dev/null 2>&1
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
     fi
 
-    # 使用配置文件或命令行参数启动服务
+    # 启动服务
     procd_open_instance "$CONF"
     procd_set_param command "$PROG"
     procd_append_param command -D
@@ -84,9 +79,7 @@ start_service() {
             -e 's/^[ \t]*\(Port.*\)/;\1/' \
             -e 's/.*\(Listen.*:\)[0-9]*/\1'"$port"'/' \
             -e 's/.*\(LogFile[ ]*=[ ]*\).*/\1\/var\/log\/vlmcsd\.log/' "$INI"
-
         procd_append_param command -i "$INI"
-        procd_add_jail_mount "$INI"
     else
         procd_append_param command -P "$port"
         procd_append_param command -l /var/log/vlmcsd.log
@@ -119,24 +112,34 @@ start_service() {
     add_cron
 }
 
-# 服务启动后触发
-service_started() {
-    procd_set_config_changed firewall
-}
+# 卸载服务
+unload_service() {
+    local enabled auto_activate
 
-# 停止服务
-stop_service() {
-    # 删除 DNSMASQ 配置文件
-    rm -f "$DNSMASQ_VLMCSD"
+    # 加载配置
+    config_load "$CONF"
+    config_get_bool enabled "config" "enabled" "0"
+    config_get auto_activate "config" "auto_activate" "0"
 
-    # 删除定时任务
-    del_cron
+    # 停止进程
+    kill -9 $(pgrep "$PROG") 2>/dev/null
 
-    # 重启 dnsmasq 服务
-    /etc/init.d/dnsmasq restart >/dev/null 2>&1
+    # 如果服务未启用，停止服务并清理资源
+    [ "$enabled" -eq "0" ] && del_cron
 
     # 删除日志文件
     rm -f /var/log/vlmcsd.log
+
+    # 只有在 DNSMASQ 配置有变更时才重新加载 dnsmasq 服务
+    if [ "$enabled" -eq "0" ] || [ "$auto_activate" -eq "0" ]; then
+        rm -f "$DNSMASQ_VLMCSD"
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
+    fi
+}
+
+# 服务启动后触发
+service_started() {
+    procd_set_config_changed firewall
 }
 
 # 服务停止后触发
@@ -144,7 +147,21 @@ service_stopped() {
     procd_set_config_changed firewall
 }
 
+# 停止服务
+stop_service() {
+    config_load "$CONF"
+    config_foreach unload_service "$CONF"
+}
+
+# 重新加载服务
+reload_service() {
+    stop
+    start
+}
+
 # 服务触发器
 service_triggers() {
+    # 仅监听 vlmcsd 配置文件的更改
     procd_add_reload_trigger "$CONF"
 }
+

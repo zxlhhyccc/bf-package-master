@@ -1,0 +1,41 @@
+--- a/src/kms.c
++++ b/src/kms.c
+@@ -464,13 +464,21 @@ static void getEpidFromString(RESPONSE *
+ static void getEpid(RESPONSE *const baseResponse, const char** EpidSource, const int32_t index, BYTE *const HwId, const char* defaultEPid)
+ {
+ #if !defined(NO_RANDOM_EPID) || !defined(NO_CL_PIDS) || !defined(NO_INI_FILE)
+-	const char* pid;
++	const char* pid = NULL;
++	char *ePid = NULL;
+ 	if (KmsResponseParameters[index].Epid == NULL)
+ 	{
+ #ifndef NO_RANDOM_EPID
+ 		if (RandomizationLevel == 2)
+ 		{
+-			char ePid[PID_BUFFER_SIZE];
++			ePid = malloc(PID_BUFFER_SIZE);
++			if (ePid == NULL) {
++				// Handle memory allocation failure
++				perror("Memory allocation failed for ePid");
++				return;
++			}
++
++			// Generate the random PID
+ 			generateRandomPid(index, ePid, Lcid, HostBuild);
+ 			pid = ePid;
+ 
+@@ -499,7 +507,13 @@ static void getEpid(RESPONSE *const base
+ #endif // NO_LOG
+ 	}
+ 
+-	getEpidFromString(baseResponse, pid);
++	// Pass ePid to the function
++	getEpidFromString(baseResponse, ePid ? ePid : pid);
++
++	// Free the memory after usage
++	if (ePid) {
++            free(ePid);
++	}
+ 
+ #else // defined(NO_RANDOM_EPID) && defined(NO_CL_PIDS) && !defined(NO_INI_FILE)
+ 
