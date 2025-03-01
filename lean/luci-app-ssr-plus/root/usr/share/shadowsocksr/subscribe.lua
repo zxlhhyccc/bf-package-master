@@ -297,10 +297,15 @@ local function processData(szType, content)
 					result.plugin_opts = plugin_info:sub(idx_pn + 1, #plugin_info)
 				else
 					result.plugin = plugin_info
+					result.plugin_opts = ""
 				end
 				-- 部分机场下发的插件名为 simple-obfs，这里应该改为 obfs-local
 				if result.plugin == "simple-obfs" then
 					result.plugin = "obfs-local"
+				end
+				-- 如果插件不為 none，確保 enable_plugin 為 1
+				if result.plugin ~= "none" and result.plugin ~= "" then
+					result.enable_plugin = 1
 				end
 			end
 		else
@@ -765,3 +770,4 @@ if subscribe_url and #subscribe_url > 0 then
 		end
 	end)
 end
+
