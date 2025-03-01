@@ -150,8 +150,7 @@ service_stopped() {
 
 # 停止服务
 stop_service() {
-    config_load "$CONF"
-    config_foreach unload_service "$CONF"
+    unload_service
 }
 
 # 重新加载服务
