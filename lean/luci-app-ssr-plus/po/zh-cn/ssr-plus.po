@@ -873,6 +873,9 @@ msgstr "启用插件"
 msgid "Plugin"
 msgstr "插件"
 
+msgid "Custom"
+msgstr "自定义"
+
 msgid "Custom Plugin Path"
 msgstr "自定义插件路径"
 
