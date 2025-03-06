@@ -289,7 +289,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index 57b989b..00fbed6 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1395,6 +1395,12 @@ start_dns() {
+@@ -1392,6 +1392,12 @@ start_dns() {
  				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
@@ -302,7 +302,7 @@ index 57b989b..00fbed6 100755
  			}
  		;;
  		dot)
-@@ -1542,6 +1548,19 @@ start_dns() {
+@@ -1539,6 +1545,19 @@ start_dns() {
  			}
  		fi
  	;;
@@ -322,7 +322,7 @@ index 57b989b..00fbed6 100755
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1551,6 +1570,11 @@ start_dns() {
+@@ -1548,6 +1567,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -334,7 +334,7 @@ index 57b989b..00fbed6 100755
  		else
  			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
  			echolog "  - udp://${TUN_DNS}"
-@@ -1564,6 +1588,10 @@ start_dns() {
+@@ -1561,6 +1585,10 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -345,7 +345,7 @@ index 57b989b..00fbed6 100755
  		}
  	;;
  	esac
-@@ -1682,6 +1710,73 @@ start_dns() {
+@@ -1679,6 +1707,73 @@ start_dns() {
  	fi
  }
  
@@ -419,7 +419,7 @@ index 57b989b..00fbed6 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2183,7 +2278,8 @@ get_config() {
+@@ -2180,7 +2275,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
