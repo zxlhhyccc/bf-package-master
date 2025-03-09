@@ -222,8 +222,14 @@ msgstr "服务器名称指示"
 msgid "Shadow-TLS ChainPoxy type"
 msgstr "代理链类型"
 
+msgid "Shadowsocks Variant"
+msgstr "shadowsocks 变体"
+
 msgid "Shadowsocks-rust Version"
 msgstr "shadowsocks rust 版本"
+
+msgid "Shadowsocks-libev Version"
+msgstr "Shadowsocks-libev 版本"
 
 msgid "Vmess Protocol"
 msgstr "VMESS 协议"
