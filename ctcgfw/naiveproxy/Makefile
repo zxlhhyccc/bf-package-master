@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=naiveproxy
-PKG_REAL_VERSION:=133.0.6943.49-1
+PKG_REAL_VERSION:=134.0.6998.39-1
 PKG_VERSION:=$(subst -,.,$(PKG_REAL_VERSION))
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_REAL_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/klzgrad/naiveproxy/tar.gz/v$(PKG_REAL_VERSION)?
-PKG_HASH:=599acbeae3f530e71bba4fb80312afeddd6f232ff8e24395679eceabbd097dc1
+PKG_HASH:=a3d7894d236d9161a2136394ad7b8e7cd0ffbb6f91455c8bf5bf54845144a7be
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_REAL_VERSION)
 
 PKG_LICENSE:=BSD 3-Clause
@@ -58,31 +58,31 @@ ifneq ($(CONFIG_CCACHE),)
   export naive_ccache_flags=cc_wrapper="$(CCACHE)"
 endif
 
-CLANG_VER:=20-init-16062-g091448e3-1
+CLANG_VER:=20-init-17108-g29ed6000-3
 CLANG_FILE:=clang-llvmorg-$(CLANG_VER).tar.xz
 define Download/CLANG
 	URL:=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64
 	URL_FILE:=$(CLANG_FILE)
 	FILE:=$(CLANG_FILE)
-	HASH:=312f81ba0a77fb66f077f4af105fed1ae3f7068c63127b79c560336befd7e957
+	HASH:=c6a9f5cf8a1f3e7a6d3e58ec1d9555379317ae07a7a725cac74c9b6b9eef30e3
 endef
 
-GN_VER:=c97a86a72105f3328a540f5a5ab17d11989ab7dd
+GN_VER:=ed1abc107815210dc66ec439542bee2f6cbabc00
 GN_FILE:=gn-git_revision-$(GN_VER).zip
 define Download/GN_TOOL
 	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+
 	URL_FILE:=git_revision:$(GN_VER)
 	FILE:=$(GN_FILE)
-	HASH:=0735f4ce47f015e527f4c68356a9ba16e8264c8cbe845a60354c78dced5f374d
+	HASH:=6ae106220f8bcf62448791bacd25c62d6a12c5878ef8712ed5af7bfa9a53c1a3
 endef
 
-PGO_VER:=6943-1738539685-8a4fa01b9f94909fb8f8c7e665286160c8d4fd20-1a553c683a339149e06ef9c42174c1b041f209f1
+PGO_VER:=6998-1740504838-d674c0736f2395257e3218be5f686d4659c91386-3199264f1b9d2b6785a12312fb1dde786c7cffea
 PGO_FILE:=chrome-linux-$(PGO_VER).profdata
 define Download/PGO_PROF
 	URL:=https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles
 	URL_FILE:=$(PGO_FILE)
 	FILE:=$(PGO_FILE)
-	HASH:=1cbc51c4d7ebd9354dc4809942165ba5706ab1c7383d7fc8337c1c20e5ccbd3f
+	HASH:=c9a20ad16562317ef7052d5dadf5713496f56781f82ef22397c2099876e9125c
 endef
 
 # define Build/Prepare
