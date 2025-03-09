@@ -60,13 +60,13 @@ start_service() {
     config_get port "config" "port" "1688"
 
     # 如果服务未启用，直接返回
-    [ "$enabled" -eq "1" ] || return 1
+    [ "$enabled" -eq 1 ] || return 1
 
     # 自动激活配置
-    if [ "$auto_activate" -eq "1" ]; then
+    if [ "$auto_activate" -eq 1 ]; then
         hostname="$(uci -q get system.@system[0].hostname)"
         [ -n "$hostname" ] && echo "srv-host=_vlmcs._tcp,$hostname,$port,0,100" > "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq reload >/dev/null 2>&1
+        /etc/init.d/dnsmasq restart >/dev/null 2>&1
     fi
 
     # 启动服务
@@ -74,7 +74,7 @@ start_service() {
     procd_set_param command "$PROG"
     procd_append_param command -D
 
-    if [ "$conf" -eq "1" ]; then
+    if [ "$conf" -eq 1 ]; then
         sed -i \
             -e 's/^[ \t]*\(Port.*\)/;\1/' \
             -e 's/.*\(Listen.*:\)[0-9]*/\1'"$port"'/' \
@@ -92,7 +92,7 @@ start_service() {
     procd_add_jail_mount "$INI"
 
     # 配置防火墙规则
-    if [ "$internet_access" -eq "1" ]; then
+    if [ "$internet_access" -eq 1 ]; then
         procd_open_data
         json_add_array firewall
             json_add_object ""
@@ -122,19 +122,19 @@ unload_service() {
     config_get_bool enabled "config" "enabled" "0"
     config_get auto_activate "config" "auto_activate" "0"
 
-    # 停止进程
-    killall "$PROG" 2>/dev/null
-
     # 如果服务未启用，停止服务并清理资源
-    [ "$enabled" -eq "0" ] && del_cron
+    [ "$enabled" -eq 0 ] && del_cron
 
-    # 删除日志文件
-    rm -f /var/log/vlmcsd.log
+    # 仅在停止服务时删除日志文件
+    if [ "$enabled" -eq "0" ]; then
+        # 删除日志文件
+        [ -f /var/log/vlmcsd.log ] && rm -f /var/log/vlmcsd.log
+    fi
 
     # 只有在 DNSMASQ 配置有变更时才重新加载 dnsmasq 服务
-    if [ "$enabled" -eq "0" ] || [ "$auto_activate" -eq "0" ]; then
+    if [ "$enabled" -eq 0 ] || [ "$auto_activate" -eq 0 ]; then
         rm -f "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq reload >/dev/null 2>&1
+        /etc/init.d/dnsmasq restart >/dev/null 2>&1
     fi
 }
 
@@ -150,6 +150,8 @@ service_stopped() {
 
 # 停止服务
 stop_service() {
+    pid=$(pgrep -f "$PROG")
+    [ -n "$pid" ] && kill -9 $pid
     unload_service
 }
 
