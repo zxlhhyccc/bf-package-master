@@ -75,15 +75,6 @@
  	config_get ipset_name "$section" "ipset_name" ""
  	[ -z "$ipset_name" ] || conf_append "ipset" "$ipset_name"
  
-@@ -735,7 +771,7 @@ load_service()
- 	[ -z "$response_mode" ] || conf_append "response-mode" "$response_mode"
- 
- 	config_get_bool enable_auto_update "$section" "enable_auto_update" "0"
--	[ "$enable_auto_update" = "1" ] && enable_auto_update || disable_auto_update
-+	[ "$enabled" = "1" -a "$enable_auto_update" = "1" ] && enable_auto_update || disable_auto_update
- 
- 	config_get_bool bind_device "$section" "bind_device" "0"
- 	config_get bind_device_name "$section" "bind_device_name" "${lan_device}"
 @@ -808,6 +844,7 @@ load_service()
  		[ "$old_enabled" = "0" ] && return 1
  		[ "$old_port" = "53" ] && stop_main_dns "0"
