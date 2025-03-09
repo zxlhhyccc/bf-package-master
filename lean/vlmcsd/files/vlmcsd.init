@@ -66,7 +66,7 @@ start_service() {
     if [ "$auto_activate" -eq 1 ]; then
         hostname="$(uci -q get system.@system[0].hostname)"
         [ -n "$hostname" ] && echo "srv-host=_vlmcs._tcp,$hostname,$port,0,100" > "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq restart >/dev/null 2>&1
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
     fi
 
     # 启动服务
@@ -134,7 +134,7 @@ unload_service() {
     # 只有在 DNSMASQ 配置有变更时才重新加载 dnsmasq 服务
     if [ "$enabled" -eq 0 ] || [ "$auto_activate" -eq 0 ]; then
         rm -f "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq restart >/dev/null 2>&1
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
     fi
 }
 
