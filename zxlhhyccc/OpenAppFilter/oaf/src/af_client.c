@@ -273,7 +273,7 @@ int __af_visit_info_report(af_client_info_t *node)
 	cJSON_Minify(out);
 	if (count > 0 || node->report_count == 0)
 	{
-		AF_INFO("report:%s count=%d\n", out, node->report_count);
+		AF_LMT_INFO("report:%s count=%d\n", out, node->report_count);
 		node->report_count++;
 		af_send_msg_to_user(out, strlen(out));
 	}
@@ -299,7 +299,7 @@ void af_visit_info_report(void)
 }
 static inline int get_packet_dir(struct net_device *in)
 {
-	if (0 == strncmp(in->name, "br-lan", 6))
+	if (strstr(in->name, g_lan_ifname))
 	{
 		return PKT_DIR_UP;
 	}
