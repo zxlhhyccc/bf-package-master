@@ -126,7 +126,7 @@ unload_service() {
     [ "$enabled" -eq 0 ] && del_cron
 
     # 仅在停止服务时删除日志文件
-    if [ "$enabled" -eq "0" ]; then
+    if [ "$enabled" -eq 0 ]; then
         # 删除日志文件
         [ -f /var/log/vlmcsd.log ] && rm -f /var/log/vlmcsd.log
     fi
