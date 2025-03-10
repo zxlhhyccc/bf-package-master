@@ -1,5 +1,0 @@
-{
-	"config": "appfilter",
-	"init": "appfilter",
-	"exec": "/usr/bin/oaf_rule reload"
-}
