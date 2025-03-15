@@ -23,6 +23,9 @@ local function is_installed(e)
 	return luci.model.ipkg.installed(e)
 end
 
+local has_ss_rust = is_finded("sslocal") or is_finded("ssserver")
+local has_ss_libev = is_finded("ss-redir") or is_finded("ss-local")
+
 -- 读取当前存储的 ss_type
 local ss_type = uci:get_first("shadowsocksr", "server_subscribe", "ss_type") or "ss-rust"
 
@@ -153,7 +156,7 @@ end
 if is_finded("ssr-redir") then
 	o:value("ssr", translate("ShadowsocksR"))
 end
-if is_finded("ss-local") or is_finded("ss-redir") or is_finded("sslocal") or is_finded("ssserver") then
+if has_ss_rust or has_ss_libev then
     o:value("ss", translate("ShadowSocks"))
 end
 if is_finded("trojan") then
@@ -194,9 +197,15 @@ o.description = translate("Redirect traffic to this network interface")
 -- 新增一个选择框，用于选择 Shadowsocks 版本
 o = s:option(ListValue, "has_ss_type", string.format("<b><span style='color:red;'>%s</span></b>", translate("ShadowSocks Node Use Version")))
 o.description = translate("Selection ShadowSocks Node Use Version.")
-o:value("ss-rust", translate("ShadowSocks-rust Version"))
-o:value("ss-libev", translate("ShadowSocks-libev Version"))
 -- 设置默认 Shadowsocks 版本
+-- 动态添加选项
+if has_ss_rust then
+    o:value("ss-rust", translate("ShadowSocks-rust Version"))
+end
+if has_ss_libev then
+    o:value("ss-libev", translate("ShadowSocks-libev Version"))
+end
+-- 设置默认值
 if ss_type == "ss-rust" then
     o.default = "ss-rust"
 elseif ss_type == "ss-libev" then

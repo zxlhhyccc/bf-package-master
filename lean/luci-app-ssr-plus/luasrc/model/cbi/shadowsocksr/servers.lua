@@ -13,16 +13,16 @@ local function is_finded(e)
     return luci.sys.exec(string.format('type -t -p "%s" 2>/dev/null', e)) ~= ""
 end
 
-local has_ss_libev = is_finded("ss-redir") or is_finded("ss-local")
 local has_ss_rust = is_finded("sslocal") or is_finded("ssserver")
+local has_ss_libev = is_finded("ss-redir") or is_finded("ss-local")
 
 local ss_type_list = {}
 
-if has_ss_libev then
-    table.insert(ss_type_list, { id = "ss-libev", name = translate("ShadowSocks-libev Version") })
-end
 if has_ss_rust then
     table.insert(ss_type_list, { id = "ss-rust", name = translate("ShadowSocks-rust Version") })
+end
+if has_ss_libev then
+    table.insert(ss_type_list, { id = "ss-libev", name = translate("ShadowSocks-libev Version") })
 end
 
 -- 如果用户没有手动设置，则自动选择
