@@ -30,7 +30,7 @@ PKG_LICENSE_FILES:=LICENSE
 PKG_BUILD_DEPENDS:=rust/host
 PKG_BUILD_PARALLEL:=1
 
-RUST_PKG_FEATURES:=logging,local,server,manager,utility,hickory-dns,service,local-http,local-http-rustls,local-redir,local-tunnel,local-dns,local-fake-dns,local-tun,local-socks4,trust-dns,dns-over-tls,dns-over-https,dns-over-h3,stream-cipher,utility-url-outline,jemalloc,security-replay-attack-detect,multi-threaded,aead-cipher-2022,aead-cipher-2022-extra,security-replay-attack-detect
+RUST_PKG_FEATURES:=logging,local,server,manager,utility,hickory-dns,service,local-http,local-http-rustls,local-redir,local-tunnel,local-dns,local-fake-dns,local-tun,local-socks4,trust-dns,dns-over-tls,dns-over-https,dns-over-h3,stream-cipher,utility-url-outline,jemalloc,security-replay-attack-detect,multi-threaded,aead-cipher-2022,dns-over-h3,aead-cipher-2022-extra,security-replay-attack-detect
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
