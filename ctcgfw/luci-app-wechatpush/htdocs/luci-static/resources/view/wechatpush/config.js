@@ -340,6 +340,11 @@ return view.extend({
 		o.description = _('Please enter the device MAC and device alias separated by a space, such as:<br/> XX:XX:XX:XX:XX:XX My Phone<br/> 192.168.1.2 My PC<br />Please use the 「Save」 button in the text box.');
 
 		// 推送内容
+		o = s.taboption('content', form.MultiValue, 'lite_enable', _('Simplified mode'));
+		o.value('device', _('Simplify the current device list'));
+		o.value('nowtime', _('Simplify the current time'));
+		o.value('content', _('Push only the title'));
+
 		o = s.taboption('content', form.Button, '_getip', _('Test IP acquisition command'), _('You may need to save the configuration before sending.'));
 		o.inputstyle = 'action';
 		o.onclick = function () {
@@ -499,7 +504,7 @@ return view.extend({
 		o.rmempty = false;
 		o.datatype = 'and(uinteger,min(0))';
 		o.depends('login_web_black', '1');
-		o.description = _('\"0\" in ipset means permanent blacklist, use with caution. If misconfigured, change the device IP and clear rules in LUCI.');
+		o.description = _('\"0\" in ipset means permanent blacklist, use with caution. If misconfigured, change the device IP and clear rules in LUCI.<br/>Note: The whitelist for bans is located under the \"Do Not Disturb\" tab.');
 
 		o = s.taboption('ipset', form.Flag, 'port_knocking_enable', _('Port knocking'));
 		o.default = '0';
@@ -600,11 +605,6 @@ return view.extend({
 		}
 
 		// 免打扰
-		o = s.taboption('disturb', form.MultiValue, 'lite_enable', _('Simplified mode'));
-		o.value('device', _('Simplify the current device list'));
-		o.value('nowtime', _('Simplify the current time'));
-		o.value('content', _('Push only the title'));
-
 		o = s.taboption('disturb', cbiRichListValue, 'do_not_disturb_mode', _('Do Not Disturb time setting'));
 		o.value('', _('Close'),
 			_(' '));
@@ -681,12 +681,16 @@ return view.extend({
 		o.placeholder = '300';
 		o.datatype = 'and(uinteger)';
 		o.description = _('If set to 0, it\'s a single check without considering duration.');
+		o.depends({ cpu_notification: "temp", '!contains': true });
+		o.depends({ cpu_notification: "load", '!contains': true });
 
 		o = s.taboption('disturb', form.Value, 'cpu_notification_delay', _('CPU alarm quiet time (seconds)'));
 		o.rmempty = false;
 		o.placeholder = '3600';
 		o.datatype = 'and(uinteger)';
 		o.description = _('No repeat notifications within the set time after the initial push notification.');
+		o.depends({ cpu_notification: "temp", '!contains': true });
+		o.depends({ cpu_notification: "load", '!contains': true });
 
 		o = s.taboption('disturb', cbiRichListValue, 'login_disturb', _('Do Not Disturb for Login Reminders'));
 		o.value('', _('Close'),
@@ -696,14 +700,7 @@ return view.extend({
 		o.value('2', _('Send notification only on the first login'),
 			_('Send notification only once within the specified time interval.'));
 
-		o = s.taboption('disturb', form.Value, 'login_notification_delay', _('Login reminder do not disturb time (s)'));
-		o.rmempty = false;
-		o.placeholder = '3600';
-		o.datatype = 'and(uinteger,min(10))';
-		o.description = _('Send notification after the first login and do not repeat within the specified time<br/>Take a shortcut and read the login time from the log');
-		o.depends('login_disturb', '2');
-
-		o = fwtool.addIPOption(s, 'disturb', 'login_ip_white_list', _('Login reminder whitelist'), null, 'ipv4', hosts, true);
+		o = fwtool.addIPOption(s, 'disturb', 'login_ip_white_list', _('Login Alert (Auto-Ban) Whitelist'), null, 'ipv4', hosts, true);
 		o.datatype = 'ipaddr';
 		o.depends({ login_notification: "web_logged", '!contains': true });
 		o.depends({ login_notification: "ssh_logged", '!contains': true });
@@ -714,6 +711,13 @@ return view.extend({
 		o = s.taboption('disturb', form.Flag, 'login_log_enable', _('Login reminder log anti-flooding'));
 		o.description = _('Users in the whitelist or during the undisturbed time period after their first login IP will be exempt from log recording, preventing log flooding.');
 		o.depends('login_disturb', '1');
+		o.depends('login_disturb', '2');
+
+		o = s.taboption('disturb', form.Value, 'login_notification_delay', _('Login reminder do not disturb time (s)'));
+		o.rmempty = false;
+		o.placeholder = '3600';
+		o.datatype = 'and(uinteger,min(10))';
+		o.description = _('Send notification after the first login and do not repeat within the specified time<br/>Take a shortcut and read the login time from the log');
 		o.depends('login_disturb', '2');
 
 		return m.render();

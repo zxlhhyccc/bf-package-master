@@ -517,8 +517,8 @@ msgid "Blacklisting time (s)"
 msgstr "拉黑时间（秒）"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:489
-msgid "\"0\" in ipset means permanent blacklist, use with caution. If misconfigured, change the device IP and clear rules in LUCI."
-msgstr "ipset 中, \"0\" 为永久拉黑，慎用。如不幸误操作，请更改设备 IP 进入 LUCI 界面清空规则"
+msgid "\"0\" in ipset means permanent blacklist, use with caution. If misconfigured, change the device IP and clear rules in LUCI.<br/>Note: The whitelist for bans is located under the \"Do Not Disturb\" tab."
+msgstr "ipset 中, \"0\" 为永久拉黑，慎用。如不幸误操作，请更改设备 IP 进入 LUCI 界面清空规则。<br/>注：封禁白名单位于 “免打扰” 选项卡。"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:491
 msgid "Port knocking"
@@ -785,8 +785,8 @@ msgid "Send notification after the first login and do not repeat within the spec
 msgstr "首次登录后推送通知，在设定时间内不再重复提醒<br/>偷懒一下，登录时间从日志中读取，请确保开启日志功能"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:682
-msgid "Login reminder whitelist"
-msgstr "登录提醒白名单"
+msgid "Login Alert (Auto-Ban) Whitelist"
+msgstr "登录提醒（自动封禁）白名单"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/config.js:689
 msgid "Login reminder log anti-flooding"
@@ -909,11 +909,23 @@ msgstr "获取失败："
 msgid "Assist in obtaining device information"
 msgstr "辅助获取设备列表"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:92
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:164
 msgid "Retrieve hostname list from modem"
 msgstr "从光猫获取主机名等信息"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:93
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:165
+msgid "Retrieve hostname list from modem MikroTik Router"
+msgstr "从 ROS 路由器中获取主机名等信息"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:165
+msgid "Get wireless band information and hostname from MiWiFi"
+msgstr "从小米路由器中获取无线频段信息和主机名"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:166
+msgid "Get wireless band information and hostname from other OpenWrt"
+msgstr "从其他 OpenWrt 中获取无线频段信息和主机名"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:167
 msgid "Scan local IP"
 msgstr "扫描局域网 IP"
 
@@ -964,6 +976,30 @@ msgstr "光猫登录密码"
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:132
 msgid "Use a regular account, no need for super password"
 msgstr "使用普通账号即可，不需要超密"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:209
+msgid "MiWiFi IP Address"
+msgstr "小米路由器 IP 地址"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:213
+msgid "The main router address is all that is needed in the Mesh wireless network topology."
+msgstr "在 Mesh 无线网络拓扑中，只需要填写主路由器地址。"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:216
+msgid "MiWiFi Login Password"
+msgstr "小米路由器登录密码"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:213
+msgid "MikroTik Routers IP Address"
+msgstr "ROS 路由器 IP 地址"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:213
+msgid "MikroTik Router Account"
+msgstr "ROS 路由器用户名"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:216
+msgid "The main router address is all that is needed in the Mesh wireless network topology."
+msgstr "Mesh 无线网络拓扑中，只需要填写主路由地址"
 
 #: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/advanced.js:135
 msgid "IP range to be scanned"
@@ -1045,7 +1081,11 @@ msgstr "单位为小时"
 msgid "Network uptime greater than"
 msgstr "网络在线时间大于"
 
-#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/client.js:14
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/client.js:70
+msgid "Connection Point"
+msgstr "连接点"
+
+#: applications/luci-app-wechatpush/htdocs/luci-static/resources/view/wechatpush/client.js:70
 msgid "Online time"
 msgstr "在线时间"
 
