@@ -3,7 +3,7 @@ local uci = luci.model.uci.cursor()
 local server_table = {}
 local type_table = {}
 local function is_finded(e)
-	return luci.sys.exec('type -t -p "%s"' % e) ~= "" and true or false
+	return luci.sys.exec(string.format('type -t -p "%s" 2>/dev/null', e)) ~= ""
 end
 
 uci:foreach("shadowsocksr", "servers", function(s)
@@ -205,6 +205,7 @@ for key, server_type in pairs(type_table) do
         o:depends("server", key)
     end
 end
+o:depends({server = "same", disable = true})
 
 -- Socks User
 o = s:option(Value, "socks5_user", translate("Socks5 User"), translate("Only when Socks5 Auth Mode is password valid, Mandatory."))
@@ -227,6 +228,7 @@ for key, server_type in pairs(type_table) do
         o:depends("server", key)
     end
 end
+o:depends({server = "same", disable = true})
 end
 
 -- Local Port
