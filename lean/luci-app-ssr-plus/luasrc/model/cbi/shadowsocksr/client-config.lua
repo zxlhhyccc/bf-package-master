@@ -7,7 +7,7 @@ require "luci.http"
 require "luci.jsonc"
 require "luci.model.ipkg"
 require "luci.model.uci"
-local uci = luci.model.uci.cursor()
+local uci = require "luci.model.uci".cursor()
 
 local m, s, o
 
@@ -27,7 +27,7 @@ local has_ss_rust = is_finded("sslocal") or is_finded("ssserver")
 local has_ss_libev = is_finded("ss-redir") or is_finded("ss-local")
 
 -- 读取当前存储的 ss_type
-local ss_type = uci:get_first("shadowsocksr", "server_subscribe", "ss_type") or "ss-rust"
+local ss_type = uci:get_first("shadowsocksr", "server_subscribe", "ss_type")
 
 local server_table = {}
 local encrypt_methods = {

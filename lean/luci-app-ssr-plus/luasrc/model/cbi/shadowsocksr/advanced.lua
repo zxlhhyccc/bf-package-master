@@ -1,5 +1,5 @@
 local m, s, o
-local uci = luci.model.uci.cursor()
+local uci = require "luci.model.uci".cursor()
 local server_table = {}
 local type_table = {}
 local function is_finded(e)

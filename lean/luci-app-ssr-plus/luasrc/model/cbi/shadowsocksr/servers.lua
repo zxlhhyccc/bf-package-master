@@ -3,7 +3,7 @@ require "luci.http"
 require "luci.sys"
 require "luci.dispatcher"
 require "luci.model.uci"
-local uci = luci.model.uci.cursor()
+local uci = require "luci.model.uci".cursor()
 
 local m, s, o, node
 local server_count = 0
