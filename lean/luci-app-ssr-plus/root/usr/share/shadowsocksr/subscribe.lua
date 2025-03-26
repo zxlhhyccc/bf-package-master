@@ -161,6 +161,12 @@ local function processData(szType, content)
 		local url = URL.parse("http://" .. content)
 		local params = url.query
 
+		-- 调试输出所有参数
+		-- log("Hysteria2 原始参数:")
+		-- for k,v in pairs(params) do
+			-- log(k.."="..v)
+		-- end
+
 		result.alias = url.fragment and UrlDecode(url.fragment) or nil
 		result.type = hy2_type
 		result.server = url.host
@@ -170,12 +176,12 @@ local function processData(szType, content)
 			result.transport_protocol = params.protocol or "udp"
 		end
 		result.hy2_auth = url.user
-		result.uplink_capacity = params.upmbps
-		result.downlink_capacity = params.downmbps
-		if params.obfs and params.obfs-password then
+		result.uplink_capacity = params.upmbps or "5"
+		result.downlink_capacity = params.downmbps or "20"
+		if params.obfs then
 			result.flag_obfs = "1"
-			result.transport_protocol = params.obfs
-			result.transport_protocol = params.obfs-password
+			result.obfs_type = params.obfs
+			result.salamander = params["obfs-password"] or params["obfs_password"]
 		end
 		if params.sni then
 			result.tls = "1"
