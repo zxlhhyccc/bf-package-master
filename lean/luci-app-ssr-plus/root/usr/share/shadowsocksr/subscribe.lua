@@ -180,7 +180,7 @@ local function processData(szType, content)
 	if not isCompleteJSON(content) then
 		return nil
 	end
-	if szType == "hysteria2" then
+	if szType == "hysteria2" or szType == "hy2" then
 		local url = URL.parse("http://" .. content)
 		local params = url.query
 
