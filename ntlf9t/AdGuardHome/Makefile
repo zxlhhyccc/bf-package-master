@@ -106,6 +106,9 @@ define Package/AdGuardHome/install
 	$(INSTALL_DIR) $(1)/etc/AdGuardHome
 
 	$(INSTALL_CONF) ./conf/$(ADG_CONF_NAME).yaml $(1)/etc/AdGuardHome/AdGuardHome.yaml
+
+	$(INSTALL_DIR) $(1)/etc/sysctl.d
+	$(INSTALL_CONF) ./conf/adguardhome.sysctl $(1)/etc/sysctl.d/50-AdGuardHome.conf
 endef
 
 $(eval $(call Download,AdGuardHome-frontend))
