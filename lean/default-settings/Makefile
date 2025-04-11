@@ -27,6 +27,13 @@ define Package/default-settings-chn
   DEPENDS:=+default-settings +@LUCI_LANG_zh_Hans +luci-i18n-base-zh-cn
 endef
 
+define Package/default-settings-ipq807x
+  $(Package/default-settings)
+  TITLE+= (Optimize for CHN users)
+  DEPENDS:=@TARGET_qualcommax \
+		   +default-settings
+endef
+
 define Build/Compile
 endef
 
@@ -48,5 +55,11 @@ define Package/default-settings-chn/install
 	po2lmo ./i18n/other_zh.po $(1)/usr/lib/lua/luci/i18n/other.zh-cn.lmo
 endef
 
+define Package/default-settings-ipq807x/install
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) ./files/zzz-default-settings-ipq807x $(1)/etc/uci-defaults/99-default-settings-ipq807x
+endef
+
 $(eval $(call BuildPackage,default-settings))
 $(eval $(call BuildPackage,default-settings-chn))
+$(eval $(call BuildPackage,default-settings-ipq807x))
