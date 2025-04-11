@@ -15,9 +15,9 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/dnsproxy.git
-PKG_SOURCE_DATE:=2025-03-19
-PKG_SOURCE_VERSION:=d64332fbadf25bc185d39694c68e79445a5915be
-PKG_MIRROR_HASH:=aaec7f84280848bc495813d7d33f6cf1196ce28640e8bf34284b287fd53518c6
+PKG_SOURCE_DATE:=2025-04-08
+PKG_SOURCE_VERSION:=c7570de2c11dd3bc29c8a52edcfa9f64549dcce8
+PKG_MIRROR_HASH:=ee9bb265bb426693b1505191f1699a78f518a0f4a549e3bd458337d09911ebf8
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=Apache-2.0
@@ -39,7 +39,7 @@ GO_PKG_LDFLAGS_X:=$(GO_PKG)/internal/version.version=v$(PKG_VERSION)
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/dnsproxy
+define Package/dnsproxy/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
@@ -49,10 +49,26 @@ define Package/dnsproxy
   USERID:=dnsproxy=411:dnsproxy=411
 endef
 
-define Package/dnsproxy/description
+define Package/dnsproxy/Default/description
   A simple DNS proxy server that supports all existing DNS protocols including
   DNS-over-TLS, DNS-over-HTTPS, DNSCrypt, and DNS-over-QUIC.Moreover, it can
   work as a DNS-over-HTTPS, DNS-over-TLS or DNS-over-QUIC server.
+endef
+
+define Package/dnsproxy
+  $(call Package/dnsproxy/Default)
+endef
+
+define Package/dnsproxy-neo
+  $(call Package/dnsproxy/Default)
+endef
+
+define Package/dnsproxy/description
+  $(call Package/dnsproxy/Default/description)
+endef
+
+define Package/dnsproxy-neo/description
+  $(call Package/dnsproxy/Default/description)
 endef
 
 define Package/dnsproxy/config
@@ -95,9 +111,10 @@ define Package/dnsproxy/install
 	$(INSTALL_BIN) $(CURDIR)/files/dnsproxy.defaults $(1)/etc/uci-defaults/80-dnsproxy-migration
 endef
 
-define Package/dnsproxy/conffiles
-/etc/config/dnsproxy
+define Package/dnsproxy-neo/install
+	$(call GoPackage/Package/Install/Bin,$(1))
 endef
 
 $(eval $(call GoBinPackage,dnsproxy))
 $(eval $(call BuildPackage,dnsproxy))
+$(eval $(call BuildPackage,dnsproxy-neo))
