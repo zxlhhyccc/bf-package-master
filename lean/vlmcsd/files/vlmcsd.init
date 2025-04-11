@@ -6,93 +6,93 @@ USE_PROCD=1
 CONF="vlmcsd"
 PROG="/usr/bin/vlmcsd"
 INI="/etc/vlmcsd.ini"
+PIDFILE="/var/run/vlmcsd.pid"
 
-# 获取 DNSMASQ 配置路径
-if [ -f /etc/openwrt_release ]; then
-    DNSMASQ_UCI_CONFIG="$(uci -q show "dhcp.@dnsmasq[0]" | awk 'NR==1 {split($0, conf, /[.=]/); print conf[2]}')"
-    if [ -f "/tmp/etc/dnsmasq.conf.$DNSMASQ_UCI_CONFIG" ]; then
-        DNSMASQ_CONF_DIR="$(awk -F '=' '/^conf-dir=/ {print $2}' "/tmp/etc/dnsmasq.conf.$DNSMASQ_UCI_CONFIG")"
-    else
-        DNSMASQ_CONF_DIR="/tmp/dnsmasq.d"
+# 获取DNSMASQ配置路径
+get_dnsmasq_conf() {
+    if [ -f /etc/openwrt_release ]; then
+        DNSMASQ_UCI_CONFIG="$(uci -q show "dhcp.@dnsmasq[0]" | awk 'NR==1 {split($0, conf, /[.=]/); print conf[2]}')"
+        if [ -f "/tmp/etc/dnsmasq.conf.$DNSMASQ_UCI_CONFIG" ]; then
+            DNSMASQ_CONF_DIR="$(awk -F '=' '/^conf-dir=/ {print $2}' "/tmp/etc/dnsmasq.conf.$DNSMASQ_UCI_CONFIG")"
+        else
+            DNSMASQ_CONF_DIR="/tmp/dnsmasq.d"
+        fi
+        DNSMASQ_VLMCSD="${DNSMASQ_CONF_DIR%*/}/dnsmasq-vlmcsd.conf"
     fi
-    DNSMASQ_VLMCSD="${DNSMASQ_CONF_DIR%*/}/dnsmasq-vlmcsd.conf"
-fi
+}
 
-# 重启 crond 服务
+# 重启crond服务
 restart_crond() {
     /etc/init.d/cron restart >/dev/null 2>&1
 }
 
-# 添加定时任务
-add_cron() {
-    [ -n "$log" ] || log="0"
-
-    if [ "$log" -lt 7 ]; then
-        if ! grep -wq "\* $log .*vlmcsd" /etc/crontabs/root; then
-            grep -q vlmcsd /etc/crontabs/root && sed -i '/vlmcsd/d' /etc/crontabs/root
-            echo "0 0 * * $log rm -f /var/log/vlmcsd.log" >> /etc/crontabs/root
-            restart_crond
-        fi
-    else
-        del_cron
-    fi
+# 管理定时任务 - 完全修正版
+manage_cron() {
+    local action=$1
+    local log_day=${2:-0}  # 默认值0表示每天
+    
+    case "$action" in
+        add)
+            # 先删除可能存在的旧任务
+            sed -i '/vlmcsd\.log/d' /etc/crontabs/root 2>/dev/null
+            
+            # 只有log_day在0-6之间才添加(0=周日，1-6=周一到周六)
+            if [ "$log_day" -ge 0 ] && [ "$log_day" -le 6 ]; then
+                # 添加新任务
+                echo "0 0 * * $log_day rm -f /var/log/vlmcsd.log" >> /etc/crontabs/root
+                # 重载cron配置
+                restart_crond
+            fi
+            ;;
+        del)
+            # 删除所有相关任务
+            if grep -q "vlmcsd\.log" /etc/crontabs/root 2>/dev/null; then
+                sed -i '/vlmcsd\.log/d' /etc/crontabs/root
+                restart_crond
+            fi
+            ;;
+    esac
 }
 
-# 删除定时任务
-del_cron() {
-    if grep -q vlmcsd /etc/crontabs/root; then
-        sed -i '/vlmcsd/d' /etc/crontabs/root
-        restart_crond
-    fi
-}
-
-# 启动服务
 start_service() {
-    local enabled auto_activate internet_access conf log port
-
-    # 加载配置
+    get_dnsmasq_conf
+    
     config_load "$CONF"
     config_get_bool enabled "config" "enabled" "0"
+    [ "$enabled" -eq 1 ] || return 1
+
     config_get auto_activate "config" "auto_activate" "0"
     config_get internet_access "config" "internet_access" "0"
     config_get conf "config" "conf" "0"
     config_get log "config" "log" "0"
     config_get port "config" "port" "1688"
 
-    # 如果服务未启用，直接返回
-    [ "$enabled" -eq 1 ] || return 1
-
-    # 自动激活配置
+    # 配置自动激活
     if [ "$auto_activate" -eq 1 ]; then
         hostname="$(uci -q get system.@system[0].hostname)"
         [ -n "$hostname" ] && echo "srv-host=_vlmcs._tcp,$hostname,$port,0,100" > "$DNSMASQ_VLMCSD"
         /etc/init.d/dnsmasq reload >/dev/null 2>&1
     fi
 
-    # 启动服务
-    procd_open_instance "$CONF"
-    procd_set_param command "$PROG"
-    procd_append_param command -D
-
-    if [ "$conf" -eq 1 ]; then
+    # 配置INI文件
+    [ "$conf" -eq 1 ] && {
         sed -i \
             -e 's/^[ \t]*\(Port.*\)/;\1/' \
             -e 's/.*\(Listen.*:\)[0-9]*/\1'"$port"'/' \
             -e 's/.*\(LogFile[ ]*=[ ]*\).*/\1\/var\/log\/vlmcsd\.log/' "$INI"
-        procd_append_param command -i "$INI"
-    else
-        procd_append_param command -P "$port"
-    fi
+    }
 
-    procd_append_param command -l /var/log/vlmcsd.log
+    # 启动服务
+    procd_open_instance "$CONF"
+    procd_set_param command "$PROG" -D -P "$port" -l /var/log/vlmcsd.log
+    [ "$conf" -eq 1 ] && procd_append_param command -i "$INI"
+    procd_set_param pidfile "$PIDFILE"
     procd_set_param file "$INI"
-    procd_set_param stdout 1
-    procd_set_param stderr 1
     procd_set_param respawn
     procd_add_jail_mount "$INI"
 
     # 配置防火墙规则
-    if [ "$internet_access" -eq 1 ]; then
+    [ "$internet_access" -eq 1 ] && {
         procd_open_data
         json_add_array firewall
             json_add_object ""
@@ -105,37 +105,10 @@ start_service() {
             json_close_object
         json_close_array
         procd_close_data
-    fi
-
+    }
     procd_close_instance
-
-    # 添加定时任务
-    add_cron
-}
-
-# 卸载服务
-unload_service() {
-    local enabled auto_activate
-
-    # 加载配置
-    config_load "$CONF"
-    config_get_bool enabled "config" "enabled" "0"
-    config_get auto_activate "config" "auto_activate" "0"
-
-    # 如果服务未启用，停止服务并清理资源
-    [ "$enabled" -eq 0 ] && del_cron
-
-    # 仅在停止服务时删除日志文件
-    if [ "$enabled" -eq 0 ]; then
-        # 删除日志文件
-        [ -f /var/log/vlmcsd.log ] && rm -f /var/log/vlmcsd.log
-    fi
-
-    # 只有在 DNSMASQ 配置有变更时才重新加载 dnsmasq 服务
-    if [ "$enabled" -eq 0 ] || [ "$auto_activate" -eq 0 ]; then
-        rm -f "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq reload >/dev/null 2>&1
-    fi
+    # 定时任务
+    manage_cron add "$log"
 }
 
 # 服务启动后触发
@@ -148,22 +121,34 @@ service_stopped() {
     procd_set_config_changed firewall
 }
 
-# 停止服务
+
 stop_service() {
-    pid=$(pgrep -f "$PROG")
-    [ -n "$pid" ] && kill -9 $pid
-    unload_service
+    get_dnsmasq_conf
+
+    # 清理资源
+    [ -f "$DNSMASQ_VLMCSD" ] && {
+        rm -f "$DNSMASQ_VLMCSD"
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
+    }
+
+    # 移除定时任务
+    manage_cron del
+
+    # 确保进程停止
+    [ -f "$PIDFILE" ] && {
+        kill -9 $(cat "$PIDFILE") 2>/dev/null
+        rm -f "$PIDFILE"
+    }
+
+    # 清理日志
+    [ -f "/var/log/vlmcsd.log" ] && rm -f /var/log/vlmcsd.log
 }
 
-# 重新加载服务
 reload_service() {
     stop
     start
 }
 
-# 服务触发器
 service_triggers() {
-    # 仅监听 vlmcsd 配置文件的更改
     procd_add_reload_trigger "$CONF"
 }
-
