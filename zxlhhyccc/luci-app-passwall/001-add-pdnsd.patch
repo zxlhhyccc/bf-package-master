@@ -1,12 +1,13 @@
 diff --git a/Makefile b/Makefile
-index 6653f5f..62c1ed5 100644
+index 485b59c..bc1ef26 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -12,10 +12,12 @@ PKG_RELEASE:=1
+@@ -12,10 +12,13 @@ PKG_RELEASE:=1
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
 +	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Geoview \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
@@ -15,16 +16,17 @@ index 6653f5f..62c1ed5 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -34,16 +36,38 @@ PKG_CONFIG_DEPENDS:= \
+@@ -34,16 +37,39 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
 -	+chinadns-ng +dns2socks +dnsmasq-full +ip-full \
 -	+libuci-lua +lua +luci-compat +luci-lib-jsonc \
 -	+microsocks +resolveip +tcping
-+	+chinadns-ng +dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
++	+chinadns-ng +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
 +	+microsocks +resolveip +tcping +unzip \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS:dns2socks \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -58,7 +60,7 @@ index 6653f5f..62c1ed5 100644
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -53,113 +77,102 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
+@@ -53,113 +79,106 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -78,6 +80,10 @@ index 6653f5f..62c1ed5 100644
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
 +	bool "Include DNS2TCP"
++	default y
++
++config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS
++	bool "Include DNS2SOCKS"
 +	default y
 +
  config PACKAGE_$(PKG_NAME)_INCLUDE_Geoview

@@ -13,6 +13,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Geoview \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
@@ -36,9 +37,10 @@ PKG_CONFIG_DEPENDS:= \
 LUCI_TITLE:=LuCI support for PassWall
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
-	+chinadns-ng +dns2socks +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
+	+chinadns-ng +ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
 	+microsocks +resolveip +tcping +unzip \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
+	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS:dns2socks \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
@@ -93,6 +95,10 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP
 	bool "Include DNS2TCP"
+	default y
+
+config PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS
+	bool "Include DNS2SOCKS"
 	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Geoview
