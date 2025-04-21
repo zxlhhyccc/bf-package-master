@@ -209,7 +209,12 @@ if is_finded("chinadns-ng") then
 	o:value("4.2.2.4:53", translate("Level 3 Public DNS (4.2.2.4)"))
 	o:value("1.1.1.1:53", translate("Cloudflare DNS (1.1.1.1)"))
 	o:depends("shunt_dns_mode", "5")
-	o.description = translate("Custom DNS Server format as IP:PORT (default: 8.8.4.4:53), Muitiple DNS server can saperate with ','")
+	o.description = translate(
+    	"<ul>" ..
+    	"<li>" .. translate("Custom DNS Server format as IP:PORT (default: 8.8.4.4:53)") .. "</li>" .. 
+    	"<li>" .. translate("Muitiple DNS server can saperate with ','") .. "</li>" ..
+    	"</ul>"
+	)
 
 	o = s:option(ListValue, "chinadns_ng_shunt_proto", translate("ChinaDNS-NG shunt query protocol"))
 	o:value("none", translate("UDP/TCP upstream"))

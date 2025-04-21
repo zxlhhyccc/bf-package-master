@@ -624,8 +624,8 @@ msgstr "访问国外域名 DNS 服务器"
 msgid "Custom DNS Server format as IP:PORT (default: 8.8.4.4:53)"
 msgstr "格式为 IP:Port（默认：8.8.4.4:53）"
 
-msgid "Custom DNS Server format as IP:PORT (default: 8.8.4.4:53), Muitiple DNS server can saperate with ','"
-msgstr "格式为 IP:Port（默认：8.8.4.4:53），如多个上游 DNS 服务器请用 ',' 分隔（注意用英文逗号)"
+msgid "Muitiple DNS server can saperate with ','"
+msgstr "多个上游 DNS 服务器请用 ',' 分隔（注意用英文逗号)"
 
 msgid "ChinaDNS-NG query protocol"
 msgstr "ChinaDNS-NG 查询协议"
