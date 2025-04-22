@@ -5,7 +5,7 @@
 'require uci';
 'require view';
 
-const callServiceList = rpc.declare({
+var callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -42,7 +42,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		let m, s, o;
+		var m, s, o;
 
 		m = new form.Map('ua2f', _('UA2F'), _('Change User-Agent to F-words.'));
 
@@ -78,6 +78,9 @@ return view.extend({
 		s = m.section(form.NamedSection, 'main', 'ua2f');
 
 		o = s.option(form.Value, 'custom_ua', _('Custom User-Agent'));
+
+		o = s.option(form.Flag, 'disable_connmark', _('Disable conntrack mark'),
+			_('This will increase compatibility with other programs that modify conntrack marks but will decrease performance.'));
 
 		o = s.option(form.Button, '_check_ua', _('Check User-Agent'));
 		o.inputtitle = _('Open website');
