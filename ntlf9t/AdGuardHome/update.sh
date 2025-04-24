@@ -42,7 +42,7 @@ function update() {
 
 	[ "$frontend_sha" != "$frontend_old_sha" ] || return 3
 
-	sed -i -e "$((line + 1))s/HASH:=.*/HASH:=$frontend_sha/" "$CURDIR/Makefile"
+	sed -i -e "$((line + 1))s/FRONTEND_HASH:=.*/FRONTEND_HASH:=$frontend_sha/" "$CURDIR/Makefile"
 
 	# 获取commit值
 	  commit="$(git ls-remote  https://github.com/$repo.git beta-v0.107 | cut -f1)"
