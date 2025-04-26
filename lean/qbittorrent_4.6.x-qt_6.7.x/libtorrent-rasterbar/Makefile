@@ -20,7 +20,7 @@ PYTHON3_PKG_WHEEL_NAME:=libtorrent
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
-include ../../lang/python/python3-package.mk
+include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
 
 define Package/libtorrent-rasterbar/Default
   TITLE:=Rasterbar BitTorrent library
