@@ -1,0 +1,171 @@
+#!/bin/sh
+. /lib/functions.sh
+
+# 检测当前使用的防火墙框架（fw3 或 fw4）
+is_fw4=0
+command -v fw4 >/dev/null && is_fw4=1
+
+# 清理防火墙规则函数
+clean_firewall_rules() {
+    if [ "$is_fw4" -eq "1" ]; then
+        nft_incdir="/usr/share/nftables.d/chain-pre"
+        rm -f "$nft_incdir/input/zerotier.nft" \
+              "$nft_incdir/forward/zerotier.nft" \
+              "$nft_incdir/srcnat/zerotier.nft"
+        logger -t "zerotier" "Removed nftables rules (fw4)"
+    else
+        uci -q delete firewall.zerotier
+        uci -q delete firewall.zerotier_in_primary
+        uci -q delete firewall.zerotier_in_secondary
+
+        local idx=0
+        while uci -q get firewall.@forwarding[$idx] >/dev/null 2>&1; do
+            local src dest
+            src="$(uci -q get firewall.@forwarding[$idx].src)"
+            dest="$(uci -q get firewall.@forwarding[$idx].dest)"
+            if [ "$src" = "zerotier" ] || [ "$dest" = "zerotier" ]; then
+                uci -q delete firewall.@forwarding[$idx]
+                continue
+            fi
+            idx=$((idx + 1))
+        done
+
+        logger -t "zerotier" "Removed iptables rules (fw3)"
+    fi
+
+    uci commit firewall
+    [ "$is_fw4" -eq "1" ] && fw4 reload || fw3 reload
+}
+
+apply_firewall_rules() {
+    /etc/init.d/zerotier running || { logger -t "zerotier" "Service not running, skipping rule application"; exit 1; }
+
+    primaryPort=$(zerotier-cli -j info 2>/dev/null | jsonfilter -q -e '@.config.settings.primaryPort')
+    secondaryPort=$(zerotier-cli -j info 2>/dev/null | jsonfilter -q -e '@.config.settings.secondaryPort')
+
+    if [ -z "$primaryPort" ] && [ -z "$secondaryPort" ]; then
+        logger -t "zerotier" "No valid port found, skipping rule application"
+        exit 1
+    fi
+
+    clean_firewall_rules
+
+    if [ "$is_fw4" -eq "1" ]; then
+        nft_incdir="/usr/share/nftables.d/chain-pre"
+        mkdir -p "$nft_incdir/input" "$nft_incdir/forward" "$nft_incdir/srcnat"
+
+        [ -n "$primaryPort" ] && {
+            echo "udp dport $primaryPort counter accept comment \"!fw4: Allow-ZeroTier-Inbound(primaryPort)\"" >> "$nft_incdir/input/zerotier.nft"
+            logger -t "zerotier" "Added primaryPort $primaryPort rule (fw4)"
+        }
+        [ -n "$secondaryPort" ] && {
+            echo "udp dport $secondaryPort counter accept comment \"!fw4: Allow-ZeroTier-Inbound(secondaryPort)\"" >> "$nft_incdir/input/zerotier.nft"
+            logger -t "zerotier" "Added secondaryPort $secondaryPort rule (fw4)"
+        }
+    else
+        [ -n "$primaryPort" ] && {
+            uci -q set firewall.zerotier_in_primary="rule"
+            uci -q set firewall.zerotier_in_primary.name="Allow-ZeroTier-Inbound(primaryPort)"
+            uci -q set firewall.zerotier_in_primary.src="wan"
+            uci -q add_list firewall.zerotier_in_primary.proto="tcp"
+            uci -q add_list firewall.zerotier_in_primary.proto="udp"
+            uci -q set firewall.zerotier_in_primary.dest_port="$primaryPort"
+            uci -q set firewall.zerotier_in_primary.target="ACCEPT"
+            uci -q set firewall.zerotier_in_primary.dest="*"
+            logger -t "zerotier" "Added primaryPort $primaryPort rule (fw3)"
+        }
+        [ -n "$secondaryPort" ] && {
+            uci -q set firewall.zerotier_in_secondary="rule"
+            uci -q set firewall.zerotier_in_secondary.name="Allow-ZeroTier-Inbound(secondaryPort)"
+            uci -q set firewall.zerotier_in_secondary.src="wan"
+            uci -q add_list firewall.zerotier_in_secondary.proto="udp"
+            uci -q set firewall.zerotier_in_secondary.dest_port="$secondaryPort"
+            uci -q set firewall.zerotier_in_secondary.target="ACCEPT"
+            uci -q set firewall.zerotier_in_secondary.dest="*"
+            logger -t "zerotier" "Added secondaryPort $secondaryPort rule (fw3)"
+        }
+    fi
+
+    zerotier_nat() {
+        local cfg="$1"
+        local enabled id auto_nat
+        local portDeviceName ip_segments
+
+        config_get_bool enabled "$cfg" 'enabled' 0
+        [ "$enabled" -eq "1" ] || return
+
+        config_get id "$cfg" 'id'
+        config_get_bool auto_nat "$cfg" 'auto_nat' 0
+        [ "$auto_nat" -eq "1" ] || return
+
+        portDeviceName=$(zerotier-cli -j listnetworks 2>/dev/null | jsonfilter -q -e "@[@.nwid=\"$id\"].portDeviceName")
+        [ -n "$portDeviceName" ] || return
+
+        ip_segments="$(ip route | grep "dev $portDeviceName proto kernel" | awk '{print $1}')"
+
+        if [ "$is_fw4" -eq "1" ]; then
+            echo "iifname \"$portDeviceName\" counter accept comment \"!fw4: Zerotier allow inbound from $portDeviceName\"" >> "$nft_incdir/input/zerotier.nft"
+            echo "iifname \"$portDeviceName\" counter accept comment \"!fw4: Zerotier forward in $portDeviceName\"" >> "$nft_incdir/forward/zerotier.nft"
+            echo "oifname \"$portDeviceName\" counter accept comment \"!fw4: Zerotier forward out $portDeviceName\"" >> "$nft_incdir/forward/zerotier.nft"
+            echo "oifname \"$portDeviceName\" counter masquerade comment \"!fw4: Zerotier SNAT outbound $portDeviceName\"" >> "$nft_incdir/srcnat/zerotier.nft"
+
+            for ipseg in $ip_segments; do
+                echo "ip saddr $ipseg counter masquerade comment \"!fw4: Zerotier $ipseg SNAT\"" >> "$nft_incdir/srcnat/zerotier.nft"
+            done
+        else
+            uci -q set firewall.zerotier="zone"
+            uci -q set firewall.zerotier.name="zerotier"
+            uci -q set firewall.zerotier.input="ACCEPT"
+            uci -q set firewall.zerotier.output="ACCEPT"
+            uci -q set firewall.zerotier.forward="ACCEPT"
+            uci -q add_list firewall.zerotier.device="$portDeviceName"
+            uci -q set firewall.zerotier.masq="1"
+
+            for ipseg in $ip_segments; do
+                uci -q add_list firewall.zerotier.subnet="$ipseg"
+            done
+
+            uci -q add firewall forwarding
+            uci -q set firewall.@forwarding[-1].src="zerotier"
+            uci -q set firewall.@forwarding[-1].dest="lan"
+
+            uci -q add firewall forwarding
+            uci -q set firewall.@forwarding[-1].src="zerotier"
+            uci -q set firewall.@forwarding[-1].dest="wan"
+
+            uci -q add firewall forwarding
+            uci -q set firewall.@forwarding[-1].src="lan"
+            uci -q set firewall.@forwarding[-1].dest="zerotier"
+        fi
+
+        logger -t "zerotier" "Auto NAT for $id ($portDeviceName) added!"
+    }
+
+    config_load zerotier
+    config_foreach zerotier_nat 'network'
+
+    [ "$is_fw4" -eq "1" ] && {
+        uci -q set firewall.@defaults[0].auto_includes="1"
+        uci commit firewall
+        fw4 reload
+    } || {
+        uci commit firewall
+        fw3 reload
+    }
+}
+
+case "$1" in
+    start)
+        apply_firewall_rules
+        ;;
+    stop)
+        clean_firewall_rules
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
+
+exit 0
+

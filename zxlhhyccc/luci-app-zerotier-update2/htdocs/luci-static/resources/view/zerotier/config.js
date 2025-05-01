@@ -148,7 +148,7 @@ return view.extend({
 		s = m.section(
 			form.GridSection,
 			'network',
-			_('Networks'),
+			_('Join Network'),
 			_(
 				'<strong>Network configuration, you can have as many configurations as networks you want to join. See documentation at <a href="https://docs.zerotier.com/config/#network-specific-configuration" target="_blank" style="color: green; font-weight: bold; display: inline-block;">Network Specific Configuration</a></strong>'
 			)
@@ -159,8 +159,16 @@ return view.extend({
 		s.nodescriptions = true;
 		s.addbtntitle = _('Add new Network...');
 
+		o = s.option(form.Flag, 'enabled', _('Enable'));
+		o.default = '1';
+		o.rmempty = false;
+
 		// id
 		o = s.option(form.Value, 'id', _('ID'));
+		o.datatype = "and(rangelength(16,16),hexstring)";
+		o.maxlength = 16;
+		o.size = 16;
+		o.rmempty = false;
 
 		// allow_managed
 		o = s.option(

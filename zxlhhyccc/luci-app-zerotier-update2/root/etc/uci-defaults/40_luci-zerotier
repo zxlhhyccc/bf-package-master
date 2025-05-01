@@ -1,0 +1,36 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+    [ -e "/etc/config/ucitrack" ] && {
+        delete ucitrack.@zerotier[-1]
+        commit ucitrack
+    }
+
+    delete firewall.zerotier
+    commit firewall
+EOF
+
+if grep -q "fw3" /etc/init.d/firewall; then
+    # 如果是 fw3（iptables），还要删除这两个链
+    uci -q delete firewall.zerotier_in_primary
+    uci -q delete firewall.zerotier_in_secondary
+
+    # 删除所有 src/dest 包含 zerotier 的 forwarding 节点
+    idx=0
+    while uci -q get firewall.@forwarding[$idx] >/dev/null 2>&1; do
+        src="$(uci -q get firewall.@forwarding[$idx].src)"
+        dest="$(uci -q get firewall.@forwarding[$idx].dest)"
+        if [ "$src" = "zerotier" ] || [ "$dest" = "zerotier" ]; then
+            uci -q delete firewall.@forwarding[$idx]
+            # 删除后索引不用增加，因为条目前移
+            continue
+        fi
+        idx=$((idx + 1))
+    done
+
+    uci commit firewall
+fi
+
+rm -f /tmp/luci-indexcache
+exit 0
+
