@@ -5,25 +5,9 @@
 
 [中文文档](README.md) | [English](README_en.md)
 
-这是一款用于 OpenWRT 路由器上进行 微信/Telegram 推送的插件
+这是一款用于 OpenWRT 路由器上进行 微信、Telegram、邮件 通知的插件。
 
-推送服务支持列表：
-
-| 推送应用 | 方式 | 接口说明 |
-| :-------- | :----- | :----- |
-| 微信 | Server酱 | https://sct.ftqq.com/
-| 微信 | 推送加 | http://www.pushplus.plus/
-| 微信 | WxPusher | https://wxpusher.zjiecode.com/docs
-| 企业微信 | 应用推送 | https://work.weixin.qq.com/api/doc/90000/90135/90248
-| Telegram | bot | https://t.me/BotFather
-
-精力有限，如需要钉钉推送、飞书推送、Bark 推送等请尝试另一个分支 https://github.com/zzsj0928/luci-app-pushbot ，或使用自定义 API 设置
-
-v2.06.2 之后的版本不再支持 LuCI 18.06，如需编译，请使用 openwrt-18.06 分支，拉取源码时请使用 `git clone -b openwrt-18.06 https://github.com/tty228/luci-app-wechatpush.git` 命令
-
-
-## 主要功能
-
+主要功能：
 - [x] 路由 IP、IPv6 变动推送
 - [x] 设备 上线、离线 推送
 - [x] 设备在线列表及流量使用情况
@@ -32,6 +16,19 @@ v2.06.2 之后的版本不再支持 LuCI 18.06，如需编译，请使用 openwr
 - [x] 路由 Web、SSH 登录提示，自动拉黑、端口敲门
 - [x] 无人值守任务
 
+通知服务支持列表：
+| 推送应用 | 方式 | 接口说明 |
+| :-------- | :----- | :----- |
+| 微信 | Server酱 | https://sct.ftqq.com/
+| 微信 | 推送加 | http://www.pushplus.plus/
+| 微信 | WxPusher | https://wxpusher.zjiecode.com/docs
+| 企业微信 | 应用推送 | https://work.weixin.qq.com/api/doc/90000/90135/90248
+| Telegram | bot | https://t.me/BotFather
+| Mail | msmtp | https://marlam.de/msmtp/
+
+精力有限，如需要钉钉推送、飞书推送、Bark 推送等请尝试另一个分支 https://github.com/zzsj0928/luci-app-pushbot ，或使用自定义 API 设置
+
+v2.06.2 之后的版本不再支持 LuCI 18.06，如需编译，请使用 openwrt-18.06 分支，拉取源码时请使用 `git clone -b openwrt-18.06 https://github.com/tty228/luci-app-wechatpush.git` 命令
 
 ## 说明
 
@@ -46,7 +43,7 @@ v2.06.2 之后的版本不再支持 LuCI 18.06，如需编译，请使用 openwr
 对于设备未宣告主机名、光猫拨号上网、OpenWrt 作为旁路网关等各类情况导致的获取主机名失败，可以通过以下方式设置主机名
 
 - 使用设备名备注
-- 在高级设置处配置从光猫获取
+- 在高级设置处配置从光猫、小米路由器、ROS 获取
 - 开启 MAC 设备数据库
 - 安装 samba*-server 或 samba*-client，使程序可以通过 NetBIOS 查询主机名
 
@@ -57,7 +54,6 @@ v2.06.2 之后的版本不再支持 LuCI 18.06，如需编译，请使用 openwr
 
 - 如遇设备休眠频繁，请在高级设置处自行调整超时设置
 - 如果不需要太过精准的设备在线信息，只需要其余功能，可以在高级设置中关闭主动探测
-
 
 **关于流量统计信息：**
 
