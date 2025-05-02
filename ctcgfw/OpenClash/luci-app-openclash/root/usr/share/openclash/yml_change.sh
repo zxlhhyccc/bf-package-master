@@ -344,7 +344,11 @@ threads << Thread.new {
       Value['external-controller']='0.0.0.0:$3';
       Value['secret']='$2';
       Value['bind-address']='*';
-      Value['external-ui']='/etc/openclash/ui';
+      Value['external-ui']='/usr/share/openclash/ui';
+      Value['external-ui-name']='metacubexd';
+      if Value.key?('external-ui-url') then
+         Value.delete('external-ui-url');
+      end;
       if not Value.key?('keep-alive-interval') and not Value.key?('keep-alive-idle') then
          Value['keep-alive-interval']=15;
          Value['keep-alive-idle']=600;
