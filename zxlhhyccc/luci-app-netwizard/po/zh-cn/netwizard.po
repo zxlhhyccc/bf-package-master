@@ -70,12 +70,14 @@ msgstr "选择表示不开启DHCP服务器。在一个网络中，只需要一�
 msgid "Enable IPv6"
 msgstr "启用IPv6"
 
-
 msgid "Lan IPv4 address"
 msgstr "内网IP地址"
 
 msgid "You must specify the IP address of this machine, which is the IP address of the web access route"
 msgstr "必须指定此机器IP地址,即该路由web访问的IP地址"
+
+msgid "Forcefully specify the DNS server for this router"
+msgstr "强制指定此路由器的DNS服务器"
 
 msgid "Lan IPv4 gateway"
 msgstr "网关(主路由IP)"
@@ -92,8 +94,11 @@ msgstr "Wan口子网掩码"
 msgid "Wan IPv4 gateway"
 msgstr "Wan口网关"
 
-msgid "Use iptables to force all TCP/UDP DNS 53ports in IPV4/IPV6 to be forwarded from this route[Suggest opening]"
-msgstr "用iptables强制IPV4/IPV6所有TCP/UDP DNS 53端口走此路由解析[建议打开]"
+msgid "DNS Redirect"
+msgstr "DNS 重定向"
+
+msgid "force all TCP/UDP DNS 53ports in IPV4/IPV6 to be forwarded from this route[Suggest opening]"
+msgstr "强制IPV4/IPV6所有TCP/UDP DNS 53端口走此路由解析[建议打开]"
 
 msgid "Custom firewall"
 msgstr "启用自定义规则"
