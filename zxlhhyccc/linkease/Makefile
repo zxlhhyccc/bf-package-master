@@ -10,17 +10,16 @@ include $(TOPDIR)/rules.mk
 PKG_ARCH_LINKEASE:=$(ARCH)
 
 PKG_NAME:=linkease
-PKG_VERSION:=1.6.9
-PKG_RELEASE:=$(PKG_ARCH_LINKEASE)-2
+PKG_VERSION:=1.7.0
+PKG_RELEASE:=$(PKG_ARCH_LINKEASE)-3
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://fw.koolcenter.com/binary/LinkEase/LinuxStorage/
-PKG_HASH:=09d17d4c41e27c4f3e4b3a722e589c78e09b2124ea377c44a3d7af06005e8012
+PKG_SOURCE_URL:=http://dl.istoreos.com/binary/LinkEase/LinuxStorage/
+PKG_HASH:=61aec39bd1977020150ee02726288c9718181324d1e27159bfb84adb9318e933
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
-PKG_BUILD_FLAGS:=no-mips16
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -29,9 +28,9 @@ define Package/$(PKG_NAME)
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=LinkEase - the file cloud
-	DEPENDS:=@(arm||x86_64||aarch64) +ffmpeg-remux
+	DEPENDS:=@(arm||x86_64||aarch64) +linkmount
 	PKGARCH:=all
-	URL:=https://www.ddnsto.com/linkease/
+	URL:=https://www.linkease.com/
 endef
 
 define Package/$(PKG_NAME)/description
@@ -46,6 +45,7 @@ define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 if [ -z "$${IPKG_INSTROOT}" ]; then
 	[ -f /etc/uci-defaults/linkease ] && /etc/uci-defaults/linkease && rm -f /etc/uci-defaults/linkease
+	exit 0
 fi
 endef
 
@@ -59,8 +59,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin/linkease-plugins $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/linkease
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/heif-converter.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/heif-converter
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease-media.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/linkease-media
 	$(INSTALL_BIN) ./files/linkease-config.sh $(1)/usr/sbin/linkease-config.sh
-	$(INSTALL_BIN) ./files/aria2.sh $(1)/usr/sbin/linkease-plugins/aria2.sh
 	$(INSTALL_CONF) ./files/linkease.config $(1)/etc/config/linkease
 	$(INSTALL_BIN) ./files/linkease.init $(1)/etc/init.d/linkease
 	$(INSTALL_BIN) ./files/linkease.uci-default $(1)/etc/uci-defaults/linkease
