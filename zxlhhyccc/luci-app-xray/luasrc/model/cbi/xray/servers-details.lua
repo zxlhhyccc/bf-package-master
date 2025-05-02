@@ -128,6 +128,9 @@ o:depends('protocol', 'socks')
 o:depends('protocol', 'shadowsocks')
 -- o.placeholder = "eg: tls;host=www.bing.com;path=/websocket"
 o.rmempty = true
+
+o = s:option(Flag, "uot", translate("UDP over TCP"))
+o.rmempty = true
 -- [[ shadowsocks ]]--
 
 return m

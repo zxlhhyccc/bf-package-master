@@ -14,8 +14,12 @@ EXTRA_COMMANDS="rules healthcheck"
 EXTRA_HELP="	rules		Start IPTABLES inject\n	healthcheck	Check if service health"
 CRON_FILE=/etc/crontabs/root
 PLUGIN_FILE=/var/run/xray-plugin
-WATCHDOG_ENDPOINT='accounts.gstatic.com'
-# WATCHDOG_ENDPOINT='cp.cloudflare.com'
+WATCHDOG_ENDPOINT='one.one.one.one'
+WATCHDOG_ENDPOINT_IP0='1.0.0.1'
+WATCHDOG_ENDPOINT_IP1='1.1.1.1'
+PROBE_ENDPOINT='detectportal.firefox.com'
+# PROBE_ENDPOINT='accounts.gstatic.com'
+# PROBE_ENDPOINT='cp.cloudflare.com'
 
 DNSMASQDIR=$(sed -n 's+conf-dir=++p' /var/etc/dnsmasq.conf.* 2>/dev/null)
 [ "V$DNSMASQDIR" = "V" ] && DNSMASQDIR=/var/dnsmasq.d
@@ -149,7 +153,7 @@ xray_injectdns() {
 		echo "server=/${WATCHDOG_ENDPOINT}/80.80.80.80" >>$DNSconf
 	}
 
-	DNSPROBE_DOMAIN='t.cn'
+	DNSPROBE_DOMAIN='0.alidns.com'
 	cat <<-EOF >>$DNSconf
 		server=/$DNSPROBE_DOMAIN/223.5.5.5
 		server=/$DNSPROBE_DOMAIN/119.29.29.29
@@ -176,7 +180,7 @@ start_rules() {
 		-B "$(uci_get_by_type access_control wan_bp_list)" \
 		-b "$(uci_get_by_type access_control wan_bp_ips)" \
 		-W "$(uci_get_by_type access_control wan_fw_list)" \
-		-w "$(uci_get_by_type access_control wan_fw_ips)" \
+		-w "$(uci_get_by_type access_control wan_fw_ips) $WATCHDOG_ENDPOINT_IP0  $WATCHDOG_ENDPOINT_IP1" \
 		-I "$(uci_get_by_type access_control lan_ifaces)" \
 		-d "$(uci_get_by_type access_control lan_target)" \
 		-a "$(config_foreach get_lan_hosts lan_hosts)" \
@@ -436,7 +440,8 @@ gen_server_shadowsocks_config() {
 			            "address": "$(uci_get_by_name $1 server)",
 			            "port": $(uci_get_by_name $1 server_port),
 			            "password": "$(uci_get_by_name $1 id)",
-			            "method": "$(uci_get_by_name $1 method)"
+			            "method": "$(uci_get_by_name $1 method)",
+			            "uot": $(uci_bool_by_name $1 uot && echo true || echo false)
 			          }
 			        ]
 			      },
@@ -582,7 +587,7 @@ gen_config_file() {
 		  },
 		  "observatory": {
 		    "subjectSelector": [ "OutB" ],
-		    "probeURL": "http://${WATCHDOG_ENDPOINT}/generate_204",
+		    "probeURL": "https://${PROBE_ENDPOINT}/success.txt",
 		    "probeInterval": "9s"
 		  },
 		  "log": {
@@ -670,8 +675,8 @@ kill_all() {
 stop() {
 	local t0=$(date '+%s')
 	echo >&2 "# Info: stopping..."
-	/usr/bin/${NAME}-rules -f
 	kill_all $(xray_bin)
+	/usr/bin/${NAME}-rules -f
 	if [ -f ${PLUGIN_FILE} ]; then
 		kill_all $(sort -u ${PLUGIN_FILE})
 		rm -f ${PLUGIN_FILE}*
@@ -680,6 +685,7 @@ stop() {
 	rm -rf /var/run/xrayservice
 	xray_cleandns
 	del_cron
+	kill_all $(xray_bin)
 	echo >&2 "# Info: stopped. CostTime: $(($(date '+%s') - $t0))s"
 }
 
@@ -726,9 +732,9 @@ healthcheck() {
 		timeout=5
 		[ $retry -lt 1 ] && return 1
 		if which wait4x >/dev/null 2>&1; then # use [wait4x]
-			wait4x http $target || cat_connect $target $((retry - 1))
+			wait4x -i300ms -t5s http $target
 		elif which wait-for >/dev/null 2>&1; then # use [wait-for]
-			wait-for -t=10s http --url=$target >/dev/null 2>&1 || cat_connect $target $((retry - 1))
+			wait-for -t=5s http --url=$target >/dev/null 2>&1
 		else # use [curl]
 			ret_code=$(curl -s --connect-timeout $timeout "$target" -w %{http_code} -o /dev/null | tail -n1)
 			# echo -n "[ $retry $ret_code ] "
@@ -737,10 +743,10 @@ healthcheck() {
 	}
 
 	TRPORT=$(uci_get_by_type transparent_proxy local_port 1234)
-	GOOGLE=$(ping -4 -q -c 1 -s 0 -W 1 -w 1 ${WATCHDOG_ENDPOINT} 2>/dev/null | sed '1{s/[^(]*(//;s/).*//;q}')
 	DNSPOD=119.29.29.98 #DNSPOD HTTPDNS (Inside GFW)
 
-	if [ "Z$GOOGLE" = "Z" ]; then
+	# DNSCHECK
+	if [ "Z$(ping -4 -q -c 1 -s 0 -W 1 -w 1 ${WATCHDOG_ENDPOINT} 2>/dev/null | sed '1{s/[^(]*(//;s/).*//;q}')" = "Z" ]; then
 		iptables -t nat -I OUTPUT -p tcp -d $DNSPOD -j RETURN
 		cat_connect "http://${DNSPOD}/d"
 		if [ "Z$?" = "Z0" ]; then
@@ -751,13 +757,14 @@ healthcheck() {
 		else
 			echo '['$LOGTIME'] Network Problem. Do nothing.'
 		fi
-		iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN
+		while iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN 2>/dev/null; do :; done
 		return 0
 	fi
 
-	iptables -t nat -I OUTPUT -p tcp -d $GOOGLE -j REDIRECT --to-port $TRPORT
+	# iptables -t nat -I OUTPUT -p tcp -d $WATCHDOG_ENDPOINT_IP0 -j REDIRECT --to-port $TRPORT
+	# iptables -t nat -I OUTPUT -p tcp -d $WATCHDOG_ENDPOINT_IP1 -j REDIRECT --to-port $TRPORT
 	iptables -t nat -I OUTPUT -p tcp -d $DNSPOD -j RETURN
-	cat_connect "http://${WATCHDOG_ENDPOINT}/generate_204" 3
+	cat_connect "https://${WATCHDOG_ENDPOINT}/cdn-cgi/trace" 3
 	if [ "Z$?" = "Z0" ]; then
 		echo "[${LOGTIME}] ${NAME} No Problem."
 	else
@@ -768,7 +775,7 @@ healthcheck() {
 		cat_connect "http://${DNSPOD}/d"
 		if [ "Z$?" = "Z0" ]; then
 			echo "[${LOGTIME}] Problem decteted, restarting ${NAME}..."
-			[ -x /etc/init.d/haproxy-tcp ] && /etc/init.d/haproxy-tcp restart
+			[ -x /etc/init.d/haproxy-tcp ] && /etc/init.d/haproxy-tcp restart >/dev/null 2>&1
 			stop >/dev/null 2>&1
 			start >/dev/null 2>&1
 		else
@@ -776,7 +783,8 @@ healthcheck() {
 		fi
 	fi
 
-	iptables -t nat -D OUTPUT -p tcp -d $GOOGLE -j REDIRECT --to-port $TRPORT
-	iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN
+	# while iptables -t nat -D OUTPUT -p tcp -d $WATCHDOG_ENDPOINT_IP0 -j REDIRECT --to-port $TRPORT 2>/dev/null; do :; done
+	# while iptables -t nat -D OUTPUT -p tcp -d $WATCHDOG_ENDPOINT_IP1 -j REDIRECT --to-port $TRPORT 2>/dev/null; do :; done
+	while iptables -t nat -D OUTPUT -p tcp -d $DNSPOD -j RETURN 2>/dev/null; do :; done
 	return 0
 }
