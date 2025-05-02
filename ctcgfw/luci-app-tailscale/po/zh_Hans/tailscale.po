@@ -9,7 +9,7 @@ msgstr ""
 
 #: luci-app-tailscale/htdocs/luci-static/resources/view/tailscale/setting.js:188
 msgid "Accept DNS"
-msgstr "允许 DNS"
+msgstr "允许DNS"
 
 #: luci-app-tailscale/htdocs/luci-static/resources/view/tailscale/setting.js:188
 msgid "Accept DNS configuration from the Tailscale admin console."
@@ -103,11 +103,11 @@ msgstr "授予访问 Tailscale 配置的权限"
 
 #: luci-app-tailscale/htdocs/luci-static/resources/view/tailscale/interface.js:75
 msgid "IPv4 Address"
-msgstr "IPv4 地址"
+msgstr "IPv4地址"
 
 #: luci-app-tailscale/htdocs/luci-static/resources/view/tailscale/interface.js:79
 msgid "IPv6 Address"
-msgstr "IPv6 地址"
+msgstr "IPv6地址"
 
 #: luci-app-tailscale/root/usr/share/luci/menu.d/luci-app-tailscale.json:22
 msgid "Interface Info"
