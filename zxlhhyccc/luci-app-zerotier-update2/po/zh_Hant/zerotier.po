@@ -24,11 +24,11 @@ msgstr ""
 msgid "Add new Network..."
 msgstr "新增網路"
 
-#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:213
+#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:211
 msgid "Allow DNS"
 msgstr "允許 DNS"
 
-#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:202
+#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:201
 msgid "Allow Default"
 msgstr "允許預設閘道"
 
@@ -40,11 +40,11 @@ msgstr "允許公共網路路由"
 msgid "Allow Managed"
 msgstr "允許私人網路路由"
 
-#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:225
+#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:222
 msgid "Allow ZeroTier clients access your LAN network."
 msgstr "允許 ZeroTier 用戶端訪問您的區域網路"
 
-#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:214
+#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:212
 msgid "Allow ZeroTier to set DNS servers. Default No."
 msgstr "允許 ZeroTier 設定 DNS 伺服器。預設為 No"
 
@@ -60,16 +60,16 @@ msgid ""
 "Default Yes."
 msgstr "允許 ZeroTier 設定 IP 位址和路由（僅限本地/專用範圍）。預設為 Yes"
 
-#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:203
+#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:202
 msgid "Allow ZeroTier to set the Default Route on the system. Default No."
 msgstr "允許 ZeroTier 設定係統上的預設路由。預設為 No"
 
-#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:224
+#: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:221
 msgid "Auto NAT clients"
 msgstr "自動 NAT 用戶端"
 
 #: applications/luci-app-zerotier-update2/root/usr/share/luci/menu.d/luci-app-zerotier-update2.json:14
-msgid "config settings"
+msgid "Base settings"
 msgstr "基礎設定"
 
 #: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/config.js:100
@@ -229,6 +229,9 @@ msgstr "ZeroTier 管理中心"
 #: applications/luci-app-zerotier-update2/htdocs/luci-static/resources/view/zerotier/interface.js:98
 msgid "ZeroTier is an open source, cross-platform and easy to use virtual LAN."
 msgstr "ZeroTier 是一個開源、跨平台且易於使用的虛擬區域網路 VPN"
+
+#~ msgid "config settings"
+#~ msgstr "基礎設定"
 
 #~ msgid "Network ID"
 #~ msgstr "網路 ID"
