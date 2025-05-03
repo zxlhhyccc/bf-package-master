@@ -57,7 +57,7 @@ s = br:section(SimpleSection)
 
 o = s:option(ListValue, 'bing_background', translate('Wallpaper Source'))
 o:value('0', translate('Built-in'))
-o:value('1', translate('Bing Wallpapers'))
+o:value('1', translate('Bing'))
 o.default = bing_background
 o.rmempty = false
 

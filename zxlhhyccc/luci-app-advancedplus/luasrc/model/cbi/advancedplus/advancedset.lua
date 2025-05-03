@@ -10,19 +10,6 @@ translate("</br>For specific usage, see:")..translate("<a href=\'https://github.
 
 t = a:section(TypedSection, "basic", translate("Settings"))
 t.anonymous = true
-e = t:option(Flag, "qos",translate('Qos automatic optimization'), translate('Enable QOS automatic optimization strategy (testing function)'))
-e.default = "0"
-e.rmempty = false
-
-dl = t:option(Value, "download", translate("Download bandwidth(Mbit/s)"))
-dl.default = '200'
-dl:depends("qos", true)
-
-ul = t:option(Value, "upload", translate("Upload bandwidth(Mbit/s)"))
-ul.default = '30'
-ul:depends("qos", true)
-
-e = t:option(Flag, "uhttps",translate('Accessing using HTTPS'), translate('Open the address in the background and use HTTPS for secure access'))
 
 e = t:option(Flag, "usshmenu",translate('No backend menu required'), translate('OPENWRT backend and SSH login do not display shortcut menus'))
 
@@ -37,10 +24,20 @@ e.rmempty = false
 e = t:option(Flag, "set_ttyd",translate('Allow TTYD external network access'))
 e.default = "0"
 
-e = t:option(Flag, "set_firewall_wan",translate('Set firewall wan to open'))
-e.default = "0"
+e = t:option(ListValue, "set_firewall_wan",translate('Set up firewall for external network access'))
+e:value('ACCEPT', translate('accept'))
+e:value('DROP', translate('drop'))
+e:value('REJECT', translate('reject'))
+e.default = 'ACCEPT'
 
 e = t:option(Flag, "dhcp_domain",translate('Add Android host name mapping'), translate('Resolve the issue of Android native TV not being able to connect to WiFi for the first time'))
 e.default = "0"
+
+a.apply_on_parse = true
+a.on_after_apply = function(self,map)
+	luci.sys.exec("/etc/init.d/advancedplus start >/dev/null 2>&1")
+	luci.http.redirect(luci.dispatcher.build_url("admin","system","advancedplus","advancedset"))
+end
+
 
 return a

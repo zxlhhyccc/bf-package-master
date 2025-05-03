@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 skin="Kucat"
 
@@ -21,7 +21,7 @@ is_iStore() {
 }
 
 is_vip() {
-     DISTRIB_FREE=$(cat /etc/openwrt_release | grep "Vip" | cut -d " " -f 2 | cut -d "-" -f 1)
+     DISTRIB_FREE=$(cat /etc/openwrt_release | grep "Vip" | cut -d "'" -f 2 | cut -d "-" -f 1)
     if [ "$DISTRIB_FREE" = "Vip" ]; then
         return 0
     else
@@ -30,7 +30,7 @@ is_vip() {
 }
 
 is_free() {
-     DISTRIB_FREE=$(cat /etc/openwrt_release | grep "Free" | cut -d " " -f 2 | cut -d "-" -f 1)
+     DISTRIB_FREE=$(cat /etc/openwrt_release | grep "Free" | cut -d "'" -f 2 | cut -d "-" -f 1)
     if [ "$DISTRIB_FREE" = "Free" ]; then
         return 0
     else
@@ -40,7 +40,7 @@ is_free() {
 
 istore_install(){
     if is_iStore; then
-        echo "已经内置iStore应用商店,无须安装！"
+        echo "已存在有iStore应用商店,无须再安装！"
      else
        echo "正在安装iStore应用商店...."
 	remove_check_signature
@@ -70,9 +70,6 @@ istore_install(){
             if is_x86_64; then
                 extra_info="with iStoreOS Style"
 		echo "src/gz is_store https://istore.linkease.com/repo/all/store" >/etc/opkg/customfeeds.conf
-		if is_vip; then
-	        	echo "src/gz dllkids https://op.dllkids.xyz/packages/x86_64" >>/etc/opkg/customfeeds.conf
-		fi
                 current_revision=$(grep "DISTRIB_REVISION" /etc/openwrt_release | cut -d "'" -f 2)
                 if [[ $current_revision != *"$extra_info"* ]]; then
                     new_revision="${current_revision} ${extra_info}"
@@ -100,39 +97,40 @@ istore_install(){
                     sed -i '1s/$/ like iStoreOS/' /tmp/sysinfo/model
                 fi
             fi
-        uci set luci.main.mediaurlbase='/luci-static/Kucat'
+        uci -q set luci.main.mediaurlbase='/luci-static/kucat'
         uci commit
-        opkg update
-	rm -rf /tmp/is-opkg
-        echo "iStore应用商店安装完成,需要重启OPENWRT才能生效！"
+	rm -rf /tmp/is-opkg /tmp/luci*
+        echo "iStore应用商店安装完成！"
     fi
+    exit
 }
 
 drv_install(){
     if is_vip; then
-        echo "开始安装Docker安装完成..."
-        bash /etc/kmodreg docker
-        echo "Docker安装完成,需要重启OPENWRT才能生效！"
+        bash /etc/kmodreg drv 
     else
-            echo "目前此功能仅限VIP版本提供！"
+         echo "目前此功能仅限VIP版本提供！"
     fi
+    exit
 }
 
 docker_install(){
     if is_vip; then
-        echo "开始安装所有驱动..."
-        bash /etc/kmodreg drv 
-        echo "所有驱动完成,需要重启OPENWRT才能生效！"
+        bash /etc/kmodreg docker
     else
         echo "目前此功能仅限VIP版本提供！"
     fi
+    exit
 }
 
-case $1 in
-    istore) 
-        istore_install ;;  
-    drv) 
-        drv_install ;;  
-    docker) 
-        docker_install;;  
+case "$1" in
+    "istore") 
+        istore_install
+	;;  
+    "drv") 
+        drv_install
+	;;  
+    "docker") 
+        docker_install
+	;;  
     esac

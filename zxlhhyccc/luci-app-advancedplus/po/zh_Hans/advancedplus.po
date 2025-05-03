@@ -14,7 +14,6 @@ msgstr "Argon主题设置"
 msgid "Design Config"
 msgstr "Design主题设置"
 
-
 msgid "Advanced Setting"
 msgstr "高级设置"
 
@@ -90,14 +89,14 @@ msgstr "壁纸透明度"
 msgid "Follow System"
 msgstr "跟随系统"
 
+msgid "Inital Setup"
+msgstr "设置向导"
+
 msgid "Refreshing mode"
 msgstr "清爽模式"
 
 msgid "Enable Daily Word"
 msgstr "启用每日一言"
-
-msgid "Cancel background glass fence special effects"
-msgstr "取消背景玻璃栅栏特效"
 
 msgid "Care mode (large font)"
 msgstr "关怀模式(大字体)"
@@ -107,12 +106,6 @@ msgstr "展开导航栏"
 
 msgid "Expand or shrink the toolbar"
 msgstr "展开或者收缩导航栏"
-
-msgid "Color palette"
-msgstr "调色板工具"
-
-msgid "Call up your favorite color value tool (note: HEX and RGB colors)"
-msgstr "调出自己喜欢的颜色值工具(注意:HEX和RGB值区别)"
 
 msgid "Light"
 msgstr "亮色"
@@ -261,8 +254,11 @@ msgstr "状态相关快捷键设置"
 msgid "Enable color matching"
 msgstr "启用配色方案"
 
-msgid "Using the Color palette"
-msgstr "使用颜色调色板"
+msgid "RGB Palette Tools"
+msgstr "获取RGB颜色工具"
+
+msgid "RGB color values"
+msgstr "RGB颜色值"
 
 msgid "RoyalBlue"
 msgstr "皇家高端蓝"
@@ -406,8 +402,8 @@ msgstr "点击执行"
 msgid "Allow TTYD external network access"
 msgstr "允许TTYD外网访问"
 
-msgid "Set firewall wan to open"
-msgstr "设置防火墙wan打开"
+msgid "Set up firewall for external network access"
+msgstr "设置防火墙外网访问"
 
 msgid "Add Android host name mapping"
 msgstr "添加安卓主机名映射"

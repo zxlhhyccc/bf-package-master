@@ -6,9 +6,6 @@ STOP=15
 EXTRA_COMMANDS='reset'
 EXTRA_HELP="        reset   Reset to default settings"
 
-ipt=$(command -v iptables-legacy || command -v iptables)
-ip6t=$(command -v ip6tables-legacy || command -v ip6tables)
-
 reset() {
 rm -rf /etc/config/advancedplus
 cat <<EOF  >/etc/config/advancedplus
@@ -21,7 +18,7 @@ config basic
 	option font_d '1.1rem'
 	option font_z '0.92rem'
 	option font_x '0.875rem'
-	option bklock '1'
+	option bklock '0'
 	option setbar '1'
 	option dayword '0'
 	option background '0'
@@ -136,6 +133,7 @@ else
      $tautocore restart
 fi
 }
+
 sethttps() {
     uhttp=`uci -q get uhttpd.main.listen_https | awk -F ' ' '{printf $1}'`
     if [ "x$(uci -q get advancedplus.@basic[0].uhttps)" = "x1" ] ; then
@@ -148,8 +146,8 @@ sethttps() {
 	         /etc/init.d/uhttpd restart
 	    }
     else
-        [  $uhttp ] && 
-	{  
+        [  $uhttp ] &&
+	{
 	     /etc/init.d/uhttpd stop
 	    sed -i "/listen_https/d" /etc/config/uhttpd
 	    uci commit uhttpd
@@ -171,28 +169,20 @@ setnetwizard(){
 }
 
 set_firewall_wan() {
-    if [ "x$(uci -q get advancedplus.@basic[0].set_firewall_wan)" = "x1" ] ; then
-    ## 设置防火墙wan 打开
-    uci -q set firewall.@zone[1].input='ACCEPT'
+wanwan=`uci -q get advancedplus.@basic[0].set_firewall_wan`
+if [ -n $wanwan ] ; then
+    uci -q set firewall.@zone[1].input=$wanwan
     uci commit firewall
-    /etc/init.d/firewall reload
-    else
-    uci -q set firewall.@zone[1].input='REJECT'
-    uci commit firewall
-    /etc/init.d/firewall reload
-    fi
+fi
 }
 
 set_ttyd() {
     if [ "x$(uci -q get advancedplus.@basic[0].set_ttyd)" = "x1" ] ; then
-    uci delete ttyd.@ttyd[0].interface
-    uci commit
-    /etc/init.d/firewall reload
+        uci -q delete ttyd.@ttyd[0].interface
     else
-    uci -q set ttyd.@ttyd[0].interface='@lan'
-    uci commit
-    /etc/init.d/firewall reload
+        uci -q set ttyd.@ttyd[0].interface='@lan'
     fi
+    uci commit ttyd
 }
 
 dhcp_domain() {
@@ -216,26 +206,15 @@ dhcp_domain() {
     fi
 }
 advancedset(){
-dev=`ifconfig | grep "Point-to-Point" | cut -d " " -f1`
-[ ! $dev ] && dev=` uci -q get network.wan.ifname ` || dev=` uci -q get network.wan.device ` 
-[ ! $dev ] && dev=br-lan
-setnetwizard
-sethttps
-dhcp_domain
-set_ttyd
-set_firewall_wan
-tsoset
-    [ "x$(uci -q get advancedplus.@basic[0].qos)" = "x1" ] && \usr\bin\qoshome
-    if [ "x$(uci -q get advancedplus.@basic[0].ttl)" = "x1" ] ; then
-        $ipt -t mangle -A PREROUTING -p tcp --tcp-flags RST RST -i $dev -j DROP
-        $ipt -t mangle -A PREROUTING -i ${dev} -j TTL --ttl-inc 1
-        $ipt -t mangle -A POSTROUTING -o ${dev} -j TTL --ttl-set 64
-    fi
-    #cpumode=`uci -q get advancedplus.@basic[0].cpumode`
-    #[ ! $cpumode ] || cpumodeset $cpumode   /usr/bin/zsh
+    dev=`ifconfig | grep "Point-to-Point" | cut -d " " -f1`
+    [ ! $dev ] && dev=` uci -q get network.wan.ifname ` || dev=` uci -q get network.wan.device ` 
+    [ ! $dev ] && dev=br-lan
+    setnetwizard
+    set_ttyd
+    set_firewall_wan
+    tsoset
     sed -i "\/bin\/zsh/d" /etc/profile
     [ "x$(uci -q get advancedplus.@basic[0].usshmenu)" = "x1" ] || echo '/usr/bin/zsh'  >> /etc/profile
-    uci commit netwizard 
 }
 
 kucatset(){

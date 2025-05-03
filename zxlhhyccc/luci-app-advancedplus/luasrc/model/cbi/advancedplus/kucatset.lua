@@ -54,7 +54,7 @@ e = t:option(Flag, "setbar", translate("Expand Toolbar"),translate('Expand or sh
 e.rmempty = false
 e.default = '0'
 
-e = t:option(Flag, "bgqs", translate("Refreshing mode"),translate('Cancel background glass fence special effects'))
+e = t:option(Flag, "bgqs", translate("Refreshing mode"))
 e.rmempty = false
 e.default = '0'
 
@@ -84,18 +84,22 @@ e.rmempty = false
 e = t:option(Value, 'gossr', translate('Services Ssrkey settings'))
 e:value('shadowsocksr', translate('SSR'))
 e:value('bypass', translate('bypass'))
-e:value('vssr', translate('Hello World'))
+e:value('nikki', translate('nikki[Mihomo]'))
 e:value('passwall', translate('passwall'))
 e:value('passwall2', translate('passwall2'))
 e:value('openclash', translate('OpenClash'))
-e:value('chatgpt-web', translate('Chatgpt Web'))
-e:value('ddns-go', translate('DDNS-GO'))
+e:value('homeproxy', translate('HomeProxy'))
+e:value('vssr', translate('Hello World'))
 e.default = 'bypass'
 e.rmempty = false
 
 e = t:option(Flag, "fontmode", translate("Care mode (large font)"))
 e.rmempty = false
 e.default = '0'
+
+e = t:option(DummyValue, '', translate('RGB Palette Tools'))
+e.rawhtml = true
+e.template = 'advancedplus/color_primary'
 
 t = a:section(TypedSection, "theme", translate("Color scheme list"))
 t.template = "cbi/tblsection"
