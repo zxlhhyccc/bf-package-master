@@ -336,7 +336,7 @@ index 57b989b..00fbed6 100755
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
 @@ -1574,6 +1593,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
- 			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
+ 			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
 +		elif [ -f "$(first_type pdnsd)" ];then
 +			REMOTE_DNS="1.1.1.1"
@@ -348,7 +348,7 @@ index 57b989b..00fbed6 100755
  			echolog "  - udp://${TUN_DNS}"
 @@ -1587,6 +1611,10 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
- 			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b 127.0.0.1 -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
+ 			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
 +		} || {
 +			REMOTE_DNS="1.1.1.1"
@@ -357,7 +357,7 @@ index 57b989b..00fbed6 100755
  		}
  	;;
  	esac
-@@ -1705,6 +1733,73 @@ start_dns() {
+@@ -1707,6 +1735,73 @@ start_dns() {
  	fi
  }
  
@@ -431,7 +431,7 @@ index 57b989b..00fbed6 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2206,7 +2301,8 @@ get_config() {
+@@ -2208,7 +2303,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
