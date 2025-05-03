@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2024 The Sirpdboy Team <herboy2008@gmail.com>    
+# Copyright (C) 2019-2025 The Sirpdboy Team <herboy2008@gmail.com>    
 #
 # This is free software, licensed under the Apache License, Version 2.0 .
 #
@@ -10,16 +10,13 @@ THEME_TITLE:=Kucat Theme
 PKG_NAME:=luci-theme-$(THEME_NAME)
 LUCI_TITLE:=Kucat Theme by sirpdboy
 LUCI_DEPENDS:=
-PKG_VERSION:=2.4.9
-PKG_RELEASE:=20250114
+PKG_VERSION:=2.5.9
+PKG_RELEASE:=20250418
 
-define Package/luci-theme-$(THEME_NAME)/postinst
-#!/bin/sh
-
-rm -Rf /var/luci-modulecache
-rm -Rf /var/luci-indexcache
-exit 0
-
+define Package/luci-theme-$(THEME_NAME)/conffiles
+/www/luci-static/resources/background/
+/www/luci-static/kucat/img/
+/etc/config/kucat
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
