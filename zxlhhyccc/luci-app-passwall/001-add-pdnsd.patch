@@ -272,7 +272,7 @@ index 92144fb..4ae3764 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -304,6 +307,12 @@ msgstr "关闭（不使用）"
+@@ -310,6 +313,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
