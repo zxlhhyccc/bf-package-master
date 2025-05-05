@@ -12,9 +12,9 @@ LOG_FILE="/var/log/vlmcsd.log"
 # 获取DNSMASQ配置路径
 get_dnsmasq_conf() {
     if [ -f /etc/openwrt_release ]; then
-        DNSMASQ_UCI_CONFIG="$(uci -q show "dhcp.@dnsmasq[0]" | awk 'NR==1 {split($0, conf, /[.=]/); print conf[2]}')"
+        DNSMASQ_UCI_CONFIG="$(uci -q show dhcp.@dnsmasq[0] | awk 'NR==1 {split($0, conf, /[.=]/); print conf[2]}')"
         if [ -f "/tmp/etc/dnsmasq.conf.$DNSMASQ_UCI_CONFIG" ]; then
-            DNSMASQ_CONF_DIR="$(awk -F '=' '/^conf-dir=/ {print $2}' "/tmp/etc/dnsmasq.conf.$DNSMASQ_UCI_CONFIG")"
+            DNSMASQ_CONF_DIR="$(awk -F '=' '/^conf-dir=/{print $2}' "/tmp/etc/dnsmasq.conf.$DNSMASQ_UCI_CONFIG")"
         else
             DNSMASQ_CONF_DIR="/tmp/dnsmasq.d"
         fi
@@ -29,38 +29,57 @@ restart_crond() {
 
 # 管理定时任务
 manage_cron() {
-    local action=$1
-    local log=${2:-0}  # 默认值0表示每天
-    
+    local action="$1"
+    local log_day="${2:-0}"  # 默认值0表示每天
+
     case "$action" in
         add)
-            # 先删除可能存在的旧任务
+            # 删除可能存在的旧任务
             sed -i '/vlmcsd\.log/d' /etc/crontabs/root 2>/dev/null
-            
-            # 只有log在0-6之间才添加(0=周日，1-6=周一到周六)
-            if [ "$log" -ge 0 ] && [ "$log" -le 6 ]; then
+            # 只有log_day在0-6之间才添加(0=周日，1-6=周一到周六)
+            if [ "$log_day" -ge 0 ] && [ "$log_day" -le 6 ]; then
                 # 添加新任务
-                echo "0 0 * * $log rm -f $LOG_FILE" >> /etc/crontabs/root
+                echo "0 0 * * $log_day rm -f $LOG_FILE" >> /etc/crontabs/root
                 # 重载cron配置
                 restart_crond
             fi
             ;;
         del)
-            # 删除所有相关任务
+            # 删除定时任务
             if grep -q "vlmcsd\.log" /etc/crontabs/root 2>/dev/null; then
                 sed -i '/vlmcsd\.log/d' /etc/crontabs/root
+                # 重载cron配置
                 restart_crond
             fi
             ;;
     esac
 }
 
+disable_service() {
+    [ -n "$DNSMASQ_VLMCSD" ] && [ -f "$DNSMASQ_VLMCSD" ] && {
+        rm -f "$DNSMASQ_VLMCSD"
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
+    }
+
+    # 停止时删除定时任务
+    manage_cron del
+
+    # 清理日志
+    [ -f "$LOG_FILE" ] && rm -f "$LOG_FILE"
+}
+
 start_service() {
+    local enabled auto_activate internet_access conf log port
+
     get_dnsmasq_conf
-    
+
     config_load "$CONF"
     config_get_bool enabled "config" "enabled" "0"
-    [ "$enabled" -eq 1 ] || return 1
+
+    [ "$enabled" -ne 1 ] && {
+        disable_service
+        return
+    }
 
     config_get auto_activate "config" "auto_activate" "0"
     config_get internet_access "config" "internet_access" "0"
@@ -69,14 +88,14 @@ start_service() {
     config_get port "config" "port" "1688"
 
     # 配置自动激活
-    if [ "$auto_activate" -eq 1 ]; then
+    [ "$auto_activate" -eq 1 ] && [ -n "$DNSMASQ_VLMCSD" ] && {
         hostname="$(uci -q get system.@system[0].hostname)"
         [ -n "$hostname" ] && echo "srv-host=_vlmcs._tcp,$hostname,$port,0,100" > "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq reload >/dev/null 2>&1
-    fi
+        /etc/init.d/dnsmasq reload >/dev/null
+    }
 
-    # 配置INI文件
-    [ "$conf" -eq 1 ] && {
+    # 修改 ini 配置文件
+    [ "$conf" -eq 1 ] && [ -f "$INI" ] && {
         sed -i \
             -e 's/^[ \t]*\(Port.*\)/;\1/' \
             -e "s/.*\(Listen.*:\)[0-9]*/\1$port/" \
@@ -92,24 +111,29 @@ start_service() {
     procd_set_param respawn
     procd_add_jail_mount "$INI"
 
-    # 配置防火墙规则
+    # 自动添加防火墙规则
     [ "$internet_access" -eq 1 ] && {
         procd_open_data
         json_add_array firewall
             json_add_object ""
-            json_add_string type rule
-            json_add_string name "Allow-vlmcsd-tcp"
-            json_add_string proto "tcp"
-            json_add_string src "*"
-            json_add_string dest_port "$port"
-            json_add_string target "ACCEPT"
+                json_add_string type rule
+                json_add_string name "Allow-vlmcsd-tcp"
+                json_add_string src "*"
+                json_add_string proto "tcp"
+                json_add_string dest_port "$port"
+                json_add_string target "ACCEPT"
             json_close_object
         json_close_array
         procd_close_data
     }
+
     procd_close_instance
-    # 定时任务
+    # 启动时添加定时任务
     manage_cron add "$log"
+}
+
+service_triggers() {
+    procd_add_reload_trigger "$CONF"
 }
 
 # 服务启动后触发
@@ -121,35 +145,3 @@ service_started() {
 service_stopped() {
     procd_set_config_changed firewall
 }
-
-stop_service() {
-    get_dnsmasq_conf
-
-    # 清理资源
-    [ -f "$DNSMASQ_VLMCSD" ] && {
-        rm -f "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq reload >/dev/null 2>&1
-    }
-
-    # 移除定时任务
-    manage_cron del
-
-    # 确保进程停止
-    [ -f "$PIDFILE" ] && {
-        kill -9 "$(cat "$PIDFILE")" 2>/dev/null
-        rm -f "$PIDFILE"
-    }
-
-    # 清理日志
-    [ -f "$LOG_FILE" ] && rm -f "$LOG_FILE"
-}
-
-reload_service() {
-    stop
-    start
-}
-
-service_triggers() {
-    procd_add_reload_trigger "$CONF"
-}
-
