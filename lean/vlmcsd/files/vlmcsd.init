@@ -9,7 +9,7 @@ INI="/etc/vlmcsd.ini"
 PIDFILE="/var/run/vlmcsd.pid"
 LOG_FILE="/var/log/vlmcsd.log"
 
-# 获取DNSMASQ配置路径
+# 获取 dnsmasq 配置路径和临时配置文件位置
 get_dnsmasq_conf() {
     if [ -f /etc/openwrt_release ]; then
         DNSMASQ_UCI_CONFIG="$(uci -q show dhcp.@dnsmasq[0] | awk 'NR==1 {split($0, conf, /[.=]/); print conf[2]}')"
@@ -22,64 +22,48 @@ get_dnsmasq_conf() {
     fi
 }
 
-# 重启crond服务
+# 重启计划任务服务
 restart_crond() {
     /etc/init.d/cron restart >/dev/null 2>&1
 }
 
-# 管理定时任务
+# 添加或删除计划任务
 manage_cron() {
     local action="$1"
-    local log_day="${2:-0}"  # 默认值0表示每天
+    local log_day="${2:-0}"  # 默认每天清理日志 (0=周日)
 
     case "$action" in
         add)
-            # 删除可能存在的旧任务
+            # 删除可能存在的旧计划任务
             sed -i '/vlmcsd\.log/d' /etc/crontabs/root 2>/dev/null
             # 只有log_day在0-6之间才添加(0=周日，1-6=周一到周六)
             if [ "$log_day" -ge 0 ] && [ "$log_day" -le 6 ]; then
-                # 添加新任务
+                # 添加计划任务
                 echo "0 0 * * $log_day rm -f $LOG_FILE" >> /etc/crontabs/root
-                # 重载cron配置
+                # 重启计划任务服务
                 restart_crond
             fi
             ;;
         del)
-            # 删除定时任务
+            # 删除计划任务
             if grep -q "vlmcsd\.log" /etc/crontabs/root 2>/dev/null; then
-                sed -i '/vlmcsd\.log/d' /etc/crontabs/root
-                # 重载cron配置
+                sed -i '/vlmcsd\.log/d' /etc/crontabs/root 2>/dev/null
+                # 重启计划任务服务
                 restart_crond
             fi
             ;;
     esac
 }
 
-disable_service() {
-    [ -n "$DNSMASQ_VLMCSD" ] && [ -f "$DNSMASQ_VLMCSD" ] && {
-        rm -f "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq reload >/dev/null 2>&1
-    }
-
-    # 停止时删除定时任务
-    manage_cron del
-
-    # 清理日志
-    [ -f "$LOG_FILE" ] && rm -f "$LOG_FILE"
-}
-
-start_service() {
-    local enabled auto_activate internet_access conf log port
-
+# 启动实例
+start_instance() {
     get_dnsmasq_conf
 
-    config_load "$CONF"
-    config_get_bool enabled "config" "enabled" "0"
+    stop_instance
 
-    [ "$enabled" -ne 1 ] && {
-        disable_service
-        return
-    }
+    # 读取配置
+    config_get_bool enabled "config" "enabled" "0"
+    [ "$enabled" -eq 1 ] || return 1
 
     config_get auto_activate "config" "auto_activate" "0"
     config_get internet_access "config" "internet_access" "0"
@@ -87,14 +71,14 @@ start_service() {
     config_get log "config" "log" "0"
     config_get port "config" "port" "1688"
 
-    # 配置自动激活
+    # 如果启用自动激活，则自动添加 DNSMasq SRV 记录
     [ "$auto_activate" -eq 1 ] && [ -n "$DNSMASQ_VLMCSD" ] && {
         hostname="$(uci -q get system.@system[0].hostname)"
         [ -n "$hostname" ] && echo "srv-host=_vlmcs._tcp,$hostname,$port,0,100" > "$DNSMASQ_VLMCSD"
         /etc/init.d/dnsmasq reload >/dev/null
     }
 
-    # 修改 ini 配置文件
+    # 修改 INI 配置文件中的端口和日志路径
     [ "$conf" -eq 1 ] && [ -f "$INI" ] && {
         sed -i \
             -e 's/^[ \t]*\(Port.*\)/;\1/' \
@@ -102,7 +86,7 @@ start_service() {
             -e "s|.*\(LogFile[ ]*=[ ]*\).*|\1$LOG_FILE|" "$INI"
     }
 
-    # 启动服务
+    # 启动 procd 管理服务
     procd_open_instance "$CONF"
     procd_set_param command "$PROG" -D -P "$port" -l "$LOG_FILE"
     [ "$conf" -eq 1 ] && procd_append_param command -i "$INI"
@@ -111,7 +95,7 @@ start_service() {
     procd_set_param respawn
     procd_add_jail_mount "$INI"
 
-    # 自动添加防火墙规则
+    # 如开启公网访问，添加临时防火墙规则
     [ "$internet_access" -eq 1 ] && {
         procd_open_data
         json_add_array firewall
@@ -128,10 +112,36 @@ start_service() {
     }
 
     procd_close_instance
-    # 启动时添加定时任务
+    # 添加清理日志的计划任务
     manage_cron add "$log"
 }
 
+# 停止服务时清理配置和日志
+stop_instance() {
+    # 删除 dnsmasq 配置
+    [ -f "$DNSMASQ_VLMCSD" ] && {
+        rm -f "$DNSMASQ_VLMCSD"
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
+    }
+
+    # 删除清理日志的计划任务
+    manage_cron del
+
+    # 禁用服务时删除日志文件
+    config_get_bool enabled "config" "enabled" "0"    
+    [ "$enabled" -eq 0 ] && [ -f "$LOG_FILE" ] && {
+        rm -f "$LOG_FILE"
+        logger -t "$CONF" "Service disabled, removed log file: $LOG_FILE"
+    }
+}
+
+# 启动服务
+start_service() {
+    config_load "$CONF"
+    config_foreach start_instance "$CONF"
+}
+
+# 服务触发器
 service_triggers() {
     procd_add_reload_trigger "$CONF"
 }
@@ -145,3 +155,4 @@ service_started() {
 service_stopped() {
     procd_set_config_changed firewall
 }
+
