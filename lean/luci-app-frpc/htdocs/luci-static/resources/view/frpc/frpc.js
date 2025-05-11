@@ -2,6 +2,7 @@
 'require view';
 'require ui';
 'require form';
+'require fs';
 'require rpc';
 'require uci';
 'require tools.widgets as widgets';
@@ -157,6 +158,16 @@ const callServiceList = rpc.declare({
 	expect: { '': {} }
 });
 
+function getVersion() {
+    return fs.exec("/usr/bin/frpc", ["-v"])
+        .then(function (result) {
+            if (result.code === 0) {
+                return result.stdout.trim(); // 提取版本号
+            }
+            return _("Unknown version");
+        });
+}
+
 function getServiceStatus() {
 	return L.resolveDefault(callServiceList('frpc'), {}).then(function (res) {
 		console.log(res);
@@ -194,8 +205,11 @@ return view.extend({
 		let m, s, o;
 		var webport = (uci.get(data[0], 'common', 'admin_port'));
 
-		m = new form.Map('frpc', _('frp Client'),
-			_('Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet,it supports TCP and UDP, as well as HTTP and HTTPS protocols.'));
+		m = new form.Map('frpc', _('frp Client'));
+		L.resolveDefault(getVersion()).then(function(version) {
+			m.description = _("Frp is a fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet,it supports TCP and UDP, as well as HTTP and HTTPS protocols.<br/>Current Version")
+				+ ": <b><font style=\"color:green\">" + version + "</font></b>";
+		});
 
 		s = m.section(form.NamedSection, '_status');
 		s.anonymous = true;
