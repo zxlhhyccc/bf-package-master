@@ -24,7 +24,7 @@ var commonConf = [
 	[form.Value, 'http_proxy', _('HTTP proxy'), _('HttpProxy specifies a proxy address to connect to the server through. If this value is "", the server will be connected to directly.<br />By default, this value is read from the "http_proxy" environment variable.')],
 	[form.Value, 'log_file', _('Log file'), _('LogFile specifies a file where logs will be written to. This value will only be used if LogWay is set appropriately.<br />By default, this value is "console".')],
 	[form.ListValue, 'log_level', _('Log level'), _('LogLevel specifies the minimum log level. Valid values are "trace", "debug", "info", "warn", and "error".<br />By default, this value is "info".'), {values: ['trace', 'debug', 'info', 'warn', 'error']}],
-	[form.Value, 'log_max_days', _('Log max days'), _('LogMaxDays specifies the maximum number of days to store log information before deletion. This is only used if LogWay == "file".<br />By default, this value is 0.'), {datatype: 'uinteger'}],
+	[form.Value, 'log_max_days', _('Log max days'), _('LogMaxDays specifies the maximum number of days to store log information before deletion. This is only used if LogWay == "file".<br />By default, this value is 0.'), {datatype: 'uinteger', placeholder: '0'}],
 	[form.Flag, 'disable_log_color', _('Disable log color'), _('DisableLogColor disables log colors when LogWay == "console" when set to true.'), {datatype: 'bool', default: 'false'}],
 	[form.Value, 'token', _('Token'), _('Token specifies the authorization token used to create keys to be sent to the server. The server must have a matching token for authorization to succeed. <br />By default, this value is "".')],
 	[form.Value, 'admin_addr', _('Admin address'), _('AdminAddr specifies the address that the admin server binds to.<br />By default, this value is "0.0.0.0".'), {datatype: 'ipaddr'}],
@@ -35,11 +35,17 @@ var commonConf = [
 	[form.Flag, 'tcp_mux', _('TCP mux'), _('TcpMux toggles TCP stream multiplexing. This allows multiple requests from a client to share a single TCP connection. If this value is true, the server must have TCP multiplexing enabled as well.<br />By default, this value is true.'), {datatype: 'bool', default: 'true'}],
 	[form.Value, 'user', _('User'), _('User specifies a prefix for proxy names to distinguish them from other clients. If this value is not "", proxy names will automatically be changed to "{user}.{proxy_name}".<br />By default, this value is "".')],
 	[form.Flag, 'login_fail_exit', _('Exit when login fail'), _('LoginFailExit controls whether or not the client should exit after a failed login attempt. If false, the client will retry until a login attempt succeeds.<br />By default, this value is true.'), {datatype: 'bool', default: 'true'}],
-	[form.ListValue, 'protocol', _('Protocol'), _('Protocol specifies the protocol to use when interacting with the server. Valid values are "tcp", "kcp", and "websocket".<br />By default, this value is "tcp".'), {values: ['tcp', 'kcp', 'websocket']}],
+	[form.ListValue, 'protocol', _('Protocol'), _('Protocol specifies the protocol to use when interacting with the server. Valid values are "tcp", "kcp", "quic", "websocket", and "wss".<br />By default, this value is "tcp".'), {values: ['tcp', 'kcp', 'quic', 'websocket', 'wss']}],
 	[form.Flag, 'tls_enable', _('TLS'), _('TLSEnable specifies whether or not TLS should be used when communicating with the server.'), {datatype: 'bool'}],
-	[form.Value, 'heartbeat_interval', _('Heartbeat interval'), _('HeartBeatInterval specifies at what interval heartbeats are sent to the server, in seconds. It is not recommended to change this value.<br />By default, this value is 30.'), {datatype: 'uinteger'}],
-	[form.Value, 'heartbeat_timeout', _('Heartbeat timeout'), _('HeartBeatTimeout specifies the maximum allowed heartbeat response delay before the connection is terminated, in seconds. It is not recommended to change this value.<br />By default, this value is 90.'), {datatype: 'uinteger'}],
+	[form.Value, 'heartbeat_interval', _('Heartbeat interval'), _('HeartBeatInterval specifies at what interval heartbeats are sent to the server, in seconds. It is not recommended to change this value.<br />By default, this value is 30.'), {datatype: 'uinteger', placeholder: '30'}],
+	[form.Value, 'heartbeat_timeout', _('Heartbeat timeout'), _('HeartBeatTimeout specifies the maximum allowed heartbeat response delay before the connection is terminated, in seconds. It is not recommended to change this value.<br />By default, this value is 90.'), {datatype: 'uinteger', placeholder: '90'}],
 	[form.DynamicList, '_', _('Additional settings'), _('This list can be used to specify some additional parameters which have not been included in this LuCI.'), {placeholder: 'Key-A=Value-A'}]
+];
+
+var quicCommonConf = [
+	[form.Value, 'quic_keepalivePeriod', _('QUIC Keep-alive Period.(Unit:second)'), _('QUIC Keep-alive Period. By default this value is 10.'), {datatype: 'integer', placeholder: '10'}],
+	[form.Value, 'quic_maxIdleTimeout', _('QUIC Max Idle Timeout.(Unit:second)'), _('QUIC Max Idle Timeout. By default this value is 30.'), {datatype: 'integer', placeholder: '30'}],
+	[form.Value, 'quic_maxIncomingStreams', _('QUIC Max Concurrent streams'), _('QUIC Max Concurrent streams. By default this value is 100000.'), {datatype: 'integer', placeholder: '100000'}],
 ];
 
 var baseProxyConf = [
@@ -52,7 +58,12 @@ var baseProxyConf = [
 ];
 
 var bindInfoConf = [
-	[form.Value, 'remote_port', _('Remote port'), _('If remote_port is 0, frps will assign a random port for you'), {datatype: 'port'}]
+	[form.Value, 'remote_port', _('Remote port'), _('If remote_port is 0, frps will assign a random port for you'), {datatype: 'port'}],
+];
+
+var versionConf = [
+	[form.ListValue, 'proxyprotocolversion', _('Proxy Protocol Version'), undefined, {values: [['', _('none')], ['v1', _('V1')], ['V2', _('V2')]]}, {default: ''}],
+	[form.DynamicList, '_', _('Additional settings'), _('This list can be used to specify some additional parameters which have not been included in this LuCI.'), {placeholder: 'Key-A=Value-A'}]
 ];
 
 var domainConf = [
@@ -69,9 +80,8 @@ var httpProxyConf = [
 ];
 
 var stcpProxyConf = [
-	[form.ListValue, 'role', _('Role'), undefined, {values: ['server', 'visitor']}],
-	[form.Value, 'server_name', _('Server name'), undefined, {depends: [{role: 'visitor'}]}],
-	[form.Value, 'sk', _('Sk')],
+	[form.Value, 'allowUsers', _('Allow Users'), _('If left empty, only visitors under the same user are allowed to connect by default.<br />To specify particular users, separate them with commas, for example: <code>user1, user2</code>.'), {values: [['', _('Empty')], ['*', _('Allow all users')]]}],
+	[form.Value, 'secretKey', _('Secret Key'), _('Used for authentication by visitors')]
 ];
 
 var pluginConf = [
@@ -209,6 +219,7 @@ return view.extend({
 		s.tab('init', _('Startup Settings'));
 
 		defTabOpts(s, 'common', commonConf, {optional: true});
+		defTabOpts(s, 'common', quicCommonConf, {optional: true, depends: [{protocol: 'quic'}]});
 
 		o = s.taboption('init', form.SectionValue, 'init', form.TypedSection, 'init', _('Startup Settings'));
 		s = o.subsection;
@@ -246,6 +257,9 @@ return view.extend({
 
 		// TCP and UDP
 		defTabOpts(s, 'general', bindInfoConf, {optional: true, modalonly: true, depends: [{type: 'tcp'}, {type: 'udp'}]});
+
+		// VERSION
+		defTabOpts(s, 'general', versionConf, {optional: true, modalonly: true});
 
 		// HTTP and HTTPS
 		defTabOpts(s, 'http', domainConf, {optional: true, modalonly: true, depends: [{type: 'http'}, {type: 'https'}]});

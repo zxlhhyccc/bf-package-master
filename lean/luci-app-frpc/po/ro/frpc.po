@@ -11,7 +11,7 @@ msgstr ""
 "20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.14.2-dev\n"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:235
 msgid "Add new proxy..."
 msgstr "Adăugați un nou proxy..."
 
@@ -20,6 +20,7 @@ msgid "Additional configs"
 msgstr "Configurații adiționale"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:42
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
 msgid "Additional settings"
 msgstr "Setări adiționale"
 
@@ -74,6 +75,14 @@ msgstr ""
 "va utiliza pentru autentificare.<br />În mod implicit, această valoare este "
 "\"admin\"."
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid "Allow Users"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid "Allow all users"
+msgstr ""
+
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:34
 msgid "Assets dir"
 msgstr "Directorul de resurse"
@@ -99,19 +108,16 @@ msgstr ""
 msgid "Clear Logs..."
 msgstr ""
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:211
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
-msgid "Collecting data ..."
-msgstr "Colectarea datelor ..."
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:201
 msgid "Collecting data..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:208
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:218
 msgid "Common Settings"
 msgstr "Setări comune"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid "Compression"
 msgstr "Comprimare"
 
@@ -123,7 +129,7 @@ msgstr "Fișiere de configurare incluse în fișierul de configurare temporar"
 msgid "Configuration"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:70
 msgid "Custom domains"
 msgstr "Domenii personalizate"
 
@@ -139,11 +145,15 @@ msgstr ""
 "DisableLogColor dezactivează culorile jurnalului atunci când LogWay == "
 "\"console\" este setat la adevărat."
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid "Empty"
+msgstr ""
+
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:21
 msgid "Enable"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
 msgid "Encryption"
 msgstr "Criptare"
 
@@ -159,14 +169,14 @@ msgstr "Paritate"
 msgid "Failed to clear log."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:198
 msgid ""
 "Frp is a fast reverse proxy to help you expose a local server behind a NAT "
 "or firewall to the internet,it supports TCP and UDP, as well as HTTP and "
 "HTTPS protocols."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:228
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:239
 msgid "General Settings"
 msgstr "Setări generale"
 
@@ -174,12 +184,12 @@ msgstr "Setări generale"
 msgid "Grant access to LuCI app frpc"
 msgstr "Acordă acces la aplicația LuCI frpc"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:229
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:240
 msgid "HTTP Settings"
 msgstr "Setări HTTP"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:80
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:77
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
 msgid "HTTP password"
 msgstr "Parola HTTP"
 
@@ -187,8 +197,8 @@ msgstr "Parola HTTP"
 msgid "HTTP proxy"
 msgstr "Proxy HTTP"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:79
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:76
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
 msgid "HTTP user"
 msgstr "Utilizator HTTP"
 
@@ -220,7 +230,7 @@ msgstr "Intervalul bătăilor inimii"
 msgid "Heartbeat timeout"
 msgstr "Timpul limită a bătăilor inimii"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:67
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
 msgid "Host header rewrite"
 msgstr "Rescrierea antetului gazdă"
 
@@ -234,7 +244,14 @@ msgstr ""
 "Dacă această valoare este \"\", serverul va fi conectat direct.<br />În mod "
 "implicit, această valoare este citită din variabila de mediu \"http_proxy\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid ""
+"If left empty, only visitors under the same user are allowed to connect by "
+"default.<br />To specify particular users, separate them with commas, for "
+"example: <code>user1, user2</code>."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:61
 msgid "If remote_port is 0, frps will assign a random port for you"
 msgstr ""
 "Dacă remote_port este 0, frps va aloca un port aleatoriu pentru dumneavoastră"
@@ -243,26 +260,26 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:234
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:245
 msgid "Local IP"
 msgstr "IP local"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:235
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:246
 msgid "Local port"
 msgstr "Port local"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
 msgid "LocalIp specifies the IP address or host name to proxy to."
 msgstr ""
 "LocalIp specifică adresa IP sau numele de gazdă către care se face proxy."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
 msgid "LocalPort specifies the port to proxy to."
 msgstr "LocalPort specifică portul la care se face proxy."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:75
 msgid "Locations"
 msgstr "Locații"
 
@@ -344,7 +361,7 @@ msgstr ""
 msgid "Logs cleared successfully!"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:180
 msgid "NOT RUNNING"
 msgstr "NU FUNCȚIONEAZĂ"
 
@@ -357,15 +374,15 @@ msgstr ""
 "configurare, vezi <a href=\"https://github.com/fatedier/frp#configuration-"
 "file-template\">frp README</a>"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:167
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:177
 msgid "Open Web Interface"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:88
 msgid "Plugin"
 msgstr "Plugin"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:230
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:241
 msgid "Plugin Settings"
 msgstr "Setările plugin-ului"
 
@@ -376,28 +393,29 @@ msgstr "Protocol"
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:38
 msgid ""
 "Protocol specifies the protocol to use when interacting with the server. "
-"Valid values are \"tcp\", \"kcp\", and \"websocket\".<br />By default, this "
-"value is \"tcp\"."
+"Valid values are \"tcp\", \"kcp\", \"quic\", \"websocket\", and \"wss\".<br /"
+">By default, this value is \"tcp\"."
 msgstr ""
-"Protocol specifică protocolul care trebuie utilizat la interacțiunea cu "
-"serverul. Valorile valide sunt \"tcp\", \"kcp\" și \"websocket\".<br />Prin "
-"definiție, această valoare este \"tcp\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:220
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "Proxy Protocol Version"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:231
 msgid "Proxy Settings"
 msgstr "Setări Proxy"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:232
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:52
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:243
 msgid "Proxy name"
 msgstr "Nume proxy"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:233
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:244
 msgid "Proxy type"
 msgstr "Tipul de proxy"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
 msgid ""
 "ProxyType specifies the type of this proxy. Valid values include \"tcp\", "
 "\"udp\", \"http\", \"https\", \"stcp\", and \"xtcp\".<br />By default, this "
@@ -407,7 +425,31 @@ msgstr ""
 "\"udp\", \"http\", \"https\", \"stcp\" și \"xtcp\".<br />Prin definiție, "
 "această valoare este \"tcp\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+msgid "QUIC Keep-alive Period. By default this value is 10."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+msgid "QUIC Keep-alive Period.(Unit:second)"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+msgid "QUIC Max Concurrent streams"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+msgid "QUIC Max Concurrent streams. By default this value is 100000."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+msgid "QUIC Max Idle Timeout. By default this value is 30."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+msgid "QUIC Max Idle Timeout.(Unit:second)"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:178
 msgid "RUNNING"
 msgstr "RULARE"
 
@@ -415,18 +457,14 @@ msgstr "RULARE"
 msgid "Refresh every %s seconds."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:236
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:61
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:247
 msgid "Remote port"
 msgstr "Port la distanță"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:15
 msgid "Respawn when crashed"
 msgstr "Respawn când crapă"
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:72
-msgid "Role"
-msgstr "Rol"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:14
 msgid "Run daemon as group"
@@ -436,21 +474,21 @@ msgstr "Rularea daemonului ca grup"
 msgid "Run daemon as user"
 msgstr "Rulați daemonul ca utilizator"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:92
 msgid "SOCKS5 password"
 msgstr "Parola SOCKS5"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
 msgid "SOCKS5 user"
 msgstr "Utilizator SOCKS5"
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+msgid "Secret Key"
+msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
 msgid "Server address"
 msgstr "Adresa serverului"
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:73
-msgid "Server name"
-msgstr "Nume server"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid "Server port"
@@ -472,16 +510,12 @@ msgstr ""
 "ServerPort specifică portul de conectare la server.<br />În mod implicit, "
 "această valoare este 7000."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:74
-msgid "Sk"
-msgstr "Sk"
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:209
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:213
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:219
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Startup Settings"
 msgstr "Setări de pornire"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:60
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:71
 msgid "Subdomain"
 msgstr "Subdomeniu"
 
@@ -514,6 +548,7 @@ msgstr ""
 "TCP.<br />În mod implicit, această valoare este adevărată."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:42
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
 msgid ""
 "This list can be used to specify some additional parameters which have not "
 "been included in this LuCI."
@@ -536,7 +571,7 @@ msgstr ""
 "corespunzător pentru ca autorizarea să reușească. <br />În mod implicit, "
 "această valoare este \"\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:93
 msgid "Unix domain socket path"
 msgstr "Calea socket-ului de domeniu Unix"
 
@@ -544,7 +579,7 @@ msgstr "Calea socket-ului de domeniu Unix"
 msgid "Unknown error: %s"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid ""
 "UseCompression controls whether or not communication with the server will be "
 "compressed.<br />By default, this value is false."
@@ -552,7 +587,7 @@ msgstr ""
 "UseCompression controlează dacă comunicarea cu serverul va fi sau nu "
 "comprimată.<br />În mod implicit, această valoare este falsă."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
 msgid ""
 "UseEncryption controls whether or not communication with the server will be "
 "encrypted. Encryption is done using the tokens supplied in the server and "
@@ -562,6 +597,10 @@ msgstr ""
 "criptată. Criptarea se face cu ajutorul token-urilor furnizate în "
 "configurația serverului și a clientului.<br />În mod implicit, această "
 "valoare este falsă."
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+msgid "Used for authentication by visitors"
+msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:36
 msgid "User"
@@ -578,12 +617,45 @@ msgstr ""
 "schimbat automat în \"{utilizator}.{nume_proxy}\".<br />În mod implicit, "
 "această valoare este \"\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:187
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "V1"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "V2"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:178
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:180
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:197
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "client frp"
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "none"
+msgstr ""
+
+#~ msgid "Collecting data ..."
+#~ msgstr "Colectarea datelor ..."
+
+#~ msgid ""
+#~ "Protocol specifies the protocol to use when interacting with the server. "
+#~ "Valid values are \"tcp\", \"kcp\", and \"websocket\".<br />By default, "
+#~ "this value is \"tcp\"."
+#~ msgstr ""
+#~ "Protocol specifică protocolul care trebuie utilizat la interacțiunea cu "
+#~ "serverul. Valorile valide sunt \"tcp\", \"kcp\" și \"websocket\".<br /"
+#~ ">Prin definiție, această valoare este \"tcp\"."
+
+#~ msgid "Role"
+#~ msgstr "Rol"
+
+#~ msgid "Server name"
+#~ msgstr "Nume server"
+
+#~ msgid "Sk"
+#~ msgstr "Sk"
 
 #~ msgid "Name can not be \"common\""
 #~ msgstr "Numele nu poate fi \"comun\""

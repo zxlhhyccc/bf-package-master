@@ -10,7 +10,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.18.1\n"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:235
 msgid "Add new proxy..."
 msgstr "Thêm proxy mới..."
 
@@ -19,6 +19,7 @@ msgid "Additional configs"
 msgstr "Cấu hình thêm"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:42
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
 msgid "Additional settings"
 msgstr "Cài đặt mở rộng"
 
@@ -72,6 +73,14 @@ msgstr ""
 "AdminUser chỉ định tên người dùng mà máy chủ quản trị sẽ sử dụng để đăng "
 "nhập.<br />Theo mặc định, giá trị này là \"admin\"."
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid "Allow Users"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid "Allow all users"
+msgstr ""
+
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:34
 msgid "Assets dir"
 msgstr "Assets dir"
@@ -96,19 +105,16 @@ msgstr ""
 msgid "Clear Logs..."
 msgstr ""
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:211
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
-msgid "Collecting data ..."
-msgstr "Đang thu thập dữ liệu ..."
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:201
 msgid "Collecting data..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:208
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:218
 msgid "Common Settings"
 msgstr "Thiết lập chung"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid "Compression"
 msgstr "Nén"
 
@@ -120,7 +126,7 @@ msgstr "Tệp cấu hình bao gồm trong tệp cấu hình tạm thời"
 msgid "Configuration"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:70
 msgid "Custom domains"
 msgstr "Tên miền tùy chỉnh"
 
@@ -136,11 +142,15 @@ msgstr ""
 "DisableLogColor disables log colors when LogWay == \"console\" khi đặt là "
 "true."
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid "Empty"
+msgstr ""
+
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:21
 msgid "Enable"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
 msgid "Encryption"
 msgstr "Mã hóa"
 
@@ -156,14 +166,14 @@ msgstr "Thoát khi đăng nhập thất bại"
 msgid "Failed to clear log."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:198
 msgid ""
 "Frp is a fast reverse proxy to help you expose a local server behind a NAT "
 "or firewall to the internet,it supports TCP and UDP, as well as HTTP and "
 "HTTPS protocols."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:228
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:239
 msgid "General Settings"
 msgstr "Các cài đặt chung"
 
@@ -171,12 +181,12 @@ msgstr "Các cài đặt chung"
 msgid "Grant access to LuCI app frpc"
 msgstr "Cấp quyền truy cập vào ứng dụng LuCI frpc"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:229
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:240
 msgid "HTTP Settings"
 msgstr "Cài đặt HTTP"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:80
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:77
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
 msgid "HTTP password"
 msgstr "Mật khẩu HTTP"
 
@@ -184,8 +194,8 @@ msgstr "Mật khẩu HTTP"
 msgid "HTTP proxy"
 msgstr "HTTP proxy"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:79
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:76
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
 msgid "HTTP user"
 msgstr "Người dùng HTTP"
 
@@ -217,7 +227,7 @@ msgstr "Heartbeat interval"
 msgid "Heartbeat timeout"
 msgstr "Heartbeat timeout"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:67
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
 msgid "Host header rewrite"
 msgstr "Viết lại tiêu đề máy chủ"
 
@@ -231,7 +241,14 @@ msgstr ""
 "giá trị này là \"\", thì máy chủ sẽ được kết nối trực tiếp.<br />Theo mặc "
 "định, giá trị này được đọc từ biến môi trường \"http_proxy\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+msgid ""
+"If left empty, only visitors under the same user are allowed to connect by "
+"default.<br />To specify particular users, separate them with commas, for "
+"example: <code>user1, user2</code>."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:61
 msgid "If remote_port is 0, frps will assign a random port for you"
 msgstr "Nếu remote_port bằng 0, fps sẽ chỉ định một cổng ngẫu nhiên cho bạn"
 
@@ -239,25 +256,25 @@ msgstr "Nếu remote_port bằng 0, fps sẽ chỉ định một cổng ngẫu n
 msgid "Loading..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:234
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:245
 msgid "Local IP"
 msgstr "IP nội bộ"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:235
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:246
 msgid "Local port"
 msgstr "Cổng nội bộ"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
 msgid "LocalIp specifies the IP address or host name to proxy to."
 msgstr "LocalIp chỉ định địa chỉ IP hoặc tên máy chủ để ủy quyền."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
 msgid "LocalPort specifies the port to proxy to."
 msgstr "LocalPort chỉ định cổng cho proxy."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:75
 msgid "Locations"
 msgstr "Vị trí"
 
@@ -338,7 +355,7 @@ msgstr ""
 msgid "Logs cleared successfully!"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:180
 msgid "NOT RUNNING"
 msgstr "Không chạy"
 
@@ -351,15 +368,15 @@ msgstr ""
 "\"https://github.com/fatedier/frp#configuration-file-template\">frp README</"
 "a>"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:167
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:177
 msgid "Open Web Interface"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:88
 msgid "Plugin"
 msgstr "Plugin"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:230
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:241
 msgid "Plugin Settings"
 msgstr "Cài đặt Plugin"
 
@@ -370,28 +387,29 @@ msgstr "Giao thức"
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:38
 msgid ""
 "Protocol specifies the protocol to use when interacting with the server. "
-"Valid values are \"tcp\", \"kcp\", and \"websocket\".<br />By default, this "
-"value is \"tcp\"."
+"Valid values are \"tcp\", \"kcp\", \"quic\", \"websocket\", and \"wss\".<br /"
+">By default, this value is \"tcp\"."
 msgstr ""
-"Giao thức chỉ định giao thức sẽ sử dụng khi tương tác với máy chủ. Các giá "
-"trị hợp lệ là \"tcp\", \"kcp\" và \"websocket\".<br />Theo mặc định, giá trị "
-"này là \"tcp\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:220
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "Proxy Protocol Version"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:231
 msgid "Proxy Settings"
 msgstr "Cài đặt Proxy"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:232
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:52
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:243
 msgid "Proxy name"
 msgstr "Tên Proxy"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:233
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:244
 msgid "Proxy type"
 msgstr "Loại Proxy"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
 msgid ""
 "ProxyType specifies the type of this proxy. Valid values include \"tcp\", "
 "\"udp\", \"http\", \"https\", \"stcp\", and \"xtcp\".<br />By default, this "
@@ -401,7 +419,31 @@ msgstr ""
 "\", \"http\", \"https\", \"stcp\" và \"xtcp\".<br />Theo mặc định, giá trị "
 "này là \"tcp\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+msgid "QUIC Keep-alive Period. By default this value is 10."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+msgid "QUIC Keep-alive Period.(Unit:second)"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+msgid "QUIC Max Concurrent streams"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+msgid "QUIC Max Concurrent streams. By default this value is 100000."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+msgid "QUIC Max Idle Timeout. By default this value is 30."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+msgid "QUIC Max Idle Timeout.(Unit:second)"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:178
 msgid "RUNNING"
 msgstr "Đang chạy"
 
@@ -409,18 +451,14 @@ msgstr "Đang chạy"
 msgid "Refresh every %s seconds."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:236
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:61
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:247
 msgid "Remote port"
 msgstr "Remote port"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:15
 msgid "Respawn when crashed"
 msgstr "Respawn khi bị lỗi"
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:72
-msgid "Role"
-msgstr "Vai trò"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:14
 msgid "Run daemon as group"
@@ -430,21 +468,21 @@ msgstr "Chạy daemon theo nhóm"
 msgid "Run daemon as user"
 msgstr "Chạy daemon với tư cách người dùng"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:92
 msgid "SOCKS5 password"
 msgstr "Mật khẩu SOCKS5"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
 msgid "SOCKS5 user"
 msgstr "Tài khoản người dùng SOCKS5"
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+msgid "Secret Key"
+msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
 msgid "Server address"
 msgstr "Địa chỉ máy chủ"
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:73
-msgid "Server name"
-msgstr "Tên máy chủ"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
 msgid "Server port"
@@ -466,16 +504,12 @@ msgstr ""
 "ServerPort chỉ định cổng để kết nối với máy chủ trên.<br />Theo mặc định, "
 "giá trị này là 7000."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:74
-msgid "Sk"
-msgstr "Sk"
-
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:209
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:213
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:219
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:224
 msgid "Startup Settings"
 msgstr "Cài đặt khởi động"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:60
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:71
 msgid "Subdomain"
 msgstr "Miền con"
 
@@ -506,6 +540,7 @@ msgstr ""
 "phải bật tính năng ghép kênh TCP.<br />Theo mặc định, giá trị này là true."
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:42
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
 msgid ""
 "This list can be used to specify some additional parameters which have not "
 "been included in this LuCI."
@@ -527,7 +562,7 @@ msgstr ""
 "được gửi đến máy chủ. Máy chủ phải có mã thông báo phù hợp để ủy quyền thành "
 "công. <br />Theo mặc định, giá trị này là \"\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:93
 msgid "Unix domain socket path"
 msgstr "Đường dẫn tên miền socket Unix"
 
@@ -535,7 +570,7 @@ msgstr "Đường dẫn tên miền socket Unix"
 msgid "Unknown error: %s"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid ""
 "UseCompression controls whether or not communication with the server will be "
 "compressed.<br />By default, this value is false."
@@ -543,7 +578,7 @@ msgstr ""
 "UseCompression kiểm soát việc có nén giao tiếp với máy chủ hay không.<br /"
 ">Theo mặc định, giá trị này là sai."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
 msgid ""
 "UseEncryption controls whether or not communication with the server will be "
 "encrypted. Encryption is done using the tokens supplied in the server and "
@@ -552,6 +587,10 @@ msgstr ""
 "UseEncryption kiểm soát việc giao tiếp với máy chủ có được mã hóa hay không. "
 "Quá trình mã hóa được thực hiện bằng cách sử dụng mã thông báo được cung cấp "
 "trong cấu hình máy chủ và máy khách.<br />Theo mặc định, giá trị này là sai."
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+msgid "Used for authentication by visitors"
+msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:36
 msgid "User"
@@ -567,9 +606,42 @@ msgstr ""
 "khách khác. Nếu giá trị này không phải là \"\", tên proxy sẽ tự động được "
 "đổi thành \"{user}.{proxy_name}\".<br />Theo mặc định, giá trị này là \"\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:168
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:170
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:187
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "V1"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "V2"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:178
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:180
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:197
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "frp Client"
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:65
+msgid "none"
+msgstr ""
+
+#~ msgid "Collecting data ..."
+#~ msgstr "Đang thu thập dữ liệu ..."
+
+#~ msgid ""
+#~ "Protocol specifies the protocol to use when interacting with the server. "
+#~ "Valid values are \"tcp\", \"kcp\", and \"websocket\".<br />By default, "
+#~ "this value is \"tcp\"."
+#~ msgstr ""
+#~ "Giao thức chỉ định giao thức sẽ sử dụng khi tương tác với máy chủ. Các "
+#~ "giá trị hợp lệ là \"tcp\", \"kcp\" và \"websocket\".<br />Theo mặc định, "
+#~ "giá trị này là \"tcp\"."
+
+#~ msgid "Role"
+#~ msgstr "Vai trò"
+
+#~ msgid "Server name"
+#~ msgstr "Tên máy chủ"
+
+#~ msgid "Sk"
+#~ msgstr "Sk"

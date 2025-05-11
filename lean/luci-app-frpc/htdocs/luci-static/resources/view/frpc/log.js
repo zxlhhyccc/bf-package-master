@@ -60,7 +60,7 @@ return view.extend({
 				'src': L.resource(['icons/loading.gif']),
 				'alt': _('Loading...'),
 				'style': 'vertical-align:middle'
-			}, _('Collecting data ...'))
+			}, _('Collecting data...'))
 		);
 
 		//const log_path = open(uci.get('frpc', 'common', 'log_file'), 'r');

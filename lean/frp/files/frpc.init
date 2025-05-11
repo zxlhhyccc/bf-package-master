@@ -3,87 +3,262 @@
 START=99
 USE_PROCD=1
 
-NAME=frpc
-PROG=/usr/bin/$NAME
+NAME="frpc"
+PROG="/usr/bin/$NAME"
+CONF_FILE="/var/etc/${NAME}.toml"
 
-make_dir() {
-	local d
-	for d in "$@"; do
-		if [ ! -d "$d" ]; then
-			mkdir -p "$d" 2>/dev/null || return 1
-		fi
-	done
-
-	return 0
-}
-
+# 创建日志目录
 log_dir() {
 	config_get log_file "common" "log_file" ""
-	log_file="${log_file:-"/var/log/frpc.log"}"
-	
-	local log_dir
-	log_dir="$(dirname "${log_file}")"
-
-	[ -s ${log_file} ] || {
-		[ -d "$log_dir" ] || {
-			make_dir "$log_dir" || return 1
-		}
-	}
+	log_file="${log_file:-/var/log/frpc.log}"
+	local log_dir="$(dirname "$log_file")"
+	[ -d "$log_dir" ] || mkdir -p "$log_dir"
 }
 
+# 错误输出
 _err() {
 	echo "$*" >&2
 	logger -p daemon.err -t "$NAME" "$*"
 }
 
-config_cb() {
-	[ $# -eq 0 ] && return
+# 配置名转换
+to_camel_case() {
+	case "$1" in
+		# 全局配置转换
+		admin_addr) echo "webServer.addr" ;;
+		admin_port) echo "webServer.port" ;;
+		admin_pwd) echo "webServer.password" ;;
+		admin_user) echo "webServer.user" ;;
+		assets_dir) echo "webServer.assetsDir" ;;
+		allowUsers) echo "allowUsers" ;;
+		custom_domains) echo "customDomains" ;;
+		disable_log_color) echo "log.disablePrintColor" ;;
+		heartbeat_interval) echo "transport.heartbeatInterval" ;;
+		heartbeat_timeout) echo "transport.heartbeatTimeout" ;;
+		http_proxy) echo "transport.proxyURL" ;;
+		http_user) echo "httpUser" ;;
+		http_pwd) echo "httpPassword" ;;
+		host_header_rewrite) echo "hostHeaderRewrite" ;;
+		local_ip) echo "localIP" ;;
+		local_port) echo "localPort" ;;
+		locations) echo "locations" ;;
+		log_file) echo "log.to" ;;
+		log_level) echo "log.level" ;;
+		log_max_days) echo "log.maxDays" ;;
+		login_fail_exit) echo "loginFailExit" ;;
+		name) echo "name" ;;
+		protocol) echo "transport.protocol" ;;
+		proxyprotocolversion) echo "transport.proxyProtocolVersion" ;;
+		quic_keepalivePeriod) echo "transport.quic.keepalivePeriod" ;;
+		quic_maxIdleTimeout) echo "transport.quic.maxIdleTimeout" ;;
+		quic_maxIncomingStreams) echo "transport.quic.maxIncomingStreams" ;;
+		remote_port) echo "remotePort" ;;
+		secretKey) echo "secretKey" ;;
+		server_addr) echo "serverAddr" ;;
+		server_port) echo "serverPort" ;;
+		subdomain) echo "subdomain" ;;
+		tcp_mux) echo "transport.tcpMux" ;;
+		tls_enable) echo "transport.tls.enable" ;;
+		token) echo "auth.token" ;;
+		type) echo "type" ;;
+		user) echo "user" ;;
+		use_encryption) echo "transport.useEncryption" ;;
+		use_compression) echo "transport.useCompression" ;;
 
-	local type="$1"
-	local name="$2"
-	if [ "$type" = "conf" ]; then
-		echo "[$name]" >> "$conf_file"
-		#sed -i "1d" "$conf_file"
-		option_cb() {
-			local option="$1"
-			local value="$2"
-			#[ "$option" = "name" ] && \#
-			[ "$option" = "$name" ] && \
-			sed -i "s/$CONFIG_SECTION/$value/g" "$conf_file" || \
-			echo "$option = $value" >> "$conf_file";
-		}
-		list_cb() {
-			local name="$1"
-			local value="$2"
-			[ "$name" = "_" ] && echo "$value" >> "$conf_file"
-		}
-	else
-		[ "$type" = "init" ] && init_cfg="$name"
-		option_cb() { return 0; }
-		list_cb() { return 0; }
-	fi
+		# 插件配置转换
+		plugin_http_user) echo "httpUser" ;;
+		plugin_http_passwd) echo "httpPassword" ;;
+		plugin_user) echo "user" ;;
+		plugin_passwd) echo "password" ;;
+		plugin_unix_path) echo "unixPath" ;;
+
+		# 默认返回
+		*) echo "$1" ;;
+	esac
 }
 
-service_triggers()
-{
+append_raw() {
+	echo "$1" >> "$CONF_FILE"
+}
+
+# 写入全局 common 配置
+write_common() {
+	config_get_bool enabled "$1" "enabled" 0
+	[ "$enabled" -ne 1 ] && return 1
+
+	> "$CONF_FILE"
+
+	local common_conf="server_addr server_port admin_addr admin_port protocol token tcp_mux user admin_user admin_pwd tls_enable log_file log_level log_max_days login_fail_exit disable_log_color heartbeat_interval heartbeat_timeout http_proxy assets_dir quic_keepalivePeriod quic_maxIdleTimeout quic_maxIncomingStreams"
+	local common_string="server_addr admin_addr protocol token user admin_user admin_pwd log_file log_level"
+
+	for opt in $common_conf; do
+		config_get val "$1" "$opt"
+		[ -n "$val" ] || continue
+		camel=$(to_camel_case "$opt")
+
+		case "$val" in
+			true|false)
+				echo "$camel = $val" >> "$CONF_FILE"
+				;;
+			*)
+				# 强制为字符串的字段
+				if echo "$common_string" | grep -qw "$opt"; then
+					echo "$camel = \"$val\"" >> "$CONF_FILE"
+				elif echo "$val" | grep -Eq '^[0-9]+$'; then
+					echo "$camel = $val" >> "$CONF_FILE"
+				else
+					echo "$camel = \"$val\"" >> "$CONF_FILE"
+				fi
+				;;
+		esac
+	done
+
+	# 添加 list _ 字段
+	config_list_foreach "$1" _ append_raw
+
+	echo "" >> "$CONF_FILE"
+	return 0
+}
+
+# 写入 [[proxies]] 配置
+write_proxies() {
+	local section="$1"
+	config_get _type "$section" "type"
+	[ -z "$_type" ] && return 1
+
+	echo "[[proxies]]" >> "$CONF_FILE"
+
+	local proxies_conf="name type local_ip local_port http_user http_pwd subdomain host_header_rewrite proxyprotocolversion remote_port use_encryption use_compression secretKey"
+	local proxies_string="name type local_ip http_user http_pwd subdomain host_header_rewrite secretKey"
+	for opt in $proxies_conf; do
+		config_get val "$section" "$opt"
+		[ -n "$val" ] || continue
+		camel=$(to_camel_case "$opt")
+
+		case "$val" in
+			true|false)
+				echo "$camel = $val" >> "$CONF_FILE"
+				;;
+			*)
+				# 强制为字符串的字段
+				if echo "$proxies_string" | grep -qw "$opt"; then
+					echo "$camel = \"$val\"" >> "$CONF_FILE"
+				elif echo "$val" | grep -Eq '^[0-9]+$'; then
+					echo "$camel = $val" >> "$CONF_FILE"
+				else
+					echo "$camel = \"$val\"" >> "$CONF_FILE"
+				fi
+				;;
+		esac
+	done
+
+	# custom_domains 处理为数组
+	config_get customdomains "$section" "custom_domains"
+	if [ -n "$customdomains" ]; then
+		local output='['
+		OLD_IFS="$IFS"; IFS=','; for domain in $customdomains; do
+			domain="$(echo "$domain" | xargs)"
+			[ -n "$domain" ] && output="${output}\"$domain\", "
+		done; IFS="$OLD_IFS"
+		output="${output%, }]"
+		echo "customDomains = $output" >> "$CONF_FILE"
+	fi
+
+	# locations 处理为数组
+	config_get locations "$section" "locations"
+	if [ -n "$locations" ]; then
+		local output='['
+		OLD_IFS="$IFS"; IFS=','; for loc in $locations; do
+			loc="$(echo "$loc" | xargs)"
+			[ -n "$loc" ] && output="${output}\"$loc\", "
+		done; IFS="$OLD_IFS"
+		output="${output%, }]"
+		echo "locations = $output" >> "$CONF_FILE"
+	fi
+
+	# allowUsers 处理为数组
+	config_get allow_users "$section" "allowUsers"
+	if [ -n "$allow_users" ]; then
+		allow_users="$(echo "$allow_users" | xargs)"
+		if [ "$allow_users" = "*" ]; then
+			echo "allowUsers = [\"*\"]" >> "$CONF_FILE"
+		else
+			local output='['
+			OLD_IFS="$IFS"; IFS=','; for user in $allow_users; do
+				user="$(echo "$user" | xargs)"
+				[ -n "$user" ] && output="${output}\"$user\", "
+			done; IFS="$OLD_IFS"
+			output="${output%, }]"
+			echo "allowUsers = $output" >> "$CONF_FILE"
+		fi
+	fi
+
+	# 插件配置
+	config_get plugin "$section" "plugin"
+	if [ -n "$plugin" ]; then
+		echo "[proxies.plugin]" >> "$CONF_FILE"
+		echo "type = \"$plugin\"" >> "$CONF_FILE"
+
+		local plugin_conf="plugin_http_user plugin_http_passwd plugin_user plugin_passwd plugin_unix_path"
+		for opt in $plugin_conf; do
+			config_get val "$section" "$opt"
+			camel=$(to_camel_case "$opt")
+			[ -n "$val" ] && echo "$camel = \"$val\"" >> "$CONF_FILE"
+		done
+	fi
+
+	# list _ 原始追加
+	config_list_foreach "$section" _ append_raw
+	echo "" >> "$CONF_FILE"
+	return 0
+}
+
+# 写入其他 section(备用)
+write_extra_section() {
+	local section="$1"
+	config_get _type "$section" "type"
+	[ -n "$_type" ] && return 0
+	[ "$section" = "common" ] && return 0
+
+	echo "[$section]" >> "$CONF_FILE"
+	config_list_foreach "$section" _ append_raw
+
+	local cfg
+	config_get_keys cfg "$section"
+	for opt in $cfg; do
+		[ "$opt" = "_" ] && continue
+		config_get val "$section" "$opt"
+		camel=$(to_camel_case "$opt")
+		case "$val" in
+			true|false) echo "$camel = $val" >> "$CONF_FILE" ;;
+			*[!0-9]*) echo "$camel = \"$val\"" >> "$CONF_FILE" ;;
+			*) echo "$camel = $val" >> "$CONF_FILE" ;;
+		esac
+	done
+	echo "" >> "$CONF_FILE"
+	return 0
+}
+
+service_triggers() {
 	procd_add_reload_trigger "$NAME"
 }
 
 start_service() {
-	local init_cfg=" "
-	local conf_file="/var/etc/$NAME.toml"
+	local init_cfg="init"
 
-	> "$conf_file"
+	> "$CONF_FILE"
+
 	config_load "$NAME"
+
+	write_common "common" || return 1
 
 	log_dir
 
-	local enabled
-		config_get_bool enabled "common" 'enabled' '0'
-		[ "$enabled" = "1" ] || return 1
+	config_foreach write_proxies "conf"
+	config_foreach write_extra_section "conf"
 
 	local stdout stderr user group respawn env conf_inc
-	uci_validate_section "$NAME" init "$init_cfg" \
+	uci_validate_section "$NAME" "$init_cfg" "$init_cfg" \
 		'stdout:bool:1' \
 		'stderr:bool:1' \
 		'user:string' \
@@ -98,17 +273,17 @@ start_service() {
 		return 1
 	}
 
-	[ -n "$conf_inc" ] && config_list_foreach "$init_cfg" conf_inc cat >> "$conf_file"
+	[ -n "$conf_inc" ] && config_list_foreach "$init_cfg" conf_inc cat >> "$CONF_FILE"
 
 	procd_open_instance
-	procd_set_param command "$PROG" -c "$conf_file"
-	procd_set_param file $conf_file
-	procd_set_param stdout $stdout
-	procd_set_param stderr $stderr
+	procd_set_param command "$PROG" -c "$CONF_FILE"
+	procd_set_param file "$CONF_FILE"
+	procd_set_param stdout "$stdout"
+	procd_set_param stderr "$stderr"
 	[ -n "$user" ] && procd_set_param user "$user"
 	[ -n "$group" ] && procd_set_param group "$group"
-	[ $respawn -eq 1 ] && procd_set_param respawn
-	[ -n "$env" ] && config_list_foreach "$init_cfg" env "procd_append_param env"
+	[ "$respawn" -eq 1 ] && procd_set_param respawn
+	[ -n "$env" ] && config_list_foreach "$init_cfg" env procd_append_param env
 	procd_close_instance
 }
 
