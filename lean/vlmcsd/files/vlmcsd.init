@@ -24,7 +24,7 @@ get_dnsmasq_conf() {
 
 # 重启计划任务服务
 restart_crond() {
-    /etc/init.d/cron restart >/dev/null 2>&1
+    crontab /etc/crontabs/root
 }
 
 # 添加或删除计划任务
