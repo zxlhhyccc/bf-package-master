@@ -301,7 +301,7 @@ start(){
 
 	sed -i '/drop_caches/d' /etc/crontabs/root
 	if [ $free_memory -eq 1 ];  then
-		3,58 * * * * sync && echo 3 | tee /proc/sys/vm/drop_caches > /dev/null
+		echo "3,58 * * * * sync && echo 3 | tee /proc/sys/vm/drop_caches" >> /etc/crontabs/root
 	else
 		sed -i '/drop_caches/d' /etc/crontabs/root
 	fi
