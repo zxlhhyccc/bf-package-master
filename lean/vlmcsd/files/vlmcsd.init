@@ -30,7 +30,7 @@ restart_crond() {
 # 添加或删除计划任务
 manage_cron() {
     local action="$1"
-    local log_day="${2:-0}"  # 默认每天清理日志 (0=周日)
+    local log_day="${2:-0}"  # 默认周日清理日志
 
     case "$action" in
         add)
@@ -57,9 +57,9 @@ manage_cron() {
 
 # 启动实例
 start_instance() {
-    get_dnsmasq_conf
-
     stop_instance
+
+    get_dnsmasq_conf
 
     # 读取配置
     config_get_bool enabled "config" "enabled" "0"
@@ -73,9 +73,10 @@ start_instance() {
 
     # 如果启用自动激活，则自动添加 DNSMasq SRV 记录
     [ "$auto_activate" -eq 1 ] && [ -n "$DNSMASQ_VLMCSD" ] && {
+        local hostname
         hostname="$(uci -q get system.@system[0].hostname)"
         [ -n "$hostname" ] && echo "srv-host=_vlmcs._tcp,$hostname,$port,0,100" > "$DNSMASQ_VLMCSD"
-        /etc/init.d/dnsmasq reload >/dev/null
+        /etc/init.d/dnsmasq reload >/dev/null 2>&1
     }
 
     # 修改 INI 配置文件中的端口和日志路径
@@ -88,12 +89,14 @@ start_instance() {
 
     # 启动 procd 管理服务
     procd_open_instance "$CONF"
-    procd_set_param command "$PROG" -D -P "$port" -l "$LOG_FILE"
+    procd_set_param command "$PROG"
+    procd_append_param command -D
+    procd_append_param command -p "$port"
+    procd_append_param command -l "$LOG_FILE"
     [ "$conf" -eq 1 ] && procd_append_param command -i "$INI"
     procd_set_param pidfile "$PIDFILE"
-    procd_set_param file "$INI"
+    [ "$conf" -eq 1 ] && procd_set_param file "$INI"
     procd_set_param respawn
-    procd_add_jail_mount "$INI"
 
     # 如开启公网访问，添加临时防火墙规则
     [ "$internet_access" -eq 1 ] && {
@@ -119,6 +122,8 @@ start_instance() {
 # 停止服务时清理配置和日志
 stop_instance() {
     # 删除 dnsmasq 配置
+    get_dnsmasq_conf
+
     [ -f "$DNSMASQ_VLMCSD" ] && {
         rm -f "$DNSMASQ_VLMCSD"
         /etc/init.d/dnsmasq reload >/dev/null 2>&1
@@ -128,7 +133,7 @@ stop_instance() {
     manage_cron del
 
     # 禁用服务时删除日志文件
-    config_get_bool enabled "config" "enabled" "0"    
+    config_get_bool enabled "config" "enabled" "0"
     [ "$enabled" -eq 0 ] && [ -f "$LOG_FILE" ] && {
         rm -f "$LOG_FILE"
         logger -t "$CONF" "Service disabled, removed log file: $LOG_FILE"
