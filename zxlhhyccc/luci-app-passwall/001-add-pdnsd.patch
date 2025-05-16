@@ -222,7 +222,7 @@ index 3f6dd8c..2656874 100644
  if api.is_finded("smartdns") then
  	o:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
  end
-@@ -492,6 +501,8 @@ o.validate = function(self, value, t)
+@@ -507,6 +516,8 @@ o.validate = function(self, value, t)
  	end
  	return value
  end
@@ -231,7 +231,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  
  ---- DNS Forward
-@@ -506,6 +517,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+@@ -521,6 +532,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -240,7 +240,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -576,6 +589,17 @@ o.validate = function(self, value, t)
+@@ -591,6 +604,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -262,7 +262,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -166,6 +166,9 @@ msgstr "远程 DNS DoH"
+@@ -169,6 +169,9 @@ msgstr "远程 DNS DoH"
  msgid "Remote DNS DoT"
  msgstr "远程 DNS DoT"
  
@@ -272,7 +272,7 @@ index 92144fb..4ae3764 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -310,6 +313,12 @@ msgstr "关闭（不使用）"
+@@ -313,6 +316,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
