@@ -109,6 +109,8 @@ define Package/dnsproxy/install
 	$(INSTALL_BIN) $(CURDIR)/files/dnsproxy.init $(1)/etc/init.d/dnsproxy
 	$(INSTALL_DIR) $(1)/etc/uci-defaults/
 	$(INSTALL_BIN) $(CURDIR)/files/dnsproxy.defaults $(1)/etc/uci-defaults/80-dnsproxy-migration
+	$(INSTALL_DIR) $(1)/etc/sysctl.d/
+	$(INSTALL_CONF) ./files/dnsproxy.sysctl $(1)/etc/sysctl.d/50-dnsproxy.conf
 endef
 
 define Package/dnsproxy-neo/install
