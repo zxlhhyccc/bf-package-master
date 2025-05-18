@@ -11,7 +11,7 @@ msgstr ""
 "n>6 && n<11) ? 3 : 4;\n"
 "X-Generator: Weblate 5.8-dev\n"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:249
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:245
 msgid "Add new proxy..."
 msgstr "Cuir seachfhreastalaí nua leis..."
 
@@ -19,8 +19,8 @@ msgstr "Cuir seachfhreastalaí nua leis..."
 msgid "Additional configs"
 msgstr "Cumraíochtaí breise"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:67
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
 msgid "Additional settings"
 msgstr "Socruithe breise"
 
@@ -76,11 +76,11 @@ msgstr ""
 "chun logáil isteach.<br />De réir réamhshocraithe, is é an luach seo ná "
 "\"admin\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid "Allow Users"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid "Allow all users"
 msgstr ""
 
@@ -109,16 +109,16 @@ msgstr ""
 msgid "Clear Logs..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:225
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:222
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:232
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:229
 msgid "Common Settings"
 msgstr "Socruithe Coitianta"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
 msgid "Compression"
 msgstr "Comhbhrú"
 
@@ -130,7 +130,7 @@ msgstr "Áirítear comhaid cumraíochta sa chomhad cumraíochta sealadach"
 msgid "Configuration"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:71
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:68
 msgid "Custom domains"
 msgstr "Fearainn saincheaptha"
 
@@ -146,7 +146,7 @@ msgstr ""
 "Díchumasaíonn DisableLogColor dathanna loga nuair a bhíonn LogWay == \"consól"
 "\" socraithe nuair atá siad fíor."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid "Empty"
 msgstr ""
 
@@ -154,7 +154,11 @@ msgstr ""
 msgid "Enable"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
+msgid "Enable or disable Frp Client"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:52
 msgid "Encryption"
 msgstr "Criptiú"
 
@@ -170,14 +174,14 @@ msgstr "Scoir nuair a theipeann ar logáil isteach"
 msgid "Failed to clear log."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:210
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:207
 msgid ""
 "Frp is a fast reverse proxy to help you expose a local server behind a NAT "
 "or firewall to the internet,it supports TCP and UDP, as well as HTTP and "
 "HTTPS protocols.<br/>Current Version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:253
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:249
 msgid "General Settings"
 msgstr "Socruithe Ginearálta"
 
@@ -185,12 +189,12 @@ msgstr "Socruithe Ginearálta"
 msgid "Grant access to LuCI app frpc"
 msgstr "Deonaigh rochtain ar app LuCI frpc"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:254
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:250
 msgid "HTTP Settings"
 msgstr "Socruithe HTTP"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:75
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:88
 msgid "HTTP password"
 msgstr "Pasfhocal HTTP"
 
@@ -198,8 +202,8 @@ msgstr "Pasfhocal HTTP"
 msgid "HTTP proxy"
 msgstr "seachfhreastalaí HTTP"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:77
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:74
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:87
 msgid "HTTP user"
 msgstr "Úsáideoir HTTP"
 
@@ -231,7 +235,7 @@ msgstr "Eatramh buille croí"
 msgid "Heartbeat timeout"
 msgstr "Teorainn ama buille croí"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:79
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:76
 msgid "Host header rewrite"
 msgstr "Athscríobh ceanntásc an óstaigh"
 
@@ -246,14 +250,14 @@ msgstr ""
 "leis.<br />De réir réamhshocraithe, léitear an luach seo ón athróg "
 "timpeallachta \"http_proxy\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid ""
 "If left empty, only visitors under the same user are allowed to connect by "
 "default.<br />To specify particular users, separate them with commas, for "
 "example: <code>user1, user2</code>."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:62
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
 msgid "If remote_port is 0, frps will assign a random port for you"
 msgstr "Más 0 é remote_port, sannfaidh frps port randamach duit"
 
@@ -261,27 +265,27 @@ msgstr "Más 0 é remote_port, sannfaidh frps port randamach duit"
 msgid "Loading..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:259
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:255
 msgid "Local IP"
 msgstr "IP áitiúil"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:58
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:260
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:256
 msgid "Local port"
 msgstr "Port áitiúil"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
 msgid "LocalIp specifies the IP address or host name to proxy to."
 msgstr ""
 "Sonraíonn LocalIp an seoladh IP nó an t-ainm óstaigh chun an "
 "seachfhreastalaí dó."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:58
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid "LocalPort specifies the port to proxy to."
 msgstr "Sonraíonn LocalPort an port le seachfhreastalaí chuige."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:76
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:73
 msgid "Locations"
 msgstr "Suímh"
 
@@ -363,7 +367,7 @@ msgstr ""
 msgid "Logs cleared successfully!"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:191
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
 msgid "NOT RUNNING"
 msgstr "NÍ RÚCHÁN"
 
@@ -376,15 +380,15 @@ msgstr ""
 "cumraíochta, féach <a href=\"https://github.com/fatedier/frp#configuration-"
 "file-template\">frp README</a>"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:185
 msgid "Open Web Interface"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:86
 msgid "Plugin"
 msgstr "Breiseán"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:255
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:251
 msgid "Plugin Settings"
 msgstr "Socruithe Breiseán"
 
@@ -399,25 +403,25 @@ msgid ""
 ">By default, this value is \"tcp\"."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "Proxy Protocol Version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:245
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:241
 msgid "Proxy Settings"
 msgstr "Socruithe Seachfhreastalaí"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:257
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:253
 msgid "Proxy name"
 msgstr "Ainm seachfhreastalaí"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:258
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:254
 msgid "Proxy type"
 msgstr "Cineál seachfhreastalaí"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
 msgid ""
 "ProxyType specifies the type of this proxy. Valid values include \"tcp\", "
 "\"udp\", \"http\", \"https\", \"stcp\", and \"xtcp\".<br />By default, this "
@@ -427,31 +431,31 @@ msgstr ""
 "bailí \"tcp\", \"udp\", \"http\", \"https\", \"stcp\", agus \"xtcp\".<br /"
 ">De réir réamhshocraithe, is é an luach seo ná \"tcp\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
 msgid "QUIC Keep-alive Period. By default this value is 10."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
 msgid "QUIC Keep-alive Period.(Unit:second)"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:45
 msgid "QUIC Max Concurrent streams"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:45
 msgid "QUIC Max Concurrent streams. By default this value is 100000."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:44
 msgid "QUIC Max Idle Timeout. By default this value is 30."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:44
 msgid "QUIC Max Idle Timeout.(Unit:second)"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:189
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:186
 msgid "RUNNING"
 msgstr "REATHA"
 
@@ -459,8 +463,8 @@ msgstr "REATHA"
 msgid "Refresh every %s seconds."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:62
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:261
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:257
 msgid "Remote port"
 msgstr "Port cianda"
 
@@ -476,15 +480,15 @@ msgstr "Rith deamhan mar ghrúpa"
 msgid "Run daemon as user"
 msgstr "Rith deamhan mar úsáideoir"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:93
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
 msgid "SOCKS5 password"
 msgstr "Pasfhocal SOCKS5"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:92
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
 msgid "SOCKS5 user"
 msgstr "SOCKS5 úsáideora"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:85
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
 msgid "Secret Key"
 msgstr ""
 
@@ -512,12 +516,12 @@ msgstr ""
 "Sonraíonn ServerPort an port le ceangal leis an bhfreastalaí air.<br />De "
 "réir réamhshocraithe, is é 7000 an luach seo."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:233
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:238
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:230
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:234
 msgid "Startup Settings"
 msgstr "Socruithe Tosaithe"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:72
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:69
 msgid "Subdomain"
 msgstr "Fofhearann"
 
@@ -549,8 +553,8 @@ msgstr ""
 "caithfidh an freastalaí ilphléacsáil TCP a bheith cumasaithe freisin.<br /"
 ">De réir réamhshocraithe, tá an luach seo fíor."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:67
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
 msgid ""
 "This list can be used to specify some additional parameters which have not "
 "been included in this LuCI."
@@ -573,7 +577,7 @@ msgstr ""
 "bhfreastalaí le go n-éireoidh leis an údarú. <br />De réir réamhshocraithe, "
 "is é \" \"an luach seo."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:94
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
 msgid "Unix domain socket path"
 msgstr "Conair soicéad fearainn Unix"
 
@@ -581,11 +585,11 @@ msgstr "Conair soicéad fearainn Unix"
 msgid "Unknown error: %s"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:167
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:164
 msgid "Unknown version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
 msgid ""
 "UseCompression controls whether or not communication with the server will be "
 "compressed.<br />By default, this value is false."
@@ -594,7 +598,7 @@ msgstr ""
 "chomhbhrú nó nach ndéanfar.<br />De réir réamhshocraithe, tá an luach seo "
 "bréagach."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:52
 msgid ""
 "UseEncryption controls whether or not communication with the server will be "
 "encrypted. Encryption is done using the tokens supplied in the server and "
@@ -605,7 +609,7 @@ msgstr ""
 "comharthaí a soláthraíodh i gcumraíocht an fhreastalaí agus an chliaint.<br /"
 ">De réir réamhshocraithe, tá an luach seo bréagach."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:85
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
 msgid "Used for authentication by visitors"
 msgstr ""
 
@@ -624,22 +628,22 @@ msgstr ""
 "seachfhreastalaí go huathoibríoch go \"{user}.{proxy_name}\".<br />De réir "
 "réamhshocraithe, is \" \"an luach seo."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "V1"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "V2"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:189
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:191
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:208
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:186
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:205
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "frp Cliant"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "none"
 msgstr ""
 

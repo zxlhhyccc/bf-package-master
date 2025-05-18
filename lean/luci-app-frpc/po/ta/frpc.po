@@ -10,7 +10,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.10-dev\n"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:249
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:245
 msgid "Add new proxy..."
 msgstr "புதிய ப்ராக்சியைச் சேர்க்கவும் ..."
 
@@ -18,8 +18,8 @@ msgstr "புதிய ப்ராக்சியைச் சேர்க்�
 msgid "Additional configs"
 msgstr "கூடுதல் உள்ளமைவுகள்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:67
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
 msgid "Additional settings"
 msgstr "கூடுதல் அமைப்புகள்"
 
@@ -72,11 +72,11 @@ msgstr ""
 "நிர்வாகி சேவையகம் உள்நுழைவுக்கு பயன்படுத்தும் பயனர்பெயரை நிர்வாகி குறிப்பிடுகிறார். "
 "<br /> இயல்பாக, இந்த மதிப்பு \"நிர்வாகி\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid "Allow Users"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid "Allow all users"
 msgstr ""
 
@@ -104,16 +104,16 @@ msgstr ""
 msgid "Clear Logs..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:225
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:222
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:232
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:229
 msgid "Common Settings"
 msgstr "பொதுவான அமைப்புகள்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
 msgid "Compression"
 msgstr "சுருக்க"
 
@@ -125,7 +125,7 @@ msgstr "கட்டமைப்பு கோப்புகள் தற்க�
 msgid "Configuration"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:71
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:68
 msgid "Custom domains"
 msgstr "தனிப்பயன் களங்கள்"
 
@@ -141,7 +141,7 @@ msgstr ""
 "LOGCOLOR ஐ முடக்கு லாங்வே == \"கன்சோல்\" உண்மைக்கு அமைக்கும்போது வண்ணங்களை முடக்கு "
 "வண்ணங்களை முடக்கு."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid "Empty"
 msgstr ""
 
@@ -149,7 +149,11 @@ msgstr ""
 msgid "Enable"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:22
+msgid "Enable or disable Frp Client"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:52
 msgid "Encryption"
 msgstr "குறியாக்கம்"
 
@@ -165,14 +169,14 @@ msgstr "உள்நுழைவு தோல்வியடையும் ப�
 msgid "Failed to clear log."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:210
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:207
 msgid ""
 "Frp is a fast reverse proxy to help you expose a local server behind a NAT "
 "or firewall to the internet,it supports TCP and UDP, as well as HTTP and "
 "HTTPS protocols.<br/>Current Version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:253
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:249
 msgid "General Settings"
 msgstr "பொது அமைப்புகள்"
 
@@ -180,12 +184,12 @@ msgstr "பொது அமைப்புகள்"
 msgid "Grant access to LuCI app frpc"
 msgstr "லூசி ஆப் எஃப்ஆர்பிசிக்கு அணுகல் வழங்கவும்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:254
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:250
 msgid "HTTP Settings"
 msgstr "HTTP அமைப்புகள்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:78
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:75
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:88
 msgid "HTTP password"
 msgstr "HTTP கடவுச்சொல்"
 
@@ -193,8 +197,8 @@ msgstr "HTTP கடவுச்சொல்"
 msgid "HTTP proxy"
 msgstr "HTTP பதிலாள்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:77
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:74
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:87
 msgid "HTTP user"
 msgstr "HTTP பயனர்"
 
@@ -226,7 +230,7 @@ msgstr "இதய துடிப்பு இடைவெளி"
 msgid "Heartbeat timeout"
 msgstr "இதய துடிப்பு நேரம் முடிந்தது"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:79
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:76
 msgid "Host header rewrite"
 msgstr "புரவலன் தலைப்பு மீண்டும் எழுதவும்"
 
@@ -240,14 +244,14 @@ msgstr ""
 "\"\" என்றால், சேவையகம் நேரடியாக இணைக்கப்படும். <br /> இயல்பாக, இந்த மதிப்பு "
 "\"http_proxy\" சூழல் மாறியிலிருந்து படிக்கப்படுகிறது."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:84
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
 msgid ""
 "If left empty, only visitors under the same user are allowed to connect by "
 "default.<br />To specify particular users, separate them with commas, for "
 "example: <code>user1, user2</code>."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:62
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
 msgid "If remote_port is 0, frps will assign a random port for you"
 msgstr "Remote_port 0 ஆக இருந்தால், FRP கள் உங்களுக்காக ஒரு சீரற்ற துறைமுகத்தை ஒதுக்கும்"
 
@@ -255,25 +259,25 @@ msgstr "Remote_port 0 ஆக இருந்தால், FRP கள் உங�
 msgid "Loading..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:259
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:255
 msgid "Local IP"
 msgstr "உள்ளக ஐபி"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:58
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:260
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:256
 msgid "Local port"
 msgstr "உள்ளக துறைமுகம்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:57
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
 msgid "LocalIp specifies the IP address or host name to proxy to."
 msgstr "லோக்கல்ஐபி ஐபி முகவரி அல்லது புரவலன் பெயரை ப்ராக்சிக்கு குறிப்பிடுகிறது."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:58
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
 msgid "LocalPort specifies the port to proxy to."
 msgstr "உள்ளக துறைமுகம் துறைமுகத்தை ப்ராக்சிக்கு குறிப்பிடுகிறது."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:76
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:73
 msgid "Locations"
 msgstr "இருப்பிடங்கள்"
 
@@ -354,7 +358,7 @@ msgstr ""
 msgid "Logs cleared successfully!"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:191
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
 msgid "NOT RUNNING"
 msgstr "ஓடவில்லை"
 
@@ -367,15 +371,15 @@ msgstr ""
 "\"https://github.com/fatedier/frp#configuration-file-template\"> frp ReadMe "
 "</a>"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:185
 msgid "Open Web Interface"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:86
 msgid "Plugin"
 msgstr "சொருகு"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:255
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:251
 msgid "Plugin Settings"
 msgstr "சொருகி அமைப்புகள்"
 
@@ -390,25 +394,25 @@ msgid ""
 ">By default, this value is \"tcp\"."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "Proxy Protocol Version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:245
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:241
 msgid "Proxy Settings"
 msgstr "பதிலாள் அமைப்புகள்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:257
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:253
 msgid "Proxy name"
 msgstr "பதிலாள் பெயர்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:258
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:254
 msgid "Proxy type"
 msgstr "பதிலாள் வகை"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
 msgid ""
 "ProxyType specifies the type of this proxy. Valid values include \"tcp\", "
 "\"udp\", \"http\", \"https\", \"stcp\", and \"xtcp\".<br />By default, this "
@@ -418,31 +422,31 @@ msgstr ""
 "சி.பி\", \"யுடிபி\", \"எச்.டி.டி.பி\", \"எச்.டி.டி.பி.எச்\", \"எச்.டி.சி.பி\" "
 "மற்றும் \"எக்ச்.டி.சி.பி\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
 msgid "QUIC Keep-alive Period. By default this value is 10."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:47
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
 msgid "QUIC Keep-alive Period.(Unit:second)"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:45
 msgid "QUIC Max Concurrent streams"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:49
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:45
 msgid "QUIC Max Concurrent streams. By default this value is 100000."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:44
 msgid "QUIC Max Idle Timeout. By default this value is 30."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:48
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:44
 msgid "QUIC Max Idle Timeout.(Unit:second)"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:189
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:186
 msgid "RUNNING"
 msgstr "இயங்கும்"
 
@@ -450,8 +454,8 @@ msgstr "இயங்கும்"
 msgid "Refresh every %s seconds."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:62
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:261
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:257
 msgid "Remote port"
 msgstr "தொலை துறைமுகம்"
 
@@ -467,15 +471,15 @@ msgstr "டீமனை குழுவாக இயக்கவும்"
 msgid "Run daemon as user"
 msgstr "டீமனை பயனராக இயக்கவும்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:93
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
 msgid "SOCKS5 password"
 msgstr "SOCKS5 கடவுச்சொல்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:92
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
 msgid "SOCKS5 user"
 msgstr "SOCKS5 பயனர்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:85
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
 msgid "Secret Key"
 msgstr ""
 
@@ -503,12 +507,12 @@ msgstr ""
 "சேவையகத்துடன் இணைக்க ServerPort போர்ட்டைக் குறிப்பிடுகிறது. <br /> இயல்பாக, இந்த "
 "மதிப்பு 7000 ஆகும்."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:233
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:238
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:230
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:234
 msgid "Startup Settings"
 msgstr "தொடக்க அமைப்புகள்"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:72
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:69
 msgid "Subdomain"
 msgstr "துணை டொமைன்"
 
@@ -540,8 +544,8 @@ msgstr ""
 "சேவையகத்தில் TCP மல்டிபிளெக்சிங் இயக்கப்பட்டிருக்க வேண்டும். <br /> இயல்பாக, இந்த மதிப்பு "
 "உண்மை."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:43
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:67
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
 msgid ""
 "This list can be used to specify some additional parameters which have not "
 "been included in this LuCI."
@@ -563,7 +567,7 @@ msgstr ""
 "கிள்ளாக்கு குறிப்பிடுகிறது. ஏற்பு வெற்றிபெற சேவையகம் பொருந்தக்கூடிய டோக்கனைக் "
 "கொண்டிருக்க வேண்டும். <br /> இயல்பாக, இந்த மதிப்பு \"\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:94
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
 msgid "Unix domain socket path"
 msgstr "யூனிக்ச் டொமைன் சாக்கெட் பாதை"
 
@@ -571,11 +575,11 @@ msgstr "யூனிக்ச் டொமைன் சாக்கெட் ப
 msgid "Unknown error: %s"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:167
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:164
 msgid "Unknown version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:56
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:53
 msgid ""
 "UseCompression controls whether or not communication with the server will be "
 "compressed.<br />By default, this value is false."
@@ -583,7 +587,7 @@ msgstr ""
 "சேவையகத்துடனான தொடர்பு சுருக்கப்படுமா இல்லையா என்பதை USECOMPRESSION "
 "கட்டுப்படுத்துகிறது. <br /> இயல்பாக, இந்த மதிப்பு தவறானது."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:52
 msgid ""
 "UseEncryption controls whether or not communication with the server will be "
 "encrypted. Encryption is done using the tokens supplied in the server and "
@@ -593,7 +597,7 @@ msgstr ""
 "கட்டுப்படுத்துகிறது. சேவையகம் மற்றும் கிளையன்ட் உள்ளமைவில் வழங்கப்பட்ட டோக்கன்களைப் "
 "பயன்படுத்தி குறியாக்கம் செய்யப்படுகிறது. <br /> இயல்பாக, இந்த மதிப்பு தவறானது."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:85
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
 msgid "Used for authentication by visitors"
 msgstr ""
 
@@ -611,22 +615,22 @@ msgstr ""
 "குறிப்பிடுகிறார். இந்த மதிப்பு \"\" இல்லையென்றால், பதிலாள் பெயர்கள் தானாக \"{user}. "
 "{proxy_name}\" என மாற்றப்படும். <br /> இயல்பாக, இந்த மதிப்பு \"\"."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "V1"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "V2"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:189
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:191
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:208
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:186
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:205
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "FRP வாங்கி"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:66
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:63
 msgid "none"
 msgstr ""
 

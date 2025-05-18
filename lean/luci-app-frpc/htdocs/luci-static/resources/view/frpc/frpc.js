@@ -19,7 +19,7 @@ var startupConf = [
 ];
 
 var commonConf = [
-	[form.Flag, 'enabled', _('Enable'), {rmempty: false}],
+	[form.Flag, 'enabled', _('Enable'), _('Enable or disable Frp Client'), {rmempty: false}],
 	[form.Value, 'server_addr', _('Server address'), _('ServerAddr specifies the address of the server to connect to.<br />By default, this value is "127.0.0.1".'), {datatype: 'host'}],
 	[form.Value, 'server_port', _('Server port'), _('ServerPort specifies the port to connect to the server on.<br />By default, this value is 7000.'), {datatype: 'port'}],
 	[form.Value, 'http_proxy', _('HTTP proxy'), _('HttpProxy specifies a proxy address to connect to the server through. If this value is "", the server will be connected to directly.<br />By default, this value is read from the "http_proxy" environment variable.')],
@@ -40,13 +40,10 @@ var commonConf = [
 	[form.Flag, 'tls_enable', _('TLS'), _('TLSEnable specifies whether or not TLS should be used when communicating with the server.'), {datatype: 'bool'}],
 	[form.Value, 'heartbeat_interval', _('Heartbeat interval'), _('HeartBeatInterval specifies at what interval heartbeats are sent to the server, in seconds. It is not recommended to change this value.<br />By default, this value is 30.'), {datatype: 'uinteger', placeholder: '30'}],
 	[form.Value, 'heartbeat_timeout', _('Heartbeat timeout'), _('HeartBeatTimeout specifies the maximum allowed heartbeat response delay before the connection is terminated, in seconds. It is not recommended to change this value.<br />By default, this value is 90.'), {datatype: 'uinteger', placeholder: '90'}],
+	[form.Value, 'quic_keepalivePeriod', _('QUIC Keep-alive Period.(Unit:second)'), _('QUIC Keep-alive Period. By default this value is 10.'), {depends: [{protocol: 'quic'}], datatype: 'integer', placeholder: '10'}],
+	[form.Value, 'quic_maxIdleTimeout', _('QUIC Max Idle Timeout.(Unit:second)'), _('QUIC Max Idle Timeout. By default this value is 30.'), {depends: [{protocol: 'quic'}], datatype: 'integer', placeholder: '30'}],
+	[form.Value, 'quic_maxIncomingStreams', _('QUIC Max Concurrent streams'), _('QUIC Max Concurrent streams. By default this value is 100000.'), {depends: [{protocol: 'quic'}], datatype: 'integer', placeholder: '100000'}],
 	[form.DynamicList, '_', _('Additional settings'), _('This list can be used to specify some additional parameters which have not been included in this LuCI.'), {placeholder: 'Key-A=Value-A'}]
-];
-
-var quicCommonConf = [
-	[form.Value, 'quic_keepalivePeriod', _('QUIC Keep-alive Period.(Unit:second)'), _('QUIC Keep-alive Period. By default this value is 10.'), {datatype: 'integer', placeholder: '10'}],
-	[form.Value, 'quic_maxIdleTimeout', _('QUIC Max Idle Timeout.(Unit:second)'), _('QUIC Max Idle Timeout. By default this value is 30.'), {datatype: 'integer', placeholder: '30'}],
-	[form.Value, 'quic_maxIncomingStreams', _('QUIC Max Concurrent streams'), _('QUIC Max Concurrent streams. By default this value is 100000.'), {datatype: 'integer', placeholder: '100000'}],
 ];
 
 var baseProxyConf = [
@@ -233,7 +230,6 @@ return view.extend({
 		s.tab('init', _('Startup Settings'));
 
 		defTabOpts(s, 'common', commonConf, {optional: true});
-		defTabOpts(s, 'common', quicCommonConf, {optional: true, depends: [{protocol: 'quic'}]});
 
 		o = s.taboption('init', form.SectionValue, 'init', form.TypedSection, 'init', _('Startup Settings'));
 		s = o.subsection;
