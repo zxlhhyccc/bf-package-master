@@ -24,6 +24,7 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Elon Huang <elonhhuang@gmail.com> \
 		Tianling Shen <cnsztl@immortalwrt.org>
+PKG_CPE_ID:=cpe:/a:rclone:rclone
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_RCLONE_COMPRESS_GOPROXY \
