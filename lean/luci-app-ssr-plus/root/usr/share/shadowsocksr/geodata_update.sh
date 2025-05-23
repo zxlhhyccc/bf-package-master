@@ -3,7 +3,7 @@
 rm -rf /tmp/geo*
 
 #wget --no-check-certificate -q -O /tmp/geoip.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat
-wget --no-check-certificate -q -O /tmp/geosite.dat https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat
+curl -sSL --insecure -o /tmp/geosite.dat "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat"
 
 remove_full_string() {
 	temp_file="$(echo "$1" | awk -F '.' '{print $1"-temp."$2}')"
