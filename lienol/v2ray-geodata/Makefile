@@ -12,7 +12,7 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 
 include $(INCLUDE_DIR)/package.mk
 
-GEOIP_VER:=202505080020
+GEOIP_VER:=202505220020
 GEOIP_FILE:=geoip.dat.$(GEOIP_VER)
 define Download/geoip
 #  URL:=https://github.com/v2fly/geoip/releases/download/$(GEOIP_VER)/
@@ -22,10 +22,10 @@ define Download/geoip
   URL:=https://github.com/Loyalsoldier/geoip/releases/latest/download
   URL_FILE:=geoip-only-cn-private.dat
   FILE:=$(GEOIP_FILE)
-  HASH:=ac886a469c4e17706c164ac96e95385d21e37b1d5d73adf3aff0b111bb44c760
+  HASH:=1c5ed99be484320bc99cdfa65c7d0f5fe583bdbb9b50c34273045f9410c38ea1
 endef
 
-GEOSITE_VER:=202505122213
+GEOSITE_VER:=202505272213
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 define Download/geosite
@@ -35,17 +35,17 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=0cfb085b3c8566f496ed45af4fdd43969e1ec7d138377ff98bf4998e5af30720
+  HASH:=954b87ac046b339073807a2733dd2548a934f46301f4f955706e100095fb8d04
 endef
 
-GEOSITE_IRAN_VER:=202505120041
+GEOSITE_IRAN_VER:=202505260041
 GEOSITE_IRAN_FILE:=iran.dat.$(GEOSITE_IRAN_VER)
 define Download/geosite-ir
 #  URL:=https://github.com/bootmortis/iran-hosted-domains/releases/download/$(GEOSITE_IRAN_VER)/
   URL:=https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat
   URL_FILE:=iran.dat
   FILE:=$(GEOSITE_IRAN_FILE)
-  HASH:=1797aec3ef7cf7f9a34fef2e056fd4faa04458bb468b0a6ff4e8b2440bb6ed29
+  HASH:=063852d8eb2df6a4541bdbaf38b422b8cfadbb6315cc2098f0eb6c9437bbb8b6
 endef
 
 define Package/v2ray-geodata/template
