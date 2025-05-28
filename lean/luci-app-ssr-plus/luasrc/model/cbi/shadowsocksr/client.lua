@@ -155,6 +155,7 @@ o:depends("pdnsd_enable", "3")
 o:depends("pdnsd_enable", "4")
 o.description = translate("Custom DNS Server format as IP:PORT (default: 8.8.4.4:53)")
 o.datatype = "ip4addrport"
+o.default = "8.8.4.4:53"
 
 o = s:option(ListValue, "tunnel_forward_mosdns", translate("Anti-pollution DNS Server"))
 o:value("tcp://8.8.4.4:53,tcp://8.8.8.8:53", translate("Google Public DNS"))
