@@ -74,9 +74,9 @@ msgstr ""
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:1173
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:1186
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:1200
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:177
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:203
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:236
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:178
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:204
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:237
 msgid "<ul><li>"
 msgstr ""
 
@@ -85,7 +85,7 @@ msgid "Access Control"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:171
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:195
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:196
 msgid "AdGuard DNSCrypt SDNS"
 msgstr ""
 
@@ -97,15 +97,15 @@ msgstr ""
 msgid "Advertising Data"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:291
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:292
 msgid "AliYun Public DNS"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:255
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:256
 msgid "AliYun Public DNS (223.5.5.5)"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:178
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:185
 msgid "Alias"
 msgstr ""
 
@@ -136,9 +136,9 @@ msgstr ""
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:135
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:166
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:138
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:159
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:190
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:222
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:160
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:191
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:223
 msgid "Anti-pollution DNS Server"
 msgstr ""
 
@@ -163,8 +163,8 @@ msgstr ""
 msgid "Apple domains optimization"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:206
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:212
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:213
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:219
 msgid "Apply"
 msgstr ""
 
@@ -172,7 +172,7 @@ msgstr ""
 msgid "Are you sure you want to restore the client to default settings?"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:223
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:230
 msgid "Auto Switch"
 msgstr ""
 
@@ -205,11 +205,11 @@ msgstr ""
 msgid "Baidu Connectivity"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:292
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:293
 msgid "Baidu Public DNS"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:256
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:257
 msgid "Baidu Public DNS (180.76.76.76)"
 msgstr ""
 
@@ -234,11 +234,11 @@ msgstr ""
 msgid "CLOSE WIN"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:295
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:296
 msgid "CNNIC SDNS"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:259
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:260
 msgid "CNNIC SDNS (1.2.4.8)"
 msgstr ""
 
@@ -287,7 +287,7 @@ msgstr ""
 msgid "China IP Data"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:242
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:243
 msgid "ChinaDNS-NG query protocol"
 msgstr ""
 
@@ -312,7 +312,7 @@ msgid "Clear logs"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:157
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:181
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:182
 msgid "Click here to view or manage the DNS list file"
 msgstr ""
 
@@ -322,19 +322,19 @@ msgid "Click to the page"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:141
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:165
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:166
 msgid "Cloudflare DNS"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:129
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:210
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:149
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:233
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:234
 msgid "Cloudflare DNS (1.1.1.1)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:172
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:196
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:197
 msgid "Cloudflare DNSCrypt SDNS"
 msgstr ""
 
@@ -387,26 +387,26 @@ msgid "Custom"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:175
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:199
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:200
 msgid ""
 "Custom DNS Server (support: IP:Port or tls://IP:Port or https://IP/dns-query "
 "and other format)."
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:143
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:167
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:168
 msgid "Custom DNS Server for MosDNS"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:132
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:214
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:156
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:237
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:238
 msgid "Custom DNS Server format as IP:PORT (default: 8.8.4.4:53)"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:267
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:297
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:268
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:298
 msgid "Custom DNS Server format as IP:PORT (default: disabled)"
 msgstr ""
 
@@ -430,19 +430,19 @@ msgstr ""
 msgid "DNS Anti-pollution"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:293
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:294
 msgid "DNS Pai (CT/CMCC/CU)"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:257
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:258
 msgid "DNS Pai (CT/CMCC/CU) (101.226.4.6)"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:294
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:295
 msgid "DNS Pai (CU)"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:258
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:259
 msgid "DNS Pai (CU) (123.125.81.6)"
 msgstr ""
 
@@ -450,11 +450,11 @@ msgstr ""
 msgid "DNS Query Mode For Shunt Mode"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:290
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:291
 msgid "DNSPod Public DNS"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:254
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:255
 msgid "DNSPod Public DNS (119.29.29.29)"
 msgstr ""
 
@@ -489,12 +489,12 @@ msgid ""
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:177
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:201
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:202
 msgid "Defines the upstreams logic mode"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:180
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:204
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:205
 msgid ""
 "Defines the upstreams logic mode, possible values: load_balance, parallel, "
 "fastest_addr (default: load_balance)."
@@ -519,11 +519,11 @@ msgstr ""
 msgid "Disable"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:287
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:288
 msgid "Disable ChinaDNS in MosDNS"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:250
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:251
 msgid "Disable ChinaDNS-NG"
 msgstr ""
 
@@ -531,12 +531,12 @@ msgstr ""
 msgid "Disable IPv6 In MosDNS Query Mode (Shunt Mode)"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:169
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:170
 msgid "Disable IPv6 in MosDNS query mode (only for Non-CN domain)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:190
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:215
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:216
 msgid "Disable IPv6 query mode"
 msgstr ""
 
@@ -565,7 +565,7 @@ msgid "Do you want to restore the client to default settings?"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:223
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:246
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:247
 msgid "DoT upstream (Need use wolfssl version)"
 msgstr ""
 
@@ -573,11 +573,11 @@ msgstr ""
 msgid "Domain Strategy"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:249
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:250
 msgid "Domestic DNS Server"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:286
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:287
 msgid "Domestic DNS Server (ChinaDNS Mode With MosDNS)"
 msgstr ""
 
@@ -741,7 +741,7 @@ msgstr ""
 msgid "Every Wednesday"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:278
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:279
 msgid "Expecting: %s"
 msgstr ""
 
@@ -856,26 +856,26 @@ msgid "Google Connectivity"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:167
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:191
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:192
 msgid "Google DNSCrypt SDNS"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:136
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:160
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:161
 msgid "Google Public DNS"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:119
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:200
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:139
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:223
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:224
 msgid "Google Public DNS (8.8.4.4)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:120
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:201
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:140
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:224
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:225
 msgid "Google Public DNS (8.8.8.8)"
 msgstr ""
 
@@ -1046,57 +1046,57 @@ msgstr ""
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:123
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:204
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:143
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:227
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:228
 msgid "Level 3 Public DNS (209.244.0.3)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:124
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:205
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:144
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:228
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:229
 msgid "Level 3 Public DNS (209.244.0.4)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:125
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:206
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:145
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:229
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:230
 msgid "Level 3 Public DNS (4.2.2.1)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:126
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:207
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:146
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:230
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:231
 msgid "Level 3 Public DNS (4.2.2.2)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:127
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:208
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:147
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:231
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:232
 msgid "Level 3 Public DNS (4.2.2.3)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:128
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:209
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:148
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:232
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:233
 msgid "Level 3 Public DNS (4.2.2.4)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:138
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:162
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:163
 msgid "Level 3 Public DNS-1 (209.244.0.3-4)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:139
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:163
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:164
 msgid "Level 3 Public DNS-2 (4.2.2.1-2)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:140
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:164
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:165
 msgid "Level 3 Public DNS-3 (4.2.2.3-4)"
 msgstr ""
 
@@ -1177,7 +1177,7 @@ msgid "Mixed as an alias of socks, default:Enabled."
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:215
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:238
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:239
 msgid "Muitiple DNS server can saperate with ','"
 msgstr ""
 
@@ -1209,11 +1209,11 @@ msgstr ""
 msgid "NaiveProxy"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:289
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:290
 msgid "Nanjing Xinfeng 114DNS"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:253
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:254
 msgid "Nanjing Xinfeng 114DNS (114.114.114.114)"
 msgstr ""
 
@@ -1272,8 +1272,8 @@ msgstr ""
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:924
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:936
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:946
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:175
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:180
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:182
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:187
 msgid "None"
 msgstr ""
 
@@ -1333,21 +1333,21 @@ msgid "Only when Socks5 Auth Mode is password valid, Not mandatory."
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:137
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:161
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:162
 msgid "OpenDNS"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:122
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:203
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:142
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:226
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:227
 msgid "OpenDNS (208.67.220.220)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:121
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:202
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:141
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:225
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:226
 msgid "OpenDNS (208.67.222.222)"
 msgstr ""
 
@@ -1392,7 +1392,7 @@ msgstr ""
 msgid "Permit Without Stream"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:200
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:207
 msgid "Ping Latency"
 msgstr ""
 
@@ -1420,7 +1420,7 @@ msgstr ""
 msgid "Pre-shared key"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:299
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:300
 msgid "Prevent DNS leak (Only Work With ChinaDNS Mode)"
 msgstr ""
 
@@ -1475,7 +1475,7 @@ msgid "QUIC maxStreamReceiveWindow"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:170
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:194
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:195
 msgid "Quad9 DNSCrypt SDNS"
 msgstr ""
 
@@ -1499,7 +1499,7 @@ msgstr ""
 msgid "Really reset all changes?"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:210
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:217
 msgid "Reapply"
 msgstr ""
 
@@ -1615,7 +1615,7 @@ msgid "Save Words splited by /"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:151
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:175
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:176
 msgid "Select DNS parse Mode"
 msgstr ""
 
@@ -1647,7 +1647,7 @@ msgstr ""
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:262
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/server-config.lua:96
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/server.lua:112
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:183
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:190
 msgid "Server Port"
 msgstr ""
 
@@ -1677,7 +1677,7 @@ msgid "Session Ticket"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:160
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:184
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:185
 msgid "Set Single DNS"
 msgstr ""
 
@@ -1732,7 +1732,7 @@ msgstr ""
 msgid "Short ID"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:188
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:195
 msgid "Socket Connected"
 msgstr ""
 
@@ -1831,7 +1831,7 @@ msgid ""
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:221
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:244
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:245
 msgid "TCP upstream"
 msgstr ""
 
@@ -1880,7 +1880,7 @@ msgid "TUIC send window"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:168
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:192
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:193
 msgid "TWNIC-101 DNSCrypt SDNS"
 msgstr ""
 
@@ -1905,7 +1905,7 @@ msgid "Timeout for establishing a connection to server(second)"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:155
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:179
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:180
 msgid "Tips: Dnsproxy DNS Parse List Path:"
 msgstr ""
 
@@ -1931,7 +1931,7 @@ msgid "Trojan"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:398
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:173
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:180
 msgid "Type"
 msgstr ""
 
@@ -1954,12 +1954,12 @@ msgid "UDP relay mode"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:222
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:245
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:246
 msgid "UDP upstream"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:220
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:243
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:244
 msgid "UDP/TCP upstream"
 msgstr ""
 
@@ -2016,16 +2016,16 @@ msgid "Use ChinaDNS-NG query and cache"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:161
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:185
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:186
 msgid "Use DNS List File"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:251
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:288
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:252
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:289
 msgid "Use DNS from WAN"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:252
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:253
 msgid "Use DNS from WAN and 114DNS"
 msgstr ""
 
@@ -2066,6 +2066,10 @@ msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/ssrurl.htm:92
 msgid "User cancelled."
+msgstr ""
+
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/servers.lua:158
+msgid "User-Agent"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client-config.lua:282
@@ -2155,17 +2159,17 @@ msgid "When disabled shunt mode, will same time stopped shunt service."
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:191
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:216
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:217
 msgid "When disabled, all AAAA requests are not resolved."
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:180
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:205
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:206
 msgid "When two or more DNS servers are deployed, enable this function."
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:154
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:178
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:179
 msgid ""
 "When use DNS list file, please ensure list file exists and is formatted "
 "correctly."
@@ -2266,7 +2270,7 @@ msgid "chrome"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:173
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:197
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:198
 msgid "cloudflare-dns.com DNSCrypt SDNS"
 msgstr ""
 
@@ -2289,7 +2293,7 @@ msgid "disable"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:169
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:193
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:194
 msgid "dns.sb DNSCrypt SDNS"
 msgstr ""
 
@@ -2298,7 +2302,7 @@ msgid "edge"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:185
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:210
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:211
 msgid "fastest_addr"
 msgstr ""
 
@@ -2335,7 +2339,7 @@ msgid "ios"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:183
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:208
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:209
 msgid "load_balance"
 msgstr ""
 
@@ -2362,7 +2366,7 @@ msgid "obfs-local"
 msgstr ""
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:184
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:209
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:210
 msgid "parallel"
 msgstr ""
 
@@ -2420,7 +2424,7 @@ msgstr ""
 msgid "v2ray-plugin"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:278
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:279
 msgid "valid address:port"
 msgstr ""
 
