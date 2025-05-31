@@ -1,8 +1,8 @@
 --- a/luasrc/model/cbi/openclash/config-subscribe-edit.lua
 +++ b/luasrc/model/cbi/openclash/config-subscribe-edit.lua
-@@ -106,6 +106,9 @@ o:value("https://api.dler.io/sub", translate("api.dler.io")..translate("(Default
- o:value("https://v.id9.cc/sub", translate("v.id9.cc")..translate("(Support Vless By Pinyun)"))
- o:value("https://sub.id9.cc/sub", translate("sub.id9.cc"))
+@@ -104,6 +104,9 @@ o:value("https://api.dler.io/sub", translate("api.dler.io")..translate("(Default
+ o:depends("sub_convert", "1")
+ o:value("https://api.dler.io/sub", translate("api.dler.io")..translate("(Default)"))
  o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
 +o:value("https://api.sub.x10.bz/sub", translate("api.sub.x10.bz")..translate("(Support Vless By Oneself)"))
 +o:value("https://api.api88.cloudns.org/sub", translate("api.api88.cloudns.org")..translate("(Support Vless By Oneself)"))
@@ -23,9 +23,9 @@
  s = m:section(TypedSection, "openclash")
 --- a/po/zh-cn/openclash.zh-cn.po
 +++ b/po/zh-cn/openclash.zh-cn.po
-@@ -2814,6 +2814,12 @@ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
- msgid "(Support Vless By Pinyun)"
- msgstr "(由品云提供，支持 Vless)"
+@@ -2811,6 +2811,12 @@ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
+ msgid "Override All Dns Query"
+ msgstr "启用后将尽可能的覆盖DNS查询到的域名"
  
 +msgid "(Support Vless By Oneself)"
 +msgstr "(自建项目，支持 Vless)"
