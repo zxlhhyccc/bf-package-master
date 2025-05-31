@@ -1,12 +1,32 @@
 #!/bin/sh
 
-[ "$ACTION" = "add" ] || exit 0
+[ -z "$DEVICENAME" ] && exit 0
 echo "$DEVICENAME" | grep -Eq "^zt" || exit 0
 
-# 双重检查：服务状态 + UCI 配置
-if [ -x "/etc/init.d/zerotier" ] && \
-   /etc/init.d/zerotier enabled && \
-   [ "$(uci -q get zerotier.global.enabled)" = "1" ]; then
-   sleep 5
-   zerotier-nat start "$DEVICENAME" > /dev/null 2>&1 &
-fi
+logger -t zerotier "Hotplug event: ACTION=$ACTION INTERFACE=$INTERFACE DEVICENAME=$DEVICENAME"
+
+lockfile="/var/lock/zerotier-nat.lock"
+
+case "$ACTION" in
+	add)
+		logger -t zerotier "Hotplug: Interface $DEVICENAME added"
+
+		(
+			flock -n 200 || exit 1
+			sleep 1
+			zerotier-nat start "$DEVICENAME" >/dev/null 2>&1
+			logger -t zerotier "zerotier-nat start $DEVICENAME done"
+		) 200>"$lockfile" &
+		;;
+
+	remove)
+		logger -t zerotier "Hotplug: Interface $DEVICENAME removed"
+
+		(
+			flock -n 200 || exit 1
+			zerotier-nat stop >/dev/null 2>&1
+			logger -t zerotier "zerotier-nat stop done"
+		) 200>"$lockfile"
+		;;
+esac
+
