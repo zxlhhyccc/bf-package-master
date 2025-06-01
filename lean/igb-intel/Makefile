@@ -7,12 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=kmod-igb-intel
-PKG_VERSION:=5.13.7
+PKG_VERSION:=5.19.2
 PKG_RELEASE:=1
 
-PKG_SOURCE:=igb-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://downloads.sourceforge.net/project/e1000/igb%20stable/$(PKG_VERSION)/
-PKG_HASH:=4ccae73110f3c871a17b7cc6df7dbdf6295fc90f4941e8b2978a471c2fec83cb
+PKG_SOURCE_VERSION:=612a03b6d6a616d3e11f6a1dfda673e65ec68405
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/intel/ethernet-linux-igb/tar.gz/$(PKG_SOURCE_VERSION)?
+PKG_HASH:=67366162306af3741dc2a6e9f0a58d05ee49057eb19c5946fb88ff065fe87c56
 
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/package.mk
@@ -22,16 +23,20 @@ PKG_UNPACK:=zcat $(DL_DIR)/$(PKG_SOURCE) | $(TAR) -C $(PKG_BUILD_DIR) --strip-co
 define KernelPackage/igb-intel
   SUBMENU:=Network Devices
   TITLE:=Intel igb drivers - oot version from Intel
-  DEPENDS:=+kmod-ptp @PCI_SUPPORT
+  DEPENDS:=@PCI_SUPPORT +kmod-i2c-core +kmod-i2c-algo-bit +kmod-ptp +kmod-hwmon-core
   CONFLICTS:=kmod-igb
   KCONFIG:=CONFIG_IGB \
-    CONFIG_IGB_HWMON=n \
+    CONFIG_IGB_HWMON=y \
     CONFIG_IGB_DCA=n
   FILES:=$(PKG_BUILD_DIR)/src/igb.ko
-  AUTOLOAD:=$(call AutoLoad,35,igb)
+  AUTOLOAD:=$(call AutoLoad,35,igb,1)
 endef
 
 define Build/Compile
+	cd ${PKG_BUILD_DIR}/src; KSRC="$(LINUX_DIR)" \
+		CONFFILE="$(LINUX_DIR)/.config" \
+		OUT="$(PKG_BUILD_DIR)/src/kcompat_generated_defs.h" \
+		bash kcompat-generator.sh
 	+$(KERNEL_MAKE) M=$(PKG_BUILD_DIR)/src modules
 endef
 
