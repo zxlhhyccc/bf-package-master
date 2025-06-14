@@ -1,6 +1,6 @@
 --- a/package/openwrt/files/etc/init.d/smartdns
 +++ b/package/openwrt/files/etc/init.d/smartdns
-@@ -250,6 +250,35 @@ restart_crond()
+@@ -252,6 +252,35 @@ restart_crond()
  	/etc/init.d/cron restart >/dev/null 2>&1
  }
  
@@ -36,7 +36,7 @@
  disable_auto_update()
  {
  	local no_restart="$1"
-@@ -269,13 +298,13 @@ disable_auto_update()
+@@ -271,13 +300,13 @@ disable_auto_update()
  
  enable_auto_update()
  {
@@ -52,7 +52,7 @@
  	restart_crond
  }
  
-@@ -648,8 +677,12 @@ load_service()
+@@ -650,8 +679,12 @@ load_service()
  	config_get bind_cert_key_pass "$section" "bind_cert_key_pass" ""
  	config_get server_flags "$section" "server_flags" ""
  
@@ -65,7 +65,7 @@
  
  	config_get speed_check_mode "$section" "speed_check_mode" ""
  	[ ! -z "$speed_check_mode" ] && conf_append "speed-check-mode" "$speed_check_mode"
-@@ -677,6 +710,9 @@ load_service()
+@@ -679,6 +712,9 @@ load_service()
  
  	config_get auto_set_dnsmasq "$section" "auto_set_dnsmasq" "1"
  
@@ -75,7 +75,7 @@
  	config_get ipset_name "$section" "ipset_name" ""
  	[ -z "$ipset_name" ] || conf_append "ipset" "$ipset_name"
  
-@@ -808,6 +844,7 @@ load_service()
+@@ -810,6 +846,7 @@ load_service()
  		[ "$old_enabled" = "0" ] && return 1
  		[ "$old_port" = "53" ] && stop_main_dns "0"
  		[ "$old_port" != "53" ] && [ "$old_auto_set_dnsmasq" = "1" ] && stop_forward_dnsmasq "$old_port" "0"
