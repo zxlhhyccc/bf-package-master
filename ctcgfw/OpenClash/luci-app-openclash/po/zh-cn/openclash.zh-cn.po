@@ -1368,11 +1368,14 @@ msgstr "注意：如更新失败可手动下载并上传"
 msgid "Note: the client may not support update, because the firmware with squashfs format will not release flash space after updating"
 msgstr "注意：客户端可能无法更新，因为squashfs格式的固件更新后不会释放闪存空间"
 
-msgid "Compiled Version Selected (Auto-save when you click to update or download)"
-msgstr "已选择编译版本（点击更新或下载时自动保存）"
+msgid "Compiled Version"
+msgstr "编译版本"
 
-msgid "Release Branch Selected (Auto-save when you click to update or download)"
-msgstr "已选择更新分支（点击更新或下载时自动保存）"
+msgid "Release Branch"
+msgstr "更新分支"
+
+msgid "Note: options will auto-save when you click to update or download"
+msgstr "注意：以下选项在点击更新或下载时将自动保存"
 
 msgid "CPU Architecture"
 msgstr "处理器架构"
@@ -2199,6 +2202,9 @@ msgstr "试试手气"
 msgid "Dler Cloud Account Login Failed! Please Check And Try Again..."
 msgstr "Dler Cloud 账户登录失败！请检查账户信息并重试..."
 
+msgid "Dler Cloud Account Login Failed, The Error Info is"
+msgstr "Dler Cloud 账户登录失败，错误信息"
+
 msgid "Dler Cloud Checkin Failed! Please Check And Try Again..."
 msgstr "Dler Cloud 签到失败，请稍后再试！"
 
@@ -2874,18 +2880,6 @@ msgstr "注意: Fake-IP 模式下如需要进行客户端访问控制，请将DN
 msgid "Click to the page"
 msgstr "点击前往"
 
-msgid "Only Meta Core"
-msgstr "仅 Meta 内核"
-
-msgid "(Only Meta Core)"
-msgstr "（仅 Meta 内核）"
-
-msgid "(Only TUN Core)"
-msgstr "（仅 TUN 内核）"
-
-msgid "(TUN&Meta Core)"
-msgstr "（TUN&Meta 内核）"
-
 msgid "Custom Sniffer Settings"
 msgstr "自定义流量探测（嗅探）设置"
 
@@ -2945,9 +2939,6 @@ msgstr "本地 IPv6 绕过地址"
 
 msgid "The Traffic of The Destination For The Specified Address Will Not Pass The Core"
 msgstr "目的地为指定地址的流量不会通过核心"
-
-msgid "Only Meta Core Support SS2022"
-msgstr "仅 Meta 内核支持 SS2022"
 
 msgid "Force HTTP/3"
 msgstr "强制 HTTP/3"
@@ -3521,3 +3512,27 @@ msgstr "跳过安全路径检查"
 
 msgid "Drop The Type of DNS Responsed"
 msgstr "丢弃指定类型的 DNS 回应"
+
+msgid "Disable-IPv4"
+msgstr "禁用 IPv4"
+
+msgid "Disable-IPv6"
+msgstr "禁用 IPv6"
+
+msgid "Smart Core Switch"
+msgstr "Smart 内核切换"
+
+msgid "Error: Failed to create update script!"
+msgstr "错误：创建插件升级进程失败！"
+
+msgid "Tip: Attempting to start update service"
+msgstr "提示：正在启动插件升级进程，当前尝试"
+
+msgid "Error: Service start failed, retrying in 2 seconds..."
+msgstr "错误：插件升级进程启动失败，将在 2 秒后重试..."
+
+msgid "Error: Failed to start update service, please check and try again later..."
+msgstr "错误：插件升级进程启动失败，请检查日志并稍后再试..."
+
+msgid "Core Update"
+msgstr "内核版本更新"
