@@ -208,7 +208,7 @@ local function processData(szType, content)
 		if params["obfs-password"] or params["obfs_password"] then
 			result.flag_obfs = "1"
 			result.obfs_type = params.obfs
-			result.salamander = params["obfs-password"] or params["obfs_password"]
+			result.salamander = params["obfs-password"] or params["obfs_password"] or nil
 		end
 		if params.sni then
 			result.tls = "1"

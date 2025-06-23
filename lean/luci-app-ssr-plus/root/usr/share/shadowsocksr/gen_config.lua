@@ -412,14 +412,29 @@ local ss = {
 	reuse_port = true
 }
 local hysteria2 = {
-	server = (server.server_port and (server.port_range and (server.server .. ":" .. server.server_port .. "," .. string.gsub(server.port_range, ":", "-")) or (server.server .. ":" .. server.server_port) or (server.port_range and server.server .. ":" .. string.gsub(server.port_range, ":", "-") or server.server .. ":443"))),
+	server = (
+		server.server_port and 
+		(
+			server.port_range and 
+			(server.server .. ":" .. server.server_port .. "," .. string.gsub(server.port_range, ":", "-")) 
+			or 
+			(server.server .. ":" .. server.server_port)
+		) 
+		or 
+		(
+			server.port_range and 
+			server.server .. ":" .. string.gsub(server.port_range, ":", "-") 
+			or 
+			server.server .. ":443"
+		)
+	),
 	bandwidth = (server.uplink_capacity or server.downlink_capacity) and {
 	up = tonumber(server.uplink_capacity) and tonumber(server.uplink_capacity) .. " mbps" or nil,
 	down = tonumber(server.downlink_capacity) and tonumber(server.downlink_capacity) .. " mbps" or nil 
 	} or nil,
 	socks5 = (proto:find("tcp") and tonumber(socks_port) and tonumber(socks_port) ~= 0) and {
 		listen = "0.0.0.0:" .. tonumber(socks_port),
-		disable_udp = false
+		disableUDP = false
 	} or nil,
 	transport = server.transport_protocol and {
 		type = server.transport_protocol or "udp",
