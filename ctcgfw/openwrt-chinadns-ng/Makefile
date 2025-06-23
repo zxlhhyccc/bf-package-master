@@ -9,7 +9,7 @@ PKG_VERSION:=2025.06.20
 PKG_RELEASE:=1
 
 ifeq ($(ARCH),aarch64)
-  ifeq ($(filter $(BOARD),rockchip qualcommax))
+  ifneq (,$(filter $(BOARD),rockchip qualcommax))
     PKG_ARCH:=$(PKG_NAME)+wolfssl@aarch64-linux-musl@generic+v8a@fast+lto
     PKG_HASH:=224494b4505ac8dd347a70b298b853b677c0e247887d6edcf46b08bb153de017
   else
