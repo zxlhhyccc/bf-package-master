@@ -4,11 +4,11 @@ local ucursor = require "luci.model.uci".cursor()
 local json = require "luci.jsonc"
 
 local server_section = arg[1]
-local proto = arg[2] or "tcp"
-local local_port = arg[3] or "0"
-local socks_port = arg[4] or "0"
+local proto          = arg[2] or "tcp"
+local local_port     = arg[3] or "0"
+local socks_port     = arg[4] or "0"
 
-local chain = arg[5] or "0"
+local chain          = arg[5] or "0"
 local chain_local_port = string.split(chain, "/")[2] or "0"
 
 local server = ucursor:get_all("shadowsocksr", server_section)
