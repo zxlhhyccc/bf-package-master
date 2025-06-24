@@ -17,7 +17,7 @@ index 92278d8..d76853b 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -34,16 +38,40 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,16 +39,41 @@ PKG_CONFIG_DEPENDS:= \
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -41,6 +41,7 @@ index 92278d8..d76853b 100644
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-local \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-redir \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS:shadow-tls \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_SingBox:sing-box \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus:trojan-plus \
@@ -62,7 +63,7 @@ index 92278d8..d76853b 100644
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -53,113 +81,110 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
+@@ -54,119 +83,115 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -149,6 +150,12 @@ index 92278d8..d76853b 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server
  	bool "Include ShadowsocksR Libev Server"
 -	select PACKAGE_shadowsocksr-libev-ssr-server
+ 	default n
+ 
+ config PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS
+ 	bool "Include Shadow-TLS"
+-	select PACKAGE_shadow-tls
+ 	depends on aarch64||arm||x86_64
  	default n
  
  config PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs
