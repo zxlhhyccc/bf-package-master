@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-openclash
-PKG_VERSION:=0.46.099
+PKG_VERSION:=0.46.101
 PKG_MAINTAINER:=vernesong <https://github.com/vernesong/OpenClash>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -98,6 +98,7 @@ define Package/$(PKG_NAME)/preinst
 		cp -rf "/etc/openclash" "/tmp/openclash" >/dev/null 2>&1
 		cp -rf "/usr/share/openclash/ui/yacd" "/tmp/openclash_yacd" >/dev/null 2>&1
 		cp -rf "/usr/share/openclash/ui/dashboard" "/tmp/openclash_dashboard" >/dev/null 2>&1
+		cp -rf "/www/luci-static/resources/openclash/pac" "/tmp/pac" >/dev/null 2>&1
 	fi
 	exit 0
 endef
@@ -117,6 +118,7 @@ define Package/$(PKG_NAME)/prerm
 	cp -rf "/etc/openclash" "/tmp/openclash" >/dev/null 2>&1
 	cp -rf "/usr/share/openclash/ui/yacd" "/tmp/openclash_yacd" >/dev/null 2>&1
 	cp -rf "/usr/share/openclash/ui/dashboard" "/tmp/openclash_dashboard" >/dev/null 2>&1
+	cp -rf "/www/luci-static/resources/openclash/pac" "/tmp/pac" >/dev/null 2>&1
 	exit 0
 endef
 
@@ -149,6 +151,7 @@ define Package/$(PKG_NAME)/postrm
 	rm -rf /tmp/openclash_edit_file_name >/dev/null 2>&1
 	rm -rf /tmp/openclash_announcement >/dev/null 2>&1
 	rm -rf /usr/share/openclash/ui/xd >/dev/null 2>&1
+	rm -rf /www/luci-static/resources/openclash/pac >/dev/null 2>&1
 	sed -i '/OpenClash Append/,/OpenClash Append End/d' "/usr/lib/lua/luci/model/network.lua" >/dev/null 2>&1
 	sed -i '/.*kB maximum content size*/c\HTTP_MAX_CONTENT      = 1024*100		-- 100 kB maximum content size' /usr/lib/lua/luci/http.lua >/dev/null 2>&1
 	sed -i '/.*kB maximum content size*/c\export let HTTP_MAX_CONTENT = 1024*100;		// 100 kB maximum content size' /usr/share/ucode/luci/http.uc >/dev/null 2>&1
