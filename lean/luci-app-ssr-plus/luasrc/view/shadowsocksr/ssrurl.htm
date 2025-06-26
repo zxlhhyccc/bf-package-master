@@ -41,12 +41,21 @@ function b64encsafe(str) {
 }
 
 function b64decsafe(str) {
-	var l;
-	str = str.replace(/-/g, "+").replace(/_/g, "/");
-	l = str.length;
-	l = (4 - l % 4) % 4;
-	if (l) str = padright(str, l, "=");
-	return atob(str);
+	try {
+		// 替换 URL-safe Base64 字符
+		str = str.replace(/-/g, "+").replace(/_/g, "/");
+		// 补全 padding（确保长度是4的倍数）
+		const pad = (4 - str.length % 4) % 4;
+		if (pad) str += "=".repeat(pad);
+		// Base64 解码
+		const decoded = atob(str);
+		// 检查是否为 URL 编码内容，若是则进一步 decodeURIComponent
+		return /%[0-9A-Fa-f]{2}/.test(decoded)
+			? decodeURIComponent(decoded.replace(/\+/g, '%20'))
+			: decoded;
+	} catch (e) {
+		return null;
+	}
 }
 
 function dictvalue(d, key) {
@@ -170,6 +179,9 @@ function import_ssr_url(btn, urlname, sid) {
 				url0 = url0.substring(0, hashIndex);
 			}
 
+			// 去除末尾多余的 / （通常出现在 ? 前）
+			url0 = url0.replace(/\/(\?|#|$)/, "$1");
+
 			// 再分离 ?（参数）
 			var queryIndex = url0.indexOf("?");
 			var queryStr = "";
@@ -203,7 +215,7 @@ function import_ssr_url(btn, urlname, sid) {
 				}
 			} else {
 				// === Base64 SS2022 / 普通格式 的整体编码格式 ===
-				var sstr = b64decsafe(url0);
+				var sstr = b64decsafe(decodeURIComponent(url0));
 				if (!sstr) {
 					s.innerHTML = "<font style='color:red'>Base64 sstr failed</font>";
 					break;

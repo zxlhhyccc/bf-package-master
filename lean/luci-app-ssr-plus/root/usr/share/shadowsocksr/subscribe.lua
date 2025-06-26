@@ -106,6 +106,12 @@ local function split(full, sep)
 	end
 	return result
 end
+-- 判断是否为 URL 编码字符串
+local function isURLEncoded(szText)
+	return type(szText) == "string" and
+		szText:find("%%[0-9A-Fa-f][0-9A-Fa-f]") ~= nil
+end
+
 -- urlencode
 local function get_urlencode(c)
 	return sformat("%%%02X", sbyte(c))
@@ -147,10 +153,16 @@ local function base64Decode(text)
 	text = text:gsub("_", "/")
 	text = text:gsub("-", "+")
 	local mod4 = #text % 4
-	text = text .. string.sub('====', mod4 + 1)
+	if mod4 > 0 then
+		text = text .. string.sub('====', mod4 + 1)
+	end
 	local result = b64decode(text)
 	if result then
-		return result:gsub("%z", "")
+		result = result:gsub("%z", "")
+		if isURLEncoded(result) then
+			result = UrlDecode(result)
+		end
+		return result
 	else
 		return raw
 	end
