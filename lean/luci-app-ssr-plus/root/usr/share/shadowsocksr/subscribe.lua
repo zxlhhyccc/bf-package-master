@@ -106,12 +106,6 @@ local function split(full, sep)
 	end
 	return result
 end
--- 判断是否为 URL 编码字符串
-local function isURLEncoded(szText)
-	return type(szText) == "string" and
-		szText:find("%%[0-9A-Fa-f][0-9A-Fa-f]") ~= nil
-end
-
 -- urlencode
 local function get_urlencode(c)
 	return sformat("%%%02X", sbyte(c))
@@ -153,16 +147,10 @@ local function base64Decode(text)
 	text = text:gsub("_", "/")
 	text = text:gsub("-", "+")
 	local mod4 = #text % 4
-	if mod4 > 0 then
-		text = text .. string.sub('====', mod4 + 1)
-	end
+	text = text .. string.sub('====', mod4 + 1)
 	local result = b64decode(text)
 	if result then
-		result = result:gsub("%z", "")
-		if isURLEncoded(result) then
-			result = UrlDecode(result)
-		end
-		return result
+		return result:gsub("%z", "")
 	else
 		return raw
 	end
@@ -418,6 +406,20 @@ local function processData(szType, content)
 		end
 		method = userinfo:sub(1, split_pos - 1)
 		password = userinfo:sub(split_pos + 1)
+
+		-- 判断密码是否经过url编码
+		local function isURLEncodedPassword(pwd)
+			if not pwd:find("%%[0-9A-Fa-f][0-9A-Fa-f]") then
+				return false
+			end
+				local ok, decoded = pcall(UrlDecode, pwd)
+				return ok and urlEncode(decoded) == pwd
+		end
+
+		local decoded = UrlDecode(password)
+			if isURLEncodedPassword(password) and decoded then
+				password = decoded
+		end
 
 		-- 解析服务器地址和端口（兼容 IPv6）
 		if host_port:find("^%[.*%]:%d+$") then
