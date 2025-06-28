@@ -368,6 +368,7 @@ local function processData(szType, content)
 
 		-- 拆 base64 主体和 ? 参数部分
 		local uri_main, query_str = info:match("^([^?]+)%??(.*)$")
+		uri_main = uri_main:gsub("/+$", "")
 		--log("SS 节点格式:", uri_main)
 		local params = {}
 		if query_str and query_str ~= "" then
