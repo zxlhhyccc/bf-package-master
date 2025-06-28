@@ -364,11 +364,10 @@ local function processData(szType, content)
 		if idx_sp > 0 then
 			alias = UrlDecode(content:sub(idx_sp + 1))
 		end
-		local info = content:sub(1, idx_sp > 0 and idx_sp - 1 or #content)
+		local info = content:sub(1, idx_sp > 0 and idx_sp - 1 or #content):gsub("/%?", "?")
 
 		-- 拆 base64 主体和 ? 参数部分
 		local uri_main, query_str = info:match("^([^?]+)%??(.*)$")
-		uri_main = uri_main:gsub("/+$", "")
 		--log("SS 节点格式:", uri_main)
 		local params = {}
 		if query_str and query_str ~= "" then
