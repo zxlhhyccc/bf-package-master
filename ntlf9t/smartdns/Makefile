@@ -11,8 +11,8 @@ PKG_RELEASE:=3
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=b35f9e42f46d5fd5b77e28241b031bfe8a9c81e0
-PKG_MIRROR_HASH:=2a84069d9dffb3c918070463d98e141f5c34a3a3c5fbddc3fd2b1e363c8e1b6b
+PKG_SOURCE_VERSION:=fd1afaeaf97c3781c09364e0dc76e32627914fd7
+PKG_MIRROR_HASH:=0510f9f7cdc2a3ebc201540b3f1c24f4bff220ace599d58738bcd4d25c146b06
 
 SMARTDNS_WEBUI_VERSION:=1.0.0
 SMAETDNS_WEBUI_SOURCE_PROTO:=git
@@ -28,7 +28,7 @@ PKG_BUILD_PARALLEL:=1
 
 # node compile is slow, so do not use it, download node manually.
 # PACKAGE_smartdns-ui:node/host
-PKG_BUILD_DEPENDS:=PACKAGE_smartdns-ui:rust/host 
+PKG_BUILD_DEPENDS:=PACKAGE_smartdns-ui:rust/host node-pnpm/host
 
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 include $(INCLUDE_DIR)/package.mk
@@ -110,9 +110,9 @@ define Package/smartdns-ui/install
 endef
 
 define Build/Compile/smartdns-webui
-	which npm || (echo "npm not found, please install npm first" && exit 1)
-	npm install --prefix $(PKG_BUILD_DIR)/smartdns-webui/
-	npm run build --prefix $(PKG_BUILD_DIR)/smartdns-webui/
+	which pnpm || (echo "pnpm not found, please install pnpm first" && exit 1)
+	pnpm install --prefix $(PKG_BUILD_DIR)/smartdns-webui/
+	cd $(PKG_BUILD_DIR)/smartdns-webui && pnpm run build
 endef
 
 define Build/Compile/smartdns-ui
