@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=ddns-scripts-aliyun
+PKG_NAME:=ddns-scripts-aliyun-lua
 PKG_VERSION:=1.0.3
 PKG_RELEASE:=6
 
