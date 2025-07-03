@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * Copyright (C) 2018-2024 Ruilin Peng (Nick) <pymumu@gmail.com>.
+ * Copyright (C) 2018-2025 Ruilin Peng (Nick) <pymumu@gmail.com>.
  *
  * smartdns is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 'require ui';
 
 var conf = 'smartdns';
-const callServiceList = rpc.declare({
+var callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -61,8 +61,16 @@ function smartdnsRenderStatus(res) {
 	var smartdnsEnable = uci.get_first('smartdns', 'smartdns', 'enabled');
 	var dnsmasqServer = uci.get_first('dhcp', 'dnsmasq', 'server');
 
+	var uiEnable = uci.get_first('smartdns', 'smartdns', 'ui') || "0";
+	var uiPort = uci.get_first('smartdns', 'smartdns', 'ui_port') || "6080";
+
 	if (isRunning) {
 		renderHTML += "<span style=\"color:green;font-weight:bold\">SmartDNS - " + _("RUNNING") + "</span>";
+
+		if (uiEnable === '1') {
+			var uiLink = "http://" + window.location.hostname + ":" + uiPort + "/";
+			renderHTML += "<a class=\"cbi-button cbi-button-action\" style=\"margin-left: 10px;\" href=\"" + uiLink + "\" target=\"_blank\">" + _("Open the WebUI") + "</a>";
+		}
 	} else {
 		renderHTML += "<span style=\"color:red;font-weight:bold\">SmartDNS - " + _("NOT RUNNING") + "</span>";
 		if (smartdnsEnable === '1') {
@@ -84,17 +92,28 @@ function smartdnsRenderStatus(res) {
 
 	return renderHTML;
 }
+
+function isSmartdnsUiAvailable() {
+	return fs.stat('/usr/lib/libsmartdns_ui.so').then(function (res) {
+		return res && res.type === 'file';
+	}).catch(function () {
+		return false;
+	});
+}
+
 return view.extend({
 	load: function () {
 		return Promise.all([
 			uci.load('dhcp'),
 			uci.load('smartdns'),
+			isSmartdnsUiAvailable()
 		]);
 	},
 	render: function (stats) {
-		let m, s, o;
-		let ss, so;
-		let servers, download_files;
+		var m, s, o;
+		var ss, so;
+		var servers, download_files;
+		var hasUi = stats[2];
 
 		m = new form.Map('smartdns', _('SmartDNS'));
 		m.title = _("SmartDNS Server");
@@ -139,7 +158,6 @@ return view.extend({
 		s.tab("files", _("Download Files Setting"), _("Download domain list files for domain-rule and include config files, please refresh the page after download to take effect."));
 		s.tab("proxy", _("Proxy Server Settings"));
 		s.tab("custom", _("Custom Settings"));
-		s.tab("log", _("Log Settings"));
 
 		///////////////////////////////////////
 		// Basic Settings
@@ -166,6 +184,31 @@ return view.extend({
 		o = s.taboption("settings", form.Flag, "auto_set_dnsmasq", _("Automatically Set Dnsmasq"), _("Automatically set as upstream of dnsmasq when port changes."));
 		o.rmempty = false;
 		o.default = o.enabled;
+
+		//WebUI
+		if (hasUi) {
+			o = s.taboption("settings", form.Flag, "ui", _("Enable WebUI"), _("Enable or disable smartdns webui plugin."));
+			o.rmempty = false;
+			o.default = o.disabled;
+
+			o = s.taboption("settings", form.Value, "ui_port", _("WebUI Port"), _("WebUI server port."));
+			o.placeholder = 6080;
+			o.datatype = "port";
+			o.rempty = false;
+			o.depends('ui', '1');
+
+			o = s.taboption("settings", form.Value, "ui_data_dir", _("WebUI Data Dir"), _("Directory for storing the webui database."));
+			o.placeholder = "/var/lib/smartdns";
+			o.datatype = "string";
+			o.rempty = false;
+			o.depends('ui', '1');
+
+			o = s.taboption("settings", form.Value, "ui_log_max_age", _("WebUI Log Retention"), _("Number of days to retain webui logs."));
+			o.placeholder = 30;
+			o.datatype = "uinteger";
+			o.rempty = false;
+			o.depends('ui', '1');
+		}
 
 		// Update domain rules and IP list
 		o = s.taboption("settings", form.Flag, "enable_list_auto_update", _("Update domestic blacklist And whitelist"),
@@ -414,7 +457,7 @@ return view.extend({
 
 			return true;
 		}
-
+		
 		// NFTset name;
 		o = s.taboption("advanced", form.Value, "nftset_name", _("NFTset Name"), _("NFTset name, format: [#[4|6]:[family#table#set]]"));
 		o.rmempty = true;
@@ -513,7 +556,7 @@ return view.extend({
 
 			o.value(download_files[i].name);
 		}
-
+	
 		///////////////////////////////////////
 		// second dns server;
 		///////////////////////////////////////
@@ -586,7 +629,7 @@ return view.extend({
 		o = s.taboption("seconddns", form.Flag, "seconddns_force_aaaa_soa", _("Force AAAA SOA"), _("Force AAAA SOA."));
 		o.rmempty = true;
 		o.default = o.disabled;
-
+		
 		// Force HTTPS SOA
 		o = s.taboption("seconddns", form.Flag, "seconddns_force_https_soa", _("Force HTTPS SOA"), _("Force HTTPS SOA."));
 		o.rmempty = true;
@@ -792,12 +835,18 @@ return view.extend({
 		o.rmempty = true;
 		o.default = o.disabled;
 
-		///////////////////////////////////////
-		// log settings;
-		///////////////////////////////////////
-		o = s.taboption("log", form.ListValue, "log_level", _("Log Level"));
+		o = s.taboption("custom", form.DummyValue, "log_settings", "");
+		o.renderWidget = function () {
+			return E('div', {
+				'style': `font-size: 1.5em;
+					font-weight: bold;
+					color: #000;`
+				}, [ _("Log Settings") ]);
+		};
+
+		o = s.taboption("custom", form.ListValue, "log_level", _("Log Level"));
 		o.rmempty = true;
-		o.placeholder = "default";
+		o.default = "";
 		o.value("", _("default"));
 		o.value("debug");
 		o.value("info");
@@ -807,72 +856,76 @@ return view.extend({
 		o.value("fatal");
 		o.value("off");
 
-		o = s.taboption("log", form.ListValue, "log_output_mode", _("Log Output Mode"));
+		o = s.taboption("custom", form.ListValue, "log_output_mode", _("Log Output Mode"));
 		o.rmempty = true;
-		o.placeholder = _("file");
+		o.default = "file";
 		o.value("file", _("file"));
 		o.value("syslog", _("syslog"));
-
-		o = s.taboption("log", form.Value, "log_size", _("Log Size"));
+	
+		o = s.taboption("custom", form.Value, "log_size", _("Log Size"));
 		o.rmempty = true;
 		o.placeholder = "default";
 		o.depends("log_output_mode", "file");
 
-		o = s.taboption("log", form.Value, "log_num", _("Log Number"));
+		o = s.taboption("custom", form.Value, "log_num", _("Log Number"));
 		o.rmempty = true;
 		o.placeholder = "default";
 		o.depends("log_output_mode", "file");
 
-		o = s.taboption("log", form.Value, "log_file", _("Log File"))
+		o = s.taboption("custom", form.Value, "log_file", _("Log File"))
 		o.rmempty = true
 		o.placeholder = "/var/log/smartdns/smartdns.log"
 		o.depends("log_output_mode", "file");
 
-		o = s.taboption("log", form.DummyValue, "_view_log", _("View Log"));
+		o = s.taboption("custom", form.DummyValue, "view_log", _("View Log"));
 		o.renderWidget = function () {
 			return E('button', {
 				'class': 'btn cbi-button',
 				'id': 'btn_view_log',
 				'click': ui.createHandlerFn(this, function () {
-					window.location.href = "smartdns/log";
+					window.location.href = "/cgi-bin/luci/admin/services/smartdns/log";
 				})
 			}, [_("View Log")]);
 		}
+		var log_levels = ["debug", "info", "notice", "warn", "error", "fatal"];
+		log_levels.forEach(function(level) {
+			o.depends({ log_output_mode: "file", log_level: level });
+		});
 
-		o = s.taboption("log", form.Flag, "enable_audit_log", _("Enable Audit Log"));
+		o = s.taboption("custom", form.Flag, "enable_audit_log", _("Enable Audit Log"));
 		o.rmempty = true;
 		o.default = o.disabled;
 		o.rempty = true;
 
-		o = s.taboption("log", form.ListValue, "audit_log_output_mode", _("Audit Log Output Mode"));
+		o = s.taboption("custom", form.ListValue, "audit_log_output_mode", _("Audit Log Output Mode"));
 		o.rmempty = true;
-		o.placeholder = _("file");
+		o.default = "file";
 		o.value("file", _("file"));
 		o.value("syslog", _("syslog"));
 		o.depends("enable_audit_log", "1");
 
-		o = s.taboption("log", form.Value, "audit_log_size", _("Audit Log Size"));
+		o = s.taboption("custom", form.Value, "audit_log_size", _("Audit Log Size"));
 		o.rmempty = true;
 		o.placeholder = "default";
 		o.depends({"enable_audit_log":"1", "audit_log_output_mode":"file"});
 
-		o = s.taboption("log", form.Value, "audit_log_num", _("Audit Log Number"));
+		o = s.taboption("custom", form.Value, "audit_log_num", _("Audit Log Number"));
 		o.rmempty = true;
 		o.placeholder = "default";
 		o.depends({"enable_audit_log":"1", "audit_log_output_mode":"file"});
 
-		o = s.taboption("log", form.Value, "audit_log_file", _("Audit Log File"))
+		o = s.taboption("custom", form.Value, "audit_log_file", _("Audit Log File"))
 		o.rmempty = true
 		o.placeholder = "/var/log/smartdns/smartdns-audit.log"
 		o.depends({"enable_audit_log":"1", "audit_log_output_mode":"file"});
 
-		o = s.taboption("log", form.DummyValue, "_view_audit_log", _("View Audit Log"));
+		o = s.taboption("custom", form.DummyValue, "view_audit_log", _("View Audit Log"));
 		o.renderWidget = function () {
 			return E('button', {
 				'class': 'btn cbi-button',
 				'id': 'btn_view_audit_log',
 				'click': ui.createHandlerFn(this, function () {
-					window.location.href = "smartdns/smartdns-audit.log";
+					window.location.href = "/cgi-bin/luci/admin/services/smartdns/audit_log";
 				})
 			}, [_("View Audit Log")]);
 		}
@@ -882,7 +935,7 @@ return view.extend({
 		// Upstream servers;
 		////////////////
 		s = m.section(form.GridSection, "server", _("Upstream Servers"),
-			_("Upstream Servers, support UDP, TCP protocol. Please configure multiple DNS servers, "
+			_("Upstream Servers, support UDP, TCP, DoT, DoH, DoQ, DoH3 protocol. Please configure multiple DNS servers, "
 				+ "including multiple foreign DNS servers."));
 		s.anonymous = true;
 		s.addremove = true;
@@ -892,41 +945,43 @@ return view.extend({
 		s.tab('advanced', _('Advanced Settings'));
 
 		// enable flag;
-		o = s.taboption("general", form.Flag, "enabled", _("Enable"));
+		o = s.taboption("general", form.Flag, "enabled", _("Enable"), _("Enable"));
 		o.rmempty = false;
 		o.default = o.enabled;
 		o.editable = true;
 
 		// name;
-		o = s.taboption("general", form.Value, "name", _("DNS Server Name"));
+		o = s.taboption("general", form.Value, "name", _("DNS Server Name"), _("DNS Server Name"));
 
 		// IP address;
-		o = s.taboption("general", form.Value, "ip", _("DNS Server ip"));
+		o = s.taboption("general", form.Value, "ip", _("ip"), _("DNS Server ip"));
 		o.datatype = "or(ipaddr, string)";
 		o.rmempty = false;
 
 		// port;
-		o = s.taboption("general", form.Value, "port", _("DNS Server port"));
+		o = s.taboption("general", form.Value, "port", _("port"), _("DNS Server port"));
 		o.placeholder = "default";
 		o.datatype = "port";
 		o.rempty = true;
 		o.depends("type", "udp");
 		o.depends("type", "tcp");
 		o.depends("type", "tls");
-		o.depends("type", "https");
+		o.depends("type", "quic");
 
 		// type;
-		o = s.taboption("general", form.ListValue, "type", _("DNS Server type"));
+		o = s.taboption("general", form.ListValue, "type", _("type"), _("DNS Server type"));
 		o.placeholder = "udp";
 		o.value("udp", _("udp"));
 		o.value("tcp", _("tcp"));
 		o.value("tls", _("tls"));
 		o.value("https", _("https"));
+		o.value("quic", _("quic"));
+		o.value("h3", _("h3"));
 		o.default = "udp";
 		o.rempty = false;
 
 		// server group
-		o = s.taboption("general", form.Value, "server_group", _("DNS Server group"))
+		o = s.taboption("general", form.Value, "server_group", _("Server Group"), _("DNS Server group"))
 		o.rmempty = true;
 		o.placeholder = "default";
 		o.datatype = "hostname";
@@ -965,8 +1020,10 @@ return view.extend({
 		o.datatype = "string"
 		o.rempty = true
 		o.modalonly = true;
-		o.depends("type", "tls")
-		o.depends("type", "https")
+		o.depends("type", "tls");
+		o.depends("type", "https");
+		o.depends("type", "quic");
+		o.depends("type", "h3");
 
 		// certificate verify
 		o = s.taboption("advanced", form.Flag, "no_check_certificate", _("No check certificate"),
@@ -974,8 +1031,10 @@ return view.extend({
 		o.rmempty = true
 		o.default = o.disabled
 		o.modalonly = true;
-		o.depends("type", "tls")
-		o.depends("type", "https")
+		o.depends("type", "tls");
+		o.depends("type", "https");
+		o.depends("type", "quic");
+		o.depends("type", "h3");
 
 		// SNI host name
 		o = s.taboption("advanced", form.Value, "host_name", _("TLS SNI name"),
@@ -984,8 +1043,10 @@ return view.extend({
 		o.datatype = "hostname"
 		o.rempty = true
 		o.modalonly = true;
-		o.depends("type", "tls")
-		o.depends("type", "https")
+		o.depends("type", "tls");
+		o.depends("type", "https");
+		o.depends("type", "quic");
+		o.depends("type", "h3");
 
 		// http host
 		o = s.taboption("advanced", form.Value, "http_host", _("HTTP Host"),
@@ -994,7 +1055,8 @@ return view.extend({
 		o.datatype = "hostname"
 		o.rempty = true
 		o.modalonly = true;
-		o.depends("type", "https")
+		o.depends("type", "https");
+		o.depends("type", "h3");
 
 		// SPKI pin
 		o = s.taboption("advanced", form.Value, "spki_pin", _("TLS SPKI Pinning"),
@@ -1004,8 +1066,10 @@ return view.extend({
 		o.datatype = "string"
 		o.rempty = true
 		o.modalonly = true;
-		o.depends("type", "tls")
-		o.depends("type", "https")
+		o.depends("type", "tls");
+		o.depends("type", "https");
+		o.depends("type", "quic");
+		o.depends("type", "h3");
 
 		// mark
 		o = s.taboption("advanced", form.Value, "set_mark", _("Marking Packets"),
@@ -1084,7 +1148,7 @@ return view.extend({
 			if (value.match(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/)) {
 				return true;
 			}
-
+			
 			return _("Client address format error, please input ip adress or mac address.");
 		}
 
@@ -1095,7 +1159,7 @@ return view.extend({
 		o.rempty = true
 		o.modalonly = true;
 		o.root_directory = "/etc/smartdns/ip-set"
-
+		
 		o = s.taboption("basic", form.Value, "server_group", _("Server Group"), _("DNS Server group belongs to, such as office, home."))
 		o.rmempty = true
 		o.placeholder = "default"
@@ -1195,7 +1259,7 @@ return view.extend({
 
 			return true;
 		}
-
+		
 		// NFTset name;
 		o = s.taboption("advanced", form.Value, "nftset_name", _("NFTset Name"), _("NFTset name, format: [#[4|6]:[family#table#set]]"));
 		o.rmempty = true;

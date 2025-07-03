@@ -1,6 +1,6 @@
 /*************************************************************************
  *
- * Copyright (C) 2018-2024 Ruilin Peng (Nick) <pymumu@gmail.com>.
+ * Copyright (C) 2018-2025 Ruilin Peng (Nick) <pymumu@gmail.com>.
  *
  * smartdns is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ return view.extend({
 					var button = ev.target;
 					button.disabled = true;
 					button.textContent = _('Clear Logs...');
-					fs.exec_direct('/usr/libexecsmartdns-audit-call', ['clear_log'])
+					fs.exec('/usr/libexec/smartdns-audit-call', ['clear_log'])
 						.then(function () {
 							button.textContent = _('Logs cleared successfully!');
 							setTimeout(function () {
@@ -114,9 +114,9 @@ return view.extend({
 
 
 		poll.add(L.bind(function () {
-			return fs.exec_direct('/usr/libexec/smartdns-audit-call', ['tail'])
+			return fs.exec('/usr/libexec/smartdns-audit-call', ['tail'])
 				.then(function (res) {
-					var log = E('pre', { 'wrap': 'pre' }, [res.trim() || _('Log is clean.')]);
+					var log = E('pre', { 'wrap': 'pre' }, [res.stdout.trim() || _('Log is clean.')]);
 
 					dom.content(log_textarea, log);
 					log.scrollTop = log.scrollHeight;
