@@ -56,12 +56,11 @@ manage_cron() {
 }
 
 # 启动实例
-start_instance() {
-    stop_instance
-
+start_service() {
     get_dnsmasq_conf
 
     # 读取配置
+    config_load "$CONF"
     config_get_bool enabled "config" "enabled" "0"
     [ "$enabled" -eq 1 ] || return 1
 
@@ -120,7 +119,10 @@ start_instance() {
 }
 
 # 停止服务时清理配置和日志
-stop_instance() {
+stop_service() {
+    # 终止进程
+    [ -n "$PROG" ] && pidof "$PROG" >/dev/null && kill -9 $(pidof "$PROG") 2>/dev/null
+
     # 删除 dnsmasq 配置
     get_dnsmasq_conf
 
@@ -133,6 +135,8 @@ stop_instance() {
     manage_cron del
 
     # 禁用服务时删除日志文件
+    config_load "$CONF"
+
     config_get_bool enabled "config" "enabled" "0"
     [ "$enabled" -eq 0 ] && [ -f "$LOG_FILE" ] && {
         rm -f "$LOG_FILE"
@@ -140,24 +144,14 @@ stop_instance() {
     }
 }
 
-# 启动服务
-start_service() {
-    config_load "$CONF"
-    config_foreach start_instance "$CONF"
+# 重新加载服务
+reload_service() {
+    stop
+    start
 }
 
 # 服务触发器
 service_triggers() {
     procd_add_reload_trigger "$CONF"
-}
-
-# 服务启动后触发
-service_started() {
-    procd_set_config_changed firewall
-}
-
-# 服务停止后触发
-service_stopped() {
-    procd_set_config_changed firewall
 }
 
