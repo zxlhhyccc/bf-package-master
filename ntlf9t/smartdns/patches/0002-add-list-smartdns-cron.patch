@@ -75,7 +75,7 @@
  	config_get ipset_name "$section" "ipset_name" ""
  	[ -z "$ipset_name" ] || conf_append "ipset" "$ipset_name"
  
-@@ -803,6 +839,7 @@ load_service()
+@@ -809,6 +845,7 @@ load_service()
  		[ "$old_enabled" = "0" ] && return 1
  		[ "$old_port" = "53" ] && [ "$old_auto_set_dnsmasq" = "1" ] && stop_main_dns "0"
  		[ "$old_port" != "53" ] && [ "$old_auto_set_dnsmasq" = "1" ] && stop_forward_dnsmasq "$old_port" "0"
