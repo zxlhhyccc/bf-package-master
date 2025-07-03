@@ -3360,9 +3360,6 @@ msgstr "绕过服务器地址，防止重复代理"
 msgid "Warning: Unsupported format, Proxies Address Skip Function Ignore Proxy-providers File"
 msgstr "警告：不支持的格式，绕过代理服务器地址功能已忽略代理集文件"
 
-msgid "Choose CDN For Downloading"
-msgstr "选择 CDN 进行加速下载"
-
 msgid "Custom Your CDN URL"
 msgstr "自定义链接地址"
 
@@ -3906,9 +3903,6 @@ msgstr "更新"
 msgid "Failed to get startup log after retries"
 msgstr "重试后仍无法获取启动日志"
 
-msgid "Start Failed"
-msgstr "启动失败"
-
 msgid "Starting..."
 msgstr "启动中..."
 
@@ -3947,9 +3941,6 @@ msgstr "重启中..."
 
 msgid "Failed to restart core"
 msgstr "重启内核失败"
-
-msgid "Restart Failed"
-msgstr "重启失败"
 
 msgid "Invalid config file selected"
 msgstr "选择的配置文件无效"
