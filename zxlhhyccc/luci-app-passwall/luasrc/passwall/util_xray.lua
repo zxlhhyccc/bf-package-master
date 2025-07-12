@@ -37,7 +37,7 @@ local function get_domain_excluded()
 	if not content then return nil end
 	local hosts = {}
 	string.gsub(content, '[^' .. "\n" .. ']+', function(w)
-		local s = w:gsub("^%s*(.-)%s*$", "%1") -- Trim
+		local s = api.trim(w)
 		if s == "" then return end
 		if s:find("#") and s:find("#") == 1 then return end
 		if not s:find("#") or s:find("#") ~= 1 then table.insert(hosts, s) end
@@ -794,7 +794,7 @@ function gen_config(var)
 						subjectSelector = { "blc-" },
 						pingConfig = {
 							destination = _node.useCustomProbeUrl and _node.probeUrl or nil,
-							interval = _node.probeInterval or "1m",
+							interval = (api.format_go_time(_node.probeInterval) ~= "0s") and api.format_go_time(_node.probeInterval) or "1m",
 							sampling = 3,
 							timeout = "5s"
 						}
