@@ -1149,6 +1149,9 @@ msgstr "删除所有文件"
 msgid "SS/SSR/Vmess or Other Link And Subscription Address is Supported When Online Subscription Conversion is Enabled, Multiple Links Should be One Per Line or Separated By |"
 msgstr "在线订阅转换启用时支持：SS/SSR/Vmess 等节点链接和订阅链接，多个链接请每行一个或用 | 分隔"
 
+msgid "URI and subscription address is supported when online subscription conversion enabled, multiple links should be one per line or separated by"
+msgstr "在线订阅转换启用时支持：节点链接和订阅链接，多个链接请每行一个或使用分隔符"
+
 msgid "Template Name"
 msgstr "订阅转换模板"
 
@@ -1449,8 +1452,8 @@ msgstr "页面已切换为 Redir-Host 模式！"
 msgid "IP Address"
 msgstr "IP 地址"
 
-msgid "Website Access Check"
-msgstr "网站访问检查"
+msgid "Access Check"
+msgstr "访问检查"
 
 msgid "Baidu Search"
 msgstr "百度搜索"
@@ -2101,6 +2104,9 @@ msgid "OpenClash Already Stop!"
 msgstr "OpenClash 关闭成功！"
 
 msgid "Reload OpenClash Firewall Rules..."
+msgstr "重置 OpenClash 防火墙规则..."
+
+msgid "Manually Reload Firewall Rules..."
 msgstr "重置 OpenClash 防火墙规则..."
 
 msgid "Warning: OpenClash Now Disabled, Need Start From Luci Page, Exit..."
@@ -3702,9 +3708,6 @@ msgstr "支持 YAML 文件，最大 10MB"
 msgid "Subscription URL"
 msgstr "订阅地址"
 
-msgid "Enter subscription URL (http:// or https://)"
-msgstr "请输入订阅地址（http:// 或 https://）"
-
 msgid "User-Agent"
 msgstr "User-Agent"
 
@@ -3833,6 +3836,9 @@ msgstr "按 F11 全屏，Esc 退出全屏，Ctrl+鼠标滚轮缩放"
 
 msgid "Please select a config file first"
 msgstr "请先选择一个配置文件"
+
+msgid "No config files found, Please upload a config file to get started"
+msgstr "未找到配置文件，请先上传或订阅一个配置"
 
 msgid "Unknown"
 msgstr "未知"
@@ -3965,3 +3971,54 @@ msgstr "到期时间"
 
 msgid "Use RAW address download"
 msgstr "使用原始地址下载"
+
+msgid "Enter custom User-Agent"
+msgstr "输入自定义 User-Agent"
+
+msgid "Stream Unlock"
+msgstr "流媒体解锁"
+
+msgid "Previous"
+msgstr "上一个"
+
+msgid "Next"
+msgstr "下一个"
+
+msgid "Enter subscription URL or multiple links (one per line)"
+msgstr "输入订阅地址或多个链接（每行一个）"
+
+msgid "Enter custom convert address"
+msgstr "输入自定义转换地址"
+
+msgid "Enter custom template URL"
+msgstr "输入自定义模板地址"
+
+msgid "eg: rename=match@replace, one param per line"
+msgstr "例如：rename=match@replace，每行一个参数"
+
+msgid "Enter keywords to include nodes (one per line)"
+msgstr "输入包含节点的关键词（每行一个）"
+
+msgid "Enter keywords to exclude nodes (one per line)"
+msgstr "输入排除节点的关键词（每行一个）"
+
+msgid "Expire Time"
+msgstr "过期时间"
+
+msgid "Remaining Traffic"
+msgstr "剩余流量"
+
+msgid "TG Group"
+msgstr "TG群"
+
+msgid "Invalid subscription URL format. Support HTTP/HTTPS subscription URLs or protocol links, can be separated by newlines or |"
+msgstr "订阅地址格式无效。支持 HTTP/HTTPS 订阅地址或协议链接，可以用换行符或 | 分隔"
+
+msgid "Invalid subscription URL format. Only single HTTP/HTTPS subscription URL is supported when subscription conversion is disabled"
+msgstr "订阅地址格式无效。未启用订阅转换时仅支持单个 HTTP/HTTPS 订阅地址"
+
+msgid "Advanced Options"
+msgstr "高级选项"
+
+msgid "Show more subscription options"
+msgstr "显示更多订阅设置"
