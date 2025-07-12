@@ -15,10 +15,10 @@ PKG_SOURCE_VERSION:=130a9c06016d4aa12fede5edc94dc847c81640d7
 PKG_MIRROR_HASH:=d2be6c1abade9e8034d9f6e28dabe431ecbd27cdcc1f88cee72826a1c36b019e
 
 SMARTDNS_WEBUI_VERSION:=1.0.0
-SMAETDNS_WEBUI_SOURCE_PROTO:=git
+SMARTDNS_WEBUI_SOURCE_PROTO:=git
+SMARTDNS_WEBUI_FILE:=smartdns-webui-$(SMARTDNS_WEBUI_VERSION).tar.gz
 SMARTDNS_WEBUI_SOURCE_URL:=https://github.com/pymumu/smartdns-webui.git
 SMARTDNS_WEBUI_SOURCE_VERSION:=35cbf4a1940f5dd32670c69bd5cc02437ad073e7
-SMARTDNS_WEBUI_FILE:=smartdns-webui-$(SMARTDNS_WEBUI_VERSION).tar.gz
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -35,7 +35,7 @@ PKG_BUILD_DEPENDS:= \
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 include $(INCLUDE_DIR)/package.mk
 
-MAKE_VARS += VER=$(PKG_VERSION) 
+MAKE_VARS += VER=$(PKG_VERSION)
 MAKE_PATH:=src
 
 define Package/smartdns/default
@@ -127,16 +127,16 @@ endef
 
 define Download/smartdns-webui
 	FILE:=$(SMARTDNS_WEBUI_FILE)
-	PROTO:=$(SMAETDNS_WEBUI_SOURCE_PROTO)
+	PROTO:=$(SMARTDNS_WEBUI_SOURCE_PROTO)
 	URL:=$(SMARTDNS_WEBUI_SOURCE_URL)
-	MIRROR_HASH:=04873507d717b41fcdca22835ddb92271448696d2aa865320650aa1dbb20f6c4
+	HASH:=400a0d5a9d57f24058261d5c6f64502e389e40aac36bc40f62e68dbd7cb4121a
 	VERSION:=$(SMARTDNS_WEBUI_SOURCE_VERSION)
-	HASH:=$(SMARTDNS_WEBUI_HASH)
 	SUBDIR:=smartdns-webui
 endef
+
 $(eval $(call Download,smartdns-webui))
 
-ifdef CONFIG_PACKAGE_smartdns-ui
+ifeq ($(CONFIG_PACKAGE_smartdns-ui),y)
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(TAR) -C $(PKG_BUILD_DIR)/ -xf $(DL_DIR)/$(SMARTDNS_WEBUI_FILE)
@@ -145,7 +145,7 @@ endif
 
 define Build/Compile
 	$(call Build/Compile/Default,smartdns)
-ifdef CONFIG_PACKAGE_smartdns-ui
+ifeq ($(CONFIG_PACKAGE_smartdns-ui),y)
 	$(call Build/Compile/smartdns-ui)
 	$(call Build/Compile/smartdns-webui)
 endif
