@@ -30,6 +30,7 @@ PKG_BUILD_PARALLEL:=1
 # PACKAGE_smartdns-ui:node/host
 PKG_BUILD_DEPENDS:= \
 	PACKAGE_smartdns-ui:rust/host \
+	PACKAGE_smartdns-ui:rustup/host \
 	PACKAGE_smartdns-ui:node-pnpm/host
 
 include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
