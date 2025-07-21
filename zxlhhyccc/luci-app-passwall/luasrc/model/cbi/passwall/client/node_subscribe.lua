@@ -66,6 +66,11 @@ if api.is_js_luci() then
 	end
 end
 
+m.render = function(self, ...)
+	Map.render(self, ...)
+	api.optimize_cbi_ui()
+end
+
 -- [[ Subscribe Settings ]]--
 s = m:section(TypedSection, "global_subscribe", "")
 s.anonymous = true
@@ -145,7 +150,7 @@ end
 o = s:option(Button, "_update", translate("Manual subscription All"))
 o.inputstyle = "apply"
 function o.write(t, n)
-	luci.sys.call("lua /usr/share/" .. appname .. "/subscribe.lua start > /dev/null 2>&1 &")
+	luci.sys.call("lua /usr/share/" .. appname .. "/subscribe.lua start all manual > /dev/null 2>&1 &")
 	m.no_commit = true
 	luci.http.redirect(api.url("log"))
 end
@@ -215,7 +220,7 @@ end
 o = s:option(Button, "_update", translate("Manual subscription"))
 o.inputstyle = "apply"
 function o.write(t, n)
-	luci.sys.call("lua /usr/share/" .. appname .. "/subscribe.lua start " .. n .. " > /dev/null 2>&1 &")
+	luci.sys.call("lua /usr/share/" .. appname .. "/subscribe.lua start " .. n .. " manual > /dev/null 2>&1 &")
 	m.no_commit = true
 	luci.http.redirect(api.url("log"))
 end
