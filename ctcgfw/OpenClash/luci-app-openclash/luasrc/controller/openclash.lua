@@ -3159,16 +3159,16 @@ function action_oc_action()
 	if action == "start" then
 		uci:set("openclash", "config", "enable", "1")
 		uci:commit("openclash")
-		luci.sys.call("/etc/init.d/openclash start >/dev/null 2>&1 &")
+		luci.sys.call("/etc/init.d/openclash start >/dev/null 2>&1")
 	elseif action == "stop" then
 		uci:set("openclash", "config", "enable", "0")
 		uci:commit("openclash")
 		luci.sys.call("ps | grep openclash | grep -v grep | awk '{print $1}' | xargs -r kill -9 >/dev/null 2>&1")
-		luci.sys.call("/etc/init.d/openclash stop >/dev/null 2>&1 &")
+		luci.sys.call("/etc/init.d/openclash stop >/dev/null 2>&1")
 	elseif action == "restart" then
 		uci:set("openclash", "config", "enable", "1")
 		uci:commit("openclash")
-		luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
+		luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1")
 	else
 		luci.http.status(400, "Invalid action parameter")
 		return
@@ -3334,6 +3334,47 @@ function action_config_file_read()
     local is_overwrite = (config_file == "/etc/openclash/custom/openclash_custom_overwrite.sh")
 
     if not is_overwrite then
+        if string.match(config_file, "^/etc/openclash/[^/%.]+%.ya?ml$") then
+            local stat = nixio.fs.stat(config_file)
+            if stat and stat.type == "reg" then
+                if stat.size > 10 * 1024 * 1024 then
+                    luci.http.prepare_content("application/json")
+                    luci.http.write_json({
+                        status = "error",
+                        message = "Config file too large (max 10MB)"
+                    })
+                    return
+                end
+                local content = fs.readfile(config_file) or ""
+                luci.http.prepare_content("application/json")
+                luci.http.write_json({
+                    status = "success",
+                    content = content,
+                    file_info = {
+                        path = config_file,
+                        size = stat.size,
+                        mtime = stat.mtime,
+                        readable_size = fs.filesize(stat.size),
+                        last_modified = os.date("%Y-%m-%d %H:%M:%S", stat.mtime)
+                    }
+                })
+                return
+            else
+                luci.http.prepare_content("application/json")
+                luci.http.write_json({
+                    status = "success",
+                    content = "",
+                    file_info = {
+                        path = config_file,
+                        size = 0,
+                        mtime = 0,
+                        readable_size = "0 KB",
+                        last_modified = ""
+                    }
+                })
+                return
+            end
+        end
         if not string.match(config_file, "^/etc/openclash/config/[^/%.]+%.ya?ml$") then
             luci.http.prepare_content("application/json")
             luci.http.write_json({

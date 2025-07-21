@@ -1644,9 +1644,6 @@ msgstr "更新前测试失败，文件保存在 /tmp/openclash.apk，请尝试�
 msgid "Pre update test passed, ready to update and please do not refresh the page and other operations..."
 msgstr "更新前测试通过，准备开始更新，更新过程请不要刷新页面和进行其他操作..."
 
-msgid "Tip: Uninstalling the old version, please do not refresh the page or do other operations..."
-msgstr "提示：正在卸载旧版本，更新过程请不要刷新页面和进行其他操作..."
-
 msgid "Installing the new version, please do not refresh the page or do other operations..."
 msgstr "正在安装新版本，更新过程请不要刷新页面和进行其他操作..."
 
@@ -2102,6 +2099,9 @@ msgstr "第六步：删除 OpenClash 残留文件..."
 
 msgid "OpenClash Already Stop!"
 msgstr "OpenClash 关闭成功！"
+
+msgid "Skip Reload OpenClash Firewall Rules Until 5 Minutes Later..."
+msgstr "5 分钟内重置已超过 3 次，跳过本次 OpenClash 防火墙规则重置..."
 
 msgid "Reload OpenClash Firewall Rules..."
 msgstr "重置 OpenClash 防火墙规则..."
@@ -2739,8 +2739,14 @@ msgstr "使用指定代理（CDN）反代插件和配置文件中的 Github 地�
 msgid "File Edit"
 msgstr "文件编辑"
 
+msgid "Overwrite Edit"
+msgstr "覆写设置"
+
 msgid "Create File"
 msgstr "新建文件"
+
+msgid "You are editing the overwrite script, please note that some settings may cause the abnormal, be careful with the modification!"
+msgstr "您正在编辑覆写脚本，请注意某些设置可能会导致异常，请谨慎修改！"
 
 msgid "Paste the name of the new file (including the extension) here:"
 msgstr "请在此输入要新建的文件名称（含扩展名）："
@@ -3831,6 +3837,9 @@ msgstr "下载"
 msgid "Save"
 msgstr "保存"
 
+msgid "Compare"
+msgstr "对比"
+
 msgid "Loading config file..."
 msgstr "正在加载配置文件..."
 
@@ -3838,7 +3847,13 @@ msgid "Ready"
 msgstr "就绪"
 
 msgid "Press F11 for fullscreen, Esc to exit fullscreen, Ctrl+Mouse Wheel to zoom"
-msgstr "按 F11 全屏，Esc 退出全屏，Ctrl+鼠标滚轮缩放"
+msgstr "按 F11 全屏，Esc 退出全屏，Ctrl+ 鼠标滚轮缩放"
+
+msgid "Press F10 to toggle differences, F11 for fullscreen, Esc to exit fullscreen, Ctrl+Mouse Wheel to zoom"
+msgstr "按 F10 显示 Diff，F11 全屏，Esc 退出全屏，Ctrl+ 鼠标滚轮缩放"
+
+msgid "Compare mode: left(Original Config), right(Runtime Config)"
+msgstr "对比模式：左侧（原始配置），右侧（运行配置）"
 
 msgid "Please select a config file first"
 msgstr "请先选择一个配置文件"
@@ -3975,8 +3990,8 @@ msgstr "下载订阅配置失败"
 msgid "Expire Date"
 msgstr "到期时间"
 
-msgid "Use RAW address download"
-msgstr "使用原始地址下载"
+msgid "RAW address"
+msgstr "原始地址"
 
 msgid "Enter custom User-Agent"
 msgstr "输入自定义 User-Agent"
@@ -4031,3 +4046,12 @@ msgstr "显示更多订阅设置"
 
 msgid "Overwrite"
 msgstr "覆写"
+
+msgid "Original Config"
+msgstr "原始配置"
+
+msgid "Runtime Config"
+msgstr "运行配置"
+
+msgid "Runtime config (read only)"
+msgstr "运行配置（只读）"
