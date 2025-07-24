@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=7z
-PKG_VERSION:=23.08
+PKG_VERSION:=25.00
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)$(subst .,,$(PKG_VERSION))-src.tar.xz
 PKG_SOURCE_URL:=https://7-zip.org/a/
-PKG_HASH:=aa04aac906a04df59e7301f4c69e9f48808e6c8ecae4eb697703a47bfb0ac042
+PKG_HASH:=bff9e69b6ca73a5b8715d7623870a39dc90ad6ce1f4d1070685843987af1af9b
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=LGPL-2.1-or-later BSD-3-Clause unRAR
@@ -27,24 +27,20 @@ define Package/7z
   SUBMENU:=Compression
   TITLE:=File archiver with a high compression ratio
   URL:=https://7-zip.org/
-  DEPENDS:=+libstdcpp @!powerpc
+  DEPENDS:=+libstdcpp
 endef
+
+HOST_MAKE_PATH:=CPP/7zip/Bundles/Alone2
+HOST_MAKE_FLAGS+= \
+	-f ../../cmpl_gcc.mak \
+	CC="$(HOSTCC) $(HOST_CFLAGS)" \
+	CXX="$(HOSTCXX) $(HOST_CXXFLAGS)"
 
 MAKE_PATH:=CPP/7zip/Bundles/Alone2
-
-define Host/Compile
-	+$(MAKE) $(PKG_JOBS) -C $(HOST_BUILD_DIR)/$(MAKE_PATH) \
-		-f ../../cmpl_gcc.mak \
-		CC="$(HOSTCC) $(HOST_CFLAGS)" \
-		CXX="$(HOSTCXX) $(HOST_CXXFLAGS)"
-endef
-
-define Build/Compile
-	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/$(MAKE_PATH) \
-		-f ../../cmpl_gcc.mak \
-		CC="$(TARGET_CC) $(TARGET_CFLAGS)" \
-		CXX="$(TARGET_CXX) $(TARGET_CXXFLAGS)"
-endef
+MAKE_FLAGS+= \
+	-f ../../cmpl_gcc.mak \
+	CC="$(TARGET_CC) $(TARGET_CFLAGS)" \
+	CXX="$(TARGET_CXX) $(TARGET_CXXFLAGS)"
 
 define Host/Clean
 	$(RM) $(STAGING_DIR_HOSTPKG)/bin/7z $(STAGING_DIR_HOSTPKG)/bin/7zz
