@@ -36,13 +36,15 @@ function update() {
 	frontend_sha="$(curl -sL https://github.com/$repo/releases/download/v$tag/AdGuardHome_frontend.tar.gz | sha256sum | awk '{print $1}')"
 	[ -n "$frontend_sha" ] || return 1
 
-	line="$(awk "/FILE:=\\$\(${res}_FILE\)/ {print NR}" "$CURDIR/Makefile")"
+	#line="$(awk "/FILE:=\\$\(${res}_FILE\)/ {print NR}" "$CURDIR/Makefile")"
+	line="$(awk "/FRONTEND_HASH:=/ {print NR}" "$CURDIR/Makefile")"
 
-        frontend_old_sha="$(awk -F "HASH:=" -v next_line="$((line + 1))" 'NR==next_line {print $2}' "$CURDIR/Makefile" | xargs)"
+        #frontend_old_sha="$(awk -F "HASH:=" -v next_line="$((line + 1))" 'NR==next_line {print $2}' "$CURDIR/Makefile" | xargs)"
+        frontend_old_sha="$(awk -F "FRONTEND_HASH:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
 
 	[ "$frontend_sha" != "$frontend_old_sha" ] || return 3
 
-	sed -i -e "$((line + 1))s/FRONTEND_HASH:=.*/FRONTEND_HASH:=$frontend_sha/" "$CURDIR/Makefile"
+	sed -i -e "$((line))s/FRONTEND_HASH:=.*/FRONTEND_HASH:=$frontend_sha/" "$CURDIR/Makefile"
 
 	# 获取commit值
 	  commit="$(git ls-remote  https://github.com/$repo.git beta-v0.107 | cut -f1)"
