@@ -20,7 +20,7 @@ define Package/mwan3plus
    SECTION:=net
    CATEGORY:=Network
    SUBMENU:=Routing and Redirection
-   PROVIDES:=mwan3
+   PROVIDES:=+mwan3
    DEPENDS:= \
      +ip \
      +ipset \
