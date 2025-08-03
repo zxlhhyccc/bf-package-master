@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-core-v5
-PKG_VERSION:=5.37.0
+PKG_VERSION:=5.38.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
