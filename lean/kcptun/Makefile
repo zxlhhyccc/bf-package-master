@@ -74,7 +74,8 @@ endef
 
 define Build/UpdateDependencies
 	cd $(PKG_BUILD_DIR) && \
-		go mod tidy
+		go mod tidy && \
+		go mod vendor
 endef
 
 KCPTUN_COMPONENTS:=server client
