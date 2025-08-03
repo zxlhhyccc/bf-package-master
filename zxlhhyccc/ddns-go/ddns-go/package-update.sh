@@ -11,8 +11,8 @@ OLD_VER=$(grep -oP '^PKG_VERSION:=\K.*' "$CURDIR/Makefile")
 OLD_COMMIT=$(grep -oP '^PKG_SOURCE_VERSION:=\K.*' "$CURDIR/Makefile")
 OLD_CHECKSUM=$(grep -oP '^PKG_MIRROR_HASH:=\K.*' "$CURDIR/Makefile")
 
-REPO="https://github.com/apernet/hysteria"
-REPO_API="https://api.github.com/repos/apernet/hysteria/releases/latest"
+REPO="https://github.com/jeessy2/ddns-go"
+REPO_API="https://api.github.com/repos/jeessy2/ddns-go/releases/latest"
 
 # 获取新 TAG、COMMIT 等
 TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
@@ -24,10 +24,10 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     echo "新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
 
     # 删除旧源码包和哈希
-    rm -f dl/hysteria-${OLD_VER}.tar.gz
+    rm -f dl/ddns-go-${OLD_VER}.tar.gz
 
     # 清理旧缓存（触发重新编译）
-    make package/hysteria/clean V=s
+    make package/ddns-go/clean V=s
 
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
@@ -39,10 +39,10 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
         -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
     # 重新下载源码包
-    make package/hysteria/download V=s
+    make package/ddns-go/download V=s
 
     # 重新生成校验和
-    TARFILE="dl/hysteria-${VER}.tar.gz"
+    TARFILE="dl/ddns-go-${VER}.tar.gz"
     if [ -f "$TARFILE" ]; then
         CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
         ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
