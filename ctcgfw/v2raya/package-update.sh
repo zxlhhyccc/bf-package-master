@@ -1,5 +1,5 @@
 #!/bin/bash
-# 自动更新 Xray-core 版本、commit 并计算 HASH
+# 自动更新 v2rayA 版本、commit 并计算 HASH
 
 set -e
 
@@ -11,8 +11,8 @@ OLD_VER=$(grep -oP '^PKG_VERSION:=\K.*' "$CURDIR/Makefile")
 OLD_COMMIT=$(grep -oP '^PKG_SOURCE_VERSION:=\K.*' "$CURDIR/Makefile")
 OLD_CHECKSUM=$(grep -oP '^PKG_MIRROR_HASH:=\K.*' "$CURDIR/Makefile")
 
-REPO="https://github.com/AdguardTeam/dnsproxy"
-REPO_API="https://api.github.com/repos/AdguardTeam/dnsproxy/releases/latest"
+REPO="https://github.com/v2rayA/v2rayA"
+REPO_API="https://api.github.com/repos/v2rayA/v2rayA/releases/latest"
 
 # 获取新 TAG、COMMIT 等
 TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
@@ -24,10 +24,10 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     echo "新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
 
     # 删除旧源码包和哈希
-    rm -f dl/dnsproxy-${OLD_VER}.tar.gz
+    rm -f dl/v2rayA-${OLD_VER}.tar.gz
 
     # 清理旧缓存（触发重新编译）
-    make package/dnsproxy/clean V=s
+    make package/v2raya/clean V=s
 
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
@@ -38,10 +38,10 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     echo "🧹 清空旧 HASH：$OLD_CHECKSUM"
 
     # 重新下载源码包
-    make package/dnsproxy/download V=s
+    make package/v2raya/download V=s
 
     # 重新生成校验和
-    TARFILE="dl/dnsproxy-${VER}.tar.gz"
+    TARFILE="dl/v2rayA-${VER}.tar.gz"
     if [ -f "$TARFILE" ]; then
         CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
         ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \

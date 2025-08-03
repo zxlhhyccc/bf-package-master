@@ -32,11 +32,10 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
         -e "s|^PKG_VERSION:=.*|PKG_VERSION:=${VER}|" \
-        -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|"
+        -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|" \
+        -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
     echo "🧹 清空旧 HASH：$OLD_CHECKSUM"
-    ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
-        -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
     # 重新下载源码包
     make package/shadowsocks-rust/download V=s
