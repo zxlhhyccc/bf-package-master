@@ -1,5 +1,5 @@
 #!/bin/bash
-# 自动更新 Xray-core 版本、commit 并计算 HASH
+# 自动更新 ddns-go 版本、commit 并计算 HASH
 
 set -e
 
@@ -17,7 +17,7 @@ REPO_API="https://api.github.com/repos/jeessy2/ddns-go/releases/latest"
 # 获取新 TAG、COMMIT 等
 TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
 COMMIT="$(git ls-remote "$REPO" HEAD | cut -f1)"
-VER="${TAG#app/v}"  # TAG 形如 v1.8.11
+VER="${TAG#v}"  # TAG 形如 v1.8.11
 
 # 如果版本或 commit 变了，才清除并更新
 if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
