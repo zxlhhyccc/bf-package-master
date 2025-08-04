@@ -22,7 +22,6 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_BUILD_ACME \
 	CONFIG_SING_BOX_BUILD_CLASH_API \
 	CONFIG_SING_BOX_BUILD_DHCP \
-	CONFIG_SING_BOX_BUILD_ECH \
 	CONFIG_SING_BOX_BUILD_EMBEDDED_TOR \
 	CONFIG_SING_BOX_BUILD_GRPC \
 	CONFIG_SING_BOX_BUILD_GVISOR \
@@ -87,10 +86,6 @@ define Package/sing-box/config
 	bool "Build with DHCP support"
 	default y
 
-    config SING_BOX_BUILD_ECH
-	bool "Build with TLS ECH extension support"
-	default y
-
     config SING_BOX_BUILD_EMBEDDED_TOR
 	bool "Build with embedded Tor support"
 	depends on BROKEN
@@ -134,7 +129,6 @@ GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SING_BOX_BUILD_ACME),with_acme) \
 	$(if $(CONFIG_SING_BOX_BUILD_CLASH_API),with_clash_api) \
 	$(if $(CONFIG_SING_BOX_BUILD_DHCP),with_dhcp) \
-	$(if $(CONFIG_SING_BOX_BUILD_ECH),with_ech) \
 	$(if $(CONFIG_SING_BOX_BUILD_EMBEDDED_TOR),with_embedded_tor) \
 	$(if $(CONFIG_SING_BOX_BUILD_GRPC),with_grpc) \
 	$(if $(CONFIG_SING_BOX_BUILD_GVISOR),with_gvisor) \
