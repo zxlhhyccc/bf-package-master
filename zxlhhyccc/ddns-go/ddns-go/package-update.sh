@@ -16,12 +16,13 @@ REPO_API="https://api.github.com/repos/jeessy2/ddns-go/releases/latest"
 
 # 获取新 TAG、COMMIT 等
 TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
-COMMIT="$(git ls-remote "$REPO" HEAD | cut -f1)"
 VER="${TAG#v}"  # TAG 形如 v1.8.11
+
+COMMIT="$(git ls-remote "$REPO" HEAD | cut -f1)"
 
 # 如果版本或 commit 变了，才清除并更新
 if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
-    echo "新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
+    echo "⬆️  新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
 
     # 删除旧源码包和哈希
     rm -f dl/ddns-go-${OLD_VER}.tar.gz
@@ -32,11 +33,10 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
         -e "s|^PKG_VERSION:=.*|PKG_VERSION:=${VER}|" \
-        -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|"
+        -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|" \
+        -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
     echo "🧹 清空旧 HASH：$OLD_CHECKSUM"
-    ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
-        -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
     # 重新下载源码包
     make package/ddns-go/download V=s

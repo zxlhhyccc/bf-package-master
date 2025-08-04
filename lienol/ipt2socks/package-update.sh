@@ -21,7 +21,7 @@ VER="${TAG#v}"  # TAG 形如 v1.8.11
 
 # 如果版本或 commit 变了，才清除并更新
 if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
-    echo "新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
+    echo "⬆️  新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
 
     # 删除旧源码包和哈希
     rm -f dl/ipt2socks-${OLD_VER}.tar.gz

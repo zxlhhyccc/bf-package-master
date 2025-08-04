@@ -1,5 +1,5 @@
 #!/bin/bash
-# 自动更新 Xray-core 版本、commit 并计算 HASH
+# 自动更新 kcptun 版本、commit 并计算 HASH
 
 set -e
 
@@ -21,7 +21,7 @@ VER="${TAG#v}"  # TAG 形如 v1.8.11
 
 # 如果版本或 commit 变了，才清除并更新
 if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
-    echo "新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
+    echo "⬆️  新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
 
     # 删除旧源码包和哈希
     rm -f dl/kcptun-${OLD_VER}.tar.gz
@@ -32,11 +32,10 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
         -e "s|^PKG_VERSION:=.*|PKG_VERSION:=${VER}|" \
-        -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|"
+        -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|" \
+        -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
     echo "🧹 清空旧 HASH：$OLD_CHECKSUM"
-    ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
-        -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
     # 重新下载源码包
     make package/kcptun/download V=s
