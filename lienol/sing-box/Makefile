@@ -26,6 +26,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_BUILD_GRPC \
 	CONFIG_SING_BOX_BUILD_GVISOR \
 	CONFIG_SING_BOX_BUILD_QUIC \
+	CONFIG_SING_BOX_BUILD_TAILSCALE \
 	CONFIG_SING_BOX_BUILD_UTLS \
 	CONFIG_SING_BOX_BUILD_V2RAY_API \
 	CONFIG_SING_BOX_BUILD_WIREGUARD
@@ -105,6 +106,10 @@ define Package/sing-box/config
       	  Required by HTTP3 DNS transports, Naive inbound,
       	  Hysteria inbound / outbound, and v2ray QUIC transport.
 
+    config SING_BOX_BUILD_TAILSCALE
+    	bool "Build with Tailscale support"
+    	default y
+
     config SING_BOX_BUILD_UTLS
     	bool "Build with uTLS support"
     	default y
@@ -128,6 +133,7 @@ GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SING_BOX_BUILD_GRPC),with_grpc) \
 	$(if $(CONFIG_SING_BOX_BUILD_GVISOR),with_gvisor) \
 	$(if $(CONFIG_SING_BOX_BUILD_QUIC),with_quic) \
+	$(if $(CONFIG_SING_BOX_BUILD_TAILSCALE),with_tailscale) \
 	$(if $(CONFIG_SING_BOX_BUILD_UTLS),with_utls) \
 	$(if $(CONFIG_SING_BOX_BUILD_V2RAY_API),with_v2ray_api) \
 	$(if $(CONFIG_SING_BOX_BUILD_WIREGUARD),with_wireguard) \
