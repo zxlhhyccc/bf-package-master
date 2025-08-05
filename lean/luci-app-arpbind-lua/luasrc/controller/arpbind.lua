@@ -12,5 +12,5 @@ function index()
 	local page = entry({"admin", "network", "arpbind"}, cbi("arpbind"), _("IP/MAC Binding"))
 	page.order = 45
 	page.dependent = true
-	page.acl_depends = { "luci-app-arpbind" }
+	page.acl_depends = { "luci-app-arpbind-lua" }
 end

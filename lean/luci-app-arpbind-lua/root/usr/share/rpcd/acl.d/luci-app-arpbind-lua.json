@@ -1,6 +1,6 @@
 {
- 	"luci-app-arpbind": {
- 		"description": "Grant UCI access for luci-app-arpbind",
+ 	"luci-app-arpbind-lua": {
+ 		"description": "Grant UCI access for luci-app-arpbind-lua",
  		"read": {
  			"uci": [ "arpbind" ]
  		},
