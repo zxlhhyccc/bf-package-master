@@ -54,7 +54,7 @@ define Package/sing-box
     +ca-bundle \
     +kmod-inet-diag \
     +kmod-netlink-diag \
-    +kmod-tun
+    +SING_BOX_BUILD_GVISOR:kmod-tun
   USERID:=sing-box=5566:sing-box=5566
 endef
 
@@ -76,50 +76,50 @@ define Package/sing-box/config
   menu "Customizing build tags"
   if PACKAGE_sing-box
     config SING_BOX_BUILD_ACME
-	bool "Build with ACME TLS certificate issuer support"
+    bool "Build with ACME TLS certificate issuer support"
+    default y
 
     config SING_BOX_BUILD_CLASH_API
-	bool "Build with Clash API support"
-	default y
+    bool "Build with Clash API support"
+    default y
 
     config SING_BOX_BUILD_DHCP
-	bool "Build with DHCP support"
-	default y
+    bool "Build with DHCP support"
 
     config SING_BOX_BUILD_EMBEDDED_TOR
-	bool "Build with embedded Tor support"
-	depends on BROKEN
+    bool "Build with embedded Tor support"
+    depends on BROKEN
 
     config SING_BOX_BUILD_GRPC
-	bool "Build with standard gPRC support"
-	help
-      	  Standard gRPC has good compatibility but poor performance.
+    bool "Build with standard gPRC support"
+    help
+      Standard gRPC has good compatibility but poor performance.
 
     config SING_BOX_BUILD_GVISOR
-	bool "Build with gVisor support"
-	default y
+    bool "Build with gVisor support"
+    default y
 
     config SING_BOX_BUILD_QUIC
-    	bool "Build with QUIC support"
-    	default y
-    	help
-      	  Required by HTTP3 DNS transports, Naive inbound,
-      	  Hysteria inbound / outbound, and v2ray QUIC transport.
+    bool "Build with QUIC support"
+    default y
+    help
+      Required by HTTP3 DNS transports, Naive inbound,
+      Hysteria inbound / outbound, and v2ray QUIC transport.
 
     config SING_BOX_BUILD_TAILSCALE
-    	bool "Build with Tailscale support"
-    	default y
+    bool "Build with Tailscale support"
+    default y
 
     config SING_BOX_BUILD_UTLS
-    	bool "Build with uTLS support"
-    	default y
+    bool "Build with uTLS support"
+    default y
 
     config SING_BOX_BUILD_V2RAY_API
-    	bool "Build with V2Ray API support"
+    bool "Build with V2Ray API support"
 
     config SING_BOX_BUILD_WIREGUARD
-    	bool "Build with WireGuard support"
-    	default y
+    bool "Build with WireGuard support"
+    default y
   endif
 
   endmenu
@@ -156,8 +156,8 @@ define Package/sing-box/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 
 	$(INSTALL_DIR) $(1)/etc/sing-box
-	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/release/config/config.json $(1)/etc/sing-box
-	$(INSTALL_DATA) ./files/config.json.example $(1)/etc/sing-box/config.json.example
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/release/config/config.json $(1)/etc/sing-box
+	#$(INSTALL_DATA) ./files/config.json.example $(1)/etc/sing-box/config.json.example
 
 	$(INSTALL_DIR) $(1)/etc/config/
 	$(INSTALL_CONF) ./files/sing-box.conf $(1)/etc/config/sing-box
