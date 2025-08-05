@@ -16,6 +16,7 @@ REPO="https://github.com/MetaCubeX/mihomo"
 
 # 获取新 COMMIT
 COMMIT="$(git ls-remote "$REPO" "refs/heads/Alpha" | cut -f1)"
+NEW_COMMIT=${COMMIT:0:8}
 
 # 如果 commit 变了，才清除并更新
 if [ "$COMMIT" != "$OLD_COMMIT_FULL" ]; then
@@ -38,7 +39,7 @@ if [ "$COMMIT" != "$OLD_COMMIT_FULL" ]; then
     make package/openclash-meta/download V=s
 
     # 重新生成校验和
-    TARFILE="dl/openclash-meta-alpha-${OLD_COMMIT}.tar.zst"
+    TARFILE="dl/openclash-meta-alpha-${NEW_COMMIT}.tar.zst"
     if [ -f "$TARFILE" ]; then
         CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
         ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
