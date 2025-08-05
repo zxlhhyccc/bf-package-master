@@ -8,6 +8,7 @@ pushd ~/ax6-6.6 || exit 1
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
 OLD_VER=$(grep -oP '^PKG_VERSION:=\K.*' "$CURDIR/Makefile")
+OLD_DATA=$(grep -oP '^PKG_SOURCE_DATE:=\K.*' "$CURDIR/Makefile")
 OLD_COMMIT=$(grep -oP '^PKG_SOURCE_VERSION:=\K.*' "$CURDIR/Makefile")
 OLD_CHECKSUM=$(grep -oP '^PKG_MIRROR_HASH:=\K.*' "$CURDIR/Makefile")
 
@@ -18,11 +19,18 @@ REPO_API="https://api.github.com/repos/xtaci/kcptun/releases/latest"
 TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
 VER="${TAG#v}"  # TAG 形如 v1.8.11
 
+API_DATA="$(curl -s https://api.github.com/repos/xtaci/kcptun/commits \
+    | jq -r '.[0].commit.committer.date' \
+    | cut -d'T' -f1)"
+
 COMMIT="$(git ls-remote "$REPO" HEAD | cut -f1)"
 
 # 如果版本或 commit 变了，才清除并更新
-if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
+if [ "$VER" != "$OLD_VER" ] || \
+    [ "$API_DATA" != "$OLD_DATA" ] || \
+    [ "$COMMIT" != "$OLD_COMMIT" ]; then
     echo "⬆️  新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
+    echo "⬆️  新日期: $API_DATA，旧日期: $OLD_DATA"
 
     # 删除旧源码包和哈希
     rm -f dl/kcptun-${OLD_VER}.tar.gz
@@ -33,6 +41,7 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
         -e "s|^PKG_VERSION:=.*|PKG_VERSION:=${VER}|" \
+        -e "s|^PKG_SOURCE_DATE:=.*|PKG_SOURCE_DATE:=${API_DATA}|" \
         -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|" \
         -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
