@@ -1,6 +1,6 @@
 {
-	"luci-app-gost": {
-		"description": "Grant UCI access for luci-app-gost",
+	"luci-app-gost-lua": {
+		"description": "Grant UCI access for luci-app-gost-lua",
 		"read": {
 			"uci": [ "gost" ]
 		},
