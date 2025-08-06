@@ -5,9 +5,9 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/CareyWang/sub-web.git
-PKG_SOURCE_DATE:=2024-08-07
-PKG_SOURCE_VERSION:=c47bbabe4b1e41803527a3e79d07985416ae8402
-PKG_MIRROR_HASH:=0330bd3cdef239dcc9a36b6ff6bfab016954de077951c8a354fc14950dbc29c8
+PKG_SOURCE_DATE:=2025-01-08
+PKG_SOURCE_VERSION:=a8788c1a02e100ada38efc48ab72f390cd41d54c
+PKG_MIRROR_HASH:=fe5cc55185d5bee5864a1dc40866133b273c49e19801642218daefe1b434d990
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -35,7 +35,7 @@ define Build/Compile
 	( \
 		pushd "$(PKG_BUILD_DIR)"; \
 		yarn install; \
-		NODE_OPTIONS=--openssl-legacy-provider yarn build; \
+		yarn build; \
 		popd ; \
 	)
 endef
