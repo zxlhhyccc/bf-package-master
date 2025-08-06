@@ -9,8 +9,8 @@
 'require view';
 
 return view.extend({
-	load: function () {
-		return fs.exec('/sbin/ifconfig').then(function (res) {
+	load: function() {
+		return fs.exec('/sbin/ifconfig').then(function(res) {
 			if (res.code !== 0 || !res.stdout || res.stdout.trim() === '') {
 				ui.addNotification(
 					null,
@@ -22,13 +22,13 @@ return view.extend({
 			var interfaces = res.stdout.match(/zt[a-z0-9]+/g);
 			if (!interfaces || interfaces.length === 0) return 'No interface online.';
 
-			var promises = interfaces.map(function (name) {
+			var promises = interfaces.map(function(name) {
 				return fs.exec('/sbin/ifconfig', [name]);
 			});
 
-			return Promise.all(promises).then(function (results) {
+			return Promise.all(promises).then(function(results) {
 				var data = results
-					.map(function (res, index) {
+					.map(function(res, index) {
 						if (res.code !== 0 || !res.stdout || res.stdout.trim() === '') {
 							ui.addNotification(
 								null,
@@ -50,13 +50,13 @@ return view.extend({
 					})
 					.filter(Boolean);
 
-				return data.map(function (info) {
+				return data.map(function(info) {
 					var lines = info.stdout.split('\n');
 					var parsedInfo = {
 						name: info.name
 					};
 
-					lines.forEach(function (line) {
+					lines.forEach(function(line) {
 						if (line.includes('HWaddr')) {
 							parsedInfo.mac = line.split('HWaddr')[1].trim().split(' ')[0];
 						} else if (line.includes('inet addr:')) {
@@ -89,7 +89,7 @@ return view.extend({
 		});
 	},
 
-	render: function (data) {
+	render: function(data) {
 		var title = E('h2', { class: 'content' }, _('ZeroTier'));
 		var desc = E(
 			'div',
@@ -106,7 +106,7 @@ return view.extend({
 				E('div', {}, _('No interface online.'))
 			]);
 		}
-		var rows = data.flatMap(function (interfaceData) {
+		var rows = data.flatMap(function(interfaceData) {
 			return [
 				E(
 					'th',

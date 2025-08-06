@@ -6,7 +6,7 @@
 'require tools.widgets as widgets';
 
 return view.extend({
-	render: function () {
+	render() {
 		let m, s, o;
 
 		m = new form.Map('msd_lite', _('Multi Stream daemon Lite'),

@@ -7,7 +7,7 @@
 'require view';
 
 return view.extend({
-	render: function() {
+	render() {
 		let m, s, o;
 
 		m = new form.Map('dae', _('Configuration'),
@@ -54,7 +54,7 @@ return view.extend({
 		return m.render();
 	},
 
-	handleSaveApply: function(ev, mode) {
+	handleSaveApply(ev, mode) {
 		return this.handleSave(ev).then(function() {
 			return L.resolveDefault(fs.exec_direct('/etc/init.d/dae', ['hot_reload']), null);
 		});

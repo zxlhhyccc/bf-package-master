@@ -10,7 +10,7 @@
 'require uci';
 'require view';
 
-var callServiceList = rpc.declare({
+const callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -18,8 +18,8 @@ var callServiceList = rpc.declare({
 });
 
 function getServiceStatus() {
-	return L.resolveDefault(callServiceList('zerotier'), {}).then(function (res) {
-		var isRunning = false;
+	return L.resolveDefault(callServiceList('zerotier'), {}).then(function(res) {
+		let isRunning = false;
 		try {
 			isRunning = res['zerotier']['instances']['instance1']['running'];
 		} catch (e) {}
@@ -28,9 +28,9 @@ function getServiceStatus() {
 }
 
 function renderStatus(isRunning) {
-	var spanTemp =
+	let spanTemp =
 		'<em><span style="color:%s"><strong>%s %s</strong></span></em>';
-	var renderHTML;
+	let renderHTML;
 	if (isRunning) {
 		renderHTML = String.format(spanTemp, 'green', _('ZeroTier'), _('RUNNING'));
 	} else {
@@ -46,12 +46,12 @@ function renderStatus(isRunning) {
 }
 
 return view.extend({
-	load: function () {
+	load: function() {
 		return L.uci.load(['zerotier']);
 	},
 
-	render: function (data) {
-		var m, s, o;
+	render(data) {
+		let m, s, o;
 
 		m = new form.Map(
 			'zerotier',
@@ -63,10 +63,10 @@ return view.extend({
 
 		s = m.section(form.TypedSection);
 		s.anonymous = true;
-		s.render = function () {
-			poll.add(function () {
-				return L.resolveDefault(getServiceStatus()).then(function (res) {
-					var view = document.getElementById('service_status');
+		s.render = function() {
+			poll.add(function() {
+				return L.resolveDefault(getServiceStatus()).then(function(res) {
+					let view = document.getElementById('service_status');
 					view.innerHTML = renderStatus(res);
 				});
 			});
@@ -141,7 +141,7 @@ return view.extend({
 		);
 		o.inputtitle = _('Open website');
 		o.inputstyle = 'apply';
-		o.onclick = function () {
+		o.onclick = function() {
 			window.open('https://my.zerotier.com/network', '_blank');
 		};
 

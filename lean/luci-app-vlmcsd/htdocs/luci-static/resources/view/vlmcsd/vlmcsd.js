@@ -48,7 +48,7 @@ function renderStatus(isRunning) {
 }
 
 return view.extend({
-    load: function() {
+    render() {
         return Promise.all([
             uci.load('vlmcsd'),
         ]);
