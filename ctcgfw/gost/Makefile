@@ -5,18 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gost
-PKG_VERSION:=2.11.5
+PKG_VERSION:=3.2.2
 PKG_RELEASE:=1
 
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=https://codeload.github.com/ginuerzh/gost/tar.gz/v$(PKG_VERSION)?
-# PKG_HASH:=d94b570a7a84094376b8c299d740528f51b540d9162f1db562247a15a89340bf
-
-PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/ginuerzh/gost.git
-PKG_SOURCE_VERSION:=7a2490134aacba8d635708d7adeb54cc524ffdb4
-PKG_MIRROR_HASH:=e462e77bc4af9dea3b23b6ec3d4f35d8ddea1050e9cbae94aafd303e8ca24a21
+PKG_SOURCE_URL:=https://codeload.github.com/go-gost/gost/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=1b127ed18131a6851c5d1a8a72dfa07fd3ab2452eeec22baa62f60c2ed221cb5
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -28,12 +22,12 @@ PKG_CONFIG_DEPENDS:= \
 
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
-GO_PKG:=github.com/ginuerzh/gost
-GO_PKG_BUILD_PKG:=github.com/ginuerzh/gost/cmd/gost
+GO_PKG:=github.com/go-gost/gost
+GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/gost
 GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS_X:=main.version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -42,12 +36,9 @@ define Package/gost
   SECTION:=net
   CATEGORY:=Network
   TITLE:=GO Simple Tunnel
-  URL:=https://github.com/ginuerzh/gost
-  DEPENDS:=$(GO_ARCH_DEPENDS)
-endef
-
-define Package/gost/description
-  A simple security tunnel written in Golang
+  URL:=https://gost.run/
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+  USERID:=gost:gost
 endef
 
 define Package/gost/config
@@ -59,6 +50,11 @@ config GOST_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
 	default n
+endef
+
+define Package/gost/conffiles
+/etc/config/gost
+/etc/gost/
 endef
 
 ifeq ($(CONFIG_GOST_COMPRESS_GOPROXY),y)
@@ -74,15 +70,14 @@ endif
 endef
 
 define Package/gost/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/gost $(1)/usr/bin/gost
+	$(call GoPackage/Package/Install/Bin,$(1))
 
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) $(CURDIR)/files/gost.config $(1)/etc/config/gost
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) $(CURDIR)/files/gost.init $(1)/etc/init.d/gost
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_BIN) $(CURDIR)/files/gost.uci $(1)/etc/uci-defaults/99-gost-migrate
 endef
 
 $(eval $(call GoBinPackage,gost))
