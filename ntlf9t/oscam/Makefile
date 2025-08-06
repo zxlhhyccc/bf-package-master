@@ -6,22 +6,20 @@
 #
 include $(TOPDIR)/rules.mk
 
-PKG_NAME := oscam
-PKG_REV := 33e2d6
-PKG_VERSION := r11518-$(PKG_REV)
-PKG_RELEASE := 1
+PKG_NAME:=oscam
+PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:= git
-#PKG_SOURCE_PROTO := svn
-PKG_SOURCE_VERSION := $(PKG_REV)
-PKG_SOURCE_URL := https://github.com/nx111/oscam.git
-#PKG_SOURCE_URL := http://www.streamboard.tv/svn/oscam/trunk
-#PKG_SOURCE_URL := http://www.oscam.cc/svn/oscam-mirror/trunk
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL:=https://github.com/nx111/oscam.git
+PKG_SOURCE_DATE:=2022-03-07
+PKG_SOURCE_VERSION:=c5b2e655d2948a50bdc5a0db288b10f1955c3bd8
+PKG_MIRROR_HASH:=fad891220c4ea41d0eac5de5d4f41ba54f75c46cdd16ed3ebec61b64aa12b14e
 
-PKG_LICENSE := GPL-3.0
-PKG_LICENSE_FILES:= COPYING
+PKG_LICENSE:=GPL-3.0
+PKG_LICENSE_FILES:=COPYING
+PKG_MAINTAINER:=Tomasz Maciej Nowak <tomek_n@o2.pl>
 
-PKG_MAINTAINER := Tomasz Maciej Nowak <tomek_n@o2.pl>
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -30,23 +28,23 @@ define Package/oscam/config
 endef
 
 define Package/oscam
-  SECTION := net
-  CATEGORY := Network
-  TITLE := Open Source Conditional Access Modul
-  URL := http://www.streamboard.tv/oscam
-  DEPENDS := +OSCAM_USE_LIBCRYPTO:libopenssl +OSCAM_USE_LIBUSB:libusb-1.0 +OSCAM_USE_PCSC:pcscd
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=Open Source Conditional Access Modul
+  URL:=http://www.streamboard.tv/oscam
+  DEPENDS:=+OSCAM_USE_LIBCRYPTO:libopenssl +OSCAM_USE_LIBUSB:libusb-1.0 +OSCAM_USE_PCSC:pcscd
 endef
 
 define Package/list-smargo
-  SECTION := net
-  CATEGORY := Network
-  TITLE := List Smargo readers
-  URL := http://www.streamboard.tv/oscam
-  DEPENDS := oscam @OSCAM_CARDREADER_SMARGO
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=List Smargo readers
+  URL:=http://www.streamboard.tv/oscam
+  DEPENDS:=oscam @OSCAM_CARDREADER_SMARGO
 endef
 
-CONFIGURE_CMD = ./config.sh
-CONFIGURE_ARGS = \
+CONFIGURE_CMD:=./config.sh
+CONFIGURE_ARGS+= \
 	--restore \
 	$(if $(CONFIG_OSCAM_WEBIF),--enable,--disable) WEBIF \
 	$(if $(CONFIG_OSCAM_WEBIF_LIVELOG),--enable,--disable) WEBIF_LIVELOG \
@@ -135,7 +133,7 @@ define Package/oscam/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/Distribution/oscam $(1)/usr/bin/oscam
 
 	$(INSTALL_DIR) $(1)/etc/oscam
-#	$(CP) $(PKG_BUILD_DIR)/Distribution/doc/example/* $(1)/etc/oscam/
+	# $(CP) $(PKG_BUILD_DIR)/Distribution/doc/example/* $(1)/etc/oscam/
 	$(INSTALL_CONF) ./files/oscam.conf $(1)/etc/oscam/oscam.conf
 	$(INSTALL_CONF) ./files/oscam.user $(1)/etc/oscam/oscam.user
 	$(INSTALL_CONF) ./files/oscam.dvbapi $(1)/etc/oscam/oscam.dvbapi
