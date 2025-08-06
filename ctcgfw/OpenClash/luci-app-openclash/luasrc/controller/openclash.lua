@@ -27,6 +27,7 @@ function index()
 	entry({"admin", "services", "openclash", "opupdate"},call("action_opupdate"))
 	entry({"admin", "services", "openclash", "coreupdate"},call("action_coreupdate"))
 	entry({"admin", "services", "openclash", "flush_dns_cache"}, call("action_flush_dns_cache"))
+    entry({"admin", "services", "openclash", "flush_smart_cache"}, call("action_flush_smart_cache"))
 	entry({"admin", "services", "openclash", "update_config"}, call("action_update_config"))
 	entry({"admin", "services", "openclash", "download_rule"}, call("action_download_rule"))
 	entry({"admin", "services", "openclash", "restore"}, call("action_restore_config"))
@@ -413,6 +414,21 @@ function action_flush_dns_cache()
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
 		flush_status = dns_state;
+	})
+end
+
+function action_flush_smart_cache()
+	local state = 0
+	if is_running() then
+		local daip = daip()
+		local dase = dase() or ""
+		local cn_port = cn_port()
+		if not daip or not cn_port then return end
+        flush_state = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPOST http://"%s":"%s"/cache/smart/flush', dase, daip, cn_port))
+    end
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({
+		flush_status = flush_state;
 	})
 end
 
@@ -2183,10 +2199,23 @@ function action_website_check()
         luci.http.write_json(result)
         return
     end
-    
+
+    local test_domain = domain
+    local test_url
+
+    if test_domain:match("^https?://") then
+        test_domain = test_domain:gsub("^https?://([^/]+)/?.*$", "%1")
+    end
+
+    if domain == "https://raw.githubusercontent.com/" or test_domain == "raw.githubusercontent.com" then
+        test_url = "https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png"
+    else
+        test_url = "https://" .. test_domain .. "/favicon.ico"
+    end
+
     local cmd = string.format(
-        'curl -sL -m 5 --connect-timeout 3 -w "%%{http_code},%%{time_total},%%{time_connect},%%{time_appconnect}" "https://%s/favicon.ico" -o /dev/null 2>/dev/null',
-        domain
+        'curl -sL -m 5 --connect-timeout 3 -w "%%{http_code},%%{time_total},%%{time_connect},%%{time_appconnect}" "%s" -o /dev/null 2>/dev/null',
+        test_url
     )
     
     local output = luci.sys.exec(cmd)
@@ -2212,9 +2241,15 @@ function action_website_check()
                 result.success = true
                 result.response_time = response_time
             else
+                local fallback_url
+                if domain == "https://raw.githubusercontent.com/" or test_domain == "raw.githubusercontent.com" then
+                    fallback_url = "https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png"
+                else
+                    fallback_url = "https://" .. test_domain .. "/"
+                end
                 local fallback_cmd = string.format(
-                    'curl -sI -m 3 --connect-timeout 2 -w "%%{http_code},%%{time_total},%%{time_appconnect}" "https://%s/" -o /dev/null 2>/dev/null',
-                    domain
+                    'curl -sI -m 5 --connect-timeout 3 -w "%%{http_code},%%{time_total},%%{time_appconnect}" "%s" -o /dev/null 2>/dev/null',
+                    fallback_url
                 )
                 local fallback_output = luci.sys.exec(fallback_cmd)
                 
