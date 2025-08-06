@@ -1,6 +1,6 @@
 {
-	"luci-app-sysuh3c": {
-		"description": "Grant UCI access for luci-app-sysuh3c",
+	"luci-app-sysuh3c-lua": {
+		"description": "Grant UCI access for luci-app-sysuh3c-lua",
 		"read": {
 			"uci": [ "sysuh3c" ]
 		},
