@@ -1,8 +1,6 @@
-diff --git a/Makefile b/Makefile
-index 92278d8..d76853b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -12,10 +12,14 @@ PKG_RELEASE:=1
+--- 1/Makefile	2025-08-07 22:52:11.509530000 +0800
++++ 2/Makefile	2025-08-07 22:57:42.081566940 +0800
+@@ -12,10 +12,14 @@
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
@@ -17,7 +15,7 @@ index 92278d8..d76853b 100644
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,16 +39,41 @@ PKG_CONFIG_DEPENDS:= \
+@@ -35,16 +39,42 @@
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -43,6 +41,7 @@ index 92278d8..d76853b 100644
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS:shadow-tls \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs-client \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_SingBox:sing-box \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus:trojan-plus \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_tuic_client:tuic-client \
@@ -63,7 +62,7 @@ index 92278d8..d76853b 100644
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -54,119 +83,115 @@ config PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy
+@@ -54,120 +84,115 @@
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -161,6 +160,7 @@ index 92278d8..d76853b 100644
  config PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs
  	bool "Include Simple-Obfs (Shadowsocks Plugin)"
 -	select PACKAGE_simple-obfs
+-	select PACKAGE_simple-obfs-client
  	default y
  
  config PACKAGE_$(PKG_NAME)_INCLUDE_SingBox
@@ -308,7 +308,7 @@ diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
 index 57b989b..00fbed6 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1441,6 +1441,12 @@ start_dns() {
+@@ -1445,6 +1445,12 @@ start_dns() {
  				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
@@ -321,7 +321,7 @@ index 57b989b..00fbed6 100755
  			}
  		;;
  		dot)
-@@ -1590,6 +1596,19 @@ start_dns() {
+@@ -1594,6 +1600,19 @@ start_dns() {
  			}
  		fi
  	;;
@@ -341,7 +341,7 @@ index 57b989b..00fbed6 100755
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1599,6 +1618,11 @@ start_dns() {
+@@ -1603,6 +1622,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -353,7 +353,7 @@ index 57b989b..00fbed6 100755
  		else
  			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
  			echolog "  - udp://${TUN_DNS}"
-@@ -1612,6 +1636,12 @@ start_dns() {
+@@ -1616,6 +1640,12 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -366,7 +366,7 @@ index 57b989b..00fbed6 100755
  		}
  	;;
  	esac
-@@ -1735,6 +1763,73 @@ start_dns() {
+@@ -1739,6 +1767,73 @@ start_dns() {
  	fi
  }
  
@@ -440,7 +440,7 @@ index 57b989b..00fbed6 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2247,7 +2342,8 @@ get_config() {
+@@ -2251,7 +2346,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
