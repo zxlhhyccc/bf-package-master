@@ -369,6 +369,10 @@ if is_finded("xray") then
 	o.default = "10-20"
 	o:depends("fragment", true)
 
+	o = s:option(Value, "fragment_maxsplit", translate("Fragment maxSplit"), translate("Fragmented maxSplit (byte)"))
+	o.default = "100-200"
+	o:depends("fragment", true)
+
 	o = s:option(Flag, "noise", translate("Noise"), translate("UDP noise, Under some circumstances it can bypass some UDP based protocol restrictions."))
 	o.default = 0
 
@@ -417,6 +421,13 @@ if is_finded("xray") then
 
 	o = s:option(Value, "delay", translate("Delay (ms)"))
 	o.datatype = "or(uinteger,portrange)"
+	o.rmempty = false
+
+	o = s:option(Value, "applyto", translate("ApplyTo (IP type)"))
+	o.default = "IP"
+	o:value("IP", "IP")
+	o:value("IPV4", "IPv4")
+	o:value("IPV6", "IPv6")
 	o.rmempty = false
 end
 
