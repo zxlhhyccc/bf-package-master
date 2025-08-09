@@ -1,5 +1,5 @@
---- 1/Makefile	2025-08-07 22:52:11.509530000 +0800
-+++ 2/Makefile	2025-08-07 22:57:42.081566940 +0800
+--- 1/Makefile	2025-08-09 16:14:30.805313000 +0800
++++ 2/Makefile	2025-08-09 16:17:46.029158270 +0800
 @@ -12,10 +12,14 @@
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
@@ -15,7 +15,7 @@
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,16 +39,42 @@
+@@ -35,16 +39,41 @@
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -40,7 +40,6 @@
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-redir \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Server:shadowsocksr-libev-ssr-server \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadow_TLS:shadow-tls \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs-client \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_SingBox:sing-box \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Trojan_Plus:trojan-plus \
@@ -62,7 +61,7 @@
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -54,120 +84,115 @@
+@@ -54,119 +83,115 @@
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -159,7 +158,6 @@
  
  config PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs
  	bool "Include Simple-Obfs (Shadowsocks Plugin)"
--	select PACKAGE_simple-obfs
 -	select PACKAGE_simple-obfs-client
  	default y
  
@@ -269,7 +267,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -172,6 +172,9 @@ msgstr "远程 DNS DoH"
+@@ -175,6 +175,9 @@ msgstr "远程 DNS DoH"
  msgid "Remote DNS DoT"
  msgstr "远程 DNS DoT"
  
@@ -279,7 +277,7 @@ index 92144fb..4ae3764 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -316,6 +319,12 @@ msgstr "关闭（不使用）"
+@@ -319,6 +322,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
