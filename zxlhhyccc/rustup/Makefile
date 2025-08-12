@@ -30,16 +30,19 @@ define Package/rustup
   SECTION:=lang
   CATEGORY:=Languages
   SUBMENU:=Rust Toolchain
-  TITLE:=The the Rust toolchain installer
+  TITLE:=The Rust toolchain installer
   URL:=https://github.com/rust-lang/rustup
   DEPENDS:=+libopenssl $(RUST_ARCH_DEPENDS)
 endef
 
-define Host/Compile
+RUSTUP_BUILD_VARS+= \
 	OPENSSL_DIR="$(STAGING_DIR_HOST)" \
 	OPENSSL_LIB_DIR="$(STAGING_DIR_HOST)/lib" \
 	OPENSSL_INCLUDE_DIR="$(STAGING_DIR_HOST)/include" \
-	PKG_CONFIG_ALLOW_CROSS=1 \
+	PKG_CONFIG_ALLOW_CROSS=1
+
+define Host/Compile
+	$(RUSTUP_BUILD_VARS) \
 	cargo build --release --locked \
 		--manifest-path=$(HOST_BUILD_DIR)/Cargo.toml \
 		--target-dir $(HOST_BUILD_DIR)/target
