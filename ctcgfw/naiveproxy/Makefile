@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=naiveproxy
-PKG_REAL_VERSION:=138.0.7204.35-1
+PKG_REAL_VERSION:=139.0.7258.62-1
 PKG_VERSION:=$(subst -,.,$(PKG_REAL_VERSION))
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_REAL_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/klzgrad/naiveproxy/tar.gz/v$(PKG_REAL_VERSION)?
-PKG_HASH:=b2d409ea4118ec4a3cc7abe003bfed35eab2a366655ac16c67e6cf477f4f1ac5
+PKG_HASH:=25f8e5f04cd9a3caaaa5477e5b591162a811b25f0b2301c914fc99814b6c796b
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_REAL_VERSION)
 
 PKG_LICENSE:=BSD 3-Clause
@@ -67,22 +67,22 @@ define Download/CLANG
 	HASH:=5f69279b3697166facfc354634157e0a8a32fa6e36864200ad8a8f85add3f3f6
 endef
 
-GN_VER:=ebc8f16ca7b0d36a3e532ee90896f9eb48e5423b
+GN_VER:=97b68a0bb62b7528bc3491c7949d6804223c2b82
 GN_FILE:=gn-git_revision-$(GN_VER).zip
 define Download/GN_TOOL
 	URL:=https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+
 	URL_FILE:=git_revision:$(GN_VER)
 	FILE:=$(GN_FILE)
-	HASH:=fa4d277382975739e3ab19f141e75d602b30b9f02edd6b8cb707009b8375acf5
+	HASH:=344ffc1be0bed50491dc5ced875d4acd1ca790618aef52d2423882050683ea1a
 endef
 
-PGO_VER:=7204-1750182162-e119762f9b8c4eff265cc04443b39939e0b77575-569fd9dc10e73e84c7d4b1c66b5ed02250b14769
+PGO_VER:=7258-1752969416-a528e01185d141ca77542255592e211024c33d34-b4ba555e3de319acd633d70ccd6c1d01f0460a1c
 PGO_FILE:=chrome-linux-$(PGO_VER).profdata
 define Download/PGO_PROF
 	URL:=https://storage.googleapis.com/chromium-optimization-profiles/pgo_profiles
 	URL_FILE:=$(PGO_FILE)
 	FILE:=$(PGO_FILE)
-	HASH:=0bb14d8f9c9bd2d7a6c4ed62e60efde77ce20e939bb01e5074b5754aed814273
+	HASH:=875f6573b0ca163e031d96b88f800a811e94e7ec3cc61af671b35a27d269e3c0
 endef
 
 # define Build/Prepare
