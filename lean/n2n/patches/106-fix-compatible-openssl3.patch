@@ -1,0 +1,158 @@
+--- a/src/aes.c
++++ b/src/aes.c
+@@ -22,7 +22,6 @@
+ 
+ #if defined (HAVE_OPENSSL_1_1) // openSSL 1.1 ---------------------------------------------------------------------
+ 
+-
+ // get any erorr message out of openssl
+ // taken from https://en.wikibooks.org/wiki/OpenSSL/Error_handling
+ static char *openssl_err_as_string (void) {
+@@ -111,54 +110,115 @@ int aes_cbc_decrypt (unsigned char *out,
+ 
+ 
+ int aes_ecb_decrypt (unsigned char *out, const unsigned char *in, aes_context_t *ctx) {
++    int len, plaintext_len;
++    const EVP_CIPHER *cipher_ecb = NULL;
++    EVP_CIPHER_CTX *ecb_ctx = EVP_CIPHER_CTX_new();
+ 
+-    AES_ecb_encrypt(in, out, &(ctx->ecb_dec_key), AES_DECRYPT);
++    if (!ecb_ctx) {
++        traceEvent(TRACE_ERROR, "aes_ecb_decrypt: EVP_CIPHER_CTX_new failed");
++        return -1;
++    }
+ 
+-    return 0;
+-}
++    // determine the key length based on ctx->cipher
++    int key_len = EVP_CIPHER_key_length(ctx->cipher);
++    switch (key_len) {
++        case AES128_KEY_BYTES:
++            cipher_ecb = EVP_aes_128_ecb();
++            break;
++        case AES192_KEY_BYTES:
++            cipher_ecb = EVP_aes_192_ecb();
++            break;
++        case AES256_KEY_BYTES:
++            cipher_ecb = EVP_aes_256_ecb();
++            break;
++        default:
++            traceEvent(TRACE_ERROR, "aes_ecb_decrypt: invalid key size %d", key_len);
++            EVP_CIPHER_CTX_free(ecb_ctx);
++            return -1;
++    }
+ 
++    if (1 != EVP_DecryptInit_ex (ecb_ctx, cipher_ecb, NULL, ctx->key, NULL)) {
++        traceEvent(TRACE_ERROR, "aes_ecb_decrypt: EVP_DecryptInit_ex failed: %s", openssl_err_as_string());
++        EVP_CIPHER_CTX_free(ecb_ctx);
++        return -1;
++    }
+ 
+-int aes_init (const unsigned char *key, size_t key_size, aes_context_t **ctx) {
++    EVP_CIPHER_CTX_set_padding(ecb_ctx, 0);
++
++    if (1 != EVP_DecryptUpdate(ecb_ctx, out, &len, in, AES_BLOCK_SIZE)) {
++        traceEvent(TRACE_ERROR, "aes_ecb_decrypt: EVP_DecryptUpdate failed: %s", openssl_err_as_string());
++        EVP_CIPHER_CTX_free(ecb_ctx);
++        return -1;
++    }
++    plaintext_len = len;
++
++    if (1 != EVP_DecryptFinal_ex (ecb_ctx, out + len, &len)) {
++        traceEvent(TRACE_ERROR, "aes_ecb_decrypt: EVP_DecryptFinal_ex failed: %s", openssl_err_as_string());
++        EVP_CIPHER_CTX_free(ecb_ctx);
++        return -1;
++    }
++    plaintext_len += len;
++
++    if (plaintext_len != AES_BLOCK_SIZE) {
++        traceEvent(TRACE_ERROR, "aes_ecb_decrypt: unexpected plaintext length %d", plaintext_len);
++        EVP_CIPHER_CTX_free(ecb_ctx);
++        return -1;
++    }
++
++    EVP_CIPHER_CTX_free(ecb_ctx);
++    return AES_BLOCK_SIZE;
++}
+ 
++int aes_init (const unsigned char *key, size_t key_size, aes_context_t **ctx) {
+     // allocate context...
+     *ctx = (aes_context_t*) calloc(1, sizeof(aes_context_t));
+     if(!(*ctx))
+         return -1;
+ 
+-    // ...and fill her up:
+-
+-    // initialize data structures
++    // create an encryption context
+     if(!((*ctx)->enc_ctx = EVP_CIPHER_CTX_new())) {
+-        traceEvent(TRACE_ERROR, "aes_init openssl's evp_* encryption context creation failed: %s",
+-                                openssl_err_as_string());
++        traceEvent(TRACE_ERROR, "aes_init enc_ctx creation failed: %s", openssl_err_as_string());
+         return -1;
+     }
+ 
++    // create the decryption context
+     if(!((*ctx)->dec_ctx = EVP_CIPHER_CTX_new())) {
+-        traceEvent(TRACE_ERROR, "aes_init openssl's evp_* decryption context creation failed: %s",
+-                                openssl_err_as_string());
++        traceEvent(TRACE_ERROR, "aes_init dec_ctx creation failed: %s", openssl_err_as_string());
+         return -1;
+     }
+ 
+-    // check key size and make key size (given in bytes) dependant settings
+-    switch(key_size) {
++    // select the algorithm based on the key length
++    const EVP_CIPHER *cipher = NULL;
++    switch (key_size) {
+         case AES128_KEY_BYTES:    // 128 bit key size
+-            (*ctx)->cipher = EVP_aes_128_cbc();
++            cipher = EVP_aes_128_cbc();
+             break;
+         case AES192_KEY_BYTES:    // 192 bit key size
+-            (*ctx)->cipher = EVP_aes_192_cbc();
++            cipher = EVP_aes_192_cbc();
+             break;
+         case AES256_KEY_BYTES:    // 256 bit key size
+-            (*ctx)->cipher = EVP_aes_256_cbc();
++            cipher = EVP_aes_256_cbc();
+             break;
+         default:
+-            traceEvent(TRACE_ERROR, "aes_init invalid key size %u\n", key_size);
++            traceEvent(TRACE_ERROR, "aes_init invalid key size %zu", key_size);
+             return -1;
+     }
+ 
+-    // key materiel handling
+-    memcpy((*ctx)->key, key, key_size);
+-    AES_set_decrypt_key(key, key_size * 8, &((*ctx)->ecb_dec_key));
++    // Initialize the encryption context
++    if(1 != EVP_EncryptInit_ex((*ctx)->enc_ctx, cipher, NULL, key, NULL)) {
++        traceEvent(TRACE_ERROR, "aes_init enc_ctx init failed: %s", openssl_err_as_string());
++        return -1;
++    }
++
++    // The initial declassification context
++    if(1 != EVP_DecryptInit_ex((*ctx)->dec_ctx, cipher, NULL, key, NULL)) {
++        traceEvent(TRACE_ERROR, "aes_init dec_ctx init failed: %s", openssl_err_as_string());
++        return -1;
++    }
++
++    // Set not to fill (if necessary)
++    EVP_CIPHER_CTX_set_padding((*ctx)->enc_ctx, 0);
++    EVP_CIPHER_CTX_set_padding((*ctx)->dec_ctx, 0);
+ 
+     return 0;
+ }
+@@ -739,9 +799,9 @@ static const uint32_t Te3[256] = {
+     0x5353f5a6U, 0xd1d168b9U, 0x00000000U, 0xeded2cc1U, 0x20206040U, 0xfcfc1fe3U, 0xb1b1c879U, 0x5b5bedb6U,
+     0x6a6abed4U, 0xcbcb468dU, 0xbebed967U, 0x39394b72U, 0x4a4ade94U, 0x4c4cd498U, 0x5858e8b0U, 0xcfcf4a85U,
+     0xd0d06bbbU, 0xefef2ac5U, 0xaaaae54fU, 0xfbfb16edU, 0x4343c586U, 0x4d4dd79aU, 0x33335566U, 0x85859411U,
+-    0x4545cf8aU, 0xf9f910e9U, 0x02020604U, 0x7f7f81feU, 0x5050f0a0U, 0x3c3c4478U, 0x9f9fba25U, 0xa8a8e34bU,
++    0x4545cf8aU, 0xf9f910e9U, 0x06060204U, 0x7f7f81feU, 0x5050f0a0U, 0x3c3c4478U, 0x9f9fba25U, 0xa8a8e34bU,
+     0x5151f3a2U, 0xa3a3fe5dU, 0x4040c080U, 0x8f8f8a05U, 0x9292ad3fU, 0x9d9dbc21U, 0x38384870U, 0xf5f504f1U,
+-    0xbcbcdf63U, 0xb6b6c177U, 0xdada75afU, 0x21216342U, 0x10103020U, 0xffff1ae5U, 0xf3f30efdU, 0xd2d26dbfU,
++    0xbcbcdf63U, 0xb6b6c177U, 0xdadada75U, 0x21216342U, 0x10103020U, 0xffff1ae5U, 0xf3f30efdU, 0xd2d26dbfU,
+     0xcdcd4c81U, 0x0c0c1418U, 0x13133526U, 0xecec2fc3U, 0x5f5fe1beU, 0x9797a235U, 0x4444cc88U, 0x1717392eU,
+     0xc4c45793U, 0xa7a7f255U, 0x7e7e82fcU, 0x3d3d477aU, 0x6464acc8U, 0x5d5de7baU, 0x19192b32U, 0x737395e6U,
+     0x6060a0c0U, 0x81819819U, 0x4f4fd19eU, 0xdcdc7fa3U, 0x22226644U, 0x2a2a7e54U, 0x9090ab3bU, 0x8888830bU,

@@ -1,0 +1,14 @@
+--- a/src/n2n.c
++++ b/src/n2n.c
+@@ -25,6 +25,11 @@
+ #include <assert.h>
+ 
+ 
++int resolve_create_thread(n2n_resolve_parameter_t **param, struct peer_info *sn_list);
++void resolve_cancel_thread(n2n_resolve_parameter_t *param);
++uint8_t resolve_check(n2n_resolve_parameter_t *param, uint8_t requires_resolution, time_t now);
++N2N_THREAD_RETURN_DATATYPE resolve_thread(N2N_THREAD_PARAMETER_DATATYPE p);
++
+ 
+ /* ************************************** */
+ 

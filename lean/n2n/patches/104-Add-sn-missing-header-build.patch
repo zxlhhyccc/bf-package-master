@@ -1,0 +1,139 @@
+--- a/src/sn_utils.c
++++ b/src/sn_utils.c
+@@ -17,6 +17,7 @@
+  */
+ 
+ #include "n2n.h"
++#include <sn_utils.h>
+ 
+ #define HASH_FIND_COMMUNITY(head, name, out) HASH_FIND_STR(head, name, out)
+ 
+@@ -2340,21 +2341,21 @@ static int process_udp (n2n_sn_t * sss,
+ 
+         case MSG_TYPE_REGISTER_SUPER_ACK: {
+             n2n_REGISTER_SUPER_ACK_t         ack;
+-            struct peer_info                 *scan, *tmp;
++            struct peer_info                 *scan, *tmp_peer;
+             n2n_sock_str_t                   sockbuf1;
+             n2n_sock_str_t                   sockbuf2;
+             macstr_t                         mac_buf1;
+-            n2n_sock_t                       sender;
++            n2n_sock_t                       sender2;
+             n2n_sock_t                       *orig_sender;
+             int                              i;
+             uint8_t                          dec_tmpbuf[REG_SUPER_ACK_PAYLOAD_SPACE];
+             n2n_REGISTER_SUPER_ACK_payload_t *payload;
+ 
+-            memset(&sender, 0, sizeof(n2n_sock_t));
+-            sender.family = AF_INET;
+-            sender.port = ntohs(sender_sock->sin_port);
+-            memcpy(&(sender.addr.v4), &(sender_sock->sin_addr.s_addr), IPV4_SIZE);
+-            orig_sender = &sender;
++            memset(&sender2, 0, sizeof(n2n_sock_t));
++            sender2.family = AF_INET;
++            sender2.port = ntohs(sender_sock->sin_port);
++            memcpy(&(sender2.addr.v4), &(sender_sock->sin_addr.s_addr), IPV4_SIZE);
++            orig_sender = &sender2;
+ 
+             memset(&ack, 0, sizeof(n2n_REGISTER_SUPER_ACK_t));
+ 
+@@ -2380,11 +2381,11 @@ static int process_udp (n2n_sn_t * sss,
+ 
+             traceEvent(TRACE_INFO, "Rx REGISTER_SUPER_ACK from MAC %s [%s] (external %s)",
+                        macaddr_str(mac_buf1, ack.srcMac),
+-                       sock_to_cstr(sockbuf1, &sender),
++                       sock_to_cstr(sockbuf1, &sender2),
+                        sock_to_cstr(sockbuf2, orig_sender));
+ 
+             skip_add = SN_ADD_SKIP;
+-            scan = add_sn_to_list_by_mac_or_sock(&(sss->federation->edges), &sender, ack.srcMac, &skip_add);
++            scan = add_sn_to_list_by_mac_or_sock(&(sss->federation->edges), &sender2, ack.srcMac, &skip_add);
+             if(scan != NULL) {
+                 scan->last_seen = now;
+             } else {
+@@ -2397,12 +2398,12 @@ static int process_udp (n2n_sn_t * sss,
+                 payload = (n2n_REGISTER_SUPER_ACK_payload_t *)dec_tmpbuf;
+                 for(i = 0; i < ack.num_sn; i++) {
+                     skip_add = SN_ADD;
+-                    tmp = add_sn_to_list_by_mac_or_sock(&(sss->federation->edges), &(payload->sock), payload->mac, &skip_add);
++                    tmp_peer = add_sn_to_list_by_mac_or_sock(&(sss->federation->edges), &(payload->sock), payload->mac, &skip_add);
+                     // other supernodes communicate via standard udp socket
+-                    tmp->socket_fd = sss->sock;
++                    tmp_peer->socket_fd = sss->sock;
+ 
+                     if(skip_add == SN_ADD_ADDED) {
+-                        tmp->last_seen = now - LAST_SEEN_SN_NEW;
++                        tmp_peer->last_seen = now - LAST_SEEN_SN_NEW;
+                     }
+ 
+                     // shift to next payload entry
+@@ -2432,14 +2433,14 @@ static int process_udp (n2n_sn_t * sss,
+             uint8_t                   nakbuf[N2N_SN_PKTBUF_SIZE];
+             size_t                    encx = 0;
+             struct peer_info          *peer;
+-            n2n_sock_str_t            sockbuf;
+-            macstr_t                  mac_buf;
+-            n2n_sock_t                sender;
+-
+-            memset(&sender, 0, sizeof(n2n_sock_t));
+-            sender.family = AF_INET;
+-            sender.port = ntohs(sender_sock->sin_port);
+-            memcpy(&(sender.addr.v4), &(sender_sock->sin_addr.s_addr), IPV4_SIZE);
++            n2n_sock_str_t            sockbuf3;
++            macstr_t                  mac_buf3;
++            n2n_sock_t                sender3;
++
++            memset(&sender3, 0, sizeof(n2n_sock_t));
++            sender3.family = AF_INET;
++            sender3.port = ntohs(sender_sock->sin_port);
++            memcpy(&(sender3.addr.v4), &(sender_sock->sin_addr.s_addr), IPV4_SIZE);
+ 
+             memset(&nak, 0, sizeof(n2n_REGISTER_SUPER_NAK_t));
+ 
+@@ -2458,8 +2459,8 @@ static int process_udp (n2n_sn_t * sss,
+             }
+ 
+             traceEvent(TRACE_INFO, "Rx REGISTER_SUPER_NAK from %s [%s]",
+-                       macaddr_str(mac_buf, nak.srcMac),
+-                       sock_to_cstr(sockbuf, &sender));
++                       macaddr_str(mac_buf3, nak.srcMac),
++                       sock_to_cstr(sockbuf3, &sender3));
+ 
+             HASH_FIND_PEER(comm->edges, nak.srcMac, peer);
+             if(comm->is_federation == IS_NO_FEDERATION) {
+--- /dev/null
++++ b/include/sn_utils.h
+@@ -0,0 +1,33 @@
++/* sn_utils.h */
++#ifndef SN_UTILS_H
++#define SN_UTILS_H
++
++#include <stdint.h>
++#include <stddef.h>
++#include <time.h>
++#include "n2n.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/* SN module function declaration */
++void close_tcp_connection(n2n_sn_t *sss, n2n_tcp_connection_t *conn);
++void calculate_shared_secrets(n2n_sn_t *sss);
++void calculate_dynamic_keys(n2n_sn_t *sss);
++void send_re_register_super(n2n_sn_t *sss);
++int load_allowed_sn_community(n2n_sn_t *sss);
++void update_node_supernode_association(struct sn_community *comm,
++                                       n2n_mac_t *edgeMac,
++                                       const struct sockaddr_in *sender_sock,
++                                       time_t now);
++int subnet_available(n2n_sn_t *sss,
++                     struct sn_community *comm,
++                     uint32_t net_id,
++                     uint32_t mask);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* SN_UTILS_H */

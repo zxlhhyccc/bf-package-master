@@ -1,0 +1,61 @@
+--- a/src/edge_utils.c
++++ b/src/edge_utils.c
+@@ -20,6 +20,7 @@
+ #include "network_traffic_filter.h"
+ #include "edge_utils_win32.h"
+ #include <zstd.h>
++#include <edge_utils.h>
+ 
+ /* heap allocation for compression as per lzo example doc */
+ #define HEAP_ALLOC(var,size) lzo_align_t __LZO_MMODEL var [ ((size) + (sizeof(lzo_align_t) - 1)) / sizeof(lzo_align_t) ]
+@@ -2627,7 +2628,6 @@ void process_udp (n2n_edge_t *eee, const
+                 char ip_tmp[N2N_EDGE_SN_HOST_SIZE];
+                 n2n_REGISTER_SUPER_ACK_payload_t *payload;
+                 int i;
+-                int skip_add;
+ 
+                 if(!(eee->sn_wait)) {
+                     traceEvent(TRACE_DEBUG, "Rx REGISTER_SUPER_ACK with no outstanding REGISTER_SUPER");
+@@ -2800,7 +2800,6 @@ void process_udp (n2n_edge_t *eee, const
+ 
+                 n2n_PEER_INFO_t pi;
+                 struct peer_info * scan;
+-                int skip_add;
+ 
+                 decode_PEER_INFO(&pi, &cmn, udp_buf, &rem, &idx);
+ 
+--- /dev/null
++++ b/include/edge_utils.h
+@@ -0,0 +1,32 @@
++/* edge_utils.h */
++#ifndef EDGE_UTILS_H
++#define EDGE_UTILS_H
++
++#include <stdint.h>
++#include <stddef.h>
++#include <time.h>
++#include "n2n.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++void reset_sup_attempts (n2n_edge_t *eee);
++int supernode_connect (n2n_edge_t *eee);
++void supernode_disconnect (n2n_edge_t *eee);
++void send_query_peer (n2n_edge_t *eee, const n2n_mac_t mac);
++void send_register_super (n2n_edge_t *eee);
++void process_udp (n2n_edge_t *eee, const struct sockaddr_in *sender_sock, const SOCKET in_sock,
++                 uint8_t *udp_buf, size_t udp_size, time_t now);
++
++int fetch_and_eventually_process_data (n2n_edge_t *eee, SOCKET sock,
++                                       uint8_t *pktbuf, uint16_t *expected, uint16_t *position,
++                                       time_t now);
++
++int edge_conf_add_supernode (n2n_edge_conf_t *conf, const char *ip_and_port);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif // EDGE_UTILS_H

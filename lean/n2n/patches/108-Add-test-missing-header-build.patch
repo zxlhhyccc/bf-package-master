@@ -1,0 +1,89 @@
+--- a/tools/tests-compress.c
++++ b/tools/tests-compress.c
+@@ -24,6 +24,8 @@
+ #include "hexdump.h"
+ #include <zstd.h>
+ 
++#include "tests.h"
++
+ /* heap allocation for compression as per lzo example doc */
+ #define HEAP_ALLOC(var,size) lzo_align_t __LZO_MMODEL var [ ((size) + (sizeof(lzo_align_t) - 1)) / sizeof(lzo_align_t) ]
+ static HEAP_ALLOC(wrkmem, LZO1X_1_MEM_COMPRESS);
+--- a/tools/tests-elliptic.c
++++ b/tools/tests-elliptic.c
+@@ -18,6 +18,7 @@
+ 
+ #include "n2n.h"
+ #include "hexdump.h"
++#include "tests.h"
+ 
+ void test_curve25519 (unsigned char *pkt_input, unsigned char *key) {
+     char *test_name = "curve25519";
+--- a/tools/tests-hashing.c
++++ b/tools/tests-hashing.c
+@@ -20,6 +20,7 @@
+ 
+ #include "n2n.h"
+ #include "hexdump.h"
++#include "tests.h"
+ 
+ 
+ uint8_t PKT_CONTENT[]={
+--- a/tools/tests-wire.c
++++ b/tools/tests-wire.c
+@@ -20,6 +20,7 @@
+ 
+ #include "n2n.h"
+ #include "hexdump.h"
++#include "tests.h"
+ 
+ void init_ip_subnet (n2n_ip_subnet_t * d) {
+     d->net_addr = 0x20212223;
+--- /dev/null
++++ b/include/tests.h
+@@ -0,0 +1,45 @@
++/* tests.h */
++#ifndef _TOOLS_TESTS_H_
++#define _TOOLS_TESTS_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <stdint.h>
++#include "n2n.h"
++
++/* ----- tests-compress.c ----- */
++void test_lzo1x(void);
++void test_zstd(void);
++
++/* ----- tests-elliptic.c ----- */
++void test_curve25519(unsigned char *pkt_input, unsigned char *key);
++
++/* ----- tests-hashing.c ----- */
++void test_pearson(void *buf, unsigned int bufsize);
++
++/* ----- tests-wire.c ----- */
++void init_ip_subnet(n2n_ip_subnet_t *d);
++void print_ip_subnet(char *test_name, char *field, n2n_ip_subnet_t *d);
++
++void init_mac(n2n_mac_t mac, const uint8_t o0, const uint8_t o1,
++              const uint8_t o2, const uint8_t o3,
++              const uint8_t o4, const uint8_t o5);
++void print_mac(char *test_name, char *field, n2n_mac_t mac);
++
++void init_auth(n2n_auth_t *auth);
++void print_auth(char *test_name, char *field, n2n_auth_t *auth);
++
++void init_common(n2n_common_t *common, char *community);
++void print_common(char *test_name, n2n_common_t *common);
++
++void test_REGISTER(n2n_common_t *common);
++void test_REGISTER_SUPER(n2n_common_t *common);
++void test_UNREGISTER_SUPER(n2n_common_t *common);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _TOOLS_TESTS_H_ */

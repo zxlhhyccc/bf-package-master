@@ -1,0 +1,187 @@
+--- a/src/tf.c
++++ b/src/tf.c
+@@ -49,6 +49,16 @@
+ 
+ #include "tf.h"
+ 
++/* Static function prototypes */
++uint32_t polyMult(uint32_t a, uint32_t b);
++uint32_t gfMod(uint32_t t, uint32_t modulus);
++uint32_t RSMatrixMultiply(uint8_t sd[8]);
++uint32_t h(uint32_t X, uint32_t L[4], int k);
++void fullKey(uint32_t L[4], int k, uint32_t QF[4][256]);
++void twofish_internal_encrypt(uint8_t PT[16], tf_context_t *ctx);
++void twofish_internal_decrypt(uint8_t PT[16], const uint8_t CT[16], tf_context_t *ctx);
++void keySched(const uint8_t M[], int N, uint32_t **S, uint32_t K[40], int *k);
++
+ 
+ const uint8_t RS[4][8] = { { 0x01, 0xA4, 0x55, 0x87, 0x5A, 0x58, 0xDB, 0x9E, },
+                            { 0xA4, 0x56, 0x82, 0xF3, 0x1E, 0xC6, 0x68, 0xE5, },
+@@ -488,56 +498,56 @@ int tf_cbc_decrypt (unsigned char *out,
+         memcpy(old, in + 2 * TF_BLOCK_SIZE, TF_BLOCK_SIZE);
+ 
+         uint32_t T0, T1;
+-        uint32_t Q0, Q1, Q2, Q3, R0, R1, R2, R3, S0, S1, S2, S3;
++        uint32_t q0, q1, q2, q3, r0, r1, r2, r3, s0, s1, s2, s3;
+ 
+         // load/byteswap/whiten input/iv
+-        Q3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[3]);
+-        Q2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[2]);
+-        Q1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[1]);
+-        Q0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[0]);
+-
+-        R3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[7]);
+-        R2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[6]);
+-        R1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[5]);
+-        R0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[4]);
+-
+-        S3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[11]);
+-        S2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[10]);
+-        S1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[9]);
+-        S0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[8]);
+-
+-        DEC_ROUND(Q0, Q1, Q2, Q3, 15); DEC_ROUND(R0, R1, R2, R3, 15); DEC_ROUND(S0, S1, S2, S3, 15);
+-        DEC_ROUND(Q2, Q3, Q0, Q1, 14); DEC_ROUND(R2, R3, R0, R1, 14); DEC_ROUND(S2, S3, S0, S1, 14);
+-        DEC_ROUND(Q0, Q1, Q2, Q3, 13); DEC_ROUND(R0, R1, R2, R3, 13); DEC_ROUND(S0, S1, S2, S3, 13);
+-        DEC_ROUND(Q2, Q3, Q0, Q1, 12); DEC_ROUND(R2, R3, R0, R1, 12); DEC_ROUND(S2, S3, S0, S1, 12);
+-        DEC_ROUND(Q0, Q1, Q2, Q3, 11); DEC_ROUND(R0, R1, R2, R3, 11); DEC_ROUND(S0, S1, S2, S3, 11);
+-        DEC_ROUND(Q2, Q3, Q0, Q1, 10); DEC_ROUND(R2, R3, R0, R1, 10); DEC_ROUND(S2, S3, S0, S1, 10);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  9); DEC_ROUND(R0, R1, R2, R3,  9); DEC_ROUND(S0, S1, S2, S3,  9);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  8); DEC_ROUND(R2, R3, R0, R1,  8); DEC_ROUND(S2, S3, S0, S1,  8);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  7); DEC_ROUND(R0, R1, R2, R3,  7); DEC_ROUND(S0, S1, S2, S3,  7);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  6); DEC_ROUND(R2, R3, R0, R1,  6); DEC_ROUND(S2, S3, S0, S1,  6);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  5); DEC_ROUND(R0, R1, R2, R3,  5); DEC_ROUND(S0, S1, S2, S3,  5);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  4); DEC_ROUND(R2, R3, R0, R1,  4); DEC_ROUND(S2, S3, S0, S1,  4);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  3); DEC_ROUND(R0, R1, R2, R3,  3); DEC_ROUND(S0, S1, S2, S3,  3);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  2); DEC_ROUND(R2, R3, R0, R1,  2); DEC_ROUND(S2, S3, S0, S1,  2);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  1); DEC_ROUND(R0, R1, R2, R3,  1); DEC_ROUND(S0, S1, S2, S3,  1);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  0); DEC_ROUND(R2, R3, R0, R1,  0); DEC_ROUND(S2, S3, S0, S1,  0);
++        q3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[3]);
++        q2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[2]);
++        q1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[1]);
++        q0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[0]);
++
++        r3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[7]);
++        r2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[6]);
++        r1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[5]);
++        r0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[4]);
++
++        s3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[11]);
++        s2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[10]);
++        s1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[9]);
++        s0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[8]);
++
++        DEC_ROUND(q0, q1, q2, q3, 15); DEC_ROUND(r0, r1, r2, r3, 15); DEC_ROUND(s0, s1, s2, s3, 15);
++        DEC_ROUND(q2, q3, q0, q1, 14); DEC_ROUND(r2, r3, r0, r1, 14); DEC_ROUND(s2, s3, s0, s1, 14);
++        DEC_ROUND(q0, q1, q2, q3, 13); DEC_ROUND(r0, r1, r2, r3, 13); DEC_ROUND(s0, s1, s2, s3, 13);
++        DEC_ROUND(q2, q3, q0, q1, 12); DEC_ROUND(r2, r3, r0, r1, 12); DEC_ROUND(s2, s3, s0, s1, 12);
++        DEC_ROUND(q0, q1, q2, q3, 11); DEC_ROUND(r0, r1, r2, r3, 11); DEC_ROUND(s0, s1, s2, s3, 11);
++        DEC_ROUND(q2, q3, q0, q1, 10); DEC_ROUND(r2, r3, r0, r1, 10); DEC_ROUND(s2, s3, s0, s1, 10);
++        DEC_ROUND(q0, q1, q2, q3,  9); DEC_ROUND(r0, r1, r2, r3,  9); DEC_ROUND(s0, s1, s2, s3,  9);
++        DEC_ROUND(q2, q3, q0, q1,  8); DEC_ROUND(r2, r3, r0, r1,  8); DEC_ROUND(s2, s3, s0, s1,  8);
++        DEC_ROUND(q0, q1, q2, q3,  7); DEC_ROUND(r0, r1, r2, r3,  7); DEC_ROUND(s0, s1, s2, s3,  7);
++        DEC_ROUND(q2, q3, q0, q1,  6); DEC_ROUND(r2, r3, r0, r1,  6); DEC_ROUND(s2, s3, s0, s1,  6);
++        DEC_ROUND(q0, q1, q2, q3,  5); DEC_ROUND(r0, r1, r2, r3,  5); DEC_ROUND(s0, s1, s2, s3,  5);
++        DEC_ROUND(q2, q3, q0, q1,  4); DEC_ROUND(r2, r3, r0, r1,  4); DEC_ROUND(s2, s3, s0, s1,  4);
++        DEC_ROUND(q0, q1, q2, q3,  3); DEC_ROUND(r0, r1, r2, r3,  3); DEC_ROUND(s0, s1, s2, s3,  3);
++        DEC_ROUND(q2, q3, q0, q1,  2); DEC_ROUND(r2, r3, r0, r1,  2); DEC_ROUND(s2, s3, s0, s1,  2);
++        DEC_ROUND(q0, q1, q2, q3,  1); DEC_ROUND(r0, r1, r2, r3,  1); DEC_ROUND(s0, s1, s2, s3,  1);
++        DEC_ROUND(q2, q3, q0, q1,  0); DEC_ROUND(r2, r3, r0, r1,  0); DEC_ROUND(s2, s3, s0, s1,  0);
+ 
+         // whiten/byteswap/store output/iv
+-        ((uint32_t*)out)[11] = htole32(S1 ^ ctx->K[3] ^ ((uint32_t*)in)[7]);
+-        ((uint32_t*)out)[10] = htole32(S0 ^ ctx->K[2] ^ ((uint32_t*)in)[6]);
+-        ((uint32_t*)out)[9]  = htole32(S3 ^ ctx->K[1] ^ ((uint32_t*)in)[5]);
+-        ((uint32_t*)out)[8]  = htole32(S2 ^ ctx->K[0] ^ ((uint32_t*)in)[4]);
+-
+-        ((uint32_t*)out)[7]  = htole32(R1 ^ ctx->K[3] ^ ((uint32_t*)in)[3]);
+-        ((uint32_t*)out)[6]  = htole32(R0 ^ ctx->K[2] ^ ((uint32_t*)in)[2]);
+-        ((uint32_t*)out)[5]  = htole32(R3 ^ ctx->K[1] ^ ((uint32_t*)in)[1]);
+-        ((uint32_t*)out)[4]  = htole32(R2 ^ ctx->K[0] ^ ((uint32_t*)in)[0]);
+-
+-        ((uint32_t*)out)[3]  = htole32(Q1 ^ ctx->K[3] ^ ((uint32_t*)ivec)[3]);
+-        ((uint32_t*)out)[2]  = htole32(Q0 ^ ctx->K[2] ^ ((uint32_t*)ivec)[2]);
+-        ((uint32_t*)out)[1]  = htole32(Q3 ^ ctx->K[1] ^ ((uint32_t*)ivec)[1]);
+-        ((uint32_t*)out)[0]  = htole32(Q2 ^ ctx->K[0] ^ ((uint32_t*)ivec)[0]);
++        ((uint32_t*)out)[11] = htole32(s1 ^ ctx->K[3] ^ ((uint32_t*)in)[7]);
++        ((uint32_t*)out)[10] = htole32(s0 ^ ctx->K[2] ^ ((uint32_t*)in)[6]);
++        ((uint32_t*)out)[9]  = htole32(s3 ^ ctx->K[1] ^ ((uint32_t*)in)[5]);
++        ((uint32_t*)out)[8]  = htole32(s2 ^ ctx->K[0] ^ ((uint32_t*)in)[4]);
++
++        ((uint32_t*)out)[7]  = htole32(r1 ^ ctx->K[3] ^ ((uint32_t*)in)[3]);
++        ((uint32_t*)out)[6]  = htole32(r0 ^ ctx->K[2] ^ ((uint32_t*)in)[2]);
++        ((uint32_t*)out)[5]  = htole32(r3 ^ ctx->K[1] ^ ((uint32_t*)in)[1]);
++        ((uint32_t*)out)[4]  = htole32(r2 ^ ctx->K[0] ^ ((uint32_t*)in)[0]);
++
++        ((uint32_t*)out)[3]  = htole32(q1 ^ ctx->K[3] ^ ((uint32_t*)ivec)[3]);
++        ((uint32_t*)out)[2]  = htole32(q0 ^ ctx->K[2] ^ ((uint32_t*)ivec)[2]);
++        ((uint32_t*)out)[1]  = htole32(q3 ^ ctx->K[1] ^ ((uint32_t*)ivec)[1]);
++        ((uint32_t*)out)[0]  = htole32(q2 ^ ctx->K[0] ^ ((uint32_t*)ivec)[0]);
+ 
+         in += 3 * TF_BLOCK_SIZE; out += 3 * TF_BLOCK_SIZE;
+ 
+@@ -547,38 +557,38 @@ int tf_cbc_decrypt (unsigned char *out,
+     // handle the two or less remaining block on a single rail
+     for(; n != 0; n--) {
+         uint32_t T0, T1;
+-        uint32_t Q0, Q1, Q2, Q3;
++        uint32_t q0, q1, q2, q3;
+ 
+         memcpy(old, in, TF_BLOCK_SIZE);
+ 
+         // load/byteswap/whiten input
+-        Q3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[3]);
+-        Q2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[2]);
+-        Q1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[1]);
+-        Q0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[0]);
+-
+-        DEC_ROUND(Q0, Q1, Q2, Q3, 15);
+-        DEC_ROUND(Q2, Q3, Q0, Q1, 14);
+-        DEC_ROUND(Q0, Q1, Q2, Q3, 13);
+-        DEC_ROUND(Q2, Q3, Q0, Q1, 12);
+-        DEC_ROUND(Q0, Q1, Q2, Q3, 11);
+-        DEC_ROUND(Q2, Q3, Q0, Q1, 10);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  9);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  8);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  7);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  6);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  5);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  4);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  3);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  2);
+-        DEC_ROUND(Q0, Q1, Q2, Q3,  1);
+-        DEC_ROUND(Q2, Q3, Q0, Q1,  0);
++        q3 = ctx->K[7] ^ le32toh(((uint32_t*)in)[3]);
++        q2 = ctx->K[6] ^ le32toh(((uint32_t*)in)[2]);
++        q1 = ctx->K[5] ^ le32toh(((uint32_t*)in)[1]);
++        q0 = ctx->K[4] ^ le32toh(((uint32_t*)in)[0]);
++
++        DEC_ROUND(q0, q1, q2, q3, 15);
++        DEC_ROUND(q2, q3, q0, q1, 14);
++        DEC_ROUND(q0, q1, q2, q3, 13);
++        DEC_ROUND(q2, q3, q0, q1, 12);
++        DEC_ROUND(q0, q1, q2, q3, 11);
++        DEC_ROUND(q2, q3, q0, q1, 10);
++        DEC_ROUND(q0, q1, q2, q3,  9);
++        DEC_ROUND(q2, q3, q0, q1,  8);
++        DEC_ROUND(q0, q1, q2, q3,  7);
++        DEC_ROUND(q2, q3, q0, q1,  6);
++        DEC_ROUND(q0, q1, q2, q3,  5);
++        DEC_ROUND(q2, q3, q0, q1,  4);
++        DEC_ROUND(q0, q1, q2, q3,  3);
++        DEC_ROUND(q2, q3, q0, q1,  2);
++        DEC_ROUND(q0, q1, q2, q3,  1);
++        DEC_ROUND(q2, q3, q0, q1,  0);
+ 
+         // load/byteswap/whiten output/iv
+-        ((uint32_t*)out)[3] = htole32(Q1 ^ ctx->K[3] ^ ((uint32_t*)ivec)[3]);
+-        ((uint32_t*)out)[2] = htole32(Q0 ^ ctx->K[2] ^ ((uint32_t*)ivec)[2]);
+-        ((uint32_t*)out)[1] = htole32(Q3 ^ ctx->K[1] ^ ((uint32_t*)ivec)[1]);
+-        ((uint32_t*)out)[0] = htole32(Q2 ^ ctx->K[0] ^ ((uint32_t*)ivec)[0]);
++        ((uint32_t*)out)[3] = htole32(q1 ^ ctx->K[3] ^ ((uint32_t*)ivec)[3]);
++        ((uint32_t*)out)[2] = htole32(q0 ^ ctx->K[2] ^ ((uint32_t*)ivec)[2]);
++        ((uint32_t*)out)[1] = htole32(q3 ^ ctx->K[1] ^ ((uint32_t*)ivec)[1]);
++        ((uint32_t*)out)[0] = htole32(q2 ^ ctx->K[0] ^ ((uint32_t*)ivec)[0]);
+ 
+         in += TF_BLOCK_SIZE; out+= TF_BLOCK_SIZE;
+ 

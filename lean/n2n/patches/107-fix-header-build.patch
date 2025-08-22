@@ -1,0 +1,36 @@
+--- a/include/n2n_regex.h
++++ b/include/n2n_regex.h
+@@ -68,6 +68,8 @@ int re_matchp (re_t pattern, const char*
+ /* Find matches of the txt pattern inside text (will compile automatically first). */
+ int  re_match (const char* pattern, const char* text, int* matchlenght);
+ 
++/* Print regex pattern (for debugging) */
++void re_print(re_t pattern);
+ 
+ #ifdef __cplusplus
+ }
+--- a/src/curve25519.c
++++ b/src/curve25519.c
+@@ -26,6 +26,7 @@
+  *
+  */
+ 
++#include "curve25519.h"
+ 
+ static void add (unsigned int out[32], const unsigned int a[32], const unsigned int b[32]) {
+ 
+--- a/include/curve25519.h
++++ b/include/curve25519.h
+@@ -17,4 +17,12 @@
+  */
+ 
+ 
++#ifndef CURVE25519_H
++#define CURVE25519_H
++
++#include <stddef.h>
++
++/* Curve25519 key exchange function */
+ void curve25519 (unsigned char *q, const unsigned char *n, const unsigned char *p);
++
++#endif /* CURVE25519_H */
