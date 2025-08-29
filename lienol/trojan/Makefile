@@ -1,9 +1,3 @@
-#
-# Copyright (C) 2018-2019 wongsyrone
-#
-# This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
-#
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=trojan
@@ -27,6 +21,7 @@ PKG_BUILD_FLAGS:=gc-sections lto
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
+include ./boost-version.mk
 
 TARGET_CXXFLAGS += -Wall -Wextra
 TARGET_CXXFLAGS += $(FPIC)
@@ -55,16 +50,7 @@ define Package/trojan
 	DEPENDS:= \
 		+libpthread +libstdcpp +libopenssl \
 		+boost +boost-program_options +boost-date_time \
-		+@TROJAN_BOOST_SYSTEM:boost-system
-endef
-
-define Package/trojan/config
-	config TROJAN_BOOST_SYSTEM
-		bool "Include boost-system depends (required for Boost < 1.89.0)"
-		default y if PACKAGE_boost-system
-		help
-			Select this option if your Boost version is lower than 1.89.0.
-			For Boost versions 1.89.0 and above, the system library is integrated into the main boost library.
+		$(if $(filter y,$(NEED_BOOST_SYSTEM)),,+boost-system)
 endef
 
 define Package/trojan/install
@@ -73,4 +59,3 @@ define Package/trojan/install
 endef
 
 $(eval $(call BuildPackage,trojan))
-

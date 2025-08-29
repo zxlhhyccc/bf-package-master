@@ -27,6 +27,7 @@ PKG_BUILD_FLAGS:=gc-sections lto
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
+include ./boost-version.mk
 
 TARGET_CXXFLAGS += -Wall -Wextra
 TARGET_CXXFLAGS += $(FPIC)
@@ -55,16 +56,7 @@ define Package/trojan-plus
 	DEPENDS:= \
 		+libpthread +libstdcpp +libopenssl \
 		+boost +boost-program_options \
-		+@TROJAN_PLUS_BOOST_SYSTEM:boost-system
-endef
-
-define Package/trojan-plus/config
-	config TROJAN_PLUS_BOOST_SYSTEM
-		bool "Include boost-system depends (required for Boost < 1.89.0)"
-		default y if PACKAGE_boost-system
-		help
-			Select this option if your Boost version is lower than 1.89.0.
-			For Boost versions 1.89.0 and above, the system library is integrated into the main boost library.
+		$(if $(filter y,$(NEED_BOOST_SYSTEM)),,+boost-system)
 endef
 
 define Package/trojan-plus/install
