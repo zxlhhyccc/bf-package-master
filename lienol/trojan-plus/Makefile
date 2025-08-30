@@ -51,7 +51,7 @@ CMAKE_OPTIONS += \
 define Package/trojan-plus
 	SECTION:=net
 	CATEGORY:=Network
-	TITLE:=An unidentifiable mechanism that helps you bypass GFW. It's compatible with original trojan with experimental features.
+	TITLE:=An unidentifiable mechanism that helps you bypass GFW
 	URL:=https://github.com/Trojan-Plus-Group/trojan-plus
 	DEPENDS:= \
 		+libpthread +libstdcpp +libopenssl \
