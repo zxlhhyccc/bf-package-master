@@ -24,7 +24,7 @@ if [ "$COMMIT" != "$OLD_COMMIT" ]; then
     rm -f dl/smartdns-${OLD_VER}.tar.zst
 
     # 清理旧缓存（触发重新编译）
-    make package/kcptun/clean V=s
+    make package/smartdns/clean V=s
  
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
