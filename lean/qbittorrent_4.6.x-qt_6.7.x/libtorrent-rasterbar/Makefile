@@ -21,6 +21,7 @@ PYTHON3_PKG_WHEEL_NAME:=libtorrent
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
+include ./boost-version.mk
 
 define Package/libtorrent-rasterbar/Default
   TITLE:=Rasterbar BitTorrent library
@@ -31,7 +32,8 @@ define Package/libtorrent-rasterbar
   $(call Package/libtorrent-rasterbar/Default)
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+boost-system +libopenssl +libatomic +libstdcpp
+  DEPENDS:=+libopenssl +libatomic +libstdcpp \
+	$(if $(filter y,$(NEED_BOOST_SYSTEM)),,+boost-system)
 endef
 
 define Package/python3-libtorrent
