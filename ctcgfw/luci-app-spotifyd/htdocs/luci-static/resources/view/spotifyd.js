@@ -5,7 +5,7 @@
 'require uci';
 'require view';
 
-const callServiceList = rpc.declare({
+var callServiceList = rpc.declare({
 	object: 'service',
 	method: 'list',
 	params: ['name'],
@@ -36,7 +36,7 @@ function renderStatus(isRunning) {
 
 return view.extend({
 	render: function() {
-		let m, s, o;
+		var m, s, o;
 
 		m = new form.Map('spotifyd', _('Spotifyd'),
 			_('An open source Spotify client running as a UNIX daemon.'));
@@ -63,7 +63,8 @@ return view.extend({
 
 		o = s.option(form.Value, 'username', _('Username'));
 
-		o = s.option(form.Value, 'password', _('Password'));
+		o = s.option(form.Value, 'token', _('Authentication token'),
+			_('Run <code>spotifyd authenticate</code> on your device to get the token.'));
 		o.password = true;
 
 		o = s.option(form.Value, 'device_name', _('Device name'));
@@ -94,12 +95,12 @@ return view.extend({
 
 		o = s.option(form.ListValue, 'audio_format', _('Audio format'),
 			_('The audio format of the streamed audio data.'));
-		o.value('S16');
-		o.value('S24');
-		o.value('S24_3');
-		o.value('S32');
-		o.value('F32');
-		o.default = 'S32';
+		o.value('s16');
+		o.value('s24');
+		o.value('s24-3');
+		o.value('s32');
+		o.value('f32');
+		o.default = 's32';
 		o.rmempty = false;
 
 		o = s.option(form.ListValue, 'bitrate', _('Audio bitrate'),
@@ -138,6 +139,7 @@ return view.extend({
 		o.default = '1';
 
 		o = s.option(form.Value, 'cache_path', _('Cache path'));
+		o.placeholder = '/var/run/spotifyd';
 		o.depends('no_audio_cache', '0');
 
 		o = s.option(form.Value, 'max_cache_size', _('Max cache size'),
