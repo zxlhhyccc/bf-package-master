@@ -19,6 +19,8 @@ PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_COMPRESS_GOPROXY \
 	CONFIG_SING_BOX_COMPRESS_UPX \
+	CONFIG_SING_BOX_TINY_COMPRESS_GOPROXY \
+	CONFIG_SING_BOX_TINY_COMPRESS_UPX \
 	CONFIG_SING_BOX_TINY_BUILD_ACME \
 	CONFIG_SING_BOX_TINY_BUILD_CLASH_API \
 	CONFIG_SING_BOX_TINY_BUILD_DHCP \
@@ -70,6 +72,15 @@ endef
 
 define Package/sing-box/config
   depends on $(subst @,,$(GO_ARCH_DEPENDS))
+
+    config SING_BOX_COMPRESS_GOPROXY
+	bool "Compiling with GOPROXY proxy"
+	default n
+
+    config SING_BOX_COMPRESS_UPX
+	bool "Compress executable files with UPX"
+	depends on !mips64
+	default n
 endef
 
 define Package/sing-box-tiny
@@ -82,13 +93,13 @@ endef
 Package/sing-box-tiny/description:=$(Package/sing-box/description)
 
 define Package/sing-box-tiny/config
-  $(call Package/sing-box/config)
+  depends on $(subst @,,$(GO_ARCH_DEPENDS))
 
-    config SING_BOX_COMPRESS_GOPROXY
+    config SING_BOX_TINY_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
 	default n
 
-    config SING_BOX_COMPRESS_UPX
+    config SING_BOX_TINY_COMPRESS_UPX
 	bool "Compress executable files with UPX"
 	depends on !mips64
 	default n
@@ -171,7 +182,7 @@ Package/sing-box-tiny/conffiles=$(Package/sing-box/conffiles)
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-ifneq ($(CONFIG_SING_BOX_COMPRESS_UPX),)
+ifneq ($(CONFIG_SING_BOX_COMPRESS_UPX)$(CONFIG_SING_BOX_TINY_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/sing-box
 endif
 endef
@@ -190,17 +201,6 @@ define Package/sing-box/install
 endef
 
 Package/sing-box-tiny/install=$(Package/sing-box/install)
-
-define Package/$(PKG_NAME)/postinst
-#!/bin/sh
-
-# check if we are on real system
-if [ -z "$${IPKG_INSTROOT}" ]; then
-	/etc/init.d/sing-box stop >/dev/null 2>&1
-	/etc/init.d/sing-box disable >/dev/null 2>&1
-fi
-exit 0
-endef
 
 $(eval $(call BuildPackage,sing-box))
 $(eval $(call BuildPackage,sing-box-tiny))
