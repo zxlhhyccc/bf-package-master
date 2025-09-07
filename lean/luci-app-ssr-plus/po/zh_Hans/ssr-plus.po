@@ -173,8 +173,8 @@ msgid "Apply"
 msgstr "应用"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:426
-msgid "ApplyTo (IP type)"
-msgstr "ApplyTo（IP 类型）"
+msgid "IP Type"
+msgstr "IP 类型"
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/backup_restore.htm:133
 msgid "Are you sure you want to restore the client to default settings?"
@@ -839,16 +839,16 @@ msgid "Fragment Packets"
 msgstr "分片方式"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:372
-msgid "Fragment maxSplit"
-msgstr "分片数据包拆分"
+msgid "Max Split"
+msgstr "最大分片数"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:368
 msgid "Fragmentation interval (ms)"
 msgstr "分片间隔（ms）"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:372
-msgid "Fragmented maxSplit (byte)"
-msgstr "分片数据包的拆分数量 (byte)"
+msgid "Limit the maximum number of splits."
+msgstr "限制分片的最大数量。"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:364
 msgid "Fragmented packet length (byte)"

@@ -209,7 +209,7 @@ if uci:get_first("shadowsocksr", 'global', 'netflix_enable', '0') ~= '0' then
 	s.value = nfip_count .. " " .. translate("Records")
 end
 
-if uci:get_first("shadowsocksr", 'global', 'pdnsd_enable', '0') == '3' then
+if uci:get_first("shadowsocksr", 'global', 'pdnsd_enable', '0') == '5' then
 	s = m:field(DummyValue, "geo_data", translate("Loyalsoldier's GeoData"))
 	s.rawhtml = true
 	s.template = "shadowsocksr/refresh"
