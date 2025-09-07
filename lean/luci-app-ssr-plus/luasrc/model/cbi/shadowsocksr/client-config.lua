@@ -866,18 +866,6 @@ o.validate = function(self, value)
     return value
 end
 
--- XHTTP ALPN
-o = s:option(ListValue, "xhttp_alpn", translate("XHTTP ALPN"))
-o.default = ""
-o:value("", translate("Default"))
-o:value("h3")
-o:value("h2")
-o:value("h3,h2")
-o:value("http/1.1")
-o:value("h2,http/1.1")
-o:value("h3,h2,http/1.1")
-o:depends({transport = "xhttp", tls = true})
-
 -- [[ H2部分 ]]--
 
 -- H2域名
@@ -1194,7 +1182,21 @@ o:depends("xtls", true)
 o:depends("reality", true)
 o.rmempty = true
 
+-- TLS ALPN
 o = s:option(ListValue, "tls_alpn", translate("TLS ALPN"))
+o.default = ""
+o:value("", translate("Default"))
+o:value("h3")
+o:value("h2")
+o:value("h3,h2")
+o:value("http/1.1")
+o:value("h2,http/1.1")
+o:value("h3,h2,http/1.1")
+o:depends({type = "hysteria2", tls = true})
+o:depends({transport = "xhttp", tls = true})
+
+-- TUIC ALPN
+o = s:option(ListValue, "tuic_alpn", translate("TUIC ALPN"))
 o.default = ""
 o:value("", translate("Default"))
 o:value("h3")
@@ -1407,4 +1409,3 @@ if is_finded("kcptun-client") then
 end
 
 return m
-
