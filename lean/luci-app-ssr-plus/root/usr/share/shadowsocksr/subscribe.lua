@@ -201,7 +201,7 @@ local function processData(szType, content)
 		result.alias = url.fragment and UrlDecode(url.fragment) or nil
 		result.type = hy2_type
 		result.server = url.host
-		result.server_port = url.port
+		result.server_port = url.port or 443
 		if params.protocol then
 			result.flag_transport = "1"
 			result.transport_protocol = params.protocol or "udp"
@@ -209,6 +209,10 @@ local function processData(szType, content)
 		result.hy2_auth = url.user
 		result.uplink_capacity = tonumber((params.upmbps or ""):match("^(%d+)")) or nil
 		result.downlink_capacity = tonumber((params.downmbps or ""):match("^(%d+)")) or nil
+		if params.mport then
+			result.flag_port_hopping = "1"
+			result.port_range = params.mport
+		end
 		if params.obfs and params.obfs ~= "none" then
 			result.flag_obfs = "1"
 			result.obfs_type = params.obfs
@@ -220,18 +224,18 @@ local function processData(szType, content)
 				result.tls_host = params.sni
 			end
 			if params.alpn then
-				result.tls_alpn = params.alpn  -- 可以是字符串或数组
+				local alpn = {}
+				for v in params.alpn:gmatch("[^,]+") do
+					table.insert(alpn, v)
+				end
+				result.tls_alpn = alpn
 			end
 		end
-		if params.insecure then
-			result.insecure = "1"
-			if params.sni then
-				result.pinsha256 = params.pinSHA256
-			end
+		if params.insecure == "1" then
+			result.insecure = params.insecure
 		end
-		if params.mport then
-			result.flag_port_hopping = "1"
-			result.port_range = params.mport
+		if params.pinSHA256 then
+			result.pinsha256 = params.pinSHA256
 		end
 	elseif szType == 'ssr' then
 		local dat = split(content, "/%?")
@@ -335,7 +339,7 @@ local function processData(szType, content)
 		if info.net == 'quic' then
 			result.quic_guise = info.type
 			result.quic_key = info.key
-			result.quic_security = info.securty
+			result.quic_security = info.security
 		end
 		if info.security then
 			result.security = info.security
@@ -344,7 +348,11 @@ local function processData(szType, content)
 			result.tls = "1"
 			result.fingerprint = info.fp
 			if info.alpn and info.alpn ~= "" then
-				result.tls_alpn = info.alpn
+				local alpn = {}
+				for v in info.alpn:gmatch("[^,]+") do
+					table.insert(alpn, v)
+				end
+				result.tls_alpn = alpn
 			end
 			if info.sni and info.sni ~= "" then
 				result.tls_host = info.sni
@@ -732,7 +740,13 @@ local function processData(szType, content)
 			result.transport = "xhttp"
 		end
 		result.tls = (params.security == "tls" or params.security == "xtls") and "1" or "0"
-		result.tls_alpn = params.alpn or ""
+		if params.alpn and params.alpn ~= "" then
+			local alpn = {}
+			for v in params.alpn:gmatch("[^,]+") do
+				table.insert(alpn, v)
+			end
+			result.tls_alpn = alpn
+		end
 		result.tls_host = params.sni
 		result.tls_flow = (params.security == "tls" or params.security == "reality") and params.flow or nil
 		result.fingerprint = params.fp

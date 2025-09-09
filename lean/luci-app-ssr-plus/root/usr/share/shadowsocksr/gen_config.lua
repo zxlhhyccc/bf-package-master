@@ -474,7 +474,7 @@ local hysteria2 = {
 	} or nil,
 	quic = (server.flag_quicparam == "1" ) and {
 		initStreamReceiveWindow = (server.initstreamreceivewindow and server.initstreamreceivewindow or nil),
-		maxStreamReceiveWindow = (server.maxstreamseceivewindow and server.maxstreamseceivewindow or nil),
+		maxStreamReceiveWindow = (server.maxstreamreceivewindow and server.maxstreamreceivewindow or nil),
 		initConnReceiveWindow = (server.initconnreceivewindow and server.initconnreceivewindow or nil),
 		maxConnReceiveWindow = (server.maxconnreceivewindow and server.maxconnreceivewindow or nil),
 		maxIdleTimeout = (tonumber(server.maxidletimeout) and tonumber(server.maxidletimeout) .. "s" or nil),
@@ -482,7 +482,7 @@ local hysteria2 = {
 		disablePathMTUDiscovery = (server.disablepathmtudiscovery == "1") and true or false
 	} or nil,
 	auth = server.hy2_auth,
-	tls = server.tls_host and {
+	tls = (server.tls_host and server.tls_host ~= "") and {
 		sni = server.tls_host,
 		alpn = (server.type == "hysteria2") and (function()
 			local alpn = {}
@@ -499,11 +499,24 @@ local hysteria2 = {
 		end)() or nil,
 		--sni = server.tls_host or (server.tls_host and server.tls_alpn) or nil,
 		insecure = (server.insecure == "1") and true or false,
-		pinSHA256 = (server.insecure == "1") and server.pinsha256 or nil
+		pinSHA256 = server.pinsha256 or nil
 	} or {
 		sni = server.server,
-		--sni = server.tls_host or (server.tls_host and server.tls_alpn) or nil,
-		insecure = (server.insecure == "1") and true or false
+		alpn = (server.type == "hysteria2") and (function()
+			local alpn = {}
+			if server.tls_alpn and server.tls_alpn ~= "" then
+				string.gsub(server.tls_alpn, '[^,]+', function(w)
+					table.insert(alpn, w)
+				end)
+			end
+			if #alpn > 0 then
+				return alpn
+			else
+				return nil
+			end
+		end)() or nil,
+		insecure = (server.insecure == "1") and true or false,
+		pinSHA256 = server.pinsha256 or nil
 	},
 	fast_open = (server.fast_open == "1") and true or false,
 	lazy = (server.lazy_mode == "1") and true or false

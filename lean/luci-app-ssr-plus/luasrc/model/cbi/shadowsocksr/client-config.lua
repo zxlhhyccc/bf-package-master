@@ -477,7 +477,7 @@ o.datatype = "uinteger"
 o.rmempty = true
 o.default = "8388608"
 
-o = s:option(Value, "maxstreamseceivewindow", translate("QUIC maxStreamReceiveWindow"))
+o = s:option(Value, "maxstreamreceivewindow", translate("QUIC maxStreamReceiveWindow"))
 o:depends({type = "hysteria2", flag_quicparam = "1"})
 o.datatype = "uinteger"
 o.rmempty = true
@@ -1213,9 +1213,8 @@ o.description = translate("If true, allowss insecure connection at TLS client, e
 
 -- [[ Hysteria2 TLS pinSHA256 ]] --
 o = s:option(Value, "pinsha256", translate("Certificate fingerprint"))
-o:depends({type = "hysteria2", insecure = true })
+o:depends("type", "hysteria2")
 o.rmempty = true
-
 
 -- [[ Mux.Cool ]] --
 o = s:option(Flag, "mux", translate("Mux"), translate("Enable Mux.Cool"))
