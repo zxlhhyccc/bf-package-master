@@ -1192,8 +1192,8 @@ o:value("h3,h2")
 o:value("http/1.1")
 o:value("h2,http/1.1")
 o:value("h3,h2,http/1.1")
+o:depends("tls", true)
 o:depends({type = "hysteria2", tls = true})
-o:depends({transport = "xhttp", tls = true})
 
 -- TUIC ALPN
 o = s:option(ListValue, "tuic_alpn", translate("TUIC ALPN"))
