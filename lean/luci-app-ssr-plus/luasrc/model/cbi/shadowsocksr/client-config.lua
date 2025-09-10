@@ -1224,7 +1224,6 @@ o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "raw", tls_flow
 o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "ws"})
 o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "kcp"})
 o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "httpupgrade"})
-o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "xhttp"})
 o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "h2"})
 o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "quic"})
 o:depends({type = "v2ray", v2ray_protocol = "vless", transport = "grpc"})

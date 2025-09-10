@@ -260,6 +260,24 @@ local function processData(szType, content)
 		end
 		result.alias = result.alias .. base64Decode(params.remarks)
 	elseif szType == "vmess" then
+		-- 预处理 content，清理掉换行、注释、空格
+		local function sanitize_json(str)
+			if not str or str == "" then return str end
+			-- 去掉首尾空格和换行
+			str = str:gsub("^%s+", ""):gsub("%s+$", "")
+			-- 去掉 // 注释
+			str = str:gsub("//[^\r\n]*", "")
+			-- 去掉 # 注释（兼容一些带 emoji 的链接）
+			str = str:gsub("#[^\r\n]*", "")
+			-- 去掉换行和制表符
+			str = str:gsub("[\r\n\t]", "")
+			-- 去掉多余空格
+			str = str:gsub("%s+", " ")
+			return str
+		end
+
+		content = sanitize_json(content)
+
 		-- 解析正常节点
 		local success, info = pcall(jsonParse, content)
 		if not success or type(info) ~= "table" then
@@ -298,8 +316,8 @@ local function processData(szType, content)
 			result.enable_xhttp_extra = (info.extra and info.extra ~= "") and "1" or nil
 			result.xhttp_extra = (info.extra and info.extra ~= "") and info.extra or nil
 			-- 尝试解析 JSON 数据
-			local success, Data = pcall(jsonParse, info.extra)
-			if success and Data then
+			local success, Data = pcall(jsonParse, info.extra or "")
+			if success and type(Data) == "table" then
 				local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
 					or (Data.downloadSettings and Data.downloadSettings.address)
 				result.download_address = address and address ~= "" and address or nil
@@ -684,8 +702,8 @@ local function processData(szType, content)
 				result.enable_xhttp_extra = (params.extra and params.extra ~= "") and "1" or nil
 				result.xhttp_extra = (params.extra and params.extra ~= "") and params.extra or nil
 				-- 尝试解析 JSON 数据
-				local success, Data = pcall(jsonParse, params.extra)
-				if success and Data then
+				local success, Data = pcall(jsonParse, params.extra) or "")
+				if success and type(Data) == "table" then
 					local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
 						or (Data.downloadSettings and Data.downloadSettings.address)
 					result.download_address = address and address ~= "" and address or nil
@@ -774,8 +792,8 @@ local function processData(szType, content)
 			result.enable_xhttp_extra = (params.extra and params.extra ~= "") and "1" or nil
 			result.xhttp_extra = (params.extra and params.extra ~= "") and params.extra or nil
 			-- 尝试解析 JSON 数据
-			local success, Data = pcall(jsonParse, params.extra)
-			if success and Data then
+			local success, Data = pcall(jsonParse, params.extra or "")
+			if success and type(Data) == "table" then
 				local address = (Data.extra and Data.extra.downloadSettings and Data.extra.downloadSettings.address)
 					or (Data.downloadSettings and Data.downloadSettings.address)
 				result.download_address = address and address ~= "" and address or nil
