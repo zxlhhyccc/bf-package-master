@@ -1,6 +1,6 @@
 --- a/luasrc/model/cbi/openclash/config-subscribe-edit.lua
 +++ b/luasrc/model/cbi/openclash/config-subscribe-edit.lua
-@@ -104,6 +104,9 @@ o:value("https://api.dler.io/sub", translate("api.dler.io")..translate("(Default
+@@ -104,6 +104,9 @@
  o:depends("sub_convert", "1")
  o:value("https://api.dler.io/sub", translate("api.dler.io")..translate("(Default)"))
  o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
@@ -10,17 +10,6 @@
  o.default = "https://api.dler.io/sub"
  o.placeholder = "https://api.dler.io/sub"
  
---- a/luasrc/model/cbi/openclash/settings.lua
-+++ b/luasrc/model/cbi/openclash/settings.lua
-@@ -27,7 +27,7 @@ m.description = translate("Note: To restore the default configuration, try acces
- "<br/>"..font_green..translate("Note: Game proxy please use nodes except VMess")..font_off..
- "<br/>"..font_green..translate("Note: If you need to perform client access control in Fake-IP mode, please change the DNS hijacking mode to firewall forwarding")..font_off..
- "<br/>"..translate("Note: The default proxy routes local traffic, BT, PT download, etc., please use Redir-Host mode as much as possible and pay attention to traffic avoidance")..
--"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..translate("Click to the page").."</a>"..
-+"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..font_green..bold_on..translate("Click to the page")..bold_off..font_off.."</a>"..
- "<br/>"..font_green..translate("For More Useful Meta Core Functions Go Wiki")..": "..font_off.."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/\")'>"..translate("https://wiki.metacubex.one/").."</a>"
- 
- s = m:section(TypedSection, "openclash")
 --- a/po/zh-cn/openclash.zh-cn.po
 +++ b/po/zh-cn/openclash.zh-cn.po
 @@ -2838,6 +2838,12 @@ msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
