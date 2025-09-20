@@ -412,9 +412,10 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 		}
 		o.onclick = function(ev, section_id) {
 			uci.set(data[0], 'config', 'main_node', section_id);
-			ui.changes.apply(true);
 
-			return this.map.save(null, true);
+			return this.map.save(null, true).then(() => {
+				ui.changes.apply(true);
+			});
 		}
 	}
 
@@ -1119,7 +1120,7 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 		o.value('random');
 		o.value('randomized');
 		o.value('safari');
-		o.depends({'tls': '1', 'type': /^((?!hysteria2?$).)+$/});
+		o.depends({'tls': '1', 'type': /^((?!hysteria2?|tuic$).)+$/});
 		o.validate = function(section_id, value) {
 			if (section_id) {
 				let tls_reality = this.map.findElement('id', 'cbid.homeproxy.%s.tls_reality'.format(section_id)).firstElementChild;
@@ -1136,6 +1137,7 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 		o.modalonly = true;
 
 		o = s.option(form.Flag, 'tls_reality', _('REALITY'));
+		o.depends({'tls': '1', 'type': 'anytls'});
 		o.depends({'tls': '1', 'type': 'vless'});
 		o.modalonly = true;
 
@@ -1389,8 +1391,9 @@ return view.extend({
 		o.inputstyle = 'apply';
 		o.inputtitle = _('Save current settings');
 		o.onclick = function() {
-			ui.changes.apply(true);
-			return this.map.save(null, true);
+			return this.map.save(null, true).then(() => {
+				ui.changes.apply(true);
+			});
 		}
 
 		o = s.taboption('subscription', form.Button, '_update_subscriptions', _('Update nodes from subscriptions'));

@@ -135,6 +135,8 @@ if (match(proxy_mode), /tun/) {
 		endpoint_independent_nat = uci.get(uciconfig, uciroutingsetting, 'endpoint_independent_nat');
 	}
 }
+
+const log_level = uci.get(uciconfig, ucimain, 'log_level') || 'warn';
 /* UCI config end */
 
 /* Config helper start */
@@ -399,7 +401,7 @@ const config = {};
 /* Log */
 config.log = {
 	disabled: false,
-	level: 'warn',
+	level: log_level,
 	output: RUN_DIR + '/sing-box-c.log',
 	timestamp: true
 };
@@ -420,12 +422,12 @@ config.dns = {
 			tag: 'default-dns',
 			type: 'udp',
 			server: wan_dns,
-			detour: 'direct-out'
+			detour: self_mark ? 'direct-out' : null
 		},
 		{
 			tag: 'system-dns',
 			type: 'local',
-			detour: 'direct-out'
+			detour: self_mark ? 'direct-out' : null
 		}
 	],
 	rules: [],
@@ -471,7 +473,7 @@ if (!isEmpty(main_node)) {
 				server: 'default-dns',
 				strategy: 'prefer_ipv6'
 			},
-			detour: 'direct-out',
+			detour: self_mark ? 'direct-out' : null,
 			...parse_dnserver(china_dns_server)
 		});
 
@@ -511,6 +513,10 @@ if (!isEmpty(main_node)) {
 		if (cfg.enabled !== '1')
 			return;
 
+		let outbound = get_outbound(cfg.outbound);
+		if (outbound === 'direct-out' && isEmpty(self_mark))
+			outbound = null;
+
 		push(config.dns.servers, {
 			tag: 'cfg-' + cfg['.name'] + '-dns',
 			type: cfg.type,
@@ -522,11 +528,11 @@ if (!isEmpty(main_node)) {
 				enabled: true,
 				server_name: cfg.tls_sni
 			} : null,
-			domain_resolver: {
-				server: get_resolver(cfg.address_resolver),
+			domain_resolver: (cfg.address_resolver || cfg.address_strategy) ? {
+				server: get_resolver(cfg.address_resolver || dns_default_server),
 				strategy: cfg.address_strategy
-			},
-			detour: get_outbound(cfg.outbound)
+			} : null,
+			detour: outbound
 		});
 	});
 
