@@ -28,12 +28,12 @@ OLD_LAST_COMMIT=$(grep 'LAST_COMMIT_POSITION' "$FILE" \
 
 API_DATE="$(curl -s "${REPO}/+log?format=JSON" \
   | tail -n +2 \
-  | jq -r '.log[1].committer.time' \
+  | jq -r '.log[0].committer.time' \
   | awk '{print $5 "-" toupper($2) "-" $3}' \
   | sed 's/JAN/01/;s/FEB/02/;s/MAR/03/;s/APR/04/;s/MAY/05/;s/JUN/06/;s/JUL/07/;s/AUG/08/;s/SEP/09/;s/OCT/10/;s/NOV/11/;s/DEC/12/')"
 NEW_DATE=${API_DATE//-/.}
 
-COMMIT_FULL="$(curl -s "${REPO}/+log?format=JSON" | tail -n +2 | jq -r '.log[1].commit')"
+COMMIT_FULL="$(curl -s "${REPO}/+log?format=JSON" | tail -n +2 | jq -r '.log[0].commit')"
 NEW_COMMIT=${COMMIT_FULL:0:8}
 LAST_COMMIT=${COMMIT_FULL:0:12}
 
