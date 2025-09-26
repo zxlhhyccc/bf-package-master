@@ -7,8 +7,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-g$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/MetaCubeX/mihomo.git
-PKG_SOURCE_VERSION:=3b15cbd9eb432d5a5e2eb6274a272333f3eba1ed
-PKG_MIRROR_HASH:=b2baf005ce8f0cdbef38a307628b436fbcb96dc640dab8cb27baf962bb04c987
+PKG_SOURCE_VERSION:=f45c6f5e916e2b5d58ef3aadad1f6a2e07001131
+PKG_MIRROR_HASH:=d8cf6ac81cc4ff743ae87b253af82ea4c6fc217fd172739a47b6168e97edde4a
 
 PKG_REV:=$(shell git rev-parse --short=7 $(PKG_SOURCE_VERSION))
 # PKG_REV:=$(shell echo $(PKG_SOURCE_VERSION) | cut -c1-7)
