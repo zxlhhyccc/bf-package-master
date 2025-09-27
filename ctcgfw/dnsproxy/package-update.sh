@@ -33,7 +33,7 @@ if [ "$VER" != "$OLD_VER" ] || \
     echo "⬆️  新日期: $API_DATA，旧日期: $OLD_DATA"
 
     # 删除旧源码包和哈希
-    rm -f dl/dnsproxy-${OLD_VER}.tar.gz
+    rm -f dl/dnsproxy-${OLD_VER}.tar.zst
 
     # 清理旧缓存（触发重新编译）
     make package/dnsproxy/clean V=s
@@ -51,7 +51,7 @@ if [ "$VER" != "$OLD_VER" ] || \
     make package/dnsproxy/download V=s
 
     # 重新生成校验和
-    TARFILE="dl/dnsproxy-${VER}.tar.gz"
+    TARFILE="dl/dnsproxy-${VER}.tar.zst"
     if [ -f "$TARFILE" ]; then
         CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
         ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
