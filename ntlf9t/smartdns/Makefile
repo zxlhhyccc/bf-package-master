@@ -6,13 +6,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=smartdns
-PKG_VERSION:=1.2025.46.2
-PKG_RELEASE:=3
+PKG_VERSION:=1.2025.47
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=885f677225b6d65453de6e5657677eeb318ebd6d
-PKG_MIRROR_HASH:=53d6145b82e5af5ba0356cae6820ac595675ba1c081c4ec310708f37eea8d85a
+PKG_SOURCE_VERSION:=38b5a30abca16de04d4e4bb2bd2358cae758fa6e
+PKG_MIRROR_HASH:=1a55ca31befa28e68af6e5d12fe710ca1e89fc463ce11e48d35768634d93330a
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -109,7 +109,7 @@ endef
 define Build/Compile/smartdns-ui
 	cargo install --force --locked bindgen-cli
 	CARGO_BUILD_ARGS="$(if $(strip $(RUST_PKG_FEATURES)),--features "$(strip $(RUST_PKG_FEATURES))") --profile $(CARGO_PKG_PROFILE)"
-	+$(CARGO_PKG_VARS) CARGO_BUILD_ARGS="$(CARGO_BUILD_ARGS)" CC=$(TARGET_CC) \
+	+$(CARGO_PKG_VARS) CARGO_BUILD_ARGS="$(CARGO_BUILD_ARGS)" CC=$(TARGET_CC) CFLAGS="-O0" \
 	PATH="$$(PATH):$(CARGO_HOME)/bin" \
 	make -C $(PKG_BUILD_DIR)/plugin/smartdns-ui
 endef
