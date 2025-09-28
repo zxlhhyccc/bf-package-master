@@ -15,8 +15,8 @@ PKG_HASH:=5987dcb828068a4a5e29ba99ab26f2983ac0c6e2e4dc3e5b3a3c0fafb69abbc0
 HOST_BUILD_DIR:=$(BUILD_DIR)/host/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Zxl hhyccc <zxlhhy@gmail.com>
-PKG_LICENSE:=Apache-2.0
-PKG_LICENSE_FILES:=MIT LICENSE
+PKG_LICENSE:=Apache-2.0 OR MIT
+PKG_LICENSE_FILES:=LICENSE-MIT LICENSE-APACHE
 
 PKG_HOST_ONLY:=1
 PKG_BUILD_FLAGS:=no-mips16
@@ -30,9 +30,14 @@ define Package/rustup
   SECTION:=lang
   CATEGORY:=Languages
   SUBMENU:=Rust Toolchain
-  TITLE:=The Rust toolchain installer
+  TITLE:=The Rust toolchain installer (host only)
   URL:=https://github.com/rust-lang/rustup
   DEPENDS:=+libopenssl $(RUST_ARCH_DEPENDS)
+endef
+
+define Package/rustup/description
+ Rustup is the recommended tool to install the Rust programming language.
+ This package only provides a host build tool for OpenWrt build system.
 endef
 
 RUSTUP_BUILD_VARS+= \
@@ -50,7 +55,8 @@ endef
 
 define Host/Install
 	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/bin
-	$(INSTALL_BIN) $(HOST_BUILD_DIR)/target/release/rustup-init $(STAGING_DIR_HOSTPKG)/bin/rustup
+	$(INSTALL_BIN) $(HOST_BUILD_DIR)/target/release/rustup-init \
+		$(STAGING_DIR_HOSTPKG)/bin/rustup
 endef
 
 define Host/Clean
