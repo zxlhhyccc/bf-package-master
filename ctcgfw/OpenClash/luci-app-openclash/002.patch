@@ -12,7 +12,7 @@
  
 --- a/po/zh-cn/openclash.zh-cn.po
 +++ b/po/zh-cn/openclash.zh-cn.po
-@@ -2838,6 +2838,12 @@ msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
+@@ -2841,6 +2841,12 @@ msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
  msgid "Override All Dns Query"
  msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
  

@@ -1,0 +1,55 @@
+From 7f41c5c2d982d85a6e5c4bca63a3d87e41fb6b57 Mon Sep 17 00:00:00 2001
+From: Your Name <you@example.com>
+Date: Tue, 24 Sep 2025 22:30:00 +0800
+Subject: [PATCH] gn: Make rust_project_writer.cc compatible with C++17
+
+Upstream GN recently switched to using C++20 ranges algorithms
+(std::ranges::sort, std::ranges::unique). Since some toolchains
+(OpenWrt, Ubuntu 20.04) still default to C++17, this patch replaces
+the ranges-based implementation with equivalent std::sort + std::unique
+code that compiles under C++17.
+
+This change does not alter runtime behavior.
+
+---
+ src/gn/rust_project_writer.cc | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/src/gn/rust_project_writer.cc b/src/gn/rust_project_writer.cc
+index 1234567..89abcde 100644
+--- a/src/gn/rust_project_writer.cc
++++ b/src/gn/rust_project_writer.cc
+@@ -6,7 +6,6 @@
+ 
+ #include <algorithm>
+ #include <optional>
+-#include <ranges>
+ #include <vector>
+ 
+ #include "base/json/string_escape.h"
+@@ -215,11 +214,17 @@
+   }
+   // Remove duplicates. We could use a set-like structure, but chances are
+   // there's very few elements.
+-  std::ranges::sort(include_dirs, [](const auto& lhs, const auto& rhs) {
+-    return lhs.value() < rhs.value();
+-  });
+-  include_dirs.erase(std::ranges::unique(include_dirs).begin(),
+-                     include_dirs.end());
++  std::sort(include_dirs.begin(), include_dirs.end(),
++            [](const SourceDir& lhs, const SourceDir& rhs) {
++              return lhs.value() < rhs.value();
++            });
++
++  include_dirs.erase(
++      std::unique(include_dirs.begin(), include_dirs.end(),
++                  [](const SourceDir& lhs, const SourceDir& rhs) {
++                    return lhs.value() == rhs.value();
++                  }),
++      include_dirs.end());
+ 
+   Crate crate = Crate(crate_root, include_dirs, crate_id, crate_label,
+                       edition.value_or("2015"));
+-- 
+2.34.1
+
