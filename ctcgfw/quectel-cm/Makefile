@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=quectel-cm
-PKG_VERSION:=1.6.5
+PKG_VERSION:=1.6.8
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -9,7 +9,7 @@ PKG_SOURCE_URL:= \
 		https://mirror2.immortalwrt.org/sources \
 		https://sources-cdn.immortalwrt.org \
 		https://sources.immortalwrt.org
-PKG_HASH:=d2d888d457ef7fd02249c42b2f56d77513285957cd0c02f240a390de1f23e3fd
+PKG_HASH:=30de214fe17c7930774dbb48113a26ffa3a68fd2918badc69b71e12dbd729032
 
 PKG_LICENSE:=Public Domain
 PKG_LICENSE_FILES:=NOTICE
