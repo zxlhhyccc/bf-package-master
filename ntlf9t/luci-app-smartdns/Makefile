@@ -15,7 +15,7 @@ LUCI_TITLE:=LuCI for smartdns
 LUCI_DESCRIPTION:=Provides Luci for smartdns
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=+luci-base +smartdns \
-	+PACKAGE_$(PKG_NAME)_INCLUDE_smartdns_ui:smartdns-ui
+	+PACKAGE_$(PKG_NAME)_INCLUDE_WebUI:smartdns-ui
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -25,7 +25,7 @@ help
 	$(LUCI_TITLE)
 	Version: $(PKG_VERSION)-$(PKG_RELEASE)
 
-config PACKAGE_$(PKG_NAME)_INCLUDE_smartdns_ui
+config PACKAGE_$(PKG_NAME)_INCLUDE_WebUI
 	bool "Include smartdns-ui"
 	default n
 endef
