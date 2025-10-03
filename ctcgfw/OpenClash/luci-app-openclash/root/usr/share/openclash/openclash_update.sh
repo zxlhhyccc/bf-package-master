@@ -262,6 +262,48 @@ check_install_success()
    fi
 }
 
+install_missing_packages() {
+   local installed_before="$1"
+
+   if [ -x "/bin/opkg" ]; then
+      for pkg in $installed_before; do
+         if ! opkg status "$pkg" >/dev/null 2>&1; then
+            local retry_count=0
+            local max_retries=3
+            while [ $retry_count -lt $max_retries ]; do
+               retry_count=$((retry_count + 1))
+               opkg install "$pkg"
+               if [ $? -eq 0 ]; then
+                  break
+               else
+                  if [ $retry_count -lt $max_retries ]; then
+                     sleep 2
+                  fi
+               fi
+            done
+         fi
+      done
+   elif [ -x "/usr/bin/apk" ]; then
+      for pkg in $installed_before; do
+         if ! apk info "$pkg" >/dev/null 2>&1; then
+            local retry_count=0
+            local max_retries=3
+            while [ $retry_count -lt $max_retries ]; do
+               retry_count=$((retry_count + 1))
+               apk add "$pkg"
+               if [ $? -eq 0 ]; then
+                  break
+               else
+                  if [ $retry_count -lt $max_retries ]; then
+                     sleep 2
+                  fi
+               fi
+            done
+         fi
+      done
+   fi
+}
+
 uci -q set openclash.config.enable=0
 uci -q commit openclash
 
@@ -270,37 +312,32 @@ max_install_retries=3
 install_success=false
 
 while [ $install_retry_count -lt $max_install_retries ]; do
-      install_retry_count=$((install_retry_count + 1))
-      LOG_OUT "Tip:【$install_retry_count/$max_install_retries】Installing the new version, please do not refresh the page or do other operations..."
-    
+   install_retry_count=$((install_retry_count + 1))
+   LOG_OUT "Tip:【$install_retry_count/$max_install_retries】Installing the new version, please do not refresh the page or do other operations..."
+   
+   packages_to_check="luci-compat kmod-inet-diag kmod-nft-tproxy kmod-ipt-nat iptables-mod-tproxy iptables-mod-extra ipset"
+   installed_before=""
    if [ -x "/bin/opkg" ]; then
+      for pkg in $packages_to_check; do
+         if opkg status "$pkg" >/dev/null 2>&1; then
+            installed_before="$installed_before $pkg"
+         fi
+      done
       opkg install /tmp/openclash.ipk
-      if ! opkg status luci-compat >/dev/null 2>&1; then
-         if opkg list luci-compat 2>/dev/null | grep -q luci-compat; then
-            opkg install luci-compat
-            if [ $? -ne 0 ]; then
-               sleep 2
-               continue
-            fi
-         fi
-      fi
    elif [ -x "/usr/bin/apk" ]; then
-      apk add -q --force-overwrite --clean-protected --allow-untrusted /tmp/openclash.apk
-      if ! apk info luci-compat >/dev/null 2>&1; then
-         if apk list luci-compat 2>/dev/null | grep -q luci-compat; then
-            apk add luci-compat
-            if [ $? -ne 0 ]; then
-               sleep 2
-               continue
-            fi
+      for pkg in $packages_to_check; do
+         if apk info "$pkg" >/dev/null 2>&1; then
+            installed_before="$installed_before $pkg"
          fi
-      fi
+      done
+      apk add -q --force-overwrite --clean-protected --allow-untrusted /tmp/openclash.apk
    fi
-    
+   
    sleep 2
    
    if check_install_success "$LAST_VER"; then
       install_success=true
+      install_missing_packages "$installed_before"
       break
    else
       LOG_OUT "Error:【$install_retry_count/$max_install_retries】Installation failed..."
