@@ -22,7 +22,7 @@ PKG_HOST_ONLY:=1
 
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
-include ../../lang/rust/rust-host-build.mk
+include $(TOPDIR)/feeds/packages/lang/rust/rust-host-build.mk
 
 define Package/bindgen-cli
   SECTION:=lang
