@@ -12,9 +12,11 @@ detect_firewall() {
 	if command -v fw4 >/dev/null 2>&1 && [ -f /usr/share/nftables.d/ruleset-post/99-shadowsocksr.nft ]; then
 		USE_NFT=1
 		NFT="nft"
-	elif command -v nft >/dev/null 2>&1 && [ "$(uci get firewall.@defaults[0].syn_flood 2>/dev/null)" != "" ] && [ ! -f /etc/config/firewall3 ]; then
-		USE_NFT=1  
-		NFT="nft"
+	elif command -v nft >/dev/null 2>&1 && \
+		[ -n "$(uci get firewall.@defaults[0].syn_flood 2>/dev/null)" ] && \
+		! grep -q "fw3" /etc/init.d/firewall 2>/dev/null; then
+			USE_NFT=1  
+			NFT="nft"
 	else
 		USE_NFT=0
 		IPT="iptables -t nat"                                 # alias of iptables
