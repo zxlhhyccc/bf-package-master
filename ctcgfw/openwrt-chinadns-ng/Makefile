@@ -117,11 +117,14 @@ endef
 
 define Package/chinadns-ng/postinst
 #!/bin/sh
-if ! crontab -l | grep -q "chinadns-ng"; then
-  (crontab -l; echo -e "# chinadns-ng\n10 3 * * * /usr/bin/chinadns-ng-daily.sh") | crontab -
+if command -v crontab >/dev/null 2>&1; then
+    if ! crontab -l | grep -q "chinadns-ng"; then
+        (crontab -l; echo -e "# chinadns-ng\n10 3 * * * /usr/bin/chinadns-ng-daily.sh") | crontab -
+    fi
 fi
 exit 0
 endef
+
 
 define Package/chinadns-ng/postrm
 #!/bin/sh
