@@ -40,7 +40,7 @@ define Package/smartdns/Default
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
-  TITLE+= smartdns
+  TITLE:= smartdns
   URL:=https://www.github.com/pymumu/smartdns/
 endef
 
