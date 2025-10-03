@@ -18,10 +18,9 @@ PKG_MAINTAINER:=Zxl hhyccc <zxlhhy@gmail.com>
 PKG_LICENSE:=Apache-2.0 OR MIT
 PKG_LICENSE_FILES:=LICENSE-MIT LICENSE-APACHE
 
-PKG_HOST_ONLY:=1
-PKG_BUILD_FLAGS:=no-mips16
-
 PKG_BUILD_DEPENDS:=rust/host
+HOST_BUILD_PARALLEL:=1
+PKG_HOST_ONLY:=1
 
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
