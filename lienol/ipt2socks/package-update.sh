@@ -3,7 +3,9 @@
 
 set -e
 
-pushd ~/ax6-6.6 || exit 1
+BUILD_DIR="$(find "$HOME" -maxdepth 3 -type d -name "ax6-6.6" 2>/dev/null | head -n1)"
+
+pushd "$BUILD_DIR" > /dev/null || exit 1
 
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
