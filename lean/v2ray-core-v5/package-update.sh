@@ -3,7 +3,7 @@
 
 set -e
 
-pushd ~/ax6-6.6 || exit 1
+pushd /home/lin/ax6-6.6 || exit 1
 
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
