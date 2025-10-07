@@ -145,7 +145,7 @@ local function cn_port()
             local config_filename = fs.basename(config_path)
             local runtime_config_path = "/etc/openclash/" .. config_filename
             local ruby_result = luci.sys.exec(string.format([[
-                timeout 5 ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+                ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
                 begin
                     config = YAML.load_file('%s')
                     if config
@@ -184,7 +184,7 @@ local function dase()
             local config_filename = fs.basename(config_path)
             local runtime_config_path = "/etc/openclash/" .. config_filename
             local ruby_result = luci.sys.exec(string.format([[
-                timeout 5 ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+                ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
                 begin
                     config = YAML.load_file('%s')
                     if config
@@ -935,6 +935,11 @@ function action_switch_rule_mode()
     local cn_port = cn_port()
     mode = luci.http.formvalue("rule_mode")
 
+    if not mode then
+        luci.http.status(400, "Missing parameters")
+        return
+    end
+
     if is_running() then
 		if not daip or not cn_port then luci.http.status(500, "Switch Faild") return end
 		info = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPATCH http://"%s":"%s"/configs -d \'{\"mode\": \"%s\"}\'', dase, daip, cn_port, mode))
@@ -945,13 +950,10 @@ function action_switch_rule_mode()
         luci.http.write_json({
             info = info;
         })
-	else
-        if mode then
-		    uci:set("openclash", "config", "proxy_mode", mode)
-            uci:commit("openclash")
-        end
-	end
-	
+    end
+    uci:set("openclash", "config", "proxy_mode", mode)
+    uci:set("openclash", "@overwrite[0]", "proxy_mode", mode)
+    uci:commit("openclash")
 end
 
 function action_get_run_mode()
@@ -972,8 +974,10 @@ function action_switch_run_mode()
     operation_mode = fs.uci_get_config("config", "operation_mode")
     if operation_mode == "redir-host" then
         uci:set("openclash", "config", "en_mode", "redir-host"..mode)
+        uci:set("openclash", "@overwrite[0]", "en_mode", "redir-host"..mode)
     elseif operation_mode == "fake-ip" then
         uci:set("openclash", "config", "en_mode", "fake-ip"..mode)
+        uci:set("openclash", "@overwrite[0]", "en_mode", "fake-ip"..mode)
     end
     uci:commit("openclash")
     if is_running() then
@@ -2335,7 +2339,7 @@ function action_proxy_info()
         
         if fs.access(runtime_config_path) then
             local ruby_result = luci.sys.exec(string.format([[
-                timeout 5 ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+                ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
                 begin
                     config = YAML.load_file('%s')
                     mixed_port = ''
@@ -2435,11 +2439,11 @@ function action_oc_settings()
             
             if fs.access(runtime_config_path) then
                 local ruby_result = luci.sys.exec(string.format([[
-                    timeout 5 ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+                    ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
                     begin
                         config = YAML.load_file('%s')
                         if config
-                            sniffer_enabled = config['sniffer'] && config['sniffer']['enable'] ? '1' : '0'
+                            sniffer_enabled = config['sniffer'] && config['sniffer']['enable'] == true ? '1' : '0'
                             respect_rules_enabled = config['dns'] && config['dns']['respect-rules'] == true ? '1' : '0'
                             puts \"#{sniffer_enabled},#{respect_rules_enabled}\"
                         else
@@ -2635,12 +2639,12 @@ function action_switch_oc_setting()
             if not update_runtime_config(ruby_cmd) then
                 return
             end
-        else
-            uci:set("openclash", "config", "enable_meta_sniffer", value)
-            uci:set("openclash", "config", "enable_meta_sniffer_pure_ip", value)
-            uci:commit("openclash")
         end
-        
+        uci:set("openclash", "config", "enable_meta_sniffer", tonumber(value))
+        uci:set("openclash", "config", "enable_meta_sniffer_pure_ip", tonumber(value))
+        uci:set("openclash", "@overwrite[0]", "enable_meta_sniffer", tonumber(value))
+        uci:set("openclash", "@overwrite[0]", "enable_meta_sniffer_pure_ip", tonumber(value))
+        uci:commit("openclash")
     elseif setting == "respect_rules" then
         if is_running() then
             local runtime_config_path = get_runtime_config_path()
@@ -2688,11 +2692,10 @@ function action_switch_oc_setting()
             if not update_runtime_config(ruby_cmd) then
                 return
             end
-        else
-            uci:set("openclash", "config", "enable_respect_rules", value)
-            uci:commit("openclash")
         end
-        
+        uci:set("openclash", "config", "enable_respect_rules", tonumber(value))
+        uci:set("openclash", "@overwrite[0]", "enable_respect_rules", tonumber(value))
+        uci:commit("openclash")
     elseif setting == "oversea" then
         uci:set("openclash", "config", "china_ip_route", value)
         uci:commit("openclash")
@@ -2770,7 +2773,7 @@ function action_generate_pac()
         
         if fs.access(runtime_config_path) then
             local ruby_result = luci.sys.exec(string.format([[
-                timeout 5 ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+                ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
                 begin
                     config = YAML.load_file('%s')
                     if config && config['authentication'] && config['authentication'].is_a?(Array) && !config['authentication'].empty?
