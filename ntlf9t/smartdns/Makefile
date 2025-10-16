@@ -118,6 +118,7 @@ ifneq ($(CONFIG_PACKAGE_smartdns-ui),)
 		$(CARGO_PKG_ARGS) ; \
 		popd ; \
 		pushd smartdns-webui ; \
+		$(SED) 's/"\^/"/g' package.json ; \
 		pnpm install ; \
 		pnpm run build ; \
 		popd ; \
