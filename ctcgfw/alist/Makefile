@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=3.53.0
+PKG_VERSION:=3.54.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/alist-org/alist/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=eb54f08392feac9b313dbf2088fe83f637dd14c350f1d35ee4fa7c5a8f2959a5
+PKG_HASH:=91552da364e1d22ed9a5fba14abeaebfd85ba4e3a208d23001ababb260fb21e9
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -50,7 +50,7 @@ define Package/alist/conffiles
 /etc/config/alist
 endef
 
-WEB_VERSION:=3.53.0
+WEB_VERSION:=3.54.0
 WEB_FILE:=$(PKG_NAME)-web-$(WEB_VERSION).tar.gz
 define Download/alist-web
 	URL:=https://github.com/AlistGo/alist-web/releases/download/$(WEB_VERSION)/
