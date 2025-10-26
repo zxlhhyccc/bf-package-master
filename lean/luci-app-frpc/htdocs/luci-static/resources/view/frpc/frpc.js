@@ -51,8 +51,8 @@ var baseProxyConf = [
 	[form.ListValue, 'type', _('Proxy type'), _('ProxyType specifies the type of this proxy. Valid values include "tcp", "udp", "http", "https", "stcp", and "xtcp".<br />By default, this value is "tcp".'), {values: ['tcp', 'udp', 'http', 'https', 'stcp', 'xtcp']}],
 	[form.Flag, 'use_encryption', _('Encryption'), _('UseEncryption controls whether or not communication with the server will be encrypted. Encryption is done using the tokens supplied in the server and client configuration.<br />By default, this value is false.'), {datatype: 'bool'}],
 	[form.Flag, 'use_compression', _('Compression'), _('UseCompression controls whether or not communication with the server will be compressed.<br />By default, this value is false.'), {datatype: 'bool'}],
-	[form.Value, 'local_ip', _('Local IP'), _('LocalIp specifies the IP address or host name to proxy to.'), {datatype: 'host'}],
-	[form.Value, 'local_port', _('Local port'), _('LocalPort specifies the port to proxy to.'), {datatype: 'port'}],
+	[form.Value, 'local_ip', _('Local IP'), _('LocalIp specifies the IP address or host name to proxy to.'), {datatype: 'host', depends: [{type: 'tcp'}, {type: 'udp'}, {type: 'http'}, {type: 'https'}, { role: 'server', type: 'stcp' }, { role: 'server', type: 'xtcp' }]}],
+	[form.Value, 'local_port', _('Local port'), _('LocalPort specifies the port to proxy to.'), {datatype: 'port', depends: [{type: 'tcp'}, {type: 'udp'}, {type: 'http'}, {type: 'https'}, { role: 'server', type: 'stcp' }, { role: 'server', type: 'xtcp' }]}],
 ];
 
 var bindInfoConf = [
@@ -78,8 +78,17 @@ var httpProxyConf = [
 ];
 
 var stcpProxyConf = [
-	[form.Value, 'allowUsers', _('Allow Users'), _('If left empty, only visitors under the same user are allowed to connect by default.<br />To specify particular users, separate them with commas, for example: <code>user1, user2</code>.'), {values: [['', _('Empty')], ['*', _('Allow all users')]]}],
-	[form.Value, 'secretKey', _('Secret Key'), _('Used for authentication by visitors')]
+	[form.ListValue, 'role', _('Role'), _('Choose server or visitor.'), {values: [['server', _('Server')], ['visitor', _('Visitor')]]}],
+	[form.Value, 'allowUsers', _('Allow Users'), _(
+		'If left empty, only visitors under the same user are allowed to connect by default.<br />' +
+		'To specify particular users, separate them with commas, for example: <code>user1, user2</code>.<br />' +
+		'Use <code>*</code> to allow all users.'
+	), {values: [['', _('Empty')], ['*', _('Allow all users')]], depends: { role: 'server' }}],
+	[form.Value, 'server_user', _('Server User'), _('If the server user is not set, it defaults to the current user.'), {depends: [{ role: 'visitor', type: 'xtcp' }]}],
+	[form.Value, 'server_name', _('Server Name'), _('The server name you want to visitor.'), {depends: { role: 'visitor' }}],
+	[form.Value, 'bind_addr', _('Bind Address'), _('Bind Address specifies the local IP address to bind the server.'), {depends: { role: 'visitor' }}],
+	[form.Value, 'bind_port', _('Bind Port'), _('Bind Port specifies the local port the server listens on.'), {depends: { role: 'visitor' }}],
+	[form.Value, 'secretKey', _('Secret Key'), _('Used for authentication by visitors. Must match between server and visitor.')]
 ];
 
 var pluginConf = [
@@ -254,14 +263,26 @@ return view.extend({
 		s.option(form.Value, 'type', _('Proxy type')).modalonly = false;
 		s.option(form.Value, 'local_ip', _('Local IP')).modalonly = false;
 		s.option(form.Value, 'local_port', _('Local port')).modalonly = false;
+		s.option(form.Value, 'server_user', _('Server User')).modalonly = false;
+		s.option(form.Value, 'server_name', _('Server Name')).modalonly = false;
+		s.option(form.Value, 'bind_addr', _('Bind Address')).modalonly = false;
+		s.option(form.Value, 'bind_port', _('Bind Port')).modalonly = false;
 		o = s.option(form.Value, 'remote_port', _('Remote port'));
 		o.modalonly = false;
 		o.depends('type', 'tcp');
 		o.depends('type', 'udp');
-		o.cfgvalue = function() {
-			var v = this.super('cfgvalue', arguments);
-			return v&&v!='0'?v:'#';
-		};
+		s.children.forEach(function(opt) {
+			if (opt instanceof form.Value) {
+				const origCfgValue = opt.cfgvalue;
+				opt.cfgvalue = function(section_id) {
+					const v = origCfgValue ? origCfgValue.apply(this, arguments) : null;
+					if (!this.modalonly && (v === '' || v === null || v === undefined))
+						return '#';
+					return v;
+				};
+				opt.placeholder = '#';
+			}
+		});
 
 		defTabOpts(s, 'general', baseProxyConf, {modalonly: true});
 

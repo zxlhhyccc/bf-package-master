@@ -10,7 +10,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 5.10.1-dev\n"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:245
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:254
 msgid "Add new proxy..."
 msgstr "加入新代理..."
 
@@ -67,11 +67,11 @@ msgid ""
 msgstr ""
 "AdminUser指定管理伺服器用於登錄的用戶名稱. <br />預設情況下, 此值為“admin”."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
 msgid "Allow Users"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:86
 msgid "Allow all users"
 msgstr ""
 
@@ -88,6 +88,28 @@ msgstr ""
 "AssetsDir指定管理伺服器將從中加載資源的本地目錄. 如果此值為“”, 將使用statik從"
 "捆綁的可執行文件中加載資產. <br />預設情況下, 此值為“”."
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:268
+msgid "Bind Address"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
+msgid "Bind Address specifies the local IP address to bind the server."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:269
+msgid "Bind Port"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
+msgid "Bind Port specifies the local port the server listens on."
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+msgid "Choose server or visitor."
+msgstr ""
+
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:81
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:91
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:95
@@ -98,12 +120,12 @@ msgstr ""
 msgid "Clear Logs..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:222
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:231
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:63
 msgid "Collecting data..."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:229
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:238
 msgid "Common Settings"
 msgstr "通用設定"
 
@@ -133,7 +155,7 @@ msgid ""
 "true."
 msgstr "當LogWay ==“ console”設置為true時, DisableLogColor禁用日誌顏色."
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:86
 msgid "Empty"
 msgstr ""
 
@@ -161,14 +183,14 @@ msgstr "登錄失敗時退出"
 msgid "Failed to clear log."
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:207
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:216
 msgid ""
 "Frp is a fast reverse proxy to help you expose a local server behind a NAT "
 "or firewall to the internet,it supports TCP and UDP, as well as HTTP and "
 "HTTPS protocols.<br/>Current Version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:249
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:258
 msgid "General Settings"
 msgstr "一般設定"
 
@@ -176,12 +198,12 @@ msgstr "一般設定"
 msgid "Grant access to LuCI app frpc"
 msgstr "授予存取LuCI app frpc的權限"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:250
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:259
 msgid "HTTP Settings"
 msgstr "HTTP 設定"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:75
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:88
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:97
 msgid "HTTP password"
 msgstr "HTTP密碼"
 
@@ -190,7 +212,7 @@ msgid "HTTP proxy"
 msgstr "HTTP代理"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:74
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:87
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:96
 msgid "HTTP user"
 msgstr "HTTP用戶"
 
@@ -233,28 +255,33 @@ msgstr ""
 "HttpProxy指定通過其連線至伺服器的代理位址。如果此值為空， 則伺服器將直接連"
 "線。<br />預設將從環境變數「http_proxy」中讀取此值。"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:83
 msgid ""
 "If left empty, only visitors under the same user are allowed to connect by "
 "default.<br />To specify particular users, separate them with commas, for "
-"example: <code>user1, user2</code>."
+"example: <code>user1, user2</code>.<br />Use <code>*</code> to allow all "
+"users."
 msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
 msgid "If remote_port is 0, frps will assign a random port for you"
 msgstr "如果遠端埠號為0，frps會為你分配一個隨機埠號"
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:87
+msgid "If the server user is not set, it defaults to the current user."
+msgstr ""
+
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/log.js:61
 msgid "Loading..."
 msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:54
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:255
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:264
 msgid "Local IP"
 msgstr "本地IP"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:55
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:256
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:265
 msgid "Local port"
 msgstr "本地埠號"
 
@@ -343,7 +370,7 @@ msgstr ""
 msgid "Logs cleared successfully!"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:197
 msgid "NOT RUNNING"
 msgstr "未執行"
 
@@ -355,15 +382,15 @@ msgstr ""
 "傳遞至frp設定檔模板的作業系統環境變數，請參閱 <a href=\"https://github.com/"
 "fatedier/frp#configuration-file-template\">frp README</a>"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:185
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:194
 msgid "Open Web Interface"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:86
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:95
 msgid "Plugin"
 msgstr "外掛"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:251
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:260
 msgid "Plugin Settings"
 msgstr "外掛設定"
 
@@ -382,17 +409,17 @@ msgstr ""
 msgid "Proxy Protocol Version"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:241
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:250
 msgid "Proxy Settings"
 msgstr "代理設定"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:50
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:253
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:262
 msgid "Proxy name"
 msgstr "代理名稱"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:51
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:254
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:263
 msgid "Proxy type"
 msgstr "代理類別"
 
@@ -429,7 +456,7 @@ msgstr ""
 msgid "QUIC Max Idle Timeout.(Unit:second)"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:186
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:195
 msgid "RUNNING"
 msgstr "執行中"
 
@@ -438,13 +465,17 @@ msgid "Refresh every %s seconds."
 msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:59
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:257
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:270
 msgid "Remote port"
 msgstr "遠端連接埠"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:16
 msgid "Respawn when crashed"
 msgstr "崩潰時重生"
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+msgid "Role"
+msgstr "角色"
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:15
 msgid "Run daemon as group"
@@ -454,16 +485,30 @@ msgstr "以群組執行背景執行"
 msgid "Run daemon as user"
 msgstr "執行守護行程的使用者"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:90
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:99
 msgid "SOCKS5 password"
 msgstr "SOCKS5 密碼"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:89
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:98
 msgid "SOCKS5 user"
 msgstr "SOCKS5 使用者"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
 msgid "Secret Key"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+msgid "Server"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:88
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:267
+msgid "Server Name"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:87
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:266
+msgid "Server User"
 msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:23
@@ -487,8 +532,8 @@ msgid ""
 "this value is 7000."
 msgstr "ServerPort指定用於連接伺服器的埠號。<br />預設情況下，此值為7000。"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:230
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:234
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:239
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:243
 msgid "Startup Settings"
 msgstr "啟動設定"
 
@@ -520,6 +565,10 @@ msgstr ""
 "TcpMux切換TCP串流多路複用。這允許來自客戶端的多個請求共享一個TCP連接。如果此"
 "值為true，則伺服器也必須啟用TCP複用。<br />預設情況下，此值為true。"
 
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:88
+msgid "The server name you want to visitor."
+msgstr ""
+
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:46
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:64
 msgid ""
@@ -540,7 +589,7 @@ msgstr ""
 "Token權杖指定用於創建要發送到伺服器的密鑰的授權金鑰。服務器必須具有匹配的權杖"
 "才能授權成功。 <br />預設情況下，此值為“”。"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:100
 msgid "Unix domain socket path"
 msgstr "Unix 網域通訊端路徑"
 
@@ -548,7 +597,7 @@ msgstr "Unix 網域通訊端路徑"
 msgid "Unknown error: %s"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:164
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:173
 msgid "Unknown version"
 msgstr ""
 
@@ -568,8 +617,9 @@ msgstr ""
 "UseEncryption控制是否加密與伺服器的通信。使用伺服器和客戶端配置中提供的權杖來"
 "完成加密。<br />預設情況下，此值為false。"
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:82
-msgid "Used for authentication by visitors"
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:91
+msgid ""
+"Used for authentication by visitors. Must match between server and visitor."
 msgstr ""
 
 #: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:37
@@ -593,9 +643,13 @@ msgstr ""
 msgid "V2"
 msgstr ""
 
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:186
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:188
-#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:205
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:81
+msgid "Visitor"
+msgstr ""
+
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:195
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:197
+#: applications/luci-app-frpc/htdocs/luci-static/resources/view/frpc/frpc.js:214
 #: applications/luci-app-frpc/root/usr/share/luci/menu.d/luci-app-frpc.json:3
 msgid "frp Client"
 msgstr "frp客戶端"
@@ -614,9 +668,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Protocol指定與伺服器交互時要使用的協定。有效值為“ tcp”，“ kcp”和“ "
 #~ "websocket”。<br />預設情況下，此值為“ tcp”。"
-
-#~ msgid "Role"
-#~ msgstr "角色"
 
 #~ msgid "Server name"
 #~ msgstr "伺服器名稱"

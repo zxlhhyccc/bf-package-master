@@ -31,6 +31,8 @@ to_camel_case() {
 		admin_user) echo "webServer.user" ;;
 		assets_dir) echo "webServer.assetsDir" ;;
 		allowUsers) echo "allowUsers" ;;
+		bind_addr) echo "bindAddr" ;;
+		bind_port) echo "bindPort" ;;
 		custom_domains) echo "customDomains" ;;
 		disable_log_color) echo "log.disablePrintColor" ;;
 		heartbeat_interval) echo "transport.heartbeatInterval" ;;
@@ -55,7 +57,9 @@ to_camel_case() {
 		remote_port) echo "remotePort" ;;
 		secretKey) echo "secretKey" ;;
 		server_addr) echo "serverAddr" ;;
+		server_name) echo "serverName" ;;
 		server_port) echo "serverPort" ;;
+		server_user) echo "serverUser" ;;
 		subdomain) echo "subdomain" ;;
 		tcp_mux) echo "transport.tcpMux" ;;
 		tls_enable) echo "transport.tls.enable" ;;
@@ -120,38 +124,69 @@ write_common() {
 	return 0
 }
 
-# 写入 [[proxies]] 配置
-write_proxies() {
+# 写入 [[proxies]] [[visitor]] 配置
+write_proxies_visitor() {
 	local section="$1"
 	config_get _type "$section" "type"
+	config_get role "$section" "role"
 	[ -z "$_type" ] && return 1
 
-	echo "[[proxies]]" >> "$CONF_FILE"
+	# 判断是 visitor 还是普通 proxies
+	if [ "$role" = "visitor" ]; then
+		echo "[[visitors]]" >> "$CONF_FILE"
 
-	local proxies_conf="name type local_ip local_port http_user http_pwd subdomain host_header_rewrite proxyprotocolversion remote_port use_encryption use_compression secretKey"
-	local proxies_string="name type local_ip http_user http_pwd subdomain host_header_rewrite secretKey"
-	for opt in $proxies_conf; do
-		config_get val "$section" "$opt"
-		[ -n "$val" ] || continue
-		camel=$(to_camel_case "$opt")
+		local visitor_conf="name type http_user http_pwd subdomain host_header_rewrite proxyprotocolversion use_encryption use_compression server_name server_user bind_addr bind_port secretKey"
+		local visitor_string="name type  http_user http_pwd subdomain host_header_rewrite server_name server_user bind_addr secretKey"
 
-		case "$val" in
-			true|false)
-				echo "$camel = $val" >> "$CONF_FILE"
-				;;
-			*)
-				# 强制为字符串的字段
-				if echo "$proxies_string" | grep -qw "$opt"; then
-					echo "$camel = \"$val\"" >> "$CONF_FILE"
-				elif echo "$val" | grep -Eq '^[0-9]+$'; then
+		for opt in $visitor_conf; do
+			config_get val "$section" "$opt"
+			[ -n "$val" ] || continue
+			camel=$(to_camel_case "$opt")
+
+			case "$val" in
+				true|false)
 					echo "$camel = $val" >> "$CONF_FILE"
-				else
-					echo "$camel = \"$val\"" >> "$CONF_FILE"
-				fi
-				;;
-		esac
-	done
+					;;
+				*)
+					# 强制为字符串的字段
+					if echo "$visitor_string" | grep -qw "$opt"; then
+						echo "$camel = \"$val\"" >> "$CONF_FILE"
+					elif echo "$val" | grep -Eq '^[0-9]+$'; then
+						echo "$camel = $val" >> "$CONF_FILE"
+					else
+						echo "$camel = \"$val\"" >> "$CONF_FILE"
+					fi
+					;;
+			esac
+		done
+	else
+		echo "[[proxies]]" >> "$CONF_FILE"
 
+		local proxies_conf="name type local_ip local_port http_user http_pwd subdomain host_header_rewrite proxyprotocolversion remote_port use_encryption use_compression secretKey"
+		local proxies_string="name type local_ip http_user http_pwd subdomain host_header_rewrite secretKey"
+
+		for opt in $proxies_conf; do
+			config_get val "$section" "$opt"
+			[ -n "$val" ] || continue
+			camel=$(to_camel_case "$opt")
+
+			case "$val" in
+				true|false)
+					echo "$camel = $val" >> "$CONF_FILE"
+					;;
+				*)
+					# 强制为字符串的字段
+					if echo "$proxies_string" | grep -qw "$opt"; then
+						echo "$camel = \"$val\"" >> "$CONF_FILE"
+					elif echo "$val" | grep -Eq '^[0-9]+$'; then
+						echo "$camel = $val" >> "$CONF_FILE"
+					else
+						echo "$camel = \"$val\"" >> "$CONF_FILE"
+					fi
+					;;
+			esac
+		done
+	fi
 	# custom_domains 处理为数组
 	config_get customdomains "$section" "custom_domains"
 	if [ -n "$customdomains" ]; then
@@ -196,7 +231,11 @@ write_proxies() {
 	# 插件配置
 	config_get plugin "$section" "plugin"
 	if [ -n "$plugin" ]; then
-		echo "[proxies.plugin]" >> "$CONF_FILE"
+		if [ "$role" = "visitor" ]; then
+			echo "[visitors.plugin]" >> "$CONF_FILE"
+		else
+			echo "[proxies.plugin]" >> "$CONF_FILE"
+		fi
 		echo "type = \"$plugin\"" >> "$CONF_FILE"
 
 		local plugin_conf="plugin_http_user plugin_http_passwd plugin_user plugin_passwd plugin_unix_path"
@@ -254,7 +293,7 @@ start_service() {
 
 	log_dir
 
-	config_foreach write_proxies "conf"
+	config_foreach write_proxies_visitor "conf"
 	config_foreach write_extra_section "conf"
 
 	local stdout stderr user group respawn env conf_inc
