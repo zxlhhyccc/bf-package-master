@@ -1,1 +1,0 @@
-import{Pt as e}from"./index-DIwJcTz_.js";var t=e(`outline`,`chevron-right`,`ChevronRight`,[[`path`,{d:`M9 6l6 6l-6 6`}]]);export{t};
