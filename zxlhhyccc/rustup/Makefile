@@ -39,17 +39,16 @@ define Package/rustup/description
  This package only provides a host build tool for OpenWrt build system.
 endef
 
-RUSTUP_BUILD_VARS+= \
+define Host/Compile
+	$(CARGO_PKG_CONFIG_VARS) \
+	TARGET_CFLAGS="$(filter-out -O%,$(TARGET_CFLAGS)) $(RUSTC_CFLAGS)" \
 	OPENSSL_DIR="$(STAGING_DIR_HOST)" \
 	OPENSSL_LIB_DIR="$(STAGING_DIR_HOST)/lib" \
 	OPENSSL_INCLUDE_DIR="$(STAGING_DIR_HOST)/include" \
-	PKG_CONFIG_ALLOW_CROSS=1
-
-define Host/Compile
-	$(RUSTUP_BUILD_VARS) \
 	cargo build --release --locked \
 		--manifest-path=$(HOST_BUILD_DIR)/Cargo.toml \
-		--target-dir $(HOST_BUILD_DIR)/target
+		--target-dir=$(HOST_BUILD_DIR)/target \
+		$(CARGO_PKG_ARGS)
 endef
 
 define Host/Install
