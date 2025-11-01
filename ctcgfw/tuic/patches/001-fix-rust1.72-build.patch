@@ -1,5 +1,5 @@
---- a/Cargo.toml
-+++ b/Cargo.toml
+--- a/tuic-client/Cargo.toml
++++ b/tuic-client/Cargo.toml
 @@ -6,33 +6,33 @@ description = "Minimalistic TUIC client
  categories = ["network-programming"]
  keywords = ["network", "proxy", "quic", "tuic"]
