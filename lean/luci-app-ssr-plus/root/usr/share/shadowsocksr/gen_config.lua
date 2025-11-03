@@ -631,6 +631,8 @@ local tuic = {
 					return nil
 				end
 			end)() or nil,
+			ipstack_prefer = (server.tuic_dual_stack == "1") and server.ipstack_prefer or nil,
+			skip_cert_verify = (server.insecure == "1" or server.insecure == true or server.insecure == "true"),
 			disable_sni = (server.disable_sni == "1") and true or false,
 			zero_rtt_handshake = (server.zero_rtt_handshake == "1") and true or false,
 			send_window = tonumber(server.send_window),
