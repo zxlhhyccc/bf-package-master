@@ -5,18 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tuic
-PKG_VERSION:=1.6.2
+PKG_VERSION:=1.0.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/Itsusinn/tuic.git
-PKG_SOURCE_VERSION:=fc2abaaec5c30f87aa610887e7e8634e85345810
-PKG_MIRROR_HASH:=a100db28efcc985e05add8ddecd89abdde01e3845589d89ee57d5048dbfdb7f6
-
-PKG_CONFIG_DEPENDS:= \
-	CONFIG_TUIC_$(1)_COMPRESS_GOPROXY \
-	CONFIG_TUIC_$(1)_COMPRESS_UPX
+PKG_SOURCE_URL:=https://github.com/tuic-protocol/tuic.git
+PKG_SOURCE_VERSION:=0acf4844c46e63b83eab3e58069fe8c060509974
+PKG_MIRROR_HASH:=7da1a71b98df892b2d89d81cdeef96ab892fc936902afba2be757efacfa14c8d
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=GPL-3.0-only
@@ -38,22 +34,6 @@ define Package/tuic/Default
     DEPENDS:=@(aarch64||arm||x86_64)
   endef
 
-  define Package/tuic-$(1)/config
-    config TUIC_$(1)_COMPRESS_GOPROXY
-      bool "Compiling with GOPROXY proxy"
-      default n
-
-    config TUIC_$(1)_COMPRESS_UPX
-      bool "Compress $(1) with UPX"
-      depends on !mips64
-      default n
-  endef
-
-  ifneq ($(CONFIG_TUIC_$(1)_COMPRESS_GOPROXY),)
-      export GO111MODULE=on
-      export GOPROXY=https://goproxy.baidu.com
-  endif
-
   define Package/tuic-$(1)/install
 	$(INSTALL_DIR) $$(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/tuic-$(1) $$(1)/usr/bin/
@@ -63,23 +43,18 @@ endef
 TUIC_COMPONENTS:=client server
 
 define Build/Compile
-  $(call BuildPackage/Build/Compile)
+	$(call BuildPackage/Build/Compile)
   $(foreach component,$(TUIC_COMPONENTS),
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
 		$(CARGO_PKG_CONFIG_VARS) \
 		MAKEFLAGS="$(PKG_JOBS)" \
 		TARGET_CFLAGS="$(filter-out -O%,$(TARGET_CFLAGS)) $(RUSTC_CFLAGS)" \
-		PKG_CONFIG_ALLOW_CROSS=1 \
-		cargo build -v --profile $(CARGO_PKG_PROFILE) $(filter-out --locked,$(CARGO_PKG_ARGS)) ; \
+		cargo build -v --profile $(CARGO_PKG_PROFILE) ; \
+		$(CARGO_PKG_ARGS) ; \
 		popd ; \
 	)
   )
-$(foreach component,$(TUIC_COMPONENTS), 
-  ifneq ($(CONFIG_TUIC_$(component)_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/tuic-$(component)
-  endif
-)
 endef
 
 $(foreach component,$(TUIC_COMPONENTS), \
