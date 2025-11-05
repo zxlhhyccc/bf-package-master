@@ -33,9 +33,13 @@ define Package/tuic/Default
     SECTION:=net
     CATEGORY:=Network
     SUBMENU:=Web Servers/Proxies
-    TITLE:=Delicately-TUICed 0-RTT proxy protocol $(1)
+    TITLE:=TUIC proxy protocol $(1)
     URL:=https://github.com/EAimTY/tuic
-    DEPENDS:=@(aarch64||arm||x86_64)
+    DEPENDS:=$(RUST_ARCH_DEPENDS)
+  endef
+
+  define Package/tuic-client/description
+    Delicately-TUICed 0-RTT proxy protocol client.
   endef
 
   define Package/tuic-$(1)/config
@@ -68,9 +72,6 @@ define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
 		$(CARGO_PKG_CONFIG_VARS) \
-		MAKEFLAGS="$(PKG_JOBS)" \
-		TARGET_CFLAGS="$(filter-out -O%,$(TARGET_CFLAGS)) $(RUSTC_CFLAGS)" \
-		PKG_CONFIG_ALLOW_CROSS=1 \
 		cargo build -v --profile $(CARGO_PKG_PROFILE) $(filter-out --locked,$(CARGO_PKG_ARGS)) ; \
 		popd ; \
 	)
@@ -84,6 +85,6 @@ endef
 
 $(foreach component,$(TUIC_COMPONENTS), \
   $(eval $(call Package/tuic/Default,$(component))) \
-  $(eval $(call GoBinPackage,tuic-$(component))) \
+  $(eval $(call RustBinPackage,tuic-$(component))) \
   $(eval $(call BuildPackage,tuic-$(component))) \
 )
