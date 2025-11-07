@@ -35,7 +35,7 @@ define Package/tuic/Default
     SUBMENU:=Web Servers/Proxies
     TITLE:=TUIC proxy protocol $(1)
     URL:=https://github.com/EAimTY/tuic
-    DEPENDS:=@(aarch64||armv7||x86_64||i686||loongarch64||riscv64)
+    DEPENDS:=@(x86_64||i386||aarch64||arm||loongarch64||riscv64)
   endef
 
   define Package/tuic-client/description
@@ -71,7 +71,7 @@ $(strip \
   $(if $(findstring x86_64,$(RUSTC_TARGET_ARCH)),--features jemallocator, \
   $(if $(findstring i686,$(RUSTC_TARGET_ARCH)),--features jemallocator, \
   $(if $(findstring aarch64,$(RUSTC_TARGET_ARCH)),--features jemallocator, \
-  $(if $(findstring armv7,$(RUSTC_TARGET_ARCH)),--no-default-features --features ring,jemallocator, \
+  $(if $(findstring arm,$(RUSTC_TARGET_ARCH)),--no-default-features --features ring,jemallocator, \
   $(if $(findstring loongarch64,$(RUSTC_TARGET_ARCH)),--no-default-features --features ring, \
   $(if $(findstring riscv64,$(RUSTC_TARGET_ARCH)),--no-default-features --features ring,jemallocator, \
   "" \
