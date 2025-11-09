@@ -204,8 +204,8 @@ diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/pass
 index 3f6dd8c..2656874 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -329,6 +329,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
- 				 "</font>")
+@@ -355,6 +355,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
+ o = s:taboption("DNS", ListValue, "dns_mode", translate("Filter Mode"))
  o:value("udp", translatef("Requery DNS By %s", "UDP"))
  o:value("tcp", translatef("Requery DNS By %s", "TCP"))
 +--dns_mode.rmempty = false
@@ -219,15 +219,15 @@ index 3f6dd8c..2656874 100644
  if api.is_finded("dns2socks") then
  	o:value("dns2socks", "dns2socks")
  end
-@@ -338,6 +346,7 @@ end
+@@ -364,6 +372,7 @@ end
  if has_xray then
  	o:value("xray", "Xray")
  end
 +--o:value("udp", translatef("Requery DNS By %s", "UDP"))
- if api.is_finded("smartdns") then
- 	o:depends({ dns_shunt = "smartdns",  ['!reverse'] = true })
- end
-@@ -437,6 +446,8 @@ o.validate = function(self, value, t)
+ o:depends({ dns_shunt = "chinadns-ng", tcp_node = "" })
+ o:depends({ dns_shunt = "dnsmasq", tcp_node = "" })
+ o.remove = function(self, section)
+@@ -473,6 +481,8 @@ o.validate = function(self, value, t)
  	end
  	return value
  end
@@ -236,7 +236,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  
  ---- DNS Forward
-@@ -451,6 +462,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+@@ -487,6 +498,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -245,7 +245,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -504,6 +517,17 @@ o.validate = function(self, value, t)
+@@ -540,6 +553,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -267,7 +267,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -169,6 +169,9 @@ msgstr "远程 DNS DoH"
+@@ -166,6 +166,9 @@ msgstr "远程 DNS DoH"
  msgid "Remote DNS DoH"
  msgstr "远程 DNS DoH"
  
@@ -277,7 +277,7 @@ index 92144fb..4ae3764 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -307,6 +310,12 @@ msgstr "关闭（不使用）"
+@@ -304,6 +307,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -438,7 +438,7 @@ index 57b989b..00fbed6 100755
  add_ip2route() {
  	local ip=$(get_host_ip "ipv4" $1)
  	[ -z "$ip" ] && {
-@@ -2217,7 +2314,8 @@ get_config() {
+@@ -2199,7 +2296,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
