@@ -217,7 +217,7 @@ ipset_nft() {
 		fi
 		;;
     gfw)
-		$NFT add set inet ss_spec gfwlist '{ type ipv4_addr; flags interval; }' 2>/dev/null
+		$NFT add set inet ss_spec gfwlist '{ type ipv4_addr; flags interval; auto-merge; }' 2>/dev/null
 		$NFT add rule inet ss_spec ss_spec_wan_ac ip daddr @china return 2>/dev/null
 		$NFT add rule inet ss_spec ss_spec_wan_ac ip daddr @gfwlist jump ss_spec_wan_fw 2>/dev/null
 		if $NFT list chain inet ss_spec ss_spec_wan_fw >/dev/null 2>&1; then
@@ -225,7 +225,7 @@ ipset_nft() {
 		fi
 		;;
     oversea)
-		$NFT add set inet ss_spec oversea '{ type ipv4_addr; flags interval; }' 2>/dev/null
+		$NFT add set inet ss_spec oversea '{ type ipv4_addr; flags interval; auto-merge; }' 2>/dev/null
 		if $NFT list chain inet ss_spec ss_spec_wan_fw >/dev/null 2>&1; then
 			$NFT insert rule inet ss_spec ss_spec_wan_ac ip daddr @oversea jump SS_SPEC_WAN_FW 2>/dev/null
 			$NFT add rule inet ss_spec ss_spec_wan_ac ip saddr @gmlan jump ss_spec_wan_fw 2>/dev/null
