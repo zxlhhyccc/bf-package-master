@@ -738,12 +738,12 @@ gen_include_nft() {
 	[ -n "$FWI" ] && echo '#!/bin/sh' >"$FWI"
 	cat <<-'EOF' >>"$FWI"
 		# Clear existing ss_spec tables
-		nft add table inet ss_spec 2>/dev/null
-		nft add table ip ss_spec 2>/dev/null
-		nft add table ip ss_spec_mangle 2>/dev/null
+		nft delete table inet ss_spec 2>/dev/null
+		nft delete table ip ss_spec 2>/dev/null
+		nft delete table ip ss_spec_mangle 2>/dev/null
 
 		# Restore shadowsocks nftables rules
-		nft list ruleset | awk '/table (inet|ip) ss_spec/{flag=1} flag'
+		nft list ruleset | awk '/^table (inet|ip) ss_spec/{flag=1} /^table / && !/^table (inet|ip) ss_spec/{flag=0} flag'
 	EOF
 	chmod +x "$FWI"
 }
