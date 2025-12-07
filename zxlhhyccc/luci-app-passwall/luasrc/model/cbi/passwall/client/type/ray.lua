@@ -61,7 +61,8 @@ for k, e in ipairs(api.get_valid_nodes()) do
 			id = e[".name"],
 			remark = e["remark"],
 			type = e["type"],
-			chain_proxy = e["chain_proxy"]
+			chain_proxy = e["chain_proxy"],
+			group = e["group"]
 		}
 	end
 	if e.protocol == "_balancing" then
@@ -98,26 +99,29 @@ m.uci:foreach(appname, "socks", function(s)
 end)
 
 -- 负载均衡列表
-o = s:option(DynamicList, _n("balancing_node"), translate("Load balancing node list"), translate("Load balancing node list, <a target='_blank' href='https://xtls.github.io/config/routing.html#balancerobject'>document</a>"))
+o = s:option(MultiValue, _n("balancing_node"), translate("Load balancing node list"), translate("Load balancing node list, <a target='_blank' href='https://xtls.github.io/config/routing.html#balancerobject'>document</a>"))
 o:depends({ [_n("protocol")] = "_balancing" })
-local valid_ids = {}
-for k, v in pairs(nodes_table) do
+o.widget = "checkbox"
+o.template = appname .. "/cbi/nodes_multiselect"
+o.group = {}
+for i, v in pairs(nodes_table) do
 	o:value(v.id, v.remark)
-	valid_ids[v.id] = true
+	o.group[#o.group+1] = v.group or ""
 end
--- 去重并禁止自定义非法输入
+-- 读取旧 DynamicList
+function o.cfgvalue(self, section)
+	local val = m.uci:get_list(appname, section, "balancing_node")
+	if val then
+		return val
+	else
+		return {}
+	end
+end
+-- 写入保持 DynamicList
 function o.custom_write(self, section, value)
 	local result = {}
-	if type(value) == "table" then
-		local seen = {}
-		for _, v in ipairs(value) do
-			if v and not seen[v] and valid_ids[v] then
-				table.insert(result, v)
-				seen[v] = true
-			end
-		end
-	else
-		result = { value }
+	for v in value:gmatch("%S+") do
+		result[#result + 1] = v
 	end
 	m.uci:set_list(appname, section, "balancing_node", result)
 end
@@ -618,8 +622,14 @@ o = s:option(TextValue, _n("xhttp_extra"), " ", translate("An XHttpObject in JSO
 o:depends({ [_n("use_xhttp_extra")] = true })
 o.rows = 15
 o.wrap = "off"
+o.custom_cfgvalue = function(self, section, value)
+	local raw = m:get(section, "xhttp_extra")
+	if raw then
+		return api.base64Decode(raw)
+	end
+end
 o.custom_write = function(self, section, value)
-	m:set(section, self.option:sub(1 + #option_prefix), value)
+	m:set(section, "xhttp_extra", api.base64Encode(value))
 	local success, data = pcall(jsonc.parse, value)
 	if success and data then
 		local address = (data.extra and data.extra.downloadSettings and data.extra.downloadSettings.address)
@@ -642,7 +652,7 @@ o.validate = function(self, value)
 	return value
 end
 o.custom_remove = function(self, section, value)
-	m:del(section, self.option:sub(1 + #option_prefix))
+	m:del(section, "xhttp_extra")
 	m:del(section, "download_address")
 end
 
