@@ -257,8 +257,10 @@ start_dns() {
 	}
 
 	if [ "$ssrplus_dns" != "0" ]; then
-		if [ -n "$dnsserver" ]; then
-			add_dns_into_ipset $run_mode $dnsserver
+		if command -v iptables-legacy >/dev/null 2>&1; then
+			if [ -n "$dnsserver" ]; then
+				add_dns_into_ipset $run_mode $dnsserver
+			fi
 		fi
 		case "$ssrplus_dns" in
 		1)
@@ -295,7 +297,9 @@ start_dns() {
 				tmp=$(for i in $(echo $mosdns_dnsserver | sed "s/,/ /g"); do
 					dnsserver=${i%:*}
 					dnsserver=${i##*/}
-					add_dns_into_ipset $run_mode $dnsserver
+					if command -v iptables-legacy >/dev/null 2>&1; then
+						add_dns_into_ipset $run_mode $dnsserver
+					fi
 					jq_ssr '.plugins[4].args.upstreams += [{"addr":"'"${i}"'","enable_pipeline":"true"}]' $mosdns_config_file
 				done)
 
@@ -344,7 +348,9 @@ start_dns() {
 				tmp=$(for i in $(echo $mosdns_dnsserver | sed "s/,/ /g"); do
 					dnsserver=${i%:*}
 					dnsserver=${i##*/}
-					add_dns_into_ipset $run_mode $dnsserver
+					if command -v iptables-legacy >/dev/null 2>&1; then
+						add_dns_into_ipset $run_mode $dnsserver
+					fi
 					jq_ssr '.plugins[1].args.upstreams += [{"addr":"'"${i}"'","enable_pipeline":"true"}]' $mosdns_config_file
 				done)
 
@@ -1288,7 +1294,17 @@ load_config() {
 	tcp_config_file=$TMP_PATH/tcp-only-ssr-retcp.json
 	case "$UDP_RELAY_SERVER" in
 	nil)
-		mode="tcp"
+		if command -v nft >/dev/null 2>&1; then
+			# nftables / fw4
+			mode="tcp,udp"
+			ARG_UDP=""
+			udp_config_file=""
+			UDP_RELAY_SERVER="nil"
+			tcp_config_file=$TMP_PATH/nft-ssr-retcp.json
+		else
+			# iptables / fw3
+			mode="tcp"
+		fi
 		;;
 	$GLOBAL_SERVER | same)
 		mode="tcp,udp"
@@ -1301,7 +1317,13 @@ load_config() {
 		udp_config_file=$TMP_PATH/udp-only-ssr-reudp.json
 		ARG_UDP="-U"
 		start_udp
-		mode="tcp"
+		if command -v nft >/dev/null 2>&1; then
+			# nftables / fw4
+			mode="tcp,udp"
+		else
+			# iptables / fw3
+			mode="tcp"
+		fi
 		;;
 	esac
 	case "$LOCAL_SERVER" in
@@ -1535,6 +1557,11 @@ start_rules() {
 		2) echo "-O" ;;
 		esac
 	}
+	if command -v nft >/dev/null 2>&1; then
+		ARG_A="-A"
+	else
+		ARG_A=""
+	fi
 	/usr/share/shadowsocksr/gfw2ipset.sh
 	/usr/bin/ssr-rules \
 		-s "$server" \
@@ -1554,7 +1581,8 @@ start_rules() {
 		-N "$shunt_ip" \
 		-M "$(uci_get_by_type global netflix_proxy 0)" \
 		-I "/etc/ssrplus/netflixip.list" \
-		$(get_arg_out) $(gfwmode) $ARG_UDP
+		$(get_arg_out) $(gfwmode) $ARG_UDP $ARG_A
+
 	return $?
 }
 
@@ -1602,6 +1630,13 @@ boot() {
 stop() {
 	unlock
 	set_lock
+	if command -v nft >/dev/null 2>&1; then
+		/usr/bin/ssr-rules -K
+		local CLEANUP_PERSISTENCE="$(uci_get_by_type global global_server nil)"
+		if [ "$CLEANUP_PERSISTENCE" == "nil" ]; then
+			/usr/bin/ssr-rules -X
+		fi
+	fi
 	/usr/bin/ssr-rules -f
 	local srulecount=0
 	if command -v nft >/dev/null 2>&1; then
@@ -1643,6 +1678,7 @@ stop() {
 		killall -q -9 kcptun-client
 	fi
 	$PS -w | grep -v "grep" | grep ssr-monitor | awk '{print $1}' | xargs kill -9 >/dev/null 2>&1 &
+	$PS -w | grep -v "grep" | grep ssr-rules | awk '{print $1}' | xargs kill -9 >/dev/null 2>&1 &
 	$PS -w | grep -v "grep" | grep "sleep 0000" | awk '{print $1}' | xargs kill -9 >/dev/null 2>&1 &
 	( \
 		# Graceful kill first, so programs have the chance to stop its subprocesses
