@@ -60,7 +60,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE_DRV
 	bool "Include Shortcut-FE ECM"
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_OFFLOADING=n
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE_CM=n
-	depends on (TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x)
+	depends on (TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x||TARGET_qualcommax)
 	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA
@@ -69,21 +69,22 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_BBRPLUS
 	bool "Include BBR CCA BBRPLUS"
+	depends on !LINUX_6_12
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_NANQINLANG
 	bool "Include BBR CCA NANQINLANG"
-	depends on !LINUX_6_6
+	depends on !(LINUX_6_6||LINUX_6_12)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMI
 	bool "Include BBR CCA TSUNAMI"
-	depends on !LINUX_6_6
+	depends on !(LINUX_6_6||LINUX_6_12)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMIO
 	bool "Include BBR CCA TSUNAMIO"
-	depends on !(LINUX_6_1||LINUX_6_6)
+	depends on !(LINUX_6_1||LINUX_6_6||LINUX_6_12)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
