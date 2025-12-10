@@ -8,12 +8,12 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=r8152
-PKG_VERSION:=2.20.1
+PKG_VERSION:=2.21.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/wget/realtek-r8152-linux/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=045a1e1d20336d26b61b01d8561216029ff3405894707958b5670a7cd7fa75c1
+PKG_HASH:=05041e46b0edb75b53bbdac640fc027b1eac22cf493e76c3018ab3b5c1dc1df8
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/realtek-$(PKG_NAME)-linux-$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0-only
