@@ -83,9 +83,9 @@ endef
 define Download/smartdns-webui
   PROTO:=git
   URL:=https://github.com/pymumu/smartdns-webui.git
-  SOURCE_DATE:=2025-12-06
-  SOURCE_VERSION:=44f2ebd4a3830005d0e6906149ecc4fae8353b80
-  MIRROR_HASH:=9900e1fad41423c82ea0cd3ec23f726ec71a3f35243330cc324022fab9e5481c
+  SOURCE_DATE:=2025-12-11
+  SOURCE_VERSION:=eb671c099dbd794acdbd6a329fcf1bdb09326bb3
+  MIRROR_HASH:=bf00c9b814417fbd17811e5cba18527a8a217178557e30bda173de7c335425aa
   SUBDIR:=smartdns-webui-$$$$(subst -,.,$$$$(SOURCE_DATE))~$$$$(call version_abbrev,$$$$(SOURCE_VERSION))
   FILE:=$$(SUBDIR).tar.zst
 endef
