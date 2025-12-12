@@ -1,0 +1,115 @@
+Subject: [PATCH] add filterA and filterAAAA option
+---
+Index: src/lib.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/lib.rs b/src/lib.rs
+--- a/src/lib.rs	(revision 40a3f03a03436a3a5f5f5df2ec8f8dbba6a58e52)
++++ b/src/lib.rs	(date 1765412114943)
+@@ -5,6 +5,7 @@
+ mod dump_logger;
+ 
+ use hickory_proto::op::{Message, Query};
++use hickory_proto::rr::RecordType;
+ use moka::future::Cache;
+ use socks5_impl::{
+     Error, Result, client,
+@@ -129,7 +130,18 @@
+             .await
+             .map_err(|e| format!("querying \"{domain}\" {e}"))?
+     };
+-    let message = dns::parse_data_to_dns_message(&data, opt.force_tcp)?;
++    let mut message = dns::parse_data_to_dns_message(&data, opt.force_tcp)?;
++
++    let answers = message.answers_mut();
++
++    if opt.filter_a {
++        answers.retain(|record| record.record_type() != RecordType::A);
++    }
++
++    if opt.filter_aaaa {
++        answers.retain(|record| record.record_type() != RecordType::AAAA);
++    }
++
+     let msg_buf = message.to_vec().map_err(|e| e.to_string())?;
+ 
+     listener.send_to(&msg_buf, &src).await?;
+@@ -193,9 +205,25 @@
+     let target_server = opt.dns_remote_server;
+     let response_buf = tcp_via_socks5_server(proxy_addr, target_server, auth, &buf[..n], timeout).await?;
+ 
+-    incoming.write_all(&response_buf).await?;
++    // incoming.write_all(&response_buf).await?;
++
++    let mut message = dns::parse_data_to_dns_message(&response_buf, true)?;
+ 
+-    let message = dns::parse_data_to_dns_message(&response_buf, true)?;
++    let answers = message.answers_mut();
++    
++    if opt.filter_a {
++        answers.retain(|record| record.record_type() != RecordType::A);
++    }
++    
++    if opt.filter_aaaa {
++        answers.retain(|record| record.record_type() != RecordType::AAAA);
++    }
++
++    let data = message.to_vec().map_err(|e| e.to_string())?;
++    let len = u16::try_from(data.len()).map_err(|e| e.to_string())?.to_be_bytes().to_vec();
++    let data = [len, data].concat();
++    incoming.write_all(&data).await?;
++    
+     log_dns_message("DNS query via TCP", &domain, &message);
+ 
+     if opt.cache_records {
+Index: src/config.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/config.rs b/src/config.rs
+--- a/src/config.rs	(revision 40a3f03a03436a3a5f5f5df2ec8f8dbba6a58e52)
++++ b/src/config.rs	(date 1765415963671)
+@@ -27,6 +27,14 @@
+     #[clap(short, long)]
+     pub cache_records: bool,
+ 
++    /// filter IPv4 answer records
++    #[clap(short = '4', long)]
++    pub filter_a: bool,
++
++    /// filter IPv6 answer records
++    #[clap(short = '6', long)]
++    pub filter_aaaa: bool,
++
+     /// Verbosity level
+     #[arg(short, long, value_name = "level", value_enum, default_value = "info")]
+     pub verbosity: ArgVerbosity,
+@@ -44,6 +52,8 @@
+             socks5_settings: ArgProxy::default(),
+             force_tcp: false,
+             cache_records: false,
++            filter_a: false,
++            filter_aaaa: false,
+             verbosity: ArgVerbosity::default(),
+             timeout: 5,
+         }
+@@ -79,6 +89,16 @@
+         self.cache_records = cache_records;
+         self
+     }
++
++    pub fn filter_a(&mut self, filter_a: bool) -> &mut Self {
++        self.filter_a = filter_a;
++        self
++    }
++
++    pub fn filter_aaaa(&mut self, filter_aaaa: bool) -> &mut Self {
++        self.filter_aaaa = filter_aaaa;
++        self
++    }
+ 
+     pub fn verbosity(&mut self, verbosity: ArgVerbosity) -> &mut Self {
+         self.verbosity = verbosity;

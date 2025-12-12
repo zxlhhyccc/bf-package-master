@@ -1,0 +1,335 @@
+diff -uNr a/DNS2SOCKS/DNS2SOCKS.c b/DNS2SOCKS/DNS2SOCKS.c
+--- a/DNS2SOCKS/DNS2SOCKS.c	2020-02-19 02:02:10.000000000 +0800
++++ b/DNS2SOCKS/DNS2SOCKS.c	2025-12-11 23:22:01.067715155 +0800
+@@ -59,6 +59,8 @@
+ static struct SEntry* g_psFirst=NULL;			//list of DNS requests and answers (cache)
+ static unsigned int g_uCacheCount=0;			//amout of entries in list g_psFirst
+ static int g_bCacheEnabled=1;					//!=0 when cache is enabled
++static int g_bFilterAEnabled = 0;				//=1 Don't include IPv4 addresses in DNS answers
++static int g_bFilterAAAAEnabled = 0;			//=1 Don't include IPv6 addresses in DNS answers
+ static struct sockaddr_storage g_sDnsSrvAddr;	//DNS server supporting TCP
+ static struct sockaddr_storage g_sSocksAddr;	//SOCKS5 server
+ static CRITICAL_SECTION g_sCritSect;			//to protect the list g_psFirst and g_uCacheCount
+@@ -741,6 +743,251 @@
+ 	return 1;	//o.k.
+ }
+ 
++/* whine_realloc */
++static void *whine_realloc(void *ptr, size_t size)
++{
++    void *ret = realloc(ptr, size);
++
++    if (!ret && size)
++        OutputToLog(OUTPUT_ALL, "failed to reallocate %zu bytes", size);
++
++    return ret;
++}
++
++/* 替换：expand_workspace
++   现在参数 *szp 表示当前数组能容纳的 pointer 数（不是字节），
++   new 表示需要确保至少能容纳 new pointers。
++*/
++static int expand_workspace(uint8_t ***wkspc, int *szp, int new_count)
++{
++    uint8_t **p;
++    int old = *szp;
++
++    if (old >= new_count)
++        return 1;
++
++    /* 给一点额外空间，避免频繁 realloc */
++    int newcap = new_count + 5;
++
++    /* 分配 newcap 个指针的字节数 */
++    if (!(p = whine_realloc(*wkspc, (size_t)newcap * sizeof(uint8_t *))))
++        return 0;
++
++    /* 将新增的指针区域清零（按字节） */
++    memset(p + old, 0, (newcap - old) * sizeof(uint8_t *));
++
++    *wkspc = p;
++    *szp = newcap;
++    return 1;
++}
++
++/* 替换：FilterDnsMessage
++   修复了 name/type 偏移、记录保存顺序、容量检查、以及 answer-count/length 修改等问题。
++*/
++static void FilterDnsMessage(uint16_t* u16aMessage)
++{
++    static uint8_t **rrs = NULL;
++    static int rr_sz = 0;  /* capacity in pointers */
++    uint8_t *msg = (uint8_t*)u16aMessage + 2;
++    size_t rr_found = 0;
++
++    uint16_t u16Len = ntohs(*u16aMessage);
++    if (u16Len <= 12)
++    {
++        OutputToLog(OUTPUT_ALL, "Invalid DNS answer detected while filter DnsMessage (too short)");
++        return;
++    }
++
++    uint8_t *pu8Pos = (uint8_t*)u16aMessage + 2;
++    uint8_t *pu8MessageEnd = pu8Pos + u16Len;
++
++    uint16_t u16AmountQuestions = ntohs(((uint16_t*)pu8Pos)[2]);
++    uint16_t u16AmountAnswer = ntohs(((uint16_t*)pu8Pos)[3]);
++
++    pu8Pos += 12; /* skip DNS header */
++
++    /* skip questions */
++    for (; u16AmountQuestions; --u16AmountQuestions)
++    {
++        /* skip QNAME */
++        for (;;)
++        {
++            if (pu8Pos >= pu8MessageEnd)
++            {
++                OutputToLog(OUTPUT_ALL, "Invalid DNS answer detected while filter DnsMessage (qname overflow)");
++                return;
++            }
++            uint8_t u8NameLen = *pu8Pos;
++            if (!u8NameLen)
++            {
++                ++pu8Pos;
++                break;
++            }
++            if (u8NameLen >= 0xc0) /* compression pointer: two bytes */
++            {
++                pu8Pos += 2;
++                break;
++            }
++            pu8Pos += u8NameLen + 1;
++        }
++
++        /* skip QTYPE(2) + QCLASS(2) */
++        if (pu8Pos + 4 > pu8MessageEnd)
++        {
++            OutputToLog(OUTPUT_ALL, "Invalid DNS question (truncated)");
++            return;
++        }
++        pu8Pos += 4;
++    }
++
++    /* walk answers and record start/end of records we WANT TO REMOVE (A/AAAA when filter enabled) */
++    uint16_t answers_left = u16AmountAnswer;
++    while (answers_left)
++    {
++        /* remember start of this RR name */
++        uint8_t *rr_name_start = pu8Pos;
++
++        /* skip NAME (labels or compression) */
++        for (;;)
++        {
++            if (pu8Pos >= pu8MessageEnd)
++            {
++                OutputToLog(OUTPUT_ALL, "Invalid DNS answer detected while filter DnsMessage (rr name overflow)");
++                return;
++            }
++            uint8_t u8NameLen = *pu8Pos;
++            if (!u8NameLen)
++            {
++                ++pu8Pos;
++                break;
++            }
++            if (u8NameLen >= 0xc0)
++            {
++                /* compression pointer: two bytes */
++                pu8Pos += 2;
++                break;
++            }
++            pu8Pos += u8NameLen + 1;
++        }
++
++        /* Now at TYPE(2) CLASS(2) */
++        if (pu8Pos + 4 > pu8MessageEnd)
++        {
++            OutputToLog(OUTPUT_ALL, "Invalid DNS RR header (truncated)");
++            return;
++        }
++
++        uint16_t type = ntohs(*(uint16_t*)pu8Pos);
++        /* skip type+class */
++        pu8Pos += 4;
++
++        /* TTL (4) + RDLENGTH (2) must exist */
++        if (pu8Pos + 6 > pu8MessageEnd)
++        {
++            OutputToLog(OUTPUT_ALL, "Invalid DNS RR (missing ttl/rdlen)");
++            return;
++        }
++
++        /* TTL */
++        int32_t i32TimeToLive = ntohl(*(int32_t*)pu8Pos);
++        pu8Pos += 4;
++
++        /* RDLENGTH */
++        uint16_t u16ContentLen = ntohs(*(uint16_t*)pu8Pos);
++        pu8Pos += 2;
++
++        if (pu8Pos + u16ContentLen > pu8MessageEnd)
++        {
++            OutputToLog(OUTPUT_ALL, "Invalid DNS RR (rdata overflow)");
++            return;
++        }
++
++        uint8_t *rr_after_rdata = pu8Pos + u16ContentLen;
++
++        /* 如果需要过滤此类型，则记录要删除的范围 */
++        if ((type == 1 && g_bFilterAEnabled) || (type == 28 && g_bFilterAAAAEnabled))
++        {
++            /* 需要保存 start,end 两个指针 */
++            /* ensure capacity: rr_found + 2 pointers */
++            if (!expand_workspace(&rrs, &rr_sz, (int)(rr_found + 2)))
++            {
++                OutputToLog(OUTPUT_ALL, "Failed to expand workspace in FilterDnsMessage");
++                return;
++            }
++
++            /* 存入 pair: start, end */
++            rrs[rr_found++] = rr_name_start;
++            rrs[rr_found++] = rr_after_rdata;
++
++            /* 减少总 answer 计数 */
++            u16AmountAnswer--;
++        }
++
++        /* advance to next RR */
++        pu8Pos = rr_after_rdata;
++        answers_left--;
++    }
++
++    if (rr_found > 0)
++    {
++        /* 合并保留的片段（把被删除的区域挤掉） */
++        uint8_t *write_ptr = (uint8_t*)u16aMessage + 2; /* 写回开始（跳过前 2 字节的长度域） */
++        unsigned idx = 0;
++        int deleteCount = 0;
++
++        /* 需要按源数据的顺序把要“保留”的片段拷贝过去
++           方法：遍历所有要删除的区间，用指针移动保留段到 write_ptr
++           这里 rrs 存储的是要删除片段的 start/end，按升序排列（因为我们遍历 answer 顺序保存）
++        */
++
++        uint8_t *read_ptr = (uint8_t*)u16aMessage + 12 + 2; /* payload start (header已过去)。注意：原 msg 起始偏移 */
++        /* 更稳健的方法是：从 message body的第一个字节(即 msg)依次处理直到末尾，跳过删除区间，拷贝其余部分 */
++        uint8_t *body_start = (uint8_t*)u16aMessage + 2;
++        uint8_t *body_end = body_start + u16Len;
++
++        /* rrs 中的区间为 [rrs[0], rrs[1]), [rrs[2], rrs[3]) ... 按存入顺序递增 */
++        uint8_t *cur = body_start;
++        for (idx = 0; idx + 1 < (unsigned)rr_found; idx += 2)
++        {
++            uint8_t *del_start = rrs[idx];
++            uint8_t *del_end = rrs[idx + 1];
++
++            if (del_start < cur) del_start = cur; /* 守护 */
++            if (del_end > body_end) del_end = body_end;
++
++            /* copy [cur, del_start) 到 write_ptr */
++            if (del_start > cur)
++            {
++                size_t chunk = del_start - cur;
++                memmove(write_ptr, cur, chunk);
++                write_ptr += chunk;
++            }
++
++            deleteCount += (int)(del_end - del_start);
++            cur = del_end;
++        }
++
++        /* copy tail */
++        if (cur < body_end)
++        {
++            size_t chunk = body_end - cur;
++            memmove(write_ptr, cur, chunk);
++            write_ptr += chunk;
++        }
++
++        /* 修正整体长度字段（前 2 字节）以及 answer count（消息内偏移为第 4 个 16-bit 字段） */
++        int new_body_len = (int)(write_ptr - body_start);
++        *u16aMessage = htons((uint16_t)new_body_len);
++        /* answer count 在 header 的第 3/4 字（questions, answers）——u16aMessage 作为 uint16_t*，索引 4 对应原来的 (u16aMessage)[4] */
++        ((uint16_t*)body_start)[3] = htons(u16AmountAnswer);
++
++        /* 注意：rrs 是静态缓存，不在每次释放（如果希望释放可在此 free 并置 NULL） */
++    }
++
++    /* done */
++}
++
++
+ //thread for connecting the SOCKS server and resolving the DNS request
+ THREAD_FUNCTION(DnsThread, pEntry)
+ {
+@@ -987,6 +1234,37 @@
+ 		return 0;
+ 	}
+ 	closesocket(hSock);
++
++
++	if (g_bFilterAEnabled || g_bFilterAAAAEnabled)
++	{
++		// need filter
++		// filter
++		FilterDnsMessage(u16aBuf);
++
++		// re calc length
++		iLen = 2 + ntohs(*u16aBuf);
++
++		// answer count FilterDnsMessage function may 0
++		uint8_t u16AmountAnswer = ntohs(u16aBuf[4]);
++
++		if (!u16AmountAnswer)
++		{
++			OutputToLog(OUTPUT_ALL, "Filter Answer return zero!");
++
++			// set Answer  solve client timeout
++			psEntry->u16aAnswer = u16aBuf;
++			// send answer
++			SendAnswer(psEntry);
++			// set Answer NULL
++			psEntry->u16aAnswer = NULL;
++			// remove
++			RemoveEntry(psEntry, hSock, g_bCacheEnabled);
++			return 0;
++		}
++	}
++
++
+ 	if(g_bCacheEnabled)
+ 	{
+ 		//store answer in cache
+@@ -1517,6 +1795,21 @@
+ 					if(szCurArg[2]==':' && ParseEcs(szCurArg+3))
+ 						continue;	//correct parameter, go to next one
+ 				}
++				break;
++			case '4':
++				if (!szCurArg[2])
++				{
++					g_bFilterAEnabled = 1;
++					continue;	//correct parameter, go to next one
++				}
++				break;
++			case '6':
++				if (!szCurArg[2])
++				{
++					g_bFilterAAAAEnabled = 1;
++					continue;	//correct parameter, go to next one
++				}
++				break;
+ 			}
+ 			//wrong/unknown parameter; display help
+ 		}
+@@ -1548,7 +1841,9 @@
+ 			"/u:User       user name if your SOCKS server uses user/password authentication\n"
+ 			"/p:Password   password if your SOCKS server uses user/password authentication\n"
+ 			"/e:IP/Bits    to enable and specify EDNS client subnet in DNS queries\n"
+-			"/ef:IP/Bits   same as above but also replaces EDNS client subnet if it exists\n\n"
++			"/ef:IP/Bits   same as above but also replaces EDNS client subnet if it exists\n"
++			"/4            Don't include IPv4 addresses in DNS answers\n"
++			"/6            Don't include IPv6 addresses in DNS answers\n\n"
+ 			"Default Socks5ServerIP:Port = %s:%s\n"
+ 			"Default DNSServerIPorName:Port = %s:%s\n"
+ 			"Default ListenIP:Port = %s:%s\n",
