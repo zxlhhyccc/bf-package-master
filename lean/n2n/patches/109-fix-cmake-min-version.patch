@@ -1,0 +1,10 @@
+diff -uNr a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2025-12-12 23:32:41.526045000 +0800
++++ b/CMakeLists.txt	2025-12-12 23:45:22.582022063 +0800
+@@ -1,5 +1,5 @@
+ project(n2n)
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.10)
+ include(CheckFunctionExists)
+ SET(CMAKE_VERBOSE_MAKEFILE ON)
+ 
