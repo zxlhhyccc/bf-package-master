@@ -85,7 +85,7 @@ define Download/smartdns-webui
   URL:=https://github.com/pymumu/smartdns-webui.git
   SOURCE_DATE:=2025-12-11
   SOURCE_VERSION:=eb671c099dbd794acdbd6a329fcf1bdb09326bb3
-  MIRROR_HASH:=bf00c9b814417fbd17811e5cba18527a8a217178557e30bda173de7c335425aa
+  MIRROR_HASH:=0395c34f24ee3a7477d72a4d70a146d65a725e882bd02b175799ce5f5360c352
   SUBDIR:=smartdns-webui-$$$$(subst -,.,$$$$(SOURCE_DATE))~$$$$(call version_abbrev,$$$$(SOURCE_VERSION))
   FILE:=$$(SUBDIR).tar.zst
 endef
