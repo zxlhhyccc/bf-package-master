@@ -25,13 +25,31 @@ PKG_HOST_ONLY:=1
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
 
+RUSTUP_FEATURES := \
+	--no-default-features \
+	--features curl-backend \
+	--features reqwest-native-tls
+
+RUSTLS_UNSUPPORTED_ARCHS := \
+	powerpc64 \
+	powerpc64le \
+	mips \
+	mipsel \
+	mips64 \
+	mips64el \
+	loongarch64
+
+ifeq ($(filter $(RUSTLS_UNSUPPORTED_ARCHS),$(ARCH)),)
+    RUSTUP_FEATURES += --features reqwest-rustls-tls
+endif
+
 define Package/rustup
   SECTION:=lang
   CATEGORY:=Languages
   SUBMENU:=Rust Toolchain
   TITLE:=The Rust toolchain installer (host only)
   URL:=https://github.com/rust-lang/rustup
-  DEPENDS:=+libopenssl $(RUST_ARCH_DEPENDS)
+  DEPENDS:=$(RUST_ARCH_DEPENDS)
 endef
 
 define Package/rustup/description
@@ -40,20 +58,20 @@ define Package/rustup/description
 endef
 
 define Host/Compile
-	$(CARGO_PKG_CONFIG_VARS) \
-	TARGET_CFLAGS="$(filter-out -O%,$(TARGET_CFLAGS)) $(RUSTC_CFLAGS)" \
-	OPENSSL_DIR="$(STAGING_DIR_HOST)" \
-	OPENSSL_LIB_DIR="$(STAGING_DIR_HOST)/lib" \
-	OPENSSL_INCLUDE_DIR="$(STAGING_DIR_HOST)/include" \
+	cd $(HOST_BUILD_DIR) && \
+	LIBZ_SYS_STATIC=1 \
+	LZMA_API_STATIC=1 \
+	OPENSSL_STATIC=1 \
+	PKG_CONFIG_ALLOW_CROSS=1 \
+	ZSTD_SYS_STATIC=1 \
 	cargo build --release --locked \
-		--manifest-path=$(HOST_BUILD_DIR)/Cargo.toml \
-		--target-dir=$(HOST_BUILD_DIR)/target \
-		$(CARGO_PKG_ARGS)
+		$(RUSTUP_FEATURES)
 endef
 
 define Host/Install
 	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/bin
-	$(INSTALL_BIN) $(HOST_BUILD_DIR)/target/release/rustup-init \
+	$(INSTALL_BIN) \
+		$(HOST_BUILD_DIR)/target/release/rustup-init \
 		$(STAGING_DIR_HOSTPKG)/bin/rustup
 endef
 
