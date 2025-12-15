@@ -1528,6 +1528,47 @@ start_rules() {
 	local local_port=$(uci_get_by_name $GLOBAL_SERVER local_port)
 	local lan_ac_ips=$(uci_get_by_type access_control lan_ac_ips)
 	local lan_ac_mode=$(uci_get_by_type access_control lan_ac_mode)
+
+	# 添加提取 GLOBAL_SERVER 和 SHUNT_SERVER 的 address 解决 Xray 有下行 IP 的节点无法代理问题。
+	server_address=""
+	shunt_address=""
+	server_xhttp_addr_file="/etc/ssrplus/server_xhttp_address.txt"
+	shunt_xhttp_addr_file="/etc/ssrplus/shunt_xhttp_address.txt"
+
+	local server_xhttp_extra=$(uci_get_by_name "$GLOBAL_SERVER" xhttp_extra)
+	local shunt_xhttp_extra=$(uci_get_by_name "$SHUNT_SERVER" xhttp_extra)
+
+	# 提取 GLOBAL_SERVER 的 address
+	if [ -n "$server_xhttp_extra" ]; then
+		server_address="$(echo "$server_xhttp_extra" | sed -n 's/.*"address":[[:space:]]*"\([^"]*\)".*/\1/p')"
+	fi
+
+	# 提取 SHUNT_SERVER 的 address
+	if [ -n "$shunt_xhttp_extra" ]; then
+		shunt_address="$(echo "$shunt_xhttp_extra" | sed -n 's/.*"address":[[:space:]]*"\([^"]*\)".*/\1/p')"
+	fi
+
+	# 根据是否一致决定生成文件
+	if [ -n "$server_address" ] && [ "$server_address" = "$shunt_address" ]; then
+		# 两个 address 相同，只生成 server 文件
+		echo "$server_address" > "$server_xhttp_addr_file"
+		rm -f "$shunt_xhttp_addr_file"
+		echo "server/shunt address 相同: $server_address"
+	else
+		# 不一致，分别生成两个文件（仅当有值时）
+		if [ -n "$server_address" ]; then
+			echo "$server_address" > "$server_xhttp_addr_file"
+			echo "提取的 server_address: $server_address"
+		fi
+
+		if [ -n "$shunt_address" ]; then
+			echo "$shunt_address" > "$shunt_xhttp_addr_file"
+			echo "提取的 shunt_address: $shunt_address"
+		fi
+	fi
+
+	# 原代码部分
+
 	if [ "$kcp_enable_flag" == "0" -a "$redir_udp" == "1" ]; then
 		local udp_server=$(get_host_ip $UDP_RELAY_SERVER)
 		local udp_local_port=$tmp_udp_port
@@ -1704,6 +1745,12 @@ stop() {
 		uci -q rename "dhcp.@dnsmasq[0]._orig_server"="server"
 		uci -q del "dhcp.@dnsmasq[0]._unused_ssrp_changed"
 		uci -q commit "dhcp"
+	fi
+	if [ -f "/etc/ssrplus/server_xhttp_address.txt" ]; then
+		rm -f /etc/ssrplus/server_xhttp_address.txt
+	fi
+	if [ -f "/etc/ssrplus/shunt_xhttp_address.txt" ]; then
+		rm -f /etc/ssrplus/shunt_xhttp_address.txt
 	fi
 	if [ -f "$DNSMASQ_CONF_DIR/dnsmasq-ssrplus.conf" ]; then
 		rm -rf $DNSMASQ_CONF_DIR/dnsmasq-ssrplus.conf \
