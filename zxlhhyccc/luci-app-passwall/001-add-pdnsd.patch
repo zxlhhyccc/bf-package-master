@@ -204,7 +204,7 @@ diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/pass
 index 3f6dd8c..2656874 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -379,6 +379,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
+@@ -391,6 +391,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
  o.default = "tcp"
  o:value("udp", translatef("Requery DNS By %s", "UDP"))
  o:value("tcp", translatef("Requery DNS By %s", "TCP"))
@@ -219,15 +219,15 @@ index 3f6dd8c..2656874 100644
  if api.is_finded("dns2socks") then
  	o:value("dns2socks", "dns2socks")
  end
-@@ -388,6 +396,7 @@ end
+@@ -400,6 +408,7 @@ end
  if has_xray then
  	o:value("xray", "Xray")
  end
 +--o:value("udp", translatef("Requery DNS By %s", "UDP"))
- o:depends({ dns_shunt = "chinadns-ng", tcp_node = "" })
- o:depends({ dns_shunt = "dnsmasq", tcp_node = "" })
+ o:depends({ dns_shunt = "chinadns-ng", _node_sel_other = "1" })
+ o:depends({ dns_shunt = "dnsmasq", _node_sel_other = "1" })
  o.remove = function(self, section)
-@@ -501,6 +510,8 @@ o.validate = function(self, value, t)
+@@ -517,6 +526,8 @@ o.validate = function(self, value, t)
  	end
  	return value
  end
@@ -236,7 +236,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  
  ---- DNS Forward
-@@ -515,6 +526,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+@@ -531,6 +542,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -245,7 +245,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -573,6 +586,17 @@ o.validate = function(self, value, t)
+@@ -591,6 +604,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
