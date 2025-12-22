@@ -11,8 +11,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/Itsusinn/tuic.git
-PKG_SOURCE_VERSION:=536cbe2cf27287f33fe8a7029047e0103b5a4c5f
-PKG_MIRROR_HASH:=ef4dcda64f613d02585e84699c375b1f9f28d8ad89f416e99301a523a2ef662e
+PKG_SOURCE_VERSION:=9cbb05789542c36ce12e27a2fb5987ad1393a1e5
+PKG_MIRROR_HASH:=a80f3f5fc6904a2f6f6b9468330c4bfb492eb912f551f8d5282dfea2323b5ab6
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_TUIC_$(1)_COMPRESS_GOPROXY \
@@ -35,7 +35,7 @@ define Package/tuic/Default
     SUBMENU:=Web Servers/Proxies
     TITLE:=TUIC proxy protocol $(1)
     URL:=https://github.com/EAimTY/tuic
-    DEPENDS:=@(aarch64||armv7||x86_64||i686||loongarch64||riscv64)
+    DEPENDS:=@(aarch64||arm||mips||mipsel||x86_64||i386||i686||riscv64||loongarch64)
   endef
 
   define Package/tuic-client/description
@@ -68,22 +68,27 @@ TUIC_COMPONENTS:=client server
 
 define Select/Features
 $(strip \
-  $(if $(findstring x86_64,$(RUSTC_TARGET_ARCH)),--features jemallocator, \
-  $(if $(findstring i686,$(RUSTC_TARGET_ARCH)),--features jemallocator, \
-  $(if $(findstring aarch64,$(RUSTC_TARGET_ARCH)),--features jemallocator, \
-  $(if $(findstring armv7,$(RUSTC_TARGET_ARCH)),--no-default-features --features ring,jemallocator, \
-  $(if $(findstring loongarch64,$(RUSTC_TARGET_ARCH)),--no-default-features --features ring, \
-  $(if $(findstring riscv64,$(RUSTC_TARGET_ARCH)),--no-default-features --features ring,jemallocator, \
-  "" \
-  )))))))
+  $(if $(findstring x86_64,$(RUSTC_TARGET_ARCH)),--features jemallocator) \
+  $(if $(findstring aarch64,$(RUSTC_TARGET_ARCH)),--features jemallocator) \
+  $(if $(or \
+    $(findstring arm,$(RUSTC_TARGET_ARCH)), \
+    $(findstring mips,$(RUSTC_TARGET_ARCH)), \
+    $(findstring mipsel,$(RUSTC_TARGET_ARCH)), \
+    $(findstring i686,$(RUSTC_TARGET_ARCH)), \
+    $(findstring i386,$(RUSTC_TARGET_ARCH)), \
+    $(findstring riscv64,$(RUSTC_TARGET_ARCH)), \
+    $(findstring loongarch64,$(RUSTC_TARGET_ARCH)) \
+  ),--no-default-features --features ring) \
+)
 endef
 
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
 		$(CARGO_PKG_CONFIG_VARS) \
-		TARGET_CFLAGS="$(filter-out -O%,$(TARGET_CFLAGS)) $(RUSTC_CFLAGS)" \
-		cargo build --release --target $(RUSTC_TARGET_ARCH) $(call Select/Features) ; \
+		cargo build --release \
+			--target $(RUSTC_TARGET_ARCH) \
+			$(call Select/Features) ; \
 		popd ; \
 	)
 $(foreach component,$(TUIC_COMPONENTS), 
