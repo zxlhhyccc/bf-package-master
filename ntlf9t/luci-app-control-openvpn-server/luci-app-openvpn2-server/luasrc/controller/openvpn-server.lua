@@ -6,7 +6,7 @@ function index()
 	entry({"admin","vpn"},firstchild(),"VPN",45).dependent=false
 	local e=entry({"admin","vpn","openvpn-server"},firstchild(),_("OpenVPN Server"),1)
 	e.dependent=false
-	e.acl_depends={ "luci-app-control-openvpn-server" }
+	e.acl_depends={ "luci-app-openvpn2-server" }
 	entry({"admin","vpn","openvpn-server","base"},cbi("openvpn-server/base"),_("Base Setting"),1)
 	entry({"admin","vpn","openvpn-server","client"},form("openvpn-server/client"),_("Client configuration"),2)
 	entry({"admin","vpn","openvpn-server","passwd"},form("openvpn-server/passwd"),_("Username and Password"),3)

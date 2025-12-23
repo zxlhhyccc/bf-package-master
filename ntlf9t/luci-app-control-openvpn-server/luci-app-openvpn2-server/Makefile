@@ -5,12 +5,12 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-control-openvpn-server
+PKG_NAME:=luci-app-openvpn2-server
 PKG_VERSION:=1.0
 PKG_RELEASE:=3
 
 LUCI_TITLE:=LuCI support for OpenVPN Server
-LUCI_DEPENDS:=+openvpn-server-openssl +openvpn-easy-rsa-whisky +luci-compat
+LUCI_DEPENDS:=+openvpn2-openssl +openvpn-easy-rsa-whisky +luci-compat
 LUCI_PKGARCH:=all
 
 define Package/$(PKG_NAME)/conffiles
