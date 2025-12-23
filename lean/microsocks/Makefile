@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright (C) 2021 ImmortalWrt.org
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=microsocks
@@ -18,6 +22,10 @@ PKG_HASH:=939d1851a18a4c03f3cc5c92ff7a50eaf045da7814764b4cb9e26921db15abc8
 PKG_MAINTAINER:=Mateusz Korniak <matkorgithubcom@ant.gliwice.pl>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
+PKG_MAINTAINER:=lean
+
+PKG_BUILD_PARALLEL:=1
+PKG_INSTALL:=1
 
 PKG_BUILD_FLAGS:=lto
 
@@ -25,14 +33,17 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/microsocks
   SECTION:=net
-  SUBMENU:=Web Servers/Proxies
   CATEGORY:=Network
-  TITLE:=SOCKS5 TCP/IP only proxy
+  SUBMENU:=Web Servers/Proxies
+  TITLE:=Tiny, portable SOCKS5 server. Support forwarding rules
+  URL:=https://github.com/rofl0r/microsocks
+  DEPENDS:=+libpthread
 endef
 
 define Package/microsocks/description
-  Low resource SOCKS5 proxy.
-  Supports only SOCKS5 protocol and forwarding only TCP/IP connections.
+  A SOCKS5 service that you can run on your remote boxes to tunnel connections
+  through them, if for some reason SSH doesn't cut it for you.
+  This version supports forwarding rules.
 endef
 
 define Package/microsocks/conffiles
@@ -42,6 +53,7 @@ endef
 # TARGET_CFLAGS+= -flto
 # TARGET_LDFLAGS+= -flto -Wl,--gc-sections,--as-needed
 
+TARGET_CFLAGS += -Wno-unknown-pragmas
 TARGET_LDFLAGS+= -Wl,--gc-sections,--as-needed
 
 define Package/microsocks/install
