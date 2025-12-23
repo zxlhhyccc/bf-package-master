@@ -251,10 +251,9 @@ o = s:option(Flag, "adblock", translate("Enable adblock"))
 o.rmempty = false
 
 o = s:option(Value, "adblock_url", translate("adblock_url"))
-o:value("https://fastly.jsdelivr.net/gh/neodevpro/neodevhost/lite_dnsmasq.conf", translate("NEO DEV HOST Lite"))
-o:value("https://fastly.jsdelivr.net/gh/neodevpro/neodevhost/dnsmasq.conf", translate("NEO DEV HOST Full"))
+o:value("https://fastly.jsdelivr.net/gh/neodevpro/neodevhost/dnsmasq.conf", translate("NEO DEV HOST"))
 o:value("https://anti-ad.net/anti-ad-for-dnsmasq.conf", translate("anti-AD"))
-o.default = "https://fastly.jsdelivr.net/gh/neodevpro/neodevhost/lite_dnsmasq.conf"
+o.default = "https://fastly.jsdelivr.net/gh/neodevpro/neodevhost/dnsmasq.conf"
 o:depends("adblock", "1")
 o.description = translate("Support AdGuardHome and DNSMASQ format list")
 
