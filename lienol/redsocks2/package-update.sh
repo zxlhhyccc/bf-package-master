@@ -29,7 +29,7 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     rm -f dl/redsocks2-${OLD_VER}.tar.zst
 
     # 清理旧缓存（触发重新编译）
-    make package/redsocks/clean V=s
+    make package/redsocks2/clean V=s
 
     # 修改 Makefile 中的版本和提交哈希
     ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
@@ -40,7 +40,7 @@ if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
     echo "🧹 清空旧 HASH：$OLD_CHECKSUM"
 
     # 重新下载源码包
-    make package/redsocks/download V=s
+    make package/redsocks2/download V=s
 
     # 重新生成校验和
     TARFILE="dl/redsocks2-${VER}.tar.zst"
