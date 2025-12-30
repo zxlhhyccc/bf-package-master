@@ -1,0 +1,54 @@
+From 1d827bd2961cdf2388195d8eeee27c481c98707c Mon Sep 17 00:00:00 2001
+From: Jon Banafato <jon@jonafato.com>
+Date: Tue, 21 Oct 2025 21:00:25 -0400
+Subject: [PATCH] Add Python 3.12, 3.13, and 3.14 to test suite and Trove
+ classifiers
+
+---
+ .github/workflows/ci.yml | 6 ++++++
+ setup.py                 | 3 +++
+ tox.ini                  | 2 +-
+ 3 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index da0e658..3b6eeb5 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -20,6 +20,12 @@ jobs:
+             toxenv: py310
+           - name: "3.11"
+             toxenv: py311
++          - name: "3.12"
++            toxenv: py312
++          - name: "3.13"
++            toxenv: py313
++          - name: "3.14"
++            toxenv: py314
+ 
+     steps:
+     - uses: actions/checkout@v2
+diff --git a/setup.py b/setup.py
+index 6befb9e..df30627 100644
+--- a/setup.py
++++ b/setup.py
+@@ -38,6 +38,9 @@ def get_long_description():
+         "Programming Language :: Python :: 3.9",
+         "Programming Language :: Python :: 3.10",
+         "Programming Language :: Python :: 3.11",
++        "Programming Language :: Python :: 3.12",
++        "Programming Language :: Python :: 3.13",
++        "Programming Language :: Python :: 3.14",
+         "Programming Language :: Python :: Implementation :: CPython",
+         "Programming Language :: Python :: Implementation :: PyPy",
+         "Topic :: Text Processing",
+diff --git a/tox.ini b/tox.ini
+index 9901cf3..631acf7 100644
+--- a/tox.ini
++++ b/tox.ini
+@@ -1,5 +1,5 @@
+ [tox]
+-envlist = py{37,38,39,310,311,py3}
++envlist = py{37,38,39,310,311,312,313,314,py3}
+ skip_missing_interpreters = true
+ 
+ [testenv]
