@@ -5,12 +5,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=brook
-PKG_VERSION:=20250808
+PKG_VERSION:=20260101
 PKG_RELEASE:=1
 
 #PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 #PKG_SOURCE_URL:=https://codeload.github.com/txthinking/brook/tar.gz/v$(PKG_VERSION)?
-#PKG_HASH:=a8e2e989f6d09e36c1fbe8593404d53a0615dc93e91a0be94dda898f0d55ff1d
+#PKG_HASH:=70e8310f31cef3b80e1696f364f12b2ab2aa0f1fb9fde00f25bda7620c21f096
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
