@@ -1,6 +1,6 @@
 --- a/src/Makefile
 +++ b/src/Makefile
-@@ -57,12 +57,13 @@ ifndef NO_GIT_VER
+@@ -60,12 +60,13 @@ ifndef NO_GIT_VER
    endif
   endif
  endif

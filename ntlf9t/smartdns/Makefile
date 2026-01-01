@@ -22,9 +22,9 @@ PKG_LICENSE_FILES:=LICENSE
 # PACKAGE_smartdns-ui:node/host
 PKG_CONFIG_DEPENDS:=CONFIG_PACKAGE_smartdns-ui
 PKG_BUILD_DEPENDS:= \
-	PACKAGE_smartdns-ui:rust/host \
+	PACKAGE_smartdns-ui:rust-bindgen/host \
 	PACKAGE_smartdns-ui:rustup/host \
-	PACKAGE_smartdns-ui:node-pnpm/host
+	PACKAGE_smartdns-ui:node/host
 PKG_BUILD_PARALLEL:=1
 
 RUST_PKG_FEATURES:=build-release
@@ -98,6 +98,7 @@ ifneq ($(CONFIG_PACKAGE_smartdns-ui),)
 	$(eval $(Download/smartdns-webui))
 	mkdir -p $(PKG_BUILD_DIR)/smartdns-webui
 	zstdcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR)/smartdns-webui $(TAR_OPTIONS) --strip-components=1
+	$(call PatchDir,$(PKG_BUILD_DIR)/smartdns-webui,$(CURDIR)/webui-patches)
 endif
 endef
 
@@ -119,8 +120,8 @@ ifneq ($(CONFIG_PACKAGE_smartdns-ui),)
 		popd ; \
 		pushd smartdns-webui ; \
 		$(SED) 's/"\^/"/g' package.json ; \
-		pnpm install ; \
-		pnpm run build ; \
+		npm install ; \
+		npm run build ; \
 		popd ; \
 		popd ; \
 	)
