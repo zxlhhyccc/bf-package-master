@@ -6,13 +6,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NPM_NAME:=pnpm
 PKG_NAME:=node-$(PKG_NPM_NAME)
-PKG_VERSION:=10.20.0
+PKG_VERSION:=10.27.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://mirrors.tencent.com/npm/$(PKG_NPM_NAME)/-/ \
                 https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
-PKG_HASH:=47a3352808501b8d1ef20112273b6a5dcfa53d28a55bcce36d268e878bd6bfe9
+PKG_HASH:=d3c7c3d12d87d177e32f01748d5994fb20cd5becf11670ee60530c374ffeabb3
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MIT
