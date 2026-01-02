@@ -305,7 +305,7 @@ def merge_list_from_file(dns_hash, key, file_path)
    return unless File.exist?(file_path)
    lines = File.readlines(file_path).map { |l| l.gsub(/#.*$/, '').strip }.reject(&:empty?)
    return if lines.empty?
-   (dns_hash[key] ||= []).concat(lines).uniq!
+   (dns_hash[key] ||= []).unshift(*lines).uniq!
 end
 
 
@@ -602,19 +602,23 @@ threads << Thread.new do
       if fake_ip_mode == 'fake-ip' && (china_ip_route || china_ip6_route)
          filter_mode = Value.dig('dns', 'fake-ip-filter-mode')
          filters = Value.dig('dns', 'fake-ip-filter') || []
+         deleted_filters = filters.select { |f| f =~ /(geosite:?|rule-set:?).*(@cn|:cn|,cn|:china)/i }
          if filter_mode == 'blacklist' || filter_mode.nil?
-            unless filters.include?('geosite:cn')
+            if !deleted_filters.any?
                (Value['dns']['fake-ip-filter'] ||= []) << 'geosite:cn'
                YAML.LOG('Tip: Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【geosite:cn】...')
             end
          else
-            deleted_filters = filters.select { |f| f =~ /(geosite:?).*(@cn|:cn|,cn|:china)/ }
             if deleted_filters.any?
                Value['dns']['fake-ip-filter'] -= deleted_filters
                deleted_filters.each do |f|
                   YAML.LOG('Tip: Because Need Ensure Bypassing IP Option Work, Deleted The Fake-IP-Filter Rule【%s】...' % [f])
                end
             end
+         end
+         if filter_mode == 'rule'
+            (Value['dns']['fake-ip-filter'] ||= []).unshift('GEOSITE,cn,real-ip')
+            YAML.LOG('Tip: Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【GEOSITE,cn,real-ip】...')
          end
       end
    rescue Exception => e
@@ -707,7 +711,7 @@ begin
    end
 
    # proxy-server-nameserver
-   local_exclude = (%x{ls -l /sys/class/net/ |awk '{print \$9}'  2>&1}.each_line.map(&:strip) + ['h3=', 'skip-cert-verify=', 'ecs=', 'ecs-override='] + ['utun', 'tailscale0', 'docker0', 'tun163', 'br-lan', 'mihomo']).uniq.join('|')
+   local_exclude = (%x{ls -l /sys/class/net/ |awk '{print \$9}'  2>&1}.each_line.map(&:strip) + ['h3=', 'skip-cert-verify=', 'ecs=', 'ecs-override=', 'disable-ipv6=', 'disable-ipv4='] + ['utun', 'tailscale0', 'docker0', 'tun163', 'br-lan', 'mihomo']).uniq.join('|')
    proxied_server_reg = /^[^#&]+#(?:(?:#{local_exclude})[^&]*&)*(?:(?!(?:#{local_exclude}))[^&]+)/
    default_proxy_servers = ['114.114.114.114', '119.29.29.29', '8.8.8.8', '1.1.1.1']
 
