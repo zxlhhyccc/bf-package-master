@@ -1,18 +1,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openclash-meta
-PKG_BASE_VERSION:=alpha
+PKG_BASE_VERSION:=1.19.18
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-g$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/MetaCubeX/mihomo.git
 PKG_SOURCE_VERSION:=0cffc8d76dee66a64c9e3d4b71b7fdc60a85a62e
-PKG_MIRROR_HASH:=90a89b1331a63e753b3795341ece320f498244659306a256743d236850f354cd
+PKG_MIRROR_HASH:=7b214efe2b49f725be72bcd4286ca15ed22207f4018747c8d5c2f297259ec5f6
 
 PKG_REV:=$(shell git rev-parse --short=7 $(PKG_SOURCE_VERSION))
 # PKG_REV:=$(shell echo $(PKG_SOURCE_VERSION) | cut -c1-7)
-PKG_VERSION:=$(PKG_BASE_VERSION)-$(call version_abbrev,$(PKG_SOURCE_VERSION))
+PKG_VERSION:=$(PKG_BASE_VERSION)~$(call version_abbrev,$(PKG_SOURCE_VERSION))
 
 PKG_MAINTAINER:=EkkoG <beijiu572@gmail.om>
 PKG_LICENSE:=GPL-3.0-only
@@ -32,7 +32,7 @@ GO_PKG:=github.com/metacubex/mihomo
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/constant.Version=$(PKG_BASE_VERSION)-g$(PKG_REV)
+	$(GO_PKG)/constant.Version=alpha-g$(PKG_REV)
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/../feeds/packages/lang/golang/golang-package.mk
