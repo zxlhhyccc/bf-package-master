@@ -5,14 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=vlmcsd
-PKG_VERSION=svn1113
+PKG_REAL_VERSION:=svn1113
+PKG_VERSION:=$(subst svn,,$(PKG_REAL_VERSION))
 PKG_RELEASE:=8
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/Wind4/vlmcsd.git
 PKG_SOURCE_DATE:=2023-07-28
 PKG_SOURCE_VERSION:=70e03572b254688b8c3557f898e7ebd765d29ae1
-PKG_MIRROR_HASH:=592503229aaf24a3d20b1330bca54d926635217e6b384012189f78c96b8807d4
+PKG_MIRROR_HASH:=cdd543eed69ddfed7378240387cbcb88087be8397898de48ae9b750de2a58594
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -37,7 +38,7 @@ define Package/vlmcsd/description
 endef
 
 define Build/Compile
-	$(SED) 's/private build/$(PKG_VERSION)/' $(PKG_BUILD_DIR)/src/config.h
+	$(SED) 's/private build/$(PKG_REAL_VERSION)/' $(PKG_BUILD_DIR)/src/config.h
 	$(call Build/Compile/Default)
 endef
 
