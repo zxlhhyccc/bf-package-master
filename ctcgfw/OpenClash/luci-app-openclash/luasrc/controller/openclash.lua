@@ -1026,9 +1026,24 @@ function sub_info_get()
 end
 
 function action_rule_mode()
+	local mode, info
+	if is_running() then
+		local daip = daip()
+		local dase = dase() or ""
+		local cn_port = cn_port()
+		if not daip or not cn_port then return end
+		info = json.parse(luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/configs', dase, daip, cn_port)))
+		if info then
+			mode = info["mode"]
+		else
+			mode = fs.uci_get_config("config", "proxy_mode") or "rule"
+		end
+	else
+		mode = fs.uci_get_config("config", "proxy_mode") or "rule"
+	end
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
-		mode = fs.uci_get_config("config", "proxy_mode") or "rule";
+		mode = mode;
 	})
 end
 
@@ -1313,7 +1328,7 @@ end
 function action_dashboard_type()
 	local dashboard_type = fs.uci_get_config("config", "dashboard_type") or "Official"
 	local yacd_type = fs.uci_get_config("config", "yacd_type") or "Official"
-	local default_dashboard = fs.uci_get_config("config", "default_dashboard")
+	local default_dashboard = fs.uci_get_config("config", "default_dashboard") or ""
 	if not fs.isdirectory("/usr/share/openclash/ui/" .. default_dashboard) then
 		default_dashboard = ""
 	end
