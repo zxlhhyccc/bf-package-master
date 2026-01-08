@@ -257,7 +257,7 @@ start_dns() {
 	}
 
 	if [ "$ssrplus_dns" != "0" ]; then
-		if command -v iptables-legacy >/dev/null 2>&1; then
+		if command -v ipset >/dev/null 2>&1; then
 			if [ -n "$dnsserver" ]; then
 				add_dns_into_ipset $run_mode $dnsserver
 			fi
@@ -297,7 +297,7 @@ start_dns() {
 				tmp=$(for i in $(echo $mosdns_dnsserver | sed "s/,/ /g"); do
 					dnsserver=${i%:*}
 					dnsserver=${i##*/}
-					if command -v iptables-legacy >/dev/null 2>&1; then
+					if command -v ipset >/dev/null 2>&1; then
 						add_dns_into_ipset $run_mode $dnsserver
 					fi
 					jq_ssr '.plugins[4].args.upstreams += [{"addr":"'"${i}"'","enable_pipeline":"true"}]' $mosdns_config_file
@@ -348,7 +348,7 @@ start_dns() {
 				tmp=$(for i in $(echo $mosdns_dnsserver | sed "s/,/ /g"); do
 					dnsserver=${i%:*}
 					dnsserver=${i##*/}
-					if command -v iptables-legacy >/dev/null 2>&1; then
+					if command -v ipset >/dev/null 2>&1; then
 						add_dns_into_ipset $run_mode $dnsserver
 					fi
 					jq_ssr '.plugins[1].args.upstreams += [{"addr":"'"${i}"'","enable_pipeline":"true"}]' $mosdns_config_file
@@ -1444,7 +1444,13 @@ start_server() {
 			;;
 		socks5)
 			[ -e /proc/sys/net/ipv6 ] && local listenip='-i ::'
-			ln_start_bin $(first_type microsocks) microsocks $listenip -p $(uci_get_by_name $1 server_port) -1 -u $(uci_get_by_name $1 username) -P $(uci_get_by_name $1 password) ssr-server$server_count
+			local username=$(uci_get_by_name $1 username)
+			local password=$(uci_get_by_name $1 password)
+			local auth_opts=""
+			if [ -n "$username" ] && [ -n "$password" ]; then
+				auth_opts="-u $username -P $password"
+			fi
+			ln_start_bin $(first_type microsocks) microsocks $listenip -p $(uci_get_by_name $1 server_port) -1 $auth_opts ssr-server$server_count
 			echolog "Server:Socks5 Server$server_count Started!"
 			;;
 		esac
@@ -1642,6 +1648,14 @@ start() {
 		Start_Run
 		start_xhttp_addr
 		start_rules
+		# Restore ipsets after rules creation
+		if command -v ipset >/dev/null 2>&1; then
+			for setname in gfwlist china blacklist whitelist netflix; do
+				if [ -f "/tmp/ssrplus_save/${setname}.save" ]; then
+					ipset restore -! < "/tmp/ssrplus_save/${setname}.save" 2>/dev/null
+				fi
+			done
+		fi
 		start_dns
 		add_cron
 		start_switch
@@ -1653,9 +1667,18 @@ start() {
 			echolog "未启动主节点，广告过滤正在加载。"
 			cp -f /etc/ssrplus/ad.conf $TMP_DNSMASQ_PATH/
 			if [ -f "$TMP_DNSMASQ_PATH/ad.conf" ]; then
-				for line in $(cat /etc/ssrplus/black.list); do sed -i "/$line/d" $TMP_DNSMASQ_PATH/ad.conf; done
-				for line in $(cat /etc/ssrplus/white.list); do sed -i "/$line/d" $TMP_DNSMASQ_PATH/ad.conf; done
-				for line in $(cat /etc/ssrplus/deny.list); do sed -i "/$line/d" $TMP_DNSMASQ_PATH/ad.conf; done
+				# Optimize: Batch filter using grep instead of looping sed
+				for list_file in /etc/ssrplus/black.list /etc/ssrplus/white.list /etc/ssrplus/deny.list; do
+					if [ -s "$list_file" ]; then
+						# Clean list file (remove comments and empty lines)
+						grep -vE '^\s*#|^\s*$' "$list_file" > "${list_file}.clean"
+						if [ -s "${list_file}.clean" ]; then
+							grep -v -F -f "${list_file}.clean" "$TMP_DNSMASQ_PATH/ad.conf" > "$TMP_DNSMASQ_PATH/ad.conf.tmp"
+							mv "$TMP_DNSMASQ_PATH/ad.conf.tmp" "$TMP_DNSMASQ_PATH/ad.conf"
+						fi
+						rm -f "${list_file}.clean"
+					fi
+				done
 			fi
 			echolog "广告过滤加载完毕。"
 		fi
@@ -1683,6 +1706,15 @@ boot() {
 }
 
 stop() {
+	# Save ipsets before stopping to persist transparent proxy state
+	if command -v ipset >/dev/null 2>&1; then
+		mkdir -p /tmp/ssrplus_save
+		ipset save gfwlist > /tmp/ssrplus_save/gfwlist.save 2>/dev/null
+		ipset save china > /tmp/ssrplus_save/china.save 2>/dev/null
+		ipset save blacklist > /tmp/ssrplus_save/blacklist.save 2>/dev/null
+		ipset save whitelist > /tmp/ssrplus_save/whitelist.save 2>/dev/null
+		ipset save netflix > /tmp/ssrplus_save/netflix.save 2>/dev/null
+	fi
 	unlock
 	set_lock
 	if command -v nft >/dev/null 2>&1; then
@@ -1754,12 +1786,6 @@ stop() {
 		uci -q rename "dhcp.@dnsmasq[0]._orig_server"="server"
 		uci -q del "dhcp.@dnsmasq[0]._unused_ssrp_changed"
 		uci -q commit "dhcp"
-	fi
-	if [ -f "/etc/ssrplus/server_xhttp_address.txt" ]; then
-		rm -f /etc/ssrplus/server_xhttp_address.txt
-	fi
-	if [ -f "/etc/ssrplus/shunt_xhttp_address.txt" ]; then
-		rm -f /etc/ssrplus/shunt_xhttp_address.txt
 	fi
 	if [ -f "$DNSMASQ_CONF_DIR/dnsmasq-ssrplus.conf" ]; then
 		rm -rf $DNSMASQ_CONF_DIR/dnsmasq-ssrplus.conf \
