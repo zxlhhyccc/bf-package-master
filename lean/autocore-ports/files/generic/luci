@@ -4,7 +4,6 @@
 'use strict';
 
 import { stdin, access, dirname, basename, open, popen, glob, lsdir, readfile, readlink, error } from 'fs';
-import { connect } from 'ubus';
 import { cursor } from 'uci';
 
 import { init_list, init_index, init_enabled, init_action, conntrack_list, process_list } from 'luci.sys';
@@ -544,8 +543,8 @@ const methods = {
 
 				for (let line = fd.read('line'); length(line); line = fd.read('line')) {
 					const m = split(line, ' ');
-					const device = replace(m[0], /\\([0-9][0-9][0-9])/g, (m, n) => char(int(n, 8)));
-					const mount  = replace(m[1], /\\([0-9][0-9][0-9])/g, (m, n) => char(int(n, 8)));
+					const device = replace(m[0], /\\([0-9][0-9][0-9])/g, (m, n) => chr(int(n, 8)));
+					const mount  = replace(m[1], /\\([0-9][0-9][0-9])/g, (m, n) => chr(int(n, 8)));
 					const stat = statvfs(mount);
 
 					if (stat?.blocks > 0) {
@@ -657,6 +656,31 @@ const methods = {
 		}
 	},
 
+	getOdhcp6cStats: {
+		call: function() {
+			const ubus = connect();
+			const devs = ubus.call('network.device', 'status');
+
+			if (!devs)
+				return false;
+
+			const dev_stats = {};
+
+			for (let dev in devs) {
+				const m = ubus.call(`odhcp6c.${dev}`, 'get_statistics');
+
+				// not all interfaces are exposed unless odhcp6c runs on it
+				if (!m)
+					continue;
+
+				push(dev_stats, dev);
+				dev_stats[dev] = m;
+			}
+
+			return { result: dev_stats };
+		}
+	},
+
 	getCPUBench: {
 		call: function() {
 			return { cpubench: readfile('/etc/bench.log') || '' };
@@ -733,31 +757,6 @@ const methods = {
 			} else {
 				return { onlineusers: error() };
 			}
-		}
-	},
-
-	getOdhcp6cStats: {
-		call: function() {
-			const ubus = connect();
-			const devs = ubus.call('network.device', 'status');
-
-			if (!devs)
-				return false;
-
-			const dev_stats = {};
-
-			for (let dev in devs) {
-				const m = ubus.call(`odhcp6c.${dev}`, 'get_statistics');
-
-				// not all interfaces are exposed unless odhcp6c runs on it
-				if (!m)
-					continue;
-
-				push(dev_stats, dev);
-				dev_stats[dev] = m;
-			}
-
-			return { result: dev_stats };
 		}
 	}
 };
