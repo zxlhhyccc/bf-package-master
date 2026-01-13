@@ -1,8 +1,8 @@
 msgid "Socat"
-msgstr "端口转发"
+msgstr "Socat"
 
-msgid "Socat is a relay for bidirectional data transfer between two independent data channels."
-msgstr "Socat 是用于在两个独立数据通道之间进行双向数据传输的中继器。"
+msgid "Socat is a versatile networking tool named after 'Socket CAT', which can be regarded as an N-fold enhanced version of NetCat"
+msgstr "Socat 是 Linux 下的一个多功能的网络工具，名字来由是「Socket CAT」。其功能与有瑞士军刀之称的 Netcat 类似，可以看做是 Netcat 的加强版。"
 
 msgid "Socat Config"
 msgstr "Socat 配置"
@@ -34,7 +34,7 @@ msgstr "监听协议"
 msgid "Listen port"
 msgstr "监听端口"
 
-msgid "REUSEADDR"
+msgid "Reuseaddr"
 msgstr "地址重用"
 
 msgid "Bind to a port local"
@@ -48,6 +48,15 @@ msgstr "目标地址"
 
 msgid "Destination port"
 msgstr "目标端口"
+
+msgid "Proxy"
+msgstr "代理"
+
+msgid "Proxy Server"
+msgstr "代理服务器"
+
+msgid "Proxy Port"
+msgstr "代理端口"
 
 msgid "Open firewall port"
 msgstr "打开防火墙端口"
