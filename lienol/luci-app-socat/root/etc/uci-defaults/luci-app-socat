@@ -16,13 +16,15 @@ if [ -x /sbin/fw4 ]; then
 		fw4 -q reload
 	fi
 fi
-uci -q batch <<-EOF >/dev/null
-	delete ucitrack.@socat[-1]
-	add ucitrack socat
-	set ucitrack.@socat[-1].init=luci_socat
-	commit ucitrack
-EOF
+if [ -e "/etc/config/ucitrack" ]; then
+	uci -q batch <<-EOF >/dev/null
+		delete ucitrack.@socat[-1]
+		add ucitrack socat
+		set ucitrack.@socat[-1].init=luci_socat
+		commit ucitrack
+	EOF
 }
+fi
 
 rm -rf /tmp/luci-*cache
 exit 0
