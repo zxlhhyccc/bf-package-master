@@ -267,7 +267,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -166,6 +166,9 @@ msgstr "远程 DNS DoH"
+@@ -169,6 +169,9 @@ msgstr "远程 DNS DoH"
  msgid "Remote DNS DoH"
  msgstr "远程 DNS DoH"
  
@@ -277,7 +277,7 @@ index 92144fb..4ae3764 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -313,6 +316,12 @@ msgstr "关闭（不使用）"
+@@ -316,6 +319,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
