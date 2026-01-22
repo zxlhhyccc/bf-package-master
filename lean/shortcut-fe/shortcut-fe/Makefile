@@ -53,7 +53,10 @@ define KernelPackage/shortcut-fe-cm
   SECTION:=kernel
   CATEGORY:=Kernel modules
   SUBMENU:=Network Support
-  DEPENDS:=+kmod-nf-conntrack +kmod-nf-conntrack6 +kmod-shortcut-fe
+  DEPENDS:= \
+	   +kmod-shortcut-fe \
+	   +kmod-nf-conntrack \
+	   +@!LINUX_6_12:kmod-nf-conntrack6
   TITLE:=Kernel driver for SFE
   FILES:=$(PKG_BUILD_DIR)/shortcut-fe-cm.ko
   KCONFIG:= \
