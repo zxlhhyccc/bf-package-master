@@ -204,7 +204,7 @@ diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/pass
 index 3f6dd8c..2656874 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -249,6 +249,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
+@@ -279,6 +279,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
  o.default = "tcp"
  o:value("udp", translatef("Requery DNS By %s", "UDP"))
  o:value("tcp", translatef("Requery DNS By %s", "TCP"))
@@ -219,7 +219,7 @@ index 3f6dd8c..2656874 100644
  if api.is_finded("dns2socks") then
  	o:value("dns2socks", "dns2socks")
  end
-@@ -258,6 +266,7 @@ end
+@@ -288,6 +296,7 @@ end
  if has_xray then
  	o:value("xray", "Xray")
  end
@@ -227,7 +227,7 @@ index 3f6dd8c..2656874 100644
  o:depends({ dns_shunt = "chinadns-ng", _node_sel_other = "1" })
  o:depends({ dns_shunt = "dnsmasq", _node_sel_other = "1" })
  o.remove = function(self, section)
-@@ -371,6 +380,8 @@ o.validate = function(self, value, t)
+@@ -401,6 +410,8 @@ o.validate = function(self, value, t)
  	end
  	return value
  end
@@ -236,7 +236,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  
  ---- DNS Forward
-@@ -385,6 +396,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+@@ -415,6 +426,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -245,7 +245,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -445,6 +458,17 @@ o.validate = function(self, value, t)
+@@ -475,6 +488,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -267,7 +267,7 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -175,6 +175,9 @@ msgstr "远程 DNS DoH"
+@@ -172,6 +172,9 @@ msgstr "远程 DNS DoH"
  msgid "Remote DNS DoH"
  msgstr "远程 DNS DoH"
  
@@ -277,7 +277,7 @@ index 92144fb..4ae3764 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -328,6 +331,12 @@ msgstr "关闭（不使用）"
+@@ -325,6 +328,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
