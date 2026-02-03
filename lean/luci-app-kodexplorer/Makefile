@@ -10,10 +10,10 @@ LUCI_TITLE:=LuCI support for KodExplorer
 LUCI_PKGARCH:=all
 
 LUCI_DEPENDS:= \
+	@PACKAGE_php8 \
 	+nginx-ssl \
 	+unzip \
 	+zoneinfo-asia \
-	+php8 \
 	+php8-fastcgi \
 	+php8-fpm \
 	+php8-mod-curl \
