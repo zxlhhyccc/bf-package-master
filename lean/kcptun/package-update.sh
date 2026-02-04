@@ -15,10 +15,15 @@ OLD_COMMIT=$(grep -oP '^PKG_SOURCE_VERSION:=\K.*' "$CURDIR/Makefile")
 OLD_CHECKSUM=$(grep -oP '^PKG_MIRROR_HASH:=\K.*' "$CURDIR/Makefile")
 
 REPO="https://github.com/xtaci/kcptun"
-REPO_API="https://api.github.com/repos/xtaci/kcptun/releases/latest"
+#REPO_API="https://api.github.com/repos/xtaci/kcptun/releases/latest"
+REPO_API="https://api.github.com/repos/xtaci/kcptun/tags"
 
 # 获取新 TAG、COMMIT 等
-TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
+#TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
+TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" \
+    | grep -o '"name": "v[^"]*"' \
+    | head -1 \
+    | cut -d'"' -f4)"
 VER="${TAG#v}"  # TAG 形如 v1.8.11
 
 API_DATA="$(curl -s https://api.github.com/repos/xtaci/kcptun/commits \
