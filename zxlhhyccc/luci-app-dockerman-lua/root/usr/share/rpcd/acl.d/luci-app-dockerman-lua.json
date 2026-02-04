@@ -1,0 +1,11 @@
+{
+	"luci-app-dockerman-lua": {
+		"description": "Grant UCI access for luci-app-dockerman-lua",
+		"read": {
+			"uci": [ "dockerd" ]
+		},
+		"write": {
+			"uci": [ "dockerd" ]
+		}
+	}
+}
