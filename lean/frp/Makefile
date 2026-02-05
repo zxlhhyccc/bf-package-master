@@ -18,7 +18,7 @@ PKG_MAINTAINER:=Richard Yu <yurichard3839@gmail.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_DEPENDS:=golang/host
+PKG_BUILD_DEPENDS:=golang/host node/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
@@ -89,6 +89,15 @@ define Package/frp/template
 endef
 
 FRP_COMPONENTS:=frpc frps
+
+define Build/Prepare
+	$(call Build/Prepare/Default)
+
+	$(foreach component,$(FRP_COMPONENTS),\
+		cd $(PKG_BUILD_DIR)/web/$(component) && \
+		npm install && \
+		npm run build;)
+endef
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
