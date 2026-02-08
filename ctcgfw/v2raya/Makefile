@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA
-PKG_VERSION:=2.2.7.4
+PKG_VERSION:=2.2.7.5
 PKG_RELEASE:=1
 
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -16,8 +16,8 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA.git
-PKG_SOURCE_VERSION:=766c65e245df623bd56ed5f063ed7f81a09807f6
-PKG_MIRROR_HASH:=d828219f3ef8be3e1d6eaa2cb862beb55ffd529eae1babc97ecd724bfaabd3fa
+PKG_SOURCE_VERSION:=0b19dc588b0202bc584dc205adca081e8e4e95d9
+PKG_MIRROR_HASH:=b859c58fc60710e309310328f2c3bf7351d198ad3c24a7baa2e825a79b5214c9
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/service
 
 PKG_LICENSE:=AGPL-3.0-only
@@ -97,7 +97,7 @@ define Download/v2raya-web
 	URL:=https://github.com/v2rayA/v2rayA/releases/download/v$(PKG_VERSION)/
 	URL_FILE:=web.tar.gz
 	FILE:=$(WEB_FILE)
-	HASH:=985b083a75b7b34ea9c5151cbc096f6f44fa369a807fea85b435fed5229dae65
+	HASH:=89bff9248a9cba8b7bda6e1202ac565dbca377319423868835235deddbfb182a
 endef
 
 define Build/Prepare
