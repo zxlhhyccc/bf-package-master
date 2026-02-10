@@ -2052,6 +2052,9 @@ msgstr "第六步: 内核状态检查及防火墙规则设置..."
 msgid "Tip: OpenClash Start Successful!"
 msgstr "提示：OpenClash 启动成功，请等待服务器上线！"
 
+msgid "Tip: OpenClash Already Running, Exit..."
+msgstr "提示：OpenClash 正在运行，退出启动..."
+
 msgid "Tip: Firewall Reload Successful!"
 msgstr "提示：防火墙重置成功！"
 
@@ -2067,17 +2070,14 @@ msgstr "第一步: 备份当前策略组状态..."
 msgid "Step 2: Delete OpenClash Firewall Rules..."
 msgstr "第二步: 删除 OpenClash 防火墙规则..."
 
-msgid "Step 3: Close The OpenClash Daemons..."
-msgstr "第三步: 关闭 OpenClash 守护程序..."
+msgid "Step 3: Close The OpenClash Services..."
+msgstr "第三步: 关闭 OpenClash 相关服务..."
 
-msgid "Step 4: Close The Clash Core Process..."
-msgstr "第四步: 关闭 Clash 主程序..."
+msgid "Step 4: Restart Dnsmasq..."
+msgstr "第四步: 重启 Dnsmasq 程序..."
 
-msgid "Step 5: Restart Dnsmasq..."
-msgstr "第五步: 重启 Dnsmasq 程序..."
-
-msgid "Step 6: Delete OpenClash Residue File..."
-msgstr "第六步：删除 OpenClash 残留文件..."
+msgid "Step 5: Delete OpenClash Residue File..."
+msgstr "第五步：删除 OpenClash 残留文件..."
 
 msgid "Tip: OpenClash Already Stop!"
 msgstr "提示：OpenClash 已关闭！"

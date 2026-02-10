@@ -6,7 +6,7 @@ msgid "OpenClash"
 msgstr "OpenClash"
 
 msgid "A Clash Client For OpenWrt"
-msgstr "Un cliente Clash para OpenWrt compatible con Shadowsocks(R), Vmess, Trojan, Snell y otros protocolos, que permite el enrutamiento por reglas de forma flexible."
+msgstr "Un cliente Clash para OpenWrt compatible con Shadowsocks(R), Vmess, Trojan, Snell y otros protocolos, que permite el enrutamiento flexible por reglas."
 
 msgid "Plugin Settings"
 msgstr "Ajustes del plugin"
@@ -120,16 +120,16 @@ msgid "Select Mode"
 msgstr "Seleccionar modo"
 
 msgid "redir-host"
-msgstr "Modo Redir-Host (compatible)"
+msgstr "Redir-Host (compatible)"
 
 msgid "fake-ip"
-msgstr "Modo Fake-IP (mejorado)"
+msgstr "Fake-IP (mejorado)"
 
 msgid "redir-host(tun mode)"
-msgstr "Modo Redir-Host (TUN)"
+msgstr "Redir-Host (TUN)"
 
 msgid "fake-ip(tun mode)"
-msgstr "Modo Fake-IP (TUN)"
+msgstr "Fake-IP (TUN)"
 
 msgid "redir-host-mix(tun mix mode)"
 msgstr "Modo Redir-Host (TUN mixto) [UDP-TUN, TCP-reenvío]"
@@ -138,7 +138,7 @@ msgid "fake-ip-mix(tun mix mode)"
 msgstr "Modo Fake-IP (TUN mixto) [UDP-TUN, TCP-reenvío]"
 
 msgid "Select Mode For OpenClash Work, Try Flush DNS Cache If Network Error"
-msgstr "Selecciona el modo de ejecución; si hay errores de red, prueba a vaciar la caché DNS"
+msgstr "Selecciona el modo de funcionamiento de OpenClash. Si hay errores de red, intenta vaciar la caché DNS."
 
 msgid "Proxy Mode"
 msgstr "Modo de proxy"
@@ -213,7 +213,7 @@ msgid "Dnsmasq Redirect"
 msgstr "Redirección mediante Dnsmasq"
 
 msgid "Firewall Redirect"
-msgstr "Redirección mediante firewall"
+msgstr "Redirección mediante cortafuegos"
 
 msgid "Custom DNS Setting"
 msgstr "DNS ascendente personalizado"
@@ -2051,6 +2051,9 @@ msgstr "Paso 6: Comprobar estado del núcleo y configurar reglas del firewall...
 msgid "Tip: OpenClash Start Successful!"
 msgstr "Consejo: OpenClash iniciado correctamente."
 
+msgid "Tip: OpenClash Already Running, Exit..."
+msgstr "Consejo: OpenClash ya está ejecutándose, saliendo del inicio..."
+
 msgid "Tip: Firewall Reload Successful!"
 msgstr "Consejo: firewall recargado correctamente."
 
@@ -2066,17 +2069,14 @@ msgstr "Paso 1: Respaldar estado actual de grupos..."
 msgid "Step 2: Delete OpenClash Firewall Rules..."
 msgstr "Paso 2: Eliminar reglas de firewall de OpenClash..."
 
-msgid "Step 3: Close The OpenClash Daemons..."
-msgstr "Paso 3: Detener servicios de OpenClash..."
+msgid "Step 3: Close The OpenClash Services..."
+msgstr "Paso 3: Detener el núcleo de OpenClash..."
 
-msgid "Step 4: Close The Clash Core Process..."
-msgstr "Paso 4: Detener el núcleo de Clash..."
+msgid "Step 4: Restart Dnsmasq..."
+msgstr "Paso 4: Reiniciar Dnsmasq..."
 
-msgid "Step 5: Restart Dnsmasq..."
-msgstr "Paso 5: Reiniciar Dnsmasq..."
-
-msgid "Step 6: Delete OpenClash Residue File..."
-msgstr "Paso 6: Eliminar archivos residuales de OpenClash..."
+msgid "Step 5: Delete OpenClash Residue File..."
+msgstr "Paso 5: Eliminar archivos residuales de OpenClash..."
 
 msgid "Tip: OpenClash Already Stop!"
 msgstr "Consejo: OpenClash ya está detenido."
