@@ -1671,6 +1671,12 @@ start_rules() {
 	}
 	if [ "$USE_TABLES" = "nftables" ]; then
 		ARG_A="-A"
+		# Restore nft persistence rules
+		if [ -f "$BACKUP_FILE" ]; then
+			mkdir -p "$PERSIST_DIR"
+			mv "$BACKUP_FILE" "$PERSIST_FILE"
+			rm -rf "$BACKUP_DIR"
+		fi
 	elif [ "$USE_TABLES" = "iptables" ]; then
 		ARG_A=""
 	fi
@@ -1767,6 +1773,8 @@ boot() {
 }
 
 stop() {
+	unlock
+	set_lock
 	check_run_environment
 	# Save ipsets before stopping to persist transparent proxy state
 	if [ "$HAS_IPSET" -eq 1 ]; then
@@ -1779,9 +1787,12 @@ stop() {
 			ipset save $setname > /tmp/ssrplus_save/$setname.save 2>/dev/null
 		done
 	fi
-	unlock
-	set_lock
 	if [ "$USE_TABLES" = "nftables" ]; then
+		# Save nft rules before stopping to persist transparent proxy state
+		if [ -f "$PERSIST_FILE" ]; then
+			mkdir -p "$BACKUP_DIR"
+			mv "$PERSIST_FILE" "$BACKUP_FILE"
+		fi
 		/usr/bin/ssr-rules -K
 		local OLD_SERVER="$(uci_get_by_type global old_global_server nil)"
 		local NEW_SERVER="$(uci_get_by_type global global_server nil)"
