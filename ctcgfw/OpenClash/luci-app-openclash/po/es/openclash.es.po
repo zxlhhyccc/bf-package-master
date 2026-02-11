@@ -4237,3 +4237,9 @@ msgstr "Defecto"
 
 msgid "Disable-Qtype"
 msgstr "Desactivar Qtype"
+
+msgid "Disable Reuse"
+msgstr "Deshabilitar reutilización"
+
+msgid "Disable Reuse The Connection"
+msgstr "Deshabilitar reutilización de la conexión"

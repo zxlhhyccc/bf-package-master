@@ -4247,3 +4247,10 @@ msgstr "默认"
 
 msgid "Disable-Qtype"
 msgstr "禁用 Qtype"
+
+msgid "Disable Reuse"
+msgstr "禁止复用"
+
+msgid "Disable Reuse The Connection"
+msgstr "禁止连接复用"
+

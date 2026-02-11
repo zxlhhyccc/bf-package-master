@@ -206,6 +206,7 @@ yml_dns_get()
    config_get "ecs_subnet" "$section" "ecs_subnet" ""
    config_get_bool "disable_ipv4" "$section" "disable_ipv4" "0"
    config_get_bool "disable_ipv6" "$section" "disable_ipv6" "0"
+   config_get_bool "disable_reuse" "$section" "disable_reuse" "0"
    config_list_foreach "$section" "disable_qtype" set_disable_qtype
 
    if [[ "$ip" =~ "$regex" ]] || [ -n "$(echo "${ip}" | grep -Eo "${regex}")" ]; then
@@ -245,6 +246,7 @@ yml_dns_get()
    [ "$ecs_override" = "1" ] && [ -n "$ecs_subnet_param" ] && ecs_override_param="ecs-override=true" || ecs_override_param=""
    [ "$disable_ipv4" = "1" ] && disable_ipv4_param="disable-ipv4=true" || disable_ipv4_param=""
    [ "$disable_ipv6" = "1" ] && disable_ipv6_param="disable-ipv6=true" || disable_ipv6_param=""
+   [ "$disable_reuse" = "1" ] && disable_reuse_param="disable-reuse=true" || disable_reuse_param=""
 
    params=""
    append_param() {
@@ -263,6 +265,7 @@ yml_dns_get()
    append_param "$disable_ipv4_param"
    append_param "$disable_ipv6_param"
    append_param "$disable_qtype_param"
+   append_param "$disable_reuse_param"
 
    full_dns_address="$dns_type$dns_address$params"
 
@@ -763,7 +766,7 @@ begin
    end
 
    # proxy-server-nameserver
-   local_exclude = (%x{ls -l /sys/class/net/ |awk '{print \$9}'  2>&1}.each_line.map(&:strip) + ['h3=', 'skip-cert-verify=', 'ecs=', 'ecs-override=', 'disable-ipv6=', 'disable-ipv4=', 'disable-qtype-'] + ['utun', 'tailscale0', 'docker0', 'tun163', 'br-lan', 'mihomo']).uniq.join('|')
+   local_exclude = (%x{ls -l /sys/class/net/ |awk '{print \$9}'  2>&1}.each_line.map(&:strip) + ['h3=', 'skip-cert-verify=', 'ecs=', 'ecs-override=', 'disable-ipv6=', 'disable-ipv4=', 'disable-qtype-', 'disable-reuse='] + ['utun', 'tailscale0', 'docker0', 'tun163', 'br-lan', 'mihomo']).uniq.join('|')
    non_domain_reg = /^dhcp:\/\/|^system($|:\/\/)|([0-9a-zA-Z-]{1,}\.)+([a-zA-Z]{2,})/
    proxied_server_reg = /^[^#&]+#(?:(?:#{local_exclude})[^&]*&)*(?:(?!(?:#{local_exclude}))[^&]+)/
    servers_to_check = Value.dig('dns', 'nameserver').to_a | Value.dig('dns', 'fallback').to_a | Value.dig('dns', 'default-nameserver').to_a
