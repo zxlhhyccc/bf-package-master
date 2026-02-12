@@ -4254,3 +4254,8 @@ msgstr "禁止复用"
 msgid "Disable Reuse The Connection"
 msgstr "禁止连接复用"
 
+msgid "Error: Write file failed:"
+msgstr "错误：写入文件失败："
+
+msgid "Error: Fix short-id values type failed:"
+msgstr "错误：修改 short-id 值类型失败："

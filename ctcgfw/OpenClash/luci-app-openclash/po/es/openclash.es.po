@@ -4243,3 +4243,9 @@ msgstr "Deshabilitar reutilización"
 
 msgid "Disable Reuse The Connection"
 msgstr "Deshabilitar reutilización de la conexión"
+
+msgid "Error: Write file failed:"
+msgstr "Error: fallo al escribir el archivo:"
+
+msgid "Error: Fix short-id values type failed:"
+msgstr "Error: fallo al modificar el tipo de valores short-id:"
