@@ -20,7 +20,7 @@ servers_update=$(uci_get_config "servers_update")
 CONFIG_FILE=$(uci_get_config "config_path")
 CONFIG_NAME=$(echo "$CONFIG_FILE" |awk -F '/' '{print $5}' 2>/dev/null)
 UPDATE_CONFIG_FILE=$(uci_get_config "config_update_path")
-UPDATE_CONFIG_NAME=$(echo "$UPDATE_CONFIG_FILE" |awk -F '/' '{print $5}' 2>/dev/null)
+UPDATE_CONFIG_NAME=$(echo "$UPDATE_CONFIG_FILE" |awk -F '/' '{print $3}' 2>/dev/null)
 
 if [ -n "$UPDATE_CONFIG_FILE" ]; then
    CONFIG_FILE="$UPDATE_CONFIG_FILE"

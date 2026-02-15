@@ -16,7 +16,7 @@ del_lock() {
 CONFIG_FILE=$(uci_get_config "config_path")
 CONFIG_NAME=$(echo "$CONFIG_FILE" |awk -F '/' '{print $5}' 2>/dev/null)
 UPDATE_CONFIG_FILE=$(uci_get_config "config_update_path")
-UPDATE_CONFIG_NAME=$(echo "$UPDATE_CONFIG_FILE" |awk -F '/' '{print $5}' 2>/dev/null)
+UPDATE_CONFIG_NAME=$(echo "$UPDATE_CONFIG_FILE" |awk -F '/' '{print $3}' 2>/dev/null)
 LOG_FILE="/tmp/openclash.log"
 set_lock
 
@@ -41,13 +41,9 @@ if [ -z "$CONFIG_NAME" ]; then
    CONFIG_NAME="config.yaml"
 fi
 
-BACKUP_FILE="/etc/openclash/backup/$(echo "$CONFIG_FILE" |awk -F '/' '{print $5}' 2>/dev/null)"
-
-if [ ! -s "$CONFIG_FILE" ] && [ ! -s "$BACKUP_FILE" ]; then
+if [ ! -s "$CONFIG_FILE" ]; then
    del_lock
    exit 0
-elif [ ! -s "$CONFIG_FILE" ] && [ -s "$BACKUP_FILE" ]; then
-   mv "$BACKUP_FILE" "$CONFIG_FILE"
 fi
 
 CFG_FILE="/etc/config/openclash"

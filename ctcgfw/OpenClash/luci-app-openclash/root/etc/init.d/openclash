@@ -646,11 +646,6 @@ do_run_file()
       ln -s "$HISTORY_PATH" "$CACHE_PATH"
    fi
 
-   #创建原始备份
-   if [ ! -f "$2" ]; then
-      cp "$1" "$2"
-   fi
-
    #保存启动内核类型
    uci -q set openclash.config.core_type="$core_type"
    uci -q commit openclash
@@ -895,9 +890,11 @@ firewall_lan_ac_traffic()
    config_get "src_ip" "$section" "src_ip" ""
    config_get "proto" "$section" "proto" "both"
    config_get "target" "$section" "target" "return"
-   config_get "enabled" "$section" "enabled" "0"
+   config_get_bool "enabled" "$section" "enabled" "0"
    config_get "family" "$section" "family" "both"
    config_get "dscp" "$section" "dscp" ""
+   config_get "interface" "$section" "interface" ""
+   config_get "user" "$section" "user" ""
    config_get "comment" "$section" "comment" "lan_ac_traffic"
 
    if [ "${enabled}" == "0" ]; then
@@ -925,6 +922,14 @@ firewall_lan_ac_traffic()
          sport_rule="sport ${src_port}"
       fi
 
+      if [ -n "${interface}" ]; then
+         interface_rule="iifname \"${interface}\""
+      fi
+
+      if [ -n "${user}" ]; then
+         user_rule="meta skuid ${user}"
+      fi
+
       if [ -n "${dscp}" ]; then
          dscp_rule="ip dscp ${dscp}"
       fi
@@ -938,44 +943,44 @@ firewall_lan_ac_traffic()
       if [ "${family}" == "both" ] || [ "${family}" == "ipv4" ]; then
          if [ -z "${en_mode_tun}" ] || [ "${en_mode_tun}" -eq 2 ]; then
             if $e_tcp ; then
-               nft insert rule inet fw4 openclash_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash position 0 ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash position 0 ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
             fi
             if $e_udp ; then
-               nft insert rule inet fw4 openclash_mangle_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_mangle position 0 ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle position 0 ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
             fi
          elif [ "${en_mode_tun}" -eq 1 ]; then
             if $e_tcp ; then
-               nft insert rule inet fw4 openclash_mangle_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_mangle position 0 ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle position 0 ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
             fi
             if $e_udp ; then
-               nft insert rule inet fw4 openclash_mangle_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_mangle position 0 ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle_output position 0 meta nfproto {ipv4} ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle position 0 ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
             fi
          fi
          if $e_tcp ; then
-            nft insert rule inet fw4 openclash_post position 0 ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+            nft insert rule inet fw4 openclash_post position 0 ip daddr != { ${fakeip_range} } ${src_ip} tcp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
          fi
          if $e_udp ; then
-            nft insert rule inet fw4 openclash_post position 0 ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+            nft insert rule inet fw4 openclash_post position 0 ip daddr != { ${fakeip_range} } ${src_ip} udp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
          fi
       fi
 
       if [ "${ipv6_enable}" -eq 1 ]; then
          if [ "${family}" == "both" ] || [ "${family}" == "ipv6" ]; then
             if $e_tcp ; then
-               nft insert rule inet fw4 openclash_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_output_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_mangle_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_mangle_output_v6 position 0 meta nfproto {ipv6} ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_post_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_output_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle_output_v6 position 0 meta nfproto {ipv6} ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_post_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} tcp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
             fi
             if $e_udp ; then
-               nft insert rule inet fw4 openclash_mangle_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} udp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_mangle_output_v6 position 0 meta nfproto {ipv6} ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} udp ${sport_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
-               nft insert rule inet fw4 openclash_post_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} udp ${sport_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} udp ${sport_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_mangle_output_v6 position 0 meta nfproto {ipv6} ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} udp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target} comment "\"${comment}\""
+               nft insert rule inet fw4 openclash_post_v6 position 0 ip6 daddr != { ${fakeip_range6} } ${src_ip_v6} udp ${sport_rule} ${user_rule} ${interface_rule} ${dscp_rule} counter ${target_} comment "\"${comment}\""
             fi
          fi
       fi
@@ -999,6 +1004,14 @@ firewall_lan_ac_traffic()
       if [ "${target}" == "return" ]; then target="RETURN" target_="RETURN"; fi
       if [ "${target}" == "drop" ]; then target="DROP" target_="RETURN"; fi
 
+      if [ -n "${interface}" ]; then
+         interface_rule="-i ${interface}"
+      fi
+
+      if [ -n "${user}" ]; then
+         user_rule="-m owner --uid-owner ${user}"
+      fi
+
       if [ -n "${dscp}" ]; then
          if iptables -m dscp --help >/dev/null 2>&1; then
             dscp_ipt="-m dscp --dscp ${dscp}"
@@ -1010,44 +1023,44 @@ firewall_lan_ac_traffic()
       if [ "${family}" == "both" ] || [ "${family}" == "ipv4" ]; then
          if [ -z "${en_mode_tun}" ] || [ "${en_mode_tun}" -eq 2 ]; then
             if $e_tcp ; then
-               iptables -t nat -I openclash_output -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
-               iptables -t nat -I openclash -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+               iptables -t nat -I openclash_output -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+               iptables -t nat -I openclash -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
             fi
             if $e_udp ; then
-               iptables -t mangle -I openclash_output -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
-               iptables -t mangle -I openclash -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               iptables -t mangle -I openclash_output -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               iptables -t mangle -I openclash -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
             fi
          elif [ "${en_mode_tun}" -eq 1 ]; then
             if $e_tcp ; then
-               iptables -t mangle -I openclash_output -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
-               iptables -t mangle -I openclash -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               iptables -t mangle -I openclash_output -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               iptables -t mangle -I openclash -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
             fi
             if $e_udp ; then
-               iptables -t mangle -I openclash_output -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
-               iptables -t mangle -I openclash -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               iptables -t mangle -I openclash_output -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               iptables -t mangle -I openclash -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
             fi
          fi
          if $e_tcp ; then
-            iptables -t nat -I openclash_post -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+            iptables -t nat -I openclash_post -p tcp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
          fi
          if $e_udp ; then
-            iptables -t nat -I openclash_post -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+            iptables -t nat -I openclash_post -p udp ! -d ${fakeip_range} ${src_ip} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
          fi
       fi
 
       if [ "${ipv6_enable}" -eq 1 ]; then
          if [ "${family}" == "both" ] || [ "${family}" == "ipv6" ]; then
             if $e_tcp ; then
-               ip6tables -t nat -I openclash ! -d ${fakeip_range6} ${src_ip_v6} -p tcp ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
-               ip6tables -t nat -I openclash_output ! -d ${fakeip_range6} ${src_ip_v6} -p tcp ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
-               ip6tables -t mangle -I openclash ! -d ${fakeip_range6} ${src_ip_v6} -p tcp ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
-               ip6tables -t mangle -I openclash_output -p tcp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
-               ip6tables -t nat -I openclash_post -p tcp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+               ip6tables -t nat -I openclash ! -d ${fakeip_range6} ${src_ip_v6} -p tcp ${sport_ipt} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+               ip6tables -t nat -I openclash_output ! -d ${fakeip_range6} ${src_ip_v6} -p tcp ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+               ip6tables -t mangle -I openclash ! -d ${fakeip_range6} ${src_ip_v6} -p tcp ${sport_ipt} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               ip6tables -t mangle -I openclash_output -p tcp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               ip6tables -t nat -I openclash_post -p tcp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
             fi
             if $e_udp ; then
-               ip6tables -t mangle -I openclash -p udp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
-               ip6tables -t mangle -I openclash_output -p udp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
-               ip6tables -t nat -I openclash_post -p udp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
+               ip6tables -t mangle -I openclash -p udp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               ip6tables -t mangle -I openclash_output -p udp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target} -m comment --comment "${comment}"
+               ip6tables -t nat -I openclash_post -p udp ! -d ${fakeip_range6} ${src_ip_v6} ${sport_ipt} ${user_rule} ${interface_rule} ${dscp_ipt} -j ${target_} -m comment --comment "${comment}"
             fi
          fi
       fi
@@ -1506,6 +1519,12 @@ if [ -n "$FW4" ]; then
       config_list_foreach "config" "wan_ac_black_ips" nft_ac_add "wan_ac_black_ips" "wan_ac_black_ipv6s"
    fi
 
+   if [ -n "$(uci_get_config "wan_ac_black_ports")" ]; then
+      nft 'add set inet fw4 wan_ac_black_ports { type inet_service; flags interval; }'
+      config_load "openclash"
+      config_list_foreach "config" "wan_ac_black_ports" nft_ac_add "wan_ac_black_ports"
+   fi
+
    #local
    nft 'add set inet fw4 localnetwork { type ipv4_addr; flags interval; auto-merge; }'
    #nft 'delete set inet fw4 localnetwork'
@@ -1625,6 +1644,7 @@ if [ -n "$FW4" ]; then
       nft 'add rule inet fw4 openclash ct direction reply counter return'
       nft add rule inet fw4 openclash ip protocol tcp ip daddr { "$fakeip_range" } counter redirect to "$proxy_port"
       nft 'add rule inet fw4 openclash ip daddr @wan_ac_black_ips counter return'
+      nft 'add rule inet fw4 openclash th dport @wan_ac_black_ports counter return'
       nft 'add rule inet fw4 openclash ip saddr @lan_ac_black_ips counter return'
       nft 'add rule inet fw4 openclash ether saddr @lan_ac_black_macs counter return'
       if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -1667,6 +1687,7 @@ if [ -n "$FW4" ]; then
                nft add rule inet fw4 openclash_mangle meta l4proto { udp } ip daddr { "$fakeip_range" } mark set "$PROXY_FWMARK" tproxy ip to 127.0.0.1:"$tproxy_port" counter accept
             fi
             nft 'add rule inet fw4 openclash_mangle ip daddr @wan_ac_black_ips counter return'
+            nft 'add rule inet fw4 openclash_mangle th dport @wan_ac_black_ports counter return'
             nft 'add rule inet fw4 openclash_mangle ip saddr @lan_ac_black_ips counter return'
             nft 'add rule inet fw4 openclash_mangle ether saddr @lan_ac_black_macs counter return'
             if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -1711,6 +1732,7 @@ if [ -n "$FW4" ]; then
             nft 'add rule inet fw4 openclash_mangle_output ip daddr @localnetwork counter return'
             nft 'add rule inet fw4 openclash_mangle_output ct direction reply counter return'
             nft 'add rule inet fw4 openclash_mangle_output ip daddr @wan_ac_black_ips counter return'
+            nft 'add rule inet fw4 openclash_mangle_output th dport @wan_ac_black_ports counter return'
             if [ "$en_mode" = "redir-host" ]; then
                nft add rule inet fw4 openclash_mangle_output th dport != @common_ports counter return
             fi
@@ -1754,6 +1776,7 @@ if [ -n "$FW4" ]; then
          fi
          if [ "$router_self_proxy" = "1" ]; then
             nft 'add rule inet fw4 openclash_output ip daddr @wan_ac_black_ips counter return'
+            nft 'add rule inet fw4 openclash_output th dport @wan_ac_black_ports counter return'
             if [ "$en_mode" = "redir-host" ]; then
                nft add rule inet fw4 openclash_output th dport != @common_ports counter return
             fi
@@ -1788,14 +1811,12 @@ if [ -n "$FW4" ]; then
          else
             nft add rule inet fw4 openclash_mangle_output meta l4proto { udp } ip daddr { "$fakeip_range" } mark set "$PROXY_FWMARK" counter
          fi
-         #icmp
-         nft add rule inet fw4  openclash_mangle_output meta nfproto {ipv4} ip protocol icmp icmp type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMP Mark\"
-
          if [ "$en_mode" = "redir-host" ]; then
             nft 'add rule inet fw4 openclash_mangle_output th dport != @common_ports counter return'
          fi
          if [ "$router_self_proxy" = "1" ]; then
             nft 'add rule inet fw4 openclash_mangle_output ip daddr @wan_ac_black_ips counter return'
+            nft 'add rule inet fw4 openclash_mangle_output th dport @wan_ac_black_ports counter return'
             if [ "$china_ip_route" != "0" ]; then
                if [ "$china_ip_route" = "1" ]; then
                   rule="ip daddr @china_ip_route"
@@ -1805,13 +1826,17 @@ if [ -n "$FW4" ]; then
                [ "$enable_redirect_dns" != "2" ] && rule="$rule ip daddr != @china_ip_route_pass"
                nft "add rule inet fw4 openclash_mangle_output $rule counter return"
             fi
+
+            #icmp
+            nft add rule inet fw4  openclash_mangle_output meta nfproto {ipv4} ip protocol icmp icmp type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMP Mark\"
+
             if [ "$en_mode_tun" -eq 1 ]; then
                nft add rule inet fw4 openclash_mangle_output meta l4proto {tcp,udp} meta mark set "$PROXY_FWMARK" counter
             else
                nft add rule inet fw4 openclash_mangle_output meta l4proto { udp } meta mark set "$PROXY_FWMARK" counter
             fi
          fi
-         nft 'add rule inet fw4 mangle_output meta nfproto {ipv4} meta l4proto {tcp,udp} counter jump openclash_mangle_output'
+         nft 'add rule inet fw4 mangle_output meta nfproto {ipv4} counter jump openclash_mangle_output'
       fi
 
       nft 'add chain inet fw4 openclash_mangle'
@@ -1829,9 +1854,8 @@ if [ -n "$FW4" ]; then
       else
          nft add rule inet fw4 openclash_mangle meta l4proto { udp } ip daddr { "$fakeip_range" } mark set "$PROXY_FWMARK" counter
       fi
-      #icmp
-      nft add rule inet fw4 openclash_mangle meta nfproto {ipv4} ip protocol icmp icmp type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMP Mark\"
       nft 'add rule inet fw4 openclash_mangle ip daddr @wan_ac_black_ips counter return'
+      nft 'add rule inet fw4 openclash_mangle th dport @wan_ac_black_ports counter return'
       nft 'add rule inet fw4 openclash_mangle ip saddr @lan_ac_black_ips counter return'
       nft 'add rule inet fw4 openclash_mangle ether saddr @lan_ac_black_macs counter return'
       if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -1853,6 +1877,10 @@ if [ -n "$FW4" ]; then
          [ "$enable_redirect_dns" != "2" ] && rule="$rule ip daddr != @china_ip_route_pass"
          nft "add rule inet fw4 openclash_mangle $rule counter return"
       fi
+
+      #icmp
+      nft add rule inet fw4 openclash_mangle meta nfproto {ipv4} ip protocol icmp icmp type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMP Mark\"
+
       nft 'add rule inet fw4 openclash_mangle ip protocol udp counter jump openclash_upnp'
 
       if [ "$en_mode_tun" -eq 1 ]; then
@@ -1861,12 +1889,12 @@ if [ -n "$FW4" ]; then
          nft add rule inet fw4 openclash_mangle meta l4proto { udp } mark set "$PROXY_FWMARK" counter
       fi
 
-      nft 'add rule inet fw4 mangle_prerouting meta nfproto {ipv4} meta l4proto {tcp,udp} counter jump openclash_mangle'
+      nft 'add rule inet fw4 mangle_prerouting meta nfproto {ipv4} counter jump openclash_mangle'
 
       #TUN FORWORD
-      nft insert rule inet fw4 forward position 0 meta l4proto {tcp,udp} oifname utun counter accept comment \"OpenClash TUN Forward\"
-      nft insert rule inet fw4 forward position 0 meta l4proto {tcp,udp} iifname utun counter accept comment \"OpenClash TUN Forward\"
-      nft insert rule inet fw4 input position 0 meta l4proto {tcp,udp} iifname utun counter accept comment \"OpenClash TUN Input\"
+      nft insert rule inet fw4 forward position 0 meta nfproto {ipv4} oifname utun counter accept comment \"OpenClash TUN Forward\"
+      nft insert rule inet fw4 forward position 0 meta nfproto {ipv4} iifname utun counter accept comment \"OpenClash TUN Forward\"
+      nft insert rule inet fw4 input position 0 meta nfproto {ipv4} iifname utun counter accept comment \"OpenClash TUN Input\"
       nft insert rule inet fw4 srcnat position 0 meta nfproto {ipv4} oifname utun counter return comment \"OpenClash TUN Postrouting\"
 
       #quic
@@ -1982,6 +2010,7 @@ if [ -n "$FW4" ]; then
          nft 'add rule inet fw4 openclash_v6 ip6 daddr @localnetwork6 counter return'
          nft 'add rule inet fw4 openclash_v6 ct direction reply counter return'
          nft 'add rule inet fw4 openclash_v6 ip6 daddr @wan_ac_black_ipv6s counter return'
+         nft 'add rule inet fw4 openclash_v6 th dport @wan_ac_black_ports counter return'
          nft 'add rule inet fw4 openclash_v6 ip6 saddr @lan_ac_black_ipv6s counter return'
          nft 'add rule inet fw4 openclash_v6 ether saddr @lan_ac_black_macs counter return'
          if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -2024,14 +2053,13 @@ if [ -n "$FW4" ]; then
 
          if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
             nft add rule inet fw4 openclash_mangle_v6 ip6 nexthdr {udp} ip6 daddr { "$fakeip_range6" } mark set "$PROXY_FWMARK" counter
-            #icmpv6
-            nft add rule inet fw4 openclash_mangle_v6 meta nfproto {ipv6} ip6 nexthdr icmpv6 icmpv6 type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMPv6 Redirect\"
          else
             if [ "$enable_v6_udp_proxy" -eq 1 ]; then
                nft add rule inet fw4 openclash_mangle_v6 ip6 nexthdr {udp} ip6 daddr { "$fakeip_range6" } mark set "$PROXY_FWMARK" tproxy ip6 to :"$tproxy_port" counter accept
             fi
          fi
          nft 'add rule inet fw4 openclash_mangle_v6 ip6 daddr @wan_ac_black_ipv6s counter return'
+         nft 'add rule inet fw4 openclash_mangle_v6 th dport @wan_ac_black_ports counter return'
          if [ "$en_mode" == "redir-host" ]; then
             nft 'add rule inet fw4 openclash_mangle_v6 th dport != @common_ports counter return'
          fi
@@ -2053,6 +2081,11 @@ if [ -n "$FW4" ]; then
             fi
             [ "$enable_redirect_dns" != "2" ] && rule="$rule ip6 daddr != @china_ip6_route_pass"
             nft "add rule inet fw4 openclash_mangle_v6 $rule counter return"
+         fi
+
+         #icmpv6
+         if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
+            nft add rule inet fw4 openclash_mangle_v6 meta nfproto {ipv6} ip6 nexthdr icmpv6 icmpv6 type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMPv6 Redirect\"
          fi
       fi
 
@@ -2101,6 +2134,7 @@ if [ -n "$FW4" ]; then
             nft 'add rule inet fw4 openclash_output_v6 ip6 daddr @localnetwork6 counter return'
             nft 'add rule inet fw4 openclash_output_v6 ct direction reply counter return'
             nft 'add rule inet fw4 openclash_output_v6 ip6 daddr @wan_ac_black_ipv6s counter return'
+            nft 'add rule inet fw4 openclash_output_v6 th dport @wan_ac_black_ports counter return'
             if [ "$en_mode" = "redir-host" ]; then
                nft 'add rule inet fw4 openclash_output_v6 th dport != @common_ports counter return'
             fi
@@ -2139,11 +2173,8 @@ if [ -n "$FW4" ]; then
                nft add rule inet fw4 openclash_mangle_output_v6 ip6 nexthdr {tcp} ip6 daddr { "$fakeip_range6" } mark set "$PROXY_FWMARK" counter
             fi
          fi
-         #icmpv6
-         if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
-            nft add rule inet fw4 openclash_mangle_output_v6 meta nfproto {ipv6} ip6 nexthdr icmpv6 icmpv6 type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMPv6 Redirect\"
-         fi
          nft 'add rule inet fw4 openclash_mangle_output_v6 ip6 daddr @wan_ac_black_ipv6s counter return'
+         nft 'add rule inet fw4 openclash_mangle_output_v6 th dport @wan_ac_black_ports counter return'
          if [ "$en_mode" = "redir-host" ]; then
             nft 'add rule inet fw4 openclash_mangle_output_v6 th dport != @common_ports counter return'
          fi
@@ -2156,6 +2187,11 @@ if [ -n "$FW4" ]; then
             fi
             [ "$enable_redirect_dns" != "2" ] && rule="$rule ip6 daddr != @china_ip6_route_pass"
             nft "add rule inet fw4 openclash_mangle_output_v6 $rule counter return"
+         fi
+
+         #icmpv6
+         if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
+            nft add rule inet fw4 openclash_mangle_output_v6 meta nfproto {ipv6} ip6 nexthdr icmpv6 icmpv6 type echo-request mark set "$PROXY_FWMARK" counter accept comment \"OpenClash ICMPv6 Redirect\"
          fi
 
          if ([ "$ipv6_mode" -eq 1 ] && [ "$enable_v6_udp_proxy" -eq 1 ]) || [ "$ipv6_mode" -eq 3 ]; then
@@ -2320,6 +2356,12 @@ if [ -z "$FW4" ]; then
       config_list_foreach "config" "wan_ac_black_ips" ac_add "wan_ac_black_ips" "wan_ac_black_ipv6s"
    fi
 
+   if [ -n "$(uci_get_config "wan_ac_black_ports")" ]; then
+      ipset create wan_ac_black_ports bitmap:port range 0-65535
+      config_load "openclash"
+      config_list_foreach "config" "wan_ac_black_ports" ac_add "wan_ac_black_ports"
+   fi
+
    #local
    ipset create localnetwork hash:net
    if [ -f "/etc/openclash/custom/openclash_custom_localnetwork_ipv4.list" ]; then
@@ -2453,6 +2495,7 @@ if [ -z "$FW4" ]; then
       iptables -t nat -A openclash -m conntrack --ctdir REPLY -j RETURN
       iptables -t nat -A openclash -p tcp -d "$fakeip_range" -j REDIRECT --to-ports "$proxy_port"
       iptables -t nat -A openclash -m set --match-set wan_ac_black_ips dst -j RETURN
+      iptables -t nat -A openclash -m set --match-set wan_ac_black_ports dst -j RETURN
       iptables -t nat -A openclash -m set --match-set lan_ac_black_ips src -j RETURN
       iptables -t nat -A openclash -m set --match-set lan_ac_black_macs src -j RETURN
       if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -2493,6 +2536,7 @@ if [ -z "$FW4" ]; then
                iptables -t mangle -A openclash -p udp -d "$fakeip_range" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
             fi
             iptables -t mangle -A openclash -m set --match-set wan_ac_black_ips dst -j RETURN
+            iptables -t mangle -A openclash -m set --match-set wan_ac_black_ports dst -j RETURN
             iptables -t mangle -A openclash -m set --match-set lan_ac_black_macs src -j RETURN
             iptables -t mangle -A openclash -m set --match-set lan_ac_black_ips src -j RETURN
             if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -2536,6 +2580,7 @@ if [ -z "$FW4" ]; then
             iptables -t mangle -A openclash_output -m set --match-set localnetwork dst -j RETURN
             iptables -t mangle -A openclash_output -m conntrack --ctdir REPLY -j RETURN
             iptables -t mangle -A openclash_output -m set --match-set wan_ac_black_ips dst -j RETURN
+            iptables -t mangle -A openclash_output -m set --match-set wan_ac_black_ports dst -j RETURN
             if [ "$en_mode" = "fake-ip" ]; then
                iptables -t mangle -A openclash_output -p udp -d "$fakeip_range" -j MARK --set-mark "$PROXY_FWMARK"
             fi
@@ -2579,6 +2624,7 @@ if [ -z "$FW4" ]; then
             iptables -t nat -A openclash_output -m set --match-set localnetwork dst -j RETURN
             iptables -t nat -A openclash_output -m conntrack --ctdir REPLY -j RETURN
             iptables -t nat -A openclash_output -m set --match-set wan_ac_black_ips dst -j RETURN
+            iptables -t nat -A openclash_output -m set --match-set wan_ac_black_ports dst -j RETURN
             if [ "$en_mode" = "redir-host" ]; then
                iptables -t nat -A openclash_output -m set ! --match-set common_ports dst -j RETURN
             fi
@@ -2611,14 +2657,13 @@ if [ -z "$FW4" ]; then
             iptables -t mangle -A openclash_output -d "$fakeip_range" -j MARK --set-mark "$PROXY_FWMARK"
          else
             iptables -t mangle -A openclash_output -p udp -d "$fakeip_range" -j MARK --set-mark "$PROXY_FWMARK"
-            #icmp
-            iptables -t mangle -A openclash_output -p icmp --icmp-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMP Mark"
          fi
          if [ "$en_mode" = "redir-host" ]; then
             iptables -t mangle -A openclash_output -m set ! --match-set common_ports dst -j RETURN
          fi
          if [ "$router_self_proxy" = "1" ]; then
             iptables -t mangle -A openclash_output -m set --match-set wan_ac_black_ips dst -j RETURN
+            iptables -t mangle -A openclash_output -m set --match-set wan_ac_black_ports dst -j RETURN
             if [ "$china_ip_route" != "0" ]; then
                if [ "$china_ip_route" = "1" ]; then
                   rule="-m set --match-set china_ip_route dst"
@@ -2631,6 +2676,8 @@ if [ -z "$FW4" ]; then
             if [ "$en_mode_tun" -eq 1 ]; then
                iptables -t mangle -A openclash_output -j MARK --set-mark "$PROXY_FWMARK"
             else
+               #icmp
+               iptables -t mangle -A openclash_output -p icmp --icmp-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMP Mark"
                iptables -t mangle -A openclash_output -p udp -j MARK --set-mark "$PROXY_FWMARK"
             fi
          fi
@@ -2650,10 +2697,9 @@ if [ -z "$FW4" ]; then
          iptables -t mangle -A openclash -d "$fakeip_range" -j MARK --set-mark "$PROXY_FWMARK"
       else
          iptables -t mangle -A openclash -p udp -d "$fakeip_range" -j MARK --set-mark "$PROXY_FWMARK"
-         #icmp
-         iptables -t mangle -A openclash -p icmp --icmp-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMP Mark"
       fi
       iptables -t mangle -A openclash -m set --match-set wan_ac_black_ips dst -j RETURN
+      iptables -t mangle -A openclash -m set --match-set wan_ac_black_ports dst -j RETURN
       iptables -t mangle -A openclash -m set --match-set lan_ac_black_ips src -j RETURN
       iptables -t mangle -A openclash -m set --match-set lan_ac_black_macs src -j RETURN
       if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -2681,6 +2727,8 @@ if [ -z "$FW4" ]; then
       if [ "$en_mode_tun" -eq 1 ]; then
          iptables -t mangle -A openclash -j MARK --set-mark "$PROXY_FWMARK"
       else
+         #icmp
+         iptables -t mangle -A openclash -p icmp --icmp-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMP Mark"
          iptables -t mangle -A openclash -p udp -j MARK --set-mark "$PROXY_FWMARK"
       fi
 
@@ -2811,6 +2859,7 @@ if [ -z "$FW4" ]; then
          ip6tables -t nat -A openclash -m set --match-set localnetwork6 dst -j RETURN
          ip6tables -t nat -A openclash -m conntrack --ctdir REPLY -j RETURN
          ip6tables -t nat -A openclash -m set --match-set wan_ac_black_ipv6s dst -j RETURN
+         ip6tables -t nat -A openclash -m set --match-set wan_ac_black_ports dst -j RETURN
          ip6tables -t nat -A openclash -m set --match-set lan_ac_black_ipv6s src -j RETURN
          ip6tables -t nat -A openclash -m set --match-set lan_ac_black_macs src -j RETURN
          if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -2850,14 +2899,13 @@ if [ -z "$FW4" ]; then
          fi
          if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
             ip6tables -t mangle -A openclash -p udp -d "$fakeip_range6" -j MARK --set-mark "$PROXY_FWMARK"
-            #icmpv6
-            ip6tables -t mangle -A openclash -p icmpv6 --icmpv6-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMPv6 Redirect"
          else
             if [ "$enable_v6_udp_proxy" -eq 1 ]; then
                ip6tables -t mangle -A openclash -p udp -d "$fakeip_range6" -j TPROXY --on-port "$tproxy_port" --tproxy-mark "$PROXY_FWMARK"
             fi
          fi
          ip6tables -t mangle -A openclash -m set --match-set wan_ac_black_ipv6s dst -j RETURN
+         ip6tables -t mangle -A openclash -m set --match-set wan_ac_black_ports dst -j RETURN
          ip6tables -t mangle -A openclash -m set --match-set lan_ac_black_macs src -j RETURN
          ip6tables -t mangle -A openclash -m set --match-set lan_ac_black_ipv6s src -j RETURN
          if [ "$lan_ac_mode" = "1" ] && [ -n "$(uci_get_config "lan_ac_white_ips")" ] && [ -n "$(uci_get_config "lan_ac_white_macs")" ]; then
@@ -2879,6 +2927,10 @@ if [ -z "$FW4" ]; then
             fi
             [ "$enable_redirect_dns" != "2" ] && rule="$rule -m set ! --match-set china_ip6_route_pass dst"
             ip6tables -t mangle -A openclash $rule -j RETURN
+         fi
+         if [ "$ipv6_mode" -eq 2 ] && [ "$ipv6_mode" -eq 3 ]; then
+            #icmpv6
+            ip6tables -t mangle -A openclash -p icmpv6 --icmpv6-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMPv6 Redirect"
          fi
       fi
 
@@ -2915,6 +2967,7 @@ if [ -z "$FW4" ]; then
             ip6tables -t nat -A openclash_output -m set --match-set localnetwork6 dst -j RETURN
             ip6tables -t nat -A openclash_output -m conntrack --ctdir REPLY -j RETURN
             ip6tables -t nat -A openclash_output -m set --match-set wan_ac_black_ipv6s dst -j RETURN
+            ip6tables -t nat -A openclash_output -m set --match-set wan_ac_black_ports dst -j RETURN
             if [ "$en_mode" = "redir-host" ]; then
                ip6tables -t nat -A openclash_output -m set ! --match-set common_ports dst -j RETURN
             fi
@@ -2947,11 +3000,8 @@ if [ -z "$FW4" ]; then
          if [ "$ipv6_mode" -eq 0 ] && [ "$enable_v6_udp_proxy" -ne 1 ]; then
             ip6tables -t mangle -A openclash_output -p tcp -d "$fakeip_range6" -j MARK --set-xmark "$PROXY_FWMARK"
          fi
-         #icmpv6
-         if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
-            ip6tables -t mangle -A openclash_output -p icmpv6 --icmpv6-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMPv6 Redirect"
-         fi
          ip6tables -t mangle -A openclash_output -m set --match-set wan_ac_black_ipv6s dst -j RETURN
+         ip6tables -t mangle -A openclash_output -m set --match-set wan_ac_black_ports dst -j RETURN
          if [ "$en_mode" = "redir-host" ]; then
             ip6tables -t mangle -A openclash_output -m set ! --match-set common_ports dst -j RETURN
          fi
@@ -2963,6 +3013,11 @@ if [ -z "$FW4" ]; then
             fi
             [ "$enable_redirect_dns" != "2" ] && rule="$rule -m set ! --match-set china_ip6_route_pass dst"
             ip6tables -t mangle -A openclash_output $rule -j RETURN
+         fi
+
+         #icmpv6
+         if [ "$ipv6_mode" -eq 2 ] || [ "$ipv6_mode" -eq 3 ]; then
+            ip6tables -t mangle -A openclash_output -p icmpv6 --icmpv6-type echo-request -j MARK --set-xmark "$PROXY_FWMARK" -m comment --comment "OpenClash ICMPv6 Redirect"
          fi
 
          if ([ "$ipv6_mode" -eq 1 ] && [ "$enable_v6_udp_proxy" -eq 1 ]) || [ "$ipv6_mode" -eq 3 ]; then
@@ -3105,7 +3160,7 @@ revert_firewall()
          nft delete chain inet fw4 handle ${handle}
       done
 
-      for handle in $(nft -a list sets |grep -E "set localnetwork|china_ip|lan_ac_|wan_ac_black_|_google_dns_|common_ports" |awk -F '# handle ' '{print$2}'); do
+      for handle in $(nft -a list sets |grep -E "set localnetwork|china_ip|lan_ac_|wan_ac_black_|common_ports" |awk -F '# handle ' '{print$2}'); do
          nft delete set inet fw4 handle ${handle}
       done
    else
@@ -3149,6 +3204,7 @@ revert_firewall()
       ipset destroy lan_ac_white_macs
       ipset destroy lan_ac_black_macs
       ipset destroy wan_ac_black_ips
+      ipset destroy wan_ac_black_ports
       ipset destroy common_ports
    fi
 } >/dev/null 2>&1
@@ -3470,7 +3526,6 @@ ${trimmed}"
                uci -q set openclash.@overwrite[0].config_path="$RAW_CONFIG_FILE"
                cfg_name=$(basename "$RAW_CONFIG_FILE" 2>/dev/null)
                if [ -n "$cfg_name" ]; then
-                  BACKUP_FILE="/etc/openclash/backup/${cfg_name}"
                   CONFIG_FILE="/etc/openclash/${cfg_name}"
                   TMP_CONFIG_FILE="/tmp/yaml_config_tmp_${cfg_name}"
                fi
@@ -3559,7 +3614,6 @@ get_config()
 {
    RAW_CONFIG_FILE=$(uci_get_config "config_path")
    CFG_NAME=$(basename "$RAW_CONFIG_FILE" 2>/dev/null)
-   BACKUP_FILE="/etc/openclash/backup/${CFG_NAME}"
    CONFIG_FILE="/etc/openclash/${CFG_NAME}"
    TMP_CONFIG_FILE="/tmp/yaml_config_tmp_${CFG_NAME}"
    enable=$(uci_get_config "enable")
@@ -3678,7 +3732,7 @@ start_service()
       do_run_mode
 
       LOG_OUT "Step 2: Check The Components..."
-      do_run_file "$RAW_CONFIG_FILE" "$BACKUP_FILE"
+      do_run_file "$RAW_CONFIG_FILE"
 
       if ! $QUICK_START; then
          LOG_OUT "Step 3: Modify The Config File..."

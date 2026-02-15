@@ -57,16 +57,11 @@ um = sul:option(DummyValue, "", nil)
 um.template = "openclash/dvalue"
 
 local dir, fd, clash
-clash = "/etc/openclash/clash"
 dir = "/etc/openclash/config/"
-bakck_dir="/etc/openclash/backup"
 proxy_pro_dir="/etc/openclash/proxy_provider/"
 rule_pro_dir="/etc/openclash/rule_provider/"
 core_dir="/etc/openclash/core/core/"
 backup_dir="/tmp/"
-create_bakck_dir=fs.mkdir(bakck_dir)
-create_proxy_pro_dir=fs.mkdir(proxy_pro_dir)
-create_rule_pro_dir=fs.mkdir(rule_pro_dir)
 
 HTTP.setfilehandler(
 	function(meta, chunk, eof)
@@ -101,15 +96,11 @@ HTTP.setfilehandler(
 			if fp == "config" then
 				CHIF = "1"
 				if IsYamlFile(meta.file) then
-					local yamlbackup="/etc/openclash/backup/" .. meta.file
-					local c=fs.copy(dir .. meta.file,yamlbackup)
 					default_config_set(meta.file)
 				end
 				if IsYmlFile(meta.file) then
 					local ymlname=string.lower(string.sub(meta.file,0,-5))
-					local ymlbackup="/etc/openclash/backup/".. ymlname .. ".yaml"
 					local c=fs.rename(dir .. meta.file,"/etc/openclash/config/".. ymlname .. ".yaml")
-					local c=fs.copy("/etc/openclash/config/".. ymlname .. ".yaml",ymlbackup)
 					local yamlname=ymlname .. ".yaml"
 					default_config_set(yamlname)
 				end
@@ -177,12 +168,7 @@ a=fs.stat(o)
 if a then
 e[t]={}
 e[t].name=fs.basename(o)
-BACKUP_FILE="/etc/openclash/backup/".. e[t].name
-if fs.mtime(BACKUP_FILE) then
-	e[t].mtime=os.date("%Y-%m-%d %H:%M:%S",fs.mtime(BACKUP_FILE))
-else
-	e[t].mtime=os.date("%Y-%m-%d %H:%M:%S",a.mtime)
-end
+e[t].mtime=os.date("%Y-%m-%d %H:%M:%S",a.mtime)
 if fs.uci_get_config("config", "config_path") and string.sub(fs.uci_get_config("config", "config_path"), 23, -1) == e[t].name then
 	e[t].state=translate("Enabled")
 else
@@ -326,7 +312,6 @@ btnapply.write = function(self, t)
 		HTTP.close()
 	elseif action == "remove" then
 		fs.unlink("/tmp/Proxy_Group")
-		fs.unlink("/etc/openclash/backup/"..fs.basename(e[t].name))
 		fs.unlink("/etc/openclash/history/"..fs.filename(e[t].name)..".db")
 		fs.unlink("/etc/openclash/"..fs.basename(e[t].name))
 		local a=fs.unlink("/etc/openclash/config/"..fs.basename(e[t].name))

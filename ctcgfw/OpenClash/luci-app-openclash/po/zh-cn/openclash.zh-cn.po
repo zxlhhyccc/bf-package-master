@@ -1107,6 +1107,9 @@ msgstr "走代理的局域网设备 IP"
 msgid "WAN Bypassed Host List"
 msgstr "不走代理的 WAN IP"
 
+msgid "WAN Bypassed Port List"
+msgstr "不走代理的 WAN 端口"
+
 msgid "LAN Bypassed Mac List"
 msgstr "不走代理的局域网设备 Mac"
 
@@ -1749,11 +1752,11 @@ msgstr "未启用第三方规则，更新程序终止！"
 msgid "Get Other Rules Settings Faild, Update Stop!"
 msgstr "未找到第三方规则配置，更新程序终止！"
 
-msgid "is Replaced Successfully, Start Picking Nodes..."
-msgstr "替换成功，检测到已启用节点筛选，开始挑选节点..."
+msgid "Start Picking Nodes..."
+msgstr "检测到已启用节点筛选，开始挑选节点..."
 
-msgid "is Replaced Successfully, Start to Reserving..."
-msgstr "替换成功，检测到已启用保留配置，开始进行设置..."
+msgid "Start to Reserving..."
+msgstr "检测到已启用保留配置，开始进行设置..."
 
 msgid "Config File Test Successful, Check If There is Any Update..."
 msgstr "配置文件测试成功，检查是否有更新..."
@@ -3468,6 +3471,9 @@ msgstr "直连"
 msgid "Error: Config File Overwrite Failed,"
 msgstr "错误：配置文件覆写失败，"
 
+msgid "Error: Config File params checked Failed,"
+msgstr "错误：配置文件参数检查失败，"
+
 msgid "Edit"
 msgstr "编辑"
 
@@ -4259,3 +4265,9 @@ msgstr "错误：写入文件失败："
 
 msgid "Error: Fix short-id values type failed:"
 msgstr "错误：修改 short-id 值类型失败："
+
+msgid "Interface"
+msgstr "接口"
+
+msgid "User"
+msgstr "用户"

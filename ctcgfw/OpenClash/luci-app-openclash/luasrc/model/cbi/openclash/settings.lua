@@ -8,6 +8,13 @@ local fs = require "luci.openclash"
 local uci = require "luci.model.uci".cursor()
 local json = require "luci.jsonc"
 local datatype = require "luci.cbi.datatypes"
+local net = require "luci.model.network".init()
+local devices = {}
+for _, iface in ipairs(net:get_interfaces()) do
+	if iface:name() then
+		table.insert(devices, {name = iface:name()})
+	end
+end
 
 -- 优化 CBI UI（新版 LuCI 专用）
 local function optimize_cbi_ui()
@@ -218,6 +225,10 @@ o = s:taboption("lan_ac", DynamicList, "wan_ac_black_ips", translate("WAN Bypass
 o.datatype = "ipmask"
 o.description = translate("In The Fake-IP Mode, Only Pure IP Requests Are Supported, Please Setting Fake-IP-Filter First If You Need Domain Type Requests")
 
+o = s:taboption("lan_ac", DynamicList, "wan_ac_black_ports", translate("WAN Bypassed Port List"))
+o.datatype = "or(port, portrange)"
+o.description = translate("In The Fake-IP Mode, Only Pure IP Requests Are Supported, Please Setting Fake-IP-Filter First If You Need Domain Type Requests")
+
 s2 = m:section(TypedSection, "lan_ac_traffic", translate("Lan Traffic Access List"),
 	"1. "..translate("The Traffic From The Local Specified Port Will Not Pass The Core, Try To Set When The Bypass Gateway Forwarding Fails").."; ".."2. "..translate("In The Fake-IP Mode, Only Pure IP Requests Are Supported, Please Setting Fake-IP-Filter First If You Need Domain Type Requests"))
 
@@ -267,6 +278,42 @@ o:value("ipv6", translate("IPv6"))
 o:value("both", translate("Both"))
 o.default = "tcp"
 o.rmempty = false
+
+o = s2:option(ListValue, "interface", translate("Interface"))
+o:value("")
+o.default = ""
+for _, dev in ipairs(devices) do
+	o:value(dev.name)
+end
+o.rmempty = true
+
+o = s2:option(ListValue, "user", translate("User"))
+o:value("")
+o.default = ""
+local passwd_content = NXFS.readfile("/etc/passwd")
+local users = ""
+if passwd_content then
+    for line in string.gmatch(passwd_content, "[^\n]+") do
+        if line:match("^[^#]") and line:match(":") then
+            local fields = {}
+            for field in string.gmatch(line, "([^:]+)") do
+                table.insert(fields, field)
+            end
+            if #fields >= 3 then
+                local username = fields[1]
+                local uid_str = fields[3]
+                local uid = tonumber(uid_str)
+                if uid and uid >= 0 then
+                    users = users .. uid .. ":" .. username .. "\n"
+                end
+            end
+        end
+    end
+end
+for uid, username in string.gmatch(users, "(%d+):(%S+)") do
+    o:value(uid, username)
+end
+o.rmempty = true
 
 o = s2:option(Value, "dscp", translate("DSCP"))
 o.datatype = "range(0,63)"
@@ -417,17 +464,16 @@ o.default = 1
 o = s:taboption("traffic_control", DynamicList, "intranet_allowed_wan_name", translate("WAN Interface Name"))
 o.description = translate("Select WAN Interface Name For The Intranet Allowed")
 o:depends("intranet_allowed", "1")
-local interfaces = SYS.exec("ls -l /sys/class/net/ 2>/dev/null |awk '{print $9}' 2>/dev/null")
-for interface in string.gmatch(interfaces, "%S+") do
-	o:value(interface)
+for _, dev in ipairs(devices) do
+	o:value(dev.name)
 end
 
 o = s:taboption("traffic_control", ListValue, "lan_interface_name", translate("LAN Interface Name"))
 o.description = translate("Select LAN Interface Name")
 o:value("0", translate("Disable"))
 o.default = "0"
-for interface in string.gmatch(interfaces, "%S+") do
-	o:value(interface)
+for _, dev in ipairs(devices) do
+	o:value(dev.name)
 end
 
 o = s:taboption("traffic_control", Value, "local_network_pass", translate("Local IPv4 Network Bypassed List"))

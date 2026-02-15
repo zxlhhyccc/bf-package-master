@@ -21,7 +21,6 @@ set_lock
 
 LOGTIME=$(echo $(date "+%Y-%m-%d %H:%M:%S"))
 LOG_FILE="/tmp/openclash.log"
-CFG_FILE="/tmp/yaml_sub_tmp_config.yaml"
 CRON_FILE="/etc/crontabs/root"
 CONFIG_PATH=$(uci_get_config "config_path")
 servers_update=$(uci_get_config "servers_update")
@@ -55,7 +54,7 @@ config_test()
       local IFS=$'\n'
       for i in $test_info; do
          if [ -n "$(echo "$i" |grep "configuration file")" ]; then
-            local info=$(echo "$i" |sed "s# ${CFG_FILE} #【${CONFIG_FILE}】#g")
+            local info=$(echo "$i" |sed "s# ${CFG_FILE} #【${name}】#g")
             LOG_OUT "$info"
          else
             echo "$i" >> "$LOG_FILE"
@@ -105,11 +104,11 @@ config_cus_up()
 	fi
 	if [ -z "$subscribe_url_param" ]; then
 	   if [ -n "$key_match_param" ] || [ -n "$key_ex_match_param" ]; then
-	      LOG_OUT "Config File【$name】is Replaced Successfully, Start Picking Nodes..."	      
+	      LOG_OUT "Config File【$name】Start Picking Nodes..."	      
 	      ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
 	      begin
             threads = [];
-	         Value = YAML.load_file('$CONFIG_FILE');
+	         Value = YAML.load_file('$CFG_FILE');
 	         if Value.has_key?('proxies') and not Value['proxies'].to_a.empty? then
 	            Value['proxies'].reverse.each{
 	            |x|
@@ -166,30 +165,22 @@ config_cus_up()
 	      rescue Exception => e
 	         YAML.LOG('Error: Filter Proxies Failed,【' + e.message + '】');
 	      ensure
-	         File.open('$CONFIG_FILE','w') {|f| YAML.dump(Value, f)};
+	         File.open('$CFG_FILE','w') {|f| YAML.dump(Value, f)};
 	      end" 2>/dev/null >> $LOG_FILE
 	   fi
    fi
    if [ "$servers_update" -eq 1 ]; then
-      LOG_OUT "Config File【$name】is Replaced Successfully, Start to Reserving..."
-      uci -q set openclash.config.config_update_path="/etc/openclash/config/$name.yaml"
+      LOG_OUT "Config File【$name】Start to Reserving..."
+      uci -q set openclash.config.config_update_path=${CFG_FILE}
       uci -q set openclash.config.servers_if_update=1
       uci commit openclash
       /usr/share/openclash/yml_groups_get.sh
       uci -q set openclash.config.servers_if_update=1
       uci commit openclash
       /usr/share/openclash/yml_groups_set.sh
-      if [ "$CONFIG_FILE" == "$CONFIG_PATH" ]; then
-         restart=1
-      fi
-      LOG_OUT "Config File【$name】Update Successful!"
-      SLOG_CLEAN
-   elif [ "$CONFIG_FILE" == "$CONFIG_PATH" ]; then
-      LOG_OUT "Config File【$name】Update Successful!"
+   fi
+   if [ "$CONFIG_FILE" == "$CONFIG_PATH" ]; then
       restart=1
-   else
-      LOG_OUT "Config File【$name】Update Successful!"
-      SLOG_CLEAN
    fi
 
    rm -rf /tmp/Proxy_Group 2>/dev/null
@@ -200,52 +191,47 @@ config_su_check()
    LOG_OUT "Config File Test Successful, Check If There is Any Update..."
    sed -i 's/!<str> /!!str /g' "$CFG_FILE" >/dev/null 2>&1
    if [ -f "$CONFIG_FILE" ]; then
-      cmp -s "$BACKPACK_FILE" "$CFG_FILE"
+      #保留规则部分
+      if [ "$servers_update" -eq 1 ] && [ "$only_download" -eq 0 ]; then
+            ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+            Value = YAML.load_file('$CONFIG_FILE');
+            Value_1 = YAML.load_file('$CFG_FILE');
+            if Value.key?('rules') or Value.key?('script') or Value.key?('rule-providers') then
+               if Value.key?('rules') then
+                  Value_1['rules'] = Value['rules']
+               end;
+               if Value.key?('script') then
+                  Value_1['script'] = Value['script']
+               end;
+               if Value.key?('rule-providers') then
+                  Value_1['rule-providers'] = Value['rule-providers']
+               end;
+               File.open('$CFG_FILE','w') {|f| YAML.dump(Value_1, f)};
+            end;
+         " 2>/dev/null
+      fi
+      if [ "$only_download" -eq 0 ]; then
+         config_cus_up
+      fi
+
+      cmp -s "$CONFIG_FILE" "$CFG_FILE"
       if [ "$?" -ne 0 ]; then
          LOG_OUT "Config File【$name】Are Updates, Start Replacing..."
-         cp "$CFG_FILE" "$BACKPACK_FILE"
-         #保留规则部分
-         if [ "$servers_update" -eq 1 ] && [ "$only_download" -eq 0 ]; then
-   	        ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
-               Value = YAML.load_file('$CONFIG_FILE');
-               Value_1 = YAML.load_file('$CFG_FILE');
-               if Value.key?('rules') or Value.key?('script') or Value.key?('rule-providers') then
-                  if Value.key?('rules') then
-                     Value_1['rules'] = Value['rules']
-                  end;
-                  if Value.key?('script') then
-                     Value_1['script'] = Value['script']
-                  end;
-                  if Value.key?('rule-providers') then
-                     Value_1['rule-providers'] = Value['rule-providers']
-                  end;
-                  File.open('$CFG_FILE','w') {|f| YAML.dump(Value_1, f)};
-               end;
-            " 2>/dev/null
-         fi
          mv "$CFG_FILE" "$CONFIG_FILE" 2>/dev/null
-         if [ "$only_download" -eq 0 ]; then
-            config_cus_up
-         else
-            LOG_OUT "Config File【$name】Update Successful!"
-            SLOG_CLEAN
-         fi
+         LOG_OUT "Config File【$name】Update Successful!"
       else
          LOG_OUT "Config File【$name】No Change, Do Nothing!"
          rm -rf "$CFG_FILE"
-         SLOG_CLEAN
       fi
    else
       LOG_OUT "Config File【$name】Download Successful, Start To Create..."
-      mv "$CFG_FILE" "$CONFIG_FILE" 2>/dev/null
-      cp "$CONFIG_FILE" "$BACKPACK_FILE"
       if [ "$only_download" -eq 0 ]; then
          config_cus_up
-      else
-         LOG_OUT "Config File【$name】Update Successful!"
-         SLOG_CLEAN
       fi
+      mv "$CFG_FILE" "$CONFIG_FILE" 2>/dev/null
+      LOG_OUT "Config File【$name】Update Successful!"
    fi
+   SLOG_CLEAN
 }
 
 config_error()
@@ -376,7 +362,7 @@ sub_info_get()
 {
    local section="$1" subscribe_url template_path subscribe_url_param template_path_encode key_match_param key_ex_match_param c_address de_ex_keyword sub_ua append_custom_params
    config_get_bool "enabled" "$section" "enabled" "1"
-   config_get "name" "$section" "name" ""
+   config_get "name" "$section" "name" "config"
    config_get "sub_convert" "$section" "sub_convert" ""
    config_get "address" "$section" "address" ""
    config_get "keyword" "$section" "keyword" ""
@@ -392,6 +378,9 @@ sub_info_get()
    config_get "custom_template_url" "$section" "custom_template_url" ""
    config_get "de_ex_keyword" "$section" "de_ex_keyword" ""
    config_get "sub_ua" "$section" "sub_ua" "clash.meta"
+
+   CONFIG_FILE="/etc/openclash/config/$name.yaml"
+   CFG_FILE="/tmp/$name.yaml"
 
    if [ "$enabled" -eq 0 ]; then
       if [ -n "$2" ]; then
@@ -417,15 +406,6 @@ sub_info_get()
       rule_provider="&expand=false&classic=true"
    else
       rule_provider=""
-   fi
-
-   if [ -z "$name" ]; then
-      name="config"
-      CONFIG_FILE="/etc/openclash/config/config.yaml"
-      BACKPACK_FILE="/etc/openclash/backup/config.yaml"
-   else
-      CONFIG_FILE="/etc/openclash/config/$name.yaml"
-      BACKPACK_FILE="/etc/openclash/backup/$name.yaml"
    fi
 
    if [ -n "$2" ] && [ "$2" != "$CONFIG_FILE" ] && [ "$2" != "$name" ]; then

@@ -393,13 +393,8 @@ function action_flush_smart_cache()
 end
 
 function action_update_config()
-	-- filename or config_file is basename
+	-- filename is basename
 	local filename = luci.http.formvalue("filename")
-	local config_file = luci.http.formvalue("config_file")
-
-	if not filename and config_file then
-		filename = config_file
-	end
 
 	luci.http.prepare_content("application/json")
 
@@ -1872,8 +1867,6 @@ function rename_file()
 	local new_file_path = file_path .. new_file_name
 	local old_run_file_path = "/etc/openclash/" .. old_file_name
 	local new_run_file_path = "/etc/openclash/" .. new_file_name
-	local old_backup_file_path = "/etc/openclash/backup/" .. old_file_name
-	local new_backup_file_path = "/etc/openclash/backup/" .. new_file_name
 	if fs.rename(old_file_path, new_file_path) then
 		if file_path == "/etc/openclash/config/" then
 			if fs.uci_get_config("config", "config_path") == old_file_path then
@@ -1882,10 +1875,6 @@ function rename_file()
 			
 			if fs.isfile(old_run_file_path) then
 				fs.rename(old_run_file_path, new_run_file_path)
-			end
-			
-			if fs.isfile(old_backup_file_path) then
-				fs.rename(old_backup_file_path, new_backup_file_path)
 			end
 			
 			uci:foreach("openclash", "config_subscribe",
