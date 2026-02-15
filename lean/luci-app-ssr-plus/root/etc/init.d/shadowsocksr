@@ -17,6 +17,10 @@ LOCK_FILE=/var/lock/ssrplus.lock
 LOG_FILE=/var/log/ssrplus.log
 TMP_PATH=/var/etc/ssrplus
 TMP_BIN_PATH=$TMP_PATH/bin
+PERSIST_DIR="/usr/share/nftables.d/ruleset-post"
+PERSIST_FILE="$PERSIST_DIR/99-shadowsocksr.nft"
+BACKUP_DIR="/etc/ssrplus/ssrplus-persist"
+BACKUP_FILE="$BACKUP_DIR/99-shadowsocksr.save"
 # 设置 DNSMASQ_CONF_DIR 和 TMP_DNSMASQ_PATH
 if [ -f /etc/openwrt_release ]; then
     # 获取默认的 DNSMASQ 配置 ID
