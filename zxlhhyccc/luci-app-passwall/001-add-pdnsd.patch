@@ -227,7 +227,7 @@ index 3f6dd8c..2656874 100644
  o:depends({ dns_shunt = "chinadns-ng", _node_sel_other = "1" })
  o:depends({ dns_shunt = "dnsmasq", _node_sel_other = "1" })
  o.remove = function(self, section)
-@@ -401,6 +410,8 @@ o.validate = function(self, value, t)
+@@ -403,6 +412,8 @@ o.validate = function(self, value, t)
  	end
  	return value
  end
@@ -236,7 +236,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  
  ---- DNS Forward
-@@ -415,6 +426,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+@@ -417,6 +428,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -245,7 +245,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -475,6 +488,17 @@ o.validate = function(self, value, t)
+@@ -477,6 +490,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
