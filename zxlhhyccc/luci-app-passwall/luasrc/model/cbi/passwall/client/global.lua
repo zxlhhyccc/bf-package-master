@@ -122,7 +122,7 @@ o.group = {"",""}
 o:depends("_node_sel_other", "1")
 o.remove = function(self, section)
 	local v = s.fields["shunt_udp_node"]:formvalue(section)
-	if not f then
+	if not v then
 		return m:del(section, self.option)
 	end
 end
@@ -212,10 +212,25 @@ o:value("dnsmasq", "Dnsmasq")
 o:value("chinadns-ng", translate("ChinaDNS-NG (recommended)"))
 if api.is_finded("smartdns") then
 	o:value("smartdns", "SmartDNS")
+	o.write = function(self, section, value)
+		if value ~= "smartdns" then
+			m:del(section, "group_domestic")
+		end
+		return ListValue.write(self, section, value)
+	end
+
 	o = s:taboption("DNS", Value, "group_domestic", translate("Domestic group name"))
 	o.placeholder = "local"
+	o.rmempty = false
 	o:depends("dns_shunt", "smartdns")
 	o.description = translate("You only need to configure domestic DNS packets in SmartDNS, and fill in the domestic DNS group name here.")
+	o.validate = function(self, value, section)
+		value = api.trim(value)
+		if value == "" then
+			return nil, translatef("%s cannot be empty.", "SmartDNS " .. translate("Domestic group name"))
+		end
+		return value
+	end
 end
 
 o = s:taboption("DNS", ListValue, "direct_dns_mode", translate("Direct DNS") .. " " .. translate("Request protocol"))

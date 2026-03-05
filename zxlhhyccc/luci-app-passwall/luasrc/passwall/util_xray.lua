@@ -115,7 +115,7 @@ function gen_outbound(flag, node, tag, proxy_table)
 					bytes[#bytes + 1] = tonumber(b)
 				end)
 			else
-				local result = api.bin.b64decode(node.wireguard_reserved)
+				local result = api.base64Decode(node.wireguard_reserved)
 				for i = 1, #result do
 					bytes[i] = result:byte(i)
 				end
@@ -222,11 +222,12 @@ function gen_outbound(flag, node, tag, proxy_table)
 				} or nil,
 				grpcSettings = (node.transport == "grpc") and {
 					serviceName = node.grpc_serviceName,
-					multiMode = (node.grpc_mode == "multi") and true or nil,
-					idle_timeout = tonumber(node.grpc_idle_timeout) or nil,
+					multiMode = (node.grpc_mode == "multi") and true or false,
+					idle_timeout = node.grpc_idle_timeout and (tonumber(node.grpc_idle_timeout) < 10 and 10 or tonumber(node.grpc_idle_timeout)) or nil,
 					health_check_timeout = tonumber(node.grpc_health_check_timeout) or nil,
-					permit_without_stream = (node.grpc_permit_without_stream == "1") and true or nil,
-					initial_windows_size = tonumber(node.grpc_initial_windows_size) or nil
+					permit_without_stream = (node.grpc_permit_without_stream == "1") and true or false,
+					initial_windows_size = node.grpc_initial_windows_size and tonumber(node.grpc_initial_windows_size) or 0,
+					user_agent = node.user_agent
 				} or nil,
 				httpupgradeSettings = (node.transport == "httpupgrade") and {
 					path = node.httpupgrade_path or "/",
@@ -289,35 +290,55 @@ function gen_outbound(flag, node, tag, proxy_table)
 					end)(),
 					disablePathMTUDiscovery = (node.hysteria2_disable_mtu_discovery) and true or false
 				} or nil,
-				finalmask = (node.transport == "mkcp") and {
-					udp = (function()
-						local t = {}
+				finalmask = (function()
+					local finalmask
+					if node.transport == "mkcp" then
 						local map = {none = "none", srtp = "header-srtp", utp = "header-utp", ["wechat-video"] = "header-wechat",
 							dtls = "header-dtls", wireguard = "header-wireguard", dns = "header-dns"}
+						local udp = {}
 						if node.mkcp_guise and node.mkcp_guise ~= "none" then
 							local g = { type = map[node.mkcp_guise] }
 							if node.mkcp_guise == "dns" and node.mkcp_domain and node.mkcp_domain ~= "" then
 								g.settings = { domain = node.mkcp_domain }
 							end
-							t[#t + 1] = g
+							udp[#udp+1] = g
 						end
 						local c = { type = (node.mkcp_seed and node.mkcp_seed ~= "") and "mkcp-aes128gcm" or "mkcp-original" }
 						if node.mkcp_seed and node.mkcp_seed ~= "" then
 							c.settings = { password = node.mkcp_seed }
 						end
-						t[#t + 1] = c
-						return t
-					end)()
-				} or (node.transport == "hysteria" and node.hysteria2_obfs_type and node.hysteria2_obfs_type ~= "") and {
-					udp = {
-						{
-							type = node.hysteria2_obfs_type,
-							settings = node.hysteria2_obfs_password and {
-								password = node.hysteria2_obfs_password
-							} or nil
+						udp[#udp+1] = c
+						finalmask = { udp = udp }
+					elseif node.transport == "hysteria" and node.hysteria2_obfs_type and node.hysteria2_obfs_type ~= "" then
+						finalmask = {
+							udp = {{
+								type = node.hysteria2_obfs_type,
+								settings = node.hysteria2_obfs_password and {
+									password = node.hysteria2_obfs_password
+								} or nil
+							}}
 						}
-					}
-				} or nil
+					end
+					if node.finalmask and node.finalmask ~= "" then
+						local ok, fm = pcall(jsonc.parse, api.base64Decode(node.finalmask))
+						if ok and type(fm) == "table" then
+							if not finalmask or not next(finalmask) then
+								finalmask = fm
+							else
+								if type(fm.udp) == "table" then
+									finalmask.udp = finalmask.udp or {}
+									for i = 1, #fm.udp do
+										finalmask.udp[#finalmask.udp+1] = fm.udp[i]
+									end
+								end
+								if type(fm.tcp) == "table" then
+									finalmask.tcp = fm.tcp
+								end
+							end
+						end
+					end
+					return (finalmask and next(finalmask)) and finalmask or nil
+				end)()
 			} or nil,
 			settings = {
 				vnext = (node.protocol == "vmess" or node.protocol == "vless") and {
@@ -589,7 +610,7 @@ function gen_config_server(node)
 						host = node.ws_host or nil,
 						path = node.ws_path
 					} or nil,
-					grpcSettings = (node.transport == "grpc") and {
+					grpcSettings = (node.transport == "grpc" and node.grpc_serviceName) and {
 						serviceName = node.grpc_serviceName
 					} or nil,
 					httpupgradeSettings = (node.transport == "httpupgrade") and {
@@ -602,26 +623,46 @@ function gen_config_server(node)
 						maxUploadSize = node.xhttp_maxuploadsize,
 						maxConcurrentUploads = node.xhttp_maxconcurrentuploads
 					} or nil,
-					finalmask = (node.transport == "mkcp") and {
-						udp = (function()
-							local t = {}
+					finalmask = (function()
+						local finalmask
+						if node.transport == "mkcp" then
 							local map = {none = "none", srtp = "header-srtp", utp = "header-utp", ["wechat-video"] = "header-wechat",
 								dtls = "header-dtls", wireguard = "header-wireguard", dns = "header-dns"}
+							local udp = {}
 							if node.mkcp_guise and node.mkcp_guise ~= "none" then
 								local g = { type = map[node.mkcp_guise] }
 								if node.mkcp_guise == "dns" and node.mkcp_domain and node.mkcp_domain ~= "" then
 									g.settings = { domain = node.mkcp_domain }
 								end
-								t[#t + 1] = g
+								udp[#udp+1] = g
 							end
 							local c = { type = (node.mkcp_seed and node.mkcp_seed ~= "") and "mkcp-aes128gcm" or "mkcp-original" }
 							if node.mkcp_seed and node.mkcp_seed ~= "" then
 								c.settings = { password = node.mkcp_seed }
 							end
-							t[#t + 1] = c
-							return t
-						end)()
-					} or nil,
+							udp[#udp+1] = c
+							finalmask = { udp = udp }
+						end
+						if node.finalmask and node.finalmask ~= "" then
+							local ok, fm = pcall(jsonc.parse, api.base64Decode(node.finalmask))
+							if ok and type(fm) == "table" then
+								if not finalmask or not next(finalmask) then
+									finalmask = fm
+								else
+									if type(fm.udp) == "table" then
+										finalmask.udp = finalmask.udp or {}
+										for i = 1, #fm.udp do
+											finalmask.udp[#finalmask.udp+1] = fm.udp[i]
+										end
+									end
+									if type(fm.tcp) == "table" then
+										finalmask.tcp = fm.tcp
+									end
+								end
+							end
+						end
+						return (finalmask and next(finalmask)) and finalmask or nil
+					end)(),
 					sockopt = {
 						tcpFastOpen = (node.tcp_fast_open == "1") and true or nil,
 						acceptProxyProtocol = (node.acceptProxyProtocol and node.acceptProxyProtocol == "1") and true or false
@@ -964,7 +1005,7 @@ function gen_config(var)
 			return balancer_tag, loopback_outbound
 		end
 
-		function set_outbound_detour(node, outbound, outbounds_table, shunt_rule_name)
+		function set_outbound_detour(node, outbound, outbounds_table)
 			if not node or not outbound or not outbounds_table then return nil end
 			local default_outTag = outbound.tag
 			local last_insert_outbound
@@ -1025,12 +1066,7 @@ function gen_config(var)
 						to_outbound = gen_outbound(node[".name"], to_node)
 					end
 					if to_outbound then
-						if shunt_rule_name then
-							to_outbound.tag = outbound.tag
-							outbound.tag = node[".name"]
-						else
-							to_outbound.tag = outbound.tag .. " -> " .. to_outbound.tag
-						end
+						to_outbound.tag = outbound.tag .. " -> " .. to_outbound.tag
 						if to_node.type == "Xray" then
 							to_outbound.proxySettings = {
 								tag = outbound.tag,
@@ -1053,25 +1089,8 @@ function gen_config(var)
 			elseif type(node_id) == "table" then
 				node = node_id
 			end
+			if not tag then tag = node[".name"] end
 			if node then
-				if node.protocol == "_iface" then
-					if node.iface then
-						local outbound = {
-							tag = tag,
-							protocol = "freedom",
-							streamSettings = {
-								sockopt = {
-									mark = 255,
-									interface = node.iface
-								}
-							}
-						}
-						table.insert(outbounds, outbound)
-						sys.call(string.format("mkdir -p %s && touch %s/%s", api.TMP_IFACE_PATH, api.TMP_IFACE_PATH, node.iface))
-						return outbound.tag
-					end
-					return nil
-				end
 				if proxy_table.chain_proxy == "1" or proxy_table.chain_proxy == "2" then
 					node.chain_proxy = proxy_table.chain_proxy
 					node.preproxy_node = proxy_table.chain_proxy == "1" and proxy_table.preproxy_node
@@ -1095,6 +1114,20 @@ function gen_config(var)
 						outbound = loopback_outbound
 						node[".name"] = outbound.tag
 						has_add_outbound = true
+					end
+				elseif node.protocol == "_iface" then
+					if node.iface then
+						outbound = {
+							tag = tag,
+							protocol = "freedom",
+							streamSettings = {
+								sockopt = {
+									mark = 255,
+									interface = node.iface
+								}
+							}
+						}
+						sys.call(string.format("mkdir -p %s && touch %s/%s", api.TMP_IFACE_PATH, api.TMP_IFACE_PATH, node.iface))
 					end
 				end
 				if not outbound then
@@ -1277,7 +1310,7 @@ function gen_config(var)
 				rules = rules
 			}
 		else
-			COMMON.default_outbound_tag = gen_outbound_get_tag(flag, node, "default", {
+			COMMON.default_outbound_tag = gen_outbound_get_tag(flag, node, nil, {
 				fragment = xray_settings.fragment == "1" or nil,
 				noise = xray_settings.noise == "1" or nil,
 				run_socks_instance = not no_run
@@ -1538,17 +1571,26 @@ function gen_config(var)
 							dns_server = api.clone(_remote_dns)
 						end
 					end
-					dns_server.domains = value.domain
-					if value.shunt_rule_name then
-						dns_server.tag = "dns-in-" .. value.shunt_rule_name
-					end
-
+					local outboundTag
 					if dns_server then
-						local outboundTag
-						if not api.is_local_ip(dns_server.address) or value.outboundTag == "blackhole" then --dns为本地ip，不走代理
+						if not api.is_local_ip(dns_server.address) or value.outboundTag == "blackhole" then
 							outboundTag = value.outboundTag
 						else
-							outboundTag = "direct"
+							outboundTag = "direct" --dns为本地ip，走直连
+						end
+					end
+					local dns_block_mode = "host"
+					if dns_block_mode == "host" and outboundTag == "blackhole" then
+						for d_i, d_k in ipairs(value.domain) do
+							dns.hosts[d_k] = "0.0.0.0"
+						end
+						dns_server = nil
+					end
+					if dns_server then
+						dns_server.finalQuery = true
+						dns_server.domains = value.domain
+						if value.shunt_rule_name then
+							dns_server.tag = "dns-in-" .. value.shunt_rule_name
 						end
 						table.insert(dns.servers, dns_server)
 						table.insert(routing.rules, dns_rule_position, {
