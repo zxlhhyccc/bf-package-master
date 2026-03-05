@@ -11,8 +11,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=b6139a199232140447aff6c4ec111c222ac84993
-PKG_MIRROR_HASH:=a2a678ea3699932e5ef25187123f35fd51f3537bf83d4eef1deb92431b44f51e
+PKG_SOURCE_VERSION:=3d744ecb27b5a2a0c05433aabf3fbe564643fa2f
+PKG_MIRROR_HASH:=1ae7e7f3345d30ee7ee883a3916871d5740bf98a1f471d369ee62f667aaa6092
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -83,9 +83,9 @@ endef
 define Download/smartdns-webui
   PROTO:=git
   URL:=https://github.com/pymumu/smartdns-webui.git
-  SOURCE_DATE:=2025-12-24
-  SOURCE_VERSION:=3261c18b1b93d841e86d9e727557109ae71d71cd
-  MIRROR_HASH:=84fb0061ee4f701a51806e0b4d74dc19a6a2e6116a2a9862ae78e7a5d1a6b465
+  SOURCE_DATE:=2025-03-03
+  SOURCE_VERSION:=d4be0d8936416c01ecad4bce88279a416689d760
+  MIRROR_HASH:=dc08b0a09ab6287ee31797f610c8b2d12f9ae7d894151b89241295f24d7187a7
   SUBDIR:=smartdns-webui-$$$$(subst -,.,$$$$(SOURCE_DATE))~$$$$(call version_abbrev,$$$$(SOURCE_VERSION))
   FILE:=$$(SUBDIR).tar.zst
 endef
@@ -98,7 +98,6 @@ ifneq ($(CONFIG_PACKAGE_smartdns-ui),)
 	$(eval $(Download/smartdns-webui))
 	mkdir -p $(PKG_BUILD_DIR)/smartdns-webui
 	zstdcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR)/smartdns-webui $(TAR_OPTIONS) --strip-components=1
-	$(call PatchDir,$(PKG_BUILD_DIR)/smartdns-webui,$(CURDIR)/webui-patches)
 endif
 endef
 
@@ -108,6 +107,10 @@ define Build/Compile
 ifneq ($(CONFIG_PACKAGE_smartdns-ui),)
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
+		pushd smartdns-webui ; \
+		npm install ; \
+		npm run build ; \
+		popd ; \
 		pushd plugin/smartdns-ui ; \
 		$(CARGO_PKG_CONFIG_VARS) \
 		MAKEFLAGS="$(PKG_JOBS)" \
@@ -117,11 +120,6 @@ ifneq ($(CONFIG_PACKAGE_smartdns-ui),)
 		$(if $(strip $(RUST_PKG_FEATURES)),--features "$(strip $(RUST_PKG_FEATURES))") \
 		$(if $(filter --jobserver%,$(PKG_JOBS)),,-j1) \
 		$(CARGO_PKG_ARGS) ; \
-		popd ; \
-		pushd smartdns-webui ; \
-		$(SED) 's/"\^/"/g' package.json ; \
-		npm install ; \
-		npm run build ; \
 		popd ; \
 		popd ; \
 	)
