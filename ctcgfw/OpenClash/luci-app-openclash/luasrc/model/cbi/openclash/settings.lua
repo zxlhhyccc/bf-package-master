@@ -79,7 +79,6 @@ s:tab("auto_restart", translate("Auto Restart"))
 s:tab("version_update", translate("Version Update"))
 s:tab("developer", translate("Developer Settings"))
 s:tab("debug", translate("Debug Logs"))
-s:tab("dlercloud", translate("Dler Cloud"))
 
 o = s:taboption("op_mode", ListValue, "en_mode", font_red..bold_on..translate("Select Mode")..bold_off..font_off)
 o.description = translate("Select Mode For OpenClash Work, Try Flush DNS Cache If Network Error")
@@ -887,42 +886,6 @@ o.value = "OpenAI"
 o:depends("stream_auto_select_openai", "1")
 
 ---- update Settings
-o = s:taboption("rules_update", Flag, "other_rule_auto_update", translate("Auto Update"))
-o.description = font_red..bold_on..translate("Auto Update Other Rules")..bold_off..font_off
-o.default = 0
-
-o = s:taboption("rules_update", ListValue, "other_rule_update_week_time", translate("Update Time (Every Week)"))
-o:depends("other_rule_auto_update", "1")
-o:value("*", translate("Every Day"))
-o:value("1", translate("Every Monday"))
-o:value("2", translate("Every Tuesday"))
-o:value("3", translate("Every Wednesday"))
-o:value("4", translate("Every Thursday"))
-o:value("5", translate("Every Friday"))
-o:value("6", translate("Every Saturday"))
-o:value("0", translate("Every Sunday"))
-o.default = "1"
-
-o = s:taboption("rules_update", ListValue, "other_rule_update_day_time", translate("Update time (every day)"))
-o:depends("other_rule_auto_update", "1")
-for t = 0,23 do
-o:value(t, t..":00")
-end
-o.default = "0"
-
-o = s:taboption("rules_update", Button, translate("Other Rules Update")) 
-o:depends("other_rule_auto_update", "1")
-o.title = translate("Update Other Rules")
-o.inputtitle = translate("Check And Update")
-o.description = translate("Other Rules Update(Only in Use)")..", "..translate("Current Version:").." "..font_green..bold_on..translate(fs.get_resourse_mtime("/usr/share/openclash/res/lhie1.yaml"))..bold_off..font_off
-o.inputstyle = "reload"
-o.write = function()
-	m.uci:set("openclash", "config", "enable", 1)
-	m.uci:commit("openclash")
-	SYS.call("/usr/share/openclash/openclash_rule.sh >/dev/null 2>&1 &")
-	HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
-end
-
 o = s:taboption("geo_update", Flag, "geo_auto_update", font_red..bold_on..translate("Auto Update GeoIP MMDB")..bold_off..font_off)
 o.default = 0
 
@@ -1343,54 +1306,6 @@ end
 ---- debug
 o = s:taboption("debug", DummyValue, "", nil)
 o.template = "openclash/debug"
-
----- dlercloud
-o = s:taboption("dlercloud", Value, "dler_email")
-o.title = translate("Account Email Address")
-o.rmempty = true
-
-o = s:taboption("dlercloud", Value, "dler_passwd")
-o.title = translate("Account Password")
-o.password = true
-o.rmempty = true
-
-if fs.uci_get_config("config", "dler_token") then
-	o = s:taboption("dlercloud", Flag, "dler_checkin")
-	o.title = translate("Checkin")
-	o.default = 0
-	o.rmempty = true
-end
-
-o = s:taboption("dlercloud", Value, "dler_checkin_interval")
-o.title = translate("Checkin Interval (hour)")
-o:depends("dler_checkin", "1")
-o.default = "1"
-o.rmempty = true
-
-o = s:taboption("dlercloud", Value, "dler_checkin_multiple")
-o.title = translate("Checkin Multiple")
-o.datatype = "uinteger"
-o.default = "1"
-o:depends("dler_checkin", "1")
-o.rmempty = true
-o.description = font_green..bold_on..translate("Multiple Must Be a Positive Integer and No More Than 100")..bold_off..font_off
-function o.validate(self, value)
-	if tonumber(value) < 1 then
-		return "1"
-	end
-	if tonumber(value) > 100 then
-		return "100"
-	end
-	return value
-end
-
-o = s:taboption("dlercloud", DummyValue, "dler_login", translate("Account Login"))
-o.template = "openclash/dler_login"
-if fs.uci_get_config("config", "dler_token") then
-	o.value = font_green..bold_on..translate("Account logged in")..bold_off..font_off
-else
-	o.value = font_red..bold_on..translate("Account not logged in")..bold_off..font_off
-end
 
 local t = {
 	{Commit, Apply}

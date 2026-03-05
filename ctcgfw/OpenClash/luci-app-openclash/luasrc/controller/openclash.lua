@@ -42,11 +42,6 @@ function index()
 	entry({"admin", "services", "openclash", "one_key_update_check"}, call("action_one_key_update_check"))
 	entry({"admin", "services", "openclash", "switch_mode"}, call("action_switch_mode"))
 	entry({"admin", "services", "openclash", "op_mode"}, call("action_op_mode"))
-	entry({"admin", "services", "openclash", "dler_info"}, call("action_dler_info"))
-	entry({"admin", "services", "openclash", "dler_checkin"}, call("action_dler_checkin"))
-	entry({"admin", "services", "openclash", "dler_logout"}, call("action_dler_logout"))
-	entry({"admin", "services", "openclash", "dler_login"}, call("action_dler_login"))
-	entry({"admin", "services", "openclash", "dler_login_info_save"}, call("action_dler_login_info_save"))
 	entry({"admin", "services", "openclash", "sub_info_get"}, call("sub_info_get"))
 	entry({"admin", "services", "openclash", "config_name"}, call("action_config_name"))
 	entry({"admin", "services", "openclash", "switch_config"}, call("action_switch_config"))
@@ -75,22 +70,17 @@ function index()
 	entry({"admin", "services", "openclash", "announcement"}, call("action_announcement"))
 	entry({"admin", "services", "openclash", "settings"},cbi("openclash/settings"),_("Plugin Settings"), 30).leaf = true
 	entry({"admin", "services", "openclash", "config-overwrite"},cbi("openclash/config-overwrite"),_("Overwrite Settings"), 40).leaf = true
-	entry({"admin", "services", "openclash", "servers"},cbi("openclash/servers"),_("Onekey Create"), 50).leaf = true
+	entry({"admin", "services", "openclash", "config-subscribe"},cbi("openclash/config-subscribe"),_("Config Subscribe"), 60).leaf = true
+	entry({"admin", "services", "openclash", "servers"},cbi("openclash/servers"),nil).leaf = true
 	entry({"admin", "services", "openclash", "other-rules-edit"},cbi("openclash/other-rules-edit"), nil).leaf = true
 	entry({"admin", "services", "openclash", "custom-dns-edit"},cbi("openclash/custom-dns-edit"), nil).leaf = true
 	entry({"admin", "services", "openclash", "other-file-edit"},cbi("openclash/other-file-edit"), nil).leaf = true
-	entry({"admin", "services", "openclash", "rule-providers-settings"},cbi("openclash/rule-providers-settings"),_("Rule Providers Append"), 60).leaf = true
-	entry({"admin", "services", "openclash", "game-rules-manage"},form("openclash/game-rules-manage"), nil).leaf = true
-	entry({"admin", "services", "openclash", "rule-providers-manage"},form("openclash/rule-providers-manage"), nil).leaf = true
 	entry({"admin", "services", "openclash", "proxy-provider-file-manage"},form("openclash/proxy-provider-file-manage"), nil).leaf = true
 	entry({"admin", "services", "openclash", "rule-providers-file-manage"},form("openclash/rule-providers-file-manage"), nil).leaf = true
-	entry({"admin", "services", "openclash", "game-rules-file-manage"},form("openclash/game-rules-file-manage"), nil).leaf = true
-	entry({"admin", "services", "openclash", "config-subscribe"},cbi("openclash/config-subscribe"),_("Config Subscribe"), 70).leaf = true
 	entry({"admin", "services", "openclash", "config-subscribe-edit"},cbi("openclash/config-subscribe-edit"), nil).leaf = true
 	entry({"admin", "services", "openclash", "servers-config"},cbi("openclash/servers-config"), nil).leaf = true
 	entry({"admin", "services", "openclash", "groups-config"},cbi("openclash/groups-config"), nil).leaf = true
 	entry({"admin", "services", "openclash", "proxy-provider-config"},cbi("openclash/proxy-provider-config"), nil).leaf = true
-	entry({"admin", "services", "openclash", "rule-providers-config"},cbi("openclash/rule-providers-config"), nil).leaf = true
 	entry({"admin", "services", "openclash", "config"},form("openclash/config"),_("Config Manage"), 80).leaf = true
 	entry({"admin", "services", "openclash", "log"},cbi("openclash/log"),_("Server Logs"), 90).leaf = true
 	entry({"admin", "services", "openclash", "myip_check"}, call("action_myip_check"))
@@ -355,12 +345,6 @@ function core_download()
 
 end
 
-function download_rule()
-	local filename = luci.http.formvalue("filename")
-	local state = luci.sys.call(string.format('/usr/share/openclash/openclash_download_rule_list.sh "%s" >/dev/null 2>&1',filename))
-	return state
-end
-
 function action_flush_dns_cache()
 	local state = 0
 	if is_running() then
@@ -448,192 +432,6 @@ function action_one_key_update()
 		return luci.sys.call(string.format("rm -rf /tmp/*_last_version 2>/dev/null && bash /usr/share/openclash/openclash_update.sh 'one_key_update' '%s' >/dev/null 2>&1 &", cdn_url))
 	else
 		return luci.sys.call("rm -rf /tmp/*_last_version 2>/dev/null && bash /usr/share/openclash/openclash_update.sh 'one_key_update' >/dev/null 2>&1 &")
-	end
-end
-
-local function dler_login_info_save()
-	uci:set("openclash", "config", "dler_email", luci.http.formvalue("email"))
-	uci:set("openclash", "config", "dler_passwd", luci.http.formvalue("passwd"))
-	uci:set("openclash", "config", "dler_checkin", luci.http.formvalue("checkin"))
-	uci:set("openclash", "config", "dler_checkin_interval", luci.http.formvalue("interval"))
-	if tonumber(luci.http.formvalue("multiple")) > 100 then
-		uci:set("openclash", "config", "dler_checkin_multiple", "100")
-	elseif tonumber(luci.http.formvalue("multiple")) < 1 or not tonumber(luci.http.formvalue("multiple")) then
-		uci:set("openclash", "config", "dler_checkin_multiple", "1")
-	else
-		uci:set("openclash", "config", "dler_checkin_multiple", luci.http.formvalue("multiple"))
-	end
-	uci:commit("openclash")
-	return "success"
-end
-
-local function dler_login()
-	local info, token, get_sub, sub_info, sub_key, sub_match, sub_convert, sid
-	local sub_path = "/tmp/dler_sub"
-	local email = fs.uci_get_config("config", "dler_email")
-	local passwd = fs.uci_get_config("config", "dler_passwd")
-	if email and passwd then
-		info = luci.sys.exec(string.format("curl -sL -H 'Content-Type: application/json' -d '{\"email\":\"%s\", \"passwd\":\"%s\", \"token_expire\":\"365\" }' -X POST https://dler.cloud/api/v1/login", email, passwd))
-		if info then
-			info = json.parse(info)
-		end
-		if info and info.ret == 200 then
-			token = info.data.token
-			uci:set("openclash", "config", "dler_token", token)
-			uci:commit("openclash")
-			get_sub = string.format("curl -sL -H 'Content-Type: application/json' -d '{\"access_token\":\"%s\"}' -X POST https://dler.cloud/api/v1/managed/clash -o %s", token, sub_path)
-			luci.sys.exec(get_sub)
-			sub_info = fs.readfile(sub_path)
-			if sub_info then
-				sub_info = json.parse(sub_info)
-			end
-			if sub_info and sub_info.ret == 200 then
-				sub_key = {"smart","ss","vmess","trojan"}
-				for _,v in ipairs(sub_key) do
-					while true do
-						sub_match = false
-						sub_convert = false
-						uci:foreach("openclash", "config_subscribe",
-						function(s)
-							if s.name == "Dler Cloud - " .. v and s.address == sub_info[v] then
-								sub_match = true
-							end
-							if s.name == "Dler Cloud - " .. v and s.address ~= sub_info[v] then
-								sub_convert = true
-								sid = s['.name']
-							end
-						end)
-						if sub_match then break end
-						if sub_convert then
-							uci:set("openclash", sid, "address", sub_info[v])
-						else
-							sid = uci:add("openclash", "config_subscribe")
-							uci:set("openclash", sid, "name", "Dler Cloud - " .. v)
-							uci:set("openclash", sid, "address", sub_info[v])
-						end
-						uci:commit("openclash")
-						break
-					end
-					luci.sys.exec(string.format('curl -sL -m 3 --retry 2 --user-agent "clash" "%s" -o "/etc/openclash/config/Dler Cloud - %s.yaml" >/dev/null 2>&1', sub_info[v], v))
-				end
-			end
-			return info.ret
-		else
-			uci:delete("openclash", "config", "dler_token")
-			uci:commit("openclash")
-			fs.unlink(sub_path)
-			fs.unlink("/tmp/dler_checkin")
-			fs.unlink("/tmp/dler_info")
-			if info and info.msg then
-				return info.msg
-			else
-				return "login faild"
-			end
-		end
-	else
-		uci:delete("openclash", "config", "dler_token")
-		uci:commit("openclash")
-		fs.unlink(sub_path)
-		fs.unlink("/tmp/dler_checkin")
-		fs.unlink("/tmp/dler_info")
-		return "email or passwd is wrong"
-	end
-end
-
-local function dler_logout()
-	local info, token
-	local token = fs.uci_get_config("config", "dler_token")
-	if token then
-		info = luci.sys.exec(string.format("curl -sL -H 'Content-Type: application/json' -d '{\"access_token\":\"%s\"}' -X POST https://dler.cloud/api/v1/logout", token))
-		if info then
-			info = json.parse(info)
-		end
-		if info and info.ret == 200 then
-			uci:delete("openclash", "config", "dler_token")
-			uci:delete("openclash", "config", "dler_checkin")
-			uci:delete("openclash", "config", "dler_checkin_interval")
-			uci:delete("openclash", "config", "dler_checkin_multiple")
-			uci:commit("openclash")
-			fs.unlink("/tmp/dler_sub")
-			fs.unlink("/tmp/dler_checkin")
-			fs.unlink("/tmp/dler_info")
-			return info.ret
-		else
-			if info and info.msg then
-				return info.msg
-			else
-				return "logout faild"
-			end
-		end
-	else
-		return "logout faild"
-	end
-end
-
-local function dler_info()
-	local info, path, get_info
-	local token = fs.uci_get_config("config", "dler_token")
-	path = "/tmp/dler_info"
-	if token then
-		get_info = string.format("curl -sL -H 'Content-Type: application/json' -d '{\"access_token\":\"%s\"}' -X POST https://dler.cloud/api/v1/information -o %s", token, path)
-		if not fs.access(path) then
-			luci.sys.exec(get_info)
-		else
-			if fs.readfile(path) == "" or not fs.readfile(path) then
-				luci.sys.exec(get_info)
-			else
-				if (os.time() - fs.mtime(path) > 900) then
-					luci.sys.exec(get_info)
-				end
-			end
-		end
-		info = fs.readfile(path)
-		if info then
-			info = json.parse(info)
-		end
-		if info and info.ret == 200 and info.data then
-			return info.data
-		elseif info and info.msg and info.msg ~= "api error, ignore" then
-			luci.sys.exec(string.format("echo -e %s Dler Cloud Account Login Failed, The Error Info is【%s】 >> /tmp/openclash.log", os.date("%Y-%m-%d %H:%M:%S"), info.msg))
-			info.msg = "api error, ignore"
-			fs.writefile(path, json.stringify(info))
-		elseif info and info.msg and info.msg == "api error, ignore" then
-			return "error"
-		else
-			fs.unlink(path)
-			luci.sys.exec(string.format("echo -e %s Dler Cloud Account Login Failed! Please Check And Try Again... >> /tmp/openclash.log", os.date("%Y-%m-%d %H:%M:%S")))
-		end
-		return "error"
-	else
-		return "error"
-	end
-end
-
-local function dler_checkin()
-	local info
-	local path = "/tmp/dler_checkin"
-	local token = fs.uci_get_config("config", "dler_token")
-	local multiple = fs.uci_get_config("config", "dler_checkin_multiple") or 1
-	if token then
-		info = luci.sys.exec(string.format("curl -sL -H 'Content-Type: application/json' -d '{\"access_token\":\"%s\", \"multiple\":\"%s\"}' -X POST https://dler.cloud/api/v1/checkin", token, multiple))
-		if info then
-			info = json.parse(info)
-		end
-		if info and info.ret == 200 then
-			fs.unlink("/tmp/dler_info")
-			fs.writefile(path, info)
-			luci.sys.exec(string.format("echo -e %s Dler Cloud Checkin Successful, Result:【%s】 >> /tmp/openclash.log", os.date("%Y-%m-%d %H:%M:%S"), info.data.checkin))
-			return info
-		else
-			if info and info.msg then
-				luci.sys.exec(string.format("echo -e %s Dler Cloud Checkin Failed, Result:【%s】 >> /tmp/openclash.log", os.date("%Y-%m-%d %H:%M:%S"), info.msg))
-			else
-				luci.sys.exec(string.format("echo -e %s Dler Cloud Checkin Failed! Please Check And Try Again... >> /tmp/openclash.log",os.date("%Y-%m-%d %H:%M:%S")))
-			end
-			return info
-		end
-	else
-		return "error"
 	end
 end
 
@@ -1278,41 +1076,6 @@ function action_save_corever_branch()
 	})
 end
 
-function action_dler_login_info_save()
-	luci.http.prepare_content("application/json")
-	luci.http.write_json({
-		dler_login_info_save = dler_login_info_save();
-	})
-end
-
-function action_dler_info()
-	luci.http.prepare_content("application/json")
-	luci.http.write_json({
-		dler_info = dler_info();
-	})
-end
-
-function action_dler_checkin()
-	luci.http.prepare_content("application/json")
-	luci.http.write_json({
-		dler_checkin = dler_checkin();
-	})
-end
-
-function action_dler_logout()
-	luci.http.prepare_content("application/json")
-	luci.http.write_json({
-		dler_logout = dler_logout();
-	})
-end
-
-function action_dler_login()
-	luci.http.prepare_content("application/json")
-	luci.http.write_json({
-		dler_login = dler_login();
-	})
-end
-
 function action_one_key_update_check()
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
@@ -1884,13 +1647,6 @@ function rename_file()
 				end
 			end)
 			
-			uci:foreach("openclash", "other_rules",
-			function(s)
-				if s.config == old_file_name and fs.filename(new_file_name) ~= new_file_name then
-					uci:set("openclash", s[".name"], "config", new_file_name)
-				end
-			end)
-			
 			uci:foreach("openclash", "groups",
 			function(s)
 				if s.config == old_file_name and fs.filename(new_file_name) ~= new_file_name then
@@ -1905,28 +1661,7 @@ function rename_file()
 				end
 			end)
 			
-			uci:foreach("openclash", "rule_provider_config",
-			function(s)
-				if s.config == old_file_name and fs.filename(new_file_name) ~= new_file_name then
-					uci:set("openclash", s[".name"], "config", new_file_name)
-				end
-			end)
-			
 			uci:foreach("openclash", "servers",
-			function(s)
-				if s.config == old_file_name and fs.filename(new_file_name) ~= new_file_name then
-					uci:set("openclash", s[".name"], "config", new_file_name)
-				end
-			end)
-			
-			uci:foreach("openclash", "game_config",
-			function(s)
-				if s.config == old_file_name and fs.filename(new_file_name) ~= new_file_name then
-					uci:set("openclash", s[".name"], "config", new_file_name)
-				end
-			end)
-			
-			uci:foreach("openclash", "rule_providers",
 			function(s)
 				if s.config == old_file_name and fs.filename(new_file_name) ~= new_file_name then
 					uci:set("openclash", s[".name"], "config", new_file_name)
@@ -3629,7 +3364,7 @@ function action_add_subscription()
 	local address = luci.http.formvalue("address")
 	local sub_ua = luci.http.formvalue("sub_ua") or "clash.meta"
 	local sub_convert = luci.http.formvalue("sub_convert") or "0"
-	local convert_address = luci.http.formvalue("convert_address") or "https://api.dler.io/sub"
+	local convert_address = luci.http.formvalue("convert_address") or ""
 	local template = luci.http.formvalue("template") or ""
 	local emoji = luci.http.formvalue("emoji") or "false"
 	local udp = luci.http.formvalue("udp") or "false"

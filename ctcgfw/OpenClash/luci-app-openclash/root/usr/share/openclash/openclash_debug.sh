@@ -27,7 +27,6 @@ set_lock
 DEBUG_LOG="/tmp/openclash_debug.log"
 LOGTIME=$(echo $(date "+%Y-%m-%d %H:%M:%S"))
 enable_custom_dns=$(uci_get_config "enable_custom_dns")
-rule_source=$(uci_get_config "rule_source")
 enable_custom_clash_rules=$(uci_get_config "enable_custom_clash_rules") 
 ipv6_enable=$(uci_get_config "ipv6_enable")
 ipv6_dns=$(uci_get_config "ipv6_dns")
@@ -47,8 +46,6 @@ elif [ -x "/usr/bin/apk" ]; then
    cpu_model=$(apk list libc 2>/dev/null|awk '{print $2}')
 fi
 core_meta_version=$(/etc/openclash/core/clash_meta -v 2>/dev/null |awk -F ' ' '{print $3}' |head -1 2>/dev/null)
-servers_update=$(uci_get_config "servers_update")
-mix_proxies=$(uci_get_config "mix_proxies")
 op_version=$(ipk_v "luci-app-openclash")
 china_ip_route=$(uci_get_config "china_ip_route")
 common_ports=$(uci_get_config "common_ports")
@@ -239,15 +236,6 @@ IPV6-DNS解析: $(ts_cf "$ipv6_dns")
 绕过中国大陆IP: $(ts_cf "$china_ip_route")
 路由本机代理: $(ts_cf "$router_self_proxy")
 
-#启动异常时建议关闭此项后重试
-混合节点: $(ts_cf "$mix_proxies")
-保留配置: $(ts_cf "$servers_update")
-EOF
-
-cat >> "$DEBUG_LOG" <<-EOF
-
-#启动异常时建议关闭此项后重试
-第三方规则: $(ts_cf "$rule_source")
 EOF
 
 cat >> "$DEBUG_LOG" <<-EOF

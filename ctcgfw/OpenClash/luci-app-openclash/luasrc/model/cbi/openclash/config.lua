@@ -151,7 +151,6 @@ HTTP.setfilehandler(
 				fs.unlink(backup_dir .. meta.file)
 				um.value = translate("Backup File Restore Successful!")
 			end
-			fs.unlink("/tmp/Proxy_Group")
 		end
 	end
 )
@@ -192,22 +191,27 @@ st.template="openclash/cfg_check"
 sb.template="openclash/sub_info_show"
 
 btnis=tb:option(Button,"switch",translate("SwiTch"))
-btnis.template="openclash/other_button"
 btnis.render=function(o,t,a)
-if not e[t] then return false end
-if IsYamlFile(e[t].name) or IsYmlFile(e[t].name) then
-a.display=""
-else
-a.display="none"
-end
-o.inputstyle="apply"
-Button.render(o,t,a)
+	if not e[t] then return false end
+	if IsYamlFile(e[t].name) or IsYmlFile(e[t].name) then
+		a.display=""
+	else
+		a.display="none"
+	end
+	o.inputstyle="apply"
+	Button.render(o,t,a)
 end
 btnis.write=function(a,t)
-fs.unlink("/tmp/Proxy_Group")
-uci:set("openclash", "config", "config_path", "/etc/openclash/config/"..e[t].name)
-uci:commit("openclash")
-HTTP.redirect(luci.dispatcher.build_url("admin", "services", "openclash", "config"))
+	uci:set("openclash", "config", "config_path", "/etc/openclash/config/"..e[t].name)
+	uci:commit("openclash")
+	HTTP.redirect(luci.dispatcher.build_url("admin", "services", "openclash", "config"))
+end
+
+btned=tb:option(Button,"edit",translate("Edit"))
+btned.inputstyle="apply"
+btned.write=function(a,t)
+	local file_path = "etc/openclash/config/" .. fs.basename(e[t].name)
+	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "other-file-edit", "config", "%s") % file_path)
 end
 
 btnrn=tb:option(DummyValue,"/etc/openclash/config/",translate("Rename"))
@@ -224,9 +228,9 @@ actions.render = function(self, t, a)
 	if not e[t] then return end
 	self.keylist = {}
 	self.vallist = {}
-	-- Edit
-	table.insert(self.keylist, "edit")
-	table.insert(self.vallist, translate("Edit"))
+	-- Servers manage
+	table.insert(self.keylist, "servers_manage")
+	table.insert(self.vallist, translate("Servers Manage"))
 
 	-- Copy
 	if IsYamlFile(e[t].name) or IsYmlFile(e[t].name) then
@@ -257,9 +261,9 @@ btnapply.write = function(self, t)
 	if not e[t] then return end
 	local action = self.map:formvalue("cbid." .. self.map.config .. "." .. t .. ".actions")
 
-	if action == "edit" then
+	if action == "servers_manage" then
 		local file_path = "etc/openclash/config/" .. fs.basename(e[t].name)
-		HTTP.redirect(DISP.build_url("admin", "services", "openclash", "other-file-edit", "config", "%s") % file_path)
+		HTTP.redirect(DISP.build_url("admin", "services", "openclash", "servers", "%s") % file_path)
 	elseif action == "copy" then
 		local num = 1
 		while true do
@@ -311,7 +315,6 @@ btnapply.write = function(self, t)
 		fd:close()
 		HTTP.close()
 	elseif action == "remove" then
-		fs.unlink("/tmp/Proxy_Group")
 		fs.unlink("/etc/openclash/history/"..fs.filename(e[t].name)..".db")
 		fs.unlink("/etc/openclash/"..fs.basename(e[t].name))
 		local a=fs.unlink("/etc/openclash/config/"..fs.basename(e[t].name))
@@ -326,7 +329,7 @@ p.reset = false
 p.submit = false
 
 local provider_manage = {
-	{proxy_mg, rule_mg, game_mg}
+	{proxy_mg, rule_mg}
 }
 
 promg = p:section(Table, provider_manage)
@@ -343,13 +346,6 @@ o.inputtitle = translate("Rule Providers File List")
 o.inputstyle = "reload"
 o.write = function()
 	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "rule-providers-file-manage"))
-end
-
-o = promg:option(Button, "game_mg", " ")
-o.inputtitle = translate("Game Rules File List")
-o.inputstyle = "reload"
-o.write = function()
-	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "game-rules-file-manage"))
 end
 
 m = SimpleForm("openclash",translate("Config File Edit"))
@@ -414,7 +410,6 @@ o = a:option(Button, "Commit", " ")
 o.inputtitle = translate("Commit Settings")
 o.inputstyle = "apply"
 o.write = function()
-	fs.unlink("/tmp/Proxy_Group")
 	uci:commit("openclash")
 end
 
@@ -427,7 +422,6 @@ o = a:option(Button, "Apply", " ")
 o.inputtitle = translate("Apply Settings")
 o.inputstyle = "apply"
 o.write = function()
-	fs.unlink("/tmp/Proxy_Group")
 	uci:set("openclash", "config", "enable", 1)
 	uci:commit("openclash")
 	SYS.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")

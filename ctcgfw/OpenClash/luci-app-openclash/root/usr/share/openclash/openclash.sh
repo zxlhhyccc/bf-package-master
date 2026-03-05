@@ -23,7 +23,6 @@ LOGTIME=$(echo $(date "+%Y-%m-%d %H:%M:%S"))
 LOG_FILE="/tmp/openclash.log"
 CRON_FILE="/etc/crontabs/root"
 CONFIG_PATH=$(uci_get_config "config_path")
-servers_update=$(uci_get_config "servers_update")
 router_self_proxy=$(uci_get_config "router_self_proxy" || echo 1)
 FW4=$(command -v fw4)
 CLASH="/etc/openclash/clash"
@@ -71,17 +70,12 @@ config_test()
 config_download()
 {
 LOG_OUT "Tip: Config File【$name】Downloading User-Agent【$sub_ua】..."
-if [ -n "$subscribe_url_param" ]; then
-   if [ -n "$c_address" ]; then
-      LOG_INFO "Tip: Config File【$name】Downloading URL【$c_address$subscribe_url_param】..."
-      DOWNLOAD_URL="${c_address}${subscribe_url_param}"
-      DOWNLOAD_PARAM="$sub_ua"
-   else
-      LOG_INFO "Tip: Config File【$name】Downloading URL【https://api.dler.io/sub$subscribe_url_param】..."
-      DOWNLOAD_URL="https://api.dler.io/sub${subscribe_url_param}"
-      DOWNLOAD_PARAM="$sub_ua"
-   fi
-else
+if [ -n "$subscribe_url_param" ] && [ -n "$c_address" ]; then
+   LOG_INFO "Tip: Config File【$name】Downloading URL【$c_address$subscribe_url_param】..."
+   DOWNLOAD_URL="${c_address}${subscribe_url_param}"
+   DOWNLOAD_PARAM="$sub_ua"
+fi
+if [ -z "$DOWNLOAD_URL" ]; then
    LOG_INFO "Tip: Config File【$name】Downloading URL【$subscribe_url】..."
    DOWNLOAD_URL="${subscribe_url}"
    DOWNLOAD_PARAM="$sub_ua"
@@ -169,21 +163,6 @@ config_cus_up()
 	      end" 2>/dev/null >> $LOG_FILE
 	   fi
    fi
-   if [ "$servers_update" -eq 1 ]; then
-      LOG_OUT "Config File【$name】Start to Reserving..."
-      uci -q set openclash.config.config_update_path=${CFG_FILE}
-      uci -q set openclash.config.servers_if_update=1
-      uci commit openclash
-      /usr/share/openclash/yml_groups_get.sh
-      uci -q set openclash.config.servers_if_update=1
-      uci commit openclash
-      /usr/share/openclash/yml_groups_set.sh
-   fi
-   if [ "$CONFIG_FILE" == "$CONFIG_PATH" ]; then
-      restart=1
-   fi
-
-   rm -rf /tmp/Proxy_Group 2>/dev/null
 }
 
 config_su_check()
@@ -191,29 +170,9 @@ config_su_check()
    LOG_OUT "Config File Test Successful, Check If There is Any Update..."
    sed -i 's/!<str> /!!str /g' "$CFG_FILE" >/dev/null 2>&1
    if [ -f "$CONFIG_FILE" ]; then
-      #保留规则部分
-      if [ "$servers_update" -eq 1 ] && [ "$only_download" -eq 0 ]; then
-            ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
-            Value = YAML.load_file('$CONFIG_FILE');
-            Value_1 = YAML.load_file('$CFG_FILE');
-            if Value.key?('rules') or Value.key?('script') or Value.key?('rule-providers') then
-               if Value.key?('rules') then
-                  Value_1['rules'] = Value['rules']
-               end;
-               if Value.key?('script') then
-                  Value_1['script'] = Value['script']
-               end;
-               if Value.key?('rule-providers') then
-                  Value_1['rule-providers'] = Value['rule-providers']
-               end;
-               File.open('$CFG_FILE','w') {|f| YAML.dump(Value_1, f)};
-            end;
-         " 2>/dev/null
-      fi
       if [ "$only_download" -eq 0 ]; then
          config_cus_up
       fi
-
       cmp -s "$CONFIG_FILE" "$CFG_FILE"
       if [ "$?" -ne 0 ]; then
          LOG_OUT "Config File【$name】Are Updates, Start Replacing..."
@@ -222,6 +181,7 @@ config_su_check()
       else
          LOG_OUT "Config File【$name】No Change, Do Nothing!"
          rm -rf "$CFG_FILE"
+         return
       fi
    else
       LOG_OUT "Config File【$name】Download Successful, Start To Create..."
@@ -231,15 +191,15 @@ config_su_check()
       mv "$CFG_FILE" "$CONFIG_FILE" 2>/dev/null
       LOG_OUT "Config File【$name】Update Successful!"
    fi
-   SLOG_CLEAN
+   if [ "$CONFIG_FILE" == "$CONFIG_PATH" ]; then
+      restart=1
+   fi
 }
 
 config_error()
 {
    LOG_OUT "Error:【$name】Update Error, Please Try Again Later..."
    rm -rf "$CFG_FILE" 2>/dev/null
-   SLOG_CLEAN
-   return 1
 }
 
 change_dns()
@@ -310,24 +270,24 @@ server_key_match()
 	local key_match key_word
 	 
    if [ -n "$(echo "$1" |grep "^ \{0,\}$")" ] || [ -n "$(echo "$1" |grep "^\t\{0,\}$")" ]; then
-	    return
+	   return
    fi
 	 
    if [ -n "$(echo "$1" |grep "&")" ]; then
       key_word=$(echo "$1" |sed 's/&/ /g')
-	    for k in $key_word
-	    do
-	       if [ -z "$k" ]; then
-	          continue
-	       fi
-	       k="(?=.*$k)"
-	       key_match="$key_match$k"
-	    done
-	    key_match="^($key_match).*"
+      for k in $key_word
+      do
+         if [ -z "$k" ]; then
+            continue
+         fi
+         k="(?=.*$k)"
+         key_match="$key_match$k"
+      done
+      key_match="^($key_match).*"
    else
-	    if [ -n "$1" ]; then
-	       key_match="($1)"
-	    fi
+      if [ -n "$1" ]; then
+         key_match="($1)"
+      fi
    fi
 
    if [ "$2" = "keyword" ]; then
@@ -460,7 +420,6 @@ sub_info_get()
    if [ "${PIPESTATUS[0]}" -eq 0 ] && [ -s "$CFG_FILE" ]; then
       #prevent ruby unexpected error
       sed -i -E 's/protocol-param: ([^,'"'"'"''}( *#)\n\r]+)/protocol-param: "\1"/g' "$CFG_FILE" 2>/dev/null
-      sed -i '/^ \{0,\}enhanced-mode:/d' "$CFG_FILE" >/dev/null 2>&1
       config_test
       if [ $? -ne 0 ]; then
          LOG_OUT "Error: Config File Tested Faild, Please Check The Log Infos!"
@@ -498,8 +457,6 @@ sub_info_get()
 #分别获取订阅信息进行处理
 config_load "openclash"
 config_foreach sub_info_get "config_subscribe" "$1"
-uci -q delete openclash.config.config_update_path
-uci commit openclash
-
+SLOG_CLEAN
 dec_job_counter_and_restart "$restart"
 del_lock

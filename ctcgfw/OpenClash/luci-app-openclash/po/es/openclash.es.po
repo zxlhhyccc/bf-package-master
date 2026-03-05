@@ -5,8 +5,8 @@
 msgid "OpenClash"
 msgstr "OpenClash"
 
-msgid "A Clash Client For OpenWrt"
-msgstr "Un cliente Clash para OpenWrt compatible con Shadowsocks(R), Vmess, Trojan, Snell y otros protocolos, que permite el enrutamiento flexible por reglas."
+msgid "A Mihomo(Clash) Client For OpenWrt"
+msgstr "Un cliente Mihomo(Clash) para OpenWrt compatible con Shadowsocks(R), Vmess, Trojan, Snell y otros protocolos, que permite el enrutamiento flexible por reglas."
 
 msgid "Plugin Settings"
 msgstr "Ajustes del plugin"
@@ -19,18 +19,6 @@ msgstr "Resumen"
 
 msgid "Overwrite Settings"
 msgstr "Sobrescribir ajustes"
-
-msgid "Rule Providers Append"
-msgstr "Añadir proveedores de reglas"
-
-msgid "Game Rules Append"
-msgstr "Añadir reglas de juegos"
-
-msgid "Other Rule Providers Append"
-msgstr "Añadir otros proveedores de reglas"
-
-msgid "Custom Rule Providers Append"
-msgstr "Añadir proveedores de reglas personalizados"
 
 msgid "General Settings"
 msgstr "Ajustes generales"
@@ -287,8 +275,8 @@ msgstr "Permitir resolución DNS IPv6"
 msgid "Enable to Resolve IPv6 DNS Requests"
 msgstr "Permite procesar peticiones DNS de tipo IPv6"
 
-msgid "Rules Setting"
-msgstr "Ajustes de reglas"
+msgid "Common Setting"
+msgstr "Configuración común"
 
 msgid "Config Manage"
 msgstr "Gestión de configuraciones"
@@ -470,21 +458,6 @@ msgstr "Actualizar lista Chnroute"
 msgid "Chnroute Update"
 msgstr "Actualización de Chnroute"
 
-msgid "Other Rules Update(Only in Use)"
-msgstr "Actualización de reglas de terceros (solo si se están usando)"
-
-msgid "Enable Other Rules"
-msgstr "Habilitar reglas de terceros"
-
-msgid "Use Other Rules"
-msgstr "Sobrescribe las reglas del archivo de configuración (excepto personalizadas). Debes crear antes la configuración más abajo."
-
-msgid "lhie1 Rules"
-msgstr "Reglas lhie1"
-
-msgid "Auto Update Other Rules"
-msgstr "La actualización automática solo funciona si se están usando reglas de terceros"
-
 msgid "Update Time (Every Week)"
 msgstr "Hora de actualización (cada semana)"
 
@@ -512,33 +485,6 @@ msgstr "Cada sábado"
 msgid "Every Sunday"
 msgstr "Cada domingo"
 
-msgid "Update Other Rules"
-msgstr "Actualizar reglas de terceros"
-
-msgid "GlobalTV"
-msgstr "Streaming internacional"
-
-msgid "AsianTV"
-msgstr "Streaming asiático"
-
-msgid "CN Mainland TV"
-msgstr "Streaming de China continental"
-
-msgid "Proxy"
-msgstr "Tráfico que debe ir por proxy"
-
-msgid "Apple"
-msgstr "Servicios de Apple"
-
-msgid "Google FCM"
-msgstr "Google FCM (notificaciones)"
-
-msgid "Scholar"
-msgstr "Sitios académicos"
-
-msgid "Microsoft"
-msgstr "Servicios de Microsoft"
-
 msgid "Netflix"
 msgstr "Netflix"
 
@@ -550,27 +496,6 @@ msgstr "Bilibili"
 
 msgid "Bahamut"
 msgstr "Bahamut"
-
-msgid "Steam"
-msgstr "Steam (no incluye descargas)"
-
-msgid "Netease Music"
-msgstr "Netease Music"
-
-msgid "Speedtest"
-msgstr "Speedtest (tráfico de prueba)"
-
-msgid "AdBlock"
-msgstr "Publicidad (AdBlock)"
-
-msgid "Domestic"
-msgstr "Tráfico doméstico"
-
-msgid "Others"
-msgstr "Tráfico no coincidente con reglas"
-
-msgid "Choose Proxy Groups, Base On Your Config File"
-msgstr "Selecciona los grupos de proxy para cada categoría; los grupos se toman de tu archivo de configuración"
 
 msgid "Custom Clash Rules"
 msgstr "Reglas personalizadas"
@@ -632,8 +557,8 @@ msgstr "Actualizar OpenClash"
 msgid "Only For IPK Install Type Or Not Release Memory"
 msgstr "Solo se puede actualizar si se instaló mediante IPK; las versiones compiladas en el sistema no liberarán espacio tras actualizar."
 
-msgid "Onekey Create"
-msgstr "Generar con un clic"
+msgid "Servers Manage"
+msgstr "Gestionar servidores"
 
 msgid "Read Config"
 msgstr "Leer configuración"
@@ -656,35 +581,8 @@ msgstr "Volver al resumen"
 msgid "Refresh Page"
 msgstr "Actualizar página"
 
-msgid "Onekey Create (Servers&Groups manage)"
-msgstr "Generación con un clic (gestión de nodos y grupos)"
-
-msgid "Keep Settings"
-msgstr "Conservar ajustes"
-
-msgid "Only Update Servers Below When Subscription"
-msgstr "Al suscribir, solo actualizar nodos y proveedores; mantener grupos sin modificar su orden."
-
-msgid "New Servers Group (Support Regex)"
-msgstr "Grupo predeterminado para nuevos nodos (soporta expresiones regulares)"
-
-msgid "Set The New Subscribe Server's Default Proxy Groups"
-msgstr "Selecciona los grupos predeterminados para los nuevos nodos suscritos (sin duplicados)"
-
-msgid "Choose Template For Create Config"
-msgstr "Selecciona la plantilla para generar la configuración"
-
-msgid "Use Other Rules To Create Config"
-msgstr "Crear configuración usando reglas de terceros (luego podrás ajustar parámetros en Ajustes globales)"
-
-msgid "Disable Create Config"
-msgstr "Solo actualizar nodos de la configuración"
-
-msgid "Mix Proxies"
-msgstr "Mezclar nodos"
-
-msgid "Mix This Page's Proxies"
-msgstr "Al generar la configuración, mezclar todos los servidores listados en esta página (sin importar el archivo original)"
+msgid "Servers & Groups manage"
+msgstr "Gestión de nodos y grupos"
 
 msgid "Type"
 msgstr "Tipo"
@@ -749,14 +647,8 @@ msgstr "Contraseña de autenticación"
 msgid "None"
 msgstr "Sin configuración"
 
-msgid "Create Config"
-msgstr "Generar archivo de configuración"
-
-msgid "Create Config By One-Click Only Need Proxies"
-msgstr "La generación con un clic solo requiere nodos o proveedores configurados"
-
-msgid "Proxy Groups(No Need Set when Config Create)"
-msgstr "Grupos de proxy (no es necesario configurarlos al generar con un clic)"
+msgid "Proxy Groups"
+msgstr "Grupos de proxy"
 
 msgid "Proxies"
 msgstr "Configuración de nodos"
@@ -802,51 +694,6 @@ msgstr "Tamaño inicial de la ventana de recepción de conexión QUIC"
 
 msgid "QUIC max connection receive window"
 msgstr "Tamaño máximo de la ventana de recepción de conexión QUIC"
-
-msgid "Edit Rule Providers"
-msgstr "Editar proveedores de reglas"
-
-msgid "Rule Providers Type"
-msgstr "Tipo de proveedor de reglas"
-
-msgid "Choose The Rule Providers Type"
-msgstr "Selecciona el tipo de proveedor de reglas"
-
-msgid "Append Position"
-msgstr "Orden de coincidencia"
-
-msgid "Priority Match"
-msgstr "Prioritario (sobrescribe)"
-
-msgid "Extended Match"
-msgstr "Extendido (complementario)"
-
-msgid "Rule Providers Name"
-msgstr "Alias del proveedor (no duplicar)"
-
-msgid "Rule Behavior"
-msgstr "Tipo de regla"
-
-msgid "Rule Format"
-msgstr "Formato de regla"
-
-msgid "Choose The Rule Behavior"
-msgstr "Selecciona el tipo de regla"
-
-msgid "Choose The Rule File Format, For More Info:"
-msgstr "Selecciona el formato del archivo de reglas. Más información en:"
-
-msgid "Rule Providers Path"
-msgstr "Ruta del proveedor de reglas"
-
-msgid "Update Your Rule Providers File From Config Luci Page"
-msgstr "Primero sube aquí tus archivos de proveedores de reglas en la página de gestión de configuración"
-
-msgid "Rule Providers URL"
-msgstr "URL del proveedor de reglas"
-
-msgid "Rule Providers Interval(s)"
-msgstr "Intervalo de actualización (segundos)"
 
 msgid "Edit Group"
 msgstr "Editar grupo"
@@ -902,8 +749,8 @@ msgstr "Grupo de proxy (compatible con expresiones regulares)"
 msgid "Set Proxy Group"
 msgstr "Asignar grupo de proxy"
 
-msgid "No Need Set when Config Create, The added Proxy Groups Must Exist"
-msgstr "No es necesario configurarlo al generar la configuración; los grupos añadidos deben existir previamente."
+msgid "The added Proxy Groups Must Exist"
+msgstr "Los grupos añadidos deben existir previamente."
 
 msgid "The added Dialer Proxy or Group Must Exist"
 msgstr "El proxy de marcación o grupo añadido debe existir"
@@ -1003,48 +850,6 @@ msgstr "URL de comprobación de estado"
 
 msgid "Health Check Interval(s)"
 msgstr "Intervalo de comprobación (s)"
-
-msgid "Game Rule's Name"
-msgstr "Nombre de regla de juego"
-
-msgid "Rule Provider's Name"
-msgstr "Nombre del proveedor de reglas (sin duplicados)"
-
-msgid "Select Proxy Group"
-msgstr "Seleccionar grupo de proxy"
-
-msgid "Game Rules List"
-msgstr "Lista de reglas de juegos"
-
-msgid "Rule Name"
-msgstr "Nombre de la regla"
-
-msgid "Rule Type"
-msgstr "Tipo de regla"
-
-msgid "Rule Author"
-msgstr "Autor de la regla"
-
-msgid "Download Rule"
-msgstr "Descargar regla"
-
-msgid "Exist"
-msgstr "Descargado"
-
-msgid "Not Exist"
-msgstr "No descargado"
-
-msgid "Serial Number"
-msgstr "Número de serie"
-
-msgid "Game Rules Manage"
-msgstr "Gestionar reglas de juegos de terceros"
-
-msgid "Other Rule Provider Manage"
-msgstr "Gestionar proveedores de reglas de terceros"
-
-msgid "Other Rule Providers List"
-msgstr "Lista de proveedores de reglas de terceros"
 
 msgid "Proxy UDP Traffics"
 msgstr "Proxy para tráfico UDP"
@@ -1511,18 +1316,6 @@ msgstr "(Todos los países con datos completos oficiales)"
 msgid "(Only CN)"
 msgstr "(Solo datos de China)"
 
-msgid "Other Rules Edit"
-msgstr "Edición de reglas de terceros"
-
-msgid "Get Group Names"
-msgstr "Obtener nombres de grupos"
-
-msgid "Get Group Names After Select Config File"
-msgstr "Selecciona un archivo de configuración y luego pulsa para obtener sus grupos"
-
-msgid "Other Rules Name"
-msgstr "Nombre de regla de terceros"
-
 msgid "Note"
 msgstr "Nota"
 
@@ -1694,15 +1487,6 @@ msgstr "Advertencia: no se ha seleccionado ninguna versión compilada; selecció
 msgid "Core Has Not Been Updated, Stop Continuing Operation!"
 msgstr "El núcleo no ha sido actualizado; proceso detenido."
 
-msgid "Start Downloading Third Party Rules in Use..."
-msgstr "Iniciando descarga de reglas de terceros en uso..."
-
-msgid "Warning: Multiple Other-Rules-Configurations Enabled, Ignore..."
-msgstr "Advertencia: múltiples configuraciones de reglas detectadas; ignorando duplicadas..."
-
-msgid "Download Successful, Start Preprocessing Rule File..."
-msgstr "Descarga correcta; iniciando preprocesamiento del archivo de reglas..."
-
 msgid "Error:"
 msgstr "Error:"
 
@@ -1712,32 +1496,8 @@ msgstr "Consejo:"
 msgid "Warning:"
 msgstr "Advertencia:"
 
-msgid "Rule File Format Validation Failed, Please Try Again Later..."
-msgstr "Validación del archivo de reglas fallida; inténtalo más tarde."
-
-msgid "Error: Updated Others Rules"
-msgstr "Error: archivo de reglas actualizado"
-
-msgid "Has No Rules Field, Update Exit..."
-msgstr "El archivo carece de sección de reglas; actualización detenida."
-
-msgid "Has Incompatible Proxy-Group, Update Exit, Please Wait For OpenClash Update To Adapt..."
-msgstr "El archivo contiene grupos no compatibles; espera a una actualización de OpenClash."
-
-msgid "Check The Downloaded Rule File For Updates..."
-msgstr "Comprobando si el archivo de reglas contiene actualizaciones..."
-
-msgid "Detected that The Downloaded Rule File Has Been Updated, Starting To Replace..."
-msgstr "Se detectaron actualizaciones; iniciando reemplazo..."
-
-msgid "Other Rules"
-msgstr "Reglas de terceros"
-
 msgid "Update Successful!"
 msgstr "¡Actualización completada!"
-
-msgid "Updated Other Rules"
-msgstr "Reglas actualizadas"
 
 msgid "No Change, Do Nothing!"
 msgstr "Sin cambios; operación detenida."
@@ -1745,17 +1505,8 @@ msgstr "Sin cambios; operación detenida."
 msgid "Update Error, Please Try Again Later..."
 msgstr "Error al actualizar; inténtalo más tarde."
 
-msgid "Other Rules Not Enable, Update Stop!"
-msgstr "Las reglas de terceros no están habilitadas; operación detenida."
-
-msgid "Get Other Rules Settings Faild, Update Stop!"
-msgstr "No se encontró configuración de reglas de terceros; operación detenida."
-
 msgid "Start Picking Nodes..."
 msgstr "iniciando selección de nodos..."
-
-msgid "Start to Reserving..."
-msgstr "aplicando configuraciones reservadas..."
 
 msgid "Config File Test Successful, Check If There is Any Update..."
 msgstr "Archivo de configuración válido; comprobando cambios..."
@@ -1946,8 +1697,8 @@ msgstr "nodo hacia el archivo de configuración..."
 msgid "Proxy-provider To Config File..."
 msgstr "proveedor de proxy hacia el archivo de configuración..."
 
-msgid "Unable To Parse, Please Choose One-key Function To Create Config File..."
-msgstr "Error de lectura: usa la función de creación con un clic para generar el archivo de configuración."
+msgid "Unable To Parse..."
+msgstr "Error de lectura..."
 
 msgid "Setting Secondary DNS Server List..."
 msgstr "Configurando la lista de DNS secundarios..."
@@ -1967,20 +1718,8 @@ msgstr "Lectura completada."
 msgid "Write Successful!"
 msgstr "Escritura completada."
 
-msgid "Creating By Using lhie1 Rules..."
-msgstr "Creando usando las reglas lhie1..."
-
-msgid "Created Successful, Updating Proxies, Proxy-providers, Groups..."
-msgstr "Creación completada; actualizando nodos, proveedores y grupos..."
-
 msgid "Proxies, Proxy-providers, Groups Edited Successful, Updating Config File"
 msgstr "Edición completada; actualizando archivo de configuración..."
-
-msgid "Warning: Because of The Different Porxy-Group's Name, Stop Setting The Other Rules!"
-msgstr "Advertencia: los nombres de los grupos no coinciden; se detiene la aplicación de reglas de terceros."
-
-msgid "Error: Missing Porxy-Group's Name, Stop Setting The Other Rules!"
-msgstr "Error: faltan grupos requeridos por las reglas de terceros; operación detenida."
 
 msgid "Tip: Detected That The nameserver DNS Option Has No Server Set, Starting To Complete..."
 msgstr "Consejo: detectado Nameserver sin servidores configurados; completando automáticamente..."
@@ -2123,27 +1862,6 @@ msgstr "Tolerancia del grupo URL-Test"
 msgid "Attention:"
 msgstr "Atención:"
 
-msgid "The game proxy is a test function and does not guarantee the availability of rules"
-msgstr "El proxy de juegos es experimental y no garantiza que las reglas funcionen."
-
-msgid "Preparation steps:"
-msgstr "Pasos previos:"
-
-msgid "1. Check the policy group and node you are going to use, Policy group type suggestion: fallback, game nodes must be support UDP and not a Vmess"
-msgstr "1. Comprueba el grupo y nodo que usarás. Recomendado: grupo tipo FallBack; el nodo debe soportar UDP y no ser Vmess."
-
-msgid "2. Click the <manage third party game rules> or <manage third party rule set> button to enter the rule list and download the rules you want to use"
-msgstr "2. Entra en «Gestionar reglas de juegos» o «Gestionar reglas de terceros» y descarga las reglas necesarias."
-
-msgid "3. On this page, set the corresponding configuration file and policy group of the rule you have downloaded, and save the settings"
-msgstr "3. Configura aquí el archivo y grupo correspondiente a la regla descargada, y guarda los ajustes."
-
-msgid "When setting this page, if the groups is empty, please go to the <Onekey Create> page to add"
-msgstr "Si no aparecen grupos, ve a «Crear con un clic» para añadirlos."
-
-msgid "Introduction to rule set usage:"
-msgstr "Introducción al uso de conjuntos de reglas:"
-
 msgid "Introduction to proxy usage:"
 msgstr "Introducción al uso de nodos proxy:"
 
@@ -2171,81 +1889,6 @@ msgstr "Error: Fallback-Filter solo funciona con Fallback DNS configurado; ignor
 msgid "Error: Unable To Parse Custom Fallback-Filter File, Ignore..."
 msgstr "Error: no se pudo leer el archivo Fallback-Filter; ignorado."
 
-msgid "Simple & trustworthy"
-msgstr "Simple y confiable"
-
-msgid "Cross-platform Support"
-msgstr "Compatibilidad multiplataforma"
-
-msgid "Global Acceleration Network"
-msgstr "Red global de aceleración"
-
-msgid "Easy to Use"
-msgstr "Fácil de usar"
-
-msgid "Intelligent Shunting"
-msgstr "Desvío inteligente"
-
-msgid "Perfect Technical Support"
-msgstr "Soporte técnico completo"
-
-msgid "Plan Expiration Time"
-msgstr "Fecha de vencimiento"
-
-msgid "Account Balances"
-msgstr "Saldo de la cuenta"
-
-msgid "Aff Balances"
-msgstr "Saldo de afiliación"
-
-msgid "Account Integral"
-msgstr "Puntos de la cuenta"
-
-msgid "Today Used"
-msgstr "Uso de hoy"
-
-msgid "Plan Used"
-msgstr "Consumo del plan"
-
-msgid "Plan Unused"
-msgstr "Tráfico restante"
-
-msgid "Plan Traffic"
-msgstr "Tráfico del plan"
-
-msgid "Checkin"
-msgstr "Recompensa diaria"
-
-msgid "Dler Cloud Account Login Failed! Please Check And Try Again..."
-msgstr "Error al iniciar sesión en Dler Cloud. Revisa tus datos e inténtalo de nuevo..."
-
-msgid "Dler Cloud Account Login Failed, The Error Info is"
-msgstr "Error al iniciar sesión en Dler Cloud. Información del error:"
-
-msgid "Dler Cloud Checkin Failed! Please Check And Try Again..."
-msgstr "Fallo al realizar el check-in en Dler Cloud; inténtalo de nuevo más tarde."
-
-msgid "Account Email Address"
-msgstr "Correo de la cuenta"
-
-msgid "Account Password"
-msgstr "Contraseña"
-
-msgid "Checkin Interval (hour)"
-msgstr "Intervalo de check-in (horas)"
-
-msgid "Checkin Multiple"
-msgstr "Multiplicador de check-in"
-
-msgid "Multiple Must Be a Positive Integer and No More Than 100"
-msgstr "El multiplicador debe ser un entero positivo y no mayor que 100."
-
-msgid "Dler Cloud Checkin Successful, Result:"
-msgstr "Check-in de Dler Cloud realizado correctamente. Resultado:"
-
-msgid "Dler Cloud Checkin Failed, Result:"
-msgstr "Check-in de Dler Cloud fallido. Resultado:"
-
 msgid "Downloading Rule..."
 msgstr "Descargando regla..."
 
@@ -2255,62 +1898,8 @@ msgstr "Descarga fallida"
 msgid "Download Successful"
 msgstr "Descarga completada"
 
-msgid "Rule No Change"
-msgstr "La regla no ha cambiado"
-
 msgid "Download Timeout"
 msgstr "Tiempo de descarga agotado"
-
-msgid "Rule Project:"
-msgstr "Proyecto de reglas:"
-
-msgid "Login..."
-msgstr "Iniciando sesión..."
-
-msgid "Dler Cloud Login Successful"
-msgstr "Inicio de sesión en Dler Cloud correcto"
-
-msgid "Dler Cloud Login Faild"
-msgstr "Inicio de sesión en Dler Cloud fallido"
-
-msgid "Login Account"
-msgstr "Iniciar sesión"
-
-msgid "Dler Cloud Logout Successful"
-msgstr "Cierre de sesión en Dler Cloud correcto"
-
-msgid "Dler Cloud Logout Faild"
-msgstr "Cierre de sesión en Dler Cloud fallido"
-
-msgid "Logout Account"
-msgstr "Cerrar sesión"
-
-msgid "Account Login"
-msgstr "Inicio de sesión"
-
-msgid "Account logged in"
-msgstr "Sesión iniciada"
-
-msgid "Account not logged in"
-msgstr "Sesión no iniciada"
-
-msgid "Logout..."
-msgstr "Cerrando sesión..."
-
-msgid "Error Login Info"
-msgstr "Datos de acceso incorrectos"
-
-msgid "Warning: Proxy is no longer used. Auto replaced by proxies"
-msgstr "Advertencia: «Proxy» ya no se usa; reemplazado automáticamente por «proxies»."
-
-msgid "Warning: Proxy Group is no longer used. Auto replaced by proxy-groups"
-msgstr "Advertencia: «Proxy Group» ya no se usa; reemplazado por «proxy-groups»."
-
-msgid "Warning: Rule is no longer used. Auto replaced by rules"
-msgstr "Advertencia: «Rule» ya no se usa; reemplazado por «rules»."
-
-msgid "Warning: rule-provider is no longer used. Auto replaced by rule-providers"
-msgstr "Advertencia: «rule-provider» ya no se usa; reemplazado por «rule-providers»."
 
 msgid "Error: Load File Failed,"
 msgstr "Error: fallo al cargar el archivo,"
@@ -2342,32 +1931,17 @@ msgstr "Error: fallo al aplicar reglas personalizadas,"
 msgid "Error: Set BT/P2P DIRECT Rules Failed,"
 msgstr "Error: fallo al aplicar reglas DIRECT para BT/P2P,"
 
-msgid "Error: Set lhie1 Rules Failed,"
-msgstr "Error: fallo al aplicar reglas lhie1,"
-
 msgid "Error: Filter Proxies Failed,"
 msgstr "Error: fallo en el filtrado de nodos,"
 
 msgid "Error: Unable To Parse Config File,"
 msgstr "Error: no se pudo analizar el archivo de configuración,"
 
-msgid "Error: Unable To Parse Updated Rules File,"
-msgstr "Error: no se pudo analizar el archivo de reglas actualizado,"
-
 msgid "Error: Edit Provider Path Failed,"
 msgstr "Error: fallo al modificar la ruta del proveedor,"
 
 msgid "Error: Edit URL-Test Group Tolerance Option Failed,"
 msgstr "Error: fallo al modificar la tolerancia del grupo URL-Test,"
-
-msgid "Error: Game Proxy Merge Failed,"
-msgstr "Error: fallo al combinar reglas de juego,"
-
-msgid "Error: Rule Set Add Failed,"
-msgstr "Error: fallo al añadir reglas al Rule-Set,"
-
-msgid "Error: Custom Rule Provider Merge Failed,"
-msgstr "Error: fallo al combinar proveedores de reglas personalizados,"
 
 msgid "Error: Resolve Proxy-providers Failed,"
 msgstr "Error: fallo al analizar proveedores de proxy,"
@@ -2389,9 +1963,6 @@ msgstr "¡El cambio ha fallado!"
 
 msgid "Current Config File"
 msgstr "Archivo de configuración actual"
-
-msgid "Official Website"
-msgstr "Sitio oficial"
 
 msgid "Up"
 msgstr "Subida"
@@ -2846,6 +2417,9 @@ msgstr "El sniffer ayuda a evitar errores de proxy de dominios y fallos de secue
 msgid "Override All Dns Query"
 msgstr "Sobrescribir todas las consultas DNS"
 
+msgid "Rules Setting"
+msgstr "Ajustes de reglas"
+
 msgid "Meta Settings"
 msgstr "Ajustes Meta"
 
@@ -3116,12 +2690,6 @@ msgstr "1. Antes de editar el archivo de configuración, pulsa el botón inferio
 msgid "2. Proxy-providers address can be directly filled in the subscription link"
 msgstr "2. La dirección de un proveedor de proxy puede ser directamente un enlace de suscripción."
 
-msgid "Custom Tag"
-msgstr "Etiqueta personalizada"
-
-msgid "Mark as Custom Node to Prevent Retention config from being Deleted When Enabled"
-msgstr "Marcar como nodo personalizado para evitar que se elimine al usar configuración de retención."
-
 msgid "Error: Edit URL-Test URL Failed,"
 msgstr "Error: fallo al modificar la URL de URL-Test,"
 
@@ -3175,9 +2743,6 @@ msgstr "Configurar rango Fake-IP"
 
 msgid "IPv6 Settings"
 msgstr "Configuración IPv6"
-
-msgid "Custom Config Overwrite Scripts Which Will Run After Plugin Own Completely, Please Be Careful, The Wrong Changes May Lead to Exceptions"
-msgstr "Scripts de sobrescritura personalizados (se ejecutan tras las reglas internas). Usa con cuidado; cambios incorrectos pueden causar fallos."
 
 msgid "Custom Firewall Rules, Support IPv4 and IPv6, All Rules Will Be Added After Plugin Own Completely"
 msgstr "Reglas de firewall personalizadas (IPv4/IPv6). Se aplican tras las reglas internas del plugin."
@@ -3983,14 +3548,17 @@ msgstr "Introduce palabras clave para incluir nodos (una por línea)"
 msgid "Enter keywords to exclude nodes (one per line)"
 msgstr "Introduce palabras clave para excluir nodos (una por línea)"
 
-msgid "Expire Time"
-msgstr "Tiempo de expiración"
+msgid "Expire"
+msgstr "Expiración"
 
-msgid "Remaining Traffic"
-msgstr "Tráfico restante"
+msgid "Traffic"
+msgstr "Tráfico"
 
-msgid "TG Group"
-msgstr "Grupo TG"
+msgid "Plan"
+msgstr "Plan"
+
+msgid "Official"
+msgstr "oficial"
 
 msgid "Invalid subscription URL format. Support HTTP/HTTPS subscription URLs or protocol links, can be separated by newlines or |"
 msgstr "Formato de URL no válido. Se admiten direcciones HTTP/HTTPS o enlaces de protocolo, separados por saltos de línea o |"
@@ -4261,3 +3829,9 @@ msgstr "Interfaz"
 
 msgid "User"
 msgstr "Usuario"
+
+msgid "Serial Number"
+msgstr "Número de serie"
+
+msgid "Error: Set Custom Overwrite Script Failed,"
+msgstr "Error: fallo al ejecutar el script de sobrescritura personalizado,"

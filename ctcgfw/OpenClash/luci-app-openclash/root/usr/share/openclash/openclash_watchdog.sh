@@ -361,9 +361,6 @@ fi
       CFG_UPDATE_INT=$(expr "$CFG_UPDATE_INT" + 1)
    fi
 
-##Dler Cloud Checkin
-   /usr/share/openclash/openclash_dler_checkin.lua >/dev/null 2>&1
-
 ##STREAMING_UNLOCK_CHECK
    if [ "$stream_auto_select" -eq 1 ] && [ "$router_self_proxy" -eq 1 ]; then
       [ "$stream_auto_select_interval" -ne "$stream_auto_select_interval_now" ] && STREAM_AUTO_SELECT=1 && stream_auto_select_interval="$stream_auto_select_interval_now"

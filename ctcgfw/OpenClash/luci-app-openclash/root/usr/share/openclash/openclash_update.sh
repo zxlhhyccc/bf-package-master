@@ -297,9 +297,6 @@ install_missing_packages() {
    fi
 }
 
-uci -q set openclash.config.enable=0
-uci -q commit openclash
-
 install_retry_count=0
 max_install_retries=3
 install_success=false
@@ -347,9 +344,6 @@ if [ "$install_success" = true ]; then
       rm -rf /tmp/openclash.apk >/dev/null 2>&1
    fi
    LOG_OUT "Tip: OpenClash update successful, about to restart!"
-   uci -q set openclash.config.enable=1
-   uci -q commit openclash
-   /etc/init.d/openclash restart 2>/dev/null
 else
    if [ -x "/bin/opkg" ]; then
       LOG_OUT "Error: OpenClash update failed after 3 attempts, the file is saved in /tmp/openclash.ipk, please try to update manually with【opkg install /tmp/openclash.ipk】"
