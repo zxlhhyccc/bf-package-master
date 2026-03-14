@@ -386,8 +386,8 @@ end
 
 o = s:taboption("DNS", ListValue, "xray_dns_mode", translate("Remote DNS") .. " " .. translate("Request protocol"))
 o.default = "tcp"
-o:value("udp", "UDP")
 o:value("tcp", "TCP")
+o:value("udp", "UDP")
 o:value("tcp+doh", "TCP + DoH (" .. translate("A/AAAA type") .. ")")
 o:depends("dns_mode", "xray")
 o:depends("smartdns_dns_mode", "xray")
@@ -403,9 +403,10 @@ end
 
 o = s:taboption("DNS", ListValue, "singbox_dns_mode", translate("Remote DNS") .. " " .. translate("Request protocol"))
 o.default = "tcp"
-o:value("udp", "UDP")
 o:value("tcp", "TCP")
+o:value("udp", "UDP")
 o:value("doh", "DoH")
+o:value("http3", "HTTP3(DoH3)")
 o:depends("dns_mode", "sing-box")
 o:depends("smartdns_dns_mode", "sing-box")
 o.cfgvalue = function(self, section)
@@ -470,6 +471,7 @@ o:value("https://doh.libredns.gr/ads,116.202.176.26", "116.202.176.26 (LibreDNS-
 o.validate = doh_validate
 o:depends({xray_dns_mode = "tcp+doh"})
 o:depends({singbox_dns_mode = "doh"})
+o:depends({singbox_dns_mode = "http3"})
 
 o = s:taboption("DNS", Value, "remote_dns_client_ip", translate("EDNS Client Subnet"))
 o.description = translate("Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address).") .. "<br />" ..
@@ -497,7 +499,7 @@ o.validate = function(self, value, t)
 		end
 		local _tcp_node = s.fields["tcp_node"]:formvalue(t)
 		if _dns_mode and _tcp_node then
-			if m:get(_tcp_node, "type"):lower() ~= _dns_mode then
+			if (m:get(_tcp_node, "type") or ""):lower() ~= _dns_mode then
 				return nil, translatef("TCP node must be '%s' type to use FakeDNS.", _dns_mode)
 			end
 		end

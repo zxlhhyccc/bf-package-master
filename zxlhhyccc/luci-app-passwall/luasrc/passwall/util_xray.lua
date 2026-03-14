@@ -14,8 +14,7 @@ local function get_noise_packets()
 		local noise = (n.enabled == "1") and {
 			type = n.type,
 			packet = n.packet,
-			delay = string.find(n.delay, "-") and n.delay or tonumber(n.delay),
-			applyTo = n.applyTo
+			delay = string.find(n.delay, "-") and n.delay or tonumber(n.delay)
 		} or nil
 		table.insert(noises, noise)
 	end)
@@ -241,31 +240,21 @@ function gen_outbound(flag, node, tag, proxy_table)
 					path = node.xhttp_path or "/",
 					host = node.xhttp_host,
 					extra = (function()
-						local extra_tbl = {}
-						-- 解析 xhttp_extra 并做简单容错处理
+						local extra = {}
 						if node.xhttp_extra then
-							local success, parsed = pcall(jsonc.parse, api.base64Decode(node.xhttp_extra))
-							if success and parsed then
-								extra_tbl = parsed.extra or parsed
-								for k, v in pairs(extra_tbl) do
-									if (type(v) == "table" and next(v) == nil) or v == nil then
-										extra_tbl[k] = nil
-									end
-								end
+							local ok, parsed = pcall(jsonc.parse, api.base64Decode(node.xhttp_extra))
+							if ok and type(parsed) == "table" then
+								extra = parsed.extra or parsed
 							end
 						end
 						-- 处理 User-Agent
 						if node.user_agent and node.user_agent ~= "" then
-							extra_tbl.headers = extra_tbl.headers or {}
-							if not extra_tbl.headers["User-Agent"] and not extra_tbl.headers["user-agent"] then
-								extra_tbl.headers["User-Agent"] = node.user_agent
+							extra.headers = extra.headers or {}
+							if not extra.headers["User-Agent"] and not extra.headers["user-agent"] then
+								extra.headers["User-Agent"] = node.user_agent
 							end
 						end
-						-- 清理空的 headers
-						if extra_tbl.headers and next(extra_tbl.headers) == nil then
-							extra_tbl.headers = nil
-						end
-						return next(extra_tbl) ~= nil and extra_tbl or nil
+						return api.cleanEmptyTables(extra)
 					end)()
 				} or nil,
 				hysteriaSettings = (node.transport == "hysteria") and {
@@ -322,22 +311,10 @@ function gen_outbound(flag, node, tag, proxy_table)
 					if node.finalmask and node.finalmask ~= "" then
 						local ok, fm = pcall(jsonc.parse, api.base64Decode(node.finalmask))
 						if ok and type(fm) == "table" then
-							if not finalmask or not next(finalmask) then
-								finalmask = fm
-							else
-								if type(fm.udp) == "table" then
-									finalmask.udp = finalmask.udp or {}
-									for i = 1, #fm.udp do
-										finalmask.udp[#finalmask.udp+1] = fm.udp[i]
-									end
-								end
-								if type(fm.tcp) == "table" then
-									finalmask.tcp = fm.tcp
-								end
-							end
+							finalmask = fm
 						end
 					end
-					return (finalmask and next(finalmask)) and finalmask or nil
+					return api.cleanEmptyTables(finalmask)
 				end)()
 			} or nil,
 			settings = {
@@ -646,22 +623,10 @@ function gen_config_server(node)
 						if node.finalmask and node.finalmask ~= "" then
 							local ok, fm = pcall(jsonc.parse, api.base64Decode(node.finalmask))
 							if ok and type(fm) == "table" then
-								if not finalmask or not next(finalmask) then
-									finalmask = fm
-								else
-									if type(fm.udp) == "table" then
-										finalmask.udp = finalmask.udp or {}
-										for i = 1, #fm.udp do
-											finalmask.udp[#finalmask.udp+1] = fm.udp[i]
-										end
-									end
-									if type(fm.tcp) == "table" then
-										finalmask.tcp = fm.tcp
-									end
-								end
+								finalmask = fm
 							end
 						end
-						return (finalmask and next(finalmask)) and finalmask or nil
+						return api.cleanEmptyTables(finalmask)
 					end)(),
 					sockopt = {
 						tcpFastOpen = (node.tcp_fast_open == "1") and true or nil,
@@ -749,7 +714,6 @@ function gen_config(var)
 	local fakedns = nil
 	local routing = nil
 	local observatory = nil
-	local burstObservatory = nil
 	local strategy = nil
 	local inbounds = {}
 	local outbounds = {}
@@ -921,7 +885,7 @@ function gen_config(var)
 					end
 				end
 				if is_new_blc_node then
-					local outboundTag = gen_outbound_get_tag(flag, blc_node_id, blc_node_tag, { fragment = xray_settings.fragment == "1" or nil, noise = xray_settings.record_fragment == "1" or nil, run_socks_instance = not no_run })
+					local outboundTag = gen_outbound_get_tag(flag, blc_node_id, blc_node_tag, { fragment = xray_settings.fragment == "1" or nil, noise = xray_settings.noise == "1" or nil, run_socks_instance = not no_run })
 					if outboundTag then
 						valid_nodes[#valid_nodes + 1] = outboundTag
 					end
@@ -946,7 +910,7 @@ function gen_config(var)
 					local fallback_node = get_node_by_id(fallback_node_id)
 					if fallback_node then
 						if fallback_node.protocol ~= "_balancing" then
-							local outboundTag = gen_outbound_get_tag(flag, fallback_node, fallback_node_id, { fragment = xray_settings.fragment == "1" or nil, noise = xray_settings.record_fragment == "1" or nil, run_socks_instance = not no_run })
+							local outboundTag = gen_outbound_get_tag(flag, fallback_node, fallback_node_id, { fragment = xray_settings.fragment == "1" or nil, noise = xray_settings.noise == "1" or nil, run_socks_instance = not no_run })
 							if outboundTag then
 								fallback_node_tag = outboundTag
 							end
@@ -975,29 +939,19 @@ function gen_config(var)
 				fallbackTag = fallback_node_tag,
 				strategy = strategy
 			})
-			if _node.balancingStrategy == "leastPing" or _node.balancingStrategy == "leastLoad" or fallback_node_tag then
-				if _node.balancingStrategy == "leastLoad" then
-					if not burstObservatory then
-						burstObservatory = {
-							subjectSelector = { "blc-" },
-							pingConfig = {
-								destination = _node.useCustomProbeUrl and _node.probeUrl or nil,
-								interval = (api.format_go_time(_node.probeInterval) ~= "0s") and api.format_go_time(_node.probeInterval) or "1m",
-								sampling = 3,
-								timeout = "5s"
-							}
-						}
-					end
-				else
-					if not observatory then
-						observatory = {
-							subjectSelector = { "blc-" },
-							probeUrl = _node.useCustomProbeUrl and _node.probeUrl or nil,
-							probeInterval = (api.format_go_time(_node.probeInterval) ~= "0s") and api.format_go_time(_node.probeInterval) or "1m",
-							enableConcurrency = true
-						}
-					end
+			if not observatory and (_node.balancingStrategy == "leastPing" or _node.balancingStrategy == "leastLoad" or fallback_node_tag) then
+				local t = api.format_go_time(_node.probeInterval)
+				if t == "0s" then
+					t = "60s"
+				elseif not t:find("[hm]") and tonumber(t:match("%d+")) < 10 then
+					t = "10s"
 				end
+				observatory = {
+					subjectSelector = { "blc-" },
+					probeUrl = _node.useCustomProbeUrl and _node.probeUrl or "https://www.google.com/generate_204",
+					probeInterval = t,
+					enableConcurrency = true
+				}
 			end
 			local loopback_outbound = gen_loopback(loopback_tag, loopback_dst)
 			local inbound_tag = loopback_outbound.settings.inboundTag
@@ -1652,8 +1606,7 @@ function gen_config(var)
 			-- 传出连接
 			outbounds = outbounds,
 			-- 连接观测
-			observatory = (not burstObservatory) and observatory or nil,
-			burstObservatory = burstObservatory,
+			observatory = observatory,
 			-- 路由
 			routing = routing,
 			-- 本地策略
@@ -1685,8 +1638,7 @@ function gen_config(var)
 					fragment = (xray_settings.fragment == "1") and {
 						packets = (xray_settings.fragment_packets and xray_settings.fragment_packets ~= "") and xray_settings.fragment_packets,
 						length = (xray_settings.fragment_length and xray_settings.fragment_length ~= "") and xray_settings.fragment_length,
-						interval = (xray_settings.fragment_interval and xray_settings.fragment_interval ~= "") and xray_settings.fragment_interval,
-						maxSplit = (xray_settings.fragment_maxSplit and xray_settings.fragment_maxSplit ~= "") and xray_settings.fragment_maxSplit
+						interval = (xray_settings.fragment_interval and xray_settings.fragment_interval ~= "") and xray_settings.fragment_interval
 					} or nil,
 					noises = (xray_settings.noise == "1") and get_noise_packets() or nil
 				},
