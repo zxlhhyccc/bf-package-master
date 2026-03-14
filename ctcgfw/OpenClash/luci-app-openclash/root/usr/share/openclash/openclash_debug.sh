@@ -26,6 +26,7 @@ set_lock
 
 DEBUG_LOG="/tmp/openclash_debug.log"
 LOGTIME=$(echo $(date "+%Y-%m-%d %H:%M:%S"))
+log_level=$(uci_get_config "log_level")
 enable_custom_dns=$(uci_get_config "enable_custom_dns")
 enable_custom_clash_rules=$(uci_get_config "enable_custom_clash_rules") 
 ipv6_enable=$(uci_get_config "ipv6_enable")
@@ -369,6 +370,9 @@ echo "" >> "$DEBUG_LOG"
 echo "#ip route list" >> "$DEBUG_LOG"
 ip route list >> "$DEBUG_LOG" 2>/dev/null
 echo "" >> "$DEBUG_LOG"
+echo "#ip route list table 354" >> "$DEBUG_LOG"
+ip route list table 354 >> "$DEBUG_LOG" 2>/dev/null
+echo "" >> "$DEBUG_LOG"
 echo "#ip rule show" >> "$DEBUG_LOG"
 ip rule show >> "$DEBUG_LOG" 2>/dev/null
 echo "" >> "$DEBUG_LOG"
@@ -379,6 +383,9 @@ route -A inet6 >> "$DEBUG_LOG" 2>/dev/null
 echo "" >> "$DEBUG_LOG"
 echo "#ip -6 route list" >> "$DEBUG_LOG"
 ip -6 route list >> "$DEBUG_LOG" 2>/dev/null
+echo "" >> "$DEBUG_LOG"
+echo "#ip -6 route list table 354" >> "$DEBUG_LOG"
+ip -6 route list table 354 >> "$DEBUG_LOG" 2>/dev/null
 echo "" >> "$DEBUG_LOG"
 echo "#ip -6 rule show" >> "$DEBUG_LOG"
 ip -6 rule show >> "$DEBUG_LOG" 2>/dev/null
@@ -457,23 +464,23 @@ fi
 
 cat >> "$DEBUG_LOG" <<-EOF
 
-#===================== 最近运行日志(自动切换为Debug模式) =====================#
+#===================== 最近运行日志 (切换为Debug模式) =====================#
 
 EOF
 
-if pidof clash >/dev/null; then
-   curl -SsL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "debug"}' >/dev/null
+if pidof clash >/dev/null && [ "$log_level" != "debug" ]; then
+   curl -SsL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "debug"}' >/dev/null
    sleep 10
 fi
 
 tail -n 100 "/tmp/openclash.log" >> "$DEBUG_LOG" 2>/dev/null
 cat >> "$DEBUG_LOG" <<-EOF
 
-#===================== 最近运行日志获取完成(自动切换为silent模式) =====================#
+#===================== 最近运行日志获取完成 =====================#
 
 EOF
-if pidof clash >/dev/null; then
-   curl -SsL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "silent"}' >/dev/null
+if pidof clash >/dev/null && [ "$log_level" != "debug" ]; then
+   curl -SsL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer ${da_password}" -XPATCH http://${lan_ip}:${cn_port}/configs -d '{"log-level": "'"$log_level"'"}' >/dev/null
 fi
 
 cat >> "$DEBUG_LOG" <<-EOF

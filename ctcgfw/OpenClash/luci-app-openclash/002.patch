@@ -12,7 +12,7 @@
  
 --- a/po/zh-cn/openclash.zh-cn.po
 +++ b/po/zh-cn/openclash.zh-cn.po
-@@ -2418,6 +2418,12 @@ msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
+@@ -2430,6 +2430,12 @@ msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
  msgid "Rules Setting"
  msgstr "规则设置"
  

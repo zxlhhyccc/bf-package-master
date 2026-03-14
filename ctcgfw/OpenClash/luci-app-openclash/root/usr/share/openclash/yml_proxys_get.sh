@@ -51,7 +51,7 @@ ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
    begin
       Value = YAML.load_file('$CONFIG_FILE');
    rescue Exception => e
-      YAML.LOG('Error: Load File Failed,【' + e.message + '】');
+      YAML.LOG_ERROR('Load File Failed,【' + e.message + '】');
    end;
 
    threads = [];
@@ -171,7 +171,7 @@ ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
             };
             threads_prv.each(&:join);
          rescue Exception => e
-            YAML.LOG('Error: Resolve Proxy-providers Failed,【${CONFIG_NAME} - ' + x + ': ' + e.message + '】');
+            YAML.LOG_ERROR('Resolve Proxy-providers Failed,【${CONFIG_NAME} - ' + x + ': ' + e.message + '】');
          ensure
             queue.pop
          end;
@@ -1448,7 +1448,7 @@ ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
             };
             threads.each(&:join);
          rescue Exception => e
-            YAML.LOG('Error: Resolve Proxies Failed,【${CONFIG_NAME} - '+ x['type'] + ' - ' + x['name'] + ': ' + e.message + '】');
+            YAML.LOG_ERROR('Resolve Proxies Failed,【${CONFIG_NAME} - '+ x['type'] + ' - ' + x['name'] + ': ' + e.message + '】');
          ensure
             queue.pop
          end;

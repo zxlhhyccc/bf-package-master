@@ -16,7 +16,7 @@ yml_other_set()
    begin
       Value = YAML.load_file('$2');
    rescue Exception => e
-      YAML.LOG('Error: Load File Failed,【' + e.message + '】');
+      YAML.LOG_ERROR('Load File Failed,【' + e.message + '】');
    end;
 
    begin
@@ -111,7 +111,7 @@ yml_other_set()
                };
             end;
          rescue Exception => e
-            YAML.LOG('Error: Set BT/P2P DIRECT Rules Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Set BT/P2P DIRECT Rules Failed,【' + e.message + '】');
          end;
 
          begin
@@ -185,7 +185,7 @@ yml_other_set()
                         if CONFIG_GROUP.include?(RULE_GROUP) then
                            true;
                         else
-                           YAML.LOG('Warning: Skiped The Custom Rule Because Group & Proxy Not Found:【' + x + '】');
+                           YAML.LOG_WARN('Skiped The Custom Rule Because Group & Proxy Not Found:【' + x + '】');
                            false;
                         end;
                      };
@@ -231,7 +231,7 @@ yml_other_set()
                };
             end;
          rescue Exception => e
-            YAML.LOG('Error: Set Custom Rules Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Set Custom Rules Failed,【' + e.message + '】');
          end;
 
          #Router Self Proxy Rule
@@ -249,7 +249,7 @@ yml_other_set()
                Value['rules'].delete('SRC-IP-CIDR,$5/32,DIRECT');
             end;
          rescue Exception => e
-            YAML.LOG('Error: Set Router Self Proxy Rule Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Set Router Self Proxy Rule Failed,【' + e.message + '】');
          end;
       };
 
@@ -293,7 +293,7 @@ yml_other_set()
                end;
             end;
          rescue Exception => e
-            YAML.LOG('Error: Edit Provider Path Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Edit Provider Path Failed,【' + e.message + '】');
          end;
 
          # tolerance
@@ -308,7 +308,7 @@ yml_other_set()
                };
             end;
          rescue Exception => e
-            YAML.LOG('Error: Edit URL-Test Group Tolerance Option Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Edit URL-Test Group Tolerance Option Failed,【' + e.message + '】');
          end;
 
          # URL-Test interval
@@ -334,7 +334,7 @@ yml_other_set()
                end;
             end;
          rescue Exception => e
-            YAML.LOG('Error: Edit URL-Test Interval Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Edit URL-Test Interval Failed,【' + e.message + '】');
          end;
 
          # health-check url
@@ -360,7 +360,7 @@ yml_other_set()
                end;
             end;
          rescue Exception => e
-            YAML.LOG('Error: Edit URL-Test URL Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Edit URL-Test URL Failed,【' + e.message + '】');
          end;
 
          # smart auto switch
@@ -391,7 +391,7 @@ yml_other_set()
                };
             end;
          rescue Exception => e
-            YAML.LOG('Error: Setting Smart Auto Switch Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Setting Smart Auto Switch Failed,【' + e.message + '】');
          end;
 
          threads.each(&:join);
@@ -400,7 +400,7 @@ yml_other_set()
       thread_pool.each(&:join);
 
    rescue Exception => e
-      YAML.LOG('Error: Config File Overwrite Failed,【%s】' % [e.message])
+      YAML.LOG_ERROR('Config File Overwrite Failed,【%s】' % [e.message])
    ensure
       File.open('$2','w') {|f| YAML.dump(Value, f)};
    end" 2>/dev/null >> $LOG_FILE

@@ -70,7 +70,7 @@ ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
    begin
       Value = YAML.load_file('$CONFIG_FILE');
    rescue Exception => e
-      YAML.LOG('Error: Load File Failed,【' + e.message + '】');
+      YAML.LOG_ERROR('Load File Failed,【' + e.message + '】');
    end;
 
    threads_g = [];
@@ -224,7 +224,7 @@ ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
           };
          threads_g.each(&:join);
       rescue Exception => e
-         YAML.LOG('Error: Resolve Groups Failed,【${CONFIG_NAME} - ' + x['type'] + ' - ' + x['name'] + ': ' + e.message + '】');
+         YAML.LOG_ERROR('Resolve Groups Failed,【${CONFIG_NAME} - ' + x['type'] + ' - ' + x['name'] + ': ' + e.message + '】');
       ensure
          queue.pop
       end;

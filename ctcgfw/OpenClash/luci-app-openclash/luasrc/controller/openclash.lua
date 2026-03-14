@@ -167,19 +167,13 @@ end
 
 local function startlog()
 	local info = ""
-	local line_trans = ""
 	if fs.access("/tmp/openclash_start.log") then
 		info = luci.sys.exec("sed -n '$p' /tmp/openclash_start.log 2>/dev/null")
-		line_trans = info
 		if string.len(info) > 0 then
-			if not string.find (info, "【") or not string.find (info, "】") then
-				line_trans = trans_line_nolabel(info)
-   			else
-   				line_trans = trans_line(info)
-   			end
-   		end
+			info = trans_line(info)
+		end
 	end
-	return line_trans
+	return info
 end
 
 local function pkg_type()
@@ -224,23 +218,19 @@ local function coremetacv()
 end
 
 local function corelv()
-	local status = process_status("/usr/share/openclash/clash_version.sh")
 	local core_meta_lv = ""
 	local core_smart_enable = fs.uci_get_config("config", "smart_enable") or "0"
-	if not status then
-		if fs.access("/tmp/clash_last_version") and tonumber(os.time() - fs.mtime("/tmp/clash_last_version")) < 1800 then
-			if core_smart_enable == "1" then
-				core_meta_lv = luci.sys.exec("sed -n 2p /tmp/clash_last_version 2>/dev/null |tr -d '\n'")
-			else
-				core_meta_lv = luci.sys.exec("sed -n 1p /tmp/clash_last_version 2>/dev/null |tr -d '\n'")
-			end
+	if fs.access("/tmp/clash_last_version") then
+		if core_smart_enable == "1" then
+			core_meta_lv = luci.sys.exec("sed -n 2p /tmp/clash_last_version 2>/dev/null |tr -d '\n'")
 		else
-			action_get_last_version()
-			core_meta_lv = "loading..."
+			core_meta_lv = luci.sys.exec("sed -n 1p /tmp/clash_last_version 2>/dev/null |tr -d '\n'")
 		end
 	else
 		core_meta_lv = "loading..."
 	end
+
+	action_get_last_version()
 	return core_meta_lv
 end
 
@@ -264,23 +254,19 @@ local function opcv()
 end
 
 local function oplv()
-	local status = process_status("/usr/share/openclash/openclash_version.sh")
 	local oplv = ""
-	if not status then
-		if fs.access("/tmp/openclash_last_version") and tonumber(os.time() - fs.mtime("/tmp/openclash_last_version")) < 1800 then
-			oplv = luci.sys.exec("sed -n 1p /tmp/openclash_last_version 2>/dev/null |tr -d '\n'")
-		else
-			action_get_last_version()
-			oplv = "loading..."
-		end
+
+	if fs.access("/tmp/openclash_last_version") then
+		oplv = luci.sys.exec("sed -n 1p /tmp/openclash_last_version 2>/dev/null |tr -d '\n'")
 	else
 		oplv = "loading..."
 	end
+
+	action_get_last_version()
 	return oplv
 end
 
 local function opup()
-	luci.sys.call("rm -rf /tmp/*_last_version 2>/dev/null && bash /usr/share/openclash/openclash_version.sh >/dev/null 2>&1")
 	return luci.sys.call("bash /usr/share/openclash/openclash_update.sh >/dev/null 2>&1 &")
 end
 
@@ -288,7 +274,6 @@ local function coreup()
 	uci:set("openclash", "config", "enable", "1")
 	uci:commit("openclash")
 	local type = luci.http.formvalue("core_type")
-	luci.sys.call("rm -rf /tmp/*_last_version 2>/dev/null && bash /usr/share/openclash/clash_version.sh >/dev/null 2>&1")
 	return luci.sys.call(string.format("/usr/share/openclash/openclash_core.sh '%s' >/dev/null 2>&1 &", type))
 end
 
@@ -336,10 +321,8 @@ end
 function core_download()
 	local cdn_url = luci.http.formvalue("url")
 	if cdn_url then
-		luci.sys.call(string.format("rm -rf /tmp/clash_last_version 2>/dev/null && bash /usr/share/openclash/clash_version.sh '%s' >/dev/null 2>&1", cdn_url))
 		luci.sys.call(string.format("bash /usr/share/openclash/openclash_core.sh 'Meta' '%s' >/dev/null 2>&1 &", cdn_url))
 	else
-		luci.sys.call("rm -rf /tmp/clash_last_version 2>/dev/null && bash /usr/share/openclash/clash_version.sh >/dev/null 2>&1")
 		luci.sys.call("bash /usr/share/openclash/openclash_core.sh 'Meta' >/dev/null 2>&1 &")
 	end
 
@@ -352,8 +335,8 @@ function action_flush_dns_cache()
 		local dase = dase() or ""
 		local cn_port = cn_port()
 		if not daip or not cn_port then return end
-		fake_ip_state = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPOST http://"%s":"%s"/cache/fakeip/flush', dase, daip, cn_port))
-		dns_state = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPOST http://"%s":"%s"/cache/dns/flush', dase, daip, cn_port))
+		fake_ip_state = luci.sys.exec(string.format('curl -sL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPOST http://"%s":"%s"/cache/fakeip/flush', dase, daip, cn_port))
+		dns_state = luci.sys.exec(string.format('curl -sL -m 3 --retry 2-H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPOST http://"%s":"%s"/cache/dns/flush', dase, daip, cn_port))
 	end
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
@@ -368,7 +351,7 @@ function action_flush_smart_cache()
 		local dase = dase() or ""
 		local cn_port = cn_port()
 		if not daip or not cn_port then return end
-		flush_state = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPOST http://"%s":"%s"/cache/smart/flush', dase, daip, cn_port))
+		flush_state = luci.sys.exec(string.format('curl -sL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPOST http://"%s":"%s"/cache/smart/flush', dase, daip, cn_port))
 	end
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
@@ -429,9 +412,9 @@ end
 function action_one_key_update()
 	local cdn_url = luci.http.formvalue("url")
 	if cdn_url then
-		return luci.sys.call(string.format("rm -rf /tmp/*_last_version 2>/dev/null && bash /usr/share/openclash/openclash_update.sh 'one_key_update' '%s' >/dev/null 2>&1 &", cdn_url))
+		return luci.sys.call(string.format("bash /usr/share/openclash/openclash_update.sh 'one_key_update' '%s' >/dev/null 2>&1 &", cdn_url))
 	else
-		return luci.sys.call("rm -rf /tmp/*_last_version 2>/dev/null && bash /usr/share/openclash/openclash_update.sh 'one_key_update' >/dev/null 2>&1 &")
+		return luci.sys.call("bash /usr/share/openclash/openclash_update.sh 'one_key_update' >/dev/null 2>&1 &")
 	end
 end
 
@@ -554,10 +537,10 @@ function fetch_sub_info(sub_url, sub_ua)
 	local info, upload, download, total, day_expire, http_code
 	local used, expire, day_left, percent, surplus
 
-	info = luci.sys.exec(string.format("curl -sLI -X GET -m 10 -w 'http_code=%%{http_code}' -H 'User-Agent: %s' '%s'", sub_ua, sub_url))
+	info = luci.sys.exec(string.format("curl -sLI -X GET -m 10 --retry 2 -w 'http_code=%%{http_code}' -H 'User-Agent: %s' '%s'", sub_ua, sub_url))
 	local http_match = string.match(info, "http_code=(%d+)")
 	if not info or not http_match or tonumber(http_match) ~= 200 then
-		info = luci.sys.exec(string.format("curl -sLI -X GET -m 10 -w 'http_code=%%{http_code}' -H 'User-Agent: Quantumultx' '%s'", sub_url))
+		info = luci.sys.exec(string.format("curl -sLI -X GET -m 10 --retry 2 -w 'http_code=%%{http_code}' -H 'User-Agent: Quantumultx' '%s'", sub_url))
 		http_match = string.match(info, "http_code=(%d+)")
 	end
 
@@ -765,7 +748,7 @@ function get_sub_url(filename)
 end
 
 function sub_info_get()
-	local sub_ua, filename, sub_info
+	local sub_ua, filename, sub_info, url_result
 	local providers_data = {}
 
 	filename = luci.http.formvalue("filename")
@@ -781,7 +764,7 @@ function sub_info_get()
 	)
 
 	if filename and not is_start() then
-		local url_result = get_sub_url(filename)
+		url_result = get_sub_url(filename)
 
 		if not url_result then
 			sub_info = "No Sub Info Found"
@@ -814,7 +797,8 @@ function sub_info_get()
 	luci.http.write_json({
 		sub_info = sub_info,
 		providers = providers_data,
-		get_time = os.time()
+		get_time = os.time(),
+		url_result = url_result
 	})
 end
 
@@ -825,7 +809,7 @@ function action_rule_mode()
 		local dase = dase() or ""
 		local cn_port = cn_port()
 		if not daip or not cn_port then return end
-		info = json.parse(luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/configs', dase, daip, cn_port)))
+		info = json.parse(luci.sys.exec(string.format('curl -sL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/configs', dase, daip, cn_port)))
 		if info then
 			mode = info["mode"]
 		else
@@ -854,7 +838,7 @@ function action_switch_rule_mode()
 
 	if is_running() then
 		if not daip or not cn_port then luci.http.status(500, "Switch Faild") return end
-		info = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPATCH http://"%s":"%s"/configs -d \'{\"mode\": \"%s\"}\'', dase, daip, cn_port, mode))
+		info = luci.sys.exec(string.format('curl -sL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPATCH http://"%s":"%s"/configs -d \'{\"mode\": \"%s\"}\'', dase, daip, cn_port, mode))
 		if info ~= "" then
 			luci.http.status(500, "Switch Faild")
 		end
@@ -904,7 +888,7 @@ function action_log_level()
 		local dase = dase() or ""
 		local cn_port = cn_port()
 		if not daip or not cn_port then return end
-		info = json.parse(luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/configs', dase, daip, cn_port)))
+		info = json.parse(luci.sys.exec(string.format('curl -sL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/configs', dase, daip, cn_port)))
 		if info then
 			level = info["log-level"]
 		else
@@ -916,27 +900,6 @@ function action_log_level()
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
 		log_level = level;
-	})
-end
-
-function action_switch_log()
-	local level, info
-	if is_running() then
-		local daip = daip()
-		local dase = dase() or ""
-		local cn_port = cn_port()
-		level = luci.http.formvalue("log_level")
-		if not daip or not cn_port or not level then luci.http.status(500, "Switch Faild") return end
-		info = luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPATCH http://"%s":"%s"/configs -d \'{\"log-level\": \"%s\"}\'', dase, daip, cn_port, level))
-		if info ~= "" then
-			luci.http.status(500, "Switch Faild")
-		end
-	else
-		luci.http.status(500, "Switch Faild")
-	end
-	luci.http.prepare_content("application/json")
-	luci.http.write_json({
-		info = info;
 	})
 end
 
@@ -1001,8 +964,8 @@ function action_toolbar_show()
 		local cn_port = cn_port()
 		if not daip or not cn_port then return end
 
-		traffic = json.parse(luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/traffic', dase, daip, cn_port)))
-		connections = json.parse(luci.sys.exec(string.format('curl -sL -m 3 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/connections', dase, daip, cn_port)))
+		traffic = json.parse(luci.sys.exec(string.format('curl -sL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/traffic', dase, daip, cn_port)))
+		connections = json.parse(luci.sys.exec(string.format('curl -sL -m 3 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://"%s":"%s"/connections', dase, daip, cn_port)))
 
 		if traffic and connections and connections.connections then
 			connection = #(connections.connections)
@@ -1124,7 +1087,7 @@ function action_switch_dashboard()
 	local switch_name = luci.http.formvalue("name")
 	local switch_type = luci.http.formvalue("type")
 	local state = luci.sys.call(string.format('/usr/share/openclash/openclash_download_dashboard.sh "%s" "%s" >/dev/null 2>&1', switch_name, switch_type))
-	if switch_name == "Dashboard" and tonumber(state) == 1 then
+	if switch_name == "Dashboard" and tonumber(state) == 0 then
 		if switch_type == "Official" then
 			uci:set("openclash", "config", "dashboard_type", "Official")
 			uci:commit("openclash")
@@ -1132,7 +1095,7 @@ function action_switch_dashboard()
 			uci:set("openclash", "config", "dashboard_type", "Meta")
 			uci:commit("openclash")
 		end
-	elseif switch_name == "Yacd" and tonumber(state) == 1 then
+	elseif switch_name == "Yacd" and tonumber(state) == 0 then
 		if switch_type == "Official" then
 			uci:set("openclash", "config", "yacd_type", "Official")
 			uci:commit("openclash")
@@ -1250,10 +1213,14 @@ end
 
 function action_get_last_version()
 	if not process_status("/usr/share/openclash/clash_version.sh") then
-		luci.sys.call("bash /usr/share/openclash/clash_version.sh &")
+		if tonumber(os.time() - (fs.mtime("/tmp/clash_last_version") or 0)) > 1800 then
+			luci.sys.call("bash /usr/share/openclash/clash_version.sh &")
+		end
 	end
 	if not process_status("/usr/share/openclash/openclash_version.sh") then
-		luci.sys.call("bash /usr/share/openclash/openclash_version.sh &")
+		if tonumber(os.time() - (fs.mtime("/tmp/openclash_last_version") or 0)) > 1800 then
+			luci.sys.call("bash /usr/share/openclash/openclash_version.sh &")
+		end
 	end
 end
 
@@ -1328,6 +1295,7 @@ function action_refresh_log()
 	luci.http.prepare_content("application/json")
 	local logfile = "/tmp/openclash.log"
 	local log_len = tonumber(luci.http.formvalue("log_len")) or 0
+	local core_refresh = luci.http.formvalue("core_refresh") == "true"
 
 	if not fs.access(logfile) then
 		luci.http.write_json({
@@ -1352,53 +1320,53 @@ function action_refresh_log()
 	end
 
 	local exclude_pattern = "UDP%-Receive%-Buffer%-Size|^Sec%-Fetch%-Mode|^User%-Agent|^Access%-Control|^Accept|^Origin|^Referer|^Connection|^Pragma|^Cache%-"
-	local core_pattern = " DBG | INF |level=| WRN | ERR | FTL "
+	local core_pattern = "level=|^time="
 	local limit = 1000
 	local start_line = (log_len > 0 and total_lines > log_len) and (log_len + 1) or 1
+	local core_cmd, oc_cmd, core_raw, oc_raw
+	local core_logs = {}
+	local oc_logs = {}
 
-	local core_cmd = string.format(
+	core_cmd = string.format(
 		"tail -n +%d '%s' | grep -v -E '%s' | grep -E '%s' | tail -n %d",
 		start_line, logfile, exclude_pattern, core_pattern, limit
 	)
-	local core_raw = luci.sys.exec(core_cmd)
 
-	local oc_cmd = string.format(
+	oc_cmd = string.format(
 		"tail -n +%d '%s' | grep -v -E '%s' | grep -v -E '%s' | tail -n %d",
 		start_line, logfile, exclude_pattern, core_pattern, limit
 	)
-	local oc_raw = luci.sys.exec(oc_cmd)
 
-	local core_log = ""
+	if core_refresh then
+		core_raw = luci.sys.exec(core_cmd)
+	end
+
+	oc_raw = luci.sys.exec(oc_cmd)
+
 	if core_raw and core_raw ~= "" then
-		local core_logs = {}
 		for line in core_raw:gmatch("[^\n]+") do
-			local line_trans = line
-			if string.match(string.sub(line, 0, 8), "%d%d:%d%d:%d%d") then
-				line_trans = '"'..os.date("%Y-%m-%d", os.time()).. " "..os.date("%H:%M:%S", tonumber(string.sub(line, 0, 8)))..'"'..string.sub(line, 9, -1)
-			end
-			table.insert(core_logs, line_trans)
-		end
-		if #core_logs > 0 then
-			core_log = table.concat(core_logs, "\n")
+			table.insert(core_logs, line)
 		end
 	end
 
-	local oc_log = ""
 	if oc_raw and oc_raw ~= "" then
-		local oc_logs = {}
 		for line in oc_raw:gmatch("[^\n]+") do
-			local line_trans
-			if not string.find(line, "【") or not string.find(line, "】") then
-				line_trans = trans_line_nolabel(line)
-			else
-				line_trans = trans_line(line)
+			if not string.match(string.sub(line, 1, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d") then
+				line = os.date("%Y-%m-%d %H:%M:%S") .. ' [Fatal] ' .. line
 			end
-			table.insert(oc_logs, line_trans)
-		end
-		if #oc_logs > 0 then
-			oc_log = table.concat(oc_logs, "\n")
+			table.insert(oc_logs, trans_line(line))
 		end
 	end
+
+	if #core_logs > limit then
+		core_logs = {table.unpack(core_logs, #core_logs - limit + 1)}
+	end
+	if #oc_logs > limit then
+		oc_logs = {table.unpack(oc_logs, #oc_logs - limit + 1)}
+	end
+
+	local core_log = #core_logs > 0 and table.concat(core_logs, "\n") or ""
+	local oc_log = #oc_logs > 0 and table.concat(oc_logs, "\n") or ""
 
 	luci.http.write_json({
 		len = total_lines,
@@ -1680,19 +1648,13 @@ end
 function manual_stream_unlock_test()
 	local type = luci.http.formvalue("type")
 	local cmd = string.format('/usr/share/openclash/openclash_streaming_unlock.lua "%s"', type)
-	local line_trans
 	luci.http.prepare_content("text/plain; charset=utf-8")
 	local util = io.popen(cmd)
 	if util and util ~= "" then
 		while true do
 			local ln = util:read("*l")
 			if ln then
-				if not string.find (ln, "【") or not string.find (ln, "】") then
-					line_trans = trans_line_nolabel(ln)
-   				else
-   					line_trans = trans_line(ln)
-   				end
-				luci.http.write(line_trans)
+				luci.http.write(trans_line(ln))
 				luci.http.write("\n")
 			end
 			if not process_status("openclash_streaming_unlock.lua "..type) or not process_status("openclash_streaming_unlock.lua ") then
@@ -1708,19 +1670,13 @@ end
 function all_proxies_stream_test()
 	local type = luci.http.formvalue("type")
 	local cmd = string.format('/usr/share/openclash/openclash_streaming_unlock.lua "%s" "%s"', type, "all")
-	local line_trans
 	luci.http.prepare_content("text/plain; charset=utf-8")
 	local util = io.popen(cmd)
 	if util and util ~= "" then
 		while true do
 			local ln = util:read("*l")
 			if ln then
-				if not string.find (ln, "【") or not string.find (ln, "】") then
-					line_trans = trans_line_nolabel(ln)
-   				else
-   					line_trans = trans_line(ln)
-   				end
-				luci.http.write(line_trans)
+				luci.http.write(trans_line(ln))
 				luci.http.write("\n")
 			end
 			if not process_status("openclash_streaming_unlock.lua "..type) or not process_status("openclash_streaming_unlock.lua ") then
@@ -1733,95 +1689,70 @@ function all_proxies_stream_test()
 	luci.http.status(500, "Something Wrong While Testing...")
 end
 
-function trans_line_nolabel(data)
-	if data == nil or data == "" then
-		return ""
-	end
-
-	local line_trans = ""
-	if string.len(data) >= 19 and string.match(string.sub(data, 0, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d") then
-		line_trans = string.sub(data, 0, 20)..luci.i18n.translate(string.sub(data, 21, -1))
-	else
-		line_trans = luci.i18n.translate(data)
-	end
-	return line_trans
-end
-
 function trans_line(data)
 	if data == nil or data == "" then
 		return ""
 	end
 
-	local no_trans = {}
 	local line_trans = ""
-	local a = string.find(data, "【")
 
-	if not a then
-		if string.len(data) >= 19 and string.match(string.sub(data, 0, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d") then
-			return string.sub(data, 0, 20) .. luci.i18n.translate(string.sub(data, 21, -1))
-		else
-			return luci.i18n.translate(data)
+	local has_timestamp = string.len(data) >= 19 and string.match(string.sub(data, 1, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d")
+	local time_part = ""
+	local level_part = ""
+	local content_start = has_timestamp and 21 or 1
+
+	if has_timestamp then
+		time_part = string.sub(data, 1, 20)
+		local level_start, level_end, level_content = string.find(data, "%[([^%]]+)%]", 21)
+		if level_start and level_end and level_start == 21 then
+			level_part = "[" .. luci.i18n.translate(level_content) .. "] "
+			content_start = level_end + 2
 		end
 	end
 
-	local b_pos = string.find(data, "】")
-	if not b_pos then
-		return luci.i18n.translate(data)
-	end
+	local segments = {}
+	local last_pos = content_start
+	local pos = string.find(data, "【", content_start)
 
-	local b = b_pos + 2
-	local c = 21
-	local d = 0
-	local v
-	local x
+	while pos do
+		if pos > last_pos then
+			table.insert(segments, {
+				type = "trans",
+				text = string.sub(data, last_pos, pos - 1)
+			})
+		end
 
-	while true do
-		table.insert(no_trans, a)
-		table.insert(no_trans, b)
-
-		local next_a = string.find(data, "【", b+1)
-		local next_b = string.find(data, "】", b+1)
-
-		if next_a and next_b then
-			a = next_a
-			b = next_b + 2
-		else
+		local close_pos = string.find(data, "】", pos + 1)
+		if not close_pos then
+			table.insert(segments, {
+				type = "trans",
+				text = string.sub(data, pos, -1)
+			})
 			break
 		end
+
+		table.insert(segments, {
+			type = "no_trans",
+			text = string.sub(data, pos, close_pos + 2)
+		})
+
+		last_pos = close_pos + 3
+		pos = string.find(data, "【", last_pos)
 	end
 
-	if #no_trans % 2 ~= 0 then
-		table.remove(no_trans)
+	if last_pos <= string.len(data) then
+		table.insert(segments, {
+			type = "trans",
+			text = string.sub(data, last_pos, -1)
+		})
 	end
 
-	for k = 1, #no_trans, 2 do
-		x = no_trans[k]
-		v = no_trans[k+1]
-
-		if x and v then
-			if x <= 21 or not string.match(string.sub(data, 0, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d") then
-				line_trans = line_trans .. luci.i18n.translate(string.sub(data, d, x - 1)) .. string.sub(data, x, v)
-				d = v + 1
-			elseif v <= string.len(data) then
-				line_trans = line_trans .. luci.i18n.translate(string.sub(data, c, x - 1)) .. string.sub(data, x, v)
-			end
-			c = v + 1
-		end
-	end
-
-	if c > string.len(data) then
-		if d == 0 then
-			if string.match(string.sub(data, 0, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d") then
-				line_trans = string.sub(data, 0, 20) .. line_trans
-			end
-		end
-	else
-		if d == 0 then
-			if string.match(string.sub(data, 0, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d") then
-				line_trans = string.sub(data, 0, 20) .. line_trans .. luci.i18n.translate(string.sub(data, c, -1))
-			end
+	line_trans = time_part .. level_part
+	for _, seg in ipairs(segments) do
+		if seg.type == "trans" then
+			line_trans = line_trans .. luci.i18n.translate(seg.text)
 		else
-			line_trans = line_trans .. luci.i18n.translate(string.sub(data, c, -1))
+			line_trans = line_trans .. seg.text
 		end
 	end
 
@@ -2088,7 +2019,7 @@ function action_myip_check()
 
 	if result.ipify and result.ipify.ip then
 		local geo_cmd = string.format(
-			'curl -sL -m 5 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" "https://api-ipv4.ip.sb/geoip/%s" 2>/dev/null',
+			'curl -sL -m 5 --retry 2 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" "https://api-ipv4.ip.sb/geoip/%s" 2>/dev/null',
 			result.ipify.ip
 		)
 		local geo_data = luci.sys.exec(geo_cmd)
@@ -2141,7 +2072,7 @@ function action_website_check()
 	end
 
 	local cmd = string.format(
-		'curl -sL -m 5 --connect-timeout 3 -w "%%{http_code},%%{time_total},%%{time_connect},%%{time_appconnect}" "%s" -o /dev/null 2>/dev/null',
+		'curl -sL -m 5 --connect-timeout 3 --retry 2 -w "%%{http_code},%%{time_total},%%{time_connect},%%{time_appconnect}" "%s" -o /dev/null 2>/dev/null',
 		test_url
 	)
 
@@ -2330,7 +2261,7 @@ function action_switch_oc_setting()
 			return false
 		end
 
-		local reload_result = luci.sys.exec(string.format('curl -sL -m 5 --connect-timeout 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPUT http://"%s":"%s"/configs?force=true -d \'{"path":"%s"}\' 2>&1', dase, daip, cn_port, runtime_config_path))
+		local reload_result = luci.sys.exec(string.format('curl -sL -m 5 --connect-timeout 2 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XPUT http://"%s":"%s"/configs?force=true -d \'{"path":"%s"}\' 2>&1', dase, daip, cn_port, runtime_config_path))
 
 		if reload_result ~= "" then
 			luci.http.status(500, "Switch Failed")
@@ -2563,7 +2494,7 @@ function action_generate_pac()
 	local mixed_port = fs.uci_get_config("config", "mixed_port") or "7893"
 
 	if not proxy_ip then
-		result.error = "Unable to get proxy IP"
+		result.error = luci.i18n.translate("Unable to get proxy IP")
 		luci.http.prepare_content("application/json")
 		luci.http.write_json(result)
 		return
@@ -2683,7 +2614,7 @@ function action_generate_pac()
 
 			luci.sys.call("chmod 644 " .. pac_file_path)
 		else
-			result.error = "Failed to write PAC file"
+			result.error = luci.i18n.translate("Failed to write PAC file")
 			luci.http.prepare_content("application/json")
 			luci.http.write_json(result)
 			return
@@ -2696,7 +2627,7 @@ function action_generate_pac()
 	result.pac_url = pac_url
 
 	if not auth_exists then
-		result.error = "warning: No authentication configured, please be aware of the risk of information leakage!"
+		result.error = luci.i18n.translate("No authentication configured, please be aware of the risk of information leakage!")
 	end
 
 	luci.http.prepare_content("application/json")
@@ -3853,7 +3784,7 @@ function action_overwrite_subscribe_info()
 			local overwrite_dir = "/etc/openclash/overwrite/"
 			local file_path = overwrite_dir .. section_name
 			if url and url ~= "" then
-				local cmd = string.format('curl -sL --connect-timeout 5 -m 15 "%s" -o "%s"', url, file_path)
+				local cmd = string.format('curl -sL --connect-timeout 5 -m 15 --retry 2 "%s" -o "%s"', url, file_path)
 				local ret = luci.sys.call(cmd)
 				if not fs.access(file_path) then
 					fs.writefile(file_path, "")
@@ -3983,14 +3914,6 @@ function action_get_subscribe_info_data()
 		luci.http.status(400, "Bad Request")
 		return
 	end
-
-	local data = {}
-	uci:foreach("openclash", "subscribe_info", function(s)
-		if s.name == filename then
-			data = s
-		end
-	end)
-
 	luci.http.prepare_content("application/json")
-	luci.http.write_json(data)
+	luci.http.write_json(get_sub_url(filename))
 end

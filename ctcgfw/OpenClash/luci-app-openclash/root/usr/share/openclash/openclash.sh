@@ -69,18 +69,19 @@ config_test()
 
 config_download()
 {
-LOG_OUT "Tip: Config File【$name】Downloading User-Agent【$sub_ua】..."
+LOG_TIP "Config File【$name】Downloading User-Agent【$sub_ua】..."
 if [ -n "$subscribe_url_param" ] && [ -n "$c_address" ]; then
-   LOG_INFO "Tip: Config File【$name】Downloading URL【$c_address$subscribe_url_param】..."
+   LOG_INFO "Config File【$name】Downloading URL【$c_address$subscribe_url_param】..."
    DOWNLOAD_URL="${c_address}${subscribe_url_param}"
    DOWNLOAD_PARAM="$sub_ua"
 fi
 if [ -z "$DOWNLOAD_URL" ]; then
-   LOG_INFO "Tip: Config File【$name】Downloading URL【$subscribe_url】..."
+   LOG_INFO "Config File【$name】Downloading URL【$subscribe_url】..."
    DOWNLOAD_URL="${subscribe_url}"
    DOWNLOAD_PARAM="$sub_ua"
 fi
-DOWNLOAD_FILE_CURL "$DOWNLOAD_URL" "$CFG_FILE" "$DOWNLOAD_PARAM"
+DOWNLOAD_FILE_CURL "$DOWNLOAD_URL" "$CFG_FILE" "$CONFIG_FILE" "$DOWNLOAD_PARAM"
+DOWNLOAD_RESULT=$?
 }
 
 config_cus_up()
@@ -157,7 +158,7 @@ config_cus_up()
             end;
             threads.each(&:join);
 	      rescue Exception => e
-	         YAML.LOG('Error: Filter Proxies Failed,【' + e.message + '】');
+	         YAML.LOG_ERROR('Filter Proxies Failed,【' + e.message + '】');
 	      ensure
 	         File.open('$CFG_FILE','w') {|f| YAML.dump(Value, f)};
 	      end" 2>/dev/null >> $LOG_FILE
@@ -198,7 +199,7 @@ config_su_check()
 
 config_error()
 {
-   LOG_OUT "Error:【$name】Update Error, Please Try Again Later..."
+   LOG_ERROR "【$name】Update Error, Please Try Again Later..."
    rm -rf "$CFG_FILE" 2>/dev/null
 }
 
@@ -220,13 +221,13 @@ config_download_direct()
 
       config_download
 
-      if [ "${PIPESTATUS[0]}" -eq 0 ] && [ -s "$CFG_FILE" ]; then
+      if [ "$DOWNLOAD_RESULT" -eq 0 ] && [ -s "$CFG_FILE" ]; then
          #prevent ruby unexpected error
          sed -i -E 's/protocol-param: ([^,'"'"'"''}( *#)\n\r]+)/protocol-param: "\1"/g' "$CFG_FILE" 2>/dev/null
          sed -i '/^ \{0,\}enhanced-mode:/d' "$CFG_FILE" >/dev/null 2>&1
          config_test
          if [ $? -ne 0 ]; then
-            LOG_OUT "Error: Config File Tested Faild, Please Check The Log Infos!"
+            LOG_ERROR "Config File Tested Faild, Please Check The Log Infos!"
             change_dns
             config_error
             return
@@ -235,12 +236,12 @@ config_download_direct()
          begin
          YAML.load_file('$CFG_FILE');
          rescue Exception => e
-         YAML.LOG('Error: Unable To Parse Config File,【' + e.message + '】');
+         YAML.LOG_ERROR('Unable To Parse Config File,【' + e.message + '】');
          system 'rm -rf ${CFG_FILE} 2>/dev/null'
          end
          " 2>/dev/null >> $LOG_FILE
          if [ $? -ne 0 ]; then
-            LOG_OUT "Error: Ruby Works Abnormally, Please Check The Ruby Library Depends!"
+            LOG_ERROR "Ruby Works Abnormally, Please Check The Ruby Library Depends!"
             only_download=1
             change_dns
             config_su_check
@@ -249,13 +250,16 @@ config_download_direct()
             change_dns
             config_error
          elif ! "$(ruby_read "$CFG_FILE" ".key?('proxies')")" && ! "$(ruby_read "$CFG_FILE" ".key?('proxy-providers')")" ; then
-            LOG_OUT "Error: Updated Config【$name】Has No Proxy Field, Update Exit..."
+            LOG_ERROR "Updated Config【$name】Has No Proxy Field, Update Exit..."
             change_dns
             config_error
          else
             change_dns
             config_su_check
          fi
+      elif [ "$DOWNLOAD_RESULT" -eq 2 ]; then
+         change_dns
+         LOG_OUT "Config File【$name】No Change, Do Nothing!"
       else
          change_dns
          config_error
@@ -417,13 +421,13 @@ sub_info_get()
    LOG_OUT "Start Updating Config File【$name】..."
 
    config_download
-   if [ "${PIPESTATUS[0]}" -eq 0 ] && [ -s "$CFG_FILE" ]; then
+   if [ "$DOWNLOAD_RESULT" -eq 0 ] && [ -s "$CFG_FILE" ]; then
       #prevent ruby unexpected error
       sed -i -E 's/protocol-param: ([^,'"'"'"''}( *#)\n\r]+)/protocol-param: "\1"/g' "$CFG_FILE" 2>/dev/null
       config_test
       if [ $? -ne 0 ]; then
-         LOG_OUT "Error: Config File Tested Faild, Please Check The Log Infos!"
-         LOG_OUT "Error: Config File【$name】Subscribed Failed, Trying to Download Without Agent..."
+         LOG_ERROR "Config File Tested Faild, Please Check The Log Infos!"
+         LOG_ERROR "Config File【$name】Subscribed Failed, Trying to Download Without Agent..."
          config_download_direct
          return
       fi
@@ -431,25 +435,27 @@ sub_info_get()
       begin
       YAML.load_file('$CFG_FILE');
       rescue Exception => e
-      YAML.LOG('Error: Unable To Parse Config File,【' + e.message + '】');
+      YAML.LOG_ERROR('Unable To Parse Config File,【' + e.message + '】');
       system 'rm -rf ${CFG_FILE} 2>/dev/null'
       end
       " 2>/dev/null >> $LOG_FILE
       if [ $? -ne 0 ]; then
-         LOG_OUT "Error: Ruby Works Abnormally, Please Check The Ruby Library Depends!"
+         LOG_ERROR "Ruby Works Abnormally, Please Check The Ruby Library Depends!"
          only_download=1
          config_su_check
       elif [ ! -f "$CFG_FILE" ]; then
          LOG_OUT "Config File Format Validation Failed, Trying To Download Without Agent..."
          config_download_direct
       elif ! "$(ruby_read "$CFG_FILE" ".key?('proxies')")" && ! "$(ruby_read "$CFG_FILE" ".key?('proxy-providers')")" ; then
-         LOG_OUT "Error: Updated Config【$name】Has No Proxy Field, Trying To Download Without Agent..."
+         LOG_ERROR "Updated Config【$name】Has No Proxy Field, Trying To Download Without Agent..."
          config_download_direct
       else
          config_su_check
       fi
+   elif [ "$DOWNLOAD_RESULT" -eq 2 ]; then
+      LOG_OUT "Config File【$name】No Change, Do Nothing!"
    else
-      LOG_OUT "Error: Config File【$name】Subscribed Failed, Trying to Download Without Agent..."
+      LOG_ERROR "Config File【$name】Subscribed Failed, Trying to Download Without Agent..."
       config_download_direct
    fi
 }

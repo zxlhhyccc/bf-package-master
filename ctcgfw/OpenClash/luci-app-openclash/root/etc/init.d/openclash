@@ -99,7 +99,7 @@ load_ip_route_pass() {
       nftflag="inet#fw4#"
    else
       settype="ipset"
-      [ -n "$FW4" ] && LOG_OUT "Warning: Dnsmasq not Support nftset, Use ipset..."
+      [ -n "$FW4" ] && LOG_WARN "Dnsmasq not Support nftset, Use ipset..."
    fi
    if [ -n "$FW4" ]; then
       if [ "$china_ip_route" != "0" ] || [ "$disable_udp_quic" = "1" ]; then
@@ -393,14 +393,14 @@ if [ -z "$RAW_CONFIG_FILE" ] || [ ! -f "$RAW_CONFIG_FILE" ]; then
          RAW_CONFIG_FILE="/etc/openclash/config/$CONFIG_NAME"
          CONFIG_FILE="/etc/openclash/$CONFIG_NAME"
          TMP_CONFIG_FILE="/tmp/yaml_config_tmp_$CONFIG_NAME"
-         LOG_OUT "Error: Config Not Found, Switch Config File to【$RAW_CONFIG_FILE】"
+         LOG_ERROR "Config Not Found, Switch Config File to【$RAW_CONFIG_FILE】"
          break
       fi
    done
 fi
 
 if [ ! -f "$RAW_CONFIG_FILE" ]; then
-   LOG_OUT "Error: Config Not Found"
+   LOG_ERROR "Config Not Found"
    exit 0
 fi
 
@@ -418,15 +418,15 @@ ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
 begin
    YAML.load_file('$RAW_CONFIG_FILE');
 rescue Exception => e
-   YAML.LOG('Error: Unable To Parse Config File,【' + e.message + '】');
+   YAML.LOG_ERROR('Unable To Parse Config File,【' + e.message + '】');
    system 'rm -rf ${TMP_CONFIG_FILE}';
 end
 " 2>/dev/null >> $LOG_FILE
 if [ $? -ne 0 ]; then
-   LOG_OUT "Error: Ruby Works Abnormally, Please Check The Ruby Library Depends!"
+   LOG_ERROR "Ruby Works Abnormally, Please Check The Ruby Library Depends!"
    start_fail
 elif [ ! -f "$TMP_CONFIG_FILE" ] || [ ! -s "$TMP_CONFIG_FILE" ]; then
-   LOG_OUT "Error: Config File Format Validation Failed..."
+   LOG_ERROR "Config File Format Validation Failed..."
    start_fail
 fi
 }
@@ -442,7 +442,7 @@ check_run_quick()
    cat "/tmp/openclash.change" | while read -r i; do
       file_path=$(echo "$i" |awk -F ' #edited time# ' '{print $1}')
       if [ -z "$(grep "$file_path #edited time# $(date -r "$file_path")$" "/tmp/openclash.change")" ]; then
-         LOG_OUT "Tip: Because of the file【 $file_path 】modificated, Pause quick start..."
+         LOG_TIP "Because of the file【 $file_path 】modificated, Pause quick start..."
          rm -rf /tmp/openclash.change
          break
       fi
@@ -560,7 +560,7 @@ do_run_file()
    fi
 
    [ ! -f "$CLASH" ] || { [ "$core_type" = "Smart" ] && [ -z "$($CLASH -v | grep 'smart')" ]; } && {
-      LOG_OUT "Tip: Detected that the Core is not Installed, Ready to Download..."
+      LOG_TIP "Detected that the Core is not Installed, Ready to Download..."
       rm -rf "/tmp/clash_last_version"
       /usr/share/openclash/openclash_core.sh "$core_type"
       if [ ! -f "$meta_core_path" ]; then
@@ -570,12 +570,12 @@ do_run_file()
 
    if [ "$china_ip_route" != "0" ] || [ "$china_ip6_route" != "0" ] || [ "$disable_udp_quic" = "1" ]; then
       if [ ! -f "$chnr_path" ] || [ ! -f "$chnr6_path" ]; then
-         LOG_OUT "Tip: Detected that the Chnroute Cidr is not Installed, Ready to Download..."
+         LOG_TIP "Detected that the Chnroute Cidr is not Installed, Ready to Download..."
          /usr/share/openclash/openclash_chnroute.sh
       fi
       if [ -n "$FW4" ]; then
          if [ -z "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -z "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
-            LOG_OUT "Tip: Detected that the Chnroute Cidr List Format is wrong, Ready to Reformat..."
+            LOG_TIP "Detected that the Chnroute Cidr List Format is wrong, Ready to Reformat..."
             /usr/share/openclash/openclash_chnroute.sh
             if [ -z "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -z "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
                start_fail
@@ -583,7 +583,7 @@ do_run_file()
          fi
       else
          if [ -n "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -n "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
-            LOG_OUT "Tip: Detected that the Chnroute Cidr List Format is wrong, Ready to Reformat..."
+            LOG_TIP "Detected that the Chnroute Cidr List Format is wrong, Ready to Reformat..."
             /usr/share/openclash/openclash_chnroute.sh
             if [ -n "$(cat "$chnr_path" |grep "define china_ip_route")" ] || [ -n "$(cat "$chnr6_path" |grep "define china_ip6_route")" ]; then
                start_fail
@@ -677,7 +677,7 @@ check_mod()
       return 0
    fi
 
-   LOG_OUT "Error:【$1】module not found, please check your system depends if something abnormal!"
+   LOG_ERROR "【$1】module not found, please check your system depends if something abnormal!"
 } >/dev/null 2>&1
 
 check_core_status()
@@ -713,13 +713,13 @@ check_core_status()
       if [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_WAIT" -gt 120 ]; then
          while ( [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_RESTART" -le 3 ] )
          do
-            LOG_OUT "Warning: TUN Interface Start Failed, Try to Restart Again..."
+            LOG_WARN "TUN Interface Start Failed, Try to Restart Again..."
             start_run_core
             sleep 120
             let TUN_RESTART++
          done
          if [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_RESTART" -gt 3 ]; then
-            LOG_OUT "Warning: TUN Interface Start Failed, Please Check The Dependence or Try to Restart Again!"
+            LOG_WARN "TUN Interface Start Failed, Please Check The Dependence or Try to Restart Again!"
             start_fail
          fi
       fi
@@ -749,15 +749,15 @@ check_core_status()
          sleep 1
       done
       if [ -z "$(echo ${lan_ip} | grep -Eo ${reg4})" ]; then
-         LOG_OUT "Error: LAN IP Address Get Error, Please Check The LAN Interface Setting or Choose the Correct Interface in the Setting!"
+         LOG_ERROR "LAN IP Address Get Error, Please Check The LAN Interface Setting or Choose the Correct Interface in the Setting!"
       fi
       if [ "$CORE_HTTP_CODE" != "200" ]; then
-         LOG_OUT "Error: Core Status Abnormal, Please Check The Log Infos!"
+         LOG_ERROR "Core Status Abnormal, Please Check The Log Infos!"
          start_fail
       fi
    fi
    if [ -z "$(pidof clash)" ]; then
-      LOG_OUT "Error: Core Start Failed, Please Check The Log Infos!"
+      LOG_ERROR "Core Start Failed, Please Check The Log Infos!"
       start_fail
    fi
 
@@ -765,10 +765,10 @@ check_core_status()
    if [ "$1" == "start" ]; then
       change_dns "$enable_redirect_dns"
       set_firewall
-      LOG_OUT "Tip: OpenClash Start Successful!"
+      LOG_TIP "OpenClash Start Successful!"
    else
       set_firewall
-      LOG_OUT "Tip: Firewall Reload Successful!"
+      LOG_TIP "Firewall Reload Successful!"
    fi
 
    write_run_quick
@@ -1025,7 +1025,7 @@ firewall_lan_ac_traffic()
          if iptables -m dscp --help >/dev/null 2>&1; then
             dscp_ipt="-m dscp --dscp ${dscp}"
          else
-            LOG_OUT "Warning: iptables DSCP module not available, please try DCSP rule by core instead, skipping DSCP rule for【${comment}】"
+            LOG_WARN "iptables DSCP module not available, please try DCSP rule by core instead, skipping DSCP rule for【${comment}】"
          fi
       fi
 
@@ -1122,7 +1122,7 @@ firewall_rule_exclude()
    fi
 
    if [ -n "$(echo $dest_port |grep -E '\-|\:' 2>/dev/null)" ]; then
-      LOG_OUT "Warning: Because there is a port range【$dest_port】in the firewall rule settings【$name】auto bypassing may cause the normal connection of the client not to reach the core, if necessary, please add your own in the access control!"
+      LOG_WARN "Because there is a port range【$dest_port】in the firewall rule settings【$name】auto bypassing may cause the normal connection of the client not to reach the core, if necessary, please add your own in the access control!"
       return
    fi
 
@@ -1296,7 +1296,7 @@ firewall_redirect_exclude()
    fi
 
    if [ -n "$(echo $dest_port |grep -E '\-|\:' 2>/dev/null)" ]; then
-      LOG_OUT "Warning: Because there is a port range【$dest_port】in the firewall rule settings【$name】auto bypassing may cause the normal connection of the client not to reach the core, if necessary, please add your own in the access control!"
+      LOG_WARN "Because there is a port range【$dest_port】in the firewall rule settings【$name】auto bypassing may cause the normal connection of the client not to reach the core, if necessary, please add your own in the access control!"
       return
    fi
 
@@ -1444,34 +1444,34 @@ fi
 
 case $enable_redirect_dns in
 	"1")
-   LOG_OUT "Tip: DNS Hijacking Mode is Dnsmasq Redirect..."
+   LOG_TIP "DNS Hijacking Mode is Dnsmasq Redirect..."
    ;;
    "2")
-   LOG_OUT "Tip: DNS Hijacking Mode is Firewall Redirect..."
+   LOG_TIP "DNS Hijacking Mode is Firewall Redirect..."
    ;;
    *)
-   LOG_OUT "Tip: DNS Hijacking is Disabled..."
+   LOG_TIP "DNS Hijacking is Disabled..."
 esac
 
 if [ "$ipv6_enable" -eq 1 ]; then
    case $ipv6_mode in
       "1")
-      LOG_OUT "Tip: IPv6 Proxy Mode is Redirect..."
+      LOG_TIP "IPv6 Proxy Mode is Redirect..."
       ;;
       "2")
-      LOG_OUT "Tip: IPv6 Proxy Mode is TUN..."
+      LOG_TIP "IPv6 Proxy Mode is TUN..."
       ;;
       "3")
-      LOG_OUT "Tip: IPv6 Proxy Mode is Mix..."
+      LOG_TIP "IPv6 Proxy Mode is Mix..."
       ;;
       *)
-      LOG_OUT "Tip: IPv6 Proxy Mode is TProxy..."
+      LOG_TIP "IPv6 Proxy Mode is TProxy..."
    esac
 fi
 
 #NFTABLES
 if [ -n "$FW4" ]; then
-   LOG_OUT "Tip: Firewall4 was Detected, Use NFTABLE Rules..."
+   LOG_TIP "Firewall4 was Detected, Use NFTABLE Rules..."
 
    #china ip route
    if [ "$china_ip_route" != "0" ] || [ "$disable_udp_quic" = "1" ]; then
@@ -1600,7 +1600,7 @@ if [ -n "$FW4" ]; then
          done
          nft add rule inet fw4 openclash_wan_input th dport {$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port} counter reject
       else
-         LOG_OUT "Warning: Can't Settting Only Intranet Allowed Function, Get IPv4 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
+         LOG_WARN "Can't Settting Only Intranet Allowed Function, Get IPv4 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
       fi
    fi
 
@@ -2287,7 +2287,7 @@ if [ -n "$FW4" ]; then
             done
             nft add rule inet fw4 openclash_wan6_input ip6 nexthdr {tcp,udp} th dport {$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port} counter reject
          else
-            LOG_OUT "Warning: Can't Settting Only Intranet Allowed Function, Get IPv6 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
+            LOG_WARN "Can't Settting Only Intranet Allowed Function, Get IPv6 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
          fi
       fi
    fi
@@ -2443,7 +2443,7 @@ if [ -z "$FW4" ]; then
          iptables -t filter -A openclash_wan_input -p udp -m multiport --dport "$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port" -j REJECT
          iptables -t filter -A openclash_wan_input -p tcp -m multiport --dport "$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port" -j REJECT
       else
-         LOG_OUT "Warning: Can't Settting Only Intranet Allowed Function, Get IPv4 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
+         LOG_WARN "Can't Settting Only Intranet Allowed Function, Get IPv4 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
       fi
    fi
 
@@ -3113,7 +3113,7 @@ if [ -z "$FW4" ]; then
             ip6tables -t filter -A openclash_wan_input -p udp -m multiport --dport "$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port" -j REJECT
             ip6tables -t filter -A openclash_wan_input -p tcp -m multiport --dport "$proxy_port,$tproxy_port,$cn_port,$http_port,$socks_port,$mixed_port,$dns_port" -j REJECT
          else
-            LOG_OUT "Warning: Can't Settting Only Intranet Allowed Function, Get IPv6 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
+            LOG_WARN "Can't Settting Only Intranet Allowed Function, Get IPv6 WAN Interfaces error, Please Verify The Firewall's WAN Zone Name is wan, Ignore This IF The Device Does not Have a WAN Interfaces..."
          fi
       fi
    fi
@@ -3136,7 +3136,7 @@ if [ -z "$FW4" ]; then
 fi
 
 #端口转发
-LOG_OUT "Tip: Start Add Port Bypassing Rules For Firewall Redirect and Firewall Rules..."
+LOG_TIP "Start Add Port Bypassing Rules For Firewall Redirect and Firewall Rules..."
 config_load "firewall"
 config_foreach firewall_redirect_exclude "redirect"
 config_foreach firewall_rule_exclude "rule"
@@ -3411,7 +3411,7 @@ EOF
       file="/etc/openclash/overwrite/${name}"
       [ ! -f "$file" ] && continue
 
-      LOG_OUT "Tip: Processing Overwrite Module【$name】"
+      LOG_TIP "Processing Overwrite Module【$name】"
 
       echo "# --- overwrite source: ${name} (sid=${sid}) ---" >> "$overwrite_script"
       echo "export OPENCLASH_OVERWRITE_SID='${sid}'" >> "$overwrite_script"
@@ -3471,7 +3471,7 @@ ${trimmed}"
          restart=$(eval "echo \"$(echo "$val" | sed -nE 's/.*restart[[:space:]]*=[[:space:]]*([^,]*).*/\1/p')\"")
          [ -z "$cron" ] && cron=0
          if [ -z "$path" ] || [ -z "$url" ]; then
-            LOG_OUT "Warning: DOWNLOAD FILE no target in【Download Job => file: $file】"
+            LOG_WARN "DOWNLOAD FILE no target in【Download Job => file: $file】"
             download_failed=1
             break
          fi
@@ -3480,7 +3480,7 @@ ${trimmed}"
             need_download=1
          fi
          if [ "$need_download" -eq 1 ] && [ -n "$url" ]; then
-            LOG_OUT "Tip: DOWNLOAD FILE for【Download Job => file: $file, url: $url, path: $path, ua: ${ua:-null}, force: ${force:-false}】"
+            LOG_TIP "DOWNLOAD FILE for【Download Job => file: $file, url: $url, path: $path, ua: ${ua:-null}, force: ${force:-false}】"
             if command -v curl >/dev/null 2>&1; then
                if [ -n "$ua" ]; then
                   curl -fsSL -m 30 -H "User-Agent: $ua" "$url" -o "$path" >/dev/null 2>&1
@@ -3497,13 +3497,13 @@ ${trimmed}"
                rc=$?
             fi
             if [ $rc -ne 0 ] && [ ! -f "$path" ]; then
-               LOG_OUT "Error: DOWNLOAD FILE failed for【Download Job => file: $file, url: $url, path: $path】"
+               LOG_ERROR "DOWNLOAD FILE failed for【Download Job => file: $file, url: $url, path: $path】"
                download_failed=1
                break
             fi
          fi
          if [ "$cron" != "0" ]; then
-            LOG_OUT "Tip: Add Cron for【Cron Job => time: $cron, url: $url, path: $path, restart: ${restart:-false}】"
+            LOG_TIP "Add Cron for【Cron Job => time: $cron, url: $url, path: $path, restart: ${restart:-false}】"
             if ! grep -q "$url" $CRON_FILE 2>/dev/null; then
                if [ -n "$ua" ]; then
                   cron_cmd="$cron curl -fsSL -m 30 -H \"User-Agent: $ua\" \"$url\" -o \"$path\" >/dev/null 2>&1"
@@ -3574,18 +3574,18 @@ ${trimmed}"
                   if check_type "$key_u" "$val_clean"; then
                      uci -q set openclash.@overwrite[0]."$key_l"="$val_key"
                   else
-                     LOG_OUT "Warning: skip General key type error【General Key => $name: $key_u, value: $val_key】"
+                     LOG_WARN "skip General key type error【General Key => $name: $key_u, value: $val_key】"
                   fi
                else
-                  LOG_OUT "Warning: skip General key not allowed【General Key => $name: $key_u】"
+                  LOG_WARN "skip General key not allowed【General Key => $name: $key_u】"
                fi
             fi
          elif [ "$in_overwrite" -eq 1 ]; then
             if printf "%s" "$trimmed" | grep -qE '^ruby_[a-z_]+\b'; then
                echo "$trimmed" >> "$overwrite_script"
-               LOG_OUT "Tip: Load Overwrite Script【Ruby Script => $trimmed】"
+               LOG_TIP "Load Overwrite Script【Ruby Script => $trimmed】"
             else
-               LOG_OUT "Warning: skip invalid Overwrite command【Ruby Script => $name: $trimmed】"
+               LOG_WARN "skip invalid Overwrite command【Ruby Script => $name: $trimmed】"
             fi
          fi
       done < "$file"
@@ -3615,7 +3615,7 @@ EOF
          key_clean=$(echo "$key" | sed 's/^openclash\.[^.]*\.//')
          value_clean=$(echo "$value" | sed "s/^'//;s/'$//")
          [ -z "$key_clean" ] && continue
-         LOG_OUT "Tip: Load Overwrite Script【$key_clean => '$value_clean'】"
+         LOG_TIP "Load Overwrite Script【$key_clean => '$value_clean'】"
       done <<EOF
 $(uci -q show openclash.@overwrite[0] | grep -v '=overwrite$' | sed 's/^openclash\.@overwrite\[0\]\.//g')
 EOF
@@ -3651,14 +3651,14 @@ get_config()
    socks_port=$(uci_get_config "socks_port")
    enable_redirect_dns=$(uci_get_config "enable_redirect_dns" || echo 1)
    if [ "$(uci_get_config "fakeip_range")"  == "0" ]; then
-      fakeip_range=$(ruby_read "$CONFIG_FILE" "['dns']['fake-ip-range']")
+      fakeip_range=$(ruby_read "$RAW_CONFIG_FILE" "['dns']['fake-ip-range']")
    else
       fakeip_range=$(uci_get_config "fakeip_range")
    fi
    [ -z "$fakeip_range" ] && fakeip_range="198.18.0.1/16"
 
    if [ "$(uci_get_config "fakeip_range6")"  == "0" ]; then
-      fakeip_range6=$(ruby_read "$CONFIG_FILE" "['dns']['fake-ip-range6']")
+      fakeip_range6=$(ruby_read "$RAW_CONFIG_FILE" "['dns']['fake-ip-range6']")
    else
       fakeip_range6=$(uci_get_config "fakeip_range6")
    fi
@@ -3732,14 +3732,14 @@ get_config()
 start_service()
 {
    enable=$(uci_get_config "enable")
-   [ "$enable" != "1" ] && LOG_OUT "Warning: OpenClash Now Disabled, Need Start From Luci Page, Exit..." && SLOG_CLEAN && exit 0
+   [ "$enable" != "1" ] && LOG_WARN "OpenClash Now Disabled, Need Start From Luci Page, Exit..." && SLOG_CLEAN && exit 0
 
    if /etc/init.d/openclash status >/dev/null 2>&1; then
-      LOG_OUT "Tip: OpenClash Already Running, Exit..."
+      LOG_TIP "OpenClash Already Running, Exit..."
       exit 0
    fi
 
-   LOG_OUT "Tip: OpenClash Start Running..."
+   LOG_TIP "OpenClash Start Running..."
 
    {
       LOG_OUT "Step 1: Get The Configuration..."
@@ -3785,21 +3785,19 @@ start_service()
                sed -n "s/.*yaml_file_path=['\"]\([^'\"]*\)['\"].*/\1/p" /tmp/yaml_openclash_ruby_parse | sort | uniq | while read -r yaml_file; do
                   [ -z "$yaml_file" ] && continue
                   ruby_code=$(grep "yaml_file_path=['\"]$yaml_file['\"]" /tmp/yaml_openclash_ruby_parse | sed "s/^threads << Thread.new do //;s/ end$//")
-                  if [ -z "$ruby_code" ]; then
-                  continue
-                  fi
+                  [ -z "$ruby_code" ] && continue
                   if [ -f "$yaml_file" ]; then
-                  (
-                     ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
-                     Value = YAML.load_file('$yaml_file');
-                     threads = []
-                     $ruby_code
-                     threads.each(&:join)
-                     File.open('$yaml_file', 'w') do |f|
-                        YAML.dump(Value, f)
-                     end
-                     " >> $LOG_FILE 2>&1
-                  )
+                     (
+                        ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
+                        Value = YAML.load_file('$yaml_file');
+                        threads = []
+                        $ruby_code
+                        threads.each(&:join)
+                        File.open('$yaml_file', 'w') do |f|
+                           YAML.dump(Value, f)
+                        end
+                        " >> $LOG_FILE 2>&1
+                     )
                   fi
                done
             fi
@@ -3818,7 +3816,7 @@ start_service()
       check_core_status "start" &
 
       if [ "$ipv6_enable" -eq 0 ] && [ "$(uci -q get dhcp.lan.dhcpv6)" != "disabled" ] && [ -n "$(uci -q get dhcp.lan.dhcpv6)" ]; then
-         LOG_OUT "Warning: Please Note That Network May Abnormal With IPv6's DHCP Server"
+         LOG_WARN "Please Note That Network May Abnormal With IPv6's DHCP Server"
       fi
 
       rm -rf /tmp/yaml_*
@@ -3831,7 +3829,7 @@ stop_service()
 {
    enable=$(uci_get_config "enable")
 
-   LOG_OUT "Tip: OpenClash Stoping..."
+   LOG_TIP "OpenClash Stoping..."
    LOG_OUT "Step 1: Backup The Current Groups State..."
 
    {
@@ -3856,7 +3854,7 @@ stop_service()
       revert_dnsmasq
 
       LOG_OUT "Step 5: Delete OpenClash Residue File..."
-      LOG_OUT "Tip: OpenClash Already Stop!"
+      LOG_TIP "OpenClash Already Stop!"
 
       if [ "$enable" != "1" ]; then
          rm -rf /tmp/clash_last_version \
@@ -3896,7 +3894,7 @@ revert_dnsmasq()
 restart()
 {
    echo "OpenClash Restart..."
-   LOG_OUT "Tip: OpenClash Restart..."
+   LOG_TIP "OpenClash Restart..."
    check_run_quick
    stop
    start

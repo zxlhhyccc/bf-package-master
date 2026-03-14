@@ -83,7 +83,7 @@ yml_auth_get()
    if [ -z "$username" ] || [ -z "$password" ]; then
       return
    else
-      LOG_OUT "Tip: You have seted the authentication of SOCKS5/HTTP(S) proxy with【$username:$password】..."
+      LOG_TIP "You have seted the authentication of SOCKS5/HTTP(S) proxy with【$username:$password】..."
       echo "  - $username:$password" >>/tmp/yaml_openclash_auth
    fi
 }
@@ -170,7 +170,7 @@ PROXY_GROUPS=$(ruby -ryaml -rYAML -I "/usr/share/openclash" -E UTF-8 -e "
          Value['proxy-groups'].each { |x| puts x['name'] if x.key?('name') }
       end
    rescue Exception => e
-      YAML.LOG('Error: proxy-groups Get Failed,【%s】' % [e.message])
+      YAML.LOG_ERROR('proxy-groups Get Failed,【%s】' % [e.message])
    end
 " 2>/dev/null)
 
@@ -330,7 +330,7 @@ begin
    config_file = '$5'
    Value = YAML.load_file(config_file)
 rescue Exception => e
-   YAML.LOG('Error: Load File Failed,【%s】' % [e.message])
+   YAML.LOG_ERROR('Load File Failed,【%s】' % [e.message])
    exit
 end
 
@@ -535,7 +535,7 @@ begin
          Value['ntp']['write-to-system'] = true if !Value['ntp'].key?('write-to-system')
 
       rescue Exception => e
-         YAML.LOG('Error: Set General Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set General Failed,【%s】' % [e.message])
       end
    end
 
@@ -553,11 +553,11 @@ begin
                   Value['dns']['fallback'] = falldns_config['fallback'].uniq
                end
             elsif enable_custom_dns
-               YAML.LOG('Error: Nameserver Option Must Be Setted, Stop Customing DNS Servers')
+               YAML.LOG_ERROR('Nameserver Option Must Be Setted, Stop Customing DNS Servers')
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set Custom DNS Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set Custom DNS Failed,【%s】' % [e.message])
       end
 
       begin
@@ -575,21 +575,21 @@ begin
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set default-nameserver Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set default-nameserver Failed,【%s】' % [e.message])
       end
 
       begin
          if '$custom_fallback_filter' == '1'
             if !Value.dig('dns', 'fallback')
-               YAML.LOG('Error: Fallback-Filter Need fallback of DNS Been Setted, Ignore...')
+               YAML.LOG_ERROR('Fallback-Filter Need fallback of DNS Been Setted, Ignore...')
             elsif (filter_config = safe_load_yaml('/etc/openclash/custom/openclash_custom_fallback_filter.yaml'))
                Value['dns']['fallback-filter'] = filter_config['fallback-filter']
             else
-               YAML.LOG('Error: Unable To Parse Custom Fallback-Filter File, Ignore...')
+               YAML.LOG_ERROR('Unable To Parse Custom Fallback-Filter File, Ignore...')
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set fallback-filter Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set fallback-filter Failed,【%s】' % [e.message])
       end
    end
 
@@ -602,7 +602,7 @@ begin
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set proxy-server-nameserver Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set proxy-server-nameserver Failed,【%s】' % [e.message])
       end
    end
 
@@ -615,7 +615,7 @@ begin
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set direct-nameserver Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set direct-nameserver Failed,【%s】' % [e.message])
       end
    end
 
@@ -628,7 +628,7 @@ begin
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set Nameserver-Policy Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set Nameserver-Policy Failed,【%s】' % [e.message])
       end
    end
 
@@ -641,7 +641,7 @@ begin
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set Proxy-Server-Nameserver-Policy Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set Proxy-Server-Nameserver-Policy Failed,【%s】' % [e.message])
       end
    end
 
@@ -662,23 +662,23 @@ begin
             if filter_mode == 'blacklist' || filter_mode.nil?
                if !deleted_filters.any?
                   (Value['dns']['fake-ip-filter'] ||= []) << 'geosite:cn'
-                  YAML.LOG('Tip: Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【geosite:cn】...')
+                  YAML.LOG_TIP('Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【geosite:cn】...')
                end
             else
                if deleted_filters.any?
                   Value['dns']['fake-ip-filter'] -= deleted_filters
                   deleted_filters.each do |f|
-                     YAML.LOG('Tip: Because Need Ensure Bypassing IP Option Work, Deleted The Fake-IP-Filter Rule【%s】...' % [f])
+                     YAML.LOG_TIP('Because Need Ensure Bypassing IP Option Work, Deleted The Fake-IP-Filter Rule【%s】...' % [f])
                   end
                end
             end
             if filter_mode == 'rule'
                (Value['dns']['fake-ip-filter'] ||= []).unshift('GEOSITE,cn,real-ip')
-               YAML.LOG('Tip: Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【GEOSITE,cn,real-ip】...')
+               YAML.LOG_TIP('Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【GEOSITE,cn,real-ip】...')
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set Fake-IP-Filter Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set Fake-IP-Filter Failed,【%s】' % [e.message])
       end
    end
 
@@ -693,11 +693,11 @@ begin
                else
                   (Value['hosts'] ||= {}).merge!(hosts_content)
                end
-               YAML.LOG('Warning: You May Need to Turn off The Rebinding Protection Option of Dnsmasq When Hosts Has Set a Reserved Address...')
+               YAML.LOG_WARN('You May Need to Turn off The Rebinding Protection Option of Dnsmasq When Hosts Has Set a Reserved Address...')
             end
          end
       rescue Exception => e
-         YAML.LOG('Error: Set Hosts Rules Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set Hosts Rules Failed,【%s】' % [e.message])
       end
    end
 
@@ -708,7 +708,7 @@ begin
             Value['authentication'] = auth_config
          end
       rescue Exception => e
-         YAML.LOG('Error: Set authentication Failed,【%s】' % [e.message])
+         YAML.LOG_ERROR('Set authentication Failed,【%s】' % [e.message])
       end
    end
 
@@ -728,7 +728,7 @@ begin
                         original_size = Value['dns'][opt].size
                         Value['dns'][opt].reject! { |v| v.to_s.match?(/^system($|:\/\/)/) }
                         if Value['dns'][opt].size < original_size
-                           YAML.LOG('Tip: Option【%s】is Setted【system】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt])
+                           YAML.LOG_TIP('Option【%s】is Setted【system】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt])
                         end
                      else
                         Value['dns'][opt].each do |k, v|
@@ -737,18 +737,18 @@ begin
                               v.reject! { |z| z.to_s.match?(/^system($|:\/\/)/) }
                               if v.empty?
                                  Value['dns'][opt].delete(k)
-                                 YAML.LOG('Tip: Option【%s - %s】is Setted【system】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt, k])
+                                 YAML.LOG_TIP('Option【%s - %s】is Setted【system】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt, k])
                               elsif v.size < original_size
-                                 YAML.LOG('Tip: Option【%s - %s】is Setted【system】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt, k])
+                                 YAML.LOG_TIP('Option【%s - %s】is Setted【system】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt, k])
                               end
                            elsif v.to_s.match?(/^system($|:\/\/)/)
                               Value['dns'][opt].delete(k)
-                              YAML.LOG('Tip: Option【%s - %s】is Setted【%s】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt, k, v.to_s])
+                              YAML.LOG_TIP('Option【%s - %s】is Setted【%s】as DNS Server Which May Cause DNS Loop, Already Remove It...' % [opt, k, v.to_s])
                            end
                         end
                      end
                rescue Exception => e
-                  YAML.LOG('Error: DNS Loop Check,【%s】' % [e.message])
+                  YAML.LOG_ERROR('DNS Loop Check,【%s】' % [e.message])
                end
             end
          end
@@ -756,13 +756,13 @@ begin
       end
 
       if Value.dig('dns', 'nameserver').to_a.empty?
-         YAML.LOG('Tip: Detected That The nameserver DNS Option Has No Server Set, Starting To Complete...')
+         YAML.LOG_TIP('Detected That The nameserver DNS Option Has No Server Set, Starting To Complete...')
          Value['dns']['nameserver'] = ['114.114.114.114', '119.29.29.29', '8.8.8.8', '1.1.1.1']
          Value['dns']['fallback'] ||= ['https://dns.cloudflare.com/dns-query', 'https://dns.google/dns-query']
       end
 
       if Value['dns'].key?('default-nameserver') && Value['dns']['default-nameserver'].to_a.empty?
-         YAML.LOG('Tip: Detected That The default-nameserver DNS Option Has No Server Set, Starting To Complete...')
+         YAML.LOG_TIP('Detected That The default-nameserver DNS Option Has No Server Set, Starting To Complete...')
          Value['dns']['default-nameserver'] = ['114.114.114.114', '119.29.29.29', '8.8.8.8', '1.1.1.1']
       end
 
@@ -782,25 +782,25 @@ begin
          if respect_rules || Value.dig('dns', 'respect-rules').to_s == 'true' || all_ns_proxied || proxy_server_nameserver_policy
             Value['dns']['proxy-server-nameserver'] = default_proxy_servers
             if all_ns_proxied
-               YAML.LOG('Tip: Nameserver Option Maybe All Setted The Proxy Option, Auto Set Proxy-server-nameserver Option to【%s】For Avoiding Proxies Server Resolve Loop...' % [default_proxy_servers.join(', ')])
+               YAML.LOG_TIP('Nameserver Option Maybe All Setted The Proxy Option, Auto Set Proxy-server-nameserver Option to【%s】For Avoiding Proxies Server Resolve Loop...' % [default_proxy_servers.join(', ')])
             elsif proxy_server_nameserver_policy
-               YAML.LOG('Tip:【Proxy-server-nameserver-policy】Need Proxy-server-nameserver Option Must Be Setted, Auto Set to【%s】' % [default_proxy_servers.join(', ')])
+               YAML.LOG_TIP('【Proxy-server-nameserver-policy】Need Proxy-server-nameserver Option Must Be Setted, Auto Set to【%s】' % [default_proxy_servers.join(', ')])
             else
-               YAML.LOG('Tip:【Respect-rules】Need Proxy-server-nameserver Option Must Be Setted, Auto Set to【%s】' % [default_proxy_servers.join(', ')])
+               YAML.LOG_TIP('【Respect-rules】Need Proxy-server-nameserver Option Must Be Setted, Auto Set to【%s】' % [default_proxy_servers.join(', ')])
             end
          end
       else
          all_psn_proxied = Value.dig('dns', 'proxy-server-nameserver').to_a.all? { |x| x.match?(proxied_server_reg) }
          if all_psn_proxied
             (Value['dns']['proxy-server-nameserver'] ||= []).concat(default_proxy_servers).uniq!
-            YAML.LOG('Tip: Proxy-server-nameserver Option Maybe All Setted The Proxy Option, Auto Set Proxy-server-nameserver Option to【%s】For Avoiding Proxies Server Resolve Loop...' % [default_proxy_servers.join(', ')])
+            YAML.LOG_TIP('Proxy-server-nameserver Option Maybe All Setted The Proxy Option, Auto Set Proxy-server-nameserver Option to【%s】For Avoiding Proxies Server Resolve Loop...' % [default_proxy_servers.join(', ')])
          end
       end
    rescue Exception => e
-      YAML.LOG('Error: Config File params checked Failed,【%s】' % [e.message])
+      YAML.LOG_ERROR('Config File params checked Failed,【%s】' % [e.message])
    end
 rescue Exception => e
-   YAML.LOG('Error: Config File Overwrite Failed,【%s】' % [e.message])
+   YAML.LOG_ERROR('Config File Overwrite Failed,【%s】' % [e.message])
 ensure
    File.open(config_file, 'w') { |f| YAML.dump(Value, f) }
 end
