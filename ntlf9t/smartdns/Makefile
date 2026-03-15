@@ -17,6 +17,7 @@ PKG_MIRROR_HASH:=1ae7e7f3345d30ee7ee883a3916871d5740bf98a1f471d369ee62f667aaa609
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
+PKG_CPE_ID:=cpe:/a:pymumu:smartdns
 
 # node compile is slow, so do not use it, download node manually.
 # PACKAGE_smartdns-ui:node/host
