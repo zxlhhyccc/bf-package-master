@@ -2614,6 +2614,9 @@ msgstr "UDP 最大并发连接数"
 msgid "xudpProxyUDP443"
 msgstr "对被代理的 UDP/443 流量处理方式"
 
+msgid "An FinalMaskObject in JSON format, used for sharing."
+msgstr "JSON 格式的 FinalMaskObject，用来实现分享。"
+
 #~ msgid "Applying configuration changes… %ds"
 #~ msgstr "正在等待配置被应用… %ds"
 
