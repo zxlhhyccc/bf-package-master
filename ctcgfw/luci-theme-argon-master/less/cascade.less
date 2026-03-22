@@ -275,16 +275,17 @@ select[multiple="multiple"] {
   margin-left: 0;
   margin-right: 0;
   margin-top: 0rem;
-}
-
-
-.container .alert,
-.container .alert-message.error {
   position: relative;
   top: 0;
   transform:translate(-50%, 0);
   width: 100%;
 }
+
+#mwan3-service-status > .alert-message {
+  left: 0.5rem;
+  transform: none;
+}
+
 .lg {
   margin: 0;
   padding: 0 !important;
@@ -1091,11 +1092,10 @@ td>table>tbody>tr>td,
 }
 
 .cbi-input-file {
-  appearance: none;
+  appearance: auto !important;
 
-  // 去掉选择文件按钮
   &::-webkit-file-upload-button {
-    display: none;
+    display: inline-block !important;
   }
 }
 
@@ -1671,7 +1671,7 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
     padding: 0.5rem;
     cursor: auto;
     white-space: pre-wrap;
-    color: var(--gray-dark);
+    color: var(--dark-primary);
     outline: 0;
     border-radius: 0.25rem;
     border: 1px solid var(--lighter);

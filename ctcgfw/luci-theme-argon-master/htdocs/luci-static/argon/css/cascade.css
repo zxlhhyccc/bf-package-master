@@ -1377,16 +1377,6 @@ footer > a {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 2px 0 rgba(0, 0, 0, 0.12);
   text-shadow: none;
 }
-.modal.alert-message {
-  position: static;
-  width: 90%;
-  min-width: 270px;
-  max-width: 600px;
-  left: auto;
-  top: auto;
-  transform: none;
-  margin: 5em auto;
-}
 .alert.error,
 .alert-message.error {
   background-color: var(--warning);
@@ -1399,6 +1389,16 @@ footer > a {
 .alert .btn,
 .alert-message .btn {
   height: auto;
+}
+.modal.alert-message {
+  position: static;
+  width: 90%;
+  min-width: 270px;
+  max-width: 600px;
+  left: auto;
+  top: auto;
+  transform: none;
+  margin: 5em auto;
 }
 .alert-message > h4 {
   font-size: 110%;
@@ -1415,14 +1415,14 @@ footer > a {
   margin-left: 0;
   margin-right: 0;
   margin-top: 0rem;
-}
-
-.container .alert,
-.container .alert-message.error {
   position: relative;
   top: 0;
-  transform:translate(-50%, 0);
+  transform: translate(-50%, 0);
   width: 100%;
+}
+#mwan3-service-status > .alert-message {
+  left: 0.5rem;
+  transform: none;
 }
 .lg {
   margin: 0;
@@ -2097,10 +2097,10 @@ td > table > tbody > tr > td,
   max-width: 3rem;
 }
 .cbi-input-file {
-  appearance: none;
+  appearance: auto !important;
 }
 .cbi-input-file::-webkit-file-upload-button {
-  display: none;
+  display: inline-block !important;
 }
 .cbi-input-invalid {
   color: #f5365c !important;
@@ -2574,7 +2574,7 @@ body:not(.Interfaces) .cbi-rowstyle-2:first-child {
   padding: 0.5rem;
   cursor: auto;
   white-space: pre-wrap;
-  color: var(--gray-dark);
+  color: var(--dark-primary);
   outline: 0;
   border-radius: 0.25rem;
   border: 1px solid var(--lighter);
@@ -3468,6 +3468,9 @@ pre.command-output {
   border-color: #fb6340 !important;
   margin-left: 0 !important;
 }
+[data-page="admin-system-reboot"] .cbi-button.cbi-button-action.important {
+  align-self: flex-end;
+}
 /* applyreboot fix */
 #applyreboot-container {
   margin: 2rem;
@@ -3481,7 +3484,7 @@ pre.command-output {
   padding-left: 1.5rem;
 }
 [data-page="admin-system-poweroffdevice"] .container h2 {
-  margin: 0 0 1rem 0;
+  margin: 0;
 }
 [data-page="admin-system-poweroffdevice"] .container h2 + p {
   margin-bottom: 1rem;
@@ -3489,6 +3492,9 @@ pre.command-output {
 }
 [data-page="admin-system-poweroffdevice"] .container button + div {
   display: none;
+}
+[data-page="admin-system-poweroffdevice"] .btn.cbi-button.cbi-button-negative {
+  align-self: flex-end;
 }
 [data-page="admin-network-network"] .cbi-value-field .cbi-dynlist {
   padding: 0 !important;
@@ -3584,6 +3590,31 @@ pre.command-output {
 [data-page="admin-status-routes"] #view .cbi-tabmenu + div {
   margin-top: -0.5rem;
 }
+.cbi-section.fade-in .cbi-title {
+  position: relative;
+}
+.cbi-section.fade-in .cbi-title > div:last-child {
+  position: absolute;
+  right: 1.25rem;
+  top: 0;
+}
+.cbi-section.fade-in .cbi-title > div:last-child span {
+  font-size: 0;
+  background: none!important;
+  color: #ced4da !important;
+}
+.cbi-section.fade-in .cbi-title > div:last-child span:after {
+  transition: all 0.3s;
+  font-family: 'argon' !important;
+  content: '\e90f';
+  font-size: 1.1rem;
+  padding: 0.8755rem 0;
+  position: absolute;
+  right: 0;
+}
+.cbi-section.fade-in .cbi-title > div:last-child span[data-style=inactive]:after {
+  transform: rotate(90deg);
+}
 [data-page="admin-status"] #view > div:first-child,
 [data-page="admin-status-overview"] #view > div:first-child {
   gap: 0 !important;
@@ -3594,11 +3625,11 @@ pre.command-output {
 [data-page="admin-status-nftables"] .nft-chain-hook {
   padding: 0.5rem 1.25rem;
 }
-[data-page="admin-nlbw-display"] .cbi-section[data-tab="export"] {
+[data-page="admin-services-nlbw-display"] .cbi-section[data-tab="export"] {
   padding: 1.5rem !important;
 }
-[data-page="admin-nlbw-backup"] form {
-  padding-left: 1.5rem;
+[data-page="admin-services-nlbw-display"] .cbi-section > .right {
+  margin: 15px 15px 0px 0px;
 }
 [data-page="admin-services-ddns"] #syslog {
   overflow: auto;
@@ -3652,6 +3683,10 @@ pre.command-output {
 }
 [data-page^="admin-services-openclash"] .oc .developer-container {
   background: transparent;
+}
+[data-page^="admin-services-openclash"] .oc .announcement-card {
+  width: auto!important;
+  margin: 10px!important;
 }
 [data-page^="admin-services-openclash"] #cbi-openclash > fieldset {
   background: none;
@@ -3725,7 +3760,6 @@ pre.command-output {
 }
 [data-page^="admin-services-openclash"] .cbi-input-file {
   padding: 0.2813rem;
-  box-sizing: content-box;
   width: 15rem !important;
 }
 [data-page^="admin-services-openclash"] [id="container.openclash.config.debug"] fieldset {
@@ -3859,6 +3893,16 @@ div[style*="display:grid;grid-template-columns:repeat"] .ifacebox .ifacebox-body
 [data-page^="command-cfg"] .mobile-hide,
 [data-page^="command-cfg"] .showSide {
   display: none;
+}
+#mwan3-service-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+#mwan3-service-status > .alert-message {
+  position: static;
+  transform: none;
 }
 /* responsive */
 @media all and (-ms-high-contrast: none) {
