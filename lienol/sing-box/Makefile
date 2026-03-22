@@ -93,7 +93,7 @@ endef
 Package/sing-box-tiny/description:=$(Package/sing-box/description)
 
 define Package/sing-box-tiny/config
-  depends on $(subst @,,$(GO_ARCH_DEPENDS))
+  $(call Package/sing-box/config)
 
     config SING_BOX_TINY_COMPRESS_GOPROXY
 	bool "Compiling with GOPROXY proxy"
