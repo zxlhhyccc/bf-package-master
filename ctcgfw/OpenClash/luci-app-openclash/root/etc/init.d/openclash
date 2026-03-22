@@ -3827,7 +3827,7 @@ start_service()
 
 stop_service()
 {
-   enable=$(uci_get_config "enable")
+   get_config
 
    LOG_TIP "OpenClash Stoping..."
    LOG_OUT "Step 1: Backup The Current Groups State..."
@@ -3869,6 +3869,7 @@ stop_service()
 
       del_cron
       clear_overwrite_set
+      rm -rf /tmp/openclash_jobs
       rm -rf /tmp/yaml_*
    } >/dev/null 2>&1
 
@@ -3877,7 +3878,6 @@ stop_service()
 
 revert_dnsmasq()
 {
-   get_config
    redirect_dns=$(uci_get_config "redirect_dns")
    dnsmasq_server=$(uci_get_config "dnsmasq_server")
    dnsmasq_noresolv=$(uci_get_config "dnsmasq_noresolv")
@@ -3908,7 +3908,7 @@ start_watchdog()
 
 reload_service()
 {
-   enable=$(uci_get_config "enable")
+   get_config
    MAX_RELOAD=10
    if pidof clash >/dev/null && [ "$enable" == "1" ] && [ "$1" == "firewall" ]; then
       #sleep for avoiding system unready
@@ -3935,14 +3935,12 @@ reload_service()
       LOG_OUT "【${CUR_RELOAD_NUM}/$MAX_RELOAD】Reload OpenClash Firewall Rules..."
       revert_firewall
       do_run_mode
-      get_config
       check_core_status &
    fi
    if pidof clash >/dev/null && [ "$enable" == "1" ] && [ "$1" == "manual" ]; then
       LOG_OUT "Manually Reload Firewall Rules..."
       revert_firewall
       do_run_mode
-      get_config
       check_core_status &
    fi
    if pidof clash >/dev/null && [ "$enable" == "1" ] && [ "$1" == "revert" ]; then
@@ -3952,7 +3950,6 @@ reload_service()
    fi
    if pidof clash >/dev/null && [ "$enable" == "1" ] && [ "$1" == "restore" ]; then
       do_run_mode
-      get_config
       # used for config subscribe, not background for avoiding system unready
       check_core_status
    fi

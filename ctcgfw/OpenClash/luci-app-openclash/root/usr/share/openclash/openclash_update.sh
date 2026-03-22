@@ -15,8 +15,6 @@ del_lock() {
 }
 
 set_lock
-inc_job_counter
-restart=0
 
 if [ -n "$1" ] && [ "$1" != "one_key_update" ]; then
    /usr/share/openclash/openclash_version.sh "$1" 2>/dev/null
@@ -29,7 +27,6 @@ fi
 if [ ! -f "/tmp/openclash_last_version" ]; then
    LOG_ERROR "Failed to get version information, please try again later..."
    SLOG_CLEAN
-   dec_job_counter_and_restart "$restart"
    del_lock
    exit 0
 fi
@@ -177,7 +174,6 @@ if [ -n "$OP_CV" ] && [ -n "$OP_LV" ] && version_compare "$OP_CV" "$OP_LV" && [ 
                fi
 
                SLOG_CLEAN
-               dec_job_counter_and_restart "$restart"
                del_lock
                exit 0
             fi
@@ -192,7 +188,6 @@ if [ -n "$OP_CV" ] && [ -n "$OP_LV" ] && version_compare "$OP_CV" "$OP_LV" && [ 
             rm -rf /tmp/openclash.ipk >/dev/null 2>&1
             rm -rf /tmp/openclash.apk >/dev/null 2>&1
             SLOG_CLEAN
-            dec_job_counter_and_restart "$restart"
             del_lock
             exit 0
          fi
@@ -406,7 +401,6 @@ else
       LOG_TIP "OpenClash has not been updated, stop continuing!"
    fi
    SLOG_CLEAN
-   dec_job_counter_and_restart "$restart"
 fi
 
 del_lock
