@@ -702,24 +702,25 @@ check_core_status()
          ip_="ip -6"
       fi
 
-      #wait 120s most for tun interface start
-      while ( [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_WAIT" -le 120 ] )
+      #wait 300s most for core start
+      while ( [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_WAIT" -le 300 ] )
       do
          $ip_ link set utun up
          let TUN_WAIT++
          sleep 1
       done
 
-      if [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_WAIT" -gt 120 ]; then
+      if [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_WAIT" -gt 300 ]; then
          while ( [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_RESTART" -le 3 ] )
          do
             LOG_WARN "TUN Interface Start Failed, Try to Restart Again..."
             start_run_core
-            sleep 120
             let TUN_RESTART++
+            sleep 300
          done
          if [ -n "$(pidof clash)" ] && [ -z "$($ip_ route list |grep utun)" ] && [ "$TUN_RESTART" -gt 3 ]; then
-            LOG_WARN "TUN Interface Start Failed, Please Check The Dependence or Try to Restart Again!"
+            LOG_ERROR "TUN Interface Start Failed, Please Check The Dependence or Try to Restart Again!"
+            LOG_ERROR "Core Initial Configuration Timeout, Please Check The Log Infos!"
             start_fail
          fi
       fi
@@ -742,7 +743,7 @@ check_core_status()
       fi
    else
       reg4='^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$'
-      while ( [ -n "$(pidof clash)" ] && [ "$CORE_HTTP_CODE" != "200" ] && [ "$TUN_WAIT" -le 120 ] && [ -n "$(echo ${lan_ip} | grep -Eo ${reg4})" ] )
+      while ( [ -n "$(pidof clash)" ] && [ "$CORE_HTTP_CODE" != "200" ] && [ "$TUN_WAIT" -le 300 ] && [ -n "$(echo ${lan_ip} | grep -Eo ${reg4})" ] )
       do
          CORE_HTTP_CODE=$(curl -m 5 -o /dev/null -s -w '%{http_code}' -H 'Content-Type: application/json' -H "Authorization: Bearer ${da_password}" -XGET http://${lan_ip}:${cn_port}/group)
          let TUN_WAIT++
@@ -750,9 +751,10 @@ check_core_status()
       done
       if [ -z "$(echo ${lan_ip} | grep -Eo ${reg4})" ]; then
          LOG_ERROR "LAN IP Address Get Error, Please Check The LAN Interface Setting or Choose the Correct Interface in the Setting!"
+         start_fail
       fi
-      if [ "$CORE_HTTP_CODE" != "200" ]; then
-         LOG_ERROR "Core Status Abnormal, Please Check The Log Infos!"
+      if [ -n "$(pidof clash)" ] && [ "$CORE_HTTP_CODE" != "200" ]; then
+         LOG_ERROR "Core Initial Configuration Timeout, Please Check The Log Infos!"
          start_fail
       fi
    fi

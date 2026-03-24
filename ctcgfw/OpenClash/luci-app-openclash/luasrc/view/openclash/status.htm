@@ -3023,17 +3023,18 @@
                             localStorage.setItem('sub_info_' + filename, JSON.stringify(status));
                             if (status.providers && status.providers.length === 0) {
                                 SubscriptionManager.showNoInfo();
-                                return;
                             }
                             SubscriptionManager.displaySubscriptionInfo(status);
-                            return;
                         }
                     } else {
                         needsErrorHandling = true;
+                        if (!cachedData) {
+                            SubscriptionManager.showNoInfo();
+                        }
                     }
 
                     if (needsErrorHandling) {
-                        SubscriptionManager.handleError(cachedData);
+                        SubscriptionManager.handleError(status);
                     }
                 }, true);
             }
@@ -3298,15 +3299,17 @@
             }
         },
 
-        handleError: function(cachedData) {
-            if (!cachedData) {
-                this.showNoInfo();
-            }
-
+        handleError: function(status) {
             if (this.retryCount >= this.maxRetries) {
                 this.retryCount = 0;
-                if (this.currentConfigFile && cachedData) {
-                    localStorage.removeItem('sub_info_' + this.extractFilename(this.currentConfigFile));
+                if (this.currentConfigFile && status && status.providers) {
+                    localStorage.setItem('sub_info_' + filename, JSON.stringify(status));
+                }
+                if (!status.providers || status.providers.length === 0) {
+                    this.showNoInfo();
+                }
+                if (status.providers && status.providers.length > 0) {
+                    SubscriptionManager.displaySubscriptionInfo(status);
                 }
             } else {
                 this.retryCount++;

@@ -798,7 +798,7 @@ function sub_info_get()
 
 	if #providers_data == 0 then
 		if not url_result then
-			luci.http.status(400, "Subscription information not found")
+			luci.http.status(500, "Subscription information not found")
 			return
 		end
 	end
@@ -841,7 +841,7 @@ function action_switch_rule_mode()
 	mode = luci.http.formvalue("rule_mode")
 
 	if not mode then
-		luci.http.status(400, "Missing parameters")
+		luci.http.status(500, "Missing parameters")
 		return
 	end
 
@@ -1098,7 +1098,7 @@ end
 function action_default_dashboard()
 	local default_dashboard = luci.http.formvalue("name")
 	if not default_dashboard or (default_dashboard ~= "Dashboard" and default_dashboard ~= "Yacd" and default_dashboard ~= "Metacubexd" and default_dashboard ~= "Zashboard") then
-		luci.http.status(400, "Set Failed")
+		luci.http.status(500, "Set Failed")
 		return
 	end
 	if not fs.isdirectory("/usr/share/openclash/ui/" .. string.lower(default_dashboard)) then
@@ -2257,7 +2257,7 @@ function action_switch_oc_setting()
 	local value = luci.http.formvalue("value")
 
 	if not setting or not value then
-		luci.http.status(400, "Missing parameters")
+		luci.http.status(500, "Missing parameters")
 		return
 	end
 
@@ -2490,7 +2490,7 @@ function action_switch_oc_setting()
 		end
 		uci:commit("openclash")
 	else
-		luci.http.status(400, "Invalid setting")
+		luci.http.status(500, "Invalid setting")
 		return
 	end
 
@@ -2910,14 +2910,14 @@ function action_oc_action()
 	local config_file = luci.http.formvalue("config_file")
 	
 	if not action then
-		luci.http.status(400, "Missing action parameter")
+		luci.http.status(500, "Missing action parameter")
 		return
 	end
 
 	if config_file and config_file ~= "" then
 		local config_path = "/etc/openclash/config/" .. config_file
 		if not fs.access(config_path) then
-			luci.http.status(404, "Config file not found")
+			luci.http.status(500, "Config file not found")
 			return
 		end
 
@@ -2952,7 +2952,7 @@ function action_oc_action()
 		luci.sys.call("ps | grep openclash | grep -v grep | awk '{print $1}' | xargs -r kill -9 >/dev/null 2>&1")
 		luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1")
 	else
-		luci.http.status(400, "Invalid action parameter")
+		luci.http.status(500, "Invalid action parameter")
 		return
 	end
 	
@@ -3111,7 +3111,7 @@ function action_config_file_read()
 	local config_file = luci.http.formvalue("config_file")
 
 	if not config_file then
-		luci.http.status(400, "Missing config_file parameter")
+		luci.http.status(500, "Missing config_file parameter")
 		return
 	end
 
@@ -3202,12 +3202,12 @@ function action_config_file_save()
 	end
 
 	if not config_file then
-		luci.http.status(400, "Missing config_file parameter")
+		luci.http.status(500, "Missing config_file parameter")
 		return
 	end
 
 	if not content then
-		luci.http.status(400, "Missing content parameter")
+		luci.http.status(500, "Missing content parameter")
 		return
 	end
 
@@ -3673,7 +3673,7 @@ function action_overwrite_subscribe_info()
 		return
 	elseif method == "POST" then
 		if not section_name then
-			luci.http.status(400, "Missing filename")
+			luci.http.status(500, "Missing filename")
 			return
 		end
 		local url = luci.http.formvalue("url") or ""
@@ -3835,7 +3835,7 @@ function action_overwrite_subscribe_info()
 		luci.http.write_json({status="success"})
 		return
 	else
-		luci.http.status(405, "Method Not Allowed")
+		luci.http.status(500, "Method Not Allowed")
 	end
 end
 
@@ -3923,7 +3923,7 @@ end
 function action_get_subscribe_data()
 	local filename = luci.http.formvalue("filename")
 	if not filename then
-		luci.http.status(400, "Bad Request")
+		luci.http.status(500, "Bad Request")
 		return
 	end
 
@@ -3941,7 +3941,7 @@ end
 function action_get_subscribe_info_data()
 	local filename = luci.http.formvalue("filename")
 	if not filename then
-		luci.http.status(400, "Bad Request")
+		luci.http.status(500, "Bad Request")
 		return
 	end
 	luci.http.prepare_content("application/json")

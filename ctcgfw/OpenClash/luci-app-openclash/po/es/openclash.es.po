@@ -2666,8 +2666,8 @@ msgstr "Inicio de TUN fallido; intentando reiniciar..."
 msgid "Core Start Failed, Please Check The Log Infos!"
 msgstr "Fallo al iniciar el núcleo. Revisa el registro de núcleo."
 
-msgid "Core Status Abnormal, Please Check The Log Infos!"
-msgstr "Estado del núcleo anómalo. Consulta el registro de núcleo."
+msgid "Core Initial Configuration Timeout, Please Check The Log Infos!"
+msgstr "Tiempo de espera agotado en la configuración inicial del núcleo, ¡consulta la información del registro!"
 
 msgid "Forced Sniff Pure IP Connections"
 msgstr "Forzar sniffing de conexiones IP puras"
