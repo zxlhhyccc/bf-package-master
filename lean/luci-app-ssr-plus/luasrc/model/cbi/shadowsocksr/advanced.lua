@@ -1,4 +1,5 @@
 local m, s, o
+local cbi = require "luci.cbi"
 local uci = require "luci.model.uci".cursor()
 
 -- 获取 LAN IP 地址
@@ -369,15 +370,13 @@ if is_finded("xray") then
 	o:depends("fragment", true)
 
 	o = s:option(Value, "fragment_length", translate("Fragment Length"), translate("Fragmented packet length (byte)"))
+	o.datatype = "or(uinteger,portrange)"
 	o.default = "100-200"
 	o:depends("fragment", true)
 
 	o = s:option(Value, "fragment_interval", translate("Fragment Interval"), translate("Fragmentation interval (ms)"))
+	o.datatype = "or(uinteger,portrange)"
 	o.default = "10-20"
-	o:depends("fragment", true)
-
-	o = s:option(Value, "fragment_maxsplit", translate("Max Split"), translate("Limit the maximum number of splits."))
-	o.default = "100-200"
 	o:depends("fragment", true)
 
 	o = s:option(Flag, "noise", translate("Noise"), translate("UDP noise, Under some circumstances it can bypass some UDP based protocol restrictions."))
@@ -429,13 +428,8 @@ if is_finded("xray") then
 	o = s:option(Value, "delay", translate("Delay (ms)"))
 	o.datatype = "or(uinteger,portrange)"
 	o.rmempty = false
-
-	o = s:option(Value, "applyto", translate("IP Type"))
-	o.default = "IP"
-	o:value("IP", "ALL")
-	o:value("IPV4", "IPv4")
-	o:value("IPV6", "IPv6")
-	o.rmempty = false
+	
+	s:append(cbi.Template("shadowsocksr/optimize_cbi_ui"))
 end
 
 return m
