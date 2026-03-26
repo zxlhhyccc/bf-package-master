@@ -5,14 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tuic
-PKG_VERSION:=1.7.1
+PKG_VERSION:=1.7.2
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/Itsusinn/tuic.git
-PKG_SOURCE_VERSION:=f59d3350dbbbf0a5dedf555b77eb43999363432f
-PKG_MIRROR_HASH:=779869ed320e0c2a565e7bd3429605d5f560fc899751381e3214d54e415fee37
+PKG_SOURCE_VERSION:=354450939162a0fc82c1c7e013247d7b6f359203
+PKG_MIRROR_HASH:=b8235e101d4c3b68dc7d36ffe249f53479c56668f33b0f1c43bf672ad414536d
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_TUIC_$(1)_COMPRESS_GOPROXY \
@@ -35,7 +35,7 @@ define Package/tuic/Default
     SUBMENU:=Web Servers/Proxies
     TITLE:=TUIC proxy protocol $(1)
     URL:=https://github.com/EAimTY/tuic
-    DEPENDS:=@(aarch64||arm||mips||mipsel||x86_64||i386||i686||riscv64||loongarch64)
+    DEPENDS:=@(aarch64||arm||x86_64||i686||riscv64||loongarch64)
   endef
 
   define Package/tuic-client/description
@@ -68,17 +68,16 @@ TUIC_COMPONENTS:=client server
 
 define Select/Features
 $(strip \
-  $(if $(findstring x86_64,$(RUSTC_TARGET_ARCH)),--features jemallocator) \
-  $(if $(findstring aarch64,$(RUSTC_TARGET_ARCH)),--features jemallocator) \
   $(if $(or \
-    $(findstring arm,$(RUSTC_TARGET_ARCH)), \
-    $(findstring mips,$(RUSTC_TARGET_ARCH)), \
-    $(findstring mipsel,$(RUSTC_TARGET_ARCH)), \
     $(findstring i686,$(RUSTC_TARGET_ARCH)), \
-    $(findstring i386,$(RUSTC_TARGET_ARCH)), \
+    $(findstring arm,$(RUSTC_TARGET_ARCH)), \
     $(findstring riscv64,$(RUSTC_TARGET_ARCH)), \
     $(findstring loongarch64,$(RUSTC_TARGET_ARCH)) \
   ),--no-default-features --features ring) \
+  $(if $(or \
+    $(findstring x86_64,$(RUSTC_TARGET_ARCH)), \
+    $(findstring aarch64,$(RUSTC_TARGET_ARCH)) \
+  ),--features jemallocator) \
 )
 endef
 
