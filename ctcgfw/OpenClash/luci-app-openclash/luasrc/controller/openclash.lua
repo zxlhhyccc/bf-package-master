@@ -2073,113 +2073,100 @@ function action_myip_check()
 	luci.http.write_json(result)
 end
 
-function action_website_check()
-	local domain = luci.http.formvalue("domain")
-	local result = {
-		success = false,
-		response_time = 0,
-		error = ""
-	}
+function latency_test(addr)
+	local result = { success = false, response_time = 0, error = "" }
 
-	if not domain then
+	if not addr then
 		result.error = "Missing domain parameter"
-		luci.http.prepare_content("application/json")
-		luci.http.write_json(result)
-		return
+		return result
 	end
 
-	local test_domain = domain
-	local test_url
-
-	if test_domain:match("^https?://") then
-		test_domain = test_domain:gsub("^https?://([^/]+)/?.*$", "%1")
+	if addr:match("^https?://") then
+		addr = addr:gsub("^https?://([^/]+)/?.*$", "%1")
 	end
 
-	if domain == "https://raw.githubusercontent.com/" or test_domain == "raw.githubusercontent.com" then
-		test_url = "https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png"
+	local urls = {}
+	if addr == "raw.githubusercontent.com" then
+		table.insert(urls, "https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png")
 	else
-		test_url = "https://" .. test_domain .. "/favicon.ico"
+		table.insert(urls, "https://" .. addr .. "/favicon.ico")
 	end
 
-	local cmd = string.format(
-		'curl -sL -m 5 --connect-timeout 3 --retry 2 -w "%%{http_code},%%{time_total},%%{time_connect},%%{time_appconnect}" "%s" -o /dev/null 2>/dev/null',
-		test_url
-	)
+	table.insert(urls, "https://" .. addr)
 
-	local output = luci.sys.exec(cmd)
+	for i, test_url in ipairs(urls) do
+		local cmd = string.format(
+			'curl -sI -m 5 --connect-timeout 3 --retry 2 -w "%%{http_code},%%{time_total},%%{time_connect},%%{time_appconnect}" "%s" -o /dev/null 2>/dev/null',
+			test_url
+		)
 
-	if output and output ~= "" then
-		local http_code, time_total, time_connect, time_appconnect = output:match("(%d+),([%d%.]+),([%d%.]+),([%d%.]+)")
+		local output = luci.sys.exec(cmd)
+		if output and output ~= "" then
+			local http_code, time_total, time_connect, time_appconnect =
+				output:match("(%d+),([%d%.]+),([%d%.]+),([%d%.]+)")
 
-		if http_code and tonumber(http_code) then
-			local code = tonumber(http_code)
-			local response_time = 0
-			if time_appconnect and tonumber(time_appconnect) and tonumber(time_appconnect) > 0 then
-				response_time = math.floor(tonumber(time_appconnect) * 1000)
-			elseif time_connect and tonumber(time_connect) then
-				response_time = math.floor(tonumber(time_connect) * 1000)
-			else
-				response_time = math.floor((tonumber(time_total) or 0) * 1000)
+			if not http_code then
+				http_code, time_total, time_appconnect = output:match("(%d+),([%d%.]+),([%d%.]+)")
+				time_connect = nil
 			end
 
-			if code >= 200 and code < 400 then
-				result.success = true
-				result.response_time = response_time
-			elseif code == 403 or code == 404 then
-				result.success = true
-				result.response_time = response_time
-			else
-				local fallback_url
-				if domain == "https://raw.githubusercontent.com/" or test_domain == "raw.githubusercontent.com" then
-					fallback_url = "https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png"
+			if http_code and tonumber(http_code) then
+				local code = tonumber(http_code)
+				local response_time = 0
+
+				if time_appconnect and tonumber(time_appconnect) and tonumber(time_appconnect) > 0 then
+					response_time = math.floor(tonumber(time_appconnect) * 1000)
+				elseif time_connect and tonumber(time_connect) and tonumber(time_connect) > 0 then
+					response_time = math.floor(tonumber(time_connect) * 1000)
 				else
-					fallback_url = "https://" .. test_domain .. "/"
+					response_time = math.floor((tonumber(time_total) or 0) * 1000)
 				end
-				local fallback_cmd = string.format(
-					'curl -sI -m 5 --connect-timeout 3 -w "%%{http_code},%%{time_total},%%{time_appconnect}" "%s" -o /dev/null 2>/dev/null',
-					fallback_url
-				)
-				local fallback_output = luci.sys.exec(fallback_cmd)
 
-				if fallback_output and fallback_output ~= "" then
-					local fb_code, fb_total, fb_appconnect = fallback_output:match("(%d+),([%d%.]+),([%d%.]+)")
-					if fb_code and tonumber(fb_code) then
-						local fb_code_num = tonumber(fb_code)
-						local fb_response_time = 0
-						if fb_appconnect and tonumber(fb_appconnect) and tonumber(fb_appconnect) > 0 then
-							fb_response_time = math.floor(tonumber(fb_appconnect) * 1000)
-						else
-							fb_response_time = math.floor((tonumber(fb_total) or 0) * 1000)
-						end
-
-						if fb_code_num >= 200 and fb_code_num < 400 then
-							result.success = true
-							result.response_time = fb_response_time
-						elseif fb_code_num == 403 or fb_code_num == 404 then
-							result.success = true
-							result.response_time = fb_response_time
-						else
-							result.success = false
-							result.error = "HTTP " .. fb_code_num
-							result.response_time = fb_response_time
-						end
-					else
-						result.success = false
-						result.error = "Connection failed"
-					end
+				if (code >= 200 and code < 400) or code == 403 or code == 404 then
+					result.success = true
+					result.response_time = response_time
+					return result
 				else
+					if i == #urls then
+						result.success = false
+						result.error = "HTTP " .. code
+						result.response_time = response_time
+						return result
+					end
+				end
+			else
+				if i == #urls then
 					result.success = false
-					result.error = "Connection failed"
+					result.error = "Invalid response"
+					return result
 				end
 			end
 		else
-			result.success = false
-			result.error = "Invalid response"
+			if i == #urls then
+				result.success = false
+				result.error = "No response"
+				return result
+			end
 		end
-	else
-		result.success = false
-		result.error = "No response"
 	end
+
+	return result
+end
+
+function action_website_check()
+	local domain = luci.http.formvalue("domain")
+
+	if not domain then
+		luci.http.prepare_content("application/json")
+		luci.http.write_json({
+			success = false,
+			response_time = 0,
+			error = "Missing domain parameter"
+		})
+		return
+	end
+
+	local result = latency_test(domain)
 
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(result)
