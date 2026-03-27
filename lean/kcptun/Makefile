@@ -4,15 +4,9 @@ PKG_NAME:=kcptun
 PKG_VERSION:=20260314
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-#PKG_SOURCE_URL:=https://codeload.github.com/xtaci/kcptun/tar.gz/v${PKG_VERSION}?
-#PKG_SOURCE_DATE:=2023-08-11
-#PKG_HASH:=dd88c7ddb85cc74ff22940ba2dc22f65d3b6737153b225d611abb801a0694c4d
-PKG_SOURCE_URL:=https://github.com/xtaci/kcptun.git
-PKG_SOURCE_DATE:=2026-02-09
-PKG_SOURCE_VERSION:=35c4168a78a478d9afa42a7fac1ccf8e8f7f13b3
-PKG_MIRROR_HASH:=0ad0dc978f262f2995d97c7131861ed871c80dbb95e53778acf7f648b1d6bdd6
+PKG_SOURCE_URL:=https://codeload.github.com/xtaci/kcptun/tar.gz/v${PKG_VERSION}?
+PKG_HASH:=02db422e5b423f56b4057165c72cca0003d64ad437b4c6576ecbbe73182cc07d
 
 PKG_MAINTAINER:=Dengfeng Liu <liudf0716@gmail.com>, Chao Liu <expiron18@gmail.com>
 PKG_LICENSE:=MIT
