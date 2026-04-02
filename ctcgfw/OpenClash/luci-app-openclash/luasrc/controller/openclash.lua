@@ -1644,6 +1644,13 @@ function rename_file()
 					uci:set("openclash", s[".name"], "name", fs.filename(new_file_name))
 				end
 			end)
+
+			uci:foreach("openclash", "subscribe_info",
+			function(s)
+				if s.name == fs.filename(old_file_name) and fs.filename(new_file_name) ~= new_file_name then
+					uci:set("openclash", s[".name"], "name", fs.filename(new_file_name))
+				end
+			end)
 			
 			uci:foreach("openclash", "groups",
 			function(s)

@@ -185,7 +185,7 @@ set_disable_qtype()
 yml_dns_get()
 {
    local section="$1" regex='^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$'
-   local enabled port type ip group dns_type dns_address interface specific_group node_resolve http3 ecs_subnet ecs_override disable_qtype_param
+   local enabled port type ip group dns_type dns_address interface specific_group node_resolve direct_nameserver http3 skip_cert_verify ecs_subnet ecs_override disable_qtype_param disable_qtype disable_ipv4 disable_ipv6 disable_reuse
 
    config_get_bool "enabled" "$section" "enabled" "1"
    [ "$enabled" = "0" ] && return

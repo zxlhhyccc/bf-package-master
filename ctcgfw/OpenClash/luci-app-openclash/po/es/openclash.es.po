@@ -3835,3 +3835,15 @@ msgstr "Número de serie"
 
 msgid "Set Custom Overwrite Script Failed,"
 msgstr "Fallo al ejecutar el script de sobrescritura personalizado,"
+
+msgid "Load YAML Override Block"
+msgstr "Cargar bloque de sobrescritura YAML"
+
+msgid "Invalid YAML Override format, skipped..."
+msgstr "Formato de sobrescritura YAML no válido, omitido..."
+
+msgid "Parse YAML Override failed:"
+msgstr "Error al analizar bloque de sobrescritura YAML:"
+
+msgid "YAML overwrite failed:"
+msgstr "Error en la sobrescritura YAML:"

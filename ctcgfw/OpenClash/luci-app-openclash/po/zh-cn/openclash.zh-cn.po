@@ -3848,3 +3848,15 @@ msgstr "序号"
 
 msgid "Set Custom Overwrite Script Failed,"
 msgstr "自定义覆写命令执行失败，"
+
+msgid "Load YAML Override Block"
+msgstr "加载 YAML 覆写模块"
+
+msgid "Invalid YAML Override format, skipped..."
+msgstr "无效的 YAML 覆写格式，跳过..."
+
+msgid "Parse YAML Override failed:"
+msgstr "YAML 覆写模块解析失败："
+
+msgid "YAML overwrite failed:"
+msgstr "YAML 覆写模块执行失败："
