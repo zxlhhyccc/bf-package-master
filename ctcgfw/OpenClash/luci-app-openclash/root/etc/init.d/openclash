@@ -9,6 +9,7 @@ USE_PROCD=1
 . $IPKG_INSTROOT/usr/share/openclash/ruby.sh
 . $IPKG_INSTROOT/usr/share/openclash/log.sh
 . $IPKG_INSTROOT/usr/share/openclash/uci.sh
+. $IPKG_INSTROOT/usr/share/openclash/openclash_curl.sh
 
 [ -f /etc/openwrt_release ] && {
 FW4=$(command -v fw4)
@@ -3240,9 +3241,9 @@ add_overwrite_cron()
    fi
 
    eval "restart_flag=\${OVERWRITE_RESTART_FLAG_${name}}"
-   cron_cmd="curl -fsSL -m 30 \"$url\" -o \"/etc/openclash/overwrite/$name\" >/dev/null 2>&1"
+   cron_cmd="$cron source /usr/share/openclash/openclash_curl.sh && DOWNLOAD_FILE_CURL \"$url\" \"/etc/openclash/overwrite/$name\" \"/etc/openclash/overwrite/$name\""
    if [ "$restart_flag" = "1" ]; then
-      cron_cmd="$cron_cmd && /etc/init.d/openclash restart"
+      cron_cmd="$cron_cmd && [ \"\$?\" -eq 0 ] && /etc/init.d/openclash restart"
    fi
    cron_cmd="$cron_cmd #openclash-overwrite-download"
 
@@ -3481,20 +3482,13 @@ ${trimmed}"
             LOG_TIP "DOWNLOAD FILE for【Download Job => file: $file, url: $url, path: $path, ua: ${ua:-null}, force: ${force:-false}】"
             if command -v curl >/dev/null 2>&1; then
                if [ -n "$ua" ]; then
-                  curl -fsSL -m 30 -H "User-Agent: $ua" "$url" -o "$path" >/dev/null 2>&1
+                  DOWNLOAD_FILE_CURL "$url" "$path" "$path" "$ua"
                else
-                  curl -fsSL -m 30 "$url" -o "$path" >/dev/null 2>&1
-               fi
-               rc=$?
-            else
-               if [ -n "$ua" ]; then
-                  wget -T 30 --user-agent="$ua" -qO "$path" "$url" >/dev/null 2>&1
-               else
-                  wget -T 30 -qO "$path" "$url" >/dev/null 2>&1
+                  DOWNLOAD_FILE_CURL "$url" "$path" "$path"
                fi
                rc=$?
             fi
-            if [ $rc -ne 0 ] && [ ! -f "$path" ]; then
+            if [ $rc -eq 1 ] || [ ! -f "$path" ]; then
                LOG_ERROR "DOWNLOAD FILE failed for【Download Job => file: $file, url: $url, path: $path】"
                download_failed=1
                break
@@ -3504,12 +3498,12 @@ ${trimmed}"
             LOG_TIP "Add Cron for【Cron Job => time: $cron, url: $url, path: $path, restart: ${restart:-false}】"
             if ! grep -q "$url" $CRON_FILE 2>/dev/null; then
                if [ -n "$ua" ]; then
-                  cron_cmd="$cron curl -fsSL -m 30 -H \"User-Agent: $ua\" \"$url\" -o \"$path\" >/dev/null 2>&1"
+                  cron_cmd="$cron source /usr/share/openclash/openclash_curl.sh && DOWNLOAD_FILE_CURL \"$url\" \"$path\" \"$path\" \"$ua\""
                else
-                  cron_cmd="$cron curl -fsSL -m 30 \"$url\" -o \"$path\" >/dev/null 2>&1"
+                  cron_cmd="$cron source /usr/share/openclash/openclash_curl.sh && DOWNLOAD_FILE_CURL \"$url\" \"$path\" \"$path\""
                fi
                if [ "$restart" = "1" ] || [ "$restart" = "true" ]; then
-                  cron_cmd="$cron_cmd && /etc/init.d/openclash restart"
+                  cron_cmd="$cron_cmd && [ \"\$?\" -eq 0 ] && /etc/init.d/openclash restart"
                fi
                cron_cmd="$cron_cmd #openclash-overwrite-download"
                echo "$cron_cmd" >> $CRON_FILE

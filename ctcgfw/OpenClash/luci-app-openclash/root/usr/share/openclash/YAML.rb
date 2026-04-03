@@ -28,9 +28,9 @@ module YAML
 		processed_content = fix_short_id_quotes(yaml_content)
 
 		if kwargs.empty?
-		load(processed_content, *args)
+			load(processed_content, *args)
 		else
-		load(processed_content, *args, **kwargs)
+			load(processed_content, *args, **kwargs)
 		end
 	end
 
@@ -52,8 +52,8 @@ module YAML
 			fix_short_id_quotes(yaml_content)
 		end
 		rescue => e
-		LOG_ERROR("Write file failed:【%s】" % [e.message])
-		nil
+			LOG_ERROR("Write file failed:【%s】" % [e.message])
+			nil
 		end
 	end
 
@@ -73,42 +73,42 @@ module YAML
 		begin
 			# First, normalize inline-map style unquoted short-id.
 			processed = yaml_content.gsub(INLINE_SHORT_ID_REGEX) do
-			"#{$1}\"#{$2}\""
+				"#{$1}\"#{$2}\""
 			end
 
 			lines = processed.lines
 			short_id_indices = lines.each_index.select { |i| lines[i] =~ SHORT_ID_REGEX }
 			short_id_indices.each do |short_id_index|
-			line = lines[short_id_index]
-			if line =~ SHORT_ID_REGEX
-				indent = $1
-				value = $2.strip
-				if value.empty?
-					(short_id_index + 1...lines.size).each do |i|
-					line = lines[i]
-					next if line.strip.empty?
-					if line[/^\s*/].length <= indent.length
-						break
-					end
-					if line =~ LIST_ITEM_REGEX
-						indent = $1
-						value = $2.strip
-						if value =~ KEY_REGEX
-							break
+				line = lines[short_id_index]
+				if line =~ SHORT_ID_REGEX
+					indent = $1
+					value = $2.strip
+					if value.empty?
+						(short_id_index + 1...lines.size).each do |i|
+							line = lines[i]
+							next if line.strip.empty?
+							if line[/^\s*/].length <= indent.length
+								break
+							end
+							if line =~ LIST_ITEM_REGEX
+								indent = $1
+								value = $2.strip
+								if value =~ KEY_REGEX
+									break
+								end
+								if value !~ QUOTED_VALUE_REGEX
+									lines[i] = "#{indent}- \"#{value}\"\n"
+								end
+							elsif line =~ KEY_REGEX
+								break
+							end
 						end
+					else
 						if value !~ QUOTED_VALUE_REGEX
-							lines[i] = "#{indent}- \"#{value}\"\n"
+							lines[short_id_index] = "#{indent}short-id: \"#{value}\"\n"
 						end
-					elsif line =~ KEY_REGEX
-						break
-					end
-					end
-				else
-					if value !~ QUOTED_VALUE_REGEX
-					lines[short_id_index] = "#{indent}short-id: \"#{value}\"\n"
 					end
 				end
-			end
 			end
 			lines.join
 		rescue => e
@@ -124,22 +124,22 @@ module YAML
 		begin
 			case override
 			when Hash
-			result = base.is_a?(Hash) ? base.dup : {}
+				result = base.is_a?(Hash) ? base.dup : {}
 
-			override.each do |key, value|
-				processed_key, operation = parse_key(key)
-				applied = apply_operation(result[processed_key], value, operation)
-				if applied.equal?(DELETED_SENTINEL)
-					result.delete(processed_key)
-				else
-					result[processed_key] = applied
+				override.each do |key, value|
+					processed_key, operation = parse_key(key)
+					applied = apply_operation(result[processed_key], value, operation)
+					if applied.equal?(DELETED_SENTINEL)
+						result.delete(processed_key)
+					else
+						result[processed_key] = applied
+					end
 				end
-			end
-			result
+				result
 			when Array
-			override
+				override
 			else
-			override
+				override
 			end
 		rescue => e
 			LOG_ERROR("YAML overwrite failed:【key: %s, operation: %s, error: %s】" % [key, operation, e.message])
@@ -201,17 +201,17 @@ module YAML
 		
 		begin
 			if condition.is_a?(String) && condition.start_with?('/') && condition.end_with?('/')
-			pattern = condition[1...-1]
-			regexp = Regexp.new(pattern)
-			if target.is_a?(Array)
-				target.any? { |item| item.to_s =~ regexp }
-			else
-				target.to_s =~ regexp
-			end
+				pattern = condition[1...-1]
+				regexp = Regexp.new(pattern)
+				if target.is_a?(Array)
+					target.any? { |item| item.to_s =~ regexp }
+				else
+					target.to_s =~ regexp
+				end
 			elsif condition.is_a?(Array) && target.is_a?(Array)
-			condition.all? { |c| target.include?(c) }
+				condition.all? { |c| target.include?(c) }
 			else
-			target == condition
+				target == condition
 			end
 		rescue => e
 			LOG_ERROR("YAML overwrite failed:【(match value) => target: %s, condition: %s, error: %s】" % [target, condition, e.message])
@@ -235,35 +235,37 @@ module YAML
 		case operation
 		when :delete
 			if base.is_a?(Array) && value.is_a?(Array)
-			base - value
+				base - value
 			elsif base.is_a?(Array) && !value.nil?
-			base - [value]
+				base - [value]
 			else
-			DELETED_SENTINEL
+				DELETED_SENTINEL
 			end
 		when :force_overwrite
 			value
 		when :prepend_array
 			if base.is_a?(Array) && value.is_a?(Array)
-			deep_dup(value) + base
+				(deep_dup(value) + base).uniq
 			else
-			deep_dup(value)
+				deep_dup(value)
 			end
 		when :append_array
 			if base.is_a?(Array) && value.is_a?(Array)
-			base + deep_dup(value)
+				base_dup = base.dup
+				deep_dup(value).each { |v| base_dup.delete(v) }
+				base_dup + deep_dup(value)
 			else
-			deep_dup(value)
+				deep_dup(value)
 			end
 		when :batch_update
 			batch_update_items(base, value)
 		when :merge
 			if base.is_a?(Hash) && value.is_a?(Hash)
-			overwrite(base, value)
+				overwrite(base, value)
 			elsif value.nil?
-			base
+				base
 			else
-			value
+				value
 			end
 		else
 			value
@@ -277,9 +279,9 @@ module YAML
 			processed_key, operation = parse_key(k)
 			result = apply_operation(item[processed_key], v, operation)
 			if result.equal?(DELETED_SENTINEL)
-			keys_to_delete << processed_key
+				keys_to_delete << processed_key
 			else
-			item[processed_key] = result
+				item[processed_key] = result
 			end
 		end
 
@@ -289,13 +291,13 @@ module YAML
 	def self.match_item(item, where_conditions, key = nil)
 		where_conditions.all? do |k, v|
 			if k == 'key' && !key.nil?
-			match_value(key, v)
+				match_value(key, v)
 			elsif item.is_a?(Hash)
-			match_value(item[k] || item[k.to_s], v)
+				match_value(item[k] || item[k.to_s], v)
 			elsif item.is_a?(String) && k == 'value'
-			match_value(item, v)
+				match_value(item, v)
 			else
-			false
+				false
 			end
 		end
 	end
@@ -308,58 +310,58 @@ module YAML
 			set_values = update_spec['set'] || {}
 
 			if collection.is_a?(Array)
-			result = collection.dup
-			delete_indices = []
-
-			result.each_with_index do |item, index|
-				match = match_item(item, where_conditions)
-
-				if match
-					if item.is_a?(Hash)
-					apply_set_fields(item, set_values)
-					elsif item.is_a?(String) && set_values.key?('value')
-					new_value = set_values['value']
-					if new_value.nil?
-						delete_indices << index
-					else
-						result[index] = deep_dup(new_value)
-					end
-					end
-				end
-			end
-
-			delete_indices.reverse_each { |i| result.delete_at(i) }
-			result
-			elsif collection.is_a?(Hash)
-			if where_conditions.any? { |k, _| k != 'key' } &&
-				match_item(collection, where_conditions)
 				result = collection.dup
-				apply_set_fields(result, set_values)
-				result
-			else
-				result = collection.dup
-				keys_to_delete = []
+				delete_indices = []
 
-				result.each do |key, value|
-					next unless value.is_a?(Hash)
-					match = match_item(value, where_conditions, key)
+				result.each_with_index do |item, index|
+					match = match_item(item, where_conditions)
 
 					if match
-					if set_values.key?('key-') || (set_values.key?('key') && set_values['key'].nil?)
-						keys_to_delete << key
-					else
-						apply_set_fields(value, set_values)
-					end
+						if item.is_a?(Hash)
+							apply_set_fields(item, set_values)
+						elsif item.is_a?(String) && set_values.key?('value')
+							new_value = set_values['value']
+							if new_value.nil?
+								delete_indices << index
+							else
+								result[index] = deep_dup(new_value)
+							end
+						end
 					end
 				end
 
-				keys_to_delete.each { |k| result.delete(k) }
+				delete_indices.reverse_each { |i| result.delete_at(i) }
 				result
-			end
+			elsif collection.is_a?(Hash)
+				if where_conditions.any? { |k, _| k != 'key' } &&
+					match_item(collection, where_conditions)
+					result = collection.dup
+					apply_set_fields(result, set_values)
+					result
+				else
+					result = collection.dup
+					keys_to_delete = []
+
+					result.each do |key, value|
+						next unless value.is_a?(Hash)
+						match = match_item(value, where_conditions, key)
+
+						if match
+							if set_values.key?('key-') || (set_values.key?('key') && set_values['key'].nil?)
+								keys_to_delete << key
+							else
+								apply_set_fields(value, set_values)
+							end
+						end
+					end
+
+					keys_to_delete.each { |k| result.delete(k) }
+					result
+				end
 			elsif collection.nil?
-			nil
+				nil
 			else
-			collection
+				collection
 			end
 		rescue => e
 			LOG_ERROR("YAML overwrite failed:【(batch update) => update_spec: %s, error: %s】" % [update_spec, e.message])
