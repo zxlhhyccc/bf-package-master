@@ -565,7 +565,7 @@ msgid ""
 "fastest_addr (default: load_balance)."
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:435
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:434
 msgid "Delay (ms)"
 msgstr ""
 
@@ -638,7 +638,7 @@ msgstr ""
 msgid "DoT upstream (Need use wolfssl version)"
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:422
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:421
 msgid "Domain Strategy"
 msgstr ""
 
@@ -1514,7 +1514,7 @@ msgstr ""
 msgid "Packet or Rand length as a string, e.g., 10-20."
 msgstr ""
 
-#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:431
+#: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/advanced.lua:430
 msgid "Packet | Rand Length"
 msgstr ""
 
