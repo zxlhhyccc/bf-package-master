@@ -29,7 +29,7 @@ define Package/gallery-dl
     +python3 \
     +python3-codecs \
     +python3-ctypes \
-    +python3-email \
+    +python3-urllib \
     +python3-requests \
     +python3-setuptools \
     +python3-xml
