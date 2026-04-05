@@ -121,13 +121,19 @@ module YAML
 		return override if base.nil?
 		return base if override.nil?
 
+		current_key = nil
+		current_operation = nil
+
 		begin
 			case override
 			when Hash
 				result = base.is_a?(Hash) ? base.dup : {}
 
 				override.each do |key, value|
+					current_key = key
 					processed_key, operation = parse_key(key)
+					current_operation = operation
+
 					applied = apply_operation(result[processed_key], value, operation)
 					if applied.equal?(DELETED_SENTINEL)
 						result.delete(processed_key)
@@ -135,14 +141,13 @@ module YAML
 						result[processed_key] = applied
 					end
 				end
+
 				result
-			when Array
-				override
 			else
 				override
 			end
 		rescue => e
-			LOG_ERROR("YAML overwrite failed:【key: %s, operation: %s, error: %s】" % [key, operation, e.message])
+			LOG_ERROR("YAML overwrite failed:【key: %s, operation: %s, error: %s】" % [current_key, current_operation, e.message])
 			base
 		end
 	end
@@ -152,13 +157,14 @@ module YAML
 	def self.parse_key(key)
 		key_str = key.to_s
 
-		# <>
+		# +<key>
 		if key_str.start_with?('+<') && key_str.include?('>')
 			close_idx = key_str.index('>')
 			inner_key = key_str[2...close_idx]
 			return inner_key, :prepend_array
 		end
-		
+
+		# <key>suffix
 		if key_str.start_with?('<') && key_str.include?('>')
 			close_idx = key_str.index('>')
 			inner_key = key_str[1...close_idx]
@@ -173,7 +179,7 @@ module YAML
 
 		# 尾部（支持 +, !, *, -）
 		if key_str =~ /^(.*?)([+!*\-])$/
-			return $1, determine_operation($2)
+			return Regexp.last_match(1), determine_operation(Regexp.last_match(2))
 		end
 
 		[key_str, :merge]
@@ -189,8 +195,6 @@ module YAML
 			:force_overwrite
 		when '*'
 			:batch_update
-		when ''
-			:merge
 		else
 			:merge
 		end
@@ -198,7 +202,7 @@ module YAML
 
 	def self.match_value(target, condition)
 		return false if target.nil? || condition.nil?
-		
+
 		begin
 			if condition.is_a?(String) && condition.start_with?('/') && condition.end_with?('/')
 				pattern = condition[1...-1]
@@ -230,7 +234,68 @@ module YAML
 		end
 	end
 
+	def self.merge_hash(base, value, prepend: false)
+		if prepend
+			result = {}
+
+			value.each do |k, v|
+				if base.key?(k)
+					result[k] = apply_operation(base[k], v, :merge)
+				else
+					result[k] = deep_dup(v)
+				end
+			end
+
+			base.each do |k, v|
+				result[k] = deep_dup(v) unless result.key?(k)
+			end
+
+			result
+		else
+			result = deep_dup(base)
+
+			value.each do |k, v|
+				if result.key?(k)
+					result[k] = apply_operation(result[k], v, :merge)
+				else
+					result[k] = deep_dup(v)
+				end
+			end
+
+			result
+		end
+	end
+
+	def self.delete_from_hash(base, value)
+		result = deep_dup(base)
+
+		case value
+		when Array
+			value.each { |k| result.delete(k) }
+		when Hash
+			value.each do |k, v|
+				if v.nil? || v == true
+					result.delete(k)
+				elsif result[k].is_a?(Hash) && v.is_a?(Hash)
+					nested = apply_operation(result[k], v, :delete)
+					if nested.equal?(DELETED_SENTINEL)
+						result.delete(k)
+					else
+						result[k] = nested
+					end
+				else
+					result.delete(k)
+				end
+			end
+		else
+			result.delete(value)
+		end
+
+		result
+	end
+
 	DELETED_SENTINEL = Object.new.freeze
+
 	def self.apply_operation(base, value, operation)
 		case operation
 		when :delete
@@ -238,14 +303,18 @@ module YAML
 				base - value
 			elsif base.is_a?(Array) && !value.nil?
 				base - [value]
+			elsif base.is_a?(Hash)
+				delete_from_hash(base, value)
 			else
 				DELETED_SENTINEL
 			end
 		when :force_overwrite
-			value
+			deep_dup(value)
 		when :prepend_array
 			if base.is_a?(Array) && value.is_a?(Array)
 				(deep_dup(value) + base).uniq
+			elsif base.is_a?(Hash) && value.is_a?(Hash)
+				merge_hash(base, value, prepend: true)
 			else
 				deep_dup(value)
 			end
@@ -254,6 +323,8 @@ module YAML
 				base_dup = base.dup
 				deep_dup(value).each { |v| base_dup.delete(v) }
 				base_dup + deep_dup(value)
+			elsif base.is_a?(Hash) && value.is_a?(Hash)
+				merge_hash(base, value, prepend: false)
 			else
 				deep_dup(value)
 			end
@@ -265,10 +336,10 @@ module YAML
 			elsif value.nil?
 				base
 			else
-				value
+				deep_dup(value)
 			end
 		else
-			value
+			deep_dup(value)
 		end
 	end
 
