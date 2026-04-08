@@ -233,7 +233,9 @@ if is_finded("dnsproxy") then
 	o:depends("parse_method", "parse_file")
 	o.rmempty = false
 	o.default = "1"
+end
 
+if is_finded("chinadns-ng") then
 	o = s:option(Value, "chinadns_ng_tunnel_forward", translate("Anti-pollution DNS Server"))
 	o:value("8.8.4.4:53", translate("Google Public DNS (8.8.4.4)"))
 	o:value("8.8.8.8:53", translate("Google Public DNS (8.8.8.8)"))
@@ -260,41 +262,41 @@ if is_finded("dnsproxy") then
 	o:value("udp", translate("UDP upstream"))
 	o:value("tls", translate("DoT upstream (Need use wolfssl version)"))
 	o:depends("pdnsd_enable", "7")
+end
 
-	o = s:option(Value, "chinadns_forward", translate("Domestic DNS Server"))
-	o:value("", translate("Disable ChinaDNS-NG"))
-	o:value("wan", translate("Use DNS from WAN"))
-	o:value("wan_114", translate("Use DNS from WAN and 114DNS"))
-	o:value("114.114.114.114:53", translate("Nanjing Xinfeng 114DNS (114.114.114.114)"))
-	o:value("119.29.29.29:53", translate("DNSPod Public DNS (119.29.29.29)"))
-	o:value("223.5.5.5:53", translate("AliYun Public DNS (223.5.5.5)"))
-	o:value("180.76.76.76:53", translate("Baidu Public DNS (180.76.76.76)"))
-	o:value("101.226.4.6:53", translate("DNS Pai (CT/CMCC/CU) (101.226.4.6)"))
-	o:value("123.125.81.6:53", translate("DNS Pai (CU) (123.125.81.6)"))
-	o:value("1.2.4.8:53", translate("CNNIC SDNS (1.2.4.8)"))
-	o:depends({pdnsd_enable = "1", run_mode = "router"})
-	o:depends({pdnsd_enable = "2", run_mode = "router"})
-	o:depends({pdnsd_enable = "3", run_mode = "router"})
-	o:depends({pdnsd_enable = "4", run_mode = "router"})
-	o:depends({pdnsd_enable = "5", run_mode = "router"})
-	o:depends({pdnsd_enable = "6", run_mode = "router"})
-	o:depends({pdnsd_enable = "7", run_mode = "router"})
-	o.description = translate("Custom DNS Server format as IP:PORT (default: disabled)")
-	o.validate = function(self, value, section)
-		if (section and value) then
-			if value == "wan" or value == "wan_114" then
-				return value
-			end
-
-			if validation.ip4addrport(value) then
-				return value
-			end
-
-			return nil, translate("Expecting: %s"):format(translate("valid address:port"))
+o = s:option(Value, "chinadns_forward", translate("Domestic DNS Server"))
+o:value("", translate("Disable ChinaDNS-NG"))
+o:value("wan", translate("Use DNS from WAN"))
+o:value("wan_114", translate("Use DNS from WAN and 114DNS"))
+o:value("114.114.114.114:53", translate("Nanjing Xinfeng 114DNS (114.114.114.114)"))
+o:value("119.29.29.29:53", translate("DNSPod Public DNS (119.29.29.29)"))
+o:value("223.5.5.5:53", translate("AliYun Public DNS (223.5.5.5)"))
+o:value("180.76.76.76:53", translate("Baidu Public DNS (180.76.76.76)"))
+o:value("101.226.4.6:53", translate("DNS Pai (CT/CMCC/CU) (101.226.4.6)"))
+o:value("123.125.81.6:53", translate("DNS Pai (CU) (123.125.81.6)"))
+o:value("1.2.4.8:53", translate("CNNIC SDNS (1.2.4.8)"))
+o:depends({pdnsd_enable = "1", run_mode = "router"})
+o:depends({pdnsd_enable = "2", run_mode = "router"})
+o:depends({pdnsd_enable = "3", run_mode = "router"})
+o:depends({pdnsd_enable = "4", run_mode = "router"})
+o:depends({pdnsd_enable = "5", run_mode = "router"})
+o:depends({pdnsd_enable = "6", run_mode = "router"})
+o:depends({pdnsd_enable = "7", run_mode = "router"})
+o.description = translate("Custom DNS Server format as IP:PORT (default: disabled)")
+o.validate = function(self, value, section)
+	if (section and value) then
+		if value == "wan" or value == "wan_114" then
+			return value
 		end
 
-		return value
-	end
+		if validation.ip4addrport(value) then
+			return value
+		end
+
+		return nil, translate("Expecting: %s"):format(translate("valid address:port"))
+		end
+
+	return value
 end
 
 if is_finded("mosdns") then
