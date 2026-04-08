@@ -3773,6 +3773,12 @@ msgstr "Editar información de módulo"
 msgid "Subscription"
 msgstr "Suscripción"
 
+msgid "HTTP Module"
+msgstr "Módulo HTTP"
+
+msgid "File Module"
+msgstr "Módulo de archivo"
+
 msgid "Overwrite Module"
 msgstr "Módulo de sobrescritura"
 
@@ -3847,3 +3853,6 @@ msgstr "Error al analizar bloque de sobrescritura YAML:"
 
 msgid "YAML overwrite failed:"
 msgstr "Error en la sobrescritura YAML:"
+
+msgid "files selected"
+msgstr "archivos seleccionados"

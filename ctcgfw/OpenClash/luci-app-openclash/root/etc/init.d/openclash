@@ -3273,6 +3273,26 @@ check_type() {
    esac
 }
 
+overwrite_config_match_check()
+{
+   local section="$1" name config
+   config_get "name" "$section" "name" ""
+   config_get "config" "$section" "config" ""
+
+   [ -z "$name" ] || [ "$name" != "$2" ] || [ -z "$config" ] && return
+
+   config_list_foreach "$section" "config" overwrite_config_match_item
+}
+
+overwrite_config_match_item()
+{
+   local config_path_item="$1"
+
+   [ -z "$config_path_item" ] && return
+   [ "$config_path_item" = "all" ] && OVERWRITE_CONFIG_MATCHED=1 && return
+   [ "$config_path_item" = "$(uci_get_config "config_path")" ] && OVERWRITE_CONFIG_MATCHED=1
+}
+
 overwrite_file()
 {
    clear_overwrite_set
@@ -3401,7 +3421,11 @@ EOF
       name=$(echo "$entry" | cut -d'|' -f2)
       sid=$(echo "$entry" | cut -d'|' -f3)
       enabled_flag=$(echo "$entry" | cut -d'|' -f4)
+      OVERWRITE_CONFIG_MATCHED=0
+      config_load "openclash"
+      config_foreach overwrite_config_match_check "config_overwrite" "$name"
 
+      [ "$OVERWRITE_CONFIG_MATCHED" -eq 0 ] && continue
       [ "$enabled_flag" != "1" ] && continue
       [ -z "$name" ] && continue
 
@@ -3694,7 +3718,7 @@ get_config()
    else
       fakeip_range6=$(uci_get_config "fakeip_range6")
    fi
-   [ -z "$fakeip_range6" ] && fakeip_range6="fdfe:dcba:9876::1/64"
+   [ -z "$fakeip_range6" ] && fakeip_range6=0
 
    lan_interface_name=$(uci_get_config "lan_interface_name" || echo 0)
    if [ "$lan_interface_name" = "0" ]; then
@@ -3852,7 +3876,7 @@ start_service()
       fi
 
       rm -rf /tmp/yaml_*
-   }
+   } >/dev/null 2>&1
 
    echo "OpenClash Already Start!"
 }
@@ -3927,7 +3951,7 @@ restart()
    echo "OpenClash Restart..."
    LOG_TIP "OpenClash Restart..."
    check_run_quick
-   stop
+   stop_service
    start
 }
 

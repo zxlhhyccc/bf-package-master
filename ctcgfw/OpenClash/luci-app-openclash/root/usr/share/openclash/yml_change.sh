@@ -480,7 +480,7 @@ begin
          else
             Value['dns']['enhanced-mode'] = 'fake-ip'
             Value['dns']['fake-ip-range'] = fake_ip_range
-            if Value['dns']['ipv6']
+            if Value['dns']['ipv6'] and fake_ip_range6 != '0'
                Value['dns']['fake-ip-range6'] = fake_ip_range6
             end
          end

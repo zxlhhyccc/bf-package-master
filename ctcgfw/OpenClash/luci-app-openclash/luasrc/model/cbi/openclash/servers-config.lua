@@ -157,6 +157,8 @@ o:value("http", translate("HTTP(S)"))
 o:value("direct", translate("DIRECT"))
 o:value("dns", translate("DNS"))
 o:value("ssh", translate("SSH"))
+o:value("masque", translate("MASQUE"))
+o:value("trusttunnel", translate("TrustTunnel"))
 
 o.description = translate("Using incorrect encryption mothod may causes service fail to start")
 
@@ -183,6 +185,8 @@ o:depends("type", "snell")
 o:depends("type", "socks5")
 o:depends("type", "http")
 o:depends("type", "ssh")
+o:depends("type", "masque")
+o:depends("type", "trusttunnel")
 
 o = s:option(Value, "port", translate("Server Port"))
 o.datatype = "port"
@@ -204,6 +208,8 @@ o:depends("type", "snell")
 o:depends("type", "socks5")
 o:depends("type", "http")
 o:depends("type", "ssh")
+o:depends("type", "masque")
+o:depends("type", "trusttunnel")
 
 o = s:option(Flag, "flag_port_hopping", translate("Enable Port Hopping"))
 o:depends("type", "hysteria")
@@ -507,6 +513,8 @@ o:depends({type = "snell", snell_version = "3"})
 o:depends("type", "wireguard")
 o:depends("type", "direct")
 o:depends("type", "anytls")
+o:depends("type", "masque")
+o:depends("type", "trusttunnel")
 
 o = s:option(ListValue, "udp_over_tcp", translate("udp-over-tcp"))
 o.rmempty = true
@@ -548,6 +556,7 @@ o.default = "tcp"
 o:value("tcp", translate("tcp"))
 o:value("ws", translate("websocket (ws)"))
 o:value("grpc", translate("grpc"))
+o:value("xhttp", translate("xhttp"))
 o:depends("type", "vless")
 
 o = s:option(ListValue, "obfs_vmess", translate("obfs-mode"))
@@ -636,6 +645,21 @@ o.placeholder = translate("Host: v2ray.com")
 o:depends("obfs_vmess", "websocket")
 o:depends("obfs_vless", "ws")
 
+o = s:option(Value, "xhttp_opts_path", translate("xhttp-opts-path"))
+o.rmempty = true
+o.placeholder = translate("/path")
+o:depends("obfs_vless", "xhttp")
+
+o = s:option(Value, "xhttp_opts_host", translate("xhttp-opts-host"))
+o.rmempty = true
+o.placeholder = translate("xxx.com")
+o:depends("obfs_vless", "xhttp")
+
+o = s:option(Value, "vless_encryption", translate("encryption"))
+o.rmempty = true
+o.placeholder = translate("mlkem768x25519plus.native/xorpub/random.1rtt/0rtt.(padding len).(padding gap).(X25519 Password).(ML-KEM-768 Client)...")
+o:depends("obfs_vless", "tcp")
+
 o = s:option(Value, "vless_flow", translate("flow"))
 o.rmempty = true
 o.default = "xtls-rprx-direct"
@@ -695,6 +719,7 @@ o:depends("type", "hysteria")
 o:depends("type", "hysteria2")
 o:depends("type", "tuic")
 o:depends("type", "anytls")
+o:depends("type", "trusttunnel")
 
 -- [[ TLS ]]--
 o = s:option(ListValue, "tls", translate("TLS"))
@@ -742,6 +767,7 @@ o:depends("type", "http")
 o:depends("type", "hysteria")
 o:depends("type", "hysteria2")
 o:depends("type", "anytls")
+o:depends("type", "trusttunnel")
 
 -- [[ headers ]]--
 o = s:option(DynamicList, "http_headers", translate("headers"))
@@ -786,6 +812,7 @@ o:value("h2")
 o:value("http/1.1")
 o:depends("type", "trojan")
 o:depends("type", "anytls")
+o:depends("type", "trusttunnel")
 
 -- [[ alpn ]]--
 o = s:option(DynamicList, "hysteria_alpn", translate("alpn"))
@@ -935,7 +962,7 @@ o:value("true")
 o:value("false")
 o:depends("type", "vmess")
 
--- [[ AnyTLS ]]--
+-- [[ AnyTLS ]] --
 o = s:option(Value, "idle_session_check_interval", translate("idle-session-check-interval"))
 o.rmempty = true
 o.default = "30"
@@ -950,6 +977,70 @@ o = s:option(Value, "min_idle_session", translate("min-idle-session"))
 o.rmempty = true
 o.default = "0"
 o:depends("type", "anytls")
+
+-- [[ MASQUE ]] --
+o = s:option(Value, "masque_private_key", translate("private-key"))
+o:depends("type", "masque")
+o.rmempty = true
+
+o = s:option(Value, "masque_public_key", translate("public-key"))
+o:depends("type", "masque")
+o.rmempty = true
+
+o = s:option(Value, "masque_ip", translate("IP"))
+o:depends("type", "masque")
+o.rmempty = true
+
+o = s:option(Value, "masque_ipv6", translate("IPv6"))
+o:depends("type", "masque")
+o.rmempty = true
+
+o = s:option(Value, "masque_mtu", translate("MTU"))
+o:depends("type", "masque")
+o.rmempty = true
+
+o = s:option(ListValue, "masque_remote_dns_resolve", translate("Remote DNS Resolve"))
+o.rmempty = true
+o.default = "true"
+o:value("true")
+o:value("false")
+o:depends("type", "masque")
+
+o = s:option(DynamicList, "masque_dns", translate("DNS"))
+o.rmempty = true
+o.placeholder = translate("8.8.8.8")
+o:depends("type", "masque")
+
+-- [[ TrustTunnel ]] --
+o = s:option(Value, "trusttunnel_username", translate("Username"))
+o.rmempty = false
+o.placeholder = "user"
+o:depends("type", "trusttunnel")
+
+o = s:option(Value, "trusttunnel_password", translate("Password"))
+o.password = true
+o.rmempty = false
+o:depends("type", "trusttunnel")
+
+o = s:option(ListValue, "trusttunnel_health_check", translate("Health Check"))
+o.rmempty = true
+o.default = "true"
+o:value("true")
+o:value("false")
+o:depends("type", "trusttunnel")
+
+o = s:option(ListValue, "trusttunnel_quic", translate("QUIC"))
+o.rmempty = true
+o.default = "false"
+o:value("true")
+o:value("false")
+o:depends("type", "trusttunnel")
+
+o = s:option(ListValue, "trusttunnel_congestion_controller", translate("Congestion Controller"))
+o.rmempty = true
+o.default = "bbr"
+o:value("bbr")
+o:depends("type", "trusttunnel")
 
 -- [[ Fast Open ]]--
 o = s:option(ListValue, "fast_open", translate("Fast Open"))
@@ -1009,6 +1100,7 @@ o:depends({type = "vmess", obfs_vmess = "http"})
 o:depends({type = "vmess", obfs_vmess = "h2"})
 o:depends({type = "vmess", obfs_vmess = "grpc"})
 o:depends("type", "anytls")
+o:depends("type", "trusttunnel")
 
 -- [[ ip version ]]--
 o = s:option(ListValue, "ip_version", translate("IP Version"))
