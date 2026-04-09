@@ -3790,7 +3790,7 @@ start_service()
    enable=$(uci_get_config "enable")
    [ "$enable" != "1" ] && LOG_WARN "OpenClash Now Disabled, Need Start From Luci Page, Exit..." && SLOG_CLEAN && exit 0
 
-   if /etc/init.d/openclash status >/dev/null 2>&1; then
+   if procd_running "openclash" >/dev/null; then
       LOG_TIP "OpenClash Already Running, Exit..."
       exit 0
    fi
@@ -3905,6 +3905,12 @@ stop_service()
       done
       # prevent respawn during stopping
       procd_kill "openclash"
+      for i in $(seq 1 10); do
+         procd_running "openclash" >/dev/null && sleep 1 || break
+      done
+      if procd_running "openclash" >/dev/null; then
+         kill -9 $(pidof clash) 2>/dev/null || true
+      fi
 
       LOG_OUT "Step 4: Restart Dnsmasq..."
       revert_dnsmasq
