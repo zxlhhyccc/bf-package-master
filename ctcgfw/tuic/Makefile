@@ -65,6 +65,9 @@ define Package/tuic/Default
 endef
 
 TUIC_COMPONENTS:=client server
+CARGO_PACKAGES := $(foreach component,$(TUIC_COMPONENTS), \
+                     $(if $(CONFIG_PACKAGE_tuic-$(component)), \
+                         -p tuic-$(component)))
 
 define Select/Features
 $(strip \
@@ -81,20 +84,26 @@ $(strip \
 )
 endef
 
+CARGO_ARGS += $(call Select/Features)
+RUSTFLAGS += -C panic=abort
+
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
 		$(CARGO_PKG_CONFIG_VARS) \
 		cargo build --release \
 			--target $(RUSTC_TARGET_ARCH) \
-			$(call Select/Features) ; \
+			$(CARGO_PACKAGES) \
+			$(CARGO_ARGS) ; \
 		popd ; \
 	)
-$(foreach component,$(TUIC_COMPONENTS), 
-  ifneq ($(CONFIG_TUIC_$(component)_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/tuic-$(component)
-  endif
-)
+	$(foreach component,$(TUIC_COMPONENTS), 
+	  $(if $(CONFIG_PACKAGE_tuic-$(component)), \
+	    $(if $(CONFIG_TUIC_$(component)_COMPRESS_UPX), \
+	      $(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/tuic-$(component) \
+	    ) \
+	  ) \
+	)
 endef
 
 $(foreach component,$(TUIC_COMPONENTS), \
