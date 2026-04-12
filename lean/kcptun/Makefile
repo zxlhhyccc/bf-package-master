@@ -21,6 +21,8 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
+KCPTUN_COMPONENTS := client server
+
 GO_PKG:=github.com/xtaci/kcptun
 GO_PKG_LDFLAGS:=-s -w -X 'main.VERSION=$(PKG_VERSION)'
 
@@ -72,15 +74,21 @@ define Build/UpdateDependencies
 		go mod vendor
 endef
 
-KCPTUN_COMPONENTS:=server client
-
 define Build/Compile
 	$(call Build/UpdateDependencies)
+	$(eval GO_PKG_BUILD_PKG:= \
+	    $(foreach component,$(KCPTUN_COMPONENTS), \
+	        $(if $(CONFIG_PACKAGE_kcptun-$(component)), \
+	            github.com/xtaci/kcptun/$(component))))
+ifneq ($(strip $(GO_PKG_BUILD_PKG)),)
 	$(call GoPackage/Build/Compile)
+endif
 $(foreach component,$(KCPTUN_COMPONENTS),
+  $(if $(CONFIG_PACKAGE_kcptun-$(component)), \
   ifneq ($(CONFIG_KCPTUN_$(component)_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
   endif
+  )
 )
 endef
 
