@@ -23,8 +23,9 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
+FRP_COMPONENTS:=frpc frps
+
 GO_PKG:=github.com/fatedier/frp
-GO_PKG_BUILD_PKG:=github.com/fatedier/frp/cmd/...
 GO_PKG_LDFLAGS:=-s -w
 
 include $(INCLUDE_DIR)/package.mk
@@ -88,23 +89,32 @@ define Package/frp/template
   endef
 endef
 
-FRP_COMPONENTS:=frpc frps
-
 define Build/Prepare
 	$(call Build/Prepare/Default)
 
 	$(foreach component,$(FRP_COMPONENTS),\
-		cd $(PKG_BUILD_DIR)/web/$(component) && \
-		npm install && \
-		npm run build;)
+	    $(if $(CONFIG_PACKAGE_$(component)), \
+	        cd $(PKG_BUILD_DIR)/web/$(component) && \
+	        npm install && \
+	        npm run build; \
+	    ) \
+	)
 endef
 
 define Build/Compile
+	$(eval GO_PKG_BUILD_PKG:= \
+	    $(foreach component,$(FRP_COMPONENTS), \
+	        $(if $(CONFIG_PACKAGE_$(component)), \
+	            github.com/fatedier/frp/cmd/$(component))))
+ifneq ($(strip $(GO_PKG_BUILD_PKG)),)
 	$(call GoPackage/Build/Compile)
+endif
 $(foreach component,$(FRP_COMPONENTS),
+  $(if $(CONFIG_PACKAGE_$(component)), \
   ifneq ($(CONFIG_FRP_$(component)_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
   endif
+  )
 )
 endef
 
