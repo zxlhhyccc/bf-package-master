@@ -928,6 +928,7 @@ local tuic = {
 			congestion_control = server.congestion_control,
 			heartbeat = server.heartbeat and tonumber(server.heartbeat) .. "s" or nil,
 			timeout = server.timeout and tonumber(server.timeout) .. "s" or nil,
+			startup_mode = server.startup_mode or nil,
 			gc_interval = server.gc_interval and tonumber(server.gc_interval) .. "s" or nil,
 			gc_lifetime = server.gc_lifetime and tonumber(server.gc_lifetime) .. "s" or nil,
 			alpn = (server.tuic_alpn and server.tuic_alpn ~= "") and (function()

@@ -841,6 +841,22 @@ o.datatype = "uinteger"
 o.default = "8"
 o.rmempty = true
 
+o = s:option(ListValue, "startup_mode", translate("Startup behavior"))
+o.description = translate(
+	"<ul>" ..
+	"<li>" .. translate("Eager: Connect on startup, exit on failure. Same as before.") .. "</li>" ..
+	"<li>" .. translate("Lazy(Default): connect on first incoming SOCKS5/forward request, exit on failure.") .. "</li>" ..
+	"<li>" .. translate("Loop: Connect on first incoming request, retry forever until success.") .. "</li>" ..
+	"</ul>"
+)
+o:depends("type", "tuic")
+o:value("", translate("none"))
+o:value("eager", translate("Eager"))
+o:value("lazy", translate("Lazy"))
+o:value("loop", translate("Loop"))
+o.default = "lazy"
+o.rmempty = true
+
 o = s:option(Value, "gc_interval", translate("Garbage collection interval(second)"))
 o:depends("type", "tuic")
 o.datatype = "uinteger"
