@@ -19,7 +19,7 @@ REPO_API="https://api.github.com/repos/v2fly/v2ray-core/releases/latest"
 
 # 获取新 TAG、DATA、COMMIT 等
 TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
-API_VER=="${TAG#v}"  # TAG 形如 v1.8.11
+API_VER="${TAG#v}"  # TAG 形如 v1.8.11
 
 # 获取 Git 仓库中最新的 tag（严格排序）
 LATEST_TAG=$(git ls-remote --tags "$REPO" | \
