@@ -1955,6 +1955,9 @@ msgstr "No se pudo analizar el archivo de configuración,"
 msgid "Edit Provider Path Failed,"
 msgstr "Fallo al modificar la ruta del proveedor,"
 
+msgid "Edit Provider CDN Failed,"
+msgstr "Fallo al modificar la CDN del proveedor,"
+
 msgid "Edit URL-Test Group Tolerance Option Failed,"
 msgstr "Fallo al modificar la tolerancia del grupo URL-Test,"
 

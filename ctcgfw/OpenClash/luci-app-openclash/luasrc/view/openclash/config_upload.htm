@@ -214,7 +214,7 @@
     padding: 10px 12px;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-sm);
-    background: var(--bg-white);
+    background: var(--bg-white) !important;
     color: var(--text-primary);
     font-size: 14px;
     transition: all var(--transition-fast);
@@ -256,6 +256,10 @@
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.oc .form-textarea::placeholder {
+    color: var(--text-secondary);
 }
 
 .oc .form-row {
@@ -551,6 +555,10 @@
 .oc[data-darkmode="true"] .form-textarea:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+}
+
+.oc[data-darkmode="true"] .form-textarea::placeholder {
+    color: var(--text-secondary);
 }
 
 .oc[data-darkmode="true"] .checkmark {

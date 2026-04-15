@@ -268,19 +268,13 @@ yml_other_set()
       thread_pool << Thread.new{
          threads = [];
 
-         #provider path
+         #provider CDN
          begin
             provider_configs = {'proxy-providers' => 'proxy_provider', 'rule-providers' => 'rule_provider'};
             provider_configs.each do |provider_type, path_prefix|
                if Value.key?(provider_type) && Value[provider_type].is_a?(Hash) then
                   Value[provider_type].each{|name, config|
                      threads << Thread.new {
-                        if config['path'] and not config['path'] =~ /.\/#{path_prefix}\/*/ then
-                           config['path'] = './'+path_prefix+'/'+File.basename(config['path']);
-                        elsif not config['path'] and config['type'] == 'http' then
-                           config['path'] = './'+path_prefix+'/'+name;
-                        end;
-
                         # CDN
                         if '$github_address_mod' != '0' and config['url'] then
                            if config['url'] =~ /^https:\/\/raw.githubusercontent.com/ then
@@ -305,7 +299,7 @@ yml_other_set()
                end;
             end;
          rescue Exception => e
-            YAML.LOG_ERROR('Edit Provider Path Failed,【' + e.message + '】');
+            YAML.LOG_ERROR('Edit Provider CDN Failed,【' + e.message + '】');
          end;
 
          # tolerance
