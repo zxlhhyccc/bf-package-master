@@ -2727,18 +2727,6 @@ msgstr "是否启用进程规则，仅能匹配路由器自身进程，在路由
 msgid "Enable Process Rule"
 msgstr "启用进程规则"
 
-msgid "Because there is a port range"
-msgstr "因为端口范围"
-
-msgid "in the firewall rule settings"
-msgstr "存在于防火墙规则设置"
-
-msgid "auto bypassing may cause the normal connection of the client not to reach the core, if necessary, please add your own in the access control!"
-msgstr "自动绕过后可能造成客户端的正常连接无法到达内核，如有需要，请在插件设置-来源流量访问控制中自行添加！"
-
-msgid "Start Add Port Bypassing Rules For Firewall Redirect and Firewall Rules..."
-msgstr "正在根据防火墙端口转发和防火墙通信规则添加端口绕过规则..."
-
 msgid "DNS Hijacking Mode is Dnsmasq Redirect..."
 msgstr "DNS 劫持模式为 Dnsmasq 转发..."
 

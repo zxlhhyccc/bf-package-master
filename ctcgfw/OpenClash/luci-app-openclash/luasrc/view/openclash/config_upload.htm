@@ -1128,12 +1128,6 @@ var ConfigUploader = {
             }
         });
 
-        this.overlay.addEventListener('click', function(e) {
-            if (e.target === self.overlay && !self.isProcessing) {
-                self.hide();
-            }
-        });
-
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && !self.isProcessing && self.overlay.classList.contains('show')) {
                 self.hide();

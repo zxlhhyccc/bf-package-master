@@ -665,8 +665,12 @@ function get_sub_url(filename)
 					string.gsub(s.url, '[^\n]+', function(w) table.insert(info_tb, w) end)
 				end
 				if #info_tb == 1 then
-					local url, _ = parse_url_with_name(info_tb[1], filename)
-					sub_url = url
+					local url, name = parse_url_with_name(info_tb[1], filename)
+					if url ~= info_tb[1] then
+						table.insert(providers, {name = name, url = url})
+					else
+						sub_url = url
+					end
 				elseif #info_tb > 1 then
 					for _, raw in ipairs(info_tb) do
 						local url, name = parse_url_with_name(raw, filename)

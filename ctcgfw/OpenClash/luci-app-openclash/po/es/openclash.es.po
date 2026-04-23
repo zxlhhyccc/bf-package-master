@@ -2723,18 +2723,6 @@ msgstr "Habilita reglas por proceso (solo para procesos del router). Si no está
 msgid "Enable Process Rule"
 msgstr "Activar reglas por proceso"
 
-msgid "Because there is a port range"
-msgstr "Debido a que existe un rango de puertos"
-
-msgid "in the firewall rule settings"
-msgstr "en la configuración del firewall"
-
-msgid "auto bypassing may cause the normal connection of the client not to reach the core, if necessary, please add your own in the access control!"
-msgstr "el bypass automático puede impedir que conexiones legítimas lleguen al núcleo. Añade reglas manuales si es necesario."
-
-msgid "Start Add Port Bypassing Rules For Firewall Redirect and Firewall Rules..."
-msgstr "Añadiendo reglas de bypass de puertos para redirecciones de firewall..."
-
 msgid "DNS Hijacking Mode is Dnsmasq Redirect..."
 msgstr "Modo de secuestro DNS: redirección Dnsmasq..."
 

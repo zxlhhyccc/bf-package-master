@@ -3227,8 +3227,8 @@
                     }
 
                     var needsErrorHandling = false;
-                    if (x && x.status == 200 && status.providers) {
-                        var newProvidersLength = (status.providers) ? status.providers.length : 0;
+                    if (x && x.status == 200 && status.providers.length > 0) {
+                        var newProvidersLength = status.providers.length;
                         var cachedProvidersLength = (parsedData && parsedData.providers) ? parsedData.providers.length : 0;
 
                         if (newProvidersLength !== cachedProvidersLength && cachedProvidersLength > newProvidersLength) {
@@ -3597,25 +3597,17 @@
 
         bindEvents: function() {
             var textarea = document.getElementById('subscription-url-textarea');
-            var overlay = document.getElementById('subscription-url-overlay');
 
             if (textarea) {
                 textarea.addEventListener('keydown', this.handleKeyDown.bind(this));
-            }
-            if (overlay) {
-                overlay.addEventListener('click', this.handleOverlayClick.bind(this));
             }
         },
 
         unbindEvents: function() {
             var textarea = document.getElementById('subscription-url-textarea');
-            var overlay = document.getElementById('subscription-url-overlay');
 
             if (textarea) {
                 textarea.removeEventListener('keydown', this.handleKeyDown.bind(this));
-            }
-            if (overlay) {
-                overlay.removeEventListener('click', this.handleOverlayClick.bind(this));
             }
         },
 
@@ -3623,12 +3615,6 @@
             if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
                 this.submit();
             } else if (event.key === 'Escape') {
-                this.hide();
-            }
-        },
-
-        handleOverlayClick: function(event) {
-            if (event.target.id === 'subscription-url-overlay') {
                 this.hide();
             }
         },

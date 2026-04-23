@@ -60,10 +60,10 @@ end
 ---- UA
 o = s:option(Value, "sub_ua", "User-Agent")
 o.description = font_red..bold_on..translate("Used for Downloading Subscriptions, Defaults to Clash")..bold_off..font_off
-o:value("clash.meta")
-o:value("clash-verge/v1.5.1")
+o:value("mihomo/1.19.20")
+o:value("clash-verge/v2.4.5")
 o:value("Clash")
-o.default = "clash.meta"
+o.default = "mihomo/1.19.20"
 o.rmempty = true
 
 ---- subconverter
@@ -78,7 +78,7 @@ o.description = font_red..bold_on..translate("Note: There is A Risk of Privacy L
 o:depends("sub_convert", "1")
 o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
 o:value("https://api.asailor.org/sub", translate("api.asailor.org"))
-o:value("https://api.sub.x10.bz/sub", translate("api.sub.x10.bz")..translate("(Support Vless By Oneself)"))
+o:value("https://sub.ltsc.qzz.io/sub", translate("sub.ltsc.qzz.io")..translate("(Support Vless By Oneself)"))
 o:value("https://api.api88.cloudns.org/sub", translate("api.api88.cloudns.org")..translate("(Support Vless By Oneself)"))
 o:value("https://api.api88.cloudns.be/sub", translate("api.api88.cloudns.be")..translate("(Support Vless By Cloudflare)"))
 o.default = "https://api.wcc.best/sub"
