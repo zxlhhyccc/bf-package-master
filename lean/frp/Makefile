@@ -14,7 +14,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_FRP_$(1)_COMPRESS_GOPROXY \
 	CONFIG_FRP_$(1)_COMPRESS_UPX
 
-PKG_MAINTAINER:=Richard Yu <yurichard3839@gmail.com>
+PKG_MAINTAINER:=Alexandru Ardelean <ardeleanalex@gmail.com>
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
