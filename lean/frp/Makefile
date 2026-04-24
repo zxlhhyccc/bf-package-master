@@ -32,15 +32,17 @@ include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
 define Build/Compile
-	( \
-	    $(foreach component,$(FRP_COMPONENTS),\
-	        $(if $(CONFIG_PACKAGE_$(component)), \
-		    $(MAKE) -C $(PKG_BUILD_DIR)/web/$(component) install ; \
-	        ) \
-	    ) \
-	    $(MAKE) -C $(PKG_BUILD_DIR) web ; \
-	    $(call GoPackage/Build/Compile) ; \
+	$(foreach component,$(FRP_COMPONENTS), \
+	  $(if $(CONFIG_PACKAGE_$(component)), \
+	    cd $(PKG_BUILD_DIR)/web/$(component) ; \
+	    npm install ; \
+	    npm run build ; \
+	    $(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/$(component))
+	  )
 	)
+ifneq ($(strip $(GO_PKG_BUILD_PKG)),)
+	$(call GoPackage/Build/Compile)
+endif
 $(foreach component,$(FRP_COMPONENTS),
   $(if $(CONFIG_PACKAGE_$(component)), \
   ifneq ($(CONFIG_FRP_$(component)_COMPRESS_UPX),)
