@@ -18,6 +18,7 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=golang/host node/host
 PKG_BUILD_PARALLEL:=1
+PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 FRP_COMPONENTS:=frpc frps
@@ -35,10 +36,10 @@ define Build/Compile
 	    $(foreach component,$(FRP_COMPONENTS),\
 	        $(if $(CONFIG_PACKAGE_$(component)), \
 		    $(MAKE) -C $(PKG_BUILD_DIR)/web/$(component) install ; \
-		    $(MAKE) -C $(PKG_BUILD_DIR) web ; \
-		    $(call GoPackage/Build/Compile) ; \
 	        ) \
 	    ) \
+	    $(MAKE) -C $(PKG_BUILD_DIR) web ; \
+	    $(call GoPackage/Build/Compile) ; \
 	)
 $(foreach component,$(FRP_COMPONENTS),
   $(if $(CONFIG_PACKAGE_$(component)), \
