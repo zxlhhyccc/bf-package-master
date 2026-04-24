@@ -1,14 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=frp
-PKG_VERSION:=0.68.0
+PKG_VERSION:=0.68.1
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/fatedier/frp.git
-PKG_SOURCE_VERSION:=5bfcea3d0cd11f24dbe5297190aa82c86644f838
-PKG_MIRROR_HASH:=e1ae6ac151ec289447c95904b4be90ee4933806533e721c90dfa2c682c0e483b
+PKG_SOURCE_URL:=https://codeload.github.com/fatedier/frp/tar.gz/v$(PKG_VERSION)?
+PKG_HASH:=44ed7107bf35e4f68dc0e77cd5805102effa5301528b89ee5ab0ab379088edc6
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_FRP_$(1)_COMPRESS_GOPROXY \
@@ -20,28 +18,45 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DEPENDS:=golang/host node/host
 PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
 FRP_COMPONENTS:=frpc frps
 
 GO_PKG:=github.com/fatedier/frp
+GO_PKG_BUILD_PKG:=github.com/fatedier/frp/cmd/...
 GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS_X:=github.com/fatedier/frp/pkg/util/version.version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/frp/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+define Build/Compile
+	( \
+	    $(foreach component,$(FRP_COMPONENTS),\
+	        $(if $(CONFIG_PACKAGE_$(component)), \
+		    $(MAKE) -C $(PKG_BUILD_DIR)/web/$(component) install ; \
+		    $(MAKE) -C $(PKG_BUILD_DIR) web ; \
+		    $(call GoPackage/Build/Compile) ; \
+	        ) \
+	    ) \
+	)
+$(foreach component,$(FRP_COMPONENTS),
+  $(if $(CONFIG_PACKAGE_$(component)), \
+  ifneq ($(CONFIG_FRP_$(component)_COMPRESS_UPX),)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
+  endif
+  )
+)
+endef
 
+define Package/frp/install
 	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/$(2) $(1)/usr/bin/
-	$(INSTALL_DIR) $(1)/etc/frp/$(2).d/
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/conf/$(2).toml $(1)/etc/frp/$(2).d/
 	$(INSTALL_DIR) $(1)/etc/config/
-	$(INSTALL_CONF) ./files/$(2).config $(1)/etc/config/$(2)
 	$(INSTALL_DIR) $(1)/etc/init.d/
-	$(INSTALL_BIN) ./files/$(2).init $(1)/etc/init.d/$(2)
+
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/$(2) $(1)/usr/bin/
+	$(INSTALL_CONF) ./files/$(2).config $(1)/etc/config/$(2)
+	$(INSTALL_BIN)  ./files/$(2).init   $(1)/etc/init.d/$(2)
 
 	if [ -r ./files/$(2).uci-defaults ]; then \
 		$(INSTALL_DIR) $(1)/etc/uci-defaults; \
@@ -60,8 +75,8 @@ define Package/frp/template
   endef
 
   define Package/$(1)/description
-    $(1) is a fast reverse proxy $(2) to help you expose a local server behind
-    a NAT or firewall to the internet.
+    $(1) is a fast reverse proxy $(2) that helps you expose a local server
+    behind a NAT or firewall to the internet.
   endef
 
   define Package/$(1)/config
@@ -89,36 +104,9 @@ define Package/frp/template
   endef
 endef
 
-define Build/Prepare
-	$(call Build/Prepare/Default)
-
-	$(foreach component,$(FRP_COMPONENTS),\
-	    $(if $(CONFIG_PACKAGE_$(component)), \
-	        cd $(PKG_BUILD_DIR)/web/$(component) && \
-	        npm install && \
-	        npm run build; \
-	    ) \
-	)
-endef
-
-define Build/Compile
-	$(eval GO_PKG_BUILD_PKG:= \
-	    $(foreach component,$(FRP_COMPONENTS), \
-	        $(if $(CONFIG_PACKAGE_$(component)), \
-	            github.com/fatedier/frp/cmd/$(component))))
-ifneq ($(strip $(GO_PKG_BUILD_PKG)),)
-	$(call GoPackage/Build/Compile)
-endif
-$(foreach component,$(FRP_COMPONENTS),
-  $(if $(CONFIG_PACKAGE_$(component)), \
-  ifneq ($(CONFIG_FRP_$(component)_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
-  endif
-  )
+$(foreach component,$(FRP_COMPONENTS), \
+  $(eval $(call Package/frp/template,$(component))) \
+  $(eval $(call GoBinPackage,$(component))) \
+  $(eval $(call BuildPackage,$(component))) \
 )
-endef
 
-$(eval $(call Package/frp/template,frpc,client))
-$(eval $(call Package/frp/template,frps,server))
-$(eval $(call BuildPackage,frpc))
-$(eval $(call BuildPackage,frps))
