@@ -24,6 +24,7 @@ PKG_BUILD_FLAGS:=no-mips16
 KCPTUN_COMPONENTS := client server
 
 GO_PKG:=github.com/xtaci/kcptun
+GO_PKG_BUILD_PKG:=github.com/xtaci/kcptun/...
 GO_PKG_LDFLAGS:=-s -w -X 'main.VERSION=$(PKG_VERSION)'
 
 include $(INCLUDE_DIR)/package.mk
@@ -76,10 +77,11 @@ endef
 
 define Build/Compile
 	$(call Build/UpdateDependencies)
-	$(eval GO_PKG_BUILD_PKG:= \
-	    $(foreach component,$(KCPTUN_COMPONENTS), \
-	        $(if $(CONFIG_PACKAGE_kcptun-$(component)), \
-	            github.com/xtaci/kcptun/$(component))))
+	$(foreach component,$(KCPTUN_COMPONENTS), \
+	  $(if $(CONFIG_PACKAGE_kcptun-$(component)), \
+	    $(eval GO_PKG_BUILD_PKG:=github.com/xtaci/kcptun/$(component))
+	  )
+	)
 ifneq ($(strip $(GO_PKG_BUILD_PKG)),)
 	$(call GoPackage/Build/Compile)
 endif
