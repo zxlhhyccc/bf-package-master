@@ -77,9 +77,10 @@ endef
 
 define Build/Compile
 	$(call Build/UpdateDependencies)
+	$(eval GO_PKG_BUILD_PKG:=)
 	$(foreach component,$(KCPTUN_COMPONENTS), \
 	  $(if $(CONFIG_PACKAGE_kcptun-$(component)), \
-	    $(eval GO_PKG_BUILD_PKG:=github.com/xtaci/kcptun/$(component))
+	    $(eval GO_PKG_BUILD_PKG += github.com/xtaci/kcptun/$(component)) \
 	  )
 	)
 ifneq ($(strip $(GO_PKG_BUILD_PKG)),)
