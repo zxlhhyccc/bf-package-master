@@ -22,7 +22,7 @@ TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name
 VER="${TAG#v}"  # TAG 形如 v1.8.11
 
 API_DATA=$(curl -s https://api.github.com/repos/AdguardTeam/dnsproxy/commits \
-    | jq -r '.[0].commit.committer.date' \
+    | jq -r '.[1].commit.committer.date' \
     | cut -d'T' -f1)
 
 COMMIT="$(git ls-remote "$REPO" HEAD | cut -f1)"
