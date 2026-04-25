@@ -12,6 +12,7 @@ function update() {
 
 	# 获取版本号
 	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/releases/latest" | jq -r ".tag_name" | sed 's/v//')"
+	#tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/AdguardTeam/AdGuardHome/tags" | jq -r ".[2].name" | sed 's/v//')"
 	[ -n "$tag" ] || return 1
 
         ver="$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
