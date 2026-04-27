@@ -30,6 +30,7 @@
 
     --control-height: 32px;
     --card-padding: 6px 8px;
+    --version-right: 8px;
     --gap-size: 10px;
 
     --row-1-height: 160px;
@@ -341,7 +342,7 @@
 
 .oc .version-display-container {
     position: absolute;
-    right: 10px;
+    right: var(--version-right);
     display: flex;
     gap: 8px;
     z-index: 2;
@@ -915,6 +916,7 @@
     min-height: 24px;
     min-width: 0;
     gap: 8px;
+    padding: 0 20px;
 }
 
 .oc .subscription-info-details {
@@ -1210,8 +1212,20 @@
     text-overflow: ellipsis;
     min-width: 0;
     max-width: 100%;
-    padding-left: 20px;
     overflow: hidden;
+}
+
+.oc .config-file-name .selected-file-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 0.2em;
+    margin-bottom: 0.2em;
+    background: var(--primary-color);
+    flex-shrink: 0;
+    animation: gentlePulse 4s cubic-bezier(.17,.67,.83,.67) infinite;
 }
 
 .oc .config-file-bottom {
@@ -1282,13 +1296,20 @@
     min-width: 0;
     max-width: 30vw;
     overflow: hidden;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+}
+
+.oc .file-info:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
 }
 
 .oc .file-info-item {
     display: block;
     align-items: center;
     white-space: nowrap;
-    padding-right: 20px;
+    padding: 2px 6px;
     font-size: 13px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2831,9 +2852,7 @@
                 var displayName = this.formatDisplayName(configFile);
                 if (configFile === this.rawCurrentConfig) {
                     configNameElement.innerHTML =
-                        '<svg width="0.6em" height="0.6em" viewBox="0 0 24 24" fill="var(--primary-color)" style="vertical-align:middle;margin-right:0.2em;margin-bottom:0.2em;">' +
-                        '<circle cx="12" cy="12" r="8" fill="var(--primary-color)"/>' +
-                        '</svg>' + displayName;
+                        '<span class="selected-file-dot"></span>' + displayName;
                 } else {
                     configNameElement.textContent = displayName;
                 }

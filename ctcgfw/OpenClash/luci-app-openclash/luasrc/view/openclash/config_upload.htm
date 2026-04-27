@@ -760,8 +760,8 @@
                             <label for="subscribe-ua-input"><%:User-Agent%> (<%:Optional%>):</label>
                             <div class="form-select-wrapper">
                                 <select id="subscribe-ua-input" class="form-select">
-                                    <option value="clash.meta">clash.meta</option>
-                                    <option value="clash-verge/v1.5.1">clash-verge/v1.5.1</option>
+                                    <option value="mihomo/1.19.20">mihomo/1.19.20</option>
+                                    <option value="clash-verge/v2.4.5">clash-verge/v2.4.5</option>
                                     <option value="Clash">clash</option>
                                     <option value="custom"><%:Custom%></option>
                                 </select>
@@ -1199,7 +1199,7 @@ var ConfigUploader = {
         this.switchMode('file');
         document.getElementById('config-filename-input').value = '';
         document.getElementById('subscribe-url-input').value = '';
-        document.getElementById('subscribe-ua-input').value = 'clash.meta';
+        document.getElementById('subscribe-ua-input').value = 'mihomo/1.19.20';
         document.getElementById('subscribe-ua-custom').style.display = 'none';
 
         document.getElementById('advanced-options-enable').checked = false;
@@ -1228,7 +1228,7 @@ var ConfigUploader = {
             document.getElementById('subscribe-url-input').value = data.address;
         }
         if (data.sub_ua) {
-            if (data.sub_ua === 'clash.meta' || data.sub_ua === 'clash-verge/v1.5.1' || data.sub_ua === 'Clash' || data.sub_ua === 'custom') {
+            if (data.sub_ua === 'mihomo/1.19.20' || data.sub_ua === 'clash-verge/v2.4.5' || data.sub_ua === 'Clash' || data.sub_ua === 'custom') {
                 document.getElementById('subscribe-ua-input').value = data.sub_ua;
                 if (data.sub_ua === 'custom') {
                     document.getElementById('subscribe-ua-custom').style.display = 'block';
@@ -1564,7 +1564,7 @@ var ConfigUploader = {
         }
 
         if (userAgent === 'custom') {
-            userAgent = subscribeUaCustom.value.trim() || 'clash.meta';
+            userAgent = subscribeUaCustom.value.trim() || 'mihomo/1.19.20';
         }
 
         if (!url || !filename) {
