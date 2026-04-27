@@ -149,14 +149,14 @@ function gen_outbound(flag, node, tag, proxy_table)
 				tlsSettings = (node.stream_security == "tls") and {
 					serverName = node.tls_serverName,
 					allowInsecure = (function()
-								if node.tls_CertSha and node.tls_CertSha ~= "" then return nil end
+								if node.tls_pinSHA256 and node.tls_pinSHA256 ~= "" then return nil end
 								if api.compare_versions(os.date("%Y.%m.%d"), "<", "2026.6.1") and node.tls_allowInsecure == "1" then return true end
 							end)(),
 					fingerprint = (node.type == "Xray" and node.utls == "1" and node.fingerprint and node.fingerprint ~= "") and node.fingerprint or nil,
 					pinnedPeerCertSha256 = (function()
 								if api.compare_versions(xray_version, "<", "26.1.31") then return nil end
-								if not node.tls_CertSha then return "" end
-								return node.tls_CertSha
+								if not node.tls_pinSHA256 then return "" end
+								return node.tls_pinSHA256
 							end)(),
 					verifyPeerCertByName = (function()
 								if api.compare_versions(xray_version, "<", "26.1.31") then return nil end
@@ -860,8 +860,9 @@ function gen_config(var)
 		} or nil
 	end
 
+	local node = node_id and uci:get_all(appname, node_id) or nil
+
 	if node_id then
-		local node = uci:get_all(appname, node_id)
 		local balancers = {}
 		local rules = {}
 		if node then
@@ -1663,7 +1664,12 @@ function gen_config(var)
 					address = remote_dns_udp_server or remote_dns_tcp_server,
 					port = tonumber(remote_dns_udp_port) or tonumber(remote_dns_tcp_port),
 					network = remote_dns_udp_server and "udp" or "tcp",
-					nonIPQuery = "reject"
+					nonIPQuery = (api.compare_versions(xray_version, "<", "26.4.25")) and "reject" or nil, -- Todo is to remove it
+					rules = (api.compare_versions(xray_version, ">", "26.4.17")) and {
+						{
+							action = ((node and node.protocol == "_shunt") or remote_dns_fake or dns.clientIP) and "hijack" or "direct"
+						}
+					} or nil
 				}
 			})
 
