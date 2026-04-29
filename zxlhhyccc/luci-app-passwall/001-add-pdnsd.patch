@@ -245,7 +245,7 @@ index 3f6dd8c..2656874 100644
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -494,6 +507,17 @@ o.validate = function(self, value, t)
+@@ -495,6 +508,17 @@ o.validate = function(self, value, t)
  	return value
  end
  
@@ -267,9 +267,9 @@ diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
 index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -178,6 +178,9 @@ msgstr "远程 DNS DoH"
- msgid "Remote DNS DoH"
- msgstr "远程 DNS DoH"
+@@ -181,6 +181,9 @@ msgstr "远程 DNS DoH"
+ msgid "Format: URL[,IP] (omit the latter if URL is an IP)"
+ msgstr "格式：URL[,IP]（URL 为 IP 时可省略后半部分）"
  
 +#~ msgid "Cache Resolved"
 +#~ msgstr "缓存解析结果"
@@ -277,7 +277,7 @@ index 92144fb..4ae3764 100644
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -331,6 +334,12 @@ msgstr "关闭（不使用）"
+@@ -334,6 +337,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
