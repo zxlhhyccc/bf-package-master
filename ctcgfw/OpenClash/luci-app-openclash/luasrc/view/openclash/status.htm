@@ -27,6 +27,9 @@
     --radius-lg: 8px;
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
+    --stripe-color: rgba(255,255,255,0.24);
+    --stripe-opacity: 0.5;
+    --stripe-size: 40px;
 
     --control-height: 32px;
     --card-padding: 6px 8px;
@@ -58,6 +61,8 @@
     --warning-color: #fa41c8;
     --watchdog-color: #c147f5;
     --info-color: #3b82f6;
+    --stripe-color: rgba(0, 0, 0, 0.255);
+    --stripe-opacity: 0.8;
 }
 
 .oc[data-darkmode="true"] .plugin-toggle-slider {
@@ -948,6 +953,30 @@
     height: 100%;
     border-radius: 4px;
     transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.oc .subscription-progress-fill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(45deg, var(--stripe-color) 25%, transparent 25%, transparent 50%, var(--stripe-color) 50%, var(--stripe-color) 75%, transparent 75%, transparent);
+    background-size: var(--stripe-size) var(--stripe-size);
+    animation: oc-stripes 2s linear infinite;
+    opacity: var(--stripe-opacity);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    border-radius: 4px;
+}
+
+@keyframes oc-stripes {
+    to { background-position: 40px 0; }
+}
+
+.oc[data-darkmode="true"] .subscription-progress-fill::before {
+    background-image: linear-gradient(45deg, var(--stripe-color) 25%, transparent 25%, transparent 50%, var(--stripe-color) 50%, var(--stripe-color) 75%, transparent 75%, transparent);
+    opacity: var(--stripe-opacity);
 }
 
 .oc .subscription-progress-fill.high {

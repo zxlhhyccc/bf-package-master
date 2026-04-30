@@ -3547,27 +3547,30 @@ start_service()
             begin
                threads = []
                Value = YAML.load_file('$TMP_CONFIG_FILE')
-               provider_configs = {'proxy-providers' => 'proxy_provider', 'rule-providers' => 'rule_provider'};
+               provider_configs = {'proxy-providers' => 'proxy_provider', 'rule-providers' => 'rule_provider'}
                provider_configs.each do |provider_type, path_prefix|
-                  if Value.key?(provider_type) && Value[provider_type].is_a?(Hash) then
-                     Value[provider_type].each{|name, config|
+                  if Value.key?(provider_type) && Value[provider_type].is_a?(Hash)
+                     Value[provider_type].each do |name, config|
                         threads << Thread.new {
-                           if config['path'] and not config['path'] =~ /.\/#{path_prefix}\/*/ then
-                              config['path'] = './'+path_prefix+'/'+File.basename(config['path']);
-                           elsif not config['path'] and config['type'] == 'http' then
-                              config['path'] = './'+path_prefix+'/'+name;
-                           end;
-                        };
-                     };
-                  end;
-               end;
-               threads.each(&:join)
-               File.open('$TMP_CONFIG_FILE', 'w') do |f|
-                  YAML.dump(Value, f)
+                           begin
+                              path_val = config['path']
+                              if path_val && !path_val.to_s.match?(%r{^\./#{Regexp.escape(path_prefix)}/})
+                                 config['path'] = File.join('.', path_prefix, File.basename(path_val.to_s))
+                              elsif (path_val.nil? || path_val.to_s == '') && config['type'].to_s == 'http'
+                                 config['path'] = File.join('.', path_prefix, name.to_s)
+                              end
+                           rescue => e
+                              YAML.LOG_ERROR('Edit Provider Path Failed,【%s】' % [e.message])
+                           end
+                        }
+                     end
+                  end
                end
+               threads.each(&:join)
+               File.open('$TMP_CONFIG_FILE', 'w') { |f| YAML.dump(Value, f) }
             rescue Exception => e
-               YAML.LOG_ERROR('Edit Provider Path Failed,【%s】' % [e.message]);
-            end;
+               YAML.LOG_ERROR('Edit Provider Path Failed,【%s】' % [e.message])
+            end
          " >> $LOG_FILE 2>&1
       else
          LOG_OUT "Step 3: Quick Start Mode, Skip Modify The Config File..."
