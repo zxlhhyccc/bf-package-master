@@ -379,6 +379,7 @@ begin
    smart_collect_size = '${45}'
    fake_ip_range6 = '${46}'
    fake_ip_range6_enable = '${47}' == '1'
+   global_ua = '${48}'
    default_dashboard = '$default_dashboard'
    yacd_type = '$yacd_type'
    dashboard_type = '$dashboard_type'
@@ -409,6 +410,7 @@ begin
          Value['external-controller'] = '0.0.0.0:' + controller_port
          Value['secret'] = secret
          Value['bind-address'] = '*'
+         Value['global-ua'] = global_ua if global_ua != '0'
          Value['external-ui'] = '/usr/share/openclash/ui'
          Value['external-ui-name'] = default_dashboard
          case default_dashboard

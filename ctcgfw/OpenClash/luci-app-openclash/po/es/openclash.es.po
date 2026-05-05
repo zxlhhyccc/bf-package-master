@@ -3847,3 +3847,6 @@ msgstr "Error en la sobrescritura YAML:"
 
 msgid "files selected"
 msgstr "archivos seleccionados"
+
+msgid "Global User-Agent"
+msgstr "Agente de usuario global"

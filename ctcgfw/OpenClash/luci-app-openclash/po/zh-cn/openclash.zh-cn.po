@@ -3860,3 +3860,6 @@ msgstr "YAML 覆写模块执行失败："
 
 msgid "files selected"
 msgstr "配置已选择"
+
+msgid "Global User-Agent"
+msgstr "全局 User-Agent"

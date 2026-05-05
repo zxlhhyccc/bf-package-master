@@ -2985,101 +2985,102 @@ overwrite_file()
 EOF
 
    allowed_keys_types="\
-   CONFIG_FILE:string \
-   CORE_TYPE:string \
-   LAN_INTERFACE_NAME:string \
-   INTERFACE_NAME:string \
-   CN_PORT:int \
-   DA_PASSWORD:string \
-   PROXY_PORT:int \
-   TPROXY_PORT:int \
-   HTTP_PORT:int \
-   SOCKS_PORT:int \
-   MIXED_PORT:int \
-   DNS_PORT:int \
-   ENABLE_REDIRECT_DNS:int_bool \
-   ENABLE_CUSTOM_DNS:int_bool \
-   APPEND_DEFAULT_DNS:int_bool \
-   APPEND_WAN_DNS:int_bool \
-   STORE_FAKEIP:int_bool \
-   CUSTOM_FAKEIP_FILTER:int_bool \
-   CUSTOM_FAKEIP_FILTER_MODE:string \
-   FAKEIP_RANGE:string \
-   FAKEIP_RANGE6:string \
-   ENABLE_RESPECT_RULES:int_bool \
-   CUSTOM_NAME_POLICY:int_bool \
-   CUSTOM_HOST:int_bool \
-   CUSTOM_FALLBACK_FILTER:int_bool \
-   IPV6_ENABLE:int_bool \
-   IPV6_DNS:int_bool \
-   IPV6_MODE:int \
-   ENABLE_V6_UDP_PROXY:int_bool \
-   EN_MODE:string \
-   ENABLE_UDP_PROXY:int_bool \
-   DISABLE_UDP_QUIC:int_bool \
-   ROUTER_SELF_PROXY:int_bool \
-   STACK_TYPE:string \
-   PROXY_MODE:string \
-   INTRANET_ALLOWED:int_bool \
-   INTRANET_ALLOWED_WAN_NAME:string \
-   BYPASS_GATEWAY_COMPATIBLE:int_bool \
-   COMMON_PORTS:string \
-   CHINA_IP_ROUTE:int \
-   CHINA_IP6_ROUTE:int \
-   CHNR_AUTO_UPDATE:int_bool \
-   CHNR_UPDATE_WEEK_TIME:string \
-   CHNR_UPDATE_DAY_TIME:string \
-   CHNR_CUSTOM_URL:string \
-   CHNR6_CUSTOM_URL:string \
-   CHINA_IP_ROUTE_PASS:string \
-   CHINA_IP6_ROUTE_PASS:string \
-   ENABLE_META_SNIFFER:int_bool \
-   ENABLE_META_SNIFFER_CUSTOM:int_bool \
-   ENABLE_META_SNIFFER_PURE_IP:int_bool \
-   ENABLE_TCP_CONCURRENT:int_bool \
-   FIND_PROCESS_MODE:string \
-   ENABLE_UNIFIED_DELAY:int_bool \
-   ENABLE_RULE_PROXY:int_bool \
-   ENABLE_CUSTOM_CLASH_RULES:int_bool \
-   TOLERANCE:int \
-   URLTEST_INTERVAL_MOD:int \
-   URLTEST_ADDRESS_MOD:string \
-   GITHUB_ADDRESS_MOD:string \
-   AUTO_SMART_SWITCH:int_bool \
-   SMART_ENABLE_LGBM:int_bool \
-   SMART_POLICY_PRIORITY:string \
-   SMART_COLLECT:int_bool \
-   SMART_COLLECT_SIZE:int \
-   SMART_COLLECT_RATE:string \
-   SMART_PREFER_ASN:int_bool \
-   LGBM_AUTO_UPDATE:int_bool \
-   LGBM_UPDATE_INTERVAL:int \
-   LGBM_CUSTOM_URL:string \
-   ENABLE_GEOIP_DAT:int_bool \
-   GEODATA_LOADER:string \
-   GEO_AUTO_UPDATE:int_bool \
-   GEO_UPDATE_WEEK_TIME:string \
-   GEO_UPDATE_DAY_TIME:string \
-   GEO_CUSTOM_URL:string \
-   GEOIP_AUTO_UPDATE:int_bool \
-   GEOIP_UPDATE_WEEK_TIME:string \
-   GEOIP_UPDATE_DAY_TIME:string \
-   GEOIP_CUSTOM_URL:string \
-   GEOSITE_AUTO_UPDATE:int_bool \
-   GEOSITE_UPDATE_WEEK_TIME:string \
-   GEOSITE_UPDATE_DAY_TIME:string \
-   GEOSITE_CUSTOM_URL:string \
-   GEOASN_AUTO_UPDATE:int_bool \
-   GEOASN_UPDATE_WEEK_TIME:string \
-   GEOASN_UPDATE_DAY_TIME:string \
-   GEOASN_CUSTOM_URL:string \
-   SMALL_FLASH_MEMORY:int_bool \
-   DISABLE_QUIC_GO_GSO:int_bool \
-   DELAY_START:int \
-   SKIP_PROXY_ADDRESS:int_bool \
-   SUB_INFO_URL:string \
-   DOWNLOAD_FILE:string \
-   RESTART:bool \
+      APPEND_DEFAULT_DNS:int_bool \
+      APPEND_WAN_DNS:int_bool \
+      AUTO_SMART_SWITCH:int_bool \
+      BYPASS_GATEWAY_COMPATIBLE:int_bool \
+      CHINA_IP_ROUTE:int \
+      CHINA_IP_ROUTE_PASS:string \
+      CHINA_IP6_ROUTE:int \
+      CHINA_IP6_ROUTE_PASS:string \
+      CHNR_AUTO_UPDATE:int_bool \
+      CHNR_CUSTOM_URL:string \
+      CHNR6_CUSTOM_URL:string \
+      CHNR_UPDATE_DAY_TIME:string \
+      CHNR_UPDATE_WEEK_TIME:string \
+      COMMON_PORTS:string \
+      CONFIG_FILE:string \
+      CORE_TYPE:string \
+      CN_PORT:int \
+      CUSTOM_FALLBACK_FILTER:int_bool \
+      CUSTOM_FAKEIP_FILTER:int_bool \
+      CUSTOM_FAKEIP_FILTER_MODE:string \
+      CUSTOM_HOST:int_bool \
+      CUSTOM_NAME_POLICY:int_bool \
+      DA_PASSWORD:string \
+      DELAY_START:int \
+      DISABLE_QUIC_GO_GSO:int_bool \
+      DISABLE_UDP_QUIC:int_bool \
+      DNS_PORT:int \
+      DOWNLOAD_FILE:string \
+      EN_MODE:string \
+      ENABLE_CUSTOM_CLASH_RULES:int_bool \
+      ENABLE_CUSTOM_DNS:int_bool \
+      ENABLE_GEOIP_DAT:int_bool \
+      ENABLE_META_SNIFFER:int_bool \
+      ENABLE_META_SNIFFER_CUSTOM:int_bool \
+      ENABLE_META_SNIFFER_PURE_IP:int_bool \
+      ENABLE_REDIRECT_DNS:int_bool \
+      ENABLE_RESPECT_RULES:int_bool \
+      ENABLE_RULE_PROXY:int_bool \
+      ENABLE_TCP_CONCURRENT:int_bool \
+      ENABLE_UDP_PROXY:int_bool \
+      ENABLE_UNIFIED_DELAY:int_bool \
+      ENABLE_V6_UDP_PROXY:int_bool \
+      FIND_PROCESS_MODE:string \
+      FAKEIP_RANGE:string \
+      FAKEIP_RANGE6:string \
+      GEOASN_AUTO_UPDATE:int_bool \
+      GEOASN_CUSTOM_URL:string \
+      GEOASN_UPDATE_DAY_TIME:string \
+      GEOASN_UPDATE_WEEK_TIME:int \
+      GEO_CUSTOM_URL:string \
+      GEODATA_LOADER:string \
+      GEOIP_AUTO_UPDATE:int_bool \
+      GEOIP_CUSTOM_URL:string \
+      GEOIP_UPDATE_DAY_TIME:int \
+      GEOIP_UPDATE_WEEK_TIME:int \
+      GEO_AUTO_UPDATE:int_bool \
+      GEO_UPDATE_DAY_TIME:string \
+      GEO_UPDATE_WEEK_TIME:int \
+      GEOSITE_AUTO_UPDATE:int_bool \
+      GEOSITE_CUSTOM_URL:string \
+      GEOSITE_UPDATE_DAY_TIME:string \
+      GEOSITE_UPDATE_WEEK_TIME:int \
+      GITHUB_ADDRESS_MOD:string \
+      GLOBAL_UA:string \
+      HTTP_PORT:int \
+      INTRANET_ALLOWED:int_bool \
+      INTRANET_ALLOWED_WAN_NAME:string \
+      INTERFACE_NAME:string \
+      IPV6_DNS:int_bool \
+      IPV6_ENABLE:int_bool \
+      IPV6_MODE:int \
+      LAN_INTERFACE_NAME:string \
+      LGBM_AUTO_UPDATE:int_bool \
+      LGBM_CUSTOM_URL:string \
+      LGBM_UPDATE_INTERVAL:int \
+      MIXED_PORT:int \
+      PROXY_MODE:string \
+      PROXY_PORT:int \
+      ROUTER_SELF_PROXY:int_bool \
+      SMART_COLLECT:int_bool \
+      SMART_COLLECT_RATE:string \
+      SMART_COLLECT_SIZE:int \
+      SMART_ENABLE_LGBM:int_bool \
+      SMART_POLICY_PRIORITY:string \
+      SMART_PREFER_ASN:int_bool \
+      SKIP_PROXY_ADDRESS:int_bool \
+      SMALL_FLASH_MEMORY:int_bool \
+      SOCKS_PORT:int \
+      STACK_TYPE:string \
+      STORE_FAKEIP:int_bool \
+      SUB_INFO_URL:string \
+      TOLERANCE:int \
+      TPROXY_PORT:int \
+      URLTEST_ADDRESS_MOD:string \
+      URLTEST_INTERVAL_MOD:int \
+      RESTART:bool \
    "
 
    allowed_keys_list=$(echo "$allowed_keys_types" | tr ' ' '\n' | cut -d: -f1)
@@ -3453,6 +3454,7 @@ get_config()
    geoip_custom_url=$(uci_get_config "geoip_custom_url" || echo 0)
    geosite_custom_url=$(uci_get_config "geosite_custom_url" || echo 0)
    geoasn_custom_url=$(uci_get_config "geoasn_custom_url" || echo 0)
+   global_ua=$(uci_get_config "global_ua" || echo 0)
    auto_smart_switch=$(uci_get_config "auto_smart_switch" || echo 0)
    lgbm_auto_update=$(uci_get_config "lgbm_auto_update" || echo 0)
    lgbm_custom_url=$(uci_get_config "lgbm_custom_url" || echo "https://github.com/vernesong/mihomo/releases/download/LightGBM-Model/Model.bin")
@@ -3503,7 +3505,8 @@ start_service()
          "$find_process_mode" "$fakeip_range" "$ipv6_mode" "$stack_type_v6" "$enable_unified_delay"\
          "$enable_respect_rules" "$custom_fakeip_filter_mode" "$iptables_compat" "$disable_quic_go_gso" "$cors_allow"\
          "$geo_custom_url" "$geoip_custom_url" "$geosite_custom_url" "$geoasn_custom_url"\
-         "$lgbm_auto_update" "$lgbm_custom_url" "$lgbm_update_interval" "$smart_collect" "$smart_collect_size" "$fakeip_range6" "$fake_ip_range6_enable"
+         "$lgbm_auto_update" "$lgbm_custom_url" "$lgbm_update_interval" "$smart_collect" "$smart_collect_size"\
+         "$fakeip_range6" "$fake_ip_range6_enable" "$global_ua"
 
          /usr/share/openclash/yml_rules_change.sh \
          "$enable_custom_clash_rules" "$TMP_CONFIG_FILE"\

@@ -3321,7 +3321,7 @@ end
 function action_add_subscription()
 	local name = luci.http.formvalue("name")
 	local address = luci.http.formvalue("address")
-	local sub_ua = luci.http.formvalue("sub_ua") or "clash.meta"
+	local sub_ua = luci.http.formvalue("sub_ua") or "clash-verge/v2.4.5"
 	local sub_convert = luci.http.formvalue("sub_convert") or "0"
 	local convert_address = luci.http.formvalue("convert_address") or ""
 	local template = luci.http.formvalue("template") or ""
