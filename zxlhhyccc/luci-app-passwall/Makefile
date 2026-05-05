@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-passwall
-PKG_VERSION:=26.4.15
+PKG_VERSION:=26.5.3
 PKG_RELEASE:=1
 PKG_PO_VERSION:=$(PKG_VERSION)
 
@@ -42,7 +42,7 @@ LUCI_TITLE:=LuCI support for PassWall
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
 	+ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
-	+microsocks +resolveip +tcping +unzip \
+	+microsocks +resolveip +tcping +unzip +lyaml \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
 	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS:dns2socks \
