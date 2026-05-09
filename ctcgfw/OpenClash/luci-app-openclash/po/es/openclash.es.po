@@ -3850,3 +3850,9 @@ msgstr "archivos seleccionados"
 
 msgid "Global User-Agent"
 msgstr "Agente de usuario global"
+
+msgid "depended package reinstalling..."
+msgstr "reinstalando paquete dependiente..."
+
+msgid "failed to install, please try to install it manually..."
+msgstr "no se pudo instalar; por favor, intenta instalarlo manualmente."

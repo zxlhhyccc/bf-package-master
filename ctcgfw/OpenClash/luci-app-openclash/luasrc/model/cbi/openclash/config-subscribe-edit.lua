@@ -76,13 +76,13 @@ o = s:option(Value, "convert_address", translate("Convert Address"))
 o.rmempty = true
 o.description = font_red..bold_on..translate("Note: There is A Risk of Privacy Leakage in Online Convert")..bold_off..font_off
 o:depends("sub_convert", "1")
-o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
 o:value("https://api.asailor.org/sub", translate("api.asailor.org"))
+o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
 o:value("https://sub.ltsc.qzz.io/sub", translate("sub.ltsc.qzz.io")..translate("(Support Vless By Oneself)"))
 o:value("https://api.api88.cloudns.org/sub", translate("api.api88.cloudns.org")..translate("(Support Vless By Oneself)"))
 o:value("https://api.api88.cloudns.be/sub", translate("api.api88.cloudns.be")..translate("(Support Vless By Cloudflare)"))
-o.default = "https://api.wcc.best/sub"
-o.placeholder = "https://api.wcc.best/sub"
+o.default = "https://api.asailor.org/sub"
+o.placeholder = "https://api.asailor.org/sub"
 
 ---- Template
 o = s:option(ListValue, "template", translate("Template Name"))

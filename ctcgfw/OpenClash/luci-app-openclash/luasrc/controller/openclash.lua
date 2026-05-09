@@ -2453,9 +2453,16 @@ function action_switch_oc_setting()
 		uci:set("openclash", "@overwrite[0]", "enable_respect_rules", tonumber(value))
 		uci:commit("openclash")
 	elseif setting == "oversea" then
+		oversea_v6_setting = fs.uci_get_config("config", "ipv6_enable") or "0"
+		if oversea_v6_setting ~= "0" then
+			uci:set("openclash", "config", "china_ip6_route", value)
+		end
 		uci:set("openclash", "config", "china_ip_route", value)
 		uci:commit("openclash")
 		if is_running() then
+			if oversea_v6_setting ~= "0" then
+				uci:set("openclash", "@overwrite[0]", "china_ip6_route", value)
+			end
 			uci:set("openclash", "@overwrite[0]", "china_ip_route", value)
 			uci:commit("openclash")
 			luci.sys.exec("/etc/init.d/openclash restart >/dev/null 2>&1 &")

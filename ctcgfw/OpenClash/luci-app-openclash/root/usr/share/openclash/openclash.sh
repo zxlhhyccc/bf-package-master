@@ -328,7 +328,7 @@ sub_info_get()
    config_get "udp" "$section" "udp" ""
    config_get "skip_cert_verify" "$section" "skip_cert_verify" ""
    config_get "sort" "$section" "sort" ""
-   config_get "convert_address" "$section" "convert_address" ""
+   config_get "convert_address" "$section" "convert_address" "https://api.asailor.org/sub"
    config_get "template" "$section" "template" ""
    config_get "node_type" "$section" "node_type" ""
    config_get "rule_provider" "$section" "rule_provider" ""

@@ -660,14 +660,13 @@ begin
          end
          if fake_ip_mode == 'fake-ip' && (china_ip_route || china_ip6_route)
             filter_mode = Value.dig('dns', 'fake-ip-filter-mode')
-            filters = Value.dig('dns', 'fake-ip-filter') || []
-            deleted_filters = filters.select { |f| f =~ /(geosite:?|rule-set:?).*(@cn|:cn|,cn|:china)/i }
             if filter_mode == 'blacklist' || filter_mode.nil?
-               if !deleted_filters.any?
-                  (Value['dns']['fake-ip-filter'] ||= []) << 'geosite:cn'
-                  YAML.LOG_TIP('Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【geosite:cn】...')
-               end
-            else
+               filter_rule = 'rule-set:oc-cn-domain'
+               (Value['dns']['fake-ip-filter'] ||= []) << filter_rule
+            end
+            if filter_mode == 'whitelist'
+               filters = Value.dig('dns', 'fake-ip-filter') || []
+               deleted_filters = filters.select { |f| f =~ /(geosite:?|rule-set:?).*(@cn|:cn|,cn|:china)/i }
                if deleted_filters.any?
                   Value['dns']['fake-ip-filter'] -= deleted_filters
                   deleted_filters.each do |f|
@@ -676,8 +675,14 @@ begin
                end
             end
             if filter_mode == 'rule'
-               (Value['dns']['fake-ip-filter'] ||= []).unshift('GEOSITE,cn,real-ip')
-               YAML.LOG_TIP('Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【GEOSITE,cn,real-ip】...')
+               filter_rule = 'RULE-SET,oc-cn-domain,real-ip'
+               (Value['dns']['fake-ip-filter'] ||= []).unshift(filter_rule)
+            end
+            Value['dns']['fake-ip-filter'].uniq!
+            if filter_mode != 'whitelist'
+               rule_set_hash = {'rule-providers+'=>{'oc-cn-domain'=>{'type'=>'http', 'interval'=>43200, 'behavior'=>'domain', 'format'=>'mrs', 'url'=>'https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs', 'path'=> './rule_provider/oc-cn-domain.mrs'}}}
+               Value = YAML.overwrite(Value, rule_set_hash)
+               YAML.LOG_TIP('Because Need Ensure Bypassing IP Option Work, Added The Fake-IP-Filter Rule【%s】...' % [filter_rule])
             end
          end
       rescue Exception => e
