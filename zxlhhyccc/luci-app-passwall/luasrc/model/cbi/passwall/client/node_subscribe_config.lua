@@ -18,7 +18,6 @@ m:append(Template(appname .. "/cbi/nodes_listvalue_com"))
 
 local has_ss = api.is_finded("ss-redir")
 local has_ss_rust = api.is_finded("sslocal")
-local has_trojan_plus = api.is_finded("trojan-plus")
 local has_singbox = api.finded_com("sing-box")
 local has_xray = api.finded_com("xray")
 local has_hysteria2 = api.finded_com("hysteria")
@@ -35,10 +34,6 @@ end
 if has_ss_rust then
 	local s = "shadowsocks-rust"
 	table.insert(ss_type, s)
-end
-if has_trojan_plus then
-	local s = "trojan-plus"
-	table.insert(trojan_type, s)
 end
 if has_singbox then
 	local s = "sing-box"
@@ -132,16 +127,6 @@ o.validate = function(self, value)
 	end
 	return value:gsub("%s+", ""):gsub("%z", "")
 end
-
-local has_lyaml = pcall(require, "lyaml")
-if has_lyaml then
-	o = s:option(Flag, "clash_convert", translate("Subscription Conversion"))
-	o.default = "0"
-	o.rmempty = false
-	o.description = translate("Download and convert Clash subscription when enabled (Clash subscription required).") .. "<br>" ..
-			translate("Experimental feature.")
-end
-
 
 o = s:option(ListValue, "domain_resolver", translate("Domain DNS Resolve"))
 o.description = translate("If the node address is a domain name, this DNS will be used for resolution.") .. "<br>" ..
@@ -298,10 +283,11 @@ o = s:option(Value, "user_agent", translate("User-Agent"))
 o.default = "passwall"
 o:value("passwall", "PassWall")
 o:value("v2rayN/9.99", "v2rayN")
+o:value("clash.meta", "Clash.Meta")
+o:value("Clash", "Clash")
 o:value("curl", "Curl")
 o:value("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0", "Edge for Linux")
 o:value("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0", "Edge for Windows")
-o:depends("clash_convert", false)
 
 o = s:option(ListValue, "chain_proxy", translate("Chain Proxy"))
 o:value("", translate("Close(Not use)"))
