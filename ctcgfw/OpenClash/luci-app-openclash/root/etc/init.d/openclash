@@ -3155,13 +3155,16 @@ EOF
             key_u=$(printf "%s" "$key" | tr 'a-z' 'A-Z' | tr -d ' ')
             if printf "%s" "$key_u" | grep -q "^DOWNLOAD_FILE$"; then
                download_file_lines="${download_file_lines}
-${trimmed}"
+  ${trimmed}"
             fi
          fi
       done < "$file"
 
       download_failed=0
-      echo "$download_file_lines" | sed '/^$/d' | while IFS= read -r trimmed; do
+      download_file_lines_tmp="/tmp/openclash_download_file_lines.$$"
+      printf "%s\n" "$download_file_lines" | sed '/^$/d' > "$download_file_lines_tmp"
+
+      while IFS= read -r trimmed; do
          key=$(printf "%s" "$trimmed" | awk -F'=' '{gsub(/[[:space:]]+$/,"",$1); print $1}' | sed 's/[[:space:]]*$//;s/ //g')
          val=$(echo "$trimmed" | sed 's/^[^=]*=[[:space:]]*//')
          key_u=$(printf "%s" "$key" | tr 'a-z' 'A-Z' | tr -d ' ')
@@ -3212,7 +3215,9 @@ ${trimmed}"
                echo "$cron_cmd" >> $CRON_FILE
             fi
          fi
-      done
+      done < "$download_file_lines_tmp"
+
+      rm -f "$download_file_lines_tmp"
 
       [ "$download_failed" -eq 1 ] && continue
 
@@ -3593,7 +3598,7 @@ start_service()
       fi
 
       rm -rf /tmp/yaml_*
-   } >/dev/null 2>&1
+   }
 
    echo "OpenClash Already Start!"
 }

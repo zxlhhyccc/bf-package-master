@@ -2112,77 +2112,11 @@ msgstr "解锁区域筛选"
 msgid "Unlock Nodes Filter"
 msgstr "解锁节点筛选"
 
-msgid "Start Auto Select Proxy For Netflix Unlock..."
-msgstr "开始自动选择（检测）Netflix 解锁节点..."
+msgid "Start Auto Select Unlock Proxy For"
+msgstr "开始自动选择（检测）解锁节点"
 
-msgid "Start Auto Select Proxy For Disney Plus Unlock..."
-msgstr "开始自动选择（检测）Disney Plus 解锁节点..."
-
-msgid "Start Auto Select Proxy For HBO Max Unlock..."
-msgstr "开始自动选择（检测）HBO Max 解锁节点..."
-
-msgid "Start Auto Select Proxy For YouTube Premium Unlock..."
-msgstr "开始自动选择（检测）YouTube Premium 解锁节点..."
-
-msgid "Start Auto Select Proxy For TVB Anywhere+ Unlock..."
-msgstr "开始自动选择（检测）TVB Anywhere+ 解锁节点..."
-
-msgid "Start Auto Select Proxy For Amazon Prime Video Unlock..."
-msgstr "开始自动选择（检测）Amazon Prime Video 解锁节点..."
-
-msgid "Start Auto Select Proxy For DAZN Unlock..."
-msgstr "开始自动选择（检测）DAZN 解锁节点..."
-
-msgid "Start Auto Select Proxy For Paramount Plus Unlock..."
-msgstr "开始自动选择（检测）Paramount Plus 解锁节点..."
-
-msgid "Start Auto Select Proxy For Discovery Plus Unlock..."
-msgstr "开始自动选择（检测）Discovery Plus 解锁节点..."
-
-msgid "Start Auto Select Proxy For Bilibili Unlock..."
-msgstr "开始自动选择（检测）Bilibili 解锁节点..."
-
-msgid "Start Auto Select Proxy For Google Not CN Unlock..."
-msgstr "开始自动选择（检测）Google 非送中节点..."
-
-msgid "Start Auto Select Proxy For OpenAI Unlock..."
-msgstr "开始自动选择（检测）OpenAI 解锁节点..."
-
-msgid "Netflix Group:"
-msgstr "Netflix 策略组："
-
-msgid "Disney Plus Group:"
-msgstr "Disney Plus 策略组："
-
-msgid "HBO Max Group:"
-msgstr "HBO Max 策略组："
-
-msgid "TVB Anywhere+ Group:"
-msgstr "TVB Anywhere+ 策略组："
-
-msgid "Amazon Prime Video Group:"
-msgstr "Amazon Prime Video 策略组："
-
-msgid "YouTube Premium Group:"
-msgstr "YouTube Premium 策略组："
-
-msgid "DAZN Group:"
-msgstr "DAZN 策略组："
-
-msgid "Paramount Plus Group:"
-msgstr "Paramount Plus 策略组："
-
-msgid "Discovery Plus Group:"
-msgstr "Discovery Plus 策略组："
-
-msgid "Bilibili Group:"
-msgstr "Bilibili 策略组："
-
-msgid "Google Group:"
-msgstr "Google 策略组："
-
-msgid "OpenAI Group:"
-msgstr "OpenAI 策略组："
+msgid "Group:"
+msgstr "策略组："
 
 msgid "full support"
 msgstr "完整解锁"

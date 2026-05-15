@@ -3356,9 +3356,10 @@ function action_add_subscription()
 	local is_valid_url = false
 
 	if sub_convert == "1" then
-		if string.find(address, "^https?://") and not string.find(address, "\n") and not string.find(address, "|") then
-			is_valid_url = true
-		elseif string.find(address, "\n") or string.find(address, "|") then
+		local prefixed_http_pattern = "^[^,%s]+,https?://.+"
+		local encoded_prefixed_http_pattern = "^[^%%%s]+%%2[Cc]https?%%3[Aa]%%2[Ff]%%2[Ff].+"
+
+		if string.find(address, "\n") or string.find(address, "|") then
 			local links = {}
 			if string.find(address, "\n") then
 				for line in address:gmatch("[^\n]+") do
@@ -3372,15 +3373,20 @@ function action_add_subscription()
 
 			for _, link in ipairs(links) do
 				if link and link ~= "" then
-					if string.find(link, "^https?://") or string.find(link, "^[a-zA-Z]+://") then
+					if string.find(link, "^https?://")
+						or string.find(link, "^[a-zA-Z]+://")
+						or string.find(link, prefixed_http_pattern)
+						or string.find(link, encoded_prefixed_http_pattern) then
 						is_valid_url = true
 						break
 					end
 				end
 			end
 		else
-			if string.find(address, "^[a-zA-Z]+://") and
-			   not string.find(address, "\n") and not string.find(address, "|") then
+			if string.find(address, "^https?://")
+				or string.find(address, "^[a-zA-Z]+://")
+				or string.find(address, prefixed_http_pattern)
+				or string.find(address, encoded_prefixed_http_pattern) then
 				is_valid_url = true
 			end
 		end
