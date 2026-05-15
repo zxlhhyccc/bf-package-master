@@ -25,7 +25,19 @@
 	local disp = require "luci.dispatcher"
 	local ver  = require "luci.version"
 
-	local boardinfo = util.ubus("system", "board") or { }
+	-- 兼容新旧版本的 ubus 调用
+	local boardinfo = {}
+	if util.ubus then
+		boardinfo = util.ubus("system", "board") or {}
+	else
+		-- OpenWrt 23+ 可能使用不同的方式
+		local ubus = require "ubus"
+		local conn = ubus.connect()
+		if conn then
+			boardinfo = conn:call("system", "board", {}) or {}
+			conn:close()
+		end
+	end
 
 	local node = disp.context.dispatched
 	local path = table.concat(disp.context.path, "-")
@@ -58,15 +70,17 @@
     <meta name="apple-touch-fullscreen" content="yes" /> 
 	<meta name="msapplication-TileColor" content="#09c">
 	<link rel="stylesheet" href="<%=media%>/css/style.css?v=<%= ver.luciversion %>">
+	<link rel="stylesheet" href="<%=media%>/css/compat-openwrt23.css?v=<%= ver.luciversion %>">
 	<script src="<%=media%>/js/jquery.min.js?v=3.5.1"></script>
+	<script src="<%=media%>/js/compat.js?v=<%= ver.luciversion %>"></script>
 	<link rel="shortcut icon" href="<%=media%>/favicon.ico">
 	<% if node and node.css then %>
 	<link rel="stylesheet" href="<%=resource%>/<%=node.css%>">
 	<% end -%>
 
 	<script src="<%=url('admin/translations', luci.i18n.context.lang)%><%# ?v=PKG_VERSION %>"></script>
-	<script src="<%=resource%>/cbi.js"></script>
-	<script src="<%=resource%>/luci.js?v=<%=ver.luciversion%>"></script>
+	<script src="<%=resource%>/cbi.js<%= ver.luciversion and ('?v=' .. ver.luciversion) or '' %>"></script>
+	<script src="<%=resource%>/luci.js<%= ver.luciversion and ('?v=' .. ver.luciversion) or '' %>"></script>
 	<% if css then %>
 	<style title="text/css">
 		<%= css %>

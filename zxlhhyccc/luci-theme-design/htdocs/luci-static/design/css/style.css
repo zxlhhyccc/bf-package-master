@@ -14,110 +14,107 @@
     --bg: #f1f4f5;
     --mainbg: #fff;
     --bgwhite: #fff;
-    --activeColor: #5ea69b;
-    --activeBottom: #51c291 2px solid;
-    --textColor: rgb(132,119,116);
-    --borderColor: rgba(0,0,0,.15);
-    --navbgColor: rgba(255, 255, 255, .7);
-    --navBorder: 1px solid #f2f2f2;
-    --sectionbgColor: #fff;
-    --sectionbgColor2: #fff;
-    --sectionShaddow: 3px 3px 3px rgba(0,0,0,.05);
-    --sectionBorder: none;
-    --sectiontabBorder: none;
-    --tabmenuBorderLR: none;
-    --tabmenubgColor: none;
-    --tabmenuBottom: #e4eaec 1px solid;
-    --tabmenuRadius: 0;
-    --sectionnodeBorder: #f7f7f7 1px solid;
-    --cbilineColor: #f7f7f7 1px solid;
-    --tabbgColor: #fff;
-    --inputbgColor: #f8f8f8;
-    --inputtextColor: #76838f;
-    --inputBorder: 1px solid #e4eaec;
-    --mainleftbgColor: rgb(255,255,255);
-    --bttextColor: #fff;
-    --badgebgColor: #f7f7f7;
-    --badgeBorder: #e4eaec 1px solid;
-    --progressbarColor: #c8c8c8;
+    --active_color: #5ea69b;
+    --active_bottom: #51c291 2px solid;
+    --text_color: rgb(132,119,116);
+    --border_color: rgba(0,0,0,.15);
+    --navbg_color: rgba(255, 255, 255, .7);
+    --nav_border: 1px solid #f2f2f2;
+    --sectionbg_color: #fff;
+    --sectionbg_color2: #fff;
+    --section_shaddow: 3px 3px 3px rgba(0,0,0,.05);
+    --section_border: none;
+    --sectiontab_border: none;
+    --tabmenu_border_lr: none;
+    --tabmenubg_color: none;
+    --tabmenu_bottom: #e4eaec 1px solid;
+    --tabmenu_radius: 0;
+    --sectionnode_border: #f7f7f7 1px solid;
+    --cbiline_color: #f7f7f7 1px solid;
+    --tabbg_color: #fff;
+    --inputbg_color: #f8f8f8;
+    --inputtext_color: #76838f;
+    --input_border: 1px solid #e4eaec;
+    --mainleftbg_color: rgb(255,255,255);
+    --bttext_color: #fff;
+    --badgebg_color: #f7f7f7;
+    --badge_border: #e4eaec 1px solid;
+    --progressbar_color: #c8c8c8;
     --progressbar: #5ea69b;
-    --progressbartxtColor: #fff;
+    --progressbartxt_color: #fff;
     /* --logo: url('/luci-static/design/images/logo.png');
     --mlogo: url('/luci-static/design/images/mlogo.png'); */
     --logo_color: #222b36;
-    --alertColor: #000000;
-    --alertBackground: rgb(230 230 230);
-    --modelBackground: #d4d4d4;
-    --scrollbarColor:#d0d0d0;
+    --alert_color: #000000;
+    --alert_background: rgb(230 230 230);
+    --model_background: #ffffff;
+    --model_text_color: #333333;
+    --scrollbar_color:#d0d0d0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #000;
     --bgwhite: #000;
-    --textColor: #fefefe;
-    --activeColor: #5ea69b;
-    --activeBottom: #51c291 2px solid;
-    --borderColor: #2C2C3A;
-    --navbgColor: hsla(0, 0%, 7%, .8);
-    --navBorder: 1px solid #1c1c1e;
-    --sectionbgColor: #1c1c1e;
-    --sectionbgColor2: #1c1c1e;
-    --sectionShaddow: 3px 3px 3px rgba(0,0,0,.05);
-    --sectionBorder: none;
-    --sectiontabBorder: none;
-    --sectionnodeBorder: #3d3d41 1px solid;
-    --cbilineColor: #2d2d2d 1px solid;
-    --tabbgColor: #1c1c1e;
-    --tabmenuBorderLR: none;
-    --tabmenubgColor: none;
-    --tabmenuBottom: #2d2d2d 1px solid;
-    --tabmenuRadius: 6px 6px 0 0;
-    --inputbgColor: #2f2f2f;
-    --inputtextColor: #fefefe;
-    --inputBorder: 1px solid #4d4d4d;
-    --mainleftbgColor: #000;
-    --bttextColor: #fefefe;
-    --badgebgColor: #fefefe;
-    --badgeBorder: #3d3d40 1px solid;
-    --progressbarColor: #6d6d6d;
+    --text_color: #fefefe;
+    --active_color: #5ea69b;
+    --active_bottom: #51c291 2px solid;
+    --border_color: #2C2C3A;
+    --navbg_color: hsla(0, 0%, 7%, .8);
+    --nav_border: 1px solid #1c1c1e;
+    --sectionbg_color: #1c1c1e;
+    --sectionbg_color2: #1c1c1e;
+    --section_shaddow: 3px 3px 3px rgba(0,0,0,.05);
+    --section_border: none;
+    --sectiontab_border: none;
+    --sectionnode_border: #3d3d41 1px solid;
+    --cbiline_color: #2d2d2d 1px solid;
+    --tabbg_color: #1c1c1e;
+    --tabmenu_border_lr: none;
+    --tabmenubg_color: none;
+    --tabmenu_bottom: #2d2d2d 1px solid;
+    --tabmenu_radius: 6px 6px 0 0;
+    --inputbg_color: #2f2f2f;
+    --inputtext_color: #fefefe;
+    --input_border: 1px solid #4d4d4d;
+    --mainleftbg_color: #000;
+    --bttext_color: #fefefe;
+    --badgebg_color: #fefefe;
+    --badge_border: #3d3d40 1px solid;
+    --progressbar_color: #6d6d6d;
     --progressbar: #5ea69b;
-    --progressbartxtColor: #fefefe;
+    --progressbartxt_color: #fefefe;
     /* --logo: url('/luci-static/design/images/logod.png');
     --mlogo: url('/luci-static/design/images/mlogod.png'); */
     --logo_color: #fefefe;
-    --alertColor: #ffffff;
-    --alertBackground: rgb(30 30 30);
-    --modelBackground: #1c1c1e;
-    --scrollbarColor:#4a4a4a;
+    --alert_color: #ffffff;
+    --alert_background: rgb(30 30 30);
+    --model_background: #2c2c2e;
+    --model_text_color: #fefefe;
+    --scrollbar_color:#4a4a4a;
   }
 }
 
 @font-face {
     font-family: 'icomoon';
-    src: url('../fonts/font.eot');
-    src: url('../fonts/font.eot') format('embedded-opentype'),
-    url('../fonts/font.ttf') format('truetype'),
-    url('../fonts/font.woff') format('woff'),
-    url('../fonts/font.svg') format('svg');
+    src: url('../fonts/font.woff') format('woff'),
+    url('../fonts/font.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
   font-family: 'design';
-  src: url('');
-  src: url('?#iefix') format('embedded-opentype'),
-  url('../fonts/iconfont-Regular.woff2') format('woff2'),
-  url('../fonts/iconfont-Regular.woff') format('woff'),
-  url('../fonts/iconfont-Regular.ttf') format('truetype'),
-  url('#iconfont') format('svg');
+  src: url('../fonts/iconfont.woff2') format('woff2'),
+       url('../fonts/iconfont.woff') format('woff'),
+       url('../fonts/iconfont.ttf') format('truetype');
 }
 
-@font-face{
-    font-family: 'Cocon-Regular-Font';
-    src : url('../fonts/Cocon-Regular-Font.otf') format('opentype');
+@font-face {
+  font-family: 'cocon_regular_font';
+  src: url('../fonts/Cocon-Regular-Font.otf') format('opentype');
 }
+
 div{
     font-family: 'HYk2gj';
 }
@@ -132,7 +129,7 @@ div{
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--scrollbarColor) ;
+    background: var(--scrollbar_color) ;
     border-radius: 10px;
 }
 
@@ -142,7 +139,7 @@ html {
 }
 
 a {
-    color: var(--textColor);
+    color: var(--text_color);
     text-decoration: none;
 }
 
@@ -248,7 +245,7 @@ html, body {
     font-size: 0.92rem;
     line-height: 150%;
     background-color: var(--bg);
-    color:var(--textColor);
+    color:var(--text_color);
 }
 
 select {
@@ -266,12 +263,12 @@ select {
 
 select,
 input {
-    color: var(--inputtextColor);
+    color: var(--inputtext_color);
     padding: 5px 10px;
     font-size: 0.92rem;
     font-family: -apple-system, 'Microsoft Yahei', sans-serif, Helvetica, Arial, sans-serif;
-    border: var(--inputBorder);
-    background-color: var(--inputbgColor);
+    border: var(--input_border);
+    background-color: var(--inputbg_color);
     transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
     -webkit-transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
     outline-style: none;
@@ -413,7 +410,7 @@ small {
     display: block;
     text-align: center;
     margin-top: 2rem;
-    color: var(--textColor);
+    color: var(--text_color);
     font-size: 1rem;
 }
 
@@ -443,7 +440,7 @@ small {
 .main-left {
     float: left;
     width: 17rem;
-    background-color: var(--mainleftbgColor);
+    background-color: var(--mainleftbg_color);
     overflow-x: auto;
     height: calc(100% - 3.5rem);
     position: fixed;
@@ -457,7 +454,7 @@ small {
     width: calc(100% - 17rem);
     float: right;
     height: 100%;
-    border-left: var(--sectionBorder);
+    border-left: var(--section_border);
 }
 
 .main-right > #maincontent {
@@ -505,7 +502,7 @@ header > .fill > .container > #logo > img {
 
 header > .fill > .container > .brand {
     font-size: 25px;
-    font-family: "Cocon-Regular-Font";
+    font-family: "cocon_regular_font";
     /*font-weight:bold;*/
     line-height:60px;
     /*color: white;*/
@@ -631,12 +628,12 @@ header > .fill > .container > .status > * {
 
 .notice,
 [data-indicator]:not([data-style="inactive"]) {
-	color: var(--activeColor);
+	color: var(--active_color);
 }
 
 .notice,
 [data-indicator]:not([data-style="active"]) {
-	color: var(--progressbarColor);
+	color: var(--progressbar_color);
 }
 
 span[data-indicator="uci-changes"] {
@@ -659,7 +656,7 @@ span[data-indicator="uci-changes"] {
 	background-color: #5c5c5c;
 	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .16), 0 0 2px 0 rgba(0, 0, 0, .12);
 	text-shadow: 1px 1px rgba(0, 0, 0, .1);
-	background-color: var(--alertBackground);
+	background-color: var(--alert_background);
 }
 
 .alert-message > h4 {
@@ -694,7 +691,7 @@ span[data-indicator="uci-changes"] {
 }
 
 .main > .main-left > .nav > li a {
-    color: var(--activeColor);
+    color: var(--active_color);
     display: block;
     border-radius: 6px;
     cursor: pointer;
@@ -853,7 +850,7 @@ body[class*="node-"] > .main > .main-left > .nav > .slide > .menu.active::before
 
 .main > .main-left > .nav > li:last-child a:hover,
 .main > .main-left > .nav > .slide > .menu:hover {
-    background: var(--activeColor);
+    background: var(--active_color);
     color:white;
 }
 .main > .main-left > .nav > .slide:hover {
@@ -865,13 +862,13 @@ body[class*="node-"] > .main > .main-left > .nav > .slide > .menu.active::before
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > .active {
-    background-color: var(--activeColor);
+    background-color: var(--active_color);
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > li > a {
     position: relative;
     display: block;
-    color: var(--textColor);
+    color: var(--text_color);
     vertical-align: middle;
     background:none !important;
     border: none !important;
@@ -886,7 +883,7 @@ body[class*="node-"] > .main > .main-left > .nav > .slide > .menu.active::before
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > li:hover {
-    background: var(--activeColor);
+    background: var(--active_color);
     color:white !important;
     transition: all 0.2s;
 }
@@ -895,7 +892,7 @@ body[class*="node-"] > .main > .main-left > .nav > .slide > .menu.active::before
 }
 
 .main > .main-left > .nav > .slide > .slide-menu > .active:hover {
-    background-color: var(--activeColor);
+    background-color: var(--active_color);
     cursor: pointer;
 }
 
@@ -929,21 +926,21 @@ li {
 
 
 h1 {
-    color: var(--activeColor);
+    color: var(--active_color);
     font-size: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
 
 h2 {
-    color: var(--activeColor);
+    color: var(--active_color);
     padding: 0 12px 6px 12px;
     text-transform: capitalize;
 }
 
 h3 {
     font-size: 1.2rem;
-    color: var(--activeColor);
+    color: var(--active_color);
     font-weight:bold;
     padding: 0 12px 10px 12px;
 }
@@ -953,7 +950,7 @@ h4 {
 }
 
  div.cbi-section{
-	 border: var(--sectionBorder);
+	 border: var(--section_border);
 	 margin-bottom: 20px;
 	 border-radius: 8px;
 	 margin-top: 5px;
@@ -980,9 +977,9 @@ h4 {
    min-width: inherit;
    overflow-x: auto;
    overflow-y: hidden;
-   background-color: var(--sectionbgColor);
+   background-color: var(--sectionbg_color);
    border-radius: 8px;
-   /* box-shadow: var(--sectionShaddow); */
+   /* box-shadow: var(--section_shaddow); */
    -webkit-overflow-scrolling: touch;
 }
 
@@ -1040,7 +1037,7 @@ h4 {
 }
 
 #cbi-vsftpd .cbi-map-descr {
-    color: var(--activeColor);
+    color: var(--active_color);
     padding: 0 12px 0px 12px;
     font-size: 1.2rem;
     font-weight: bold;
@@ -1119,7 +1116,7 @@ table > thead > tr > th,
 }
 
 table > tr {
-    border-bottom: var(--cbilineColor) !important;
+    border-bottom: var(--cbiline_color) !important;
 }
 
 table > tr:last-child {
@@ -1261,7 +1258,7 @@ form.inline + form.inline,
 .cbi-button-find,
 .cbi-input-reload,
 .cbi-button-reload {
-    color: var(--bttextColor);
+    color: var(--bttext_color);
     background-color: rgb(0,171,232) !important;
     border-color: rgb(0,171,232) !important;
 }
@@ -1283,7 +1280,7 @@ form.inline + form.inline,
 .cbi-button-apply,
 .cbi-button-edit {
     color: #fff !important;
-    background-color: var(--activeColor);
+    background-color: var(--active_color);
 }
 
 [data-page="admin-status-iptables"] .right {
@@ -1339,7 +1336,7 @@ form.inline + form.inline,
 
 .tabs > li:hover {
 	cursor: pointer;
-	border-bottom-color: #c9c9c9;
+	border-bottom-color: transparent;
 }
 
 .tabs > li > a {
@@ -1365,7 +1362,7 @@ form.inline + form.inline,
 }
 
 .cbi-tabmenu > li {
-    border-radius: var(--tabmenuRadius);
+    border-radius: var(--tabmenu_radius);
 }
 
 .cbi-tabmenu > li, .tabs > li {
@@ -1373,9 +1370,9 @@ form.inline + form.inline,
 }
 
 .tabs > li[class~="active"] > a {
-    color: var(--activeColor) !important;
+    color: var(--active_color) !important;
     padding-bottom: 8px;
-    border-bottom: var(--activeColor) 2px solid;
+    border-bottom: var(--active_color) 2px solid;
 }
 
 .tabs > li[class~="active"],
@@ -1384,11 +1381,11 @@ form.inline + form.inline,
 }
 
 .cbi-tabmenu {
-    border-top: var(--sectiontabBorder);
-    border-left: var(--tabmenuBorderLR);
-    border-right: var(--tabmenuBorderLR);
-    border-bottom: var(--tabmenuBottom);
-    background-color: var(--tabmenubgColor);
+    border-top: var(--sectiontab_border);
+    border-left: var(--tabmenu_border_lr);
+    border-right: var(--tabmenu_border_lr);
+    border-bottom: var(--tabmenu_bottom);
+    background-color: var(--tabmenubg_color);
     width: 100%;
     overflow-x: auto;
     margin-top: 5px;
@@ -1400,13 +1397,13 @@ form.inline + form.inline,
 }
 
 .cbi-tabmenu > li[class~="cbi-tab"] a {
-    color: var(--activeColor);
-    border-bottom: 2px solid var(--activeColor);
+    color: var(--active_color);
+    border-bottom: 2px solid var(--active_color);
 }
 
 .cbi-section .cbi-section-remove:nth-of-type(2n),
 .container > .cbi-section .cbi-section-node:nth-of-type(2n) {
-	background-color: var(--cbilineColor);
+	background-color: var(--cbiline_color);
 }
 
 [data-tab-title] {
@@ -1437,9 +1434,9 @@ form.inline + form.inline,
 
 .cbi-section-node-tabbed {
     margin-top: 0;
-    border-bottom: var(--sectiontabBorder);
-    border-left: var(--sectiontabBorder);
-    border-right: var(--sectiontabBorder);
+    border-bottom: var(--sectiontab_border);
+    border-left: var(--sectiontab_border);
+    border-right: var(--sectiontab_border);
     border-radius: 0 0;
 }
 
@@ -1479,7 +1476,7 @@ form.inline + form.inline,
     min-height: 40px;
     padding: 8px 10px;
     flex-flow:row wrap;
-    border-bottom: var(--cbilineColor);
+    border-bottom: var(--cbiline_color);
 }
 
 .cbi-value:last-child {
@@ -1562,7 +1559,7 @@ form.inline + form.inline,
 }
 
 .cbi-rowstyle-2 {
-    background-color: var(--sectionbgColor2);
+    background-color: var(--sectionbg_color2);
 }
 
 .cbi-rowstyle-2 .cbi-button-up,
@@ -1788,7 +1785,7 @@ form.inline + form.inline,
 	width: auto;
 	max-height: 200px !important;
 	/* border: thin solid #918e8c; */
-	background: var(--activeColor);
+	background: var(--active_color);
 	/* box-shadow: 0 0 4px #918e8c; */
 	/* color: var(--main-menu-color); */
 	text-align: center;
@@ -1825,7 +1822,7 @@ form.inline + form.inline,
 } */
 
 .cbi-dropdown[open] > ul.dropdown > li[selected] {
-	background: var(--activeColor);
+	background: var(--active_color);
 }
 
 .cbi-dropdown[open] > ul.dropdown > li.focus {
@@ -1866,8 +1863,8 @@ form.inline + form.inline,
     min-width: 11rem !important;
     height: 1.5rem !important;
     margin: 0 0 !important;
-    /* border-color: var(--progressbarColor) !important; */
-    background-color:var(--progressbarColor) !important;
+    /* border-color: var(--progressbar_color) !important; */
+    background-color:var(--progressbar_color) !important;
     border-radius: 5px !important;
     overflow: hidden !important;
 }
@@ -1876,7 +1873,7 @@ form.inline + form.inline,
     width: 0;
     height: 100% !important;
     transition: width .25s ease-in !important;
-    color: var(--progressbartxtColor) !important;
+    color: var(--progressbartxt_color) !important;
     background: var(--progressbar) !important;
 }
 
@@ -1923,7 +1920,7 @@ form.inline + form.inline,
     margin: 5em auto;
     padding: 1em;
     border-radius: 5px !important;
-    background: var(--modelBackground);
+    background: var(--model_background);
     box-shadow: 0 2px 2px 0 rgb(0 0 0 / 16%), 0 0 2px 0 rgb(0 0 0 / 12%);
 }
 
@@ -1952,22 +1949,24 @@ form.inline + form.inline,
 
 .modal > h4 {
 	margin: .5em 0;
+	color: var(--model_text_color);
 }
 
 .modal ul {
 	margin-left: 2.2em;
 	word-break: break-word;
+	color: var(--model_text_color);
 }
 
 .modal li {
 	list-style-type: square;
-	color: #808080;
+	color: var(--model_text_color);
 }
 
 .modal p {
 	padding-left: .25rem;
 	word-break: break-word;
-	color: #fff;
+	color: var(--model_text_color);
 }
 
 .modal label.btn {
@@ -2082,7 +2081,7 @@ body.modal-overlay-active #modal_overlay {
 td > .ifacebadge,
 .td > .ifacebadge {
 	font-size: .8rem;
-	background-color: var(--activeColor);
+	background-color: var(--active_color);
 	color: white;
 	border-radius: 8px;
 }
@@ -2132,18 +2131,18 @@ td > .ifacebadge,
     padding: 5px;
     margin-top:10px;
     border-radius: 8px;
-    background-color: var(--sectionbgColor);
+    background-color: var(--sectionbg_color);
     box-shadow: 3px 3px 3px rgb(0 0 0 / 5%);
 }
 
 
 /*textarea*/
 .cbi-input-textarea, textarea {
-    color: var(--inputtextColor);
+    color: var(--inputtext_color);
     padding: 10px;
     line-height: normal;
-    border: var(--sectionBorder);
-    background-color: var(--inputbgColor);
+    border: var(--section_border);
+    background-color: var(--inputbg_color);
     transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
     -webkit-transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
     outline-style: none;
@@ -2166,7 +2165,7 @@ td > .ifacebadge,
     padding: 10px;
     margin-bottom: 20px;
     border-radius: 0;
-    background-color: var(--sectionbgColor);
+    background-color: var(--sectionbg_color);
     border: none;
 }
 
@@ -2324,6 +2323,22 @@ td > .ifacebadge,
 .cbi-value-field .cbi-input-checkbox,
 .cbi-value-field .cbi-input-radio {
 	margin-top: .1rem;
+}
+
+/* 去掉 checkbox �?radio 的背景和边框 */
+input[type="checkbox"],
+input[type="radio"] {
+	background: transparent !important;
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	outline: none !important;
+}
+
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+	box-shadow: none !important;
+	outline: none !important;
 }
 
 .cbi-value-field > ul > li {
@@ -3003,7 +3018,7 @@ input[name="nslookup"] {
 @media screen and (max-width: 992px) {
 
     /* img[src*="/images/logo.png"] {
-    background-color: var(--mainleftbgColor);
+    background-color: var(--mainleftbg_color);
     height: 50px;
     background-image: var(--mlogo);
     background-size: 310px;
@@ -3315,15 +3330,15 @@ input[name="nslookup"] {
         margin-top: -34px;
     }
     .cbi-section-node > .cbi-value:nth-of-type(2n) {
-        background-color: var(--sectionbgColor);
+        background-color: var(--sectionbg_color);
     }
 
     .cbi-tabcontainer > .cbi-value:nth-of-type(2n) {
-        background-color: var(--sectionbgColor);
+        background-color: var(--sectionbg_color);
     }
 
     div > .cbi-value:nth-of-type(2n) {
-        background-color: var(--sectionbgColor);
+        background-color: var(--sectionbg_color);
     }
 
     .node-main-login > .main .cbi-value {
@@ -3433,11 +3448,11 @@ input[name="nslookup"] {
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	border-top: var(--navBorder);
+	border-top: var(--nav_border);
 	text-align: center;
 	height:calc(50px + constant(safe-area-inset-bottom));
 	height:calc(50px + env(safe-area-inset-bottom));
-	background-color: var(--navbgColor);
+	background-color: var(--navbg_color);
 	  -webkit-backdrop-filter: blur(10px);
 	backdrop-filter: blur(10px);
   }
@@ -3460,14 +3475,14 @@ input[name="nslookup"] {
   .cbi-button.cbi-button-positive,
   .cbi-button-edit {
 	  color: #fff !important;
-	  background-color: var(--activeColor);
+	  background-color: var(--active_color);
   }
 
 td.cbi-button, .cbi-button-apply,
 .right .cbi-button {
     font-size: 0.92rem;
     font-family: -apple-system, 'Microsoft Yahei', sans-serif, Helvetica, Arial, sans-serif;
-    border: var(--inputBorder);
+    border: var(--input_border);
     transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
     -webkit-transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
     outline-style: none;
@@ -3523,10 +3538,10 @@ td.cbi-button, .cbi-button-apply,
     min-width: inherit;
     overflow-x: auto;
     overflow-y: hidden;
-    background-color: var(--sectionbgColor);
-    /* box-shadow: var(--sectionShaddow); */
+    background-color: var(--sectionbg_color);
+    /* box-shadow: var(--section_shaddow); */
     -webkit-overflow-scrolling: touch;
-	border: var(--sectionBorder);
+	border: var(--section_border);
     margin-bottom: 20px;
     border-radius: 8px;
     margin-top: 5px;
@@ -3539,16 +3554,16 @@ td.cbi-button, .cbi-button-apply,
 
 /* fix node-admin-status-processe */
 .node-admin-status-processe button.btn.cbi-button-action {
-    color: var(--bttextColor);
+    color: var(--bttext_color);
     background-color: rgb(0,171,232) !important;
     border-color: rgb(0,171,232) !important;
 }
 
 /* fix node-admin-system-opkg cbi-button-positive */
 .node-admin-system-opkg button.btn.cbi-button-positive {
-    color: var(--bttextColor);
-    background-color: var(--activeColor) !important;
-    border-color: var(--activeColor) !important;
+    color: var(--bttext_color);
+    background-color: var(--active_color) !important;
+    border-color: var(--active_color) !important;
 }
 
 .node-admin-status-processe, button.btn.cbi-button-negative {
@@ -3560,7 +3575,7 @@ td.cbi-button, .cbi-button-apply,
 .node-admin-status-realtime-load #view div,
 .node-admin-status-realtime-bandwidth #view div,
 .node-admin-status-realtime-connections #view div{
-    border: var(--sectionBorder) !important;
+    border: var(--section_border) !important;
     font-family: -apple-system;
     background: none !important;
 }
