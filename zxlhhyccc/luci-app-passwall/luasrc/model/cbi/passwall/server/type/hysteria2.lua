@@ -1,7 +1,5 @@
 local m, s = ...
 
-local api = require "luci.passwall.api"
-
 if not api.finded_com("hysteria") then
 	return
 end
@@ -10,15 +8,19 @@ local fs = api.fs
 
 local type_name = "Hysteria2"
 
+-- [[ Hysteria2 ]]
+
+s.fields["type"]:value(type_name, "Hysteria2")
+
+if s.val["type"] and s.val["type"] ~= type_name then
+	return
+end
+
 local option_prefix = "hysteria2_"
 
 local function _n(name)
 	return option_prefix .. name
 end
-
--- [[ Hysteria2 ]]
-
-s.fields["type"]:value(type_name, "Hysteria2")
 
 o = s:option(Flag, _n("custom"), translate("Use Custom Config"))
 
@@ -26,14 +28,34 @@ o = s:option(Value, _n("port"), translate("Listen Port"))
 o.datatype = "port"
 o:depends({ [_n("custom")] = false })
 
-o = s:option(Value, _n("obfs"), translate("Obfs Password"))
+o = s:option(Flag, _n("realms"), translate("Realms"))
+o.default = "0"
 o.rewrite_option = o.option
 o:depends({ [_n("custom")] = false })
+
+o = s:option(Value, _n("realm_url"), translate("Realm URL"), translate("Example:") .. "realm://public@realm.hy2.io/your-realm-name")
+o.rewrite_option = o.option
+o:depends({ [_n("realms")] = "1" })
+
+o = s:option(DynamicList, _n("realm_stun"), translate("Realm STUN"))
+o.default = { "stun.sip.us:3478", "stun.nextcloud.com:3478", "global.stun.twilio.com:3478" }
+o.rewrite_option = o.option
+o:depends({ [_n("realms")] = "1" })
 
 o = s:option(Value, _n("auth_password"), translate("Auth Password"))
 o.password = true
 o.rewrite_option = o.option
 o:depends({ [_n("custom")] = false })
+
+o = s:option(ListValue, _n("obfs_type"), translate("Obfs Type"))
+o:value("", translate("Disable"))
+o:value("salamander")
+o.rewrite_option = o.option
+o:depends({ [_n("custom")] = false })
+
+o = s:option(Value, _n("obfs_password"), translate("Obfs Password"))
+o.rewrite_option = o.option
+o:depends({ [_n("obfs_type")] = "salamander" })
 
 o = s:option(Flag, _n("udp"), translate("UDP"))
 o.default = "1"

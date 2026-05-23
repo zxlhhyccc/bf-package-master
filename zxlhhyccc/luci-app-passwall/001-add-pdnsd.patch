@@ -1,5 +1,5 @@
---- a/Makefile	2026-05-09 20:53:35.643914000 +0800
-+++ b/Makefile	2026-05-09 21:01:41.403900058 +0800
+--- a/Makefile	2026-05-23 14:26:16.627611000 +0800
++++ b/Makefile	2026-05-23 14:34:24.003596661 +0800
 @@ -14,10 +14,14 @@
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
@@ -12,10 +12,10 @@
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
 +	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD \
- 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client \
- 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
-@@ -35,16 +39,42 @@
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client \
+@@ -33,16 +37,39 @@
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +curl \
@@ -23,7 +23,7 @@
 -	+libuci-lua +lua +luci-compat +luci-lib-jsonc \
 -	+microsocks +resolveip +tcping +lyaml
 +	+ip-full +libuci-lua +lua +luci-compat +luci-lib-jsonc \
-+	+microsocks +resolveip +tcping +unzip +lyaml \
++	+microsocks +resolveip +tcping +lyaml \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS_NG:chinadns-ng \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2TCP:dns2tcp \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS:dns2socks \
@@ -31,9 +31,6 @@
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD:pdnsd-alt \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-local \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client:shadowsocks-libev-ss-redir \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server:shadowsocks-libev-ss-server \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client:shadowsocks-rust-sslocal \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server:shadowsocks-rust-ssserver \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client:shadowsocksr-libev-ssr-local \
@@ -62,7 +59,7 @@
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -54,108 +84,106 @@
+@@ -52,97 +79,98 @@
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -117,17 +114,6 @@
 +	bool "Include PDNSD"
 +	default y
 +
- config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Client
- 	bool "Include Shadowsocks Libev Client"
--	select PACKAGE_shadowsocks-libev-ss-local
--	select PACKAGE_shadowsocks-libev-ss-redir
- 	default y
- 
- config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server
- 	bool "Include Shadowsocks Libev Server"
--	select PACKAGE_shadowsocks-libev-ss-server
- 	default y if aarch64||arm||i386||x86_64
- 
  config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client
  	bool "Include Shadowsocks Rust Client"
  	depends on !i386
@@ -190,8 +176,6 @@
  	default n
  
  endmenu
-diff --git a/luasrc/model/cbi/passwall/client/global.lua b/luasrc/model/cbi/passwall/client/global.lua
-index 3f6dd8c..2656874 100644
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
 @@ -294,6 +294,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
@@ -253,8 +237,6 @@ index 3f6dd8c..2656874 100644
  o = s:taboption("DNS", ListValue, "chinadns_ng_default_tag", translate("Default DNS"))
  o.default = "none"
  o:value("gfw", translate("Remote DNS"))
-diff --git a/po/zh-cn/passwall.po b/po/zh-cn/passwall.po
-index 92144fb..4ae3764 100644
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
 @@ -178,6 +178,9 @@ msgstr "远程 DNS DoH"
@@ -280,8 +262,6 @@ index 92144fb..4ae3764 100644
  msgid "Default Proxy Mode"
  msgstr "默认代理模式"
  
-diff --git a/root/usr/share/passwall/0_default_config b/root/usr/share/passwall/0_default_config
-index acacfed..1705bea 100644
 --- a/root/usr/share/passwall/0_default_config
 +++ b/root/usr/share/passwall/0_default_config
 @@ -5,6 +5,7 @@ config global
@@ -292,11 +272,9 @@ index acacfed..1705bea 100644
  	option dns_mode 'tcp'
  	option remote_dns '1.1.1.1'
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
-diff --git a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
-index 57b989b..00fbed6 100755
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1247,6 +1247,12 @@ start_dns() {
+@@ -1214,6 +1214,12 @@ start_dns() {
  				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
@@ -309,7 +287,7 @@ index 57b989b..00fbed6 100755
  			}
  		;;
  		auto)
-@@ -1359,6 +1365,19 @@ start_dns() {
+@@ -1326,6 +1332,19 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -329,7 +307,7 @@ index 57b989b..00fbed6 100755
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1368,6 +1387,11 @@ start_dns() {
+@@ -1335,6 +1354,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -341,7 +319,7 @@ index 57b989b..00fbed6 100755
  		else
  			TUN_DNS="$(echo ${REMOTE_DNS} | sed 's/#/:/g' | sed -E 's/\:([^:]+)$/#\1/g')"
  			echolog "  - udp://${TUN_DNS}"
-@@ -1381,6 +1405,12 @@ start_dns() {
+@@ -1348,6 +1372,12 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -354,7 +332,7 @@ index 57b989b..00fbed6 100755
  		}
  	;;
  	esac
-@@ -1513,6 +1543,73 @@ start_dns() {
+@@ -1480,6 +1510,73 @@ start_dns() {
  	fi
  }
  
@@ -428,7 +406,7 @@ index 57b989b..00fbed6 100755
  start_haproxy() {
  	[ "$(config_t_get global_haproxy balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -2029,7 +2126,8 @@ get_config() {
+@@ -1996,7 +2093,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"

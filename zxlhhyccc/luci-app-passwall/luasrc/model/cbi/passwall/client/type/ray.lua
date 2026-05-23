@@ -78,6 +78,7 @@ if not arg_select_proto:find("_") then
 	load_normal_options = true
 end
 
+local netdev_list = api.get_network_devices()
 local node_list = api.get_node_list()
 local fallback_list = {}
 local is_balancer = nil
@@ -262,12 +263,21 @@ if load_balancing_options then -- [[ Load balancing Start ]]
 	o.default = "2"
 	o.placeholder = "2"
 	o.description = translate("The load balancer selects the optimal number of nodes, and traffic is randomly distributed among them.")
+
+	o = s:option(Value, _n("tolerance"), translate("Failure Tolerance (%)"))
+	o:depends({ [_n("balancingStrategy")] = "leastLoad" })
+	o.datatype = "uinteger"
+	o.default = "10"
+	o.placeholder = "10"
+	o.description = translate("The maximum acceptable speed test failure rate. For example, 1 means allowing a 1% failure rate.")
 end  -- [[ 负载均衡 End ]]
 
 if load_iface_options then -- [[ 自定义接口 Start ]]
 	o = s:option(Value, _n("iface"), translate("Interface"))
-	o.default = "eth1"
 	o:depends({ [_n("protocol")] = "_iface" })
+	for _, d in ipairs(netdev_list) do
+		o:value(d.name, d.label)
+	end
 end -- [[ 自定义接口 End ]]
 
 
@@ -339,11 +349,9 @@ o.placeholder = "30"
 o.default = "30"
 o:depends({ [_n("protocol")] = "hysteria2" })
 
-o = s:option(Value, _n("hysteria2_up_mbps"), translate("Max upload Mbps"))
-o:depends({ [_n("protocol")] = "hysteria2" })
-
-o = s:option(Value, _n("hysteria2_down_mbps"), translate("Max download Mbps"))
-o:depends({ [_n("protocol")] = "hysteria2" })
+o = s:option(Value, _n("hysteria2_auth_password"), translate("Auth Password"))
+o.password = true
+o:depends({ [_n("protocol")] = "hysteria2"})
 
 o = s:option(ListValue, _n("hysteria2_obfs_type"), translate("Obfs Type"))
 o:value("", translate("Disable"))
@@ -353,9 +361,11 @@ o:depends({ [_n("protocol")] = "hysteria2" })
 o = s:option(Value, _n("hysteria2_obfs_password"), translate("Obfs Password"))
 o:depends({ [_n("hysteria2_obfs_type")] = "salamander" })
 
-o = s:option(Value, _n("hysteria2_auth_password"), translate("Auth Password"))
-o.password = true
-o:depends({ [_n("protocol")] = "hysteria2"})
+o = s:option(Value, _n("hysteria2_up_mbps"), translate("Max upload Mbps"))
+o:depends({ [_n("protocol")] = "hysteria2" })
+
+o = s:option(Value, _n("hysteria2_down_mbps"), translate("Max download Mbps"))
+o:depends({ [_n("protocol")] = "hysteria2" })
 
 o = s:option(Value, _n("hysteria2_idle_timeout"), translate("Idle Timeout"), translate("Example:") .. "30s (4s~120s)")
 o:depends({ [_n("protocol")] = "hysteria2"})
@@ -799,6 +809,7 @@ if not load_shunt_options then
 	if not (load_iface_options or load_balancing_options) then
 		-- Special node cannot be use pre-proxy.
 		o:value("1", translate("Preproxy Node"))
+		o:value("3", translate("Outbound Interface"))
 	end
 	o:value("2", translate("Landing Node"))
 
@@ -806,6 +817,13 @@ if not load_shunt_options then
 	o1:depends({ [_n("chain_proxy")] = "1" })
 	o1.template = appname .. "/cbi/nodes_listvalue"
 	o1.group = {}
+
+	o3 = s:option(Value, _n("outbound_iface"), translate("Outbound Interface"))
+	o3:depends({ [_n("chain_proxy")] = "3" })
+	o3:value("", translate("All"))
+	for _, d in ipairs(netdev_list) do
+		o3:value(d.name, d.label)
+	end
 
 	o2 = s:option(ListValue, _n("to_node"), translate("Landing Node"), translate("Only support a layer of proxy."))
 	o2:depends({ [_n("chain_proxy")] = "2" })
