@@ -175,9 +175,10 @@ yml_other_set()
                      cidr_regex = /\/\d+$/;
                      rule_suffix_regex = /^no-resolve$|^src$/;
 
+                     ip_rule_types = ['IP-CIDR', 'IP-CIDR6', 'SRC-IP-CIDR', 'SRC-IP-CIDR6', 'IP-SUFFIX', 'SRC-IP-SUFFIX'];
                      transformed_rules = rules_array.map{|x|
                         parts = x.split(',');
-                        if parts.length >= 2 then
+                        if parts.length >= 2 && ip_rule_types.include?(parts[0].strip.upcase) then
                            ip_part = parts[1].strip;
                            if ip_part !~ cidr_regex then
                               # IPv4

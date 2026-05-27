@@ -100,10 +100,10 @@ load_ip_route_pass() {
       if [ "$china_ip_route" != "0" ] || [ "$disable_udp_quic" = "1" ]; then
          if [ "$enable_redirect_dns" != "2" ]; then
             mkdir -p ${DNSMASQ_CONF_DIR}
-            awk '!/^$/&&!/^#/&&!/(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("'${settype}'=/%s/'${nftflag}'china_ip_route_pass'" "'\n",$0)}' /etc/openclash/custom/openclash_custom_chnroute_pass.list >>${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute_pass.conf
+            awk '!/^$/&&!/^#/&&!/(^([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("'${settype}'=/%s/'${nftflag}'china_ip_route_pass'" "'\n",$0)}' /etc/openclash/custom/openclash_custom_chnroute_pass.list >>${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute_pass.conf
             for ip in $(uci_get_config "china_ip_route_pass"); do
                [ -z "$ip" ] && continue
-               echo "$ip" | awk '!/^$/&&!/^#/&&!/(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("'${settype}'=/%s/'${nftflag}'china_ip_route_pass'" "'\n",$0)}'
+               echo "$ip" | awk '!/^$/&&!/^#/&&!/(^([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("'${settype}'=/%s/'${nftflag}'china_ip_route_pass'" "'\n",$0)}'
             done >>${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute_pass.conf
          fi
       fi
@@ -140,10 +140,10 @@ load_ip_route_pass() {
       if [ "$china_ip_route" != "0" ] || [ "$disable_udp_quic" = "1" ]; then
          if [ "$enable_redirect_dns" != "2" ]; then
             mkdir -p ${DNSMASQ_CONF_DIR}
-            awk '!/^$/&&!/^#/&&!/(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("ipset=/%s/china_ip_route_pass'" "'\n",$0)}' /etc/openclash/custom/openclash_custom_chnroute_pass.list >>${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute_pass.conf
+            awk '!/^$/&&!/^#/&&!/(^([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("ipset=/%s/china_ip_route_pass'" "'\n",$0)}' /etc/openclash/custom/openclash_custom_chnroute_pass.list >>${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute_pass.conf
             for ip in $(uci_get_config "china_ip_route_pass"); do
                [ -z "$ip" ] && continue
-               echo "$ip" | awk '!/^$/&&!/^#/&&!/(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("ipset=/%s/china_ip_route_pass'" "'\n",$0)}'
+               echo "$ip" | awk '!/^$/&&!/^#/&&!/(^([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("ipset=/%s/china_ip_route_pass'" "'\n",$0)}'
             done >>${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute_pass.conf
          fi
       fi
@@ -2008,10 +2008,10 @@ if [ -z "$FW4" ]; then
 
       if [ "$enable_redirect_dns" != "2" ]; then
          echo "create china_ip_route_pass hash:net family inet hashsize 1024 maxelem 1000000" >/tmp/openclash_china_ip_route_pass.list
-         awk '!/^$/&&!/^#/&&/(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("add china_ip_route_pass %s'" "'\n",$0)}' /etc/openclash/custom/openclash_custom_chnroute_pass.list >>/tmp/openclash_china_ip_route_pass.list
+         awk '!/^$/&&!/^#/&&/(^([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("add china_ip_route_pass %s'" "'\n",$0)}' /etc/openclash/custom/openclash_custom_chnroute_pass.list >>/tmp/openclash_china_ip_route_pass.list
          for ip in $(uci_get_config "china_ip_route_pass"); do
             [ -z "$ip" ] && continue
-            echo "$ip" | awk '!/^$/&&!/^#/&&/(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("add china_ip_route_pass %s'" "'\n",$0)}'
+            echo "$ip" | awk '!/^$/&&!/^#/&&/(^([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])((\/[0-9][0-9])?)$/{printf("add china_ip_route_pass %s'" "'\n",$0)}'
          done >>/tmp/openclash_china_ip_route_pass.list 2>/dev/null
          ipset -! flush china_ip_route_pass
          ipset -! restore </tmp/openclash_china_ip_route_pass.list

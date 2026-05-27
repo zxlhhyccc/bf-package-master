@@ -41,7 +41,7 @@ if [ "$1" = "fake-ip" ] && [ "$enable_redirect_dns" != "2" ]; then
       awk -v mode="$fake_ip_filter_mode" '
          !/^$/ && !/^#/ {
             # 跳过IPv4和IPv6地址
-            if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ || $0 ~ /:/) {
+            if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(\/[0-9]+)?$/ || $0 ~ /:/) {
                next
             }
             if (mode == "blacklist") {
