@@ -250,20 +250,6 @@ if args then
 		update(uci:get_first("shadowsocksr", "global", "adblock_url"), "/etc/ssrplus/ad.conf", args, TMP_DNSMASQ_PATH .. "/ad.conf")
 		os.exit(0)
 	end
-	if args == "nfip_data" then
-		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", args, TMP_DNSMASQ_PATH .. "/netflixip.list")
-		os.exit(0)
-	end
-	if args == "geo_data" then
-		string = luci.sys.exec("/usr/share/shadowsocksr/geodata_update.sh")
-		if string.find(string, "111") then
-			icount = luci.sys.exec("cat /etc/ssrplus/mosdns-chinadns/geosite* | wc -l")
-			log(0, tonumber(icount))
-		else
-			log(-1)
-		end
-		os.exit(0)
-	end
 else
 	log("正在更新【GFW列表】数据库")
 	update(uci:get_first("shadowsocksr", "global", "gfwlist_url"), "/etc/ssrplus/gfw_list.conf", "gfw_data", TMP_DNSMASQ_PATH .. "/gfw_list.conf")
@@ -277,10 +263,4 @@ else
 		log("正在更新【广告屏蔽】数据库")
 		update(uci:get_first("shadowsocksr", "global", "adblock_url"), "/etc/ssrplus/ad.conf", "ad_data", TMP_DNSMASQ_PATH .. "/ad.conf")
 	end
-	if uci:get_first("shadowsocksr", "global", "netflix_enable", "0") == "1" then
-		log("正在更新【Netflix IP段】数据库")
-		update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", "nfip_data", TMP_DNSMASQ_PATH .. "/netflixip.list")
-	end
-	-- log("正在更新【Netflix IP段】数据库")
-	-- update(uci:get_first("shadowsocksr", "global", "nfip_url"), "/etc/ssrplus/netflixip.list", "nfip_data")
 end

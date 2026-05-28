@@ -3,13 +3,12 @@ require "nixio.fs"
 require "luci.sys"
 require "luci.http"
 
--- 创建日志查看表单
 f = SimpleForm("logview")
 f.reset = false
 f.submit = false
 f:append(Template("shadowsocksr/log"))
 
--- 自定义日志函数
+-- 自定义 log 函数
 function log(...)
     local result = os.date("%Y-%m-%d %H:%M:%S: ") .. table.concat({...}, " ")
     local f, err = io.open("/var/log/ssrplus.log", "a")
@@ -51,6 +50,7 @@ luci.http.setfilehandler(function(meta, chunk, eof)
         luci.sys.call("rm -rf " .. temp_dir)
         nixio.fs.remove(file_path)
         fd = nixio.open(file_path, "w")
+        luci.sys.call("ls /tmp/sub_md5_* >/dev/null 2>&1 && rm -f /tmp/sub_md5_*")
         luci.sys.call("echo '' > /var/log/ssrplus.log")
     end
 
@@ -97,8 +97,8 @@ luci.http.setfilehandler(function(meta, chunk, eof)
         -- 清理临时文件
         luci.sys.call("rm -rf " .. temp_dir)
         nixio.fs.remove(file_path)
+        luci.sys.call("ls /tmp/sub_md5_* >/dev/null 2>&1 && rm -f /tmp/sub_md5_*")
     end
 end)
 
--- 返回表单
 return f, fb
