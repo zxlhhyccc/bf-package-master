@@ -1227,12 +1227,12 @@ o.default = "0"
 o.rmempty = true
 
 o = s:option(DynamicList, "local_addresses", translate("Local addresses"))
-o.datatype = "cidr"
+--o.datatype = "cidr"
 o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
 o.rmempty = true
 
 o = s:option(DynamicList, "reserved", translate("Reserved bytes(optional)"))
-o.description = translate("Decimal numbers separated by \",\" or Base64-encoded strings.")
+o.description = translate("Supports decimal numbers separated by \",\" or Base64-encoded strings, with a maximum length of 3 bytes.")
 o:depends({type = "v2ray", v2ray_protocol = "wireguard"})
 o.rmempty = true
 
