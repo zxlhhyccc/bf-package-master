@@ -22,7 +22,7 @@ module YAML
 	end
 
 	def self.load_file(filename, *args, **kwargs)
-		yaml_content = File.read(filename)
+		yaml_content = File.read(filename, mode: "r:bom|utf-8")
 		processed_content = fix_short_id_quotes(yaml_content)
 
 		load(processed_content, *args, **kwargs)

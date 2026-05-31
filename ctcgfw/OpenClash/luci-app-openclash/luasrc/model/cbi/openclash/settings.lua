@@ -983,7 +983,7 @@ o.inputstyle = "reload"
 o.write = function()
 	m.uci:set("openclash", "config", "enable", 1)
 	m.uci:commit("openclash")
-	SYS.call("/usr/share/openclash/openclash_ipdb.sh >/dev/null 2>&1 &")
+	SYS.call("/usr/share/openclash/openclash_geo.sh ipdb >/dev/null 2>&1 &")
 	HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
 
@@ -1027,7 +1027,7 @@ o.inputstyle = "reload"
 o.write = function()
 	m.uci:set("openclash", "config", "enable", 1)
 	m.uci:commit("openclash")
-	SYS.call("/usr/share/openclash/openclash_geoip.sh >/dev/null 2>&1 &")
+	SYS.call("/usr/share/openclash/openclash_geo.sh geoip >/dev/null 2>&1 &")
 	HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
 
@@ -1071,7 +1071,7 @@ o.inputstyle = "reload"
 o.write = function()
 	m.uci:set("openclash", "config", "enable", 1)
 	m.uci:commit("openclash")
-	SYS.call("/usr/share/openclash/openclash_geosite.sh >/dev/null 2>&1 &")
+	SYS.call("/usr/share/openclash/openclash_geo.sh geosite >/dev/null 2>&1 &")
 	HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
 
@@ -1115,7 +1115,7 @@ o.inputstyle = "reload"
 o.write = function()
 	m.uci:set("openclash", "config", "enable", 1)
 	m.uci:commit("openclash")
-	SYS.call("/usr/share/openclash/openclash_geoasn.sh >/dev/null 2>&1 &")
+	SYS.call("/usr/share/openclash/openclash_geo.sh geoasn >/dev/null 2>&1 &")
 	HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
 
@@ -1148,7 +1148,7 @@ o:value("https://ispip.clang.cn/all_cn.txt", translate("Clang-CN")..translate("(
 o:value("https://ispip.clang.cn/all_cn_cidr.txt", translate("Clang-CN-CIDR"))
 o:value("https://fastly.jsdelivr.net/gh/Hackl0us/GeoIP2-CN@release/CN-ip-cidr.txt", translate("Hackl0us-CN-CIDR-fastly-jsdelivr"))
 o:value("https://testingcf.jsdelivr.net/gh/Hackl0us/GeoIP2-CN@release/CN-ip-cidr.txt", translate("Hackl0us-CN-CIDR-testingcf-jsdelivr"))
-o:value("https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/direct-list.txt", translate("Loyalsoldier-github-Version"))
+o:value("https://raw.githubusercontent.com/gaoyifan/china-operator-ip/refs/heads/ip-lists/china.txt", translate("gaoyifan-github-Version"))
 o.default = "https://ispip.clang.cn/all_cn.txt"
 
 o = s:taboption("chnr_update", Value, "chnr6_custom_url")
@@ -1156,6 +1156,7 @@ o.title = translate("Custom Chnroute6 Lists URL")
 o.rmempty = false
 o.description = translate("Custom Chnroute6 Lists URL, Click Button Below To Refresh After Edit")
 o:value("https://ispip.clang.cn/all_cn_ipv6.txt", translate("Clang-CN-IPV6")..translate("(Default)"))
+o:value("https://raw.githubusercontent.com/gaoyifan/china-operator-ip/refs/heads/ip-lists/china6.txt", translate("gaoyifan-github-Version"))
 o.default = "https://ispip.clang.cn/all_cn_ipv6.txt"
 
 o = s:taboption("chnr_update", Button, translate("Chnroute Lists Update")) 
