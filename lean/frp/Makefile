@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=frp
-PKG_VERSION:=0.69.0
+PKG_VERSION:=0.69.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/fatedier/frp/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=b78879e74e44bb22805a8a4602c6f58b9f46971c003eb4079d5020f66e57ed37
+PKG_HASH:=79a62c1071ddb947e95146ad7b1cb8b25f182fed548a4a8a68d5fca06b37502c
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_FRP_$(1)_COMPRESS_GOPROXY \
@@ -26,7 +26,7 @@ FRP_COMPONENTS:=frpc frps
 GO_PKG:=github.com/fatedier/frp
 GO_PKG_BUILD_PKG:=github.com/fatedier/frp/cmd/...
 GO_PKG_LDFLAGS:=-s -w
-GO_PKG_LDFLAGS_X:=github.com/fatedier/frp/pkg/util/version.version=$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=$(GO_PKG)/pkg/util/version.version=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
