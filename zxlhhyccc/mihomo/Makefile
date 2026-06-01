@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mihomo
-PKG_VERSION:=1.19.25
+PKG_VERSION:=1.19.26
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -9,7 +9,7 @@ PKG_SOURCE_URL:=https://github.com/MetaCubeX/mihomo.git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_MIRROR_HASH:=b991b564840c17b1f680045276b13cf28f8f55ab21a503807f935610d155306b
+PKG_MIRROR_HASH:=1490260f7fdf6631142bbfeed45984ec42463e864ddc01f9ac9a8b48ce20e3a0
 
 PKG_LICENSE:=GPL3.0+
 PKG_MAINTAINER:=Joseph Mory <morytyann@gmail.com>
@@ -26,9 +26,11 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_MIHOMO_COMPRESS_UPX
 
 GO_PKG:=github.com/metacubex/mihomo
-GO_PKG_LDFLAGS:= -s -w
-GO_PKG_LDFLAGS_X:=$(GO_PKG)/constant.Version=$(PKG_BUILD_VERSION) $(GO_PKG)/constant.BuildTime=$(PKG_BUILD_TIME)
 GO_PKG_TAGS:=with_gvisor
+GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS_X:=\
+	$(GO_PKG)/constant.Version=$(PKG_BUILD_VERSION) \
+	$(GO_PKG)/constant.BuildTime=$(PKG_BUILD_TIME)
 GO_PKG_INSTALL_BIN_PATH:=/usr/libexec
 
 include $(INCLUDE_DIR)/package.mk
