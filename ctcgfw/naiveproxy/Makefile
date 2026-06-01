@@ -23,6 +23,9 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_NAIVEPROXY_COMPRESS_UPX
+
 ifneq ($(CONFIG_CPU_TYPE)," ")
   CPU_TYPE:=$(word 1, $(subst +," ,$(CONFIG_CPU_TYPE)))
   CPU_SUBTYPE:=$(word 2, $(subst +, ",$(CONFIG_CPU_TYPE)))
@@ -101,6 +104,19 @@ endef
 #	)
 # endef
 
+define Package/naiveproxy/config
+menu "NaiveProxy Configuration"
+	depends on PACKAGE_naiveproxy
+
+config NAIVEPROXY_COMPRESS_UPX
+	bool "Compress executable with UPX"
+	default n
+	help
+	  Compress the naiveproxy binary using UPX to reduce file size.
+	  This may increase startup time slightly.
+endmenu
+endef
+
 define Build/Prepare
 	$(call Build/Prepare/Default)
 
@@ -139,6 +155,9 @@ endef
 
 define Build/Compile
 	+$(NINJA) -C "$(PKG_BUILD_DIR)/src/out/Release" naive
+ifneq ($(CONFIG_NAIVEPROXY_COMPRESS_UPX),)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/src/out/Release/naive
+endif
 endef
 
 define Package/naiveproxy/conffiles
