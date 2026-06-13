@@ -55,7 +55,7 @@ if [ "$USE_VER" != "$OLD_VER" ] || \
     make package/xray-core/clean V=s
 
     # 更新 Makefile 中版本、commit 和清空 hash
-    ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
+    sed -i "$CURDIR/Makefile" \
         -e "s|^PKG_VERSION:=.*|PKG_VERSION:=${USE_VER}|" \
         -e "s|^PKG_SOURCE_DATE:=.*|PKG_SOURCE_DATE:=${API_DATA}|" \
         -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|" \
@@ -70,7 +70,7 @@ if [ "$USE_VER" != "$OLD_VER" ] || \
     TARFILE="dl/xray-core-${USE_VER}.tar.gz"
     if [ -f "$TARFILE" ]; then
         CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
-        ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
+        sed -i "$CURDIR/Makefile" \
             -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=${CHECKSUM}|"
         echo "✅ 校验和已更新：$CHECKSUM"
     else
