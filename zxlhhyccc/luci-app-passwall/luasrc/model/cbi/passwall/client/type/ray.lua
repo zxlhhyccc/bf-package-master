@@ -44,10 +44,10 @@ local header_type_list = {
 local xray_version = api.get_app_version("xray")
 
 o = s:option(ListValue, _n("protocol"), translate("Protocol"))
+o:value("socks", translate("Socks"))
+o:value("http", translate("HTTP"))
 o:value("vmess", translate("Vmess"))
 o:value("vless", translate("VLESS"))
-o:value("http", translate("HTTP"))
-o:value("socks", translate("Socks"))
 o:value("shadowsocks", translate("Shadowsocks"))
 o:value("trojan", translate("Trojan"))
 o:value("wireguard", translate("WireGuard"))
@@ -322,15 +322,6 @@ o.rewrite_option = "method"
 for a, t in ipairs(ss_method_list) do o:value(t) end
 o:depends({ [_n("protocol")] = "shadowsocks" })
 
-o = s:option(Flag, _n("iv_check"), translate("IV Check"))
-o:depends({ [_n("protocol")] = "shadowsocks", [_n("ss_method")] = "aes-128-gcm" })
-o:depends({ [_n("protocol")] = "shadowsocks", [_n("ss_method")] = "aes-256-gcm" })
-o:depends({ [_n("protocol")] = "shadowsocks", [_n("ss_method")] = "chacha20-poly1305" })
-o:depends({ [_n("protocol")] = "shadowsocks", [_n("ss_method")] = "xchacha20-poly1305" })
-
-o = s:option(Flag, _n("uot"), translate("UDP over TCP"))
-o:depends({ [_n("protocol")] = "shadowsocks" })
-
 o = s:option(ListValue, _n("flow"), translate("flow"))
 o.default = ""
 o:value("", translate("Disable"))
@@ -399,8 +390,6 @@ o = s:option(Flag, _n("tls"), translate("TLS"))
 o.default = 0
 o:depends({ [_n("protocol")] = "vmess" })
 o:depends({ [_n("protocol")] = "vless" })
-o:depends({ [_n("protocol")] = "http" })
-o:depends({ [_n("protocol")] = "socks" })
 o:depends({ [_n("protocol")] = "trojan" })
 o:depends({ [_n("protocol")] = "shadowsocks" })
 
@@ -422,7 +411,6 @@ o:value("http/1.1")
 o:value("h2,http/1.1")
 o:value("h3,h2,http/1.1")
 o:depends({ [_n("tls")] = true, [_n("reality")] = false })
-o:depends({ [_n("protocol")] = "hysteria2" })
 
 -- o = s:option(Value, _n("minversion"), translate("minversion"))
 -- o.default = "1.3"
@@ -533,7 +521,6 @@ o:value("httpupgrade", "HttpUpgrade")
 o:value("xhttp", "XHTTP")
 o:depends({ [_n("protocol")] = "vmess" })
 o:depends({ [_n("protocol")] = "vless" })
-o:depends({ [_n("protocol")] = "socks" })
 o:depends({ [_n("protocol")] = "shadowsocks" })
 o:depends({ [_n("protocol")] = "trojan" })
 
@@ -726,8 +713,6 @@ o:depends({ [_n("protocol")] = "vless", [_n("transport")] = "raw" })
 o:depends({ [_n("protocol")] = "vless", [_n("transport")] = "ws" })
 o:depends({ [_n("protocol")] = "vless", [_n("transport")] = "grpc" })
 o:depends({ [_n("protocol")] = "vless", [_n("transport")] = "httpupgrade" })
-o:depends({ [_n("protocol")] = "http" })
-o:depends({ [_n("protocol")] = "socks" })
 o:depends({ [_n("protocol")] = "shadowsocks" })
 o:depends({ [_n("protocol")] = "trojan" })
 
@@ -780,11 +765,6 @@ o.default = 0
 --[[tcpMptcp]]
 o = s:option(Flag, _n("tcpMptcp"), "tcpMptcp", translate("Enable Multipath TCP, need to be enabled in both server and client configuration."))
 o.default = 0
-
-o = s:option(Value, _n("preconns"), translate("Pre-connections"), translate("Number of early established connections to reduce latency."))
-o.datatype = "uinteger"
-o.placeholder = 0
-o:depends({ [_n("protocol")] = "vless" })
 
 o = s:option(ListValue, _n("domain_resolver"), translate("Domain DNS Resolve"))
 o.description = translate("If the node address is a domain name, this DNS will be used for resolution.") .. "<br>" .. string.format('<font color="red">%s</font>',

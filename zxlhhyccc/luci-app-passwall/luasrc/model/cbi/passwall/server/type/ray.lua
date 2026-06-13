@@ -34,10 +34,10 @@ local header_type_list = {
 o = s:option(Flag, _n("custom"), translate("Use Custom Config"))
 
 o = s:option(ListValue, _n("protocol"), translate("Protocol"))
+o:value("socks", "Socks")
+o:value("http", "HTTP")
 o:value("vmess", "Vmess")
 o:value("vless", "VLESS")
-o:value("http", "HTTP")
-o:value("socks", "Socks")
 o:value("shadowsocks", "Shadowsocks")
 o:value("trojan", "Trojan")
 o:value("hysteria2", translate("Hysteria2"))
@@ -95,9 +95,6 @@ end
 o = s:option(ListValue, _n("x_ss_method"), translate("Encrypt Method"))
 o.rewrite_option = "method"
 for a, t in ipairs(x_ss_method_list) do o:value(t) end
-o:depends({ [_n("protocol")] = "shadowsocks" })
-
-o = s:option(Flag, _n("iv_check"), translate("IV Check"))
 o:depends({ [_n("protocol")] = "shadowsocks" })
 
 o = s:option(ListValue, _n("ss_network"), translate("Transport"))
@@ -181,8 +178,6 @@ o.validate = function(self, value, t)
 end
 o:depends({ [_n("protocol")] = "vmess" })
 o:depends({ [_n("protocol")] = "vless" })
-o:depends({ [_n("protocol")] = "http" })
-o:depends({ [_n("protocol")] = "socks" })
 o:depends({ [_n("protocol")] = "shadowsocks" })
 o:depends({ [_n("protocol")] = "trojan" })
 
@@ -232,7 +227,6 @@ o:value("http/1.1")
 o:value("h2,http/1.1")
 o:value("h3,h2,http/1.1")
 o:depends({ [_n("tls")] = true, [_n("reality")] = false })
-o:depends({ [_n("protocol")] = "hysteria2"})
 
 o = s:option(Flag, _n("use_mldsa65Seed"), translate("ML-DSA-65"))
 o.default = "0"
@@ -308,7 +302,6 @@ o:value("httpupgrade", "HttpUpgrade")
 o:value("xhttp", "XHTTP")
 o:depends({ [_n("protocol")] = "vmess" })
 o:depends({ [_n("protocol")] = "vless" })
-o:depends({ [_n("protocol")] = "socks" })
 o:depends({ [_n("protocol")] = "shadowsocks" })
 o:depends({ [_n("protocol")] = "trojan" })
 
