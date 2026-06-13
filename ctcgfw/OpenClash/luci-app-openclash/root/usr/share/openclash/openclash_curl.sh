@@ -8,17 +8,29 @@ DOWNLOAD_FILE_CURL() {
     DOWNLOAD_PATH=$2
     FILE_PATH=$3
     DOWNLOAD_UA=$4
+    SECRET_KEY=$5
     [ -z "$DOWNLOAD_UA" ] && DOWNLOAD_UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
 
-    CURL_OUTPUT=$(curl -sLI --connect-timeout 5 -m 10 --speed-time 5 --speed-limit 1 --retry 2 \
-        -H "User-Agent: ${DOWNLOAD_UA}" "$DOWNLOAD_URL" 2>&1)
+    if [ -n "$SECRET_KEY" ]; then
+        CURL_OUTPUT=$(curl -sLI --connect-timeout 5 -m 10 --speed-time 5 --speed-limit 1 --retry 2 \
+            -H "User-Agent: ${DOWNLOAD_UA}" \
+            -H "X-Age-Public-Key: ${SECRET_KEY}" \
+            "$DOWNLOAD_URL" 2>&1)
+    else
+        CURL_OUTPUT=$(curl -sLI --connect-timeout 5 -m 10 --speed-time 5 --speed-limit 1 --retry 2 \
+            -H "User-Agent: ${DOWNLOAD_UA}" "$DOWNLOAD_URL" 2>&1)
+    fi
 
     NEW_ETAG=$(echo "$CURL_OUTPUT" | grep -i "^etag:" | cut -d' ' -f2- | tr -d '\r\n' | sed 's/^"//;s/"$//')
     HTTP_CODE=$(echo "$CURL_OUTPUT" | grep -i "^HTTP" | tail -1 | cut -d' ' -f2)
     CACHED_ETAG=$(GET_ETAG_BY_PATH "$FILE_PATH")
 
     if [ "$HTTP_CODE" = "200" ] && [ -n "$NEW_ETAG" ] && [ "$NEW_ETAG" = "$CACHED_ETAG" ] && [ -e "$FILE_PATH" ]; then
-        return 2
+        FILE_MTIME=$(date -r "$FILE_PATH" '+%Y-%m-%d %H:%M:%S' 2>/dev/null)
+        LAST_UPDATE=$(GET_ETAG_TIMESTAMP_BY_PATH "$FILE_PATH")
+        if [ -n "$LAST_UPDATE" ] && [ -n "$FILE_MTIME" ] && [ "$LAST_UPDATE" = "$FILE_MTIME" ]; then
+            return 2
+        fi
     fi
 
     if [ "$SHOW_DOWNLOAD_PROGRESS" = "1" ] || [ "$SHOW_DOWNLOAD_PROGRESS" = "true" ]; then
@@ -27,9 +39,16 @@ DOWNLOAD_FILE_CURL() {
         LOG_OUT "Downloading:【$(basename "$DOWNLOAD_PATH") - 0%】"
 
         (
-            curl -# -L --connect-timeout 10 -m 60 --speed-time 20 --speed-limit 1 --retry 2 \
-                -H "User-Agent: ${DOWNLOAD_UA}" \
-                "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH" 2>"$TEMP_LOG"
+            if [ -n "$SECRET_KEY" ]; then
+                curl -# -L --connect-timeout 30 -m 180 --speed-time 30 --speed-limit 1 --retry 2 \
+                    -H "User-Agent: ${DOWNLOAD_UA}" \
+                    -H "X-Age-Public-Key: ${SECRET_KEY}" \
+                    "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH" 2>"$TEMP_LOG"
+            else
+                curl -# -L --connect-timeout 30 -m 180 --speed-time 30 --speed-limit 1 --retry 2 \
+                    -H "User-Agent: ${DOWNLOAD_UA}" \
+                    "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH" 2>"$TEMP_LOG"
+            fi
             echo $? > "${TEMP_LOG}.exit"
         ) &
 
@@ -68,19 +87,26 @@ DOWNLOAD_FILE_CURL() {
 
         if [ "$EXIR_CODE" -ne 0 ]; then
             LOG_OUT "【$DOWNLOAD_PATH】Download Failed:【$OUTPUT】"
-            rm -rf $DOWNLOAD_PATH
+            rm -rf "$DOWNLOAD_PATH"
             SLOG_CLEAN
             return 1
         fi
     else
-        CURL_OUTPUT=$(curl -w "\n%{http_code}" -SsL --connect-timeout 30 -m 60 --speed-time 30 --speed-limit 1 --retry 2 -H "User-Agent: ${DOWNLOAD_UA}" "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH" 2>&1)
+        if [ -n "$SECRET_KEY" ]; then
+            CURL_OUTPUT=$(curl -w "\n%{http_code}" -SsL --connect-timeout 30 -m 180 --speed-time 30 --speed-limit 1 --retry 2 \
+                -H "User-Agent: ${DOWNLOAD_UA}" \
+                -H "X-Age-Public-Key: ${SECRET_KEY}" \
+                "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH" 2>&1)
+        else
+            CURL_OUTPUT=$(curl -w "\n%{http_code}" -SsL --connect-timeout 30 -m 180 --speed-time 30 --speed-limit 1 --retry 2 -H "User-Agent: ${DOWNLOAD_UA}" "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH" 2>&1)
+        fi
         EXIR_CODE=$?
         HTTP_CODE=$(echo "$CURL_OUTPUT" | tail -n1)
 
         if [ "$EXIR_CODE" -ne 0 ] || [ "$HTTP_CODE" -ne 200 ]; then
             OUTPUT=$(echo "$CURL_OUTPUT" | sed '$d' | grep -a 'curl:' | tail -n 1)
             LOG_OUT "【$DOWNLOAD_PATH】Download Failed:【$OUTPUT】"
-            rm -rf $DOWNLOAD_PATH
+            rm -rf "$DOWNLOAD_PATH"
             SLOG_CLEAN
             return 1
         fi

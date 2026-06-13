@@ -381,7 +381,7 @@ if [ -z "$RAW_CONFIG_FILE" ] || [ ! -f "$RAW_CONFIG_FILE" ]; then
          uci -q commit openclash
          RAW_CONFIG_FILE="/etc/openclash/config/$CONFIG_NAME"
          CONFIG_FILE="/etc/openclash/$CONFIG_NAME"
-         TMP_CONFIG_FILE="/tmp/yaml_config_tmp_$CONFIG_NAME"
+         TMP_CONFIG_FILE="/tmp/$CONFIG_NAME"
          LOG_ERROR "Config Not Found, Switch Config File to【$RAW_CONFIG_FILE】"
          break
       fi
@@ -549,7 +549,7 @@ do_run_file()
    fi
 
    [ ! -f "$CLASH" ] || { [ "$core_type" = "Smart" ] && [ -z "$($CLASH -v | grep 'smart')" ]; } && {
-      LOG_TIP "Detected that the Core is not Installed, Ready to Download..."
+      LOG_TIP "【$core_type】Core is not Detected installed, Ready to Download..."
       rm -rf "/tmp/clash_last_version"
       /usr/share/openclash/openclash_core.sh "$core_type"
       if [ ! -f "$meta_core_path" ]; then
@@ -779,6 +779,7 @@ start_run_core()
    chown root:root "$CLASH"
    procd_open_instance "openclash"
    procd_set_param env SAFE_PATHS=/usr/share/openclash:/etc/ssl
+   procd_append_param env CLASH_AGE_SECRET_KEY="$SECRET_KEY"
    procd_set_param command /bin/sh -c "$CLASH -d $CLASH_CONFIG -f \"$CONFIG_FILE\" >> $LOG_FILE 2>&1"
    procd_set_param user "root"
    procd_set_param group "nogroup"
@@ -2979,6 +2980,8 @@ overwrite_file()
 EOF
 
    allowed_keys_types="\
+      AGE_SECRET_KEY:string \
+      AGE_PUBLIC_KEY:string \
       APPEND_DEFAULT_DNS:int_bool \
       APPEND_WAN_DNS:int_bool \
       AUTO_SMART_SWITCH:int_bool \
@@ -3109,6 +3112,11 @@ EOF
 
       echo "# --- overwrite source: ${name} (sid=${sid}) ---" >> "$overwrite_script"
       echo "export OPENCLASH_OVERWRITE_SID='${sid}'" >> "$overwrite_script"
+
+      cfg_name=$(basename "$(uci_get_config "config_path")" 2>/dev/null)
+      age_config_name="${cfg_name%.*}"
+      age_secret_key=""
+      age_public_key=""
 
       param=$(uci -q get openclash."$sid".param 2>/dev/null || echo '')
       if [ -n "$param" ]; then
@@ -3243,8 +3251,9 @@ EOF
                uci -q set openclash.@overwrite[0].config_path="$RAW_CONFIG_FILE"
                cfg_name=$(basename "$RAW_CONFIG_FILE" 2>/dev/null)
                if [ -n "$cfg_name" ]; then
+                  age_config_name="${cfg_name%.*}"
                   CONFIG_FILE="/etc/openclash/${cfg_name}"
-                  TMP_CONFIG_FILE="/tmp/yaml_config_tmp_${cfg_name}"
+                  TMP_CONFIG_FILE="/tmp/${cfg_name}"
                fi
             elif printf "%s" "$key_u" | grep -q "^SUB_INFO_URL$"; then
                val_clean=$(printf "%s" "$val" | sed "s/^[[:space:]]*['\"]//;s/['\"][[:space:]]*$//")
@@ -3257,6 +3266,16 @@ EOF
                   uci -q set openclash.@subscribe_info[-1].name="${cfg_name%.*}"
                   uci -q add_list openclash.@subscribe_info[-1].url="$url_key"
                fi
+            elif printf "%s" "$key_u" | grep -q "^AGE_SECRET_KEY$"; then
+               val_clean=$(printf "%s" "$val" | sed "s/^[[:space:]]*['\"]//;s/['\"][[:space:]]*$//")
+               val_key=$(eval "echo \"$val_clean\"")
+               [ -z "$val_key" ] && continue
+               age_secret_key="$val_key"
+            elif printf "%s" "$key_u" | grep -q "^AGE_PUBLIC_KEY$"; then
+               val_clean=$(printf "%s" "$val" | sed "s/^[[:space:]]*['\"]//;s/['\"][[:space:]]*$//")
+               val_key=$(eval "echo \"$val_clean\"")
+               [ -z "$val_key" ] && continue
+               age_public_key="$val_key"
             elif printf "%s" "$key_u" | grep -q "^RESTART$"; then
                val_clean=$(printf "%s" "$val" | sed "s/^[[:space:]]*['\"]//;s/['\"][[:space:]]*$//")
                val_key=$(eval "echo \"$val_clean\"")
@@ -3286,6 +3305,10 @@ EOF
             yaml_content="${yaml_content}$(eval "echo \"$line\"")"$'\n'
          fi
       done < "$file"
+
+      if [ -n "$age_config_name" ] && { [ -n "$age_secret_key" ] || [ -n "$age_public_key" ]; }; then
+         uci_set_age_keys_by_name "$age_config_name" "$age_secret_key" "$age_public_key"
+      fi
 
       if [ -n "$yaml_content" ]; then
          LOG_TIP "Load YAML Override Block【YAML Block => $name】"
@@ -3369,7 +3392,9 @@ get_config()
    RAW_CONFIG_FILE=$(uci_get_config "config_path")
    CFG_NAME=$(basename "$RAW_CONFIG_FILE" 2>/dev/null)
    CONFIG_FILE="/etc/openclash/${CFG_NAME}"
-   TMP_CONFIG_FILE="/tmp/yaml_config_tmp_${CFG_NAME}"
+   TMP_CONFIG_FILE="/tmp/${CFG_NAME}"
+   CFG_NO_EXT_NAME="${CFG_NAME%.*}"
+   SECRET_KEY=$(uci_get_age_secret_keys "$CFG_NO_EXT_NAME")
    enable=$(uci_get_config "enable")
    enable_custom_clash_rules=$(uci_get_config "enable_custom_clash_rules")
    da_password=$(uci_get_config "dashboard_password")

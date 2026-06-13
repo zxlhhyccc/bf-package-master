@@ -326,13 +326,62 @@ msgstr "Archivo del núcleo"
 msgid "Upload"
 msgstr "Subir"
 
+msgid "Age Encryption"
+msgstr "Cifrado Age"
+
+msgid "Age Encryption File"
+msgstr "Archivo de cifrado Age"
+
+msgid "Generate Age Key"
+msgstr "Generar clave Age"
+
+msgid "Generating..."
+msgstr "Generando..."
+
+msgid "Public Key"
+msgstr "Clave pública"
+
+msgid "Secret Key"
+msgstr "Clave secreta"
+
+msgid "Age Key Type"
+msgstr "Tipo de clave"
+
+msgid "x25519"
+msgstr "x25519"
+
+msgid "PQ (mlkem768-x25519)"
+msgstr "PQ (mlkem768-x25519)"
+
+msgid "Failed to generate age key"
+msgstr "Error al generar la clave Age"
+
+msgid "No public key"
+msgstr "No hay clave pública"
+
+msgid "No secret key"
+msgstr "No hay clave secreta"
+
+msgid "Age Encryption For Config, Click For More:"
+msgstr "Cifrado Age para la configuración. Haz clic aquí para obtener más información:"
+
+msgid "Age Encryption Introduce"
+msgstr "Presentación del cifrado Age"
+
+msgid "Calculate Public Key"
+msgstr "Calcular clave pública"
+
+msgid "Please enter the Age Secret Key to calculate the public key!"
+msgstr "¡Introduce la clave secreta de Age para calcular la clave pública!"
+
+msgid "Failed to calculate public key"
+msgstr "No se ha podido calcular la clave pública"
+
 msgid "Add"
 msgstr "Añadir"
 
 msgid "File saved to"
-msgstr "Archivo guardado en"
-
-msgid "upload file error."
+msgstr "Archivo guardado en"msgid "upload file error."
 msgstr "Error al subir el archivo."
 
 msgid "No specify upload file."
@@ -1139,6 +1188,12 @@ msgstr "Restaurando..."
 msgid "Saving..."
 msgstr "Guardando..."
 
+msgid "Save successful"
+msgstr "Guardado con éxito"
+
+msgid "Failed to save age config"
+msgstr "Error al guardar la configuración de age"
+
 msgid "Firewall Rules Reset Failed"
 msgstr "Error al restablecer las reglas del firewall"
 
@@ -1712,7 +1767,7 @@ msgstr "La base de datos GEOSITE no está instalada; iniciando descarga..."
 msgid "Detected that the GEOIP Dat is not Installed, Ready to Download..."
 msgstr "La base de datos GEOIP Dat no está instalada; iniciando descarga..."
 
-msgid "Detected that the Core is not Installed, Ready to Download..."
+msgid "Core is not Detected installed, Ready to Download..."
 msgstr "El núcleo no está instalado; iniciando descarga..."
 
 msgid "Detected that the Chnroute Cidr is not Installed, Ready to Download..."
@@ -2066,8 +2121,8 @@ msgstr "Filtro de regiones"
 msgid "Unlock Nodes Filter"
 msgstr "Filtro de nodos desbloqueados"
 
-msgid "Start Auto Select Unlock Proxy For"
-msgstr "Iniciando selección automática de nodo"
+msgid "Start Auto Select Unlock Proxy For..."
+msgstr "Iniciando selección automática de nodo..."
 
 msgid "Group:"
 msgstr "Grupo:"
@@ -2753,11 +2808,17 @@ msgstr "Cambia el método de cálculo de latencia para eliminar tiempos extra co
 msgid "If the download fails, try setting the CDN in Overwrite Settings - General Settings - Github Address Modify Options"
 msgstr "Si la descarga falla, prueba a configurar un CDN en Sobrescritura → General → Modificar direcciones de Github."
 
-msgid "Used for Downloading Subscriptions, Defaults to Clash"
-msgstr "User-Agent usado para descargar suscripciones (por defecto: Clash)"
+msgid "Used for Downloading Subscriptions, Defaults to"
+msgstr "User-Agent usado para descargar suscripciones, por defecto:"
 
 msgid "Set Proxies Address Skip Failed,"
 msgstr "Fallo al configurar la omisión de direcciones de proxy,"
+
+msgid "Age decrypt failed,"
+msgstr "Error al descifrar con Age para，"
+
+msgid "Failed to parse config file with Lua helper"
+msgstr "Error al analizar el archivo de configuración con el auxiliar Lua"
 
 msgid "Flush Failed"
 msgstr "Limpieza fallida"
@@ -3449,6 +3510,12 @@ msgstr "Opciones avanzadas"
 msgid "Show more subscription options"
 msgstr "Mostrar más opciones de suscripción"
 
+msgid "Show more upload options"
+msgstr "Mostrar más opciones de carga"
+
+msgid "Show more options"
+msgstr "Mostrar más opciones"
+
 msgid "Overwrite"
 msgstr "Sobrescribir"
 
@@ -3742,3 +3809,15 @@ msgstr "reinstalando paquete dependiente..."
 
 msgid "failed to install, please try to install it manually..."
 msgstr "no se pudo instalar; por favor, intenta instalarlo manualmente."
+
+msgid "Decrypted content empty or still encrypted"
+msgstr "Contenido descifrado vacío o aún cifrado para"
+
+msgid "Decrypt attempt failed:"
+msgstr "Fallo en intento de descifrado:"
+
+msgid "Decrypt attempt failed for a found secret:"
+msgstr "Fallo en intento de descifrado con una clave encontrada:"
+
+msgid "Encrypt attempt failed:"
+msgstr "Fallo en intento de cifrado:"

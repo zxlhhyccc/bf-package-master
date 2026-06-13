@@ -35,6 +35,7 @@ local HTTP = require "luci.http"
 
 local type  = type
 local string  = string
+local tostring = tostring
 
 --- LuCI filesystem library.
 module "luci.openclash"
@@ -83,14 +84,43 @@ end
 -- @param filename	String containing the path of the file to read
 -- @return			String containing the file contents or nil on error
 -- @return			String containing the error message on error
-readfile = fs.readfile
+-- Wrapped readfile: if file is age-encrypted, try to decrypt with matching UCI secret first
+function readfile(filename)
+	local content, err = fs.readfile(filename)
+	if not content then return nil, err end
+	if content:find("BEGIN AGE ENCRYPTED FILE") then
+		local keys = get_age_keys(filename)
+		if keys and keys.secret and keys.secret ~= "" then
+			local dec = age_decrypt(keys.secret, content)
+			if dec and dec:find("BEGIN AGE ENCRYPTED FILE") == nil then
+				return dec
+			else
+				return content
+			end
+		else
+			return content
+		end
+	end
+	return content
+end
 
 --- Write the contents of given string to given file.
 -- @param filename	String containing the path of the file to read
 -- @param data		String containing the data to write
 -- @return			Boolean containing true on success or nil on error
 -- @return			String containing the error message on error
-writefile = fs.writefile
+-- Wrapped writefile: if public key exists for filename, encrypt before writing
+function writefile(filename, data)
+	local keys = get_age_keys(filename)
+	if keys and keys.public and keys.public ~= "" then
+		local enc = age_encrypt(keys.public, data)
+		if not enc then
+			return fs.writefile(filename, data)
+		end
+		return fs.writefile(filename, enc)
+	end
+	return fs.writefile(filename, data)
+end
 
 --- Copies a file.
 -- @param source	Source file
@@ -356,4 +386,41 @@ function get_file_path_from_request()
 	end
 
 	return file_path
+end
+
+function get_age_keys(filename)
+	local basename = fs.basename(filename or "") or ""
+	local basename_no_ext = basename:gsub('%.%w+$','')
+	local pub, sec
+	uci:foreach("openclash", "config_age_secret", function(s)
+		if s and s.name then
+			if s.name == basename or s.name == basename_no_ext then
+				if not pub and s.public then pub = s.public end
+				if not sec and s.secret then sec = s.secret end
+			end
+		end
+	end)
+	return { public = pub, secret = sec }
+end
+
+function age_decrypt(secret, content)
+	if not secret or secret == "" or not content then return nil end
+	local cmd = "cat <<'EOF' | /etc/openclash/core/clash_meta age decrypt " .. tostring(secret) .. " - - 2>/dev/null\n" .. content .. "\nEOF"
+	local fh = io.popen(cmd, 'r')
+	if not fh then return nil end
+	local out = fh:read('*a') or ''
+	fh:close()
+	if out and out ~= '' then return out end
+	return nil
+end
+
+function age_encrypt(public, content)
+	if not public or public == "" or not content then return nil end
+	local cmd = "cat <<'EOF' | /etc/openclash/core/clash_meta age encrypt " .. tostring(public) .. " - - 2>/dev/null\n" .. content .. "\nEOF"
+	local fh = io.popen(cmd, 'r')
+	if not fh then return nil end
+	local out = fh:read('*a') or ''
+	fh:close()
+	if out and out ~= '' then return out end
+	return nil
 end

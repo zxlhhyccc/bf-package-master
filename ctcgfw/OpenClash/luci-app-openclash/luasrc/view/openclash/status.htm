@@ -1257,6 +1257,12 @@
     animation: gentlePulse 4s cubic-bezier(.17,.67,.83,.67) infinite;
 }
 
+.oc .config-file-name .age-file-icon {
+    display: inline-block;
+    vertical-align: middle;
+    color: var(--error-color);
+}
+
 .oc .config-file-bottom {
     display: flex;
     align-items: center;
@@ -2711,7 +2717,8 @@
                                 if (typeof file === 'object' && file.mtime && file.size) {
                                     currentFileInfo = {
                                         mtime: file.mtime,
-                                        size: file.size
+                                        size: file.size,
+                                        age: file.age
                                     };
                                 }
                                 break;
@@ -2906,6 +2913,10 @@
                 if (detailsSection) {
                     detailsSection.style.display = 'flex';
                 }
+
+                if (fileInfo.age && configNameElement) {
+                    configNameElement.innerHTML += ' <span class="age-file-icon" title="<%:Age Encryption File%>"><svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9.25564L24.0086 4L42 9.25564V20.0337C42 31.3622 34.7502 41.4194 24.0026 45.0005C13.2521 41.4195 6 31.36 6 20.0287V9.25564Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M15 23L22 30L34 18" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+                }
             } else {
                 if (fileModifyTimeElement) {
                     fileModifyTimeElement.textContent = '<%:Update Time%> --';
@@ -3008,12 +3019,12 @@
             for (var i = 0; i < this.configList.length; i++) {
                 var file = this.configList[i];
                 var filePath = typeof file === 'string' ? file : (file.path || file.filepath || file);
-
                 if (filePath === selectedValue) {
                     if (typeof file === 'object' && file.mtime && file.size) {
                         selectedFileInfo = {
                             mtime: file.mtime,
-                            size: file.size
+                            size: file.size,
+                            age: file.age
                         };
                     }
                     break;
@@ -3057,7 +3068,6 @@
 
             var file = this.configList[index];
             var filePath = typeof file === 'string' ? file : (file.path || file.filepath || file);
-
             if (this.selectElement) {
                 this.selectElement.value = filePath;
             }

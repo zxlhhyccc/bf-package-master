@@ -23,8 +23,46 @@ module YAML
 
 	def self.load_file(filename, *args, **kwargs)
 		yaml_content = File.read(filename, mode: "r:bom|utf-8")
-		processed_content = fix_short_id_quotes(yaml_content)
 
+		secret = nil
+		if kwargs.key?(:secret)
+			secret = kwargs.delete(:secret)
+		end
+
+		if secret && secret.to_s.strip != "" && yaml_content.include?("BEGIN AGE ENCRYPTED FILE")
+			begin
+				decrypted = decrypt_content_with_secret(secret.to_s, yaml_content)
+				if decrypted && !decrypted.empty? && !decrypted.include?("BEGIN AGE ENCRYPTED FILE")
+					processed = fix_short_id_quotes(decrypted)
+					return load(processed, *args, **kwargs)
+				else
+					LOG_WARN("【%s】Decrypted content empty or still encrypted" % [filename])
+				end
+			rescue => e
+				LOG_WARN("Decrypt attempt failed:【%s】" % [e.message])
+			end
+		end
+
+		if (secret.nil? || secret.to_s.strip == "") && yaml_content.include?("BEGIN AGE ENCRYPTED FILE")
+			keys = find_age_keys_for_filename(filename)
+			(keys[:secrets] || []).each do |sec|
+				begin
+					decrypted = decrypt_content_with_secret(sec, yaml_content)
+					if decrypted && !decrypted.empty? && !decrypted.include?("BEGIN AGE ENCRYPTED FILE")
+						processed = fix_short_id_quotes(decrypted)
+						return load(processed, *args, **kwargs)
+					end
+				rescue => e
+					LOG_WARN("Decrypt attempt failed for a found secret:【%s】" % [e.message])
+				end
+			end
+		end
+
+		if yaml_content.include?("BEGIN AGE ENCRYPTED FILE")
+			raise "Encrypted file: decryption failed for %s" % [filename]
+		end
+
+		processed_content = fix_short_id_quotes(yaml_content)
 		load(processed_content, *args, **kwargs)
 	end
 
@@ -32,6 +70,45 @@ module YAML
 		begin
 			yaml_content = original_dump(obj, **options)
 			processed = fix_short_id_quotes(yaml_content)
+			public_key = nil
+			fname = nil
+			if options.key?(:public)
+				public_key = options.delete(:public)
+			end
+
+			if (!public_key || public_key.to_s.strip == "")
+				if options.key?(:filename)
+					fname = options.delete(:filename)
+				elsif io && io.respond_to?(:path)
+					fname = io.path
+				elsif io && io.respond_to?(:to_path)
+					fname = io.to_path
+				end
+
+				if fname && fname.to_s.strip != ""
+				keys = find_age_keys_for_filename(fname)
+				public_key = keys[:publics].first if keys[:publics] && !keys[:publics].empty?
+				end
+			end
+
+			if public_key && public_key.to_s.strip != ""
+				begin
+					encrypted = encrypt_content_with_public(public_key.to_s, processed)
+					if encrypted && !encrypted.empty?
+						if io.nil?
+							return encrypted
+						elsif io.respond_to?(:write)
+							io.write(encrypted)
+							return io
+						else
+							return encrypted
+						end
+					end
+				rescue => e
+					LOG_WARN("Encrypt attempt failed:【%s】" % [e.message])
+				end
+			end
+
 			if io.nil?
 				processed
 			elsif io.respond_to?(:write)
@@ -42,6 +119,54 @@ module YAML
 			end
 		rescue => e
 			LOG_ERROR("Write file failed:【%s】" % [e.message])
+			nil
+		end
+	end
+
+	# Find age public/secret keys for a given filename.
+	# Returns a hash: { publics: [..], secrets: [..] }
+	def self.find_age_keys_for_filename(filename)
+		begin
+			basename = File.basename(filename)
+			basename_no_ext = File.basename(filename, File.extname(filename))
+			publics = []
+			secrets = []
+			[basename, basename_no_ext].uniq.each do |n|
+				IO.popen(["/bin/sh", "-c", ". /usr/share/openclash/uci.sh; uci_get_age_public_keys \"$1\"", "sh", n], 'r') do |io|
+					io.each_line { |l| publics << l.strip unless l.nil? || l.strip == "" }
+				end
+				IO.popen(["/bin/sh", "-c", ". /usr/share/openclash/uci.sh; uci_get_age_secret_keys \"$1\"", "sh", n], 'r') do |io|
+					io.each_line { |l| secrets << l.strip unless l.nil? || l.strip == "" }
+				end
+			end
+			{ publics: publics, secrets: secrets }
+		rescue => e
+			{ publics: [], secrets: [] }
+		end
+	end
+
+	# Decrypt content using given age secret
+	def self.decrypt_content_with_secret(secret, content)
+		begin
+			IO.popen(["/etc/openclash/core/clash_meta","age","decrypt", secret, '-', '-'], 'r+') do |io|
+				io.write(content)
+				io.close_write
+				return io.read
+			end
+		rescue => e
+			nil
+		end
+	end
+
+	# Encrypt content using given age public key
+	def self.encrypt_content_with_public(public_key, content)
+		begin
+			IO.popen(["/etc/openclash/core/clash_meta","age","encrypt", public_key, '-', '-'], 'r+') do |io|
+				io.write(content)
+				io.close_write
+				return io.read
+			end
+		rescue => e
 			nil
 		end
 	end

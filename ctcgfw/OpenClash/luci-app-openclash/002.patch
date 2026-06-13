@@ -1,6 +1,6 @@
 --- a/luasrc/model/cbi/openclash/config-subscribe-edit.lua
 +++ b/luasrc/model/cbi/openclash/config-subscribe-edit.lua
-@@ -78,6 +78,9 @@
+@@ -201,6 +201,9 @@
  o:depends("sub_convert", "1")
  o:value("https://api.asailor.org/sub", translate("api.asailor.org"))
  o:value("https://api.wcc.best/sub", translate("api.wcc.best"))
@@ -12,7 +12,7 @@
  
 --- a/po/zh-cn/openclash.zh-cn.po
 +++ b/po/zh-cn/openclash.zh-cn.po
-@@ -2316,6 +2316,12 @@ msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
+@@ -2373,6 +2373,12 @@ msgstr "启用后将尽可能的覆盖 DNS 查询到的域名"
  msgid "Rules Setting"
  msgstr "规则设置"
  

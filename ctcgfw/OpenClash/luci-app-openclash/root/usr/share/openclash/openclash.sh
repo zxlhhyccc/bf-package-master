@@ -73,14 +73,14 @@ LOG_TIP "Config File【$name】Downloading User-Agent【$sub_ua】..."
 if [ -n "$subscribe_url_param" ] && [ -n "$c_address" ]; then
    LOG_INFO "Config File【$name】Downloading URL【$c_address$subscribe_url_param】..."
    local DOWNLOAD_URL="${c_address}${subscribe_url_param}"
-   local DOWNLOAD_PARAM="$sub_ua"
 fi
 if [ -z "$DOWNLOAD_URL" ]; then
    LOG_INFO "Config File【$name】Downloading URL【$subscribe_url】..."
    local DOWNLOAD_URL="${subscribe_url}"
-   local DOWNLOAD_PARAM="$sub_ua"
 fi
-DOWNLOAD_FILE_CURL "$DOWNLOAD_URL" "$CFG_FILE" "$CONFIG_FILE" "$DOWNLOAD_PARAM"
+local DOWNLOAD_PARAM="$sub_ua"
+local SECRET_KEY=$(uci_get_age_secret_keys "$name")
+DOWNLOAD_FILE_CURL "$DOWNLOAD_URL" "$CFG_FILE" "$CONFIG_FILE" "$DOWNLOAD_PARAM" "$SECRET_KEY"
 DOWNLOAD_RESULT=$?
 }
 
