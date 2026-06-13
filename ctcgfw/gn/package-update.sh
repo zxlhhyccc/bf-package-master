@@ -56,7 +56,7 @@ if [ "$COMMIT_FULL" != "$OLD_COMMIT_FULL" ]; then
     make package/gn/host/clean V=s
 
     # 更新 Makefile 中版本、commit 和清空 hash
-    ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
+    sed -i "$CURDIR/Makefile" \
         -e "s|^PKG_SOURCE_DATE:=.*|PKG_SOURCE_DATE:=${API_DATE}|" \
         -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT_FULL}|" \
         -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
@@ -64,7 +64,7 @@ if [ "$COMMIT_FULL" != "$OLD_COMMIT_FULL" ]; then
     echo "🧹 清空旧 HASH：$OLD_CHECKSUM"
 
     # 更新 last_commit_position.h 中 LAST_COMMIT_POSITION 的计数、commit
-    ./staging_dir/host/bin/sed -i "$FILE" \
+    sed -i "$FILE" \
         -e "s/^#define LAST_COMMIT_POSITION_NUM .*/#define LAST_COMMIT_POSITION_NUM ${NEW_NUM}/" \
         -e "s/^#define LAST_COMMIT_POSITION \".*\"/#define LAST_COMMIT_POSITION \"${NEW_NUM} (${LAST_COMMIT})\"/"
 
@@ -75,7 +75,7 @@ if [ "$COMMIT_FULL" != "$OLD_COMMIT_FULL" ]; then
     TARFILE="dl/gn-${NEW_DATE}~${NEW_COMMIT}.tar.zst"
     if [ -f "$TARFILE" ]; then
         CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
-        ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
+        sed -i "$CURDIR/Makefile" \
             -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=${CHECKSUM}|"
         echo "✅ 校验和已更新：$CHECKSUM"
     else
