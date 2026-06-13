@@ -5,7 +5,8 @@ PKG_VERSION:=20260314
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/xtaci/kcptun/tar.gz/v${PKG_VERSION}?
+#PKG_SOURCE_URL:=https://codeload.github.com/xtaci/kcptun/tar.gz/v${PKG_VERSION}?
+PKG_SOURCE_URL:=https://github.com/zxlhhyccc/kcptun/releases/download/v${PKG_VERSION}
 PKG_HASH:=02db422e5b423f56b4057165c72cca0003d64ad437b4c6576ecbbe73182cc07d
 
 PKG_MAINTAINER:=Dengfeng Liu <liudf0716@gmail.com>, Chao Liu <expiron18@gmail.com>
