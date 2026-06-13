@@ -29,7 +29,7 @@ if [ "$COMMIT" != "$OLD_COMMIT" ]; then
     make package/smartdns/clean V=s
  
     # 修改 Makefile 中的版本和提交哈希
-    ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
+    sed -i "$CURDIR/Makefile" \
         -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|" \
         -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
 
@@ -42,7 +42,7 @@ if [ "$COMMIT" != "$OLD_COMMIT" ]; then
     TARFILE="dl/smartdns-${OLD_VER}.tar.zst"
     if [ -f "$TARFILE" ]; then
         CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
-        ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
+        sed -i "$CURDIR/Makefile" \
             -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=${CHECKSUM}|"
         echo "✅ 校验和已更新：$CHECKSUM"
     else
