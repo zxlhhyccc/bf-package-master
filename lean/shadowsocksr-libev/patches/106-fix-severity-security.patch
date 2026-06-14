@@ -1,0 +1,22 @@
+diff -uNr a/libev/ev.c b/libev/ev.c
+--- a/libev/ev.c	2025-10-01 21:28:55.017566000 +0800
++++ b/libev/ev.c	2026-06-14 20:46:43.729778833 +0800
+@@ -1946,7 +1946,7 @@
+ array_realloc (int elem, void *base, int *cur, int cnt)
+ {
+   *cur = array_nextsize (elem, *cur, cnt);
+-  return ev_realloc (base, elem * *cur);
++  return ev_realloc (base, (size_t)elem * (size_t)*cur);
+ }
+ 
+ #define array_init_zero(base,count)	\
+@@ -4252,7 +4252,8 @@
+       if ((errno == ENOENT || errno == EACCES) && strlen (w->path) < 4096)
+         {
+           char path [4096];
+-          strcpy (path, w->path);
++          strncpy (path, w->path, sizeof (path) - 1);
++          path [sizeof (path) - 1] = 0;
+ 
+           do
+             {
