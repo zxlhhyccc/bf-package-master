@@ -11,8 +11,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=983db513ebf6074250706cc01ac3cdf77de18626
-PKG_MIRROR_HASH:=eea1bc1aeac0dff3f4c014c6f63ed9079691ee95a567f82066283dd84c048e86
+PKG_SOURCE_VERSION:=c3c0ea78f05e60ca784e8273d8cfbe9fa5acae7f
+PKG_MIRROR_HASH:=dfc793c89051681258d4fa87a3ade5133ab1e63dacea27491b093529d8a469c5
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -48,7 +48,7 @@ endef
 define Package/smartdns
   $(call Package/smartdns/Default)
   TITLE+= smartdns server
-  DEPENDS:=+i386:libatomic +libopenssl
+  DEPENDS:=+i386:libatomic +libopenssl +zlib
 endef
 
 define Package/smartdns/description
