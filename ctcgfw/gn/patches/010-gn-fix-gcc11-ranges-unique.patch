@@ -4,7 +4,7 @@
    std::ranges::sort(include_dirs, [](const auto& lhs, const auto& rhs) {
      return lhs.value() < rhs.value();
    });
-+#if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE < 12
++#if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE < 13
 +  include_dirs.erase(std::unique(include_dirs.begin(), include_dirs.end()),
 +                     include_dirs.end());
 +#else
