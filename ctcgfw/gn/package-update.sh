@@ -29,7 +29,8 @@ OLD_LAST_COMMIT=$(grep 'LAST_COMMIT_POSITION' "$FILE" \
   | tr -d '()')
 
 API_DATE="$(curl -s "${REPO}/+log?format=JSON" \
-  | tail -n +2 \
+  | sed '1s/^)]}'\''//' \
+  | sed 's/\r//g' \
   | jq -r '.log[0].committer.time' \
   | awk '{print $5 "-" toupper($2) "-" $3}' \
   | sed 's/JAN/01/;s/FEB/02/;s/MAR/03/;s/APR/04/;s/MAY/05/;s/JUN/06/;s/JUL/07/;s/AUG/08/;s/SEP/09/;s/OCT/10/;s/NOV/11/;s/DEC/12/')"
@@ -40,8 +41,9 @@ NEW_COMMIT=${COMMIT_FULL:0:8}
 LAST_COMMIT=${COMMIT_FULL:0:12}
 
 COUNT="$(curl -s "${REPO}/+log/${OLD_COMMIT}..${COMMIT_FULL}?format=JSON" \
-  | tail -n +2 \
-  | jq '.log | length')"
+  | sed '1s/^)]}'\''//' \
+  | sed 's/\r//g' \
+  | jq -r 'if type == "object" and has("log") then .log | length else 0 end')"
 
 NEW_NUM=$((OLD_COUNT + COUNT))
 
