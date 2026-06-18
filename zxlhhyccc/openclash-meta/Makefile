@@ -7,11 +7,11 @@ PKG_RELEASE:=1
 PKG_SOURCE_PROTO:=git
 # PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-g$(PKG_REV).tar.gz
 PKG_SOURCE_URL:=https://github.com/MetaCubeX/mihomo.git
-PKG_SOURCE_VERSION:=2c6ff7251dcd932aee4d57c54b3a9c34df3b1bd5
-PKG_MIRROR_HASH:=7e90083505dd41e635e3f536b10a973ceacb5758c596f3ab889809358f6f7615
+PKG_SOURCE_VERSION:=8e2aba40fc9120592703da7ba3e327e24c49fcc8
+PKG_MIRROR_HASH:=8e6675966c39ec40cb1c572dbfd2a8ab344a2b59153a83ca4e73696f7478e244
 
-PKG_REV:=$(shell git rev-parse --short=7 $(PKG_SOURCE_VERSION))
-# PKG_REV:=$(shell echo $(PKG_SOURCE_VERSION) | cut -c1-7)
+# PKG_REV:=$(shell git rev-parse --short=7 $(PKG_SOURCE_VERSION))
+PKG_REV:=$(shell echo $(PKG_SOURCE_VERSION) | cut -c1-7)
 PKG_VERSION:=$(PKG_BASE_VERSION)~$(call version_abbrev,$(PKG_SOURCE_VERSION))
 
 PKG_MAINTAINER:=EkkoG <beijiu572@gmail.om>
@@ -24,16 +24,19 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
+PKG_BUILD_VERSION:=alpha-g$(PKG_REV)
+PKG_BUILD_TIME:=$(shell date -u -Iseconds)
+
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_CLASH-META_COMPRESS_GOPROXY \
 	CONFIG_CLASH-META_COMPRESS_UPX
 
 GO_PKG:=github.com/metacubex/mihomo
-GO_PKG_BUILD_PKG:=$(GO_PKG)
-PKG_TAGS:=with_gvisor
+GO_PKG_TAGS:=with_gvisor
 GO_PKG_LDFLAGS:= -s -w
 GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/constant.Version=alpha-g$(PKG_REV)
+	$(GO_PKG)/constant.Version=$(PKG_BUILD_VERSION) $(GO_PKG)/constant.BuildTime=$(PKG_BUILD_TIME)
+GO_PKG_INSTALL_BIN_PATH:=/usr/bin
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/../feeds/packages/lang/golang/golang-package.mk
@@ -41,17 +44,15 @@ include $(INCLUDE_DIR)/../feeds/packages/lang/golang/golang-package.mk
 # TAR_OPTIONS+= --strip-components 1
 # TAR_CMD:=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
 
-define Package/$(PKG_NAME)/template
+define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
-endef
-
-define Package/$(PKG_NAME)
-	$(call Package/$(PKG_NAME)/template)
 	TITLE:=A rule-based tunnel in Go
 	URL:=https://github.com/MetaCubeX/Clash.Meta
-	DEPENDS:=$(GO_ARCH_DEPENDS)
+	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
+	ALTERNATIVES:=\
+	  300:/etc/openclash/core/clash_meta:/usr/bin/mihomo
 endef
 
 define Package/$(PKG_NAME)/description
@@ -83,10 +84,13 @@ endif
 endef
 
 define Package/$(PKG_NAME)/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-	$(INSTALL_DIR) $(1)/etc/openclash/core
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/mihomo $(1)/etc/openclash/core/clash_meta
+	$(call GoPackage/Package/Install/Bin,$(1))
 endef
 
+define Build/Prepare
+	$(Build/Prepare/Default)
+	$(RM) -r $(PKG_BUILD_DIR)/rules/logic_test
+endef
 
+$(eval $(call GoBinPackage,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))
