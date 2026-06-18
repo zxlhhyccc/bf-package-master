@@ -7,6 +7,10 @@ BUILD_DIR="$(find "$HOME" -maxdepth 3 -type d -name "ax6-6.6" 2>/dev/null | head
 
 pushd "$BUILD_DIR" > /dev/null || exit 1
 
+if [ -z "$GITHUB_TOKEN" ] && [ -f ".git-credentials" ]; then
+    GITHUB_TOKEN=$(grep -oP 'https://[^:]+:\K[^@]+' ".git-credentials" | head -n1)
+fi
+
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
 OLD_DATE_FULL=$(grep -oP '^PKG_SOURCE_DATE:=\K.*' "$CURDIR/Makefile")
