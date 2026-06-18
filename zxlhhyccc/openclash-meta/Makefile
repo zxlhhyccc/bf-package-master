@@ -33,9 +33,10 @@ PKG_CONFIG_DEPENDS:= \
 
 GO_PKG:=github.com/metacubex/mihomo
 GO_PKG_TAGS:=with_gvisor
-GO_PKG_LDFLAGS:= -s -w
-GO_PKG_LDFLAGS_X:= \
-	$(GO_PKG)/constant.Version=$(PKG_BUILD_VERSION) $(GO_PKG)/constant.BuildTime=$(PKG_BUILD_TIME)
+GO_PKG_LDFLAGS:= -s -w -buildid=
+GO_PKG_LDFLAGS_X:=\
+	$(GO_PKG)/constant.Version=$(PKG_BUILD_VERSION) \
+	$(GO_PKG)/constant.BuildTime=$(PKG_BUILD_TIME)
 GO_PKG_INSTALL_BIN_PATH:=/usr/bin
 
 include $(INCLUDE_DIR)/package.mk
@@ -52,7 +53,7 @@ define Package/$(PKG_NAME)
 	URL:=https://github.com/MetaCubeX/Clash.Meta
 	DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle
 	ALTERNATIVES:=\
-	  300:/etc/openclash/core/clash_meta:/usr/bin/mihomo
+	  300:/etc/openclash/core/clash_meta:/usr/bin/clash_meta
 endef
 
 define Package/$(PKG_NAME)/description
@@ -85,6 +86,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(call GoPackage/Package/Install/Bin,$(1))
+	mv $(1)/usr/bin/mihomo $(1)/usr/bin/clash_meta
 endef
 
 define Build/Prepare
