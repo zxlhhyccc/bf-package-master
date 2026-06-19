@@ -2,6 +2,7 @@
 
 set -x
 
+
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
 function update() {
