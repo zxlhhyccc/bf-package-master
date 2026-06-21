@@ -1,6 +1,6 @@
 --- a/src/gn/rust_project_writer.cc
 +++ b/src/gn/rust_project_writer.cc
-@@ -218,8 +218,13 @@ RustProjectWriter::Crate RustProjectWrit
+@@ -220,8 +220,13 @@ RustProjectWriter::Crate RustProjectWrit
    std::ranges::sort(include_dirs, [](const auto& lhs, const auto& rhs) {
      return lhs.value() < rhs.value();
    });
