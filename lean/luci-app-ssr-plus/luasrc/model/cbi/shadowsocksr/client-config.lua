@@ -719,6 +719,20 @@ o.rmempty = true
 o:depends({type = "hysteria2", flag_obfs = true})
 o:depends({type = "v2ray", v2ray_protocol = "hysteria2", flag_obfs = true})
 
+o = s:option(Value, "obfs_MinPacketSize", translate("Gecko Packet Size (min)"))
+o.datatype = "uinteger"
+o.placeholder = "512"
+o.default = "512"
+o:depends({type = "hysteria2", flag_obfs = true, obfs_type = "gecko"})
+o:depends({type = "v2ray", v2ray_protocol = "hysteria2", flag_obfs = true, obfs_type = "gecko"})
+
+o = s:option(Value, "obfs_MaxPacketSize", translate("Gecko Packet Size (max)"))
+o.datatype = "uinteger"
+o.placeholder = "1200"
+o.default = "1200"
+o:depends({type = "hysteria2", flag_obfs = true, obfs_type = "gecko"})
+o:depends({type = "v2ray", v2ray_protocol = "hysteria2", flag_obfs = true, obfs_type = "gecko"})
+
 o = s:option(Value, "salamander", translate("Obfuscation Password"))
 o.password = true
 o.rmempty = true

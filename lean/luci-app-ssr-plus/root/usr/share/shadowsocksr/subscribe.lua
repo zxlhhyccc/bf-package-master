@@ -988,6 +988,10 @@ local function processData(szType, content, cfgid)
 			result.flag_obfs = "1"
 			result.obfs_type = params.obfs
 			result.salamander = params["obfs-password"] or params["obfs_password"]
+			if params.obfs == "gecko" then
+				result.obfs_MinPacketSize = params.minPacketSize or "512"
+				result.obfs_MaxPacketSize = params.maxPacketSize or "1200"
+			end
 		end
 		if params.allowInsecure or params.insecure then
 			local insecure = params.allowInsecure or params.insecure

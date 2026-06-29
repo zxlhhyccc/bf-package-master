@@ -657,10 +657,18 @@ Xray.outbounds = {
 						local o = {
 							type = "salamander",
 							settings = server.salamander and {
-								password = server.salamander,
-								packetSize = server.obfs_type == "gecko" and "512-1200" or nil
+								password = server.salamander
 							} or nil
 						}
+						if server.obfs_type == "gecko" then
+							local min = tonumber(server.obfs_MinPacketSize) or 512
+							local max = tonumber(server.obfs_MaxPacketSize) or 1200
+							if min <= 0 or min > max or max > 2048 then
+								min = 512
+								max = 1200
+							end
+							o.settings.packetSize = min .. "-" .. max
+						end
 						udp[#udp+1] = o
 					end
 					if server.hysteria2_realms then
@@ -967,6 +975,9 @@ local hysteria2 = {
 		up = tonumber(server.uplink_capacity) and tonumber(server.uplink_capacity) .. " mbps" or nil,
 		down = tonumber(server.downlink_capacity) and tonumber(server.downlink_capacity) .. " mbps" or nil
 	} or nil,
+	realm = (server.hysteria2_realms and server.hysteria2_realm_stun) and {
+		stunServers = server.hysteria2_realm_stun
+	} or nil,
 	socks5 = (proto:find("tcp") and tonumber(socks_port) and tonumber(socks_port) ~= 0) and {
 		listen = "0.0.0.0:" .. tonumber(socks_port),
 		disableUDP = false
@@ -1008,7 +1019,7 @@ local hysteria2 = {
 	} or nil,
 	obfs = (server.flag_obfs == "1") and {
 		type = server.obfs_type,
-		salamander = { password = server.salamander }
+		[server.obfs_type] = { password = server.salamander }
 	} or nil,
 	quic = (server.flag_quicparam == "1" ) and {
 		initStreamReceiveWindow = (server.initstreamreceivewindow and server.initstreamreceivewindow or nil),
@@ -1057,6 +1068,16 @@ local hysteria2 = {
 	fast_open = (server.fast_open == "1") and true or false,
 	lazy = (server.lazy_mode == "1") and true or false
 }
+if hysteria2.obfs and hysteria2.obfs.type == "gecko" then
+	local min = tonumber(server.obfs_MinPacketSize) or 512
+	local max = tonumber(server.obfs_MaxPacketSize) or 1200
+	if min <= 0 or min > max or max > 2048 then
+        	min = 512
+        	max = 1200
+	end
+	hysteria2.obfs.gecko.minPacketSize = min
+	hysteria2.obfs.gecko.maxPacketSize = max
+end
 local shadowtls = {
 	client = {
 		server_addr = server.server_port and format_host_port(server.server, server.server_port) or nil,
