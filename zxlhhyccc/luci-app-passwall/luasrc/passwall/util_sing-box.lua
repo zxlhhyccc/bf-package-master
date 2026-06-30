@@ -561,10 +561,24 @@ function gen_outbound(flag, node, tag, proxy_table)
 				hop_interval_max = interval_max,
 				up_mbps = (node.hysteria2_up_mbps and tonumber(node.hysteria2_up_mbps)) and tonumber(node.hysteria2_up_mbps) or nil,
 				down_mbps = (node.hysteria2_down_mbps and tonumber(node.hysteria2_down_mbps)) and tonumber(node.hysteria2_down_mbps) or nil,
-				obfs = node.hysteria2_obfs_type and {
-					type = node.hysteria2_obfs_type,
-					password = node.hysteria2_obfs_password
-				} or nil,
+				obfs = (function(t)
+					if not t or t == "" then return nil end
+					local o = {
+						type = t,
+						password = node.hysteria2_obfs_password
+					}
+					if t == "gecko" then
+						local min = tonumber(node.hysteria2_obfs_MinPacketSize) or 512
+						local max = tonumber(node.hysteria2_obfs_MaxPacketSize) or 1200
+						if min <= 0 or min > max or max > 2048 then
+							min = 512
+							max = 1200
+						end
+						o.min_packet_size = min
+						o.max_packet_size = max
+					end
+					return o
+				end)(node.hysteria2_obfs_type),
 				password = node.hysteria2_auth_password or nil,
 				idle_timeout = (function(t)
 					if not version_ge_1_14_0 then return nil end
@@ -586,6 +600,8 @@ function gen_outbound(flag, node, tag, proxy_table)
 						realm.server_url = (realm.scheme == "realm+http" and "http://" or "https://") .. realm.server_url
 						realm.stun_servers = realm.stun_servers or node.hysteria2_realm_stun
 						realm.scheme = nil
+						realm.address = nil
+						realm.port = nil
 						return realm
 					end
 					return nil
@@ -915,10 +931,24 @@ function gen_config_server(node)
 		protocol_table = {
 			up_mbps = (node.hysteria2_ignore_client_bandwidth ~= "1" and node.hysteria2_up_mbps and tonumber(node.hysteria2_up_mbps)) and tonumber(node.hysteria2_up_mbps) or nil,
 			down_mbps = (node.hysteria2_ignore_client_bandwidth ~= "1" and node.hysteria2_down_mbps and tonumber(node.hysteria2_down_mbps)) and tonumber(node.hysteria2_down_mbps) or nil,
-			obfs = node.hysteria2_obfs_type and {
-				type = node.hysteria2_obfs_type,
-				password = node.hysteria2_obfs_password
-			} or nil,
+			obfs = (function(t)
+				if not t or t == "" then return nil end
+				local o = {
+					type = t,
+					password = node.hysteria2_obfs_password
+				}
+				if t == "gecko" then
+					local min = tonumber(node.hysteria2_obfs_MinPacketSize) or 512
+					local max = tonumber(node.hysteria2_obfs_MaxPacketSize) or 1200
+					if min <= 0 or min > max or max > 2048 then
+						min = 512
+						max = 1200
+					end
+					o.min_packet_size = min
+					o.max_packet_size = max
+				end
+				return o
+			end)(node.hysteria2_obfs_type),
 			users = {
 				{
 					name = "user1",
@@ -933,6 +963,8 @@ function gen_config_server(node)
 					realm.server_url = (realm.scheme == "realm+http" and "http://" or "https://") .. realm.server_url
 					realm.stun_servers = realm.stun_servers or node.hysteria2_realm_stun
 					realm.scheme = nil
+					realm.address = nil
+					realm.port = nil
 					realm.stun_domain_resolver = "direct"
 					return realm
 				end

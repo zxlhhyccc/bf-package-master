@@ -996,7 +996,14 @@ local default_file_tree = {
 
 local function get_api_json(url)
 	local jsonc = require "luci.jsonc"
-	local return_code, content = curl_auto(url, nil, curl_args)
+	local gh_proxy = uci_get_type("global_app", "github_proxy", "0")
+	local return_code, content
+	if gh_proxy == "1" then
+		url = "https://gh-proxy.org/" .. url
+		return_code, content = curl_base(url, nil, curl_args)
+	else
+		return_code, content = curl_auto(url, nil, curl_args)
+	end
 	if return_code ~= 0 or content == "" then return {} end
 	return jsonc.parse(content) or {}
 end
@@ -1113,7 +1120,14 @@ function to_download(app_name, url, size)
 	local _curl_args = clone(curl_args)
 	table.insert(_curl_args, "--speed-limit 51200 --speed-time 15 --max-time 300")
 
-	local return_code, result = curl_auto(url, tmp_file, _curl_args)
+	local gh_proxy = uci_get_type("global_app", "github_proxy", "0")
+	local return_code, result
+	if gh_proxy == "1" then
+		url = "https://gh-proxy.org/" .. url
+		return_code, result = curl_base(url, tmp_file, _curl_args)
+	else
+		return_code, result = curl_auto(url, tmp_file, _curl_args)
+	end
 	result = return_code == 0
 
 	if not result then
@@ -1264,7 +1278,14 @@ end
 function to_check_self()
 	local url = "https://raw.githubusercontent.com/Openwrt-Passwall/openwrt-passwall/main/luci-app-passwall/Makefile"
 	local tmp_file = "/tmp/passwall_makefile"
-	local return_code, result = curl_auto(url, tmp_file, curl_args)
+	local gh_proxy = uci_get_type("global_app", "github_proxy", "0")
+	local return_code, result
+	if gh_proxy == "1" then
+		url = "https://gh-proxy.org/" .. url
+		return_code, result = curl_base(url, tmp_file, curl_args)
+	else
+		return_code, result = curl_auto(url, tmp_file, curl_args)
+	end
 	result = return_code == 0
 	if not result then
 		exec("/bin/rm", {"-f", tmp_file})
@@ -1605,22 +1626,34 @@ function vps_domain_exclude(domain)
 end
 
 function parse_realm_uri(uri)
-	if type(uri) ~= "string" then return nil end
+	uri = trim(uri)
+	if uri == "" then return nil end
 	-- realm[+http]://token@server/realm_id?query
-	local scheme, token, server_url, realm_id, query = trim(uri):match("^(realm%+http|realm)://([^@]+)@([^/]+)/([^?]*)%??(.*)$")
-	if not scheme or not token or not server_url or not realm_id then return nil end
+	local scheme = (uri:match("^realm%+http://") and "realm+http") or (uri:match("^realm://") and "realm")
+	if not scheme then return nil end
+	uri = uri:gsub("^realm%+http://", ""):gsub("^realm://", "")
+	local token, server_url, realm_id, query = uri:match("^([^@]+)@([^/]+)/([^?]*)%??(.*)$")
+	if not token or not server_url or not realm_id then return nil end
 	realm_id = realm_id:gsub("/+$", "")
+	local address, port = server_url:match("^%[([^%]]+)%]:(%d+)$") --ipv6:port
+	if not address then
+		address, port = server_url:match("^([^:]+):(%d+)$") --ipv4[domain]:port
+	end
+	address = address or server_url:match("^%[([^%]]+)%]$") or server_url
+	port = tonumber(port) or (scheme == "realm+http" and 80 or 443)
 	local realm = {
 		scheme = scheme,
 		token = token,
 		server_url = server_url,
+		address = address,
+		port = port,
 		realm_id = realm_id
 	}
 	-- 解析 query 中的 stun=
 	local stun_servers
-	for value in (query or ""):gmatch("[?&]?[Ss][Tt][Uu][Nn]=([^&]+)") do
-		if not stun_servers then stun_servers = {} end
-		stun_servers[#stun_servers + 1] = value
+	for v in (query or ""):gmatch("[Ss][Tt][Uu][Nn]=([^&]+)") do
+		stun_servers = stun_servers or {}
+		stun_servers[#stun_servers + 1] = v
 	end
 	realm.stun_servers = stun_servers
 	return realm
