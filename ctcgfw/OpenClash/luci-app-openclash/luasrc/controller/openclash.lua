@@ -104,6 +104,11 @@ function index()
 	entry({"admin", "services", "openclash", "delete_overwrite_file"}, call("delete_overwrite_file"))
 	entry({"admin", "services", "openclash", "get_subscribe_data"}, call("action_get_subscribe_data"))
 	entry({"admin", "services", "openclash", "get_subscribe_info_data"}, call("action_get_subscribe_info_data"))
+	entry({"admin", "services", "openclash", "oix_info"}, call("oix_info"))
+	entry({"admin", "services", "openclash", "oix_checkin"}, call("oix_checkin"))
+	entry({"admin", "services", "openclash", "oix_logout"}, call("oix_logout"))
+	entry({"admin", "services", "openclash", "oix_login"}, call("oix_login"))
+	entry({"admin", "services", "openclash", "oix_login_info_save"}, call("oix_login_info_save"))
 end
 
 local fs = require "luci.openclash"
@@ -179,22 +184,14 @@ local function startlog()
 	return info
 end
 
-local function pkg_type()
-	if fs.access("/usr/bin/apk") then
-		return "apk"
-	else
-		return "opkg"
-	end
-end
-
 local function coremodel()
 	if opkg and opkg.info("libc") and opkg.info("libc")["libc"] then
 		return opkg.info("libc")["libc"]["Architecture"]
 	else
-		if pkg_type() == "opkg" then
+		if fs.pkg_type() == "opkg" then
 			return luci.sys.exec("rm -f /var/lock/opkg.lock && opkg status libc 2>/dev/null |grep 'Architecture' |awk -F ': ' '{print $2}' 2>/dev/null")
 		else
-			return luci.sys.exec("apk list libc 2>/dev/null |awk '{print $2}'")
+			return luci.sys.exec("rm -f /lib/apk/db/lock && apk list libc 2>/dev/null |awk '{print $2}'")
 		end
 	end
 end
@@ -223,8 +220,12 @@ end
 local function corelv()
 	local core_meta_lv = ""
 	local core_smart_enable = fs.uci_get_config("config", "smart_enable") or "0"
+	local core_type = fs.uci_get_config("config", "core_type") or "Meta"
+	local oix_token = fs.uci_get_config("config", "oix_token") or ""
 	if fs.access("/tmp/clash_last_version") then
-		if core_smart_enable == "1" then
+		if core_type == "Oix" or oix_token ~= "" then
+			core_meta_lv = luci.sys.exec("sed -n 1p /tmp/clash_last_version 2>/dev/null |tr -d '\n'")
+		elseif core_smart_enable == "1" then
 			core_meta_lv = luci.sys.exec("sed -n 2p /tmp/clash_last_version 2>/dev/null |tr -d '\n'")
 		else
 			core_meta_lv = luci.sys.exec("sed -n 1p /tmp/clash_last_version 2>/dev/null |tr -d '\n'")
@@ -243,10 +244,10 @@ local function opcv()
 	if info and info["luci-app-openclash"] and info["luci-app-openclash"]["Version"] and info["luci-app-openclash"]["Installed-Time"] then
 		v = info["luci-app-openclash"]["Version"]
 	else
-		if pkg_type() == "opkg" then
+		if fs.pkg_type() == "opkg" then
 			v = luci.sys.exec("rm -f /var/lock/opkg.lock && opkg status luci-app-openclash 2>/dev/null |grep 'Version' |awk -F 'Version: ' '{print $2}' |tr -d '\n'")
 		else
-			v = luci.sys.exec("apk list luci-app-openclash 2>/dev/null|grep 'installed' | grep -oE '[0-9]+(\\.[0-9]+)*' | head -1 |tr -d '\n'")
+			v = luci.sys.exec("rm -f /lib/apk/db/lock && apk list luci-app-openclash 2>/dev/null|grep 'installed' | grep -oE '[0-9]+(\\.[0-9]+)*' | head -1 |tr -d '\n'")
 		end
 	end
 	if v and v ~= "" then
@@ -397,14 +398,16 @@ function action_restore_config()
 	uci:commit("openclash")
 	luci.sys.call("mkdir -p /etc/openclash/custom >/dev/null 2>&1")
 	luci.sys.call("mkdir -p /etc/openclash/overwrite >/dev/null 2>&1")
+	luci.sys.call("mkdir -p /etc/openclash/rule_provider >/dev/null 2>&1")
 	luci.sys.call("/etc/init.d/openclash stop >/dev/null 2>&1")
-	luci.sys.call("cp /usr/share/openclash/backup/openclash /etc/config/openclash >/dev/null 2>&1 &")
-	luci.sys.call("cp /usr/share/openclash/backup/openclash_custom* /etc/openclash/custom/ >/dev/null 2>&1 &")
-	luci.sys.call("cp /usr/share/openclash/backup/openclash_force_sniffing* /etc/openclash/custom/ >/dev/null 2>&1 &")
-	luci.sys.call("cp /usr/share/openclash/backup/openclash_sniffing* /etc/openclash/custom/ >/dev/null 2>&1 &")
-	luci.sys.call("cp /usr/share/openclash/backup/china_ip_route.ipset /etc/openclash/china_ip_route.ipset >/dev/null 2>&1 &")
-	luci.sys.call("cp /usr/share/openclash/backup/china_ip6_route.ipset /etc/openclash/china_ip6_route.ipset >/dev/null 2>&1 &")
-	luci.sys.call("cp /usr/share/openclash/backup/overwrite/default /etc/openclash/overwrite/default >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/openclash /etc/config/openclash >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/openclash_custom* /etc/openclash/custom/ >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/openclash_force_sniffing* /etc/openclash/custom/ >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/openclash_sniffing* /etc/openclash/custom/ >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/china_ip_route.ipset /etc/openclash/china_ip_route.ipset >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/china_ip6_route.ipset /etc/openclash/china_ip6_route.ipset >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/overwrite/default /etc/openclash/overwrite/default >/dev/null 2>&1 &")
+	luci.sys.call("cp -f /usr/share/openclash/backup/oc-cn-domain.mrs /etc/openclash/rule_provider/oc-cn-domain.mrs >/dev/null 2>&1 &")
 	luci.sys.call("rm -rf /etc/openclash/history/* >/dev/null 2>&1 &")
 end
 
@@ -946,12 +949,12 @@ local a={' B/S',' KB/S',' MB/S',' GB/S',' TB/S',' PB/S'}
 if (e<=1024) then
 	return e..a[1]
 else
-repeat
-e=e/1024
-t=t+1
-until(e<=1024)
-return string.format("%.1f",e)..a[t]
-end
+	repeat
+		e=e/1024
+		t=t+1
+		until(e<=1024)
+		return string.format("%.1f",e)..a[t]
+	end
 end
 
 function action_toolbar_show_sys()
@@ -1286,7 +1289,7 @@ function action_update_ma()
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
 		oplv = oplv(),
-		pkg_type = pkg_type(),
+		pkg_type = fs.pkg_type(),
 		corelv = corelv(),
 		corever = corever();
 	})
@@ -1360,18 +1363,19 @@ function action_refresh_log()
 	local core_pattern = "level=|^time="
 	local limit = 1000
 	local start_line = (log_len > 0 and total_lines > log_len) and (log_len + 1) or 1
+	local read_count = math.max(0, total_lines - start_line + 1)
 	local core_cmd, oc_cmd, core_raw, oc_raw
 	local core_logs = {}
 	local oc_logs = {}
 
 	core_cmd = string.format(
-		"tail -n +%d '%s' | grep -v -E '%s' | grep -E '%s' | tail -n %d",
-		start_line, logfile, exclude_pattern, core_pattern, limit
+		"tail -n +%d '%s' | head -n %d | grep -v -E '%s' | grep -E '%s' | tail -n %d",
+		start_line, logfile, read_count, exclude_pattern, core_pattern, limit
 	)
 
 	oc_cmd = string.format(
-		"tail -n +%d '%s' | grep -v -E '%s' | grep -v -E '%s' | tail -n %d",
-		start_line, logfile, exclude_pattern, core_pattern, limit
+		"tail -n +%d '%s' | head -n %d | grep -v -E '%s' | grep -v -E '%s' | tail -n %d",
+		start_line, logfile, read_count, exclude_pattern, core_pattern, limit
 	)
 
 	if core_refresh then
@@ -1679,6 +1683,13 @@ function rename_file()
 					uci:set("openclash", s[".name"], "config", new_file_name)
 				end
 			end)
+
+			uci:foreach("openclash", "config_age_secret",
+			function(s)
+				if s.name == fs.filename(old_file_name) and fs.filename(new_file_name) ~= new_file_name then
+					uci:set("openclash", s[".name"], "name", fs.filename(new_file_name))
+				end
+			end)
 			
 			uci:commit("openclash")
 		end
@@ -1804,13 +1815,7 @@ function trans_line(data)
 end
 
 function process_status(name)
-	local ps_version = luci.sys.exec("ps --version 2>&1 |grep -c procps-ng |tr -d '\n'")
-	local cmd
-	if ps_version == "1" then
-		cmd = string.format("ps -efw |grep '%s' |grep -v grep", name)
-	else
-		cmd = string.format("ps -w |grep '%s' |grep -v grep", name)
-	end
+	local cmd = string.format("%s |grep '%s' |grep -v grep", fs.ps_cmd(), name)
 	local result = luci.sys.exec(cmd)
 	return result ~= nil and result ~= "" and not result:match("^%s*$")
 end
@@ -2102,6 +2107,8 @@ function latency_test(addr)
 	local urls = {}
 	if addr == "raw.githubusercontent.com" then
 		table.insert(urls, "https://raw.githubusercontent.com/vernesong/OpenClash/dev/img/logo.png")
+	elseif addr:match("jsdelivr%.net$") then
+		table.insert(urls, "https://" .. addr .. "/gh/vernesong/OpenClash@dev/img/logo.png")
 	else
 		table.insert(urls, "https://" .. addr .. "/favicon.ico")
 	end
@@ -2913,6 +2920,11 @@ local function is_safe_filename(filename)
 	return filename and filename:match("^[%w%._%-]+$") and not filename:match("^%.")
 end
 
+local function kill_process()
+	local cmd = string.format("%s |grep -E 'openclash|clash' |grep -v grep |awk '{print $1}' |xargs -r kill -9 >/dev/null 2>&1", fs.ps_cmd())
+	luci.sys.call(cmd)
+end
+
 function action_oc_action()
 	local action = luci.http.formvalue("action")
 	local config_file = luci.http.formvalue("config_file")
@@ -2940,7 +2952,7 @@ function action_oc_action()
 			uci:commit("openclash")
 		end
 		if not is_running() then
-			luci.sys.call("ps | grep openclash | grep -v grep | awk '{print $1}' | xargs -r kill -9 >/dev/null 2>&1")
+			kill_process()
 			luci.sys.call("/etc/init.d/openclash start >/dev/null 2>&1")
 		else
 			luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1")
@@ -2950,14 +2962,14 @@ function action_oc_action()
 			uci:set("openclash", "config", "enable", "0")
 			uci:commit("openclash")
 		end
-		luci.sys.call("ps | grep openclash | grep -v grep | awk '{print $1}' | xargs -r kill -9 >/dev/null 2>&1")
+		kill_process()
 		luci.sys.call("/etc/init.d/openclash stop >/dev/null 2>&1")
 	elseif action == "restart" then
 		if uci:get("openclash", "config", "enable") ~= "1" then
 			uci:set("openclash", "config", "enable", "1")
 			uci:commit("openclash")
 		end
-		luci.sys.call("ps | grep openclash | grep -v grep | awk '{print $1}' | xargs -r kill -9 >/dev/null 2>&1")
+		kill_process()
 		luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1")
 	else
 		luci.http.status(500, "Invalid action parameter")
@@ -3147,9 +3159,13 @@ end
 
 function action_config_file_read()
 	local config_file = luci.http.formvalue("config_file")
+	luci.http.prepare_content("application/json")
 
 	if not config_file then
-		luci.http.status(500, "Missing config_file parameter")
+		luci.http.write_json({
+			status = "error",
+			message = "Missing config_file parameter"
+		})
 		return
 	end
 
@@ -3165,7 +3181,6 @@ function action_config_file_read()
 	end
 
 	if not allow then
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "error",
 			message = "Invalid config file path"
@@ -3174,7 +3189,6 @@ function action_config_file_read()
 	end
 
 	if not fs.access(config_file) then
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "success",
 			content = "",
@@ -3191,7 +3205,6 @@ function action_config_file_read()
 
 	local stat = fs.stat(config_file)
 	if not stat or stat.type ~= "regular" then
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "error",
 			message = "Config file is not a regular file"
@@ -3200,7 +3213,6 @@ function action_config_file_read()
 	end
 
 	if stat.size > 10 * 1024 * 1024 then
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "error",
 			message = "Config file too large (max 10MB)"
@@ -3210,7 +3222,6 @@ function action_config_file_read()
 
 	local content = fs.readfile(config_file)
 	if content == nil then
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "error",
 			message = "Failed to read config file"
@@ -3218,7 +3229,6 @@ function action_config_file_read()
 		return
 	end
 
-	luci.http.prepare_content("application/json")
 	luci.http.write_json({
 		status = "success",
 		content = content,
@@ -3235,17 +3245,24 @@ end
 function action_config_file_save()
 	local config_file = luci.http.formvalue("config_file")
 	local content = luci.http.formvalue("content")
+	luci.http.prepare_content("application/json")
 	if content then
 		content = content:gsub("\r\n", "\n"):gsub("\r", "\n")
 	end
 
 	if not config_file then
-		luci.http.status(500, "Missing config_file parameter")
+		luci.http.write_json({
+			status = "error",
+			message = "Missing config_file parameter"
+		})
 		return
 	end
 
 	if not content then
-		luci.http.status(500, "Missing content parameter")
+		luci.http.write_json({
+			status = "error",
+			message = "Missing content parameter"
+		})
 		return
 	end
 
@@ -3261,7 +3278,6 @@ function action_config_file_save()
 		end
 	else
 		if not (config_file == "/etc/openclash/custom/openclash_custom_overwrite.sh" or (config_file:match("^/etc/openclash/overwrite/[^/]+$") and not string.find(config_file, "%.%."))) then
-			luci.http.prepare_content("application/json")
 			luci.http.write_json({
 				status = "error",
 				message = "Invalid overwrite file path"
@@ -3271,7 +3287,6 @@ function action_config_file_save()
 	end
 
 	if string.len(content) > 10 * 1024 * 1024 then
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "error",
 			message = "Content too large (max 10MB)"
@@ -3284,7 +3299,6 @@ function action_config_file_save()
 		backup_file = config_file .. ".backup." .. os.time()
 		local backup_success = luci.sys.call(string.format("cp '%s' '%s'", config_file, backup_file))
 		if backup_success ~= 0 then
-			luci.http.prepare_content("application/json")
 			luci.http.write_json({
 				status = "error",
 				message = "Failed to create backup file"
@@ -3299,7 +3313,6 @@ function action_config_file_save()
 			luci.sys.call(string.format("mv '%s' '%s'", backup_file, config_file))
 		end
 
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "error",
 			message = "Failed to write config file"
@@ -3313,7 +3326,6 @@ function action_config_file_save()
 			luci.sys.call(string.format("mv '%s' '%s'", backup_file, config_file))
 		end
 
-		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			status = "error",
 			message = "File write verification failed"
@@ -3349,7 +3361,6 @@ function action_config_file_save()
 		}
 	end
 
-	luci.http.prepare_content("application/json")
 	luci.http.write_json({
 		status = "success",
 		message = "Config file saved successfully",
@@ -4039,10 +4050,14 @@ function action_get_subscribe_data()
 	end)
 
 	uci:foreach("openclash", "config_age_secret", function(a)
-		if a.name == filename then
+		if a.name == filename and (not a.hidden or a.hidden ~= "true") then
 			if a.secret then data.config_age_secret = a.secret end
 			if a.public then data.config_age_public = a.public end
 			if a.algo then data.config_age_algo = a.algo end
+			return false
+		end
+		if a.name == filename and a.hidden and a.hidden == "true" then
+			data.config_age_hidden = true
 			return false
 		end
 	end)
@@ -4097,6 +4112,7 @@ function action_add_age_config()
 	local age_secret = luci.http.formvalue("age_secret") or ""
 	local age_public = luci.http.formvalue("age_public") or ""
 	local age_algo = luci.http.formvalue("age_algo") or ""
+	local age_section_id, age_section_hidden
 
 	luci.http.prepare_content("application/json")
 
@@ -4105,13 +4121,18 @@ function action_add_age_config()
 		return
 	end
 
-	local age_section_id = nil
 	uci:foreach("openclash", "config_age_secret", function(s)
 		if s.name == name then
 			age_section_id = s['.name']
+			age_section_hidden = s.hidden and s.hidden == "true"
 			return false
 		end
 	end)
+
+	if age_section_hidden then
+		luci.http.write_json({status = "error", message = "Cannot modify hidden age configuration"})
+		return
+	end
 
 	if not age_section_id and (age_secret ~= "" or age_public ~= "" or age_algo ~= "") then
 		age_section_id = uci:add("openclash", "config_age_secret")
@@ -4144,4 +4165,203 @@ function action_add_age_config()
 	end
 
 	luci.http.write_json({status = "success"})
+end
+
+function oix_login_info_save()
+	uci:set("openclash", "config", "oix_email", luci.http.formvalue("email"))
+	uci:set("openclash", "config", "oix_passwd", luci.http.formvalue("passwd"))
+	uci:set("openclash", "config", "oix_checkin", luci.http.formvalue("checkin"))
+	uci:set("openclash", "config", "oix_checkin_interval", luci.http.formvalue("interval"))
+	if tonumber(luci.http.formvalue("multiple")) > 100 then
+		uci:set("openclash", "config", "oix_checkin_multiple", "100")
+	elseif tonumber(luci.http.formvalue("multiple")) < 1 or not tonumber(luci.http.formvalue("multiple")) then
+		uci:set("openclash", "config", "oix_checkin_multiple", "1")
+	else
+		uci:set("openclash", "config", "oix_checkin_multiple", luci.http.formvalue("multiple"))
+	end
+	uci:commit("openclash")
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({status = "success"})
+end
+
+function oix_login()
+	local result, info, token, get_sub, sub_info, sub_key, sub_match, sub_convert, sid, sub_file, SIGNATURE
+	local email = fs.uci_get_config("config", "oix_email")
+	local passwd = fs.uci_get_config("config", "oix_passwd")
+	token = fs.uci_get_config("config", "oix_token")
+	if email and passwd then
+		info = luci.sys.exec(string.format("curl -sL -H 'Content-Type: application/json' -H 'User-Agent: OpenClash' -d '{\"email\":\"%s\", \"passwd\":\"%s\", \"token_expire\":\"365\" }' -X POST https://oix-api.dler.io/api/v1/login", email, passwd))
+		if info then
+			info = json.parse(info)
+		end
+		if info and info.ret == 200 then
+			-- because of uci cache, need reload after delete if get new
+			if token and token ~= "" then
+				oix_logout(token)
+			end
+			token = info.data.token
+			uci:set("openclash", "config", "oix_token", token)
+			uci:commit("openclash")
+			get_sub = string.format("curl -sL -H 'Content-Type: application/json' -H 'Authorization: Bearer %s' -X POST https://oix-api.dler.io/api/v1/managed/clash", token)
+			sub_info = luci.sys.exec(get_sub)
+			if sub_info then
+				sub_info = json.parse(sub_info)
+			end
+			if sub_info and sub_info.ret == 200 then
+				sub_key = {"openclash"}
+				for _,v in ipairs(sub_key) do
+					while true do
+						sub_match = false
+						sub_convert = false
+						uci:foreach("openclash", "config_subscribe",
+						function(s)
+							if s.name == "oixCloud - smart" and s.address == sub_info[v] then
+								sub_match = true
+							end
+							if s.name == "oixCloud - smart" and s.address ~= sub_info[v] then
+								sub_convert = true
+								sid = s['.name']
+							end
+						end)
+						if sub_match then break end
+						if sub_convert then
+							uci:set("openclash", sid, "address", sub_info[v])
+						elseif sub_info[v] then
+							sid = uci:add("openclash", "config_subscribe")
+							uci:set("openclash", sid, "name", "oixCloud - smart")
+							uci:set("openclash", sid, "address", sub_info[v])
+						end
+						uci:commit("openclash")
+						break
+					end
+					if sub_info[v] then
+						luci.sys.exec(string.format('curl -sL -m 10 --retry 2 --user-agent "clash" "%s" -o "/etc/openclash/config/oixCloud - smart.yaml" >/dev/null 2>&1', sub_info[v]))
+						luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
+					end
+				end
+			end
+			result = info.ret
+		else
+			uci:delete("openclash", "config", "oix_token")
+			uci:commit("openclash")
+			fs.unlink("/tmp/oix_checkin")
+			fs.unlink("/tmp/oix_info")
+			if info and info.msg then
+				result = info.msg
+			else
+				result = "login faild"
+			end
+		end
+	else
+		uci:delete("openclash", "config", "oix_token")
+		uci:commit("openclash")
+		fs.unlink("/tmp/oix_checkin")
+		fs.unlink("/tmp/oix_info")
+		result = "email or passwd is wrong"
+	end
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({result = result})
+end
+
+function oix_logout(oldtoken)
+	local info, result, token
+	if not oldtoken then
+		token = fs.uci_get_config("config", "oix_token")
+	else
+		token = oldtoken
+	end
+	if token then
+		info = luci.sys.exec(string.format("curl -sL -H 'Content-Type: application/json' -H 'Authorization: Bearer %s' -X POST https://oix-api.dler.io/api/v1/logout", token))
+		if info then
+			info = json.parse(info)
+		end
+		if info and info.ret == 200 then
+			uci:delete("openclash", "config", "oix_token")
+			if not oldtoken then
+				uci:delete("openclash", "config", "oix_checkin")
+				uci:delete("openclash", "config", "oix_checkin_interval")
+				uci:delete("openclash", "config", "oix_checkin_multiple")
+			end
+			uci:commit("openclash")
+			fs.unlink("/tmp/oix_checkin")
+			fs.unlink("/tmp/oix_info")
+			result = info.ret
+		else
+			if info and info.msg then
+				result = info.msg
+			else
+				result = "logout faild"
+			end
+		end
+	else
+		result = "logout faild"
+	end
+	if not oldtoken then
+		luci.http.prepare_content("application/json")
+		luci.http.write_json({result = result})
+	end
+end
+
+function oix_info()
+	local info, path, get_info
+	local result = "error"
+	local token = fs.uci_get_config("config", "oix_token")
+	path = "/tmp/oix_info"
+	if token then
+		get_info = string.format("curl -sL -H 'Content-Type: application/json' -H 'Authorization: Bearer %s' -X POST https://oix-api.dler.io/api/v1/information -o %s", token, path)
+		if not fs.access(path) then
+			luci.sys.exec(get_info)
+		else
+			if fs.readfile(path) == "" or not fs.readfile(path) then
+				luci.sys.exec(get_info)
+			else
+				if (os.time() - fs.mtime(path) > 900) then
+					luci.sys.exec(get_info)
+				end
+			end
+		end
+		info = fs.readfile(path)
+		if info then
+			info = json.parse(info)
+		end
+		if info and info.ret == 200 and info.data then
+			result = info.data
+		elseif info and info.msg then
+			fs.writefile(path, json.stringify(info))
+		else
+			fs.unlink(path)
+		end
+	end
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({result = result})
+end
+
+function oix_checkin()
+	local info, result
+	local path = "/tmp/oix_checkin"
+	local token = fs.uci_get_config("config", "oix_token")
+	local multiple = fs.uci_get_config("config", "oix_checkin_multiple") or 1
+	if token then
+		info = luci.sys.exec(string.format("curl -sL -H 'Content-Type: application/json' -H 'Authorization: Bearer %s' -d '{\"multiple\":\"%s\"}' -X POST https://oix-api.dler.io/api/v1/checkin", token, token, multiple))
+		if info then
+			info = json.parse(info)
+		end
+		if info and info.ret == 200 then
+			fs.unlink("/tmp/oix_info")
+			fs.writefile(path, info)
+			luci.sys.exec(string.format("echo -e %s oixCloud Checkin Successful, Result:【%s】 >> /tmp/openclash.log", os.date("%Y-%m-%d %H:%M:%S"), info.data.checkin))
+			result = info
+		else
+			if info and info.msg then
+				luci.sys.exec(string.format("echo -e %s oixCloud Checkin Failed, Result:【%s】 >> /tmp/openclash.log", os.date("%Y-%m-%d %H:%M:%S"), info.msg))
+			else
+				luci.sys.exec(string.format("echo -e %s oixCloud Checkin Failed! Please Check And Try Again... >> /tmp/openclash.log",os.date("%Y-%m-%d %H:%M:%S")))
+			end
+			result = info
+		end
+	else
+		result = "error"
+	end
+	luci.http.prepare_content("application/json")
+	luci.http.write_json({result = result})
 end

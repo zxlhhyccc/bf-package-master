@@ -123,19 +123,54 @@ module YAML
 		end
 	end
 
-	# Find age public/secret keys for a given filename.
-	# Returns a hash: { publics: [..], secrets: [..] }
+	def self.popen_stream(cmd, input, chunk_size: 64 * 1024)
+		output = String.new
+		IO.popen(cmd, 'r+', err: [:child, :out]) do |io|
+			io.binmode
+			writer = Thread.new do
+				begin
+				input.bytesize.times do |i|
+					chunk = input.byteslice(i * chunk_size, chunk_size)
+					break if chunk.nil?
+					io.write(chunk)
+				end
+				io.close_write
+				rescue Errno::EPIPE
+				end
+			end
+
+			while chunk = io.read(chunk_size)
+				output << chunk
+			end
+			writer.join
+		end
+		[output, $?]
+	end
+
+	def self.decode64(input)
+		first_line = input.each_line.find { |l| !l.strip.empty? } || ""
+		return input if !first_line.strip.match?(/\A[A-Za-z0-9+\/=]+\z/)
+		out, status = popen_stream(["base64", "-d"], input)
+		status.success? ? out : input
+	rescue Errno::ENOENT
+		input
+	end
+
 	def self.find_age_keys_for_filename(filename)
 		begin
 			basename = File.basename(filename)
 			basename_no_ext = File.basename(filename, File.extname(filename))
 			publics = []
 			secrets = []
+
 			[basename, basename_no_ext].uniq.each do |n|
-				IO.popen(["/bin/sh", "-c", ". /usr/share/openclash/uci.sh; uci_get_age_public_keys \"$1\"", "sh", n], 'r') do |io|
+				cmd_public = ["/bin/sh", "-c", ". /usr/share/openclash/uci.sh; uci_get_age_public_keys \"$1\"", "sh", n]
+				IO.popen(cmd_public, "r") do |io|
 					io.each_line { |l| publics << l.strip unless l.nil? || l.strip == "" }
 				end
-				IO.popen(["/bin/sh", "-c", ". /usr/share/openclash/uci.sh; uci_get_age_secret_keys \"$1\"", "sh", n], 'r') do |io|
+
+				cmd_secret = ["/bin/sh", "-c", ". /usr/share/openclash/uci.sh; uci_get_age_secret_keys \"$1\"", "sh", n]
+				IO.popen(cmd_secret, "r") do |io|
 					io.each_line { |l| secrets << l.strip unless l.nil? || l.strip == "" }
 				end
 			end
@@ -145,30 +180,20 @@ module YAML
 		end
 	end
 
-	# Decrypt content using given age secret
 	def self.decrypt_content_with_secret(secret, content)
-		begin
-			IO.popen(["/etc/openclash/core/clash_meta","age","decrypt", secret, '-', '-'], 'r+') do |io|
-				io.write(content)
-				io.close_write
-				return io.read
-			end
-		rescue => e
-			nil
-		end
+		cmd = ['/etc/openclash/core/clash_meta', 'age', 'decrypt', secret, '-', '-']
+		out, status = popen_stream(cmd, content)
+		status.success? ? out : nil
+	rescue => e
+		nil
 	end
 
-	# Encrypt content using given age public key
-	def self.encrypt_content_with_public(public_key, content)
-		begin
-			IO.popen(["/etc/openclash/core/clash_meta","age","encrypt", public_key, '-', '-'], 'r+') do |io|
-				io.write(content)
-				io.close_write
-				return io.read
-			end
-		rescue => e
-			nil
-		end
+	def self.encrypt_content_with_public(public, content)
+		cmd = ['/etc/openclash/core/clash_meta', 'age', 'encrypt', public, '-', '-']
+		out, status = popen_stream(cmd, content)
+		status.success? ? out : nil
+	rescue => e
+		nil
 	end
 
 	private
@@ -190,6 +215,8 @@ module YAML
 	#   Input:  short-id: null        -> Output: short-id: ""
 
 	def self.fix_short_id_quotes(yaml_content)
+		yaml_content = decode64(yaml_content)
+
 		return yaml_content unless yaml_content.include?('short-id:')
 
 		begin

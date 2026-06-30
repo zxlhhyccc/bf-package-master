@@ -79,6 +79,7 @@ s:tab("auto_restart", translate("Auto Restart"))
 s:tab("version_update", translate("Version Update"))
 s:tab("developer", translate("Developer Settings"))
 s:tab("debug", translate("Debug Logs"))
+s:tab("oixcloud", translate("oixCloud"))
 
 o = s:taboption("op_mode", ListValue, "en_mode", font_red..bold_on..translate("Select Mode")..bold_off..font_off)
 o.description = translate("Select Mode For OpenClash Work, Try Flush DNS Cache If Network Error")
@@ -153,6 +154,51 @@ o:value("2", translate("Firewall Redirect"))
 
 o = s:taboption("dns", DummyValue, "flush_dns_cache", translate("Flush DNS"))
 o.template = "openclash/flush_dns_cache"
+
+o = s:taboption("dns", Button, "dnsmasq_fix", translate("Dnsmasq Fix"))
+o.description = translate("If DNS is abnormal after stopping the OpenClash, please try to fix")
+o.inputtitle = translate("Fix")
+o.inputstyle = "reload"
+o.write = function()
+	uci:set("dhcp", "@dnsmasq[0]", "noresolv", "0")
+	uci:set("dhcp", "@dnsmasq[0]", "localuse", "1")
+	local resolv_file = uci:get("dhcp", "@dnsmasq[0]", "resolvfile")
+	local need_fix = false
+	if not resolv_file or resolv_file == "" then
+		need_fix = true
+	elseif not NXFS.access(resolv_file) then
+		need_fix = true
+	else
+		local content = fs.readfile(resolv_file) or ""
+		if not content:find("nameserver") then
+			need_fix = true
+		end
+	end
+	if need_fix then
+		for _, f in ipairs({"/tmp/resolv.conf.d/resolv.conf.auto", "/tmp/resolv.conf.auto"}) do
+			if NXFS.access(f) then
+				local content = fs.readfile(f) or ""
+				if content:find("nameserver") then
+					uci:set("dhcp", "@dnsmasq[0]", "resolvfile", f)
+					resolv_file = f
+					need_fix = false
+					break
+				end
+			end
+		end
+	end
+	if need_fix then
+		resolv_file = "/tmp/resolv.conf.d/resolv.conf.auto"
+		SYS.call("mkdir -p /tmp/resolv.conf.d")
+		fs.writefile(resolv_file, "# Interface lan\nnameserver 119.29.29.29\nnameserver 8.8.8.8\n")
+		uci:set("dhcp", "@dnsmasq[0]", "resolvfile", resolv_file)
+	end
+	uci:set("openclash", "config", "redirect_dns", "0")
+	uci:commit("dhcp")
+	uci:commit("openclash")
+	SYS.call("/etc/init.d/dnsmasq restart")
+	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "settings"))
+end
 
 o = s:taboption("dns", Flag, "enable_custom_domain_dns_server", translate("Enable Specify DNS Server"))
 o.default = 0
@@ -1369,6 +1415,54 @@ end
 ---- debug
 o = s:taboption("debug", DummyValue, "", nil)
 o.template = "openclash/debug"
+
+---- oixcloud
+o = s:taboption("oixcloud", Value, "oix_email")
+o.title = translate("Account Email Address")
+o.rmempty = true
+
+o = s:taboption("oixcloud", Value, "oix_passwd")
+o.title = translate("Account Password")
+o.password = true
+o.rmempty = true
+
+if fs.uci_get_config("config", "oix_token") then
+	o = s:taboption("oixcloud", Flag, "oix_checkin")
+	o.title = translate("Checkin")
+	o.default = 0
+	o.rmempty = true
+end
+
+o = s:taboption("oixcloud", Value, "oix_checkin_interval")
+o.title = translate("Checkin Interval (hour)")
+o:depends("oix_checkin", "1")
+o.default = "1"
+o.rmempty = true
+
+o = s:taboption("oixcloud", Value, "oix_checkin_multiple")
+o.title = translate("Checkin Multiple")
+o.datatype = "uinteger"
+o.default = "1"
+o:depends("oix_checkin", "1")
+o.rmempty = true
+o.description = font_green..bold_on..translate("Multiple Must Be a Positive Integer and No More Than 100")..bold_off..font_off
+function o.validate(self, value)
+	if tonumber(value) < 1 then
+		return "1"
+	end
+	if tonumber(value) > 100 then
+		return "100"
+	end
+	return value
+end
+
+o = s:taboption("oixcloud", DummyValue, "oix_login", translate("Account Login"))
+o.template = "openclash/oix_login"
+if fs.uci_get_config("config", "oix_token") then
+	o.value = font_green..bold_on..translate("Account logged in")..bold_off..font_off
+else
+	o.value = font_red..bold_on..translate("Account not logged in")..bold_off..font_off
+end
 
 local t = {
 	{Commit, Apply}

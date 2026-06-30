@@ -36,6 +36,9 @@ local HTTP = require "luci.http"
 local type  = type
 local string  = string
 local tostring = tostring
+local table = table
+local math = math
+local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
 --- LuCI filesystem library.
 module "luci.openclash"
@@ -91,12 +94,7 @@ function readfile(filename)
 	if content:find("BEGIN AGE ENCRYPTED FILE") then
 		local keys = get_age_keys(filename)
 		if keys and keys.secret and keys.secret ~= "" then
-			local dec = age_decrypt(keys.secret, content)
-			if dec and dec:find("BEGIN AGE ENCRYPTED FILE") == nil then
-				return dec
-			else
-				return content
-			end
+			return age_decrypt(keys.secret, content) or content
 		else
 			return content
 		end
@@ -113,11 +111,7 @@ end
 function writefile(filename, data)
 	local keys = get_age_keys(filename)
 	if keys and keys.public and keys.public ~= "" then
-		local enc = age_encrypt(keys.public, data)
-		if not enc then
-			return fs.writefile(filename, data)
-		end
-		return fs.writefile(filename, enc)
+		return fs.writefile(filename, age_encrypt(keys.public, data) or data)
 	end
 	return fs.writefile(filename, data)
 end
@@ -388,13 +382,12 @@ function get_file_path_from_request()
 	return file_path
 end
 
-function get_age_keys(filename)
-	local basename = fs.basename(filename or "") or ""
-	local basename_no_ext = basename:gsub('%.%w+$','')
+function get_age_keys(file)
+	local name = filename(basename(file))
 	local pub, sec
 	uci:foreach("openclash", "config_age_secret", function(s)
 		if s and s.name then
-			if s.name == basename or s.name == basename_no_ext then
+			if s.name == name and (not s.hidden or (s.hidden ~= "true")) then
 				if not pub and s.public then pub = s.public end
 				if not sec and s.secret then sec = s.secret end
 			end
@@ -403,24 +396,131 @@ function get_age_keys(filename)
 	return { public = pub, secret = sec }
 end
 
-function age_decrypt(secret, content)
-	if not secret or secret == "" or not content then return nil end
-	local cmd = "cat <<'EOF' | /etc/openclash/core/clash_meta age decrypt " .. tostring(secret) .. " - - 2>/dev/null\n" .. content .. "\nEOF"
-	local fh = io.popen(cmd, 'r')
-	if not fh then return nil end
-	local out = fh:read('*a') or ''
-	fh:close()
-	if out and out ~= '' then return out end
-	return nil
+function age_encrypt(public, content)
+    if not public or public == "" or not content then return nil end
+
+    local tmp_in = os.tmpname()
+    local tmp_out = os.tmpname()
+    local f = io.open(tmp_in, "w")
+    if not f then return nil end
+    f:write(content)
+    f:close()
+
+    local cmd = string.format(
+        "/etc/openclash/core/clash_meta age encrypt %s %s %s 2>/dev/null",
+        public, tmp_in, tmp_out
+    )
+    os.execute(cmd)
+
+    local out = nil
+    local f_out = io.open(tmp_out, "r")
+    if f_out then
+        out = f_out:read("*a") or ""
+        f_out:close()
+    end
+
+    os.remove(tmp_in)
+    os.remove(tmp_out)
+
+    return out
 end
 
-function age_encrypt(public, content)
-	if not public or public == "" or not content then return nil end
-	local cmd = "cat <<'EOF' | /etc/openclash/core/clash_meta age encrypt " .. tostring(public) .. " - - 2>/dev/null\n" .. content .. "\nEOF"
-	local fh = io.popen(cmd, 'r')
-	if not fh then return nil end
-	local out = fh:read('*a') or ''
-	fh:close()
-	if out and out ~= '' then return out end
-	return nil
+function age_decrypt(secret, content)
+    if not secret or secret == "" or not content then return nil end
+
+    local tmp_in = os.tmpname()
+    local tmp_out = os.tmpname()
+    local f = io.open(tmp_in, "w")
+    if not f then return nil end
+    f:write(content)
+    f:close()
+
+    local cmd = string.format(
+        "/etc/openclash/core/clash_meta age decrypt %s %s %s 2>/dev/null",
+        secret, tmp_in, tmp_out
+    )
+    os.execute(cmd)
+
+    local out = nil
+    local f_out = io.open(tmp_out, "r")
+    if f_out then
+        out = f_out:read("*a") or ""
+        f_out:close()
+    end
+
+    os.remove(tmp_in)
+    os.remove(tmp_out)
+
+    return out
+end
+
+function decode64(data)
+	if not data then return nil end
+	data = data:gsub('[%s]', '')
+	if #data % 4 ~= 0 then return data end
+
+	local out = {}
+	for i = 1, #data, 4 do
+		local c1, c2, c3, c4 = data:byte(i, i+3)
+		local i1 = b64chars:find(string.char(c1), 1, true) - 1
+		local i2 = b64chars:find(string.char(c2), 1, true) - 1
+		local i3 = (c3 == 61) and -1 or (b64chars:find(string.char(c3), 1, true) - 1)
+		local i4 = (c4 == 61) and -1 or (b64chars:find(string.char(c4), 1, true) - 1)
+
+		if not i1 or not i2 or (c3 ~= 61 and not i3) or (c4 ~= 61 and not i4) then
+			return nil
+		end
+
+		local x = i1 * 0x40000 + i2 * 0x1000
+		if i3 >= 0 then x = x + i3 * 0x40 end
+		if i4 >= 0 then x = x + i4 end
+
+		table.insert(out, string.char(math.floor(x / 0x10000) % 0x100))
+		if i3 >= 0 then
+			table.insert(out, string.char(math.floor(x / 0x100) % 0x100))
+		end
+		if i4 >= 0 then
+			table.insert(out, string.char(x % 0x100))
+		end
+	end
+
+	return table.concat(out)
+end
+
+--- Returns the appropriate ps command string for the system's ps implementation.
+-- Detects procps-ng (ps -efw) vs busybox (ps -w).
+-- @return String containing the ps command prefix
+function ps_cmd()
+	local ps_version = SYS.exec("ps --version 2>&1 |grep -c procps-ng |tr -d '\n'")
+	if ps_version == "1" then
+		return "ps -efw"
+	else
+		return "ps -w"
+	end
+end
+
+--- Returns the package manager type (opkg or apk).
+-- @return String "opkg" or "apk"
+function pkg_type()
+	if fs.access("/usr/bin/apk") then
+		return "apk"
+	else
+		return "opkg"
+	end
+end
+
+--- Returns the installed version of luci-app-openclash.
+-- Supports both opkg and apk package managers.
+-- @return String containing the version number, or "0" if not found
+function oc_version()
+	local v
+	if pkg_type() == "opkg" then
+		v = SYS.exec("rm -f /var/lock/opkg.lock && opkg status luci-app-openclash 2>/dev/null |grep '^Version:' |awk '{print $2}' |tr -d '\n'")
+	else
+		v = SYS.exec("rm -f /lib/apk/db/lock && apk info luci-app-openclash 2>/dev/null |grep '^luci-app-openclash-[0-9]' |sed 's/luci-app-openclash-//' |tr -d '\n'")
+	end
+	if v == "" then
+		v = "0"
+	end
+	return v
 end
