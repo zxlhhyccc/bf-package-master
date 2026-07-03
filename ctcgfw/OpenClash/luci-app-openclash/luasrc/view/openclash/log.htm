@@ -5,6 +5,7 @@
             <ul class="cbi-tabmenu">
                 <li name="tab-header" class="cbi-tab"><a href="#"><%:OpenClash Log%></a></li>
                 <li name="tab-header" class="cbi-tab-disabled"><a href="#"><%:Core Log%></a></li>
+                <li name="tab-header" class="cbi-tab-disabled"><a href="#"><%:Debug Logs%></a></li>
             </ul>
         </div>
         <div id="tab-content">
@@ -26,6 +27,9 @@
                     <label for="silent"><%:Silent%></label>
                 </div>
             </div>
+            <div class="dom">
+                <textarea id="debug_log" class="cbi-input-textarea" style="width: 100%;display:inline" data-update="change" rows="32" cols="60" readonly="readonly" ></textarea>
+            </div>
         </div>
     </div>
 
@@ -35,6 +39,10 @@
         <input type="button" class="btn cbi-button cbi-button-apply" id="start_refresh_button" value="<%:Start Refresh%>" onclick=" return start_refresh() "/>
         <input type="button" class="btn cbi-button cbi-button-apply" id="del_log_button" value="<%:Clean%>" onclick=" return del_log() " />
         <input type="button" class="btn cbi-button cbi-button-apply" id="down_log_button" value="<%:Download Log%>" onclick=" return download_log() " />
+        <span style="display:inline-flex; align-items:center; gap:0;">
+            <input type="button" class="btn cbi-button cbi-button-apply" id="gen_debug_button" value="<%:Generate Logs%>" onclick="return gen_debug_logs()" />
+            <span id="debug_loading" style="display:none; vertical-align:middle;"><img src="<%=resource%>/icons/loading.svg" onerror="this.onerror=null;this.src='<%=resource%>/icons/loading.gif'" alt="<%:Loading...%>" style="vertical-align:middle" /></span>
+        </span>
     </div>
 </fieldset>
 </body>
@@ -45,8 +53,10 @@ var s;
 var log_len = 0;
 var lv = document.getElementById('cbid.openclash.config.clog');
 var cl = document.getElementById('core_log');
+var dl = document.getElementById('debug_log');
 var animatingOC = false;
 var animatingCore = false;
+var animatingDebug = false;
 var coreWebSocket = null;
 var coreLogBuffer = [];
 var currentLogLevel = 'info';
@@ -116,6 +126,35 @@ function download_log(){
     var dt = new Date();
     var timestamp = dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+dt.getDate()+"-"+dt.getHours()+"-"+dt.getMinutes()+"-"+dt.getSeconds();
 
+    var activeTabId = 0;
+    var titles = document.getElementsByName('tab-header');
+    for(var i=0; i<titles.length; i++){
+        if(titles[i].className === 'cbi-tab') {
+            activeTabId = i;
+            break;
+        }
+    }
+
+    var downloadContent = "";
+
+    if (activeTabId === 2) {
+        var debug_content = "";
+        if (typeof editor_debug !== 'undefined' && editor_debug) {
+            debug_content = editor_debug.getValue();
+        } else if (dl && dl.value) {
+            debug_content = dl.value;
+        } else if (dl && dl.innerHTML) {
+            debug_content = dl.innerHTML;
+        }
+
+        if (!debug_content.trim()) {
+            return;
+        }
+        downloadContent += debug_content;
+        createAndDownloadFile("OpenClash-Debug-"+timestamp+".log", downloadContent);
+        return;
+    }
+
     var oc_content = "";
     if (typeof editor_oc !== 'undefined' && editor_oc) {
         oc_content = editor_oc.getValue();
@@ -124,6 +163,10 @@ function download_log(){
     } else if (lv && lv.innerHTML) {
         oc_content = lv.innerHTML;
     }
+
+    oc_content = oc_content.split('\n').filter(function(line) { 
+        return line.indexOf("】<%:Downloading URL%>【") === -1; 
+    }).join('\n');
 
     var core_content = "";
     if (typeof editor_core !== 'undefined' && editor_core) {
@@ -134,15 +177,10 @@ function download_log(){
         core_content = cl.innerHTML;
     }
 
-    oc_content = oc_content.split('\n').filter(function(line) { 
-        return line.indexOf("】<%:Downloading URL%>【") === -1; 
-    }).join('\n');
-
     if (!oc_content.trim() && !core_content.trim()) {
         return;
     }
 
-    var downloadContent = "";
     if (oc_content.trim()) {
         downloadContent += "<%:OpenClash Log%>:\n" + oc_content + "\n\n";
     }
@@ -158,12 +196,21 @@ function del_log() {
     XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_log")%>',null,function(x, data){
         lv.innerHTML="";
         cl.innerHTML="";
+        if (dl) { dl.innerHTML=""; }
         coreLogBuffer = [];
         log_len = 0;
-        editor_oc.setValue(lv.value);
-        editor_core.setValue(cl.value);
-        editor_core.refresh();
-        editor_oc.refresh();
+        if (typeof editor_oc !== 'undefined' && editor_oc) {
+            editor_oc.setValue(lv.value);
+            editor_oc.refresh();
+        }
+        if (typeof editor_core !== 'undefined' && editor_core) {
+            editor_core.setValue(cl.value);
+            editor_core.refresh();
+        }
+        if (typeof editor_debug !== 'undefined' && editor_debug) {
+            editor_debug.setValue("");
+            editor_debug.refresh();
+        }
     });
     return
 };
@@ -280,6 +327,66 @@ function coreLogWebSocket() {
         }
     });
 }
+
+function gen_debug_logs()
+{
+    var loading_el = document.getElementById('debug_loading');
+    var btn = document.getElementById('gen_debug_button');
+    var originalText = btn.value;
+    if (loading_el) { loading_el.style.display = 'inline'; }
+    if (btn) { btn.value = '<%:Generating...%>'; btn.disabled = true; }
+
+    XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "gen_debug_logs")%>', null, function(x, status) {
+        if (loading_el) { loading_el.style.display = 'none'; }
+        if (btn) { btn.value = originalText; btn.disabled = false; }
+        if (x && x.status == 200 && x.responseText != "")
+        {
+            if (typeof editor_debug !== 'undefined' && editor_debug) {
+                editor_debug.setValue(x.responseText);
+                editor_debug.refresh();
+                editor_debug.scrollTo(0, 0);
+                editor_debug.setCursor({line: 0, ch: 0});
+            } else if (dl) {
+                dl.value = x.responseText;
+                _cmWhenReady(function() {
+                    log_editor(dl, 'debug', true, '100%', '540px');
+                    if (typeof editor_debug !== 'undefined' && editor_debug) {
+                        editor_debug.setValue(dl.value);
+                        editor_debug.refresh();
+                    }
+                });
+            }
+        }
+        else
+        {
+            if (typeof editor_debug !== 'undefined' && editor_debug) {
+                editor_debug.setValue('<%:Some error occurred!%>');
+                editor_debug.refresh();
+            } else if (dl) {
+                dl.innerHTML = '<span class="error"><%:Some error occurred!%></span>';
+            }
+        }
+    });
+
+    return;
+};
+
+function load_existing_debug_log()
+{
+    XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "get_debug_logs")%>', null, function(x, status) {
+        if (x && x.status == 200 && x.responseText != "")
+        {
+            if (typeof editor_debug !== 'undefined' && editor_debug) {
+                editor_debug.setValue(x.responseText);
+                editor_debug.refresh();
+                editor_debug.scrollTo(0, 0);
+                editor_debug.setCursor({line: 0, ch: 0});
+            } else if (dl) {
+                dl.value = x.responseText;
+            }
+        }
+    });
+};
 
 function line_tolocal(str) {
     var trans_local = new Array();
@@ -678,6 +785,10 @@ window.onload = function(){
                     setTimeout(function(){
                         editor_core.refresh();
                     }, 10);
+                } else if(tab.id == 2 && typeof editor_debug !== 'undefined') {
+                    setTimeout(function(){
+                        editor_debug.refresh();
+                    }, 10);
                 }
             };
         }
@@ -687,7 +798,11 @@ window.onload = function(){
     }
     get_log_level();
     poll_log();
+    setTimeout(function() {
+        load_existing_debug_log();
+    }, 500);
 };
+
 //]]>
 </script>
 <%+cbi/valuefooter%>

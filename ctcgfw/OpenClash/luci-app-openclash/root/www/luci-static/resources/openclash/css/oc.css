@@ -4881,15 +4881,17 @@ ul {
 }
 
 .btn-group {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: center;
     gap: 12px;
     width: 100%;
     margin: 10px auto;
 }
 
 .btn-group .btn {
-    justify-self: center;
+    flex-shrink: 0;
 }
 
 :root[data-darkmode=true] #tab-header {

@@ -50,6 +50,7 @@ function index()
 	entry({"admin", "services", "openclash", "diag_connection"}, call("action_diag_connection"))
 	entry({"admin", "services", "openclash", "diag_dns"}, call("action_diag_dns"))
 	entry({"admin", "services", "openclash", "gen_debug_logs"}, call("action_gen_debug_logs"))
+	entry({"admin", "services", "openclash", "get_debug_logs"}, call("action_get_debug_logs"))
 	entry({"admin", "services", "openclash", "log_level"}, call("action_log_level"))
 	entry({"admin", "services", "openclash", "switch_log"}, call("action_switch_log"))
 	entry({"admin", "services", "openclash", "rule_mode"}, call("action_rule_mode"))
@@ -1513,6 +1514,15 @@ function action_gen_debug_logs()
 	end
 	file:close()
 	luci.http.write(info)
+end
+
+function action_get_debug_logs()
+	local logfile = "/tmp/openclash_debug.log"
+	if not fs.access(logfile) then
+		return
+	end
+	luci.http.prepare_content("text/plain; charset=utf-8")
+	luci.http.write(fs.readfile(logfile) or "")
 end
 
 function action_backup()

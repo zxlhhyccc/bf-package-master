@@ -95,11 +95,11 @@ msgstr "No configurado"
 msgid "Server Logs"
 msgstr "Registros del servidor"
 
+msgid "Core Tests"
+msgstr "Prueba del núcleo"
+
 msgid "Debug Logs"
 msgstr "Registros de depuración"
-
-msgid "Generate Logs"
-msgstr "Generar registros"
 
 msgid "Generated Logs"
 msgstr "Registros generados"
@@ -3278,6 +3278,9 @@ msgstr "El nombre del archivo contiene caracteres no válidos"
 
 msgid "Uploading..."
 msgstr "Subiendo..."
+
+msgid "Generating..."
+msgstr "Generando..."
 
 msgid "Upload completed"
 msgstr "Subida completada"
