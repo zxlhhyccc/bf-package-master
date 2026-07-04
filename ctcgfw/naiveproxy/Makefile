@@ -155,9 +155,6 @@ endef
 
 define Build/Compile
 	+$(NINJA) -C "$(PKG_BUILD_DIR)/src/out/Release" naive
-ifneq ($(CONFIG_NAIVEPROXY_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/src/out/Release/naive
-endif
 endef
 
 define Package/naiveproxy/conffiles
@@ -167,6 +164,9 @@ endef
 define Package/naiveproxy/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/out/Release/naive $(1)/usr/bin/naive
+ifneq ($(CONFIG_NAIVEPROXY_COMPRESS_UPX),)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(1)/usr/bin/naive
+endif
 	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
 	$(INSTALL_CONF) $(CURDIR)/files/naiveproxy.config $(1)/etc/config/naiveproxy
 	$(INSTALL_BIN) $(CURDIR)/files/naiveproxy.init $(1)/etc/init.d/naiveproxy
