@@ -19,30 +19,30 @@ define Download/geoip
 #  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
 #  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
 #  URL_FILE:=geoip.dat
-  URL:=https://github.com/Loyalsoldier/geoip/releases/latest/download
+  URL:=https://github.com/Loyalsoldier/geoip/releases/download/$(GEOIP_VER)/
   URL_FILE:=geoip-only-cn-private.dat
   FILE:=$(GEOIP_FILE)
   HASH:=1277fbbacff2a6a5a231055845215fc31fc374ba66c6bdf50dfaea22525edb12
 endef
 
-GEOSITE_VER:=202607022258
+GEOSITE_VER:=202607032256
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 define Download/geosite
 #  URL:=https://github.com/v2fly/domain-list-community/releases/download/$(GEOSITE_VER)/
-#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOIP_VER)/
-  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
+#  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download
+  URL:=https://github.com/Loyalsoldier/v2ray-rules-dat/releases/download/$(GEOSITE_VER)/
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=d7d33ce2946f2a83041b97e921c622a2efc8f8651f8d2dd0123daab9547ee987
+  HASH:=ed6eae91dfdf5476f78c8287bcf5a0eb092395199070b8fa935cb2386a86010b
 endef
 
 GEOSITE_IRAN_VER:=202606290159
 GEOSITE_IRAN_FILE:=iran.dat.$(GEOSITE_IRAN_VER)
 define Download/geosite-ir
-#  URL:=https://github.com/bootmortis/iran-hosted-domains/releases/download/$(GEOSITE_IRAN_VER)/
-  URL:=https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran.dat
+#  URL:=https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/
+  URL:=https://github.com/bootmortis/iran-hosted-domains/releases/download/$(GEOSITE_IRAN_VER)/
   URL_FILE:=iran.dat
   FILE:=$(GEOSITE_IRAN_FILE)
   HASH:=a6cc63b73db6decbc8990cfcb3f3a63e0c99378575458fd04df7517ce94a0479
