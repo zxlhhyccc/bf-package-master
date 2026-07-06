@@ -1464,6 +1464,9 @@ msgstr "Tipo de protocolo no soportado"
 msgid "Copy"
 msgstr "Copiar"
 
+msgid "Copy Debug"
+msgstr "Copiar Depuración"
+
 msgid "Export"
 msgstr "Exportar configuración"
 
@@ -3824,6 +3827,21 @@ msgstr "Fallo al ejecutar el script de sobrescritura personalizado,"
 
 msgid "Load YAML Override Block"
 msgstr "Cargar bloque de sobrescritura YAML"
+
+msgid "Enter YAML configuration..."
+msgstr "Ingrese configuración YAML..."
+
+msgid "Enter shell script..."
+msgstr "Ingrese script de shell..."
+
+msgid "Enter configuration..."
+msgstr "Ingrese configuración..."
+
+msgid "Edit original config..."
+msgstr "Editar configuración original..."
+
+msgid "Runtime config (read only)"
+msgstr "Configuración en ejecución (solo lectura)"
 
 msgid "Invalid YAML Override format, skipped..."
 msgstr "Formato de sobrescritura YAML no válido, omitido..."

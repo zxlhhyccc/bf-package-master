@@ -101,7 +101,7 @@ ts_re()
 	if [ -z "$1" ]; then
 	   echo "未安装"
 	else
-	   echo "已安装"
+	   echo "已安装 ($1)"
   fi
 }
 
@@ -190,7 +190,6 @@ cat >> "$DEBUG_LOG" <<-EOF
 | ruby-yaml | $(ts_re "$(ipk_v "ruby-yaml")") |
 | ruby-psych | $(ts_re "$(ipk_v "ruby-psych")") |
 | ruby-pstore | $(ts_re "$(ipk_v "ruby-pstore")") |
-| ruby版本 | $(ruby --version 2>/dev/null || echo "未安装") |
 | ruby功能测试 | $(ruby -e "require 'yaml'; YAML.load('test: ok'); puts '正常'" 2>/dev/null || echo "异常") |
 | kmod-tun(TUN模式) | $(ts_re "$(ipk_v "kmod-tun")") |
 | luci-compat | $(ts_re "$(ipk_v "luci-compat")") |
@@ -246,25 +245,25 @@ if [ "$core_model" = "0" ]; then
 fi
 cat >> "$DEBUG_LOG" <<-EOF
 | 已选择的架构 | $core_model |
-| Meta内核版本 | $core_meta_version |
+| Meta 内核版本 | $core_meta_version |
 EOF
 
 if [ ! -f "/etc/openclash/core/clash_meta" ]; then
 cat >> "$DEBUG_LOG" <<-EOF
-| Meta内核文件 | 不存在 |
+| Meta 内核文件 | 不存在 |
 EOF
 else
 cat >> "$DEBUG_LOG" <<-EOF
-| Meta内核文件 | 存在 |
+| Meta 内核文件 | 存在 |
 EOF
 fi
 if [ ! -x "/etc/openclash/core/clash_meta" ]; then
 cat >> "$DEBUG_LOG" <<-EOF
-| Meta内核运行权限 | 否 |
+| Meta 内核运行权限 | 否 |
 EOF
 else
 cat >> "$DEBUG_LOG" <<-EOF
-| Meta内核运行权限 | 正常 |
+| Meta 内核运行权限 | 正常 |
 EOF
 fi
 
@@ -350,7 +349,7 @@ EOF
 if [ "$enable_custom_clash_rules" -eq 1 ]; then
 cat >> "$DEBUG_LOG" <<-EOF
 
-## 自定义规则 一
+## 自定义规则 一 （优先匹配）
 
 \`\`\`
 # cat /etc/openclash/custom/openclash_custom_rules.list
@@ -360,7 +359,7 @@ echo "" >> "$DEBUG_LOG"
 cat >> "$DEBUG_LOG" <<-EOF
 \`\`\`
 
-## 自定义规则 二
+## 自定义规则 二 （扩展匹配）
 
 \`\`\`
 # cat /etc/openclash/custom/openclash_custom_rules_2.list
@@ -632,7 +631,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## DNS 解析文件
 
-- **Dnsmasq 当前默认 resolv 文件:** \`$dnsmasq_default_resolvfile\`
+### **Dnsmasq 当前默认 resolv 文件:** \`$dnsmasq_default_resolvfile\`
 EOF
 
 if [ -s "/tmp/resolv.conf.auto" ]; then
@@ -725,8 +724,6 @@ tail -n 100 "/tmp/openclash.log" >> "$DEBUG_LOG" 2>/dev/null
 echo "" >> "$DEBUG_LOG"
 cat >> "$DEBUG_LOG" <<-EOF
 \`\`\`
-
-## 最近运行日志获取完成
 
 EOF
 if pidof clash >/dev/null && [ "$log_level" != "debug" ]; then

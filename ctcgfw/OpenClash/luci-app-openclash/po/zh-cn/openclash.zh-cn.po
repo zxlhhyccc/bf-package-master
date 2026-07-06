@@ -1464,6 +1464,9 @@ msgstr "不支持的协议"
 msgid "Copy"
 msgstr "复制"
 
+msgid "Copy Debug"
+msgstr "复制调试日志"
+
 msgid "Export"
 msgstr "导出配置信息"
 
@@ -3830,6 +3833,21 @@ msgstr "用户"
 
 msgid "Serial Number"
 msgstr "序号"
+
+msgid "Enter YAML configuration..."
+msgstr "请输入 YAML 配置..."
+
+msgid "Enter shell script..."
+msgstr "请输入 Shell 脚本..."
+
+msgid "Enter configuration..."
+msgstr "请输入配置..."
+
+msgid "Edit original config..."
+msgstr "编辑原始配置..."
+
+msgid "Runtime config (read only)"
+msgstr "运行配置（只读）"
 
 msgid "Set Custom Overwrite Script Failed,"
 msgstr "自定义覆写命令执行失败，"
