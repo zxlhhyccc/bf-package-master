@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2010-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
@@ -9,17 +8,17 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openvpn2
 
-PKG_VERSION:=2.7.1
+PKG_VERSION:=2.7.5
 PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=\
 	https://build.openvpn.net/downloads/releases/ \
 	https://swupdate.openvpn.net/community/releases/
 PKG_SOURCE:=openvpn-$(PKG_VERSION).tar.gz
-PKG_HASH:=9858477ec2894a8a672974d8650dcb1af2eeffb468981a2b619f0fa387081167
+PKG_HASH:=c6864b3c7d4e059c7d6ce22d1b5fa646c8b379a06af872eeb9792b6083a44ac4
 PKG_BUILD_DIR:=$(BUILD_DIR)/openvpn2-$(BUILD_VARIANT)/openvpn-$(PKG_VERSION)
 
-PKG_MAINTAINER:=
+PKG_MAINTAINER:=Alexandru Ardelean <ardeleanalex@gmail.com>
 
 PKG_INSTALL:=1
 PKG_FIXUP:=autoreconf
@@ -34,7 +33,7 @@ define Package/openvpn2/Default
   TITLE:=Open source VPN solution using $(2)
   SECTION:=net
   CATEGORY:=Network
-  URL:=http://openvpn.net
+  URL:=https://openvpn.net/community/
   SUBMENU:=VPN
   MENU:=1
   DEPENDS:=+kmod-tun \
@@ -43,14 +42,16 @@ define Package/openvpn2/Default
 	   +OPENVPN_$(1)_ENABLE_LZ4:liblz4 \
 	   +OPENVPN_$(1)_ENABLE_IPROUTE2:ip \
 	   +OPENVPN_$(1)_ENABLE_DCO:libnl-genl \
+	   +OPENVPN_$(1)_ENABLE_DCO:kmod-ovpn-backports \
 	   $(3)
   VARIANT:=$(1)
+  DEFAULT_VARIANT:=$(4)
   PROVIDES:=openvpn openvpn-crypto
 endef
 
 Package/openvpn2-openssl=$(call Package/openvpn2/Default,openssl,OpenSSL,+PACKAGE_openvpn2-openssl:libopenssl)
-Package/openvpn2-mbedtls=$(call Package/openvpn2/Default,mbedtls,mbedTLS,+PACKAGE_openvpn2-mbedtls:libmbedtls)
-Package/openvpn2-wolfssl=$(call Package/openvpn2/Default,wolfssl,WolfSSL,+PACKAGE_openvpn2-wolfssl:libwolfssl)
+Package/openvpn2-mbedtls=$(call Package/openvpn2/Default,mbedtls,mbedTLS,+PACKAGE_openvpn2-mbedtls:libmbedtls,1)
+Package/openvpn2-wolfssl=$(call Package/openvpn2/Default,wolfssl,WolfSSL,+PACKAGE_openvpn2-wolfssl:libwolfssl @BROKEN)
 
 define Package/openvpn2/config/Default
 	source "$(SOURCE)/Config-$(1).in"
