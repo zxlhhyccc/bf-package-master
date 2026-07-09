@@ -6,7 +6,7 @@
 	local idname = math.random(1000)..(string.match(filename, "[%w_]+") or "")
 %>
 
-<div class="sub_div">
+<div class="sub_div oc">
     <span id='<%=idname%>' class="sub_tab"></span>
     <button type="button" class="sub_setting" title='<%:Refresh%>' alt='<%:Refresh%>' onclick='return sub_info_refresh_<%=idname%>(true)'>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -36,45 +36,18 @@ var retry_<%=idname%> = 0;
 var s_<%=idname%>;
 sub_info_refresh_<%=idname%>(false);
 
-setTimeout(function(){
-    initDarkMode();
-}, 200);
-
-function initDarkMode() {
-    if (typeof isDarkBackground === 'undefined') {
-        setTimeout(function() {
-            initDarkMode();
-        }, 100);
-        return;
-    }
-    
-    if (isDarkBackground(document.body)) {
-        document.documentElement.setAttribute('data-darkmode', 'true');
-    }
-}
-
 function progressbar_<%=idname%>(v, m, pc, np, f, t, tr) {
     var screenWidth = window.innerWidth || document.documentElement.clientWidth;
     var fontSize = '12px';
-    var minWidth = '200px';
-    var topPosition = tr == "null" ? '6px' : '2px';
 
     if (screenWidth <= 320) {
         fontSize = '8px';
-        minWidth = '140px';
-        topPosition = tr == "null" ? '8px' : '4px';
     } else if (screenWidth <= 480) {
         fontSize = '9px';
-        minWidth = '160px';
-        topPosition = tr == "null" ? '7px' : '3px';
     } else if (screenWidth <= 768) {
         fontSize = '10px';
-        minWidth = '180px';
-        topPosition = tr == "null" ? '6px' : '3px';
     } else if (screenWidth <= 1024) {
         fontSize = '11px';
-        minWidth = '200px';
-        topPosition = tr == "null" ? '6px' : '2px';
     }
 
     // Build title for native tooltip (format: "v / m (pc%)\nt (Remaining tr days)")
@@ -84,7 +57,7 @@ function progressbar_<%=idname%>(v, m, pc, np, f, t, tr) {
     }
 
     return String.format(
-        '<div class="progress_bar_bg" title="' + titleText + '" style="position:relative; border-radius: 6px; min-width: %s; display: flex; align-items: center;">' +
+        '<div class="progress_bar_bg" title="' + titleText + '" style="position:relative; border-radius: 6px; display: flex; align-items: center;">' +
         (pc >= 50 ? '<div class="progress_bar_high" style="width:%d%%; height:34px; border-radius: 6px">' :
         (pc < 50 && pc >= 20 ? '<div class="progress_bar_medium" style="width:%d%%; height:34px; border-radius: 6px">' :
         '<div class="progress_bar_low" style="width:%d%%; height:34px; border-radius: 6px">')) +
@@ -95,7 +68,7 @@ function progressbar_<%=idname%>(v, m, pc, np, f, t, tr) {
         '</div>' +
         '</div>' +
         '</div>',
-        minWidth, pc, fontSize, v, m, pc, t, tr
+        pc, fontSize, v, m, pc, t, tr
     );
 };
 

@@ -229,6 +229,7 @@ function custom_domain_dns.write(self, section, value)
 			fs.writefile("/etc/openclash/custom/openclash_custom_domain_dns.list", value)
 		end
 	end
+	return true
 end
 
 ---- Access Control
@@ -488,7 +489,7 @@ o.default = 0
 o = s:taboption("traffic_control", Value, "common_ports", font_red..bold_on..translate("Common Ports Proxy Mode")..bold_off..font_off)
 o.description = translate("Only Common Ports, Prevent BT/P2P Passing")
 o:value("0", translate("Disable"))
-o:value("21 22 23 53 80 123 143 194 443 465 587 853 993 995 998 2052 2053 2082 2083 2086 2095 2096 5222 5228 5229 5230 8080 8443 8880 8888 8889", translate("Default Common Ports"))
+o:value("21 22 23 53 80 123 143 194 443 465 587 853 993 995 998 2052 2053 2082 2083 2086 2095 2096 2197 5222 5223 5228 5229 5230 8080 8443 8880 8888 8889", translate("Default Common Ports"))
 o.default = 0
 o.placeholder = translate("443 or 21-443, Use Space to Separate")
 o:depends("en_mode", "redir-host")
@@ -538,6 +539,7 @@ function o.write(self, section, value)
 			fs.writefile("/etc/openclash/custom/openclash_custom_localnetwork_ipv4.list", value)
 		end
 	end
+	return true
 end
 
 o = s:taboption("traffic_control", Value, "chnroute_pass", translate("Chnroute Bypassed List"))
@@ -559,6 +561,7 @@ function o.write(self, section, value)
 			fs.writefile("/etc/openclash/custom/openclash_custom_chnroute_pass.list", value)
 		end
 	end
+	return true
 end
 
 --Stream Enhance
@@ -1366,6 +1369,7 @@ function o.write(self, section, value)
 			fs.writefile("/etc/openclash/custom/openclash_custom_localnetwork_ipv6.list", value)
 		end
 	end
+	return true
 end
 
 o = s:taboption("ipv6", Value, "chnroute6_pass", translate("Chnroute6 Bypassed List"))
@@ -1386,6 +1390,7 @@ function o.write(self, section, value)
 			fs.writefile("/etc/openclash/custom/openclash_custom_chnroute6_pass.list", value)
 		end
 	end
+	return true
 end
 
 ---- version update
@@ -1410,6 +1415,7 @@ function o.write(self, section, value)
 			fs.writefile("/etc/openclash/custom/openclash_custom_firewall_rules.sh", value)
 		end
 	end
+	return true
 end
 
 ---- debug

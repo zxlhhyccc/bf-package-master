@@ -144,29 +144,29 @@ cat > "$DEBUG_LOG" <<-EOF
 | 内核版本 | $(uname -r 2>/dev/null) |
 | 处理器架构 | $cpu_model |
 | 系统运行时间 | $(uptime 2>/dev/null) |
-| IPV6-DHCP | $(uci -q get dhcp.lan.dhcpv6) |
+| IPV6-DHCP | $(uci -q get dhcp.lan.dhcpv6 || echo "未配置") |
 | DNS劫持 | $(dns_re "$enable_redirect_dns") |
 
 ### 磁盘与内存
 
-\`\`\`
+\`\`\`bash
 # df -h / /tmp /etc/openclash
 $(df -h / /tmp /etc/openclash 2>/dev/null)
 \`\`\`
 
-\`\`\`
+\`\`\`bash
 # free -m
 $(free -m 2>/dev/null)
 \`\`\`
 
-\`\`\`
+\`\`\`bash
 # cat /proc/meminfo | grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree)'
 $(cat /proc/meminfo 2>/dev/null | grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree)')
 \`\`\`
 
 ### Dnsmasq 配置
 
-\`\`\`
+\`\`\`bash
 # uci show dhcp.@dnsmasq[0]
 $(uci show dhcp.@dnsmasq[0] 2>/dev/null)
 \`\`\`
@@ -214,7 +214,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### 内核模块加载状态
 
-\`\`\`
+\`\`\`bash
 # lsmod | grep -E 'tun|tproxy|inet_diag'
 $(lsmod | grep -E 'tun|tproxy|inet_diag' 2>/dev/null || echo "无相关模块")
 \`\`\`
@@ -271,7 +271,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## GEO 数据文件
 
-\`\`\`
+\`\`\`bash
 # ls -lh /etc/openclash/Country.mmdb /etc/openclash/GeoIP.dat /etc/openclash/GeoSite.dat /etc/openclash/ASN.mmdb
 $(ls -lh /etc/openclash/Country.mmdb /etc/openclash/GeoIP.dat /etc/openclash/GeoSite.dat /etc/openclash/ASN.mmdb 2>/dev/null)
 \`\`\`
@@ -285,7 +285,7 @@ $(ls -lh /etc/openclash/Country.mmdb /etc/openclash/GeoIP.dat /etc/openclash/Geo
 
 ## 冲突插件检测
 
-\`\`\`
+\`\`\`bash
 # ps | grep -E 'passwall|ssr-plus|bypass|helloworld'
 $(ps | grep -E 'passwall|ssr-plus|bypass|helloworld' | grep -v grep 2>/dev/null || echo "未检测到冲突插件")
 \`\`\`
@@ -332,14 +332,14 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## Cron 定时任务
 
-\`\`\`
+\`\`\`bash
 # crontab -l | grep -i openclash
 $(crontab -l 2>/dev/null | grep -i openclash || echo "无 OpenClash 相关 cron 任务")
 \`\`\`
 
 ## 覆写模块设置
 
-\`\`\`
+\`\`\`bash
 # uci show openclash.@overwrite[0]
 $(uci -q show openclash.@overwrite[0])
 \`\`\`
@@ -351,7 +351,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 自定义规则 一 （优先匹配）
 
-\`\`\`
+\`\`\`bash
 # cat /etc/openclash/custom/openclash_custom_rules.list
 EOF
 cat /etc/openclash/custom/openclash_custom_rules.list >> "$DEBUG_LOG"
@@ -361,7 +361,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 自定义规则 二 （扩展匹配）
 
-\`\`\`
+\`\`\`bash
 # cat /etc/openclash/custom/openclash_custom_rules_2.list
 EOF
 cat /etc/openclash/custom/openclash_custom_rules_2.list >> "$DEBUG_LOG"
@@ -424,7 +424,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### IPv4 NAT chain
 
-\`\`\`
+\`\`\`bash
 # iptables-save -t nat
 EOF
 iptables-save -t nat >> "$DEBUG_LOG" 2>/dev/null
@@ -434,7 +434,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### IPv4 Mangle chain
 
-\`\`\`
+\`\`\`bash
 # iptables-save -t mangle
 EOF
 iptables-save -t mangle >> "$DEBUG_LOG" 2>/dev/null
@@ -444,7 +444,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### IPv4 Filter chain
 
-\`\`\`
+\`\`\`bash
 # iptables-save -t filter
 EOF
 iptables-save -t filter >> "$DEBUG_LOG" 2>/dev/null
@@ -454,7 +454,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### IPv6 NAT chain
 
-\`\`\`
+\`\`\`bash
 # ip6tables-save -t nat
 EOF
 ip6tables-save -t nat >> "$DEBUG_LOG" 2>/dev/null
@@ -464,7 +464,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### IPv6 Mangle chain
 
-\`\`\`
+\`\`\`bash
 # ip6tables-save -t mangle
 EOF
 ip6tables-save -t mangle >> "$DEBUG_LOG" 2>/dev/null
@@ -474,7 +474,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### IPv6 Filter chain
 
-\`\`\`
+\`\`\`bash
 # ip6tables-save -t filter
 EOF
 ip6tables-save -t filter >> "$DEBUG_LOG" 2>/dev/null
@@ -488,7 +488,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## NFTABLES 防火墙设置
 
-\`\`\`
+\`\`\`bash
 # nft list chain inet fw4 (all chains)
 EOF
    for nft in "input" "forward" "dstnat" "srcnat" "nat_output" "mangle_prerouting" "mangle_output"; do
@@ -507,7 +507,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## IPSET状态
 
-\`\`\`
+\`\`\`bash
 # ipset list -t
 EOF
 ipset list -t >> "$DEBUG_LOG"
@@ -523,44 +523,44 @@ cat >> "$DEBUG_LOG" <<-EOF
 EOF
 echo "### IPv4" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# route -n" >> "$DEBUG_LOG"
 route -n >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# ip route list" >> "$DEBUG_LOG"
 ip route list >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# ip route list table 354" >> "$DEBUG_LOG"
 ip route list table 354 >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# ip rule show" >> "$DEBUG_LOG"
 ip rule show >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
 echo "### IPv6" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# route -A inet6" >> "$DEBUG_LOG"
 route -A inet6 >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# ip -6 route list" >> "$DEBUG_LOG"
 ip -6 route list >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# ip -6 route list table 354" >> "$DEBUG_LOG"
 ip -6 route list table 354 >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
 echo "" >> "$DEBUG_LOG"
-echo "\`\`\`" >> "$DEBUG_LOG"
+echo "\`\`\`bash" >> "$DEBUG_LOG"
 echo "# ip -6 rule show" >> "$DEBUG_LOG"
 ip -6 rule show >> "$DEBUG_LOG" 2>/dev/null
 echo "\`\`\`" >> "$DEBUG_LOG"
@@ -570,7 +570,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## Tun设备状态
 
-\`\`\`
+\`\`\`bash
 # ip tuntap list
 EOF
 ip tuntap list >> "$DEBUG_LOG" 2>/dev/null
@@ -584,7 +584,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 端口占用状态
 
-\`\`\`
+\`\`\`bash
 # netstat -nlp | grep clash
 EOF
 netstat -nlp |grep clash >> "$DEBUG_LOG" 2>/dev/null
@@ -594,7 +594,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 网络接口状态
 
-\`\`\`
+\`\`\`bash
 # ip link show && ip addr show | grep -E 'inet |utun'
 EOF
 ip link show >> "$DEBUG_LOG" 2>/dev/null
@@ -608,7 +608,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 测试本机DNS查询(www.baidu.com)
 
-\`\`\`
+\`\`\`bash
 # nslookup www.baidu.com
 EOF
 nslookup www.baidu.com >> "$DEBUG_LOG" 2>/dev/null
@@ -618,7 +618,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 测试内核DNS查询(www.instagram.com)
 
-\`\`\`
+\`\`\`bash
 # openclash_debug_dns.lua www.instagram.com
 EOF
 /usr/share/openclash/openclash_debug_dns.lua "www.instagram.com" >> "$DEBUG_LOG" 2>/dev/null
@@ -639,7 +639,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### /tmp/resolv.conf.auto
 
-\`\`\`
+\`\`\`bash
 # cat /tmp/resolv.conf.auto
 EOF
 cat /tmp/resolv.conf.auto >> "$DEBUG_LOG"
@@ -654,7 +654,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ### /tmp/resolv.conf.d/resolv.conf.auto
 
-\`\`\`
+\`\`\`bash
 # cat /tmp/resolv.conf.d/resolv.conf.auto
 EOF
 cat /tmp/resolv.conf.d/resolv.conf.auto >> "$DEBUG_LOG"
@@ -668,25 +668,24 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 测试本机网络连接(www.baidu.com)
 
-\`\`\`
+\`\`\`bash
 # curl -SsI -m 5 www.baidu.com
 EOF
 curl -SsI -m 5 www.baidu.com >> "$DEBUG_LOG" 2>/dev/null
 echo "" >> "$DEBUG_LOG"
 cat >> "$DEBUG_LOG" <<-EOF
 \`\`\`
-
-## 测试本机网络下载(raw.githubusercontent.com)
-
-\`\`\`
-# curl -SsIL -m 3 --retry 2 [VERSION_URL]
 EOF
-VERSION_URL="https://raw.githubusercontent.com/vernesong/OpenClash/refs/heads/master/LICENSE"
-if pidof clash >/dev/null; then
-   curl -SsIL -m 3 --retry 2 "$VERSION_URL" >> "$DEBUG_LOG" 2>/dev/null
-else
-   curl -SsIL -m 3 --retry 2 "$VERSION_URL" >> "$DEBUG_LOG" 2>/dev/null
-fi
+
+LICENSE_URL="https://raw.githubusercontent.com/vernesong/OpenClash/refs/heads/master/LICENSE"
+cat >> "$DEBUG_LOG" <<-EOF
+
+## 测试本机网络下载([raw.githubusercontent.com]($LICENSE_URL))
+
+\`\`\`bash
+# curl -SsIL -m 3 --retry 2 $LICENSE_URL
+EOF
+curl -SsIL -m 3 --retry 2 "$LICENSE_URL" >> "$DEBUG_LOG" 2>/dev/null
 echo "" >> "$DEBUG_LOG"
 cat >> "$DEBUG_LOG" <<-EOF
 \`\`\`
@@ -711,7 +710,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 最近运行日志 (切换为Debug模式)
 
-\`\`\`
+\`\`\`bash
 # tail -n 100 /tmp/openclash.log
 EOF
 
@@ -734,7 +733,7 @@ cat >> "$DEBUG_LOG" <<-EOF
 
 ## 活动连接信息
 
-\`\`\`
+\`\`\`bash
 # openclash_debug_getcon.lua
 EOF
 /usr/share/openclash/openclash_debug_getcon.lua

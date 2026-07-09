@@ -1299,14 +1299,20 @@ msgstr "Restauración completada."
 msgid "Restore failed!"
 msgstr "Error al restaurar la configuración."
 
-msgid "Support syntax check, press"
-msgstr "Admite comprobación de sintaxis; pulsa"
+msgid "Press"
+msgstr "Pulsa"
 
-msgid "to control diff option, press"
-msgstr "para cambiar la vista de diferencia; pulsa"
+msgid "for fullscreen,"
+msgstr "para pantalla completa,"
 
-msgid "to enter full screen editing mode"
-msgstr "para entrar en modo de edición a pantalla completa"
+msgid "to exit fullscreen,"
+msgstr "para salir,"
+
+msgid "to zoom"
+msgstr "zoom"
+
+msgid "to toggle differences,"
+msgstr "para mostrar diferencias,"
 
 msgid "Switch page to Fake-IP mode"
 msgstr "Cambiar página a modo Fake-IP"
@@ -2004,8 +2010,8 @@ msgstr "¡Cambio realizado con éxito!"
 msgid "switching failed!"
 msgstr "¡El cambio ha fallado!"
 
-msgid "Current Config File"
-msgstr "Archivo de configuración actual"
+msgid "Current Config"
+msgstr "Configuración actual"
 
 msgid "Up"
 msgstr "Subida"
@@ -2354,6 +2360,12 @@ msgstr "Prueba de desbloqueo (selección)"
 
 msgid "All Proxies Test"
 msgstr "Probar todos los nodos"
+
+msgid "Unlock Test Result"
+msgstr "Resultado de la prueba de desbloqueo"
+
+msgid "All Proxies Test Result"
+msgstr "Resultado de la prueba de todos los nodos"
 
 msgid "Something Wrong While Testing..."
 msgstr "Algo ha fallado durante la prueba..."
@@ -3360,12 +3372,6 @@ msgstr "Cargando archivo de configuración..."
 msgid "Ready"
 msgstr "Listo"
 
-msgid "Press F11 for fullscreen, Esc to exit fullscreen, Ctrl+Mouse Wheel to zoom"
-msgstr "Pulsa F11 para pantalla completa, Esc para salir, Ctrl + rueda del ratón para zoom"
-
-msgid "Press F10 to toggle differences, F11 for fullscreen, Esc to exit fullscreen, Ctrl+Mouse Wheel to zoom"
-msgstr "Pulsa F10 para mostrar diferencias, F11 para pantalla completa, Esc para salir, Ctrl + rueda del ratón para zoom"
-
 msgid "Compare mode: left(Original Config), right(Runtime Config)"
 msgstr "Modo comparación: izquierda (configuración original), derecha (configuración en ejecución)"
 
@@ -3810,9 +3816,6 @@ msgstr "Deshabilitar reutilización de la conexión"
 msgid "Write file failed:"
 msgstr "Fallo al escribir el archivo:"
 
-msgid "Fix short-id values type failed:"
-msgstr "Fallo al modificar el tipo de valores short-id:"
-
 msgid "Interface"
 msgstr "Interfaz"
 
@@ -3848,9 +3851,6 @@ msgstr "Formato de sobrescritura YAML no válido, omitido..."
 
 msgid "Parse YAML Override failed:"
 msgstr "Error al analizar bloque de sobrescritura YAML:"
-
-msgid "YAML overwrite failed:"
-msgstr "Error en la sobrescritura YAML:"
 
 msgid "files selected"
 msgstr "archivos seleccionados"
@@ -4064,3 +4064,21 @@ msgstr "Nota: oixCloud requiere la instalación de un núcleo específico; OpenC
 
 msgid "After the core start, an oixCloud nodes provider will be added, which you can customize as needed"
 msgstr "Tras iniciar el núcleo se añadirá un proveedor de nodos oixCloud que puedes personalizar"
+
+msgid "Checking backend version..."
+msgstr "Comprobando la versión del backend..."
+
+msgid "Backend Version"
+msgstr "Versión del backend"
+
+msgid "Please enter backend URL"
+msgstr "Introduce la URL del backend"
+
+msgid "Invalid backend URL"
+msgstr "URL del backend no válida"
+
+msgid "Backend version information not detected"
+msgstr "No se detectó información de versión del backend"
+
+msgid "Unable to detect backend version"
+msgstr "No se pudo detectar la versión del backend"

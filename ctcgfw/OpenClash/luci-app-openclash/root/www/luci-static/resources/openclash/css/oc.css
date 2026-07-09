@@ -54,7 +54,7 @@
     --announcement-end: #1d4ed8;
     --announcement-icon-bg: rgba(255, 255, 255, 0.1);
     --overlay-bg: rgba(0, 0, 0, 0.5);
-    --editor-fullscreen-bg: #f5f5f5;
+    --editor-bg: #f5f5f5;
     --primary-a5: rgba(59, 130, 246, 0.05);
     --primary-a10: rgba(59, 130, 246, 0.1);
     --primary-a20: rgba(59, 130, 246, 0.2);
@@ -64,9 +64,6 @@
     --success-a5: rgba(5, 150, 105, 0.05);
     --error-a12: rgba(255,80,80,0.12);
     --error-a18: rgba(255,80,80,0.18);
-    --cm-gutter-bg: #f5f5f5;
-    --cm-gutter-text: #999999;
-    --cm-gutter-border: #e2e8f0;
     --cm-indent-guide: rgba(128,128,128,0.25);
     --cm-placeholder: rgba(128,128,128,0.5);
     --cm-special-char: rgba(255,0,0,0.3);
@@ -129,7 +126,7 @@
     --announcement-end: #3555bf;
     --announcement-icon-bg: rgba(255, 255, 255, 0.1);
     --overlay-bg: rgba(0, 0, 0, 0.5);
-    --editor-fullscreen-bg: #1f2937;
+    --editor-bg: #1f2937;
     --primary-a5: rgba(96, 165, 250, 0.05);
     --primary-a10: rgba(96, 165, 250, 0.1);
     --primary-a20: rgba(96, 165, 250, 0.2);
@@ -139,9 +136,6 @@
     --success-a5: rgba(52, 211, 153, 0.05);
     --error-a12: rgba(255,80,80,0.12);
     --error-a18: rgba(255,80,80,0.18);
-    --cm-gutter-bg: #1f2937;
-    --cm-gutter-text: #858585;
-    --cm-gutter-border: #4b5563;
     --cm-indent-guide: rgba(255,255,255,0.12);
     --cm-placeholder: rgba(255,255,255,0.25);
     --cm-special-char: rgba(255,0,0,0.3);
@@ -288,10 +282,7 @@
 }
 
 .oc {
-    font-family: var(--font-family-base);
     line-height: 1.6;
-    color: var(--text-primary);
-    background-color: var(--bg-light);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -1854,15 +1845,15 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border: none;
     outline: none;
+    will-change: transform;
 }
 
 .oc-usage-help-float:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px var(--primary-a60);
+    transform: scale(1.1) translateZ(0);
 }
 
 .oc-usage-help-float:active {
-    transform: scale(0.95);
+    transform: scale(0.95) translateZ(0);
 }
 
 #usage-help-model .form-textarea {
@@ -1966,6 +1957,61 @@
     background-position: center;
     background-size: contain;
     opacity: 0.7;
+}
+
+.oc .subconverter-version-status {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    gap: 6px;
+    margin: 0 0 2px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: inherit;
+    line-height: 15px;
+    box-sizing: border-box;
+    word-break: break-word;
+}
+
+.oc .subconverter-version-status[hidden] {
+    display: none !important;
+}
+
+.oc .subconverter-version-label {
+    color: inherit;
+    font-weight: 600;
+    flex: 0 0 auto;
+}
+
+.oc .subconverter-version-text {
+    min-width: 0;
+}
+
+.oc .subconverter-version-status[data-state="checking"] {
+    color: var(--primary-color);
+}
+
+.oc .subconverter-version-status[data-state="success"] {
+    color: var(--success-color);
+}
+
+.oc .subconverter-version-status[data-state="unrecognized"],
+.oc .subconverter-version-status[data-state="empty"] {
+    color: var(--tip-color);
+}
+
+.oc .subconverter-version-status[data-state="error"] {
+    color: var(--error-color);
+}
+
+[data-page^="admin-services-openclash-config-subscribe-edit"] #cbi-openclash > .cbi-section:not(.cbi-tblsection) > .cbi-section-node[id^="cbi-openclash-"] {
+    padding-top: 14px;
+}
+
+[data-page^="admin-services-openclash-config-subscribe-edit"] #cbi-openclash > .cbi-section:not(.cbi-tblsection) textarea.cbi-input-textarea {
+    vertical-align: top;
 }
 
 .oc .filename-input-container {
@@ -2243,7 +2289,7 @@
  * ========================================================================== */
 @font-face {
     font-family: 'Twemoji Mozilla';
-    src: url('/luci-static/resources/openclash/fonts/TwemojiMozilla-flags-B12sb_Bp.woff2') format('woff2');
+    src: url('/luci-static/resources/openclash/fonts/TwemojiMozilla-flags.woff2') format('woff2');
 }
 .oc[data-darkmode="true"] #config-mode-tabs .mode-tab {
     color: var(--text-secondary);
@@ -2829,6 +2875,47 @@
 }
 
 /* ==========================================================================
+ * SECTION 3.5: config_merge_editor.htm — merge/compare toolbar
+ * ========================================================================== */
+
+/* ---- Merge editor toolbar (my_editor_div) ---- */
+.oc .oc-merge-editor-bar {
+    display: flex;
+    width: auto;
+    margin: 8px 16px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.oc #oc-merge-toggle-btn.oc-usage-help-float {
+    position: absolute;
+    bottom: 16px;
+    right: 40px;
+    z-index: 10;
+}
+
+/* ---- CBI section description ---- */
+.oc .cbi-section-descr {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--bg-gray);
+    padding: 2px 4px;
+    margin: 8px 16px;
+    border-radius: var(--radius-sm);
+    line-height: 1.5;
+}
+
+.oc[data-darkmode="true"] .oc-merge-editor-bar {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.oc[data-darkmode="true"] .cbi-section-descr {
+    background: var(--bg-gray);
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
  * SECTION 4: CodeMirror 6 (cm-editor)
  * ========================================================================== */
 
@@ -2837,9 +2924,9 @@
     text-align: left !important;
     font-size: 15px;
     line-height: 150%;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
 }
 .oc .cm-editor {
@@ -2853,7 +2940,12 @@
     overflow-wrap: break-word !important;
 }
 
-/* Modal editor override: smaller font (port from old .oc .config-editor-model .CodeMirror) */
+/* ---- Dark mode: override CM6 editor background via CSS variable ---- */
+.oc[data-darkmode="true"] .cm-editor {
+    background-color: var(--editor-bg) !important;
+}
+
+/* Modal editor override: smaller font */
 .oc .config-editor-model .cm-editor {
     font-size: 14px;
     line-height: 1.5;
@@ -2866,7 +2958,7 @@
     right: 0 !important; bottom: 0 !important;
     width: 100vw !important; height: 100vh !important;
     z-index: 999999 !important;
-    background: var(--editor-fullscreen-bg) !important;
+    background: var(--editor-bg, #f5f5f5) !important;
 }
 #oc-fullscreen-active.cm-editor > .cm-scroller {
     height: 100% !important;
@@ -2879,11 +2971,12 @@
     right: 0 !important; bottom: 0 !important;
     width: 100vw !important; height: 100vh !important;
     z-index: 999999 !important;
-    background: var(--editor-fullscreen-bg) !important;
+    background: var(--editor-bg, #f5f5f5) !important;
     overflow-y: auto !important;
 }
 
 /* ---- Cursor gap (visual spacing between cursor and text) ---- */
+.oc .cm-editor.cm-focused { outline: none; }
 .oc .cm-editor.cm-focused .cm-cursor { transform: translateX(2px); }
 
 /* ---- Hide diff highlights when F10 toggles differences off ---- */
@@ -2952,16 +3045,6 @@
     background-color: var(--cm-active-line-gutter);
 }
 
-/* ---- Gutter / Line Numbers ---- */
-.oc[data-darkmode="true"] .cm-gutters {
-    background-color: var(--cm-gutter-bg);
-    color: var(--cm-gutter-text);
-    border-right-color: var(--cm-gutter-border);
-}
-.oc[data-darkmode="true"] .cm-lineNumbers .cm-gutterElement {
-    color: var(--cm-gutter-text);
-}
-
 /* ---- Log Viewer Token Styles ---- */
 
 .cmt-log-level-info,
@@ -2971,7 +3054,7 @@
 .cmt-log-level-tip,
 .cmt-log-level-fatal,
 .cmt-log-level-watchdog {
-    font-weight: 600;
+    font-weight: 500;
     margin: 2px 0;
     border-radius: 5px;
     display: inline-flex;
@@ -2980,9 +3063,9 @@
 }
 
 /* Light mode */
-.cmt-log-timestamp { color: var(--log-timestamp) !important; font-weight: 600; background-color: var(--log-timestamp-bg); padding: 0 5px; margin: 2px 0; border-radius: 5px; display: inline-block; }
+.cmt-log-timestamp { color: var(--log-timestamp) !important; font-weight: 500; background-color: var(--log-timestamp-bg); padding: 0 5px; margin: 2px 0; border-radius: 5px; display: inline-block; }
 .cmt-log-bracket { color: var(--log-bracket) !important; font-weight: 600; }
-.cmt-log-string { color: var(--log-string) !important; font-weight: 400; }
+.cmt-log-string { color: var(--log-string) !important; font-weight: 500; }
 .cmt-log-category { color: var(--log-category) !important; font-weight: 500; background-color: var(--log-category-bg); padding: 0 5px; margin: 2px 0; border-radius: 5px; display: inline-block; text-align: center; }
 .cmt-log-link { color: var(--log-link) !important; }
 .cmt-log-level-info { color: var(--log-info) !important; background-color: var(--log-info-bg); }
@@ -3023,10 +3106,6 @@
 
 .oc[data-darkmode="true"] #mode-icon path[stroke="#333"] {
     stroke: var(--text-primary, #fff);
-}
-
-.oc[data-darkmode="true"] {
-    background-color: var(--bg-light, #111827);
 }
 
 .oc[data-darkmode="true"] .myip-main-card {
@@ -4099,33 +4178,34 @@
 /* ==========================================================================
  * SECTION 8: debug.htm
  * ========================================================================== */
-:root[data-darkmode="true"] .diag-style {
+.oc[data-darkmode="true"] .diag-style {
     color: #ffffff;
     background-color: #404040;
 }
 
-:root[data-darkmode="true"] .diag-style select, .diag-style input {
+.oc[data-darkmode="true"] .diag-style select, .diag-style input {
     color: #ffffff;
     background-color: #404040;
 }
 
-:root[data-darkmode="true"] #diag-rc-output > pre {
+.oc[data-darkmode="true"] #diag-rc-output > pre {
     background-color: #404040;
     color: #ffffff;
 }
 
-:root[data-darkmode="true"] #dns-rc-output > pre {
+.oc[data-darkmode="true"] #dns-rc-output > pre {
     background-color: #404040;
     color: #ffffff;
 }
 
-:root[data-darkmode="true"] .diag-legend {
+.oc[data-darkmode="true"] .diag-legend {
     border-bottom-color: #555;
 }
 
 .diag-style {
     color: #000;
     background-color: #f5f5f5;
+    margin-top: 10px;
 }
 
 .diag-style select, .diag-style input {
@@ -4256,7 +4336,6 @@
     background-color: #f5f5f5;
     width: 100% !important;
     max-width: 100% !important;
-    min-width: 200px;
     box-sizing: border-box;
     border-radius: 6px;
     height: 36px;
@@ -4413,83 +4492,83 @@
     cursor: not-allowed;
 }
 
-:root[data-darkmode="true"] .sub_setting svg {
+.oc[data-darkmode="true"] .sub_setting svg {
     color: #e0e0e0;
 }
 
-:root[data-darkmode="true"] .text_show {
+.oc[data-darkmode="true"] .text_show {
     color: #e0e0e0;
     line-height: 1.2;
 }
 
-:root[data-darkmode="true"] .progress_bar_bg {
+.oc[data-darkmode="true"] .progress_bar_bg {
     border: 1px solid #666666;
     background-color: #333333;
 }
 
-:root[data-darkmode="true"] .progress_bar_high {
+.oc[data-darkmode="true"] .progress_bar_high {
     background-color: #5da05d;
 }
 
-:root[data-darkmode="true"] .progress_bar_medium {
+.oc[data-darkmode="true"] .progress_bar_medium {
     background-color: #cc8550;
 }
 
-:root[data-darkmode="true"] .progress_bar_low {
+.oc[data-darkmode="true"] .progress_bar_low {
     background-color: #cc6262;
 }
 
-:root[data-darkmode="true"] .sub-info-url-model {
+.oc[data-darkmode="true"] .sub-info-url-model {
     background: var(--bg-white, #1f2937);
     border-color: var(--border-light, #374151);
 }
 
-:root[data-darkmode="true"] .sub-info-url-header,
-:root[data-darkmode="true"] .sub-info-url-footer {
+.oc[data-darkmode="true"] .sub-info-url-header,
+.oc[data-darkmode="true"] .sub-info-url-footer {
     background: var(--bg-gray, #111827);
     border-color: var(--border-light, #374151);
 }
 
-:root[data-darkmode="true"] .sub-info-url-title {
+.oc[data-darkmode="true"] .sub-info-url-title {
     color: var(--text-primary, #f3f4f6);
 }
 
-:root[data-darkmode="true"] .sub-info-url-form-group label {
+.oc[data-darkmode="true"] .sub-info-url-form-group label {
     color: var(--text-primary, #f3f4f6);
 }
 
-:root[data-darkmode="true"] .sub-info-url-form-textarea {
+.oc[data-darkmode="true"] .sub-info-url-form-textarea {
     background: var(--bg-gray, #374151);
     border-color: var(--border-light, #4b5563);
     color: var(--text-primary, #f3f4f6);
 }
 
-:root[data-darkmode="true"] .sub-info-url-form-textarea:focus {
+.oc[data-darkmode="true"] .sub-info-url-form-textarea:focus {
     border-color: var(--primary-color, #60a5fa);
     box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
 }
 
-:root[data-darkmode="true"] .sub-info-url-form-textarea::placeholder {
+.oc[data-darkmode="true"] .sub-info-url-form-textarea::placeholder {
     color: var(--text-secondary, #9ca3af);
 }
 
-:root[data-darkmode="true"] .sub-info-url-cancel-btn {
+.oc[data-darkmode="true"] .sub-info-url-cancel-btn {
     background: var(--bg-white, #374151);
     color: var(--text-secondary, #9ca3af);
     border-color: var(--border-light, #4b5563);
 }
 
-:root[data-darkmode="true"] .sub-info-url-cancel-btn:hover {
+.oc[data-darkmode="true"] .sub-info-url-cancel-btn:hover {
     background: var(--hover-bg, #4b5563);
     color: var(--text-primary, #f3f4f6);
 }
 
-:root[data-darkmode="true"] .sub-info-url-submit-btn {
+.oc[data-darkmode="true"] .sub-info-url-submit-btn {
     background: var(--primary-color, #3b82f6);
     border-color: var(--primary-color, #3b82f6);
 }
 
-:root[data-darkmode="true"] .sub-info-url-submit-btn:disabled {
+.oc[data-darkmode="true"] .sub-info-url-submit-btn:disabled {
     background: var(--bg-gray, #4b5563);
     color: var(--text-secondary, #9ca3af);
     border-color: var(--border-light, #374151);
@@ -4590,16 +4669,16 @@
 }
 
 /* Dark mode support */
-:root[data-darkmode="true"] .sub_provider_item {
+.oc[data-darkmode="true"] .sub_provider_item {
     background-color: #333333;
     border-color: #666666;
 }
 
-:root[data-darkmode="true"] .sub_provider_name {
+.oc[data-darkmode="true"] .sub_provider_name {
     color: #e0e0e0;
 }
 
-:root[data-darkmode="true"] .sub_provider_percent {
+.oc[data-darkmode="true"] .sub_provider_percent {
     color: #e0e0e0;
 }
 
@@ -4875,64 +4954,64 @@ ul {
     min-width: 0;
 }
 
-:root[data-darkmode=true] #tab-header {
+.oc[data-darkmode=true] #tab-header {
     background: #374151;
     border-bottom: 1px solid #374151;
 }
 
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu {
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu {
     background: #374151;
 }
 
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu li {
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu li {
     background: #1f2937;
     color: #a1a1aa;
     border-color: #374151;
 }
 
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab {
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab {
     background: #2563eb;
     color: #fff;
 }
 
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab a {
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab a {
     color: #fff !important;
 }
 
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab-disabled {
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab-disabled {
     color: #1f2937;
     background: #1f2937;
     opacity: .7;
 }
 
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab-disabled a {
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu li.cbi-tab-disabled a {
     color: #fff !important;
 }
 
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu li:not(.cbi-tab):hover,
-:root[data-darkmode=true] #tab-header ul.cbi-tabmenu li:not(.cbi-tab):focus {
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu li:not(.cbi-tab):hover,
+.oc[data-darkmode=true] #tab-header ul.cbi-tabmenu li:not(.cbi-tab):focus {
     color: #3b82f6;
     border-color: #3b82f6;
     background: #22304a;
 }
 
-:root[data-darkmode=true] .radio-button {
+.oc[data-darkmode=true] .radio-button {
     background: #1f2937;
 }
 
-:root[data-darkmode=true] .radio-button label {
+.oc[data-darkmode=true] .radio-button label {
     background: #374151;
     color: #d1d5db;
     border-color: #4b5563;
 }
 
-:root[data-darkmode=true] .radio-button label:hover {
+.oc[data-darkmode=true] .radio-button label:hover {
     color: #60a5fa;
     border-color: #60a5fa;
     background: #1e3a5f;
 }
 
-:root[data-darkmode=true] .radio-button input[type=radio]:checked + label {
+.oc[data-darkmode=true] .radio-button input[type=radio]:checked + label {
     background: #2563eb;
     color: #fff;
     border-color: #2563eb;
@@ -4975,7 +5054,6 @@ ul {
     margin: 1em 0;
 }
 #debug-rendered p { margin: 0.5em 0; color: inherit !important; }
-#debug-rendered span { color: inherit !important; }
 #debug-rendered a {
     color: var(--primary-color, #3b82f6) !important;
     text-decoration: none;
@@ -4987,7 +5065,6 @@ ul {
     font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
     padding: 0 2px;
     font-size: 0.9em;
-    color: #e11d48;
 }
 #debug-rendered .pre-copy-wrap {
     position: relative;
@@ -4998,21 +5075,19 @@ ul {
     background: var(--bg-gray, #f1f5f9);
     border: 1px solid var(--border-light, #e2e8f0);
     border-radius: 6px;
-    padding: 12px;
+    padding: 6px;
     overflow-x: auto;
     margin: 0;
     line-height: 1.5;
 }
 #debug-rendered pre code {
-    background: none;
-    padding: 0;
-    color: inherit;
+    padding: 5px;
     font-size: 0.88em;
 }
 #debug-rendered .pre-copy-btn {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 10px;
+    right: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -5080,7 +5155,7 @@ ul {
     border-color: var(--border-dark, #334155);
 }
 .oc[data-darkmode="true"] #debug-rendered p,
-.oc[data-darkmode="true"] #debug-rendered span,
+.oc[data-darkmode="true"] #debug-rendered span:not([class*="hljs"]),
 .oc[data-darkmode="true"] #debug-rendered li {
     color: #e2e8f0;
 }
@@ -5101,9 +5176,6 @@ ul {
 .oc[data-darkmode="true"] #debug-rendered a {
     color: #60a5fa;
 }
-.oc[data-darkmode="true"] #debug-rendered code {
-    color: #fbbf24;
-}
 .oc[data-darkmode="true"] #debug-rendered .pre-copy-btn {
     background: rgba(255,255,255,0.08);
     color: #94a3b8;
@@ -5115,9 +5187,6 @@ ul {
 .oc[data-darkmode="true"] #debug-rendered pre {
     background: rgba(0,0,0,0.3);
     border-color: var(--border-dark, #334155);
-}
-.oc[data-darkmode="true"] #debug-rendered pre code {
-    color: #e2e8f0;
 }
 .oc[data-darkmode="true"] #debug-rendered blockquote {
     color: #f1f5f9;

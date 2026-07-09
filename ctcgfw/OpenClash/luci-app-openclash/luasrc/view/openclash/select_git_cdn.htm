@@ -102,29 +102,6 @@
     var release_branch_cdn = document.getElementById('RELEASE_BRANCH_CDN');
     var smart_enable_cdn = document.getElementById('SMART_ENABLE_CDN');
 
-    function initDarkMode() {
-        var ocContainers = document.querySelectorAll('.oc');
-        if (!ocContainers.length) return;
-
-        var shouldUseDark = isDarkBackground(document.body);
-
-        ocContainers.forEach(function(ocContainer) {
-            if (shouldUseDark) {
-                ocContainer.setAttribute('data-darkmode', 'true');
-                document.documentElement.setAttribute('data-darkmode', 'true');
-            } else {
-                ocContainer.removeAttribute('data-darkmode');
-                document.documentElement.removeAttribute('data-darkmode');
-            }
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initDarkMode);
-    } else {
-        initDarkMode();
-    }
-
     function get_update_info() {
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "update_info")%>', null, function(x, status) {
             if ( x && x.status == 200 ) {

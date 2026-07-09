@@ -412,36 +412,18 @@
 
     var DarkModeDetector = {
         init: function() {
+            if (typeof ocInitTheme === 'function') ocInitTheme();
             this.applyDarkMode();
         },
 
         applyDarkMode: function() {
-            var ocContainers = document.querySelectorAll('.oc');
-            if (!ocContainers.length) return;
-
-            var theme = localStorage.getItem('oc-theme') || 'auto';
-            var shouldUseDark;
-
-            if (theme === 'light') {
-                shouldUseDark = false;
-            } else if (theme === 'dark') {
-                shouldUseDark = true;
-            } else {
-                shouldUseDark = isDarkBackground(document.body);
-            }
-
-            ocContainers.forEach(function(ocContainer) {
-                if (shouldUseDark) {
-                    ocContainer.setAttribute('data-darkmode', 'true');
-                } else {
-                    ocContainer.removeAttribute('data-darkmode');
-                }
-            });
+            ocUpdateTheme();
 
             var sunIcon = document.getElementById('sun-icon');
             var moonIcon = document.getElementById('moon-icon');
             var autoIcon = document.getElementById('auto-icon');
             if (sunIcon && moonIcon && autoIcon) {
+                var theme = localStorage.getItem('oc-theme') || 'auto';
                 sunIcon.style.display = 'none';
                 moonIcon.style.display = 'none';
                 autoIcon.style.display = 'none';

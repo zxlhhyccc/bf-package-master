@@ -96,6 +96,7 @@ function index()
 	entry({"admin", "services", "openclash", "config_file_save"}, call("action_config_file_save"))
 	entry({"admin", "services", "openclash", "upload_config"}, call("action_upload_config"))
 	entry({"admin", "services", "openclash", "add_subscription"}, call("action_add_subscription"))
+	entry({"admin", "services", "openclash", "subconverter_version"}, call("action_subconverter_version"))
 	entry({"admin", "services", "openclash", "generate_age_key"}, call("action_generate_age_key"))
 	entry({"admin", "services", "openclash", "cal_age_public_key"}, call("action_cal_age_public_key"))
 	entry({"admin", "services", "openclash", "add_age_config"}, call("action_add_age_config"))
@@ -114,6 +115,7 @@ end
 
 local fs = require "luci.openclash"
 local json = require "luci.jsonc"
+local util = require "luci.util"
 local uci = require("luci.model.uci").cursor()
 local datatype = require "luci.cbi.datatypes"
 local opkg
@@ -203,6 +205,55 @@ local function check_core()
 	else
 		return "1"
 	end
+end
+
+local function parse_subconverter_version_url(raw_url)
+	raw_url = (raw_url or ""):gsub("^%s+", ""):gsub("%s+$", "")
+	if raw_url == "" then return nil, "empty" end
+	if not raw_url:match("^[a-zA-Z][a-zA-Z0-9+%.%-]*://") then
+		raw_url = "https://" .. raw_url
+	end
+
+	local scheme, authority, path = raw_url:match("^(https?)://([^/?#]+)([^?#]*)")
+	if not scheme or not authority then return nil, "invalid" end
+	if authority:find("@", 1, true) then return nil, "invalid" end
+	if authority:match("%s") then return nil, "invalid" end
+	if raw_url:find("?", 1, true) or raw_url:find("#", 1, true) then return nil, "invalid" end
+
+	local host, port
+	if authority:sub(1, 1) == "[" then
+		host, port = authority:match("^(%[[0-9a-fA-F:%.]+%]):?(%d*)$")
+	else
+		host, port = authority:match("^([^:]+):?(%d*)$")
+	end
+	if not host or host == "" then return nil, "invalid" end
+	if port and port ~= "" then
+		port = tonumber(port)
+		if not port or port < 1 or port > 65535 then return nil, "invalid" end
+	end
+
+	path = (path and path ~= "") and path or "/"
+	if path ~= "/version" and not path:match("/version$") then return nil, "invalid" end
+
+	return scheme .. "://" .. authority .. path
+end
+
+local function sanitize_subconverter_version_text(text)
+	text = tostring(text or ""):gsub("\r", "\n")
+	local lines = {}
+	for line in text:gmatch("[^\n]+") do
+		line = line:gsub("^%s+", ""):gsub("%s+$", "")
+		if line ~= "" then lines[#lines + 1] = line end
+	end
+	text = table.concat(lines, " "):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+	if text == "" or #text > 220 then return "" end
+	if text:match("<%s*/?%s*[%a!][^>]*>") then
+		return ""
+	end
+	if not text:lower():match("subconverter") and not text:lower():match("backend") and not text:lower():match("version") and not text:match("v?%d+%.%d+") then
+		return ""
+	end
+	return text
 end
 
 local function coremetacv()
@@ -1423,7 +1474,12 @@ function action_refresh_log()
 end
 
 function action_del_log()
-	luci.sys.exec(": > /tmp/openclash.log")
+	local log_type = luci.http.formvalue("type")
+	if log_type == "debug" then
+		luci.sys.exec(": > /tmp/openclash_debug.log")
+	else
+		luci.sys.exec(": > /tmp/openclash.log")
+	end
 	return
 end
 
@@ -2893,7 +2949,7 @@ local function is_safe_filename(filename)
 end
 
 local function kill_process()
-	local cmd = string.format("%s |grep -E 'openclash|clash' |grep -v grep |awk '{print $1}' |xargs -r kill -9 >/dev/null 2>&1", fs.ps_cmd())
+	local cmd = string.format("%s |grep -E 'openclash|clash|mihomo' |grep -v grep |awk '{print $1}' |xargs -r kill -9 >/dev/null 2>&1", fs.ps_cmd())
 	luci.sys.call(cmd)
 end
 
@@ -4053,6 +4109,35 @@ function action_get_subscribe_info_data()
 	luci.http.write_json(get_sub_url(filename))
 end
 
+function action_subconverter_version()
+	local raw_url = luci.http.formvalue("url") or ""
+	local version_url, err = parse_subconverter_version_url(raw_url)
+	luci.http.prepare_content("application/json")
+
+	if not version_url then
+		luci.http.write_json({status = "error", message = err or "invalid"})
+		return
+	end
+
+	local cmd = table.concat({
+		"curl -fsS --connect-timeout 3 -m 6 --retry 0",
+		"-H " .. util.shellquote("Accept: text/plain, */*"),
+		"-H " .. util.shellquote("Origin: https://openclash.local"),
+		"-H " .. util.shellquote("Sec-Fetch-Mode: cors"),
+		"-H " .. util.shellquote("Sec-Fetch-Dest: empty"),
+		"-H " .. util.shellquote("User-Agent: OpenClash Subconverter Version Check"),
+		util.shellquote(version_url),
+		"2>/dev/null | head -c 4096"
+	}, " ")
+	local version = sanitize_subconverter_version_text(luci.sys.exec(cmd))
+
+	if version == "" then
+		luci.http.write_json({status = "unrecognized"})
+	else
+		luci.http.write_json({status = "success", version = version})
+	end
+end
+
 function action_generate_age_key()
 	local algo = luci.http.formvalue("algo") or "keygen"
 	local cmd = string.format("%s age %s", meta_core_path, (algo == "pq" and "keygen-pq" or "keygen"))
@@ -4165,6 +4250,7 @@ function oix_login()
 	local result, info, token, get_sub, sub_info, sub_key, sub_match, sub_convert, sid, sub_file, SIGNATURE
 	local email = fs.uci_get_config("config", "oix_email")
 	local passwd = fs.uci_get_config("config", "oix_passwd")
+	local core
 	token = fs.uci_get_config("config", "oix_token")
 	if email and passwd then
 		info = luci.sys.exec(string.format("curl -sL -H 'Content-Type: application/json' -H 'User-Agent: OpenClash' -d '{\"email\":\"%s\", \"passwd\":\"%s\", \"token_expire\":\"365\" }' -X POST https://oix-api.dler.io/api/v1/login", email, passwd))
@@ -4215,7 +4301,12 @@ function oix_login()
 					end
 					if sub_info[v] then
 						luci.sys.exec(string.format('curl -sL -m 10 --retry 2 --user-agent "clash" "%s" -o "/etc/openclash/config/oixCloud - smart.yaml" >/dev/null 2>&1', sub_info[v]))
-						luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
+						core = coremetacv()
+						if core ~= "0" and not string.match(core, "oix") then
+							luci.sys.exec("/usr/share/openclash/openclash_core.sh Oix")
+						else
+							luci.sys.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
+						end
 					end
 				end
 			end
