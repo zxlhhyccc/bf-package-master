@@ -6,7 +6,7 @@
 <script src="/luci-static/resources/openclash/js/cm6.min.js?v=<%=plugin_version%>"></script>
 <script src="/luci-static/resources/openclash/js/common.js?v=<%=plugin_version%>"></script>
 
-<div id="my_editor_div" style="display:flex;margin:8px 8px;">
+<div id="my_editor_div" style="display:flex;">
 	<div id="config-mode-tabs" style="display:flex;width:100%;">
 		<div class="mode-tabs">
 			<button type="button" class="mode-tab active" id="tab-original-config">
@@ -36,8 +36,8 @@
 </button>
 
 <div id="oc-merge-help" style="display:none;">
-	<span id="oc-merge-help-normal"><%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl+Mouse Wheel</b> <%:to zoom%></span>
-	<span id="oc-merge-help-merge" style="display:none;"><%:Press%> <b style="color:var(--success-color)">F10</b> <%:to toggle differences,%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl+Mouse Wheel</b> <%:to zoom%></span>
+	<span id="oc-merge-help-normal"><%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%></span>
+	<span id="oc-merge-help-merge" style="display:none;"><%:Press%> <b style="color:var(--success-color)">F10</b> <%:to toggle differences,%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%></span>
 </div>
 
 <script type="text/javascript">//<![CDATA[
@@ -52,6 +52,8 @@ var _ocIcons = {
 // dispatch() can receive TransactionSpec objects which lack docChanged.
 
 function config_merge_editor(id, id2, target, target2, readOnly, readOnly2, wid, height) {
+	id.style.display = "none";
+	id2.style.display = "none";
 	var descr = document.getElementById("my_editor_div");
 	var sectionTable = target.parentNode.parentNode.parentNode.parentNode.parentNode;
 	if (sectionTable && sectionTable.parentNode) {
@@ -81,18 +83,29 @@ function config_merge_editor(id, id2, target, target2, readOnly, readOnly2, wid,
 	var helpEl = document.getElementById('oc-merge-help');
 	if (helpEl) {
 		helpEl.style.display = 'inline';
+		var footer = document.createElement('div');
+		footer.className = 'config-editor-footer';
+		footer.style.cssText = 'border-radius:var(--radius-sm);margin: 8px;';
+		var statusDiv = document.createElement('div');
+		statusDiv.className = 'config-editor-status';
+		var mergeModeLabel = document.createElement('span');
+		mergeModeLabel.id = 'oc-merge-mode-label';
+		mergeModeLabel.style.display = 'none';
+		mergeModeLabel.textContent = '<%:Compare mode: left(Original Config), right(Runtime Config)%>';
+		statusDiv.appendChild(mergeModeLabel);
 		var helpDiv = document.createElement('div');
 		helpDiv.className = 'config-editor-help';
-		helpDiv.style.cssText = 'max-width:100%;box-sizing:border-box;text-align:right;font-size:12px;padding:8px 16px;margin:8px 16px;background:var(--bg-gray);border-radius:var(--radius-sm);';
 		helpDiv.appendChild(helpEl);
-		sectionTable.parentNode.appendChild(helpDiv);
+		footer.appendChild(statusDiv);
+		footer.appendChild(helpDiv);
+		sectionTable.parentNode.insertBefore(footer, sectionTable.nextSibling);
 		_updateMergeHelpText(false);
 	}
 
 	var sectionDescr = sectionTable.parentNode.querySelector('.cbi-section-descr');
 	if (sectionDescr) {
 		sectionDescr.classList.add('config-editor-header', 'config-editor-title');
-		sectionDescr.style.cssText = sectionDescr.style.cssText + ';display:flex !important;align-items:center;gap:6px;padding:10px 16px;min-height:40px;cursor:default;user-select:text;';
+		sectionDescr.style.cssText = sectionDescr.style.cssText + ';display:flex !important;align-items:center;gap:6px;padding:10px 10px;min-height:50px;cursor:default;user-select:text;margin-bottom: unset;';
 		var text = sectionDescr.textContent.trim();
 		var idx = text.indexOf(':');
 		if (idx > 0) {
@@ -101,14 +114,13 @@ function config_merge_editor(id, id2, target, target2, readOnly, readOnly2, wid,
 			sectionDescr.innerHTML = '<span id="editTitle">' + label + '</span> ' +
 				'<span id="config-file-name" class="config-file-name">' + fname + '</span>';
 		}
+		descr.parentNode.insertBefore(sectionDescr, descr);
 	}
 
 	target2.parentNode.style.display = "none";
 	target.parentNode.colSpan = 2;
 	target.style.height = "700px";
 	target.classList.add('oc');
-	id.style.display = "none";
-	id2.style.display = "none";
 
 	var useContent = id.value || '';
 	var defContent = id2.value || '';
@@ -202,6 +214,8 @@ function _createSingleMergeEditor(content, readOnly) {
 		if (state.target.parentNode) state.target.parentNode.colSpan = 2;
 	}
 
+	ocShowLoading(state.target, '<%:Loading...%>');
+
 	var isDark = isDarkBackground(document.body);
 	var exts = [CM6.baseExtensions(), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Enter YAML configuration...%>')];
 	var topSearch = (CM6 && CM6.topSearchExtension) ? CM6.topSearchExtension() : null;
@@ -221,16 +235,23 @@ function _createSingleMergeEditor(content, readOnly) {
 		}
 	}));
 
+	var mergeStatus = document.querySelector('.config-editor-status');
+	if (mergeStatus) mergeStatus.style.display = 'none';
+
 	var view = new CM6.EditorView({
 		state: CM6.EditorState.create({ doc: content, extensions: exts }),
 		parent: state.target
 	});
+	var btn = document.getElementById('oc-merge-toggle-btn');
+	if (btn && view.dom) view.dom.appendChild(btn);
 	if (state.wid && state.height) {
 		view.dom.style.width = state.wid;
 		view.dom.style.height = state.height;
 	}
 	state.instance = view;
 	state.isMerge = false;
+
+	ocHideLoading(state.target);
 }
 
 function _renderMergeView() {
@@ -245,6 +266,8 @@ function _renderMergeView() {
 		state.target.classList.add('oc');
 		if (state.target.parentNode) state.target.parentNode.colSpan = 2;
 	}
+
+	ocShowLoading(state.target, '<%:Loading...%>');
 
 	var isDark = isDarkBackground(document.body);
 	var topSearch = (CM6 && CM6.topSearchExtension) ? CM6.topSearchExtension() : null;
@@ -281,13 +304,30 @@ function _renderMergeView() {
 		mv.b.dom.style.height = state.height;
 	}
 
+	if (CM6.mirrorThemeScrollbar) CM6.mirrorThemeScrollbar();
+
+	var btn = document.getElementById('oc-merge-toggle-btn');
+	if (btn && mv.dom) mv.dom.appendChild(btn);
+
+	var mergeStatus = document.querySelector('.config-editor-status');
+	if (mergeStatus) mergeStatus.style.display = '';
+	var mergeLabel = document.getElementById('oc-merge-mode-label');
+	if (mergeLabel) mergeLabel.style.display = 'inline';
+
 	window._mergeViewInstance = mv;
 	window._ocMergeShowDifferences = true;
 	state.instance = mv;
 	state.isMerge = true;
+
+	ocHideLoading(state.target);
 }
 
 function _destroyMergeInstance() {
+	var btn = document.getElementById('oc-merge-toggle-btn');
+	if (btn) {
+		var editorCell = window._mergeEditorState && window._mergeEditorState.target ? window._mergeEditorState.target.parentNode : null;
+		if (editorCell) editorCell.appendChild(btn);
+	}
 	var state = window._mergeEditorState;
 	if (state && state.instance) {
 		try {
@@ -323,6 +363,8 @@ function _toggleMergeView() {
 		}
 	}
 
+	var wasFullscreen = window._ocFullscreenActive;
+
 	if (state.isMerge) {
 		state.showUse = true;
 		_createSingleMergeEditor(state.useContent, false);
@@ -334,6 +376,12 @@ function _toggleMergeView() {
 	_updateMergeToggleBtn();
 	_updateMergeTabs(state.isMerge);
 	_updateMergeHelpText(state.isMerge);
+
+	if (wasFullscreen && CM6 && CM6.toggleFullscreen) {
+		var target = state.instance && state.instance.dom ? state.instance.dom : null;
+		if (!target && CM6.getActiveEditor) target = CM6.getActiveEditor();
+		if (target) CM6.toggleFullscreen(target);
+	}
 }
 
 function _updateMergeToggleBtn() {

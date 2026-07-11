@@ -30,6 +30,9 @@ ocRegisterEditorHotkeys();
 // or a TransactionSpec (without docChanged) to dispatch().
 
 function editor(id, readOnly, wid, height) {
+	id.style.display = 'none';
+	id.parentNode.classList.add('oc');
+	ocShowLoading(id.parentNode, '<%:Loading...%>', height);
 	var isDark = isDarkBackground(document.body);
 	var exts = [CM6.baseExtensions(), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Enter YAML configuration...%>')];
 	var topSearch = (CM6 && CM6.topSearchExtension) ? CM6.topSearchExtension() : null;
@@ -50,8 +53,7 @@ function editor(id, readOnly, wid, height) {
 		state: CM6.EditorState.create({ doc: id.value, extensions: exts })
 	});
 	id.parentNode.insertBefore(view.dom, id.nextSibling);
-	id.style.display = 'none';
-	id.parentNode.classList.add('oc');
+	ocHideLoading(id.parentNode);
 	ocUpdateTheme();
 	if (wid && height) {
 		view.dom.style.width = wid;
@@ -61,6 +63,9 @@ function editor(id, readOnly, wid, height) {
 }
 
 function shell_editor(id, readOnly, wid, height) {
+	id.style.display = 'none';
+	id.parentNode.classList.add('oc');
+	ocShowLoading(id.parentNode, '<%:Loading...%>', height);
 	var isDark = isDarkBackground(document.body);
 	var exts = [CM6.baseExtensions(), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Enter shell script...%>')];
 	var topSearch = (CM6 && CM6.topSearchExtension) ? CM6.topSearchExtension() : null;
@@ -76,8 +81,7 @@ function shell_editor(id, readOnly, wid, height) {
 		state: CM6.EditorState.create({ doc: id.value, extensions: exts })
 	});
 	id.parentNode.insertBefore(view.dom, id.nextSibling);
-	id.style.display = 'none';
-	id.parentNode.classList.add('oc');
+	ocHideLoading(id.parentNode);
 	ocUpdateTheme();
 	if (wid && height) {
 		view.dom.style.width = wid;
@@ -87,6 +91,9 @@ function shell_editor(id, readOnly, wid, height) {
 }
 
 function other_editor(id, readOnly, wid, height) {
+	id.style.display = 'none';
+	id.parentNode.classList.add('oc');
+	ocShowLoading(id.parentNode, '<%:Loading...%>', height);
 	var isDark = isDarkBackground(document.body);
 	var exts = [CM6.baseExtensions(), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Enter configuration...%>')];
 	var topSearch = (CM6 && CM6.topSearchExtension) ? CM6.topSearchExtension() : null;
@@ -102,8 +109,7 @@ function other_editor(id, readOnly, wid, height) {
 		state: CM6.EditorState.create({ doc: id.value, extensions: exts })
 	});
 	id.parentNode.insertBefore(view.dom, id.nextSibling);
-	id.style.display = 'none';
-	id.parentNode.classList.add('oc');
+	ocHideLoading(id.parentNode);
 	ocUpdateTheme();
 	if (wid && height) {
 		view.dom.style.width = wid;
@@ -113,6 +119,9 @@ function other_editor(id, readOnly, wid, height) {
 }
 
 function log_editor(id, name, readOnly, wid, height) {
+	id.style.display = 'none';
+	id.parentNode.classList.add('oc');
+	ocShowLoading(id.parentNode, '<%:Loading...%>', height);
 	var isDark = isDarkBackground(document.body);
 	var exts = [CM6.lineNumbers(), CM6.EditorView.lineWrapping, CM6.EditorState.readOnly.of(true), CM6.themeExtension(isDark)];
 	var topSearch = (CM6 && CM6.topSearchExtension) ? CM6.topSearchExtension() : null;
@@ -128,8 +137,7 @@ function log_editor(id, name, readOnly, wid, height) {
 		state: CM6.EditorState.create({ doc: id.value, extensions: exts })
 	});
 	id.parentNode.insertBefore(view.dom, id.nextSibling);
-	id.style.display = 'none';
-	id.parentNode.classList.add('oc');
+	ocHideLoading(id.parentNode);
 	ocUpdateTheme();
 	window['editor_' + name] = view;
 	if (wid && height) {
@@ -159,6 +167,9 @@ function log_editor(id, name, readOnly, wid, height) {
 }
 
 function markdown_editor(id, name, readOnly, wid, height) {
+	id.style.display = 'none';
+	id.parentNode.classList.add('oc');
+	ocShowLoading(id.parentNode, '<%:Loading...%>', height);
 	var isDark = isDarkBackground(document.body);
 	var exts = [CM6.lineNumbers(), CM6.EditorView.lineWrapping, CM6.themeExtension(isDark), CM6.markdown()];
 	if (readOnly) exts.push(CM6.EditorState.readOnly.of(true));
@@ -167,8 +178,7 @@ function markdown_editor(id, name, readOnly, wid, height) {
 		state: CM6.EditorState.create({ doc: id.value || '', extensions: exts })
 	});
 	id.parentNode.insertBefore(view.dom, id.nextSibling);
-	id.style.display = 'none';
-	id.parentNode.classList.add('oc');
+	ocHideLoading(id.parentNode);
 	ocUpdateTheme();
 	window['editor_' + name] = view;
 	if (wid && height) {

@@ -593,14 +593,24 @@ function set_subinfo_url()
 	})
 end
 
-function fetch_sub_info(sub_url, sub_ua)
+function fetch_sub_info(sub_url, sub_ua, sub_headers)
 	local info, upload, download, total, day_expire, http_code
 	local used, expire, day_left, percent, surplus
 
-	info = luci.sys.exec(string.format("curl -sLI -X GET -m 5 --retry 2 -w 'http_code=%%{http_code}' -H 'User-Agent: %s' '%s'", sub_ua, sub_url))
+	local header_args = ""
+	if sub_headers and sub_headers ~= "" then
+		for hdr in sub_headers:gmatch("[^\n]+") do
+			hdr = hdr:match("^%s*(.-)%s*$")
+			if hdr and hdr ~= "" then
+				header_args = header_args .. string.format(" -H '%s'", hdr:gsub("'", "'\\''"))
+			end
+		end
+	end
+
+	info = luci.sys.exec(string.format("curl -sLI -X GET -m 5 --retry 2 -w 'http_code=%%%%{http_code}' -H 'User-Agent: %s'%s '%s'", sub_ua, header_args, sub_url))
 	local http_match = string.match(info, "http_code=(%d+)")
 	if not info or not http_match or tonumber(http_match) ~= 200 then
-		info = luci.sys.exec(string.format("curl -sLI -X GET -m 5 --retry 2 -w 'http_code=%%{http_code}' -H 'User-Agent: Quantumultx' '%s'", sub_url))
+		info = luci.sys.exec(string.format("curl -sLI -X GET -m 5 --retry 2 -w 'http_code=%%%%{http_code}' -H 'User-Agent: Quantumultx'%s '%s'", header_args, sub_url))
 		http_match = string.match(info, "http_code=(%d+)")
 	end
 
@@ -825,17 +835,24 @@ function get_sub_url(filename)
 end
 
 function sub_info_get()
-	local sub_ua, filename, sub_info, url_result
+	local sub_ua, sub_headers, filename, sub_info, url_result
 	local providers_data = {}
 
 	filename = luci.http.formvalue("filename")
 	sub_info = ""
 	sub_ua = "Clash"
+	sub_headers = ""
 
 	uci:foreach("openclash", "config_subscribe",
 		function(s)
-			if s.name == filename and s.sub_ua then
-				sub_ua = s.sub_ua
+			if s.name == filename then
+				if s.sub_ua then
+					sub_ua = s.sub_ua
+				end
+				local raw = uci:get_list("openclash", s['.name'], "sub_headers")
+				if raw then
+					sub_headers = table.concat(raw, "\n")
+				end
 				return false
 			end
 		end
@@ -846,13 +863,13 @@ function sub_info_get()
 
 		if url_result then
 			if url_result.type == "single" then
-				local info = fetch_sub_info(url_result.url, sub_ua)
+				local info = fetch_sub_info(url_result.url, sub_ua, sub_headers)
 				if info then
 					table.insert(providers_data, info)
 				end
 			else
 				for i, provider in ipairs(url_result.providers) do
-					local info = fetch_sub_info(provider.url, sub_ua)
+					local info = fetch_sub_info(provider.url, sub_ua, sub_headers)
 					if info then
 						info.provider_name = provider.name
 						table.insert(providers_data, info)
@@ -3415,6 +3432,7 @@ function action_add_subscription()
 	local keyword = luci.http.formvalue("keyword") or ""
 	local ex_keyword = luci.http.formvalue("ex_keyword") or ""
 	local de_ex_keyword = luci.http.formvalue("de_ex_keyword") or ""
+	local sub_headers = luci.http.formvalue("sub_headers") or ""
 	luci.http.prepare_content("application/json")
 
 	if not name then
@@ -3531,6 +3549,21 @@ function action_add_subscription()
 			uci:delete("openclash", section_id, "address")
 		end
 		uci:set("openclash", section_id, "sub_ua", sub_ua)
+
+		uci:delete("openclash", section_id, "sub_headers")
+		if sub_headers and sub_headers ~= "" then
+			local headers = {}
+			for line in sub_headers:gmatch("[^\n]+") do
+				local h = line:match("^%s*(.-)%s*$")
+				if h and h ~= "" then
+					table.insert(headers, h)
+				end
+			end
+			if #headers > 0 then
+				uci:set_list("openclash", section_id, "sub_headers", headers)
+			end
+		end
+
 		uci:set("openclash", section_id, "sub_convert", sub_convert)
 		if sub_convert == "1" then
 			uci:set("openclash", section_id, "convert_address", convert_address)
@@ -4078,6 +4111,14 @@ function action_get_subscribe_data()
 	uci:foreach("openclash", "config_subscribe", function(s)
 		if s.name == filename then
 			data = s
+			-- UCI list fields: convert to newline-separated strings for frontend
+			local sid = s['.name']
+			for _, field in ipairs({"sub_headers", "keyword", "ex_keyword", "custom_params"}) do
+				local raw = uci:get_list("openclash", sid, field)
+				if raw then
+					data[field] = table.concat(raw, "\n")
+				end
+			end
 			return false
 		end
 	end)

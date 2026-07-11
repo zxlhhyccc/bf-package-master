@@ -89,6 +89,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label><%:Custom Headers%> (<%:Optional%>):</label>
+                            <div class="form-help" style="margin-bottom: unset;"><%:Add custom HTTP headers to the subscription request%></div>
+                            <div id="subscribe-headers-container" style="display:none;"></div>
+                            <button type="button" id="subscribe-headers-add" class="btn upload-btn" style="align-self: flex-start; margin-top: 4px; padding: 4px 12px; font-size: 13px; border: 1px solid var(--primary-color); border-radius: var(--radius-sm); cursor: pointer;">+ <%:Add Header%></button>
+                        </div>
+
+                        <div class="form-group">
                             <label class="form-checkbox">
                                 <input type="checkbox" id="advanced-options-enable">
                                 <span class="checkmark"></span>
@@ -716,6 +723,10 @@ var ConfigUploader = {
             }
         }
 
+        document.getElementById('subscribe-headers-add').addEventListener('click', function() {
+            self.addHeaderRow('', '');
+        });
+
         document.getElementById('config-upload-submit').addEventListener('click', function() {
             if (self.currentMode === 'file') {
                 self.uploadFile();
@@ -876,6 +887,9 @@ var ConfigUploader = {
         document.getElementById('subscribe-url-input').value = '';
         document.getElementById('subscribe-ua-input').value = 'clash-verge/v2.4.5';
         document.getElementById('subscribe-ua-custom').style.display = 'none';
+        var hdrContainer = document.getElementById('subscribe-headers-container');
+        hdrContainer.innerHTML = '';
+        hdrContainer.style.display = 'none';
 
         document.getElementById('advanced-options-enable').checked = false;
         document.getElementById('advanced-options-container').style.display = 'none';
@@ -917,7 +931,22 @@ var ConfigUploader = {
             }
         }
 
-        if (data.sub_convert === '1' || data.convert_address || data.template || data.custom_template_url || data.emoji === 'true' || data.udp === 'true' || data.skip_cert_verify === 'true' || data.sort === 'true' || data.node_type === 'true' || data.rule_provider === 'true' || data.custom_params || data.keyword || data.ex_keyword || data.de_ex_keyword || data.config_age_secret || data.config_age_public || data.config_age_algo) {
+        if (data.sub_headers) {
+            var container = document.getElementById('subscribe-headers-container');
+            container.innerHTML = '';
+            var lines = data.sub_headers.split('\n');
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (line) {
+                    var colonIdx = line.indexOf(':');
+                    var name = colonIdx > 0 ? line.substring(0, colonIdx).trim() : line;
+                    var value = colonIdx > 0 ? line.substring(colonIdx + 1).trim() : '';
+                    ConfigUploader.addHeaderRow(name, value);
+                }
+            }
+        }
+
+        if (data.sub_convert === '1' || data.convert_address || data.template || data.custom_template_url || data.emoji === 'true' || data.udp === 'true' || data.skip_cert_verify === 'true' || data.sort === 'true' || data.node_type === 'true' || data.rule_provider === 'true' || data.custom_params || data.keyword || data.ex_keyword || data.de_ex_keyword || data.sub_headers || data.config_age_secret || data.config_age_public || data.config_age_algo) {
             document.getElementById('advanced-options-enable').checked = true;
             document.getElementById('advanced-options-container').style.display = 'block';
 
@@ -1288,6 +1317,7 @@ var ConfigUploader = {
         var keywords = '';
         var excludeKeywords = '';
         var excludeDefaults = [];
+        var customHeaders = ConfigUploader.collectHeaders();
 
         if (advancedEnabled) {
             convertAddress = document.getElementById('convert-address-input').value;
@@ -1412,7 +1442,8 @@ var ConfigUploader = {
                 custom_params: customParams,
                 keyword: keywords,
                 ex_keyword: excludeKeywords,
-                de_ex_keyword: excludeDefaults.join(' ')
+                de_ex_keyword: excludeDefaults.join(' '),
+                sub_headers: customHeaders
             }, function(x, data) {
                 if (x && x.status == 200 && data.status === 'success') {
                     XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "update_config")%>', {
@@ -1492,6 +1523,60 @@ var ConfigUploader = {
             } catch (e) {
             }
         }
+    },
+
+    addHeaderRow: function(name, value) {
+        var container = document.getElementById('subscribe-headers-container');
+        var row = document.createElement('div');
+        row.className = 'form-row header-row';
+        row.style.cssText = 'align-items: center; gap: 6px; margin-bottom: 6px;';
+
+        var nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.className = 'form-input';
+        nameInput.placeholder = 'Header-Name';
+        nameInput.value = name || '';
+        nameInput.style.cssText = 'flex: 1; height: 32px;';
+
+        var valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.className = 'form-input';
+        valueInput.placeholder = 'value';
+        valueInput.value = value || '';
+        valueInput.style.cssText = 'flex: 1.5; height: 32px;';
+
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'icon-btn';
+        removeBtn.title = '<%:Remove%>';
+        removeBtn.style.cssText = 'flex-shrink: 0;';
+        removeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+        removeBtn.addEventListener('click', function() {
+            row.parentNode.removeChild(row);
+            if (container.children.length === 0) {
+                container.style.display = 'none';
+            }
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(valueInput);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+        container.style.display = 'block';
+    },
+
+    collectHeaders: function() {
+        var rows = document.querySelectorAll('#subscribe-headers-container .header-row');
+        var headers = [];
+        for (var i = 0; i < rows.length; i++) {
+            var inputs = rows[i].querySelectorAll('input');
+            var name = inputs[0].value.trim();
+            var value = inputs[1].value.trim();
+            if (name) {
+                headers.push(name + ': ' + (value || ''));
+            }
+        }
+        return headers.join('\n');
     },
 
     handleError: function(message) {

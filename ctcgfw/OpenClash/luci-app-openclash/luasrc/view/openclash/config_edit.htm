@@ -72,10 +72,6 @@
             </div>
 
             <div class="config-editor-content">
-                <div class="config-editor-loading" id="config-editor-loading">
-                    <div class="loading-spinner"></div>
-                    <span><%:Loading config file...%></span>
-                </div>
                 <textarea id="config-editor-textarea" style="display: none;"></textarea>
                 <div id="config-mergeview-container" style="display:none;width:100%;height:100%;"></div>
             </div>
@@ -89,7 +85,7 @@
                     <span id="config-editor-status-text"><%:Ready%></span>
                 </div>
                 <div class="config-editor-help">
-                    <span id="config-editor-help"><%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl+Mouse Wheel</b> <%:to zoom%></span>
+                    <span id="config-editor-help"><%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%></span>
                 </div>
                 <div class="config-editor-resize-handle" id="config-editor-resize-handle"></div>
             </div>
@@ -124,6 +120,7 @@ var ConfigEditor = {
     overlay: null,
     model: null,
     editorInstance: null,
+    _currentEditorMode: null,
     originalContent: '',
     isModified: false,
     currentZoom: 100,
@@ -259,8 +256,7 @@ var ConfigEditor = {
             textarea.value = '';
             textarea.style.display = 'none';
         }
-        var loadingDiv = document.getElementById('config-editor-loading');
-        if (loadingDiv) loadingDiv.style.display = 'flex';
+        ocShowLoading(textarea.parentNode, '<%:Loading config file...%>');
         var mergeview = document.getElementById('config-mergeview-container');
         if (mergeview) mergeview.style.display = 'none';
 
@@ -318,8 +314,7 @@ var ConfigEditor = {
             textarea.value = '';
             textarea.style.display = 'none';
         }
-        var loadingDiv = document.getElementById('config-editor-loading');
-        if (loadingDiv) loadingDiv.style.display = 'flex';
+        ocShowLoading(textarea.parentNode, '<%:Loading config file...%>');
         var mergeview = document.getElementById('config-mergeview-container');
         if (mergeview) mergeview.style.display = 'none';
 
@@ -370,6 +365,7 @@ var ConfigEditor = {
             }
             this.editorInstance = null;
         }
+        this._currentEditorMode = null;
         var textarea = document.getElementById('config-editor-textarea');
         if (textarea) textarea.style.display = '';
     },
@@ -408,21 +404,22 @@ var ConfigEditor = {
             this.currentConfigFile = '';
         }
 
-        var loadingDiv = document.getElementById('config-editor-loading');
         var textarea = document.getElementById('config-editor-textarea');
         var mergeview = document.getElementById('config-mergeview-container');
         var editor_help = document.getElementById('config-editor-help');
         var layoutBtn = document.getElementById('config-editor-layout');
 
-        if (loadingDiv) loadingDiv.style.display = 'flex';
-        if (textarea) textarea.style.display = 'none';
+        if (textarea) {
+            ocHideLoading(textarea.parentNode);
+            textarea.style.display = 'none';
+        }
         if (mergeview) mergeview.style.display = 'none';
         if (layoutBtn) {
             layoutBtn.classList.remove('active');
             layoutBtn.title = "<%:Compare%>";
             layoutBtn.innerHTML = _ocIcons.SVG_COMPARE;
         }
-        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl+Mouse Wheel</b> <%:to zoom%>';
+        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%>';
     },
 
     formatDisplayName: function(fileName) {
@@ -476,11 +473,9 @@ var ConfigEditor = {
     loadConfigContent: function() {
         var self = this;
         var statusText = document.getElementById('config-editor-status-text');
-        var loadingDiv = document.getElementById('config-editor-loading');
         var textarea = document.getElementById('config-editor-textarea');
         var mergeview = document.getElementById('config-mergeview-container');
         if (mergeview) mergeview.style.display = 'none';
-        if (textarea) textarea.style.display = 'block';
 
         statusText.textContent = '<%:Loading...%>';
 
@@ -505,13 +500,26 @@ var ConfigEditor = {
         }
 
         function renderEditor(content, mode, readOnly, lint) {
-            loadingDiv.style.display = 'none';
             textarea.value = content;
-            textarea.style.display = 'block';
+
+            var editorKey = mode + '|' + (readOnly ? 'r' : 'w') + '|' + (lint ? 'l' : 'n');
+
+            if (self.editorInstance && self._currentEditorMode === editorKey && !self.mergeViewActive) {
+                self.originalContent = content;
+                self.editorInstance.dispatch({
+                    changes: { from: 0, to: self.editorInstance.state.doc.length, insert: content }
+                });
+                self.isModified = false;
+                self.updateSaveButtonState();
+                textarea.style.display = 'none';
+                ocHideLoading(textarea.parentNode);
+                return;
+            }
 
             if (self.editorInstance) {
                 self._destroyEditor();
             }
+            self._currentEditorMode = editorKey;
 
             var exts = [];
             var isDark = isDarkBackground(document.body);
@@ -573,6 +581,9 @@ var ConfigEditor = {
 
             textarea.style.display = 'none';
             self.editorInstance.dom.style.height = '100%';
+            ocHideLoading(textarea.parentNode);
+
+            if (CM6.mirrorThemeScrollbar) CM6.mirrorThemeScrollbar();
         }
 
         if (!this.isOverwrite) {
@@ -608,12 +619,12 @@ var ConfigEditor = {
                     }
                     self.updateModeTabs();
                 } else {
-                    loadingDiv.querySelector('span').textContent = '<%:Failed to load config file%>';
+                    ocHideLoading(textarea.parentNode);
                     statusText.textContent = '<%:Load failed%>';
                 }
             })
             .catch(function(err) {
-                loadingDiv.querySelector('span').textContent = '<%:Failed to load config file%>';
+                ocHideLoading(textarea.parentNode);
                 statusText.textContent = '<%:Load failed%>';
             });
     },
@@ -623,17 +634,18 @@ var ConfigEditor = {
         if (this.isOverwrite) return;
         var container = document.getElementById('config-mergeview-container');
         var textarea = document.getElementById('config-editor-textarea');
-        var loadingDiv = document.getElementById('config-editor-loading');
         var tabs = document.getElementById('config-mode-tabs');
         var editor_help = document.getElementById('config-editor-help');
         var statusText = document.getElementById('config-editor-status-text');
 
         if (tabs) tabs.style.display = 'none';
-        if (textarea) textarea.style.display = 'none';
-        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (textarea) {
+            textarea.style.display = 'none';
+            ocHideLoading(textarea.parentNode);
+        }
         if (container) container.style.display = 'block';
         if (statusText) statusText.textContent = '<%:Loading...%>';
-        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F10</b> <%:to toggle differences,%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl+Mouse Wheel</b> <%:to zoom%>';
+        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F10</b> <%:to toggle differences,%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%>';
 
         var getOriginal = function() {
             return new Promise(function(resolve, reject) {
@@ -700,6 +712,9 @@ var ConfigEditor = {
 
             self.mergeViewActive = true;
             window._mergeViewInstance = self.editorInstance;
+
+            if (CM6.mirrorThemeScrollbar) CM6.mirrorThemeScrollbar();
+
             if (statusText) statusText.textContent = '<%:Compare mode: left(Original Config), right(Runtime Config)%>';
             var layoutBtn = document.getElementById('config-editor-layout');
             if (layoutBtn) layoutBtn.classList.add('active');
@@ -728,7 +743,7 @@ var ConfigEditor = {
             layoutBtn.innerHTML = _ocIcons.SVG_COMPARE;
         }
 
-        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl+Mouse Wheel</b> <%:to zoom%>';
+        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%>';
     },
 
     saveConfigContent: function() {
@@ -1820,6 +1835,73 @@ var ConfigEditor = {
         });
     },
 
+    addOverwriteParamRow: function(container, name, value) {
+        var row = document.createElement('div');
+        row.className = 'form-row overwrite-param-row';
+        row.style.cssText = 'align-items: center; gap: 6px; margin-bottom: 6px;';
+
+        var nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.className = 'form-input';
+        nameInput.placeholder = 'Key';
+        nameInput.value = name || '';
+        nameInput.style.cssText = 'flex: 1; height: 32px;';
+
+        var valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.className = 'form-input';
+        valueInput.placeholder = 'Value';
+        valueInput.value = value || '';
+        valueInput.style.cssText = 'flex: 1.5; height: 32px;';
+
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'icon-btn';
+        removeBtn.title = '<%:Remove%>';
+        removeBtn.style.cssText = 'flex-shrink: 0;';
+        removeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+        removeBtn.addEventListener('click', function() {
+            row.parentNode.removeChild(row);
+            if (container.children.length === 0) {
+                container.style.display = 'none';
+            }
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(valueInput);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+        container.style.display = 'block';
+    },
+
+    buildOverwriteParamRows: function(container, paramStr) {
+        if (!paramStr) return;
+        var pairs = paramStr.split(';');
+        for (var i = 0; i < pairs.length; i++) {
+            var pair = pairs[i].trim();
+            if (pair) {
+                var eqIdx = pair.indexOf('=');
+                var name = eqIdx > 0 ? pair.substring(0, eqIdx).trim() : pair;
+                var value = eqIdx > 0 ? pair.substring(eqIdx + 1).trim() : '';
+                this.addOverwriteParamRow(container, name, value);
+            }
+        }
+    },
+
+    collectOverwriteParams: function(container) {
+        var rows = container.querySelectorAll('.overwrite-param-row');
+        var params = [];
+        for (var i = 0; i < rows.length; i++) {
+            var inputs = rows[i].querySelectorAll('input');
+            var name = inputs[0].value.trim();
+            var value = inputs[1].value.trim();
+            if (name) {
+                params.push(name + '=' + value);
+            }
+        }
+        return params.join(';');
+    },
+
     getOverwriteConfigSelection: function(root, dropdownId) {
         var dropdown = root.querySelector('#' + dropdownId);
         if (!dropdown) return [];
@@ -1943,7 +2025,9 @@ var ConfigEditor = {
                 </div>
                 <div class="form-group" id="overwrite-subscribe-param-group" style="display:'block';">
                     <label><%:Environment variable%>:</label>
-                    <input type="text" class="form-input" name="param" id="overwrite-subscribe-param" value="${sub.param||''}" placeholder="key1=value1;key2=value2">
+                    <div class="form-help" style="margin-bottom: unset;"><%:Set environment variables for the overwrite script%></div>
+                    <div id="overwrite-subscribe-param-container" style="display:none;"></div>
+                    <button type="button" id="overwrite-subscribe-param-add" class="btn upload-btn" style="align-self: flex-start; margin-top: 4px; padding: 4px 12px; font-size: 13px; border: 1px solid var(--primary-color); border-radius: var(--radius-sm); cursor: pointer;">+ <%:Add Param%></button>
                 </div>
                 <div class="upload-progress" id="overwrite-upload-progress" style="display:none;">
                     <div class="progress-bar">
@@ -2124,6 +2208,14 @@ var ConfigEditor = {
         if (model.querySelector('#overwrite-subscribe-filename')) {
             model.querySelector('#overwrite-subscribe-filename').addEventListener('input', validateAddOverwriteForm);
         }
+        var paramContainer = model.querySelector('#overwrite-subscribe-param-container');
+        if (paramContainer) {
+            self.buildOverwriteParamRows(paramContainer, '');
+            model.querySelector('#overwrite-subscribe-param-add').addEventListener('click', function() {
+                self.addOverwriteParamRow(paramContainer, '', '');
+            });
+        }
+
         if (model.querySelector('#overwrite-subscribe-type')) {
             model.querySelector('#overwrite-subscribe-type').addEventListener('change', validateAddOverwriteForm);
         }
@@ -2196,7 +2288,7 @@ var ConfigEditor = {
                 var update_days = form.querySelector('#overwrite-subscribe-update-days').value;
                 var update_hour = form.querySelector('#overwrite-subscribe-update-hour').value;
                 var type = form.querySelector('#overwrite-subscribe-type').value;
-                var param = form.querySelector('#overwrite-subscribe-param').value.trim();
+                var param = self.collectOverwriteParams(form.querySelector('#overwrite-subscribe-param-container'));
                 var selectedConfigPaths = self.getOverwriteConfigSelection(model, 'overwrite-subscribe-config-dropdown');
                 if (!filename) {
                     alert('<%:Please enter a filename%>');
@@ -2325,6 +2417,17 @@ var ConfigEditor = {
 
         this.bindOverwriteConfigDropdown(model.querySelector('#overwrite-subscribe-config-dropdown'));
 
+        var paramContainer = model.querySelector('#overwrite-subscribe-param-container');
+        if (paramContainer && sub && sub.param) {
+            self.buildOverwriteParamRows(paramContainer, sub.param);
+        }
+        var paramAddBtn = model.querySelector('#overwrite-subscribe-param-add');
+        if (paramAddBtn) {
+            paramAddBtn.addEventListener('click', function() {
+                self.addOverwriteParamRow(paramContainer, '', '');
+            });
+        }
+
         var typeSelect = model.querySelector('#overwrite-subscribe-type');
         var urlGroup = model.querySelector('#overwrite-subscribe-url-group');
         var updateGroup = model.querySelector('#overwrite-subscribe-update-group');
@@ -2384,7 +2487,7 @@ var ConfigEditor = {
             var newName = form.querySelector('#overwrite-subscribe-filename').value.trim();
             var type = form.querySelector('#overwrite-subscribe-type').value;
             var url = form.querySelector('#overwrite-subscribe-url').value.trim();
-            var param = form.querySelector('#overwrite-subscribe-param').value.trim();
+            var param = self.collectOverwriteParams(form.querySelector('#overwrite-subscribe-param-container'));
             var selectedConfigPaths = self.getOverwriteConfigSelection(model, 'overwrite-subscribe-config-dropdown');
 
             if (!newName) {
@@ -2414,6 +2517,7 @@ var ConfigEditor = {
             }
             formData.delete('config');
             formData.append('config', selectedConfigPaths.join('\n'));
+            formData.append('param', param);
             if (newName !== name) {
                 formData.append('old_filename', name);
             }

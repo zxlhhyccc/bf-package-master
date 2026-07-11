@@ -861,6 +861,18 @@ msgstr "Tamaño"
 msgid "Remove"
 msgstr "Eliminar"
 
+msgid "Add Header"
+msgstr "Añadir cabecera"
+
+msgid "Add Param"
+msgstr "Añadir parámetro"
+
+msgid "Add custom HTTP headers to the subscription request"
+msgstr "Añadir cabeceras HTTP personalizadas a la solicitud de suscripción"
+
+msgid "Set environment variables for the overwrite script"
+msgstr "Establecer variables de entorno para el script de sobrescritura"
+
 msgid "(Enable or Disable Subscribe)"
 msgstr "(Habilitar o deshabilitar suscripción)"
 
@@ -1310,6 +1322,9 @@ msgstr "para salir,"
 
 msgid "to zoom"
 msgstr "zoom"
+
+msgid "Mouse Wheel"
+msgstr "Rueda del ratón"
 
 msgid "to toggle differences,"
 msgstr "para mostrar diferencias,"
@@ -2336,6 +2351,15 @@ msgstr "Parámetros personalizados"
 
 msgid "eg: \"rename=match@replace\" , \"rename=\\s+([2-9])[xX]@ (HIGH:$1)\""
 msgstr "Ejemplo: \"rename=match@replace\" , \"rename=\\s+([2-9])[xX]@ (ALTO:$1)\""
+
+msgid "Custom Headers"
+msgstr "Cabeceras personalizadas"
+
+msgid "Custom HTTP request headers, one per line, format: Header-Name: value"
+msgstr "Cabeceras HTTP personalizadas, una por línea, formato: Nombre-Cabecera: valor"
+
+msgid "eg: x-hwid: device-001, one header per line, format: Name: value"
+msgstr "Ej: x-hwid: device-001, una cabecera por línea, formato: Nombre: valor"
 
 msgid "Use Rule Provider"
 msgstr "Usar proveedor de reglas"

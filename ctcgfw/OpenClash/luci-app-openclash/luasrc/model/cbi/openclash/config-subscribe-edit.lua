@@ -75,6 +75,12 @@ o:value("clash.meta/1.19.20")
 o:value("Clash")
 o.rmempty = true
 
+---- Custom Headers
+o = s:option(DynamicList, "sub_headers", translate("Custom Headers"))
+o.description = font_red..bold_on..translate("Custom HTTP request headers, one per line, format: Header-Name: value")..bold_off..font_off
+o.rmempty = true
+o.placeholder = "x-hwid: my-device-id"
+
 o = s:option(ListValue, "config_age_algo", translate("Age Key Type"))
 o.description = font_red..bold_on..translate("Age Encryption For Config, Click For More:")..bold_off..font_off.." ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/config/proxy-providers/?age-secret-key#age-secret-key\")'>"..translate("Age Encryption Introduce").."</a>"
 o:value("keygen", "x25519")
