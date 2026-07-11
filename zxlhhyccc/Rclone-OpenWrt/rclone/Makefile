@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rclone
-PKG_VERSION:=1.74.3
+PKG_VERSION:=1.74.4
 PKG_RELEASE:=1
 
 # PKG_SOURCE_PROTO:=git

@@ -2,6 +2,10 @@
 
 set -x
 
+if [ -z "$GITHUB_TOKEN" ] && [ -f ".git-credentials" ]; then
+    GITHUB_TOKEN=$(grep -oP 'https://[^:]+:\K[^@]+' ".git-credentials" | head -n1)
+fi
+
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
 function update() {
@@ -18,7 +22,13 @@ function update() {
         ver="$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
 
 	[ "$tag" != "$ver" ] || return 2
-	
+
+	# 清理指定包的编译缓存
+	if [ -n "$type" ]; then
+		rm -f "dl/${type}-${ver}.tar.gz" 2>/dev/null
+		rm -f "dl/${type}-frontend-${ver}.tar.gz" 2>/dev/null
+	fi
+
 	line="$(awk "/PKG_VERSION:=/ {print NR}" "$CURDIR/Makefile")"
 	sed -i -e "$((line))s/PKG_VERSION:=.*/PKG_VERSION:=$tag/" "$CURDIR/Makefile"
 

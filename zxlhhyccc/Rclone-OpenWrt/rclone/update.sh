@@ -16,6 +16,11 @@ function update() {
         ver="$(awk -F 'PKG_VERSION:=' '/PKG_VERSION:/{gsub("\"","",$2);print $2}' "$CURDIR/Makefile")"
 
 	[ "$tag" != "$ver" ] || return 2
+
+	# 清理指定包的编译缓存
+	if [ -n "$type" ]; then
+		rm -f "dl/${type}-${ver}.tar.gz" 2>/dev/null
+	fi
 	
 	line="$(awk "/PKG_VERSION:=/ {print NR}" "$CURDIR/Makefile")"
 	sed -i -e "$((line))s/PKG_VERSION:=.*/PKG_VERSION:=$tag/" "$CURDIR/Makefile"
