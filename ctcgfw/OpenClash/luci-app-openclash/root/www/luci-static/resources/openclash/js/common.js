@@ -403,4 +403,112 @@ function ocHideLoading(container) {
 	_ocLoadingMap.delete(container);
 }
 
+// ── Clipboard utilities ─────────────────────────────────────────
+
+window.ocCopyToClipboard = function(text, btnElement, successMessage, failMessage) {
+	if (navigator.clipboard && navigator.clipboard.writeText) {
+		navigator.clipboard.writeText(text).then(function() {
+			ocShowCopySuccess(btnElement);
+		}).catch(function() {
+			ocFallbackCopy(text, btnElement, successMessage, failMessage);
+		});
+	} else {
+		ocFallbackCopy(text, btnElement, successMessage, failMessage);
+	}
+};
+
+function ocShowCopySuccess(element) {
+	if (!element) return;
+	var origHTML = element.innerHTML;
+	element.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+	element.classList.add('copy-success');
+	setTimeout(function() {
+		element.innerHTML = origHTML;
+		element.classList.remove('copy-success');
+	}, 1500);
+}
+
+function ocFallbackCopy(text, btnElement, successMessage, failMessage) {
+	var ta = document.createElement('textarea');
+	ta.value = text;
+	ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+	document.body.appendChild(ta);
+	ta.select();
+	var ok = false;
+	try { ok = document.execCommand('copy'); } catch(e) {}
+	document.body.removeChild(ta);
+	if (ok) {
+		ocShowCopySuccess(btnElement);
+	} else if (failMessage) {
+		prompt(failMessage, text);
+	}
+}
+
+// ── Format utilities ─────────────────────────────────────────────
+
+function ocFormatUnixTime(unixTimestamp) {
+	if (!unixTimestamp || unixTimestamp === 0) {
+		return '--';
+	}
+	try {
+		var date = new Date(unixTimestamp * 1000);
+		var year = date.getFullYear();
+		var month = String(date.getMonth() + 1).padStart(2, '0');
+		var day = String(date.getDate()).padStart(2, '0');
+		var hour = String(date.getHours()).padStart(2, '0');
+		var minute = String(date.getMinutes()).padStart(2, '0');
+		var second = String(date.getSeconds()).padStart(2, '0');
+		return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+	} catch (e) {
+		return '--';
+	}
+}
+
+function ocFormatBytes(bytes) {
+	if (bytes == null || bytes === 0) return '0 B';
+	var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+	var i = Math.floor(Math.log(bytes) / Math.log(1024));
+	if (i >= sizes.length) i = sizes.length - 1;
+	return (i === 0 ? bytes : (bytes / Math.pow(1024, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function ocFormatFileSize(bytes) {
+	if (!bytes || bytes === 0) return '--';
+	return ocFormatBytes(bytes);
+}
+
+function ocGetDashboardBaseURL(status) {
+	var host, port, proto;
+	if (status.daip && window.location.hostname === status.daip) {
+		host = window.location.hostname;
+		port = status.cn_port;
+		proto = 'http://';
+	} else if (status.daip && status.db_foward_domain && status.db_foward_port) {
+		host = status.db_foward_domain;
+		port = status.db_foward_port;
+		proto = (status.db_forward_ssl == 0 ? 'http://' : 'https://');
+	} else {
+		host = window.location.hostname;
+		port = status.cn_port;
+		proto = 'http://';
+	}
+	return { host: host, port: port, proto: proto, secret: status.dase || '' };
+}
+
+function ocBuildDashboardURL(status, uiPath, needsSetup) {
+	var base = ocGetDashboardBaseURL(status);
+	var url = base.proto + base.host + ':' + base.port + '/ui/' + uiPath;
+	if (needsSetup) {
+		url += '/#/setup?hostname=' + base.host + '&port=' + base.port;
+		if (base.secret) url += '&secret=' + base.secret;
+	} else if (uiPath === 'yacd') {
+		url += '/?hostname=' + base.host + '&port=' + base.port;
+		if (base.secret) url += '&secret=' + base.secret;
+	} else if (uiPath === 'dashboard') {
+		url += '/#/?host=' + base.host + '&port=' + base.port;
+		if (base.secret) url += '&secret=' + base.secret;
+	}
+	return url;
+}
+
 ocInitTheme();

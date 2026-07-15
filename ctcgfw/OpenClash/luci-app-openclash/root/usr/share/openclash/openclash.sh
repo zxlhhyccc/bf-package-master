@@ -226,7 +226,7 @@ config_download_direct()
          sed -i '/^ \{0,\}enhanced-mode:/d' "$CFG_FILE" >/dev/null 2>&1
          config_test
          if [ $? -ne 0 ]; then
-            LOG_ERROR "Config File Tested Faild, Please Check The Log Infos!"
+            LOG_ERROR "Config File Tested Failed, Please Check The Log Infos!"
             change_dns
             config_error
             return
@@ -437,7 +437,7 @@ sub_info_get()
       sed -i -E 's/protocol-param: ([^,'"'"'"''}( *#)\n\r]+)/protocol-param: "\1"/g' "$CFG_FILE" 2>/dev/null
       config_test
       if [ $? -ne 0 ]; then
-         LOG_ERROR "Config File Tested Faild, Please Check The Log Infos!"
+         LOG_ERROR "Config File Tested Failed, Please Check The Log Infos!"
          LOG_ERROR "Config File【$name】Subscribed Failed, Trying to Download Without Agent..."
          config_download_direct
          return

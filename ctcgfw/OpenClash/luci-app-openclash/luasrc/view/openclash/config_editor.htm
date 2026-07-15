@@ -5,22 +5,15 @@
 <link rel="stylesheet" href="/luci-static/resources/openclash/css/oc.css?v=<%=plugin_version%>">
 <script src="/luci-static/resources/openclash/js/cm6.min.js?v=<%=plugin_version%>"></script>
 <script src="/luci-static/resources/openclash/js/common.js?v=<%=plugin_version%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%=plugin_version%>"></script>
 
 <%-
 local path_info = os.getenv("PATH_INFO") or ""
 local sid = path_info:match("(cfg[0-9a-f]+)") or ""
 -%>
 
+<%+openclash/common%>
 <script type="text/javascript">//<![CDATA[
-var levelTranslations = {
-    'info': '<%:Info%>',
-    'warning': '<%:Warning%>',
-    'error': '<%:Error%>',
-    'debug': '<%:Debug%>',
-    'tip': '<%:Tip%>',
-    'watchdog': '<%:Watchdog%>',
-	'fatal': '<%:Fatal%>'
-};
 
 ocRegisterEditorHotkeys();
 
@@ -163,6 +156,10 @@ function log_editor(id, name, readOnly, wid, height) {
 	view.somethingSelected = function() { return !view.state.selection.main.empty; };
 	view.setSelection = function(f, t) { var lf = view.state.doc.line(f.line + 1), lt = view.state.doc.line(t.line + 1); view.dispatch({ selection: { anchor: lf.from + f.ch, head: lt.from + t.ch } }); };
 	view.scrollIntoView = function(p, m) { if (p && p.line !== undefined) { var ln = view.state.doc.line(p.line + 1); view.dispatch({ selection: { anchor: ln.from + (p.ch || 0) }, scrollIntoView: true }); } else { view.dispatch({ selection: { anchor: view.state.selection.main.head }, scrollIntoView: true }); } };
+	if (view.state.doc.length > 0 && view.state.doc.lines >= 1) {
+		var fl = view.state.doc.line(1);
+		view.dispatch({ selection: { anchor: fl.to } });
+	}
 	return view;
 }
 
@@ -195,10 +192,8 @@ function markdown_editor(id, name, readOnly, wid, height) {
 var _cmWhenReady = window._cmWhenReady;
 
 (function() {
-var core_log = document.getElementById("core_log");
 var oc_log = document.getElementById("cbid.openclash.config.clog");
 if (oc_log) { log_editor(oc_log, 'oc', true, '100%', '540px'); }
-if (core_log) { log_editor(core_log, 'core', true, '100%', '540px'); }
 
 var custom_cfg_value = document.getElementById("cbid.openclash.<%=sid%>.other_parameters");
 if (custom_cfg_value) {
