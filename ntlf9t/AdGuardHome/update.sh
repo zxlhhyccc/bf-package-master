@@ -15,7 +15,7 @@ function update() {
 	local tag ver sha old_hash line frontend_sha frontend_old_sha commit
 
 	# 获取版本号
-	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/releases/latest" | jq -r ".tag_name" | sed 's/v//')"
+	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/releases/latest" | jq -r '(if type == "array" then .[0] else . end) | .tag_name // "error"' | sed 's/v//')"
 	#tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/AdguardTeam/AdGuardHome/tags" | jq -r ".[2].name" | sed 's/v//')"
 	[ -n "$tag" ] || return 1
 
