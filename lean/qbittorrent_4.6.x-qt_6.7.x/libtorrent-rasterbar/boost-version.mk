@@ -1,12 +1,19 @@
-# boost-version.mk
-BOOST_MAKEFILE := $(firstword $(shell find -L $(TOPDIR) -type f -path "*/boost/Makefile"))
+ifndef BOOST_VERSION_CODE
+  BOOST_MAKEFILE := $(if $(wildcard $(TOPDIR)/package/libs/boost/Makefile),\
+	$(TOPDIR)/package/libs/boost/Makefile,\
+  $(if $(wildcard $(TOPDIR)/feeds/packages/libs/boost/Makefile),\
+	$(TOPDIR)/feeds/packages/libs/boost/Makefile,\
+  $(firstword $(wildcard $(TOPDIR)/feeds/*/libs/boost/Makefile))))
 
-BOOST_PKG_VERSION := $(shell grep '^PKG_VERSION:=' $(BOOST_MAKEFILE) | head -n1 | cut -d= -f2)
+  BOOST_PKG_VERSION := $(if $(BOOST_MAKEFILE),\
+	$(strip $(shell sed -n 's/^PKG_VERSION[[:space:]]*:=//p' $(BOOST_MAKEFILE))))
 
-BOOST_VER_MAJOR := $(word 1,$(subst ., ,$(BOOST_PKG_VERSION)))
-BOOST_VER_MINOR := $(word 2,$(subst ., ,$(BOOST_PKG_VERSION)))
-BOOST_VER_PATCH := $(word 3,$(subst ., ,$(BOOST_PKG_VERSION)))
+  BOOST_VERSION_CODE := $(if $(BOOST_PKG_VERSION),\
+	$(shell \
+		v="$(BOOST_PKG_VERSION)"; \
+		IFS='.'; set -- $$v; \
+		echo $$(( $${1:-0} * 100000 + $${2:-0} * 100 + $${3:-0} ))),0)
 
-BOOST_VERSION_CODE := $(shell echo $$(($(BOOST_VER_MAJOR)*100000 + $(BOOST_VER_MINOR)*100 + $(BOOST_VER_PATCH))))
-
-NEED_BOOST_SYSTEM := $(if $(shell [ $(BOOST_VERSION_CODE) -ge 108900 ] && echo y),y,n)
+  NEED_BOOST_SYSTEM := $(if $(filter-out 0,$(BOOST_VERSION_CODE)),\
+	$(shell [ $(BOOST_VERSION_CODE) -ge 108900 ] && echo y || echo n),n)
+endif

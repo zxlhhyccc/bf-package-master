@@ -22,7 +22,7 @@ PYTHON3_PKG_WHEEL_NAME:=libtorrent
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
-include ./boost-version.mk
+include $(CURDIR)/boost-version.mk
 
 define Package/libtorrent-rasterbar/Default
   TITLE:=Rasterbar BitTorrent library
@@ -85,7 +85,9 @@ endef
 
 define Package/libtorrent-rasterbar/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libtorrent-rasterbar.so.* $(1)/usr/lib/
+	$(CP) \
+		$(PKG_INSTALL_DIR)/usr/lib/libtorrent-rasterbar.so.* \
+		$(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libtorrent-rasterbar))
