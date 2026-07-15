@@ -274,7 +274,7 @@
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1214,6 +1214,12 @@ start_dns() {
+@@ -1222,6 +1222,12 @@ start_dns() {
  				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
@@ -287,7 +287,7 @@
  			}
  		;;
  		auto)
-@@ -1326,6 +1332,19 @@ start_dns() {
+@@ -1334,6 +1340,19 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -307,7 +307,7 @@
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1335,6 +1354,11 @@ start_dns() {
+@@ -1343,6 +1362,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -319,7 +319,7 @@
  		else
  			TUN_DNS=${REMOTE_DNS}
  			echolog "  - udp://${TUN_DNS}"
-@@ -1348,6 +1372,12 @@ start_dns() {
+@@ -1356,6 +1380,12 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -332,7 +332,7 @@
  		}
  	;;
  	esac
-@@ -1480,6 +1510,73 @@ start_dns() {
+@@ -1488,6 +1518,73 @@ start_dns() {
  	fi
  }
  
@@ -406,7 +406,7 @@
  start_haproxy() {
  	[ "$(config_t_get global_haproxy balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -2002,7 +2099,8 @@ get_config() {
+@@ -2010,7 +2107,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
