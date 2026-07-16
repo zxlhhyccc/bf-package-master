@@ -258,12 +258,68 @@ local current_sid = self.map:get(section, "global_server") or "nil"
 	</style>
 
 	<script type="text/javascript">
+	if (!window.ssrXHR) {
+		window.ssrXHR = (function() {
+			function encode(data) {
+				var pairs = [];
+				var key;
+				for (key in (data || {})) {
+					if (Object.prototype.hasOwnProperty.call(data, key)) {
+						pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key] == null ? '' : data[key]));
+					}
+				}
+				return pairs.join('&');
+			}
+
+			function request(method, url, data, callback) {
+				var lower = method.toLowerCase();
+				if (window.XHR && typeof window.XHR[lower] === 'function') {
+					return window.XHR[lower](url, data, callback);
+				}
+
+				var xhr = new XMLHttpRequest();
+				var payload = encode(data);
+				var finalUrl = url;
+
+				if (lower === 'get' && payload) {
+					finalUrl += (url.indexOf('?') === -1 ? '?' : '&') + payload;
+				}
+
+				xhr.open(method, finalUrl, true);
+				xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+				if (lower !== 'get') {
+					xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+				}
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState !== 4) return;
+
+					var rv = null;
+					try {
+						rv = JSON.parse(xhr.responseText || 'null');
+					} catch (e) {}
+
+					if (callback) callback(xhr, rv);
+				};
+				xhr.send(lower === 'get' ? null : payload);
+			}
+
+			return {
+				get: function(url, data, callback) {
+					return request('GET', url, data, callback);
+				},
+				post: function(url, data, callback) {
+					return request('POST', url, data, callback);
+				}
+			};
+		})();
+	}
+
 	if (typeof(window.ssrClashRefreshSubscription) !== "function") {
 		window.ssrClashRefreshSubscription = function(btn, sid) {
 			var original = btn.value;
 			btn.disabled = true;
 			btn.value = '<%:Reloading YAML...%>';
-			XHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_refresh")%>', {
+			window.ssrXHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_refresh")%>', {
 				sid: sid
 			}, function(x, result) {
 				btn.disabled = false;
@@ -288,7 +344,7 @@ local current_sid = self.map:get(section, "global_server") or "nil"
 			}
 			btn.disabled = true;
 			btn.value = '<%:Resetting Defaults...%>';
-			XHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_reset_defaults")%>', {
+			window.ssrXHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_reset_defaults")%>', {
 				sid: sid
 			}, function(x, result) {
 				btn.disabled = false;
@@ -642,7 +698,7 @@ local current_sid = self.map:get(section, "global_server") or "nil"
 
 				select.onchange = function() {
 					setPanelStatus('<%:Switching...%>', '#0072c3');
-					XHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_switch")%>', {
+						window.ssrXHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_switch")%>', {
 						sid: currentPanelSid,
 						group: group.name,
 						name: select.value
@@ -699,7 +755,7 @@ local current_sid = self.map:get(section, "global_server") or "nil"
 				payload['rule_' + index + '_policy_group'] = rule.policy_group || '';
 			});
 
-			XHR.post('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_client_rule_save")%>', payload, function(x, result) {
+			window.ssrXHR.post('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_client_rule_save")%>', payload, function(x, result) {
 				btn.disabled = false;
 				btn.value = original;
 				if (result && result.success) {
@@ -733,7 +789,7 @@ local current_sid = self.map:get(section, "global_server") or "nil"
 			if (importBtn) importBtn.style.display = '';
 			if (refreshBtn) refreshBtn.style.display = 'none';
 
-			XHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_client_policies")%>', {
+			window.ssrXHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_client_policies")%>', {
 				sid: sid
 			}, function(x, result) {
 				if (!result || !result.active) {
@@ -785,7 +841,7 @@ local current_sid = self.map:get(section, "global_server") or "nil"
 			if (exportBtn) exportBtn.style.display = 'none';
 			if (importBtn) importBtn.style.display = 'none';
 			if (refreshBtn) refreshBtn.style.display = '';
-			XHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_groups")%>', {
+			window.ssrXHR.get('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_groups")%>', {
 				sid: sid
 			}, function(x, result) {
 				if (result && result.sid) {
@@ -955,7 +1011,7 @@ local current_sid = self.map:get(section, "global_server") or "nil"
 						return false;
 					}
 					modalRulesClearBtn.disabled = true;
-					XHR.post('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_client_rule_clear")%>', {
+					window.ssrXHR.post('<%=luci.dispatcher.build_url("admin", "services", "shadowsocksr", "clash_client_rule_clear")%>', {
 						sid: currentEditorSid
 					}, function(x, result) {
 						modalRulesClearBtn.disabled = false;
