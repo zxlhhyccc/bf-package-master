@@ -6,6 +6,7 @@
 %>
 <html>
 <head>
+<script src="/luci-static/resources/openclash/js/common.js?v=<%=plugin_version%>"></script>
 <link rel="stylesheet" href="/luci-static/resources/openclash/css/oc.css?v=<%=plugin_version%>">
 <script src="/luci-static/resources/openclash/js/cm6.min.js?v=<%=plugin_version%>"></script>
 </head>
@@ -319,7 +320,7 @@
                         <div class="config-upload-status" id="usage-help-status"></div>
                         <div class="config-upload-buttons">
                             <button type="button" class="btn cancel-btn" onclick="UsageHelpManager.hide()"><%:Cancel%></button>
-                            <button type="button" class="btn upload-btn" onclick="UsageHelpManager.copyAndHide()"><%:Copy And Close%></button>
+                            <button type="button" class="btn upload-btn" onclick="UsageHelpManager.copyAndHide()"><%:Copy%></button>
                         </div>
                     </div>
                 </div>
@@ -335,7 +336,6 @@
     <svg width="24" height="24"><use href="#oc-icon-usage-help"/></svg>
 </div>
 
-<script src="/luci-static/resources/openclash/js/common.js?v=<%=plugin_version%>"></script>
 <script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%=plugin_version%>"></script>
 <%+openclash/common%>
 <script type="text/javascript">//<![CDATA[
@@ -383,10 +383,11 @@
 
     var getDashboardBaseURL = ocGetDashboardBaseURL;
     var buildDashboardURL = ocBuildDashboardURL;
+    var bytesToSize = ocFormatBytes;
+    var debounceButton = ocDebounce;
 
     var DarkModeDetector = {
         init: function() {
-            if (typeof ocInitTheme === 'function') ocInitTheme();
             this.applyDarkMode();
         },
 
@@ -2355,16 +2356,6 @@
                 {element: document.getElementById("connect_t"), content: "<font style=\"color:var(--success-color)\">"+status.connections+"</font>"}
             ];
 
-            if (!SystemStatusManager.isEnabled) {
-                var cpuColor = status.cpu <= 50 ? "var(--success-color)" : (status.cpu <= 80 ? "var(--tip-color)" : "var(--error-color)");
-                var cpuValue = status.cpu <= 100 ? status.cpu + " %" : "0 %";
-                updates.push({element: document.getElementById("cpu_t"), content: "<font style=\"color:"+cpuColor+"\">"+cpuValue+"</font>"});
-
-                var loadValue = parseFloat(status.load_avg) || 0;
-                var loadColor = loadValue <= 50 ? "var(--success-color)" : (loadValue <= 80 ? "var(--tip-color)" : "var(--error-color)");
-                updates.push({element: document.getElementById("load_a"), content: "<font style=\"color:"+loadColor+"\">"+status.load_avg+" %</font>"});
-            }
-
             StateManager.batchUpdateDOM(updates);
         },
 
@@ -2380,11 +2371,6 @@
                     {element: document.getElementById("mem_t"), content: "<font style=\"color:var(--success-color)\">0 KB</font>"},
                     {element: document.getElementById("connect_t"), content: "<font style=\"color:var(--success-color)\">0</font>"}
                 ];
-
-                if (!SystemStatusManager.isEnabled) {
-                    fallbackUpdates.push({element: document.getElementById("cpu_t"), content: "<font style=\"color:var(--success-color)\">0 %</font>"});
-                    fallbackUpdates.push({element: document.getElementById("load_a"), content: "<font style=\"color:var(--success-color)\">0 %</font>"});
-                }
 
                 StateManager.batchUpdateDOM(fallbackUpdates);
                 this.retryCount = 0;
@@ -2780,47 +2766,29 @@
             }
         },
 
-        copyText: function() {
-            if (!this._editor) return;
-            var text = this._editor.state.doc.toString();
-            try {
-                navigator.clipboard.writeText(text).then(function() {
-                    if (UsageHelpManager.statusEl) {
-                        UsageHelpManager.statusEl.textContent = '<%:Copied to clipboard!%>';
-                        setTimeout(function() {
-                            if (UsageHelpManager.statusEl) {
-                                UsageHelpManager.statusEl.textContent = '';
-                            }
-                        }, 2000);
-                    }
-                }).catch(function() {
-                    document.execCommand('copy');
-                    if (UsageHelpManager.statusEl) {
-                        UsageHelpManager.statusEl.textContent = '<%:Copied to clipboard!%>';
-                        setTimeout(function() {
-                            if (UsageHelpManager.statusEl) {
-                                UsageHelpManager.statusEl.textContent = '';
-                            }
-                        }, 2000);
-                    }
-                });
-            } catch(e) {
-                document.execCommand('copy');
-            }
-        },
-
         copyAndHide: function() {
-            this.copyText();
-            this.hide();
+            if (!this._editor) return;
+            var text = this._editor.state.sliceDoc();
+            if (!text) return;
+            var self = this;
+            ocCopyToClipboard(text, null);
+            var btn = document.querySelector('#usage-help-model .upload-btn');
+            var origHTML = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.innerHTML = '<svg width="14" height="14" style="vertical-align:middle;margin-right:4px"><use href="#oc-icon-success"/></svg><%:Copied!%>';
+                btn.disabled = true;
+            }
+            setTimeout(function() {
+                if (btn) { btn.innerHTML = origHTML; btn.disabled = false; }
+                self.hide();
+            }, 2000);
         }
     };
 
     var pluginToggleUserAction = false;
-    var _domReady = false;
     var _lastNotRunningPoll = 0;
 
     XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "openclash", "status")%>', null, function(x, status) {
-        if (!_domReady) return; 
         if (x && x.status == 200) {
 
             if (!status.clash && Date.now() - _lastNotRunningPoll < 30000) return;
@@ -2954,6 +2922,16 @@
                 DOMCache.copy_pac_config.style.display = "none";
             }
 
+            if (status.clash) {
+                if (!SystemStatusManager.isEnabled) {
+                    SystemStatusManager.start();
+                }
+            } else {
+                SystemStatusManager.stop();
+                document.getElementById("cpu_t").innerHTML = "<font style=\"color:var(--success-color)\">0 %</font>";
+                document.getElementById("load_a").innerHTML = "<font style=\"color:var(--success-color)\">0 %</font>";
+            }
+
             if (status.clash && status.daip) {
                 if (!WSManager.hasActiveConnections()) {
                     LogManager.startLogDisplay();
@@ -2962,42 +2940,45 @@
                     if (NetworkStatsManager.isEnabled) {
                         NetworkStatsManager.stop();
                     }
-
-                    if (!SystemStatusManager.isEnabled) {
-                        SystemStatusManager.start();
-                    }
                 }
             } else {
                 WSManager.closeAll();
-                SystemStatusManager.stop();
                 NetworkStatsManager.stop();
+                document.getElementById("upload_").innerHTML = "<font style=\"color:var(--success-color)\">0 B/S</font>";
+                document.getElementById("download_").innerHTML = "<font style=\"color:var(--success-color)\">0 B/S</font>";
+                document.getElementById("uploadtotal_").innerHTML = "<font style=\"color:var(--success-color)\">0 KB</font>";
+                document.getElementById("downloadtotal_").innerHTML = "<font style=\"color:var(--success-color)\">0 KB</font>";
+                document.getElementById("mem_t").innerHTML = "<font style=\"color:var(--success-color)\">0 KB</font>";
+                document.getElementById("connect_t").innerHTML = "<font style=\"color:var(--success-color)\">0</font>";
             }
         }
         clashversion_check();
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        _domReady = true;
-        DarkModeDetector.init();
-        ConfigFileManager.init();
+    DarkModeDetector.init();
+    ConfigFileManager.init();
 
-        window.addEventListener('oc-overwrite-updated', function() {
-            OverwriteSubscribeManager.load(true);
-        });
-
-        setTimeout(function() {
-            OverwriteSubscribeManager.init();
-            SubscriptionManager.init();
-        }, 300);
-
-        setTimeout(function() { check_core(); }, 1000);
-        (window.requestIdleCallback || function(cb, opts) { setTimeout(cb, (opts && opts.timeout) || 1); })(function() { loadAnnouncement(); }, {timeout: 3000});
+    window.addEventListener('oc-overwrite-updated', function() {
+        OverwriteSubscribeManager.load(true);
     });
+
+    setTimeout(function() {
+        OverwriteSubscribeManager.init();
+        SubscriptionManager.init();
+        loadAnnouncement();
+    }, 300);
+
+    setTimeout(function() { check_core(); }, 1000);
 
     window.addEventListener('beforeunload', function() {
         WSManager.closeAll();
+        LogManager.stopLogDisplay();
         SystemStatusManager.stop();
         NetworkStatsManager.stop();
+        StateManager.clearAllCache();
+        if (StateManager.pending_requests) {
+            StateManager.pending_requests.clear();
+        }
     });
 
     function initializeWebSocketConnections(status) {
@@ -3437,20 +3418,15 @@
         memElement.innerHTML = data.inuse ? "<font style=\"color:var(--success-color)\">"+bytesToSize(data.inuse)+"</font>" : "<font style=\"color:var(--success-color)\">0 KB</font>";
     }
 
-    var bytesToSize = ocFormatBytes;
-
-    function all_one_key_update(btn) {
-        if (btn.disabled) return false;
-        btn.disabled = true;
+    var all_one_key_update = debounceButton(function(btn) {
         btn.value = '<%:Checking...%>';
         select_git_cdn();
         btn.value = '<%:Check Update%>';
         btn.disabled = false;
         return false;
-    }
+    });
 
-    function b_flush_dns_cache(btn) {
-        if (btn.disabled) return false;
+    var b_flush_dns_cache = debounceButton(function(btn) {
         btn.disabled = true;
         btn.value = '<%:Flushing...%> ';
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash","flush_dns_cache")%>', null, function(x, status) {
@@ -3462,10 +3438,9 @@
             }
         });
         return false;
-    }
+    });
 
-    function b_reload_firewall(btn) {
-        if (btn.disabled) return false;
+    var b_reload_firewall = debounceButton(function(btn) {
         btn.disabled = true;
         btn.value = '<%:Reloading...%>';
         LogManager.startLogDisplay('<%:Reloading...%>');
@@ -3474,10 +3449,9 @@
             btn.value = (x && x.status == 200) ? '<%:Reload Firewall%>' : '<%:Firewall Rules Reset Failed%>';
         });
         return false;
-    }
+    });
 
-    function b_close_all_connection(btn) {
-        if (btn.disabled) return false;
+    var b_close_all_connection = debounceButton(function(btn) {
         btn.disabled = true;
         btn.value = '<%:Reloading...%>';
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "close_all_connection")%>', null, function(x, status) {
@@ -3485,29 +3459,45 @@
             btn.value = (x && x.status == 200) ? '<%:Close Connect%>' : '<%:Close Connect Failed%>';
         });
         return false;
-    }
+    });
 
     function net_zashboard(btn) {
+        btn.disabled = true;
         btn.value = '<%:Zashboard%>';
-        winOpen(buildDashboardURL(StateManager.current_status, 'zashboard', true));
+        var status = StateManager.current_status;
+        if (!status) { setTimeout(function() { net_zashboard(btn); }, 500); return false; }
+        winOpen(buildDashboardURL(status, 'zashboard', true));
+        btn.disabled = false;
         return false;
     }
 
     function meta_dashboard(btn) {
+        btn.disabled = true;
         btn.value = '<%:Metacubexd%>';
-        winOpen(buildDashboardURL(StateManager.current_status, 'metacubexd', true));
+        var status = StateManager.current_status;
+        if (!status) { setTimeout(function() { meta_dashboard(btn); }, 500); return false; }
+        winOpen(buildDashboardURL(status, 'metacubexd', true));
+        btn.disabled = false;
         return false;
     }
 
     function ycad_dashboard(btn) {
+        btn.disabled = true;
         btn.value = '<%:Yacd%>';
-        winOpen(buildDashboardURL(StateManager.current_status, 'yacd', false));
+        var status = StateManager.current_status;
+        if (!status) { setTimeout(function() { ycad_dashboard(btn); }, 500); return false; }
+        winOpen(buildDashboardURL(status, 'yacd', false));
+        btn.disabled = false;
         return false;
     }
 
     function net_dashboard(btn) {
+        btn.disabled = true;
         btn.value = '<%:Dashboard%>';
-        winOpen(buildDashboardURL(StateManager.current_status, 'dashboard', false));
+        var status = StateManager.current_status;
+        if (!status) { setTimeout(function() { net_dashboard(btn); }, 500); return false; }
+        winOpen(buildDashboardURL(status, 'dashboard', false));
+        btn.disabled = false;
         return false;
     }
 

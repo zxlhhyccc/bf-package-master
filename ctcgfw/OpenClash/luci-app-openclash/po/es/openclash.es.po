@@ -4095,11 +4095,8 @@ msgstr "Si la descripción de mi problema está incompleta o falta mensajes de e
 msgid "My question is:"
 msgstr "Mi pregunta es:"
 
-msgid "Copied to clipboard!"
-msgstr "¡Copiado al portapapeles!"
-
-msgid "Copy And Close"
-msgstr "Copiar y cerrar"
+msgid "Copied!"
+msgstr "¡Copiado!"
 
 msgid "oixCloud Checkin Successful, Result:"
 msgstr "Registro en oixCloud exitoso, resultado:"

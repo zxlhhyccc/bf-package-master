@@ -2029,10 +2029,9 @@ var ConfigEditor = {
 
         var ocDiv = document.createElement('div');
         ocDiv.className = 'oc';
-        var mainOc = document.querySelector('.oc[data-darkmode="true"]');
-        if (mainOc) {
-            ocDiv.setAttribute('data-darkmode', 'true');
-        }
+		if (document.documentElement.getAttribute('data-darkmode') === 'true') {
+			ocDiv.setAttribute('data-darkmode', 'true');
+		}
 
         var overlay = document.createElement('div');
         overlay.className = 'config-upload-model-overlay show';
@@ -2344,10 +2343,9 @@ var ConfigEditor = {
 
         var ocDiv = document.createElement('div');
         ocDiv.className = 'oc';
-        var mainOc = document.querySelector('.oc[data-darkmode="true"]');
-        if (mainOc) {
-            ocDiv.setAttribute('data-darkmode', 'true');
-        }
+		if (document.documentElement.getAttribute('data-darkmode') === 'true') {
+			ocDiv.setAttribute('data-darkmode', 'true');
+		}
 
         var overlay = document.createElement('div');
         overlay.className = 'config-upload-model-overlay show';

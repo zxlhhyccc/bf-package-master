@@ -4063,7 +4063,7 @@ msgid "Explain underlying principles (firewall chains, YAML transformation logic
 msgstr "解释底层原理（防火墙规则链、YAML 转换逻辑）—— 而不只是点击步骤。"
 
 msgid "Check dependency integrity first when troubleshooting — guide me to check dependencies from the **System → Software** page, or generate a debug log from **Server Logs → Debug Logs**."
-msgstr "排查问题时首先检查依赖完整性 —— 指导我从 **系统 → 软件包** 页面检查依赖，或从 **服务器日志 → 调试日志** 页面生成调试日志。"
+msgstr "排查问题时首先检查依赖完整性 —— 指导我从 **系统 → 软件包** 页面检查依赖，或从 **运行日志 → 调试日志** 页面生成调试日志。"
 
 msgid "Never guess or fabricate information. If the reference guide does not cover something, actively query these external resources using web fetch / code search tools (in priority order):"
 msgstr "绝不猜测或编造信息。如参考指南未覆盖某项内容，请使用网页抓取/代码搜索工具主动查询以下外部资源（按优先级）："
@@ -4102,16 +4102,13 @@ msgid "Cite specific sources — mention which section of the reference guide, e
 msgstr "注明具体来源 —— 说明你的回答基于参考指南的哪个章节、哪个外部资源或哪个 Issue 编号。"
 
 msgid "If my problem description is incomplete or lacks error messages, ask me to generate a debug log first (**Server Logs → Debug Logs → Generate Logs**) — do NOT speculate about the cause."
-msgstr "如果我的问题描述不完整或缺少错误信息，请先要求我生成调试日志（**服务器日志 → 调试日志 → 生成日志**）—— 不要猜测原因。"
+msgstr "如果我的问题描述不完整或缺少错误信息，请先要求我生成调试日志（**运行日志 → 调试日志 → 生成日志**）—— 不要猜测原因。"
 
 msgid "My question is:"
 msgstr "我的问题是："
 
-msgid "Copied to clipboard!"
-msgstr "已复制到剪贴板！"
-
-msgid "Copy And Close"
-msgstr "复制并关闭"
+msgid "Copied!"
+msgstr "已复制！"
 
 msgid "oixCloud Checkin Successful, Result:"
 msgstr "oixCloud 签到成功，结果："
