@@ -90,6 +90,8 @@ config PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy
 	select PACKAGE_kmod-nft-socket
 	select PACKAGE_kmod-nft-tproxy
 	select PACKAGE_kmod-nft-nat
+	select PACKAGE_kmod-nf-reject
+	select PACKAGE_kmod-nf-reject6
 	depends on PACKAGE_$(PKG_NAME)
 	default y if PACKAGE_firewall4
 

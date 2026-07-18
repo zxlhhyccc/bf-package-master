@@ -1,5 +1,5 @@
---- a/Makefile	2026-05-23 14:26:16.627611000 +0800
-+++ b/Makefile	2026-05-23 14:34:24.003596661 +0800
+--- a/Makefile	2026-07-18 21:45:15.662143000 +0800
++++ b/Makefile	2026-07-18 21:45:29.886143000 +0800
 @@ -14,10 +14,14 @@
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
@@ -59,7 +59,7 @@
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -52,97 +79,98 @@
+@@ -52,10 +79,12 @@
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -72,8 +72,10 @@
  	select PACKAGE_ipt2socks
  	select PACKAGE_nftables
  	select PACKAGE_kmod-nft-socket
- 	select PACKAGE_kmod-nft-tproxy
+@@ -63,88 +92,87 @@
  	select PACKAGE_kmod-nft-nat
+ 	select PACKAGE_kmod-nf-reject
+ 	select PACKAGE_kmod-nf-reject6
 +	depends on PACKAGE_$(PKG_NAME)
  	default y if PACKAGE_firewall4
  
