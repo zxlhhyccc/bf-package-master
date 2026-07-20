@@ -89,6 +89,9 @@ msgstr "检查失败"
 msgid "File Not Exist"
 msgstr "文件不存在"
 
+msgid "Flush DNS Cache"
+msgstr "清理 DNS 缓存"
+
 msgid "Not Set"
 msgstr "未设置"
 
@@ -1115,6 +1118,12 @@ msgstr "收集 Smart 策略组的连接数据，方便用来分析及模型训�
 
 msgid "The Priority Of The Nodes, The Higher Than 1, The More Likely It Is To Be Selected, The Default Is 1, Support Regex"
 msgstr "自定义 Smart 策略组内节点的权重加成，大于 1 表示权重加成优先选择，小于 1 表示权重削减降低使用率，默认为 1，支持正则"
+
+msgid "Smart Group Tolerance"
+msgstr "Smart 策略组排序灵敏度"
+
+msgid "Sort When Proxies Delays Within Tolerance are Treated as Equal, Preventing Jitter"
+msgstr "当代理延迟在容差范围内时将其视为相等并排序，从而避免抖动"
 
 msgid "Running Status"
 msgstr "运行状态"
@@ -2178,7 +2187,7 @@ msgstr "完整解锁，区域："
 msgid "only support homemade!"
 msgstr "仅支持自制剧！"
 
-msgid "unlock test faild!"
+msgid "unlock test failed!"
 msgstr "解锁检测失败！"
 
 msgid ", the type of group is not select, auto select could not work!"
@@ -2190,13 +2199,13 @@ msgstr "开始进行解锁节点自动选择..."
 msgid "only support homemade! the type of group is not select, auto select could not work!"
 msgstr "仅支持自制剧！当前策略组类型非 Select，无法进行自动选择！"
 
-msgid "unlock test faild! the type of group is not select, auto select could not work!"
+msgid "unlock test failed! the type of group is not select, auto select could not work!"
 msgstr "解锁检测失败！当前策略组类型非 Select，无法进行自动选择！"
 
 msgid "only support homemade! start auto select unlock proxy..."
 msgstr "仅支持自制剧！开始进行解锁节点自动选择..."
 
-msgid "unlock test faild! start auto select unlock proxy..."
+msgid "unlock test failed! start auto select unlock proxy..."
 msgstr "解锁检测失败！开始进行解锁节点自动选择..."
 
 msgid "It Will Be Searched According To The Regex When Auto Search Group Fails"
@@ -2865,7 +2874,7 @@ msgstr "测试失败..."
 msgid "test is successful"
 msgstr "测试成功..."
 
-msgid "Config File Tested Faild, Please Check The Log Infos!"
+msgid "Config File Tested Failed, Please Check The Log Infos!"
 msgstr "配置文件测试失败，请查看《内核日志》排查失败原因！"
 
 msgid "Test The Config File First..."
@@ -3826,7 +3835,7 @@ msgid "module not found, please check your system depends if something abnormal!
 msgstr "模块未找到，如遇到异常请检查您的固件依赖！"
 
 msgid "Select Nodes Force Lookup and Use Target ASN Info First For More Stable Experience"
-msgstr "选择节点时强制查找并优先使用目标的 ASN 信息，以获得更稳定的体验"
+msgstr "选择节点时强制 DNS 查询并优先使用目标的 ASN 信息，以获得更稳定的体验"
 
 msgid "Prefer-ASN"
 msgstr "ASN 优先"
