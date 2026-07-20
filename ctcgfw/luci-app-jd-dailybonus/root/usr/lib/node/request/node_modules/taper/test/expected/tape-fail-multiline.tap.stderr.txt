@@ -1,0 +1,25 @@
+[34m# setup[39m
+[34m# http over http, tunnel=true[39m
+[32mok 1 should be equivalent[39m
+[34m# http over http, tunnel=false[39m
+[32mok 2 should be equivalent[39m
+[34m# http over http, tunnel=default[39m
+[32mok 3 should be equivalent[39m
+[34m# http over https, tunnel=true[39m
+[31mnot ok 4 should be equivalent[39m
+    operator: deepEqual
+    expected:      [ 'https connect to localhost:6767', 'http response', '200 http ok' ]
+    actual:      [ 'err tunneling socket could not be established, cause=UNABLE_TO_VERIFY_LEAF_SIGNATURE' ]
+    at: Request._callback (/node/somedir/test-tunnel.js:LINE:COL)
+  ...
+[34m# http over https, tunnel=false[39m
+[32mok 5 should be equivalent[39m
+[34m# http over https, tunnel=default[39m
+[32mok 6 should be equivalent[39m
+[34m# cleanup[39m
+
+[31mAssert: "should be equivalent", 
+	 found: [ 'err tunneling socket could not be established, cause=UNABLE_TO_VERIFY_LEAF_SIGNATURE' ] 
+	wanted: [ 'https connect to localhost:6767', 'http response', '200 http ok' ][39m
+	Request._callback (/node/somedir/test-tunnel.js:LINE:COL)
+

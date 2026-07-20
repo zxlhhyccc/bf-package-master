@@ -1,0 +1,21 @@
+TAP version 13
+# bind to invalid address
+ok 1 should not be equal
+ok 2 should be equal
+ok 3 should be equal
+# bind to local address
+ok 4 should not be equal
+not ok 5 should be equal
+  ---
+    operator: equal
+    expected: 'connect ExINVAL'
+    actual:   'connect EINVAL'
+    at: Request._callback (/node/somedir/test-fails.js:22:7)
+  ...
+ok 6 should be equal
+
+1..6
+# tests 6
+# pass  5
+# fail  1
+

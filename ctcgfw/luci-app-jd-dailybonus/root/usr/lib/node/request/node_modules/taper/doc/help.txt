@@ -1,0 +1,19 @@
+
+  Usage: $0 [options] <path ...>
+
+  Options:
+
+    -h, --help             Show usage information (and exit)
+    -V, --version          Print the version number (and exit)
+    --no-color             Disable all colorization
+    --timeout [ms]         Individual test file timeout (in ms; default=10000)
+
+    --runner [executable]
+        Name of alternative executable to run test-files with
+
+    -P, --runner-param [parameter]
+        An individual parameter to be passed, verbatim, to the test-runner.
+
+        Any arguments following a raw '--' will also be passed to the runner,
+        without any sort of parsing or recognition by taper.
+

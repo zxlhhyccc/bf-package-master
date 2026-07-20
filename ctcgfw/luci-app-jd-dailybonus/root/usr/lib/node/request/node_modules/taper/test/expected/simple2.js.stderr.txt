@@ -1,0 +1,2 @@
+I will log to stderr here.
+

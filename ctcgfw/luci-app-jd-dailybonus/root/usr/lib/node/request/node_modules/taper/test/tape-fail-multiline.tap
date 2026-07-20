@@ -1,0 +1,29 @@
+TAP version 13
+# setup
+# http over http, tunnel=true
+ok 1 should be equivalent
+# http over http, tunnel=false
+ok 2 should be equivalent
+# http over http, tunnel=default
+ok 3 should be equivalent
+# http over https, tunnel=true
+not ok 4 should be equivalent
+  ---
+    operator: deepEqual
+    expected:
+      [ 'https connect to localhost:6767', 'http response', '200 http ok' ]
+    actual:
+      [ 'err tunneling socket could not be established, cause=UNABLE_TO_VERIFY_LEAF_SIGNATURE' ]
+    at: Request._callback (/node/somedir/test-tunnel.js:LINE:COL)
+  ...
+# http over https, tunnel=false
+ok 5 should be equivalent
+# http over https, tunnel=default
+ok 6 should be equivalent
+# cleanup
+
+1..6
+# tests 6
+# pass  5
+# fail  1
+

@@ -1,0 +1,9 @@
+this should be logged to stdout
+this should go to stderr
+more logging to stdout
+another log to stderr
+on stderr: { timeout: 30000,
+  name: 'showing some deeper stderr logging by inspect on tap.test' }
+on stdout: { timeout: 30000,
+  name: 'showing some deeper stdout logging by inspect on tap.test' }
+

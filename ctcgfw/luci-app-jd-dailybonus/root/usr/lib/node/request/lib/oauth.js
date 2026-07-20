@@ -3,7 +3,8 @@
 var url = require('url')
 var qs = require('qs')
 var caseless = require('caseless')
-var uuid = require('uuid/v4')
+var uuid = require('uuid')
+var uuidv4 = uuid.v4 || uuid
 var oauth = require('oauth-sign')
 var crypto = require('crypto')
 var Buffer = require('safe-buffer').Buffer
@@ -25,7 +26,7 @@ OAuth.prototype.buildParams = function (_oauth, uri, method, query, form, qsLib)
     oa.oauth_timestamp = Math.floor(Date.now() / 1000).toString()
   }
   if (!oa.oauth_nonce) {
-    oa.oauth_nonce = uuid().replace(/-/g, '')
+    oa.oauth_nonce = uuidv4().replace(/-/g, '')
   }
   if (!oa.oauth_signature_method) {
     oa.oauth_signature_method = 'HMAC-SHA1'

@@ -1,0 +1,7 @@
+I will log to stderr here and then never complete.
+
+[31mAssert: "Test file timed out: fail-timeout.js", 
+	 found: true 
+	wanted: false[39m
+	fail-timeout.js:0
+
