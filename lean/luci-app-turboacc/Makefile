@@ -69,22 +69,22 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_BBRPLUS
 	bool "Include BBR CCA BBRPLUS"
-	depends on !LINUX_6_12
+	depends on !(LINUX_6_12||LINUX_6_18)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_NANQINLANG
 	bool "Include BBR CCA NANQINLANG"
-	depends on !(LINUX_6_6||LINUX_6_12)
+	depends on !(LINUX_6_6||LINUX_6_12||LINUX_6_18)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMI
 	bool "Include BBR CCA TSUNAMI"
-	depends on !(LINUX_6_6||LINUX_6_12)
+	depends on !(LINUX_6_6||LINUX_6_12||LINUX_6_18)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA_TSUNAMIO
 	bool "Include BBR CCA TSUNAMIO"
-	depends on !(LINUX_6_1||LINUX_6_6||LINUX_6_12)
+	depends on !(LINUX_6_1||LINUX_6_6||LINUX_6_12||LINUX_6_18)
 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
