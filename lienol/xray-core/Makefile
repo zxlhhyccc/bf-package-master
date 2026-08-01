@@ -1,15 +1,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray-core
-PKG_VERSION:=26.7.11
+PKG_VERSION:=26.7.28
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_DATE:=2026-07-17
-PKG_SOURCE_VERSION:=6e3322d219140a025285ded1114fe17a5edb74d8
-PKG_MIRROR_HASH:=3d9b7daee159e91d1ff61a2169a22db05eecec67281cf2cf00e2dd07fe7f2b8c
+PKG_SOURCE_DATE:=2026-07-28
+PKG_SOURCE_VERSION:=5ca6f4b7d4dc20a881d4330e498892697627ec0c
+PKG_MIRROR_HASH:=81e046fceef79eca025ab4dd554fb4f630344c4acd18580a36793576be01d5fb
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0
@@ -104,7 +104,9 @@ endif
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_XRAY_CORE_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/main; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main ; \
+	fi
 endif
 endef
 
