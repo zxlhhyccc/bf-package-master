@@ -73,7 +73,9 @@ define Build/Compile
 	$(call Build/UpdateDependencies)
 	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_V2DAT_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2dat
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/v2dat; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2dat ; \
+	fi
 endif
 endef
 
