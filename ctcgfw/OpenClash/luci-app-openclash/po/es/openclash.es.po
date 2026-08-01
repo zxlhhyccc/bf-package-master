@@ -122,6 +122,12 @@ msgstr "Aplicar ajustes"
 msgid "Download Config"
 msgstr "Descargar configuración"
 
+msgid "Click to Download"
+msgstr "Clic para descargar"
+
+msgid "Failed to get download link"
+msgstr "No se pudo obtener el enlace de descarga"
+
 msgid "Copy Config"
 msgstr "Copiar configuración"
 
@@ -1377,6 +1383,36 @@ msgstr "Acceso normal"
 msgid "Access Denied"
 msgstr "Acceso denegado"
 
+msgid "Connection Failed"
+msgstr "Conexión fallida"
+
+msgid "Invalid Response"
+msgstr "Respuesta no válida"
+
+msgid "Installed"
+msgstr "Instalado"
+
+msgid "Select Version"
+msgstr "Seleccionar versión"
+
+msgid "Latest"
+msgstr "Última"
+
+msgid "Latency"
+msgstr "Latencia"
+
+msgid "Plugin"
+msgstr "Plugin"
+
+msgid "Core"
+msgstr "Núcleo"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Failed to get version history"
+msgstr "Error al obtener historial"
+
 msgid "Bind Network Interface"
 msgstr "Vincular interfaz de red"
 
@@ -1527,20 +1563,26 @@ msgstr "Iniciando descarga"
 msgid "Download successful, start pre update test..."
 msgstr "Descarga completa, iniciando pruebas previas a la actualización..."
 
-msgid "opkg update failed or timed out, retrying..."
-msgstr "opkg update falló o expiró, reintentando..."
+msgid "opkg update failed or timed out:"
+msgstr "opkg update falló o expiró:"
 
-msgid "opkg update failed, trying pre update test..."
-msgstr "opkg update falló, se sigue intentando la prueba previa..."
+msgid "apk update failed or timed out:"
+msgstr "apk update falló o expiró:"
 
-msgid "apk update failed or timed out, retrying..."
-msgstr "apk update falló o expiró, reintentando..."
+msgid "opkg update failed:"
+msgstr "opkg update falló:"
 
-msgid "apk update failed, trying pre update test..."
-msgstr "apk update falló, se sigue intentando la prueba previa..."
+msgid "apk update failed:"
+msgstr "apk update falló:"
 
-msgid "Pre update test failed..."
-msgstr "Las pruebas previas han fallado..."
+msgid "Pre update test failed:"
+msgstr "Las pruebas previas han fallado:"
+
+msgid ", retrying..."
+msgstr ", reintentando..."
+
+msgid ", trying pre update test..."
+msgstr ", se sigue intentando la prueba previa..."
 
 msgid "Pre update test failed after 3 attempts, the file is saved in /tmp/openclash.ipk, please try to update manually with"
 msgstr "Pruebas fallidas; archivo guardado en /tmp/openclash.ipk, actualiza manualmente con:"
@@ -1554,8 +1596,8 @@ msgstr "Pruebas previas superadas. Preparando actualización, no recargues la p�
 msgid "Installing the new version, please do not refresh the page or do other operations..."
 msgstr "Instalando nueva versión; no recargues la página ni realices acciones."
 
-msgid "Installation failed..."
-msgstr "Instalación fallida..."
+msgid "Installation failed:"
+msgstr "Instalación fallida:"
 
 msgid "OpenClash update failed after 3 attempts, the file is saved in /tmp/openclash.ipk, please try to update manually with"
 msgstr "Actualización fallida; archivo guardado en /tmp/openclash.ipk, intenta actualizar con:"
@@ -1584,31 +1626,28 @@ msgstr "Descargando núcleo; si falla, descárgalo y súbelo manualmente."
 msgid "Core Download Successful, Start Update..."
 msgstr "Núcleo descargado correctamente, iniciando actualización..."
 
-msgid "Core Download Failed, Please Check The Network or Try Again Later!"
-msgstr "Descarga del núcleo fallida; verifica la red o inténtalo más tarde."
-
-msgid "Core Update Failed, Please Check The Network or Try Again Later!"
-msgstr "Actualización del núcleo fallida; revisa la red o inténtalo de nuevo."
-
-msgid "Core Update Successful!"
+msgid "Core Update Successful"
 msgstr "¡Actualización del núcleo completada!"
 
-msgid "Core Update Failed, Please Make Sure Enough Flash Memory Space or Selected Correct Core Platform And Try Again!"
-msgstr "Error al actualizar el núcleo: verifica que haya espacio suficiente o que la plataforma seleccionada sea correcta."
+msgid "Core Update Failed:"
+msgstr "Error al actualizar el núcleo:"
 
-msgid "Core Update Failed..."
-msgstr "Error al actualizar el núcleo..."
+msgid "Core Download Failed, Please Check The Network or Try Again Later..."
+msgstr "Error al descargar el núcleo, comprueba la red..."
 
-msgid "Core Download Failed..."
-msgstr "Error al descargar el núcleo..."
+msgid "Core Download Failed, Please Check The Network or Try Again Later"
+msgstr "Error al descargar el núcleo, comprueba la red o inténtalo más tarde"
 
-msgid "Core Update Failed, Please Make Sure Enough Flash Memory Space And Try Again!"
-msgstr "Error al actualizar el núcleo: comprueba el espacio de flash."
+msgid "Core Move Failed:"
+msgstr "Error al mover el núcleo:"
+
+msgid "Core Verification Failed:"
+msgstr "Error al verificar el núcleo:"
 
 msgid "No Compiled Version Selected, Please Select In Update Page And Try Again!"
 msgstr "No se ha seleccionado ninguna versión compilada; selecciónala en la página de actualización."
 
-msgid "Core Has Not Been Updated, Stop Continuing Operation!"
+msgid "Core Has Not Been Updated, Stop Continuing Operation"
 msgstr "El núcleo no ha sido actualizado; proceso detenido."
 
 msgid "Update Successful!"
@@ -1664,6 +1703,24 @@ msgstr "Descargando lista CIDR de China (IPv4)..."
 
 msgid "Start Downloading The Chnroute6 Cidr List..."
 msgstr "Descargando lista CIDR de China (IPv6)..."
+
+msgid "Version info not ready, please wait and try again"
+msgstr "Información de versión no disponible, inténtelo de nuevo"
+
+msgid "Link access timed out, cannot download"
+msgstr "Tiempo de acceso al enlace agotado, no se puede descargar"
+
+msgid "Link access failed, cannot download"
+msgstr "Acceso al enlace fallido, no se puede descargar"
+
+msgid "Failed to get plugin version info from this link, please check again later"
+msgstr "No se pudo obtener la versión del plugin de este enlace, inténtelo más tarde"
+
+msgid "Failed to get core version info from this link, please check again later"
+msgstr "No se pudo obtener la versión del núcleo de este enlace, inténtelo más tarde"
+
+msgid "The selected version is the same as the installed version, no need to update"
+msgstr "La versión seleccionada es la misma que la instalada, no es necesario actualizar"
 
 msgid "Chnroute Cidr List Download Success, Check Updated..."
 msgstr "Lista CIDR de China (IPv4) descargada correctamente, comprobando actualizaciones..."
@@ -2126,6 +2183,9 @@ msgstr "ha sido modificado, pausa del inicio rápido..."
 
 msgid "Click to Update"
 msgstr "Actualizar reglas"
+
+msgid "Click to Install"
+msgstr "Instalar"
 
 msgid "Persistence Fake-IP"
 msgstr "Persistencia de Fake-IP"
@@ -3261,6 +3321,21 @@ msgstr "Descargando:"
 msgid "Downloading..."
 msgstr "Descargando..."
 
+msgid "Downloading config..."
+msgstr "Descargando configuración..."
+
+msgid "Downloading core..."
+msgstr "Descargando núcleo..."
+
+msgid "Fetching subscription..."
+msgstr "Obteniendo suscripción..."
+
+msgid "Logging in..."
+msgstr "Iniciando sesión..."
+
+msgid "Saving token..."
+msgstr "Guardando token..."
+
 msgid "Sniff the domain name of the traffics to avoid rule-based proxy failure"
 msgstr "Analiza los dominios del tráfico para evitar fallos de proxy basados en reglas"
 
@@ -3548,6 +3623,12 @@ msgstr "Fecha de caducidad"
 
 msgid "RAW address"
 msgstr "Dirección RAW"
+
+msgid "Address"
+msgstr "Dirección"
+
+msgid "Timeout"
+msgstr "Tiempo de espera"
 
 msgid "Enter custom User-Agent"
 msgstr "Introduce un User-Agent personalizado"
@@ -3909,8 +3990,11 @@ msgstr "Agente de usuario global"
 msgid "depended package reinstalling..."
 msgstr "reinstalando paquete dependiente..."
 
-msgid "failed to install, please try to install it manually..."
-msgstr "no se pudo instalar; por favor, intenta instalarlo manualmente."
+msgid "failed to install:"
+msgstr "no se pudo instalar:"
+
+msgid ", please try to install it manually..."
+msgstr ", por favor, intenta instalarlo manualmente..."
 
 msgid "Decrypted content empty or still encrypted"
 msgstr "Contenido descifrado vacío o aún cifrado para"
@@ -4008,6 +4092,15 @@ msgstr "¡Fallo al iniciar sesión en oixCloud! Verifica los datos e inténtalo 
 msgid "oixCloud Account Login Failed, The Error Info is"
 msgstr "Fallo al iniciar sesión en oixCloud, el error es"
 
+msgid "invalid token"
+msgstr "token inválido"
+
+msgid "login failed"
+msgstr "inicio de sesión fallido"
+
+msgid "email or passwd is wrong"
+msgstr "correo electrónico o contraseña incorrectos"
+
 msgid "oixCloud Checkin Failed! Please Check And Try Again..."
 msgstr "¡Fallo al registrar en oixCloud! Inténtalo de nuevo más tarde."
 
@@ -4055,6 +4148,9 @@ msgstr "Parámetros demasiado largos"
 
 msgid "Usage Help"
 msgstr "Ayuda de uso"
+
+msgid "Click to get usage help"
+msgstr "Haga clic para obtener ayuda de uso"
 
 msgid "Copy the following text to any AI (ChatGPT, DeepSeek, etc.) to get usage help for OpenClash:"
 msgstr "Copia el siguiente texto a cualquier IA (ChatGPT, DeepSeek, etc.) para obtener ayuda de uso de OpenClash:"
@@ -4229,6 +4325,9 @@ msgstr "Error al guardar, inténtalo de nuevo"
 
 msgid "Network request failed, please check your connection and try again"
 msgstr "Error de red, revisa tu conexión"
+
+msgid "Server response error, please try again later"
+msgstr "Error de respuesta del servidor, inténtelo más tarde"
 
 msgid "Show on Overview"
 msgstr "Mostrar en resumen"

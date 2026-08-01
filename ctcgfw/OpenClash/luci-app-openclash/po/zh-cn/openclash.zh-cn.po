@@ -125,6 +125,12 @@ msgstr "应用配置"
 msgid "Download Config"
 msgstr "下载配置"
 
+msgid "Click to Download"
+msgstr "点击下载"
+
+msgid "Failed to get download link"
+msgstr "获取下载链接失败"
+
 msgid "Copy Config"
 msgstr "复制配置"
 
@@ -1380,6 +1386,36 @@ msgstr "连接正常"
 msgid "Access Denied"
 msgstr "无法访问"
 
+msgid "Connection Failed"
+msgstr "连接失败"
+
+msgid "Invalid Response"
+msgstr "响应异常"
+
+msgid "Installed"
+msgstr "已安装"
+
+msgid "Select Version"
+msgstr "选择版本"
+
+msgid "Latest"
+msgstr "最新"
+
+msgid "Latency"
+msgstr "延迟"
+
+msgid "Plugin"
+msgstr "插件"
+
+msgid "Core"
+msgstr "内核"
+
+msgid "Date"
+msgstr "日期"
+
+msgid "Failed to get version history"
+msgstr "历史版本获取失败"
+
 msgid "Bind Network Interface"
 msgstr "绑定网络接口"
 
@@ -1528,22 +1564,28 @@ msgid "Start downloading"
 msgstr "开始下载"
 
 msgid "Download successful, start pre update test..."
-msgstr "下载成功，开始进行更新前测试..."
+msgstr "下载成功，开始更新前测试..."
 
-msgid "opkg update failed or timed out, retrying..."
-msgstr "opkg update 失败或超时，正在重试..."
+msgid "opkg update failed or timed out:"
+msgstr "opkg update 失败或超时:"
 
-msgid "opkg update failed, trying pre update test..."
-msgstr "opkg update 失败，尝试进行预安装..."
+msgid "apk update failed or timed out:"
+msgstr "apk update 失败或超时:"
 
-msgid "apk update failed or timed out, retrying..."
-msgstr "apk update 失败或超时，正在重试..."
+msgid "opkg update failed:"
+msgstr "opkg update 失败:"
 
-msgid "apk update failed, trying pre update test..."
-msgstr "apk update 失败，尝试进行预安装..."
+msgid "apk update failed:"
+msgstr "apk update 失败:"
 
-msgid "Pre update test failed..."
-msgstr "更新前测试失败..."
+msgid "Pre update test failed:"
+msgstr "更新前测试失败:"
+
+msgid ", retrying..."
+msgstr "，正在重试..."
+
+msgid ", trying pre update test..."
+msgstr "，尝试进行预安装..."
 
 msgid "Pre update test failed after 3 attempts, the file is saved in /tmp/openclash.ipk, please try to update manually with"
 msgstr "更新前测试失败，文件保存在 /tmp/openclash.ipk，请尝试以下命令手动更新"
@@ -1552,13 +1594,13 @@ msgid "Pre update test failed after 3 attempts, the file is saved in /tmp/opencl
 msgstr "更新前测试失败，文件保存在 /tmp/openclash.apk，请尝试以下命令手动更新"
 
 msgid "Pre update test passed, ready to update and please do not refresh the page and other operations..."
-msgstr "更新前测试通过，准备开始更新，更新过程请不要刷新页面和进行其他操作..."
+msgstr "更新前测试通过，准备开始更新，更新过程请不要刷新页面..."
 
 msgid "Installing the new version, please do not refresh the page or do other operations..."
 msgstr "正在安装新版本，更新过程请不要刷新页面和进行其他操作..."
 
-msgid "Installation failed..."
-msgstr "软件包安装失败..."
+msgid "Installation failed:"
+msgstr "软件包安装失败:"
 
 msgid "OpenClash update failed after 3 attempts, the file is saved in /tmp/openclash.ipk, please try to update manually with"
 msgstr "OpenClash 更新失败，文件保存在 /tmp/openclash.ipk，请尝试以下命令手动更新"
@@ -1587,31 +1629,28 @@ msgstr "版本内核正在下载，如下载失败请尝试手动下载并上传
 msgid "Core Download Successful, Start Update..."
 msgstr "版本内核下载成功，开始更新..."
 
-msgid "Core Download Failed, Please Check The Network or Try Again Later!"
-msgstr "版本内核下载失败，请检查网络情况或稍后再试！"
-
-msgid "Core Update Failed, Please Check The Network or Try Again Later!"
-msgstr "版本内核更新失败，请检查网络或稍后再试！"
-
-msgid "Core Update Successful!"
+msgid "Core Update Successful"
 msgstr "版本内核更新成功！"
 
-msgid "Core Update Failed, Please Make Sure Enough Flash Memory Space or Selected Correct Core Platform And Try Again!"
-msgstr "版本内核更新失败，请确认设备闪存空间足够或内核平台正确后再试！"
+msgid "Core Update Failed:"
+msgstr "版本内核更新失败:"
 
-msgid "Core Update Failed..."
-msgstr "版本内核更新失败..."
+msgid "Core Download Failed, Please Check The Network or Try Again Later..."
+msgstr "版本内核下载失败，请检查网络情况或稍后再试！"
 
-msgid "Core Download Failed..."
-msgstr "版本内核下载失败..."
+msgid "Core Download Failed, Please Check The Network or Try Again Later"
+msgstr "版本内核下载失败，请检查网络情况或稍后再试"
 
-msgid "Core Update Failed, Please Make Sure Enough Flash Memory Space And Try Again!"
-msgstr "版本内核更新失败，请确认设备闪存空间足够后再试！"
+msgid "Core Move Failed:"
+msgstr "内核移动失败:"
+
+msgid "Core Verification Failed:"
+msgstr "内核校验失败:"
 
 msgid "No Compiled Version Selected, Please Select In Update Page And Try Again!"
 msgstr "未选择编译版本，请到升级页面选择后再试！"
 
-msgid "Core Has Not Been Updated, Stop Continuing Operation!"
+msgid "Core Has Not Been Updated, Stop Continuing Operation"
 msgstr "版本内核没有更新，停止继续操作！"
 
 msgid "Update Successful!"
@@ -1667,6 +1706,24 @@ msgstr "开始下载大陆 IP 白名单..."
 
 msgid "Start Downloading The Chnroute6 Cidr List..."
 msgstr "开始下载大陆 IPv6 白名单..."
+
+msgid "Version info not ready, please wait and try again"
+msgstr "版本信息尚未就绪，请稍后重试"
+
+msgid "Link access timed out, cannot download"
+msgstr "链接访问超时，无法下载"
+
+msgid "Link access failed, cannot download"
+msgstr "链接访问失败，无法下载"
+
+msgid "Failed to get plugin version info from this link, please check again later"
+msgstr "此链接的插件版本信息获取失败，请稍后重试"
+
+msgid "Failed to get core version info from this link, please check again later"
+msgstr "此链接的内核版本信息获取失败，请稍后重试"
+
+msgid "The selected version is the same as the installed version, no need to update"
+msgstr "所选版本与已安装版本相同，无需更新"
 
 msgid "Chnroute Cidr List Download Success, Check Updated..."
 msgstr "大陆 IP 白名单下载成功，检查版本是否更新..."
@@ -2129,6 +2186,9 @@ msgstr "被修改，暂停快速启动..."
 
 msgid "Click to Update"
 msgstr "点击更新规则"
+
+msgid "Click to Install"
+msgstr "点击安装"
 
 msgid "Persistence Fake-IP"
 msgstr "Fake-IP 持久化"
@@ -2914,7 +2974,7 @@ msgid "Change The Delay Calculation Method To Remove Extra Delays Such as Handsh
 msgstr "更换延迟计算方式，通过去除握手等额外开销来降低延迟数值"
 
 msgid "If the download fails, try setting the CDN in Overwrite Settings - General Settings - Github Address Modify Options"
-msgstr "如果下载失败，您可以尝试在覆写设置 - 常规设置 - Github 地址修改选项中设置 CDN"
+msgstr "如果下载失败，您可以尝试在覆写设置中设置 CDN"
 
 msgid "Used for Downloading Subscriptions, Defaults to"
 msgstr "用于下载订阅时指定 UA，默认为"
@@ -3145,13 +3205,13 @@ msgid "Failed to create update script!"
 msgstr "创建插件升级进程失败！"
 
 msgid "Attempting to start update service..."
-msgstr "正在启动插件升级进程..."
+msgstr "正在启动升级进程..."
 
 msgid "Service start failed, retrying in 2 seconds..."
-msgstr "插件升级进程启动失败，将在 2 秒后重试..."
+msgstr "插件升级进程启动失败，将在2秒后重试..."
 
 msgid "Failed to start update service after 3 attempts, please check and try again later..."
-msgstr "插件升级进程启动失败，请检查日志并稍后再试..."
+msgstr "升级进程启动失败，请稍后再试..."
 
 msgid "Core Update"
 msgstr "内核版本更新"
@@ -3275,6 +3335,21 @@ msgstr "下载进度："
 
 msgid "Downloading..."
 msgstr "下载中..."
+
+msgid "Downloading config..."
+msgstr "正在下载配置..."
+
+msgid "Downloading core..."
+msgstr "正在下载内核..."
+
+msgid "Fetching subscription..."
+msgstr "正在获取订阅..."
+
+msgid "Logging in..."
+msgstr "正在登录..."
+
+msgid "Saving token..."
+msgstr "正在保存令牌..."
 
 msgid "Sniff the domain name of the traffics to avoid rule-based proxy failure"
 msgstr "嗅探流量的域名信息，避免基于规则的代理失败"
@@ -3572,6 +3647,12 @@ msgstr "到期时间"
 
 msgid "RAW address"
 msgstr "原始地址"
+
+msgid "Address"
+msgstr "地址"
+
+msgid "Timeout"
+msgstr "超时"
 
 msgid "Enter custom User-Agent"
 msgstr "输入自定义 User-Agent"
@@ -3924,8 +4005,11 @@ msgstr "全局 User-Agent"
 msgid "depended package reinstalling..."
 msgstr "依赖正在重新安装..."
 
-msgid "failed to install, please try to install it manually..."
-msgstr "依赖安装失败，请重试手动安装..."
+msgid "failed to install:"
+msgstr "依赖安装失败:"
+
+msgid ", please try to install it manually..."
+msgstr "，请重试手动安装..."
 
 msgid "Decrypted content empty or still encrypted"
 msgstr "解密后内容为空或仍为加密状态"
@@ -4023,6 +4107,15 @@ msgstr "oixCloud 账户登录失败！请检查账户信息并重试..."
 msgid "oixCloud Account Login Failed, The Error Info is"
 msgstr "oixCloud 账户登录失败，错误信息"
 
+msgid "invalid token"
+msgstr "无效的令牌"
+
+msgid "login failed"
+msgstr "登录失败"
+
+msgid "email or passwd is wrong"
+msgstr "邮箱或密码错误"
+
 msgid "oixCloud Checkin Failed! Please Check And Try Again..."
 msgstr "oixCloud 签到失败，请稍后再试！"
 
@@ -4070,6 +4163,9 @@ msgstr "参数过长"
 
 msgid "Usage Help"
 msgstr "使用帮助"
+
+msgid "Click to get usage help"
+msgstr "点击获取使用帮助"
 
 msgid "Copy the following text to any AI (ChatGPT, DeepSeek, etc.) to get usage help for OpenClash:"
 msgstr "将以下文本复制到任意 AI 工具（ChatGPT、DeepSeek 等），即可获取 OpenClash 的使用帮助："
@@ -4244,6 +4340,9 @@ msgstr "签到设置保存失败，请重试"
 
 msgid "Network request failed, please check your connection and try again"
 msgstr "网络请求失败，请检查网络连接后重试"
+
+msgid "Server response error, please try again later"
+msgstr "服务器响应异常，请稍后重试"
 
 msgid "Show on Overview"
 msgstr "主页显示"

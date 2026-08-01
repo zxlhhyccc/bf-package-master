@@ -32,17 +32,19 @@
                             <div class="sub-card">
                                 <div class="card-title"><%:Running Status%></div>
                                 <div class="version-display-container">
-                                    <div class="version-display" id="plugin-version-display" style="display: none;">
+                                    <div class="version-display oc-hidden" id="plugin-version-display">
+                                        <svg width="12" height="12"><use href="#oc-icon-package"/></svg>
                                         <span class="version-text" id="plugin-version-text">-</span>
                                     </div>
-                                    <div class="version-display" id="core-version-display" style="display: none;">
+                                    <div class="version-display oc-hidden" id="core-version-display">
+                                        <svg width="12" height="12"><use href="#oc-icon-cpu"/></svg>
                                         <span class="version-text" id="core-version-text">-</span>
                                     </div>
                                 </div>
                                 <div class="core-main-controls">
                                     <div class="core-status-toggle">
                                         <span id="_clash" class="value-indicator"><%:Collecting data...%></span>
-                                        <span id="_oclog" class="value-indicator" style="display: none;"><%:Collecting data...%></span>
+                                        <span id="_oclog" class="value-indicator oc-hidden"><b><%:Collecting data...%></b></span>
                                         <div class="plugin-toggle-container">
                                             <label class="plugin-toggle-switch">
                                                 <input type="checkbox" id="plugin_toggle" onchange="togglePlugin(this)">
@@ -63,8 +65,8 @@
                                 <div class="card-actions">
                                     <button type="button" class="icon-btn theme-toggle-btn" id="theme-toggle" onclick="toggleThemeMode()">
                                         <svg id="sun-icon" width="14" height="14"><use href="#oc-icon-sun"/></svg>
-                                        <svg id="moon-icon" width="14" height="14" style="display: none"><use href="#oc-icon-moon"/></svg>
-                                        <svg id="auto-icon" width="14" height="14" style="display: none"><use href="#oc-icon-auto-theme"/></svg>
+                                        <svg id="moon-icon" width="14" height="14" class="oc-hidden"><use href="#oc-icon-moon"/></svg>
+                                        <svg id="auto-icon" width="14" height="14" class="oc-hidden"><use href="#oc-icon-auto-theme"/></svg>
                                     </button>
                                     <button type="button" class="icon-btn action-btn" id="go_wiki" title="<%:Wiki%>" onclick="return wikipage()"><svg width="14" height="14"><use href="#oc-icon-wiki"/></svg></button>
                                     <button type="button" class="icon-btn action-btn" id="go_tutorials" title="<%:Tutorials%>" onclick="return gitbookpage()"><svg width="14" height="14"><use href="#oc-icon-book"/></svg></button>
@@ -86,7 +88,7 @@
                                 <div class="card-content">
                                     <div class="card-value"><span id="_mode" class="value-indicator"><%:Collecting data...%></span></div>
                                     <div class="card-controls">
-                                        <div id="radio-ru-mode" class="cbi-button-group" style="display: inline-flex;">
+                                        <div id="radio-ru-mode" class="cbi-button-group oc-inline-flex">
                                             <input type="radio" id="normal" name="radios-ru" value="" onclick="return switch_run_mode(this.value)"/><label for="normal" id="run_normal" class="cbi-button-option"><%:Compat%></label>
                                             <input type="radio" id="tun" name="radios-ru" value="-tun" onclick="return switch_run_mode(this.value)"/><label for="tun" class="cbi-button-option"><%:TUN%></label>
                                             <input type="radio" id="mix" name="radios-ru" value="-mix" onclick="return switch_run_mode(this.value)"/><label for="mix" class="cbi-button-option"><%:Mix%></label>
@@ -98,7 +100,7 @@
                                 <div class="card-title"><%:Proxy Mode%></div>
                                 <div class="card-content">
                                     <div class="card-controls">
-                                        <div id="radio-mode" class="cbi-button-group" style="display: inline-flex;">
+                                        <div id="radio-mode" class="cbi-button-group oc-inline-flex">
                                             <input type="radio" id="rule" name="radios" value="rule" onclick="return switch_rule_mode(this.value)"/><label for="rule" class="cbi-button-option"><%:Rule%></label>
                                             <input type="radio" id="global" name="radios" value="global" onclick="return switch_rule_mode(this.value)"/><label for="global" class="cbi-button-option"><%:Global%></label>
                                             <input type="radio" id="direct" name="radios" value="direct" onclick="return switch_rule_mode(this.value)"/><label for="direct" class="cbi-button-option"><%:Direct%></label>
@@ -114,7 +116,7 @@
                                 <div class="card-title"><%:Area Bypass%><div class="help-link" title="<%:Bypass Specified Regions Network Flows, Improve Performance, If Inaccessibility on Bypass Gateway, Try to Enable Bypass Gateway Compatible Option%>"><svg width="12" height="12"><use href="#oc-icon-help"/></svg></div></div>
                                 <div class="card-content">
                                     <div class="card-controls">
-                                        <div id="oc-setting-oversea" class="cbi-button-group" style="display: inline-flex;">
+                                        <div id="oc-setting-oversea" class="cbi-button-group oc-inline-flex">
                                             <input type="radio" id="oc_setting_oversea_1" name="oc-setting-oversea" value="1" onclick="return switch_oc_setting_oversea('1')"/><label for="oc_setting_oversea_1" class="cbi-button-option"><%:Mainland%></label>
                                             <input type="radio" id="oc_setting_oversea_2" name="oc-setting-oversea" value="2" onclick="return switch_oc_setting_oversea('2')"/><label for="oc_setting_oversea_2" class="cbi-button-option"><%:Oversea%></label>
                                             <input type="radio" id="oc_setting_oversea_0" name="oc-setting-oversea" value="0" onclick="return switch_oc_setting_oversea('0')"/><label for="oc_setting_oversea_0" class="cbi-button-option"><%:Off%></label>
@@ -126,7 +128,7 @@
                                 <div class="card-title"><%:Sniffer%><a href="javascript:void(0);" onclick="window.open('https://wiki.metacubex.one/config/sniff/?h=sniff#_1', '_blank');" class="help-link" title="<%:Sniff the domain name of the traffics to avoid rule-based proxy failure%>"><svg width="12" height="12"><use href="#oc-icon-help"/></svg></a></div>
                                 <div class="card-content">
                                     <div class="card-controls">
-                                        <div id="dns-setting-sniffer" class="cbi-button-group" style="display: inline-flex;">
+                                        <div id="dns-setting-sniffer" class="cbi-button-group oc-inline-flex">
                                             <input type="radio" id="meta_sniffer_on" name="meta-sniffer-radios" value="1" onclick="return switch_meta_sniffer('1')"/><label for="meta_sniffer_on" class="cbi-button-option"><%:On%></label>
                                             <input type="radio" id="meta_sniffer_off" name="meta-sniffer-radios" value="0" onclick="return switch_meta_sniffer('0')"/><label for="meta_sniffer_off" class="cbi-button-option"><%:Off%></label>
                                         </div>
@@ -137,7 +139,7 @@
                                 <div class="card-title"><%:DNS Proxy%><a href="javascript:void(0);" onclick="window.open('https://wiki.metacubex.one/config/dns/?h=res#respect-rules', '_blank');" class="help-link" title="<%:DNS querys respect-rules to preventing access failure%>"><svg width="12" height="12"><use href="#oc-icon-help"/></svg></a></div>
                                 <div class="card-content">
                                     <div class="card-controls">
-                                        <div id="dns-setting-respect" class="cbi-button-group" style="display: inline-flex;">
+                                        <div id="dns-setting-respect" class="cbi-button-group oc-inline-flex">
                                             <input type="radio" id="respect_rules_on" name="respect-rules-radios" value="1" onclick="return switch_respect_rules('1')"/><label for="respect_rules_on" class="cbi-button-option"><%:On%></label>
                                             <input type="radio" id="respect_rules_off" name="respect-rules-radios" value="0" onclick="return switch_respect_rules('0')"/><label for="respect_rules_off" class="cbi-button-option"><%:Off%></label>
                                         </div>
@@ -148,7 +150,7 @@
                                 <div class="card-title"><%:Stream Unlock%><div class="help-link" title="<%:Auto Select Proxy For Streaming Unlock, Support Netflix, Disney Plus, HBO And YouTube Premium, etc%>"><svg width="12" height="12"><use href="#oc-icon-help"/></svg></div></div>
                                 <div class="card-content">
                                     <div class="card-controls">
-                                        <div id="stream-unlock-setting" class="cbi-button-group" style="display: inline-flex;">
+                                        <div id="stream-unlock-setting" class="cbi-button-group oc-inline-flex">
                                             <input type="radio" id="stream_unlock_on" name="stream-unlock-radios" value="1" onclick="return switch_stream_unlock('1')"/><label for="stream_unlock_on" class="cbi-button-option"><%:On%></label>
                                             <input type="radio" id="stream_unlock_off" name="stream-unlock-radios" value="0" onclick="return switch_stream_unlock('0')"/><label for="stream_unlock_off" class="cbi-button-option"><%:Off%></label>
                                         </div>
@@ -162,28 +164,28 @@
                             <div class="sub-card">
                                 <div class="card-title"><%:Config File%></div>
                                 <div class="config-file-content">
-                                    <div id="subscription-info-display" class="subscription-info-container" style="display: none;">
+                                    <div id="subscription-info-display" class="subscription-info-container oc-hidden">
                                         <div class="subscription-nav-arrow left" id="subscription-prev-arrow" onclick="switchToPreviousConfig()" title="<%:Previous%>"></div>
                                         <div class="subscription-nav-arrow right" id="subscription-next-arrow" onclick="switchToNextConfig()" title="<%:Next%>"></div>
                                         <div class="subscription-info-main">
                                             <div class="subscription-info-header">
                                                 <div class="config-file-name-wrapper">
                                                     <div class="config-file-name" id="current-config-name"><%:No Config Selected%></div>
-                                                    <span id="age-file-icon" class="age-file-icon" style="display:none;"></span>
+                                                    <span id="age-file-icon" class="age-file-icon oc-hidden"></span>
                                                 </div>
                                                 <div class="file-info" id="file-info-section">
                                                     <span id="file-modify-time" class="file-info-item"><%:Modified: %> --</span>
                                                 </div>
                                             </div>
                                             <div class="subscription-info-details">
-                                                <div class="subscription-progress" id="subscription-progress-section" style="display: none;">
+                                                <div class="subscription-progress oc-hidden" id="subscription-progress-section">
                                                     <div class="subscription-progress-bar">
                                                         <div id="subscription-progress-fill" class="subscription-progress-fill high" style="width: 0%"></div>
                                                     </div>
                                                     <div id="subscription-info-text" class="subscription-info-text"><%:Collecting data...%></div>
                                                 </div>
                                                 <div class="card-actions subscription-actions-row">
-                                                    <div id="subscription-overwrite-tags" class="subscription-overwrite-tags" style="display: none;"></div>
+                                                    <div id="subscription-overwrite-tags" class="subscription-overwrite-tags oc-hidden"></div>
                                                     <div class="subscription-action-buttons">
                                                         <button type="button" class="icon-btn action-btn" id="refresh-subscription" title="<%:Refresh%>" onclick="return refreshSubscriptionInfo()">
                                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -205,10 +207,10 @@
                                         </div>
                                     </div>
 
-                                    <div id="config-file-empty-state" class="config-file-empty-state" style="display: none;">
+                                    <div id="config-file-empty-state" class="config-file-empty-state oc-hidden">
                                         <div class="config-file-empty-message"><%:No config files found, Please upload a config file to get started%></div>
                                         <button type="button" class="config-upload-btn-large" id="upload_config_large" onclick="return uploadConfig()">
-                                            <svg width="20" height="20"><use href="#oc-icon-download"/></svg>
+                                            <svg width="20" height="20"><use href="#oc-icon-upload"/></svg>
                                             <%:Add Config File%>
                                         </button>
                                     </div>
@@ -222,7 +224,7 @@
                                             <button type="button" class="icon-btn action-btn" id="update_config" title="<%:Update%>" onclick="return updateConfig()"><svg width="14" height="14"><use href="#oc-icon-update"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="edit_config" title="<%:Edit%>" onclick="return editConfig()"><svg width="14" height="14"><use href="#oc-icon-edit"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="edit_subscribe" title="<%:Edit Subscription%>" onclick="return editSubscribe()"><svg width="14" height="14"><use href="#oc-icon-settings"/></svg></button>
-                                            <button type="button" class="icon-btn action-btn" id="upload_config" title="<%:Add%>" onclick="return uploadConfig()"><svg width="14" height="14"><use href="#oc-icon-upload"/></svg></button>
+                                            <button type="button" class="icon-btn action-btn" id="upload_config" title="<%:Add%>" onclick="return uploadConfig()"><svg width="14" height="14"><use href="#oc-icon-add"/></svg></button>
                                         </div>
                                     </div>
                                 </div>
@@ -301,7 +303,7 @@
                 </div>
 
             <!-- Usage Help Model -->
-            <div class="config-upload-model-overlay" id="usage-help-overlay" style="display: none;">
+            <div class="config-upload-model-overlay" id="usage-help-overlay">
                 <div class="config-upload-model usage-help-model" id="usage-help-model">
                     <div class="config-upload-header">
                         <div class="config-upload-title"><%:Usage Help%></div>
@@ -312,8 +314,8 @@
                     <div class="config-upload-content">
                         <div class="form-group">
                             <label class="highlight-label"><%:Copy the following text to any AI (ChatGPT, DeepSeek, etc.) to get usage help for OpenClash:%></label>
-                            <textarea id="usage-help-textarea" class="form-textarea" style="display:none"></textarea>
-                            <div id="usage-help-editor" style="height: 400px;"></div>
+                            <textarea id="usage-help-textarea" class="form-textarea oc-hidden"></textarea>
+                            <div id="usage-help-editor"></div>
                         </div>
                     </div>
                     <div class="config-upload-footer">
@@ -325,16 +327,17 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Usage Help Button -->
+            <div class="oc-usage-help-float" id="usage-help-float" title="<%:Usage Help%>" onclick="UsageHelpManager.show()">
+                <svg width="24" height="24"><use href="#oc-icon-usage-help"/></svg>
+                <span class="oc-usage-help-bubble" id="usage-help-bubble"><%:Click to get usage help%></span>
+            </div>
             </div>
         </td>
     </tr>
 </table>
 </fieldset>
-
-<!-- Usage Help Button -->
-<div class="oc-usage-help-float" id="usage-help-float" title="<%:Usage Help%>" onclick="UsageHelpManager.show()">
-    <svg width="24" height="24"><use href="#oc-icon-usage-help"/></svg>
-</div>
 
 <script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%=plugin_version%>"></script>
 <%+openclash/common%>
@@ -397,16 +400,16 @@
             var autoIcon = document.getElementById('auto-icon');
             if (sunIcon && moonIcon && autoIcon) {
                 var theme = localStorage.getItem('oc-theme') || 'auto';
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'none';
-                autoIcon.style.display = 'none';
+                sunIcon.classList.add('oc-hidden');
+                moonIcon.classList.add('oc-hidden');
+                autoIcon.classList.add('oc-hidden');
 
                 if (theme === 'light') {
-                    sunIcon.style.display = 'inline';
+                    sunIcon.classList.remove('oc-hidden');
                 } else if (theme === 'dark') {
-                    moonIcon.style.display = 'inline';
+                    moonIcon.classList.remove('oc-hidden');
                 } else {
-                    autoIcon.style.display = 'inline';
+                    autoIcon.classList.remove('oc-hidden');
                 }
             }
         }
@@ -764,7 +767,6 @@
         enableFallbackMode: function() {
             this._ws_connect = false;
             this.closeAll();
-            LogManager.startLogDisplay();
             NetworkStatsManager.resetStats();
             if (!NetworkStatsManager.isEnabled) {
                 NetworkStatsManager.start();
@@ -967,10 +969,10 @@
 
             if (isEmpty) {
                 if (emptyStateElement) {
-                    emptyStateElement.style.display = 'flex';
+                    emptyStateElement.classList.remove('oc-hidden');
                 }
                 if (configFileBottom) {
-                    configFileBottom.style.display = 'none';
+                    configFileBottom.classList.add('oc-hidden');
                 }
                 if (configFileContent) {
                     configFileContent.classList.add('empty-state');
@@ -978,10 +980,10 @@
                 this.hideSubscriptionDisplay();
             } else {
                 if (emptyStateElement) {
-                    emptyStateElement.style.display = 'none';
+                    emptyStateElement.classList.add('oc-hidden');
                 }
                 if (configFileBottom) {
-                    configFileBottom.style.display = 'flex';
+                    configFileBottom.classList.remove('oc-hidden');
                 }
                 if (configFileContent) {
                     configFileContent.classList.remove('empty-state');
@@ -992,7 +994,7 @@
         hideSubscriptionDisplay: function() {
             var subscriptionDisplay = document.getElementById('subscription-info-display');
             if (subscriptionDisplay) {
-                subscriptionDisplay.style.display = 'none';
+                subscriptionDisplay.classList.add('oc-hidden');
             }
         },
 
@@ -1064,21 +1066,21 @@
             if (!container) return;
 
             if (this.configList.length === 0) {
-                container.style.display = 'none';
+                container.classList.add('oc-hidden');
                 return;
             }
 
             if (!configFile) {
-                container.style.display = 'none';
+                container.classList.add('oc-hidden');
                 return;
             }
 
             if (configFileContent && configFileContent.classList.contains('empty-state')) {
-                container.style.display = 'none';
+                container.classList.add('oc-hidden');
                 return;
             }
 
-            container.style.display = 'flex';
+            container.classList.remove('oc-hidden');
 
             if (configNameElement) {
                 var displayName = this.formatDisplayName(configFile);
@@ -1114,10 +1116,10 @@
                     if (fileInfo.age) {
                         ageFileIconElement.innerHTML = '<svg width="16" height="16"><use href="#oc-icon-shield-check"/></svg>';
                         ageFileIconElement.title = '<%:Age Encryption File%>';
-                        ageFileIconElement.style.display = 'inline-flex';
+                        ageFileIconElement.classList.remove('oc-hidden');
                     } else {
                         ageFileIconElement.innerHTML = '';
-                        ageFileIconElement.style.display = 'none';
+                        ageFileIconElement.classList.add('oc-hidden');
                     }
                 }
             } else {
@@ -1131,7 +1133,7 @@
 
                 if (ageFileIconElement) {
                     ageFileIconElement.innerHTML = '';
-                    ageFileIconElement.style.display = 'none';
+                    ageFileIconElement.classList.add('oc-hidden');
                 }
             }
         },
@@ -1510,7 +1512,7 @@
                 return;
             }
 
-            container.style.display = 'flex';
+            container.classList.remove('oc-hidden');
 
             if (data && data.providers && data.providers.length > 0) {
                 if (data.providers.length > 1 || data.providers[0].provider_name) {
@@ -1519,7 +1521,7 @@
                     this.displaySingleProvider(data.providers[0], progressSection);
                 }
             } else {
-                progressSection.style.display = 'none';
+                progressSection.classList.add('oc-hidden');
             }
 
             if (detailsSection) {
@@ -1531,7 +1533,7 @@
             if (!progressSection) return;
 
             progressSection.innerHTML = '';
-            progressSection.style.display = 'flex';
+            progressSection.classList.remove('oc-hidden');
             progressSection.className = 'subscription-progress';
 
             var progressBar = document.createElement('div');
@@ -1577,7 +1579,7 @@
             var providerCount = displayProviders.length;
 
             progressSection.innerHTML = '';
-            progressSection.style.display = 'flex';
+            progressSection.classList.remove('oc-hidden');
             progressSection.className = 'subscription-providers-grid';
             progressSection.setAttribute('data-count', providerCount);
 
@@ -1705,11 +1707,11 @@
                 return;
             }
 
-            container.style.display = 'flex';
+            container.classList.remove('oc-hidden');
 
             if (progressSection) {
                 progressSection.innerHTML = '<div class="subscription-no-info"><%:No Sub Info Found%></div>';
-                progressSection.style.display = 'flex';
+                progressSection.classList.remove('oc-hidden');
                 progressSection.className = 'subscription-progress';
             }
 
@@ -1742,11 +1744,11 @@
                 return;
             }
 
-            container.style.display = 'flex';
+            container.classList.remove('oc-hidden');
 
             if (progressSection) {
-                progressSection.innerHTML = '<div class="subscription-loading"><%:Collecting data...%></div>';
-                progressSection.style.display = 'flex';
+                progressSection.innerHTML = '<div class="subscription-loading"><span class="loading-spinner"></span><%:Collecting data...%></div>';
+                progressSection.classList.remove('oc-hidden');
                 progressSection.className = 'subscription-progress';
             }
 
@@ -2030,7 +2032,7 @@
             this.container.innerHTML = '';
 
             if (enabledModules.length === 0) {
-                this.container.style.display = 'none';
+                this.container.classList.add('oc-hidden');
                 this.updateDragScrollState();
                 return;
             }
@@ -2051,146 +2053,178 @@
                 this.container.appendChild(tag);
             }
 
-            this.container.style.display = 'flex';
+            this.container.classList.remove('oc-hidden');
             this.updateDragScrollState();
         }
     };
 
     var LogManager = {
-        isPolling: false,
-        pollTimer: null,
-        maxPollTime: 60000,
-        pollInterval: 1000,
-        startTime: 0,
-        lastLogContent: '',
+        streamingXHR: null,
         retryCount: 0,
         maxRetries: 3,
         retryDelay: 1000,
 
         startLogDisplay: function(initialMessage) {
-            if (initialMessage) {
-                if (this.isPolling) {
-                    this.stopLogDisplay();
-                }
-            } else {
-                if (this.isPolling) {
+            if (this.streamingXHR) {
+                if (initialMessage) {
+                    this.streamingXHR.abort();
+                    this.streamingXHR = null;
+                } else {
                     return;
                 }
             }
-            if (this.pollTimer) {
-                clearTimeout(this.pollTimer);
-                this.pollTimer = null;
+            if (initialMessage) {
+                this.retryCount = 0;
             }
 
             StateManager.clearCache('<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>');
 
-            if (DOMCache.oclog && initialMessage) {
-                DOMCache.oclog.style.display = 'inline-flex';
-                DOMCache.oclog.innerHTML = '<b style="color:var(--tip-color)">' + initialMessage + '</b>';
+            if (DOMCache.oclog) {
+                if (initialMessage) {
+                    DOMCache.oclog.classList.remove('oc-hidden');
+                    DOMCache.oclog.innerHTML = '<b style="color:var(--tip-color)">' + initialMessage + '</b>';
+                }
             }
 
-            this.isPolling = true;
-            this.startTime = Date.now();
-            this.lastLogContent = '';
-            this.retryCount = 0;
-
             var self = this;
-            setTimeout(function() {
-                if (self.isPolling) {
-                    self.pollLog();
-                }
-            }, 2000);
+            XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function() {
+                self.startStreaming(!!initialMessage);
+            });
         },
 
         stopLogDisplay: function() {
-            this.isPolling = false;
-            if (this.pollTimer) {
-                clearTimeout(this.pollTimer);
-                this.pollTimer = null;
+            cancelAnimationFrame(this.scrollAnimId);
+            this.scrollAnimId = null;
+            var xhr = this.streamingXHR;
+            this.streamingXHR = null;
+            if (xhr) {
+                xhr.abort();
             }
-            this.lastLogContent = '';
-            this.retryCount = 0;
             if (DOMCache.oclog) {
                 setTimeout(function() {
-                    if (!LogManager.isPolling) {
-                        DOMCache.oclog.style.display = 'none';
+                    if (!LogManager.streamingXHR) {
+                        DOMCache.oclog.classList.add('oc-hidden');
+                        DOMCache.oclog.innerHTML = '';
                     }
                 }, 1000);
             }
         },
 
-        pollLog: function() {
-            if (!this.isPolling) return;
-
-            if (Date.now() - this.startTime > this.maxPollTime) {
-                this.stopLogDisplay();
-                return;
-            }
-
+        startStreaming: function(hasInitialMessage) {
             var self = this;
-            StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>', function(x, status) {
-                if (!self.isPolling) return;
+            if (this.streamingXHR) {
+                this.streamingXHR.abort();
+                this.streamingXHR = null;
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.timeout = 0;
+            xhr.open('GET', '<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>', true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            var stopTimer = null;
+            var streamEnded = false;
+            var gotData = false;
 
-                if (x && x.status == 200 && status && typeof status.startlog !== 'undefined') {
-                    var logContent = (status.startlog || '').trim();
-
-                    if (self.checkForErrors(logContent)) {
-                        self.stopLogDisplay();
-                        return;
-                    }
-
-                    var contentToDisplay = logContent.replace('##FINISH##', '').trim();
-                    if (contentToDisplay && contentToDisplay !== self.lastLogContent) {
-                        self.displayLog(contentToDisplay);
-                    }
-
-                    if (logContent.includes('##FINISH##')) {
-                        setTimeout(function() {
-                            self.stopLogDisplay();
-                        }, 3000);
-                        return;
-                    }
-
-                    if (logContent !== '') {
-                        self.retryCount = 0;
-                        self.scheduleNextPoll(self.pollInterval);
-                    } else {
-                        self.handleEmptyResponse();
-                    }
-                } else {
-                    self.handleFailure();
+            function finalCleanup() {
+                if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+                if (self.streamingXHR === xhr) {
+                    self.streamingXHR = null;
                 }
-            }, true);
-        },
-
-        handleEmptyResponse: function() {
-            this.scheduleNextPoll(this.pollInterval);
-        },
-
-        handleFailure: function() {
-            if (this.retryCount < this.maxRetries) {
-                this.retryCount++;
-                var delay = Math.min(this.retryDelay * Math.pow(2, this.retryCount - 1), 5000);
-                this.scheduleNextPoll(delay);
-            } else {
-                this.stopLogDisplay();
+                var capturedXhr = xhr;
+                setTimeout(function() {
+                    if (self.streamingXHR !== capturedXhr && !self.streamingXHR) {
+                        if (DOMCache.oclog) {
+                            DOMCache.oclog.classList.add('oc-hidden');
+                            DOMCache.oclog.innerHTML = '';
+                        }
+                    }
+                }, 1000);
             }
-        },
 
-        scheduleNextPoll: function(delay) {
-            var self = this;
-            this.pollTimer = setTimeout(function() {
-                self.pollLog();
-            }, delay);
+            xhr.onprogress = function() {
+                if (self.streamingXHR !== xhr) return;
+                if (streamEnded) return;
+                var text = xhr.responseText;
+                var hasFinish = text.indexOf('##FINISH##') >= 0;
+                if (text && self.checkForErrors(text)) {
+                    streamEnded = true;
+                    self.stopLogDisplay();
+                    return;
+                }
+                var raw = (text || '').replace(/##FINISH##/g, '');
+                if (raw.trim()) {
+                    gotData = true;
+                    self.retryCount = 0;
+                    if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+                    self.displayLog(raw);
+                }
+                if (hasFinish) {
+                    gotData = true;
+                    if (stopTimer) clearTimeout(stopTimer);
+                    stopTimer = setTimeout(function() {
+                        streamEnded = true;
+                        finalCleanup();
+                    }, 10000);
+                }
+            };
+
+            xhr.onload = function() {
+                if (self.streamingXHR !== xhr) return;
+                if (streamEnded) return;
+                if (!gotData) {
+                    streamEnded = true;
+                    if (hasInitialMessage) {
+                        stopTimer = setTimeout(function() {
+                            self.stopLogDisplay();
+                            if (self.retryCount < self.maxRetries * 2) {
+                                self.retryCount++;
+                                var delay = Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 5000);
+                                setTimeout(function() {
+                                    if (!self.streamingXHR) self.startLogDisplay();
+                                }, delay);
+                            }
+                        }, 5000);
+                        return;
+                    }
+                    self.stopLogDisplay();
+                    if (self.retryCount < self.maxRetries * 2) {
+                        self.retryCount++;
+                        var delay = Math.max(5000, Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 10000));
+                        setTimeout(function() {
+                            if (!self.streamingXHR) self.startLogDisplay();
+                        }, delay);
+                    }
+                    return;
+                }
+                if (!stopTimer) {
+                    stopTimer = setTimeout(function() {
+                        streamEnded = true;
+                        finalCleanup();
+                    }, 5000);
+                }
+            };
+
+            xhr.onerror = function() {
+                if (self.streamingXHR !== xhr) return;
+                streamEnded = true;
+                self.stopLogDisplay();
+                if (self.retryCount < self.maxRetries) {
+                    self.retryCount++;
+                    var delay = Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 5000);
+                    setTimeout(function() {
+                        if (!self.streamingXHR) self.startLogDisplay();
+                    }, delay);
+                }
+            };
+
+            xhr.send();
+            this.streamingXHR = xhr;
         },
 
         checkForErrors: function(log) {
             if (!log) return false;
             if (log.match(/level=(fatal|error)/)) {
-                XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function(x) {});
-
                 var msgParts = log.split('msg=');
-                var errorMsg = msgParts.length > 1 ? msgParts[1].replace(/"/g, '') : log;
+                var errorMsg = msgParts.length > 1 ? msgParts[1].replace(/"/g, '').trim() : log.trim();
 
                 setTimeout(function() {
                     alert('<%:OpenClash Start Failed%>:\n\n' + errorMsg);
@@ -2202,28 +2236,96 @@
         },
 
         displayLog: function(logContent) {
-            if (!this.isPolling || !DOMCache.oclog) return;
+            if (!this.streamingXHR || !DOMCache.oclog) return;
 
-            var cleanLog = this.cleanLogContent(logContent);
-            this.lastLogContent = cleanLog;
+            var lines = logContent.split('\n');
+            var allLines = [];
+            for (var i = 0; i < lines.length; i++) {
+                var t = lines[i].replace('##FINISH##', '').trim();
+                if (t) allLines.push(t);
+            }
+            if (allLines.length === 0) return;
 
-            var color = this.getLogColor(cleanLog);
-            var displayText = this.formatLogText(cleanLog);
+            var maxLines = 3;
+            if (allLines.length > maxLines) {
+                allLines = allLines.slice(allLines.length - maxLines);
+            }
 
-            DOMCache.oclog.style.display = 'inline-flex';
-            DOMCache.oclog.innerHTML = '<b style="color:' + color + '">' + displayText + '</b>';
-        },
+            if (!DOMCache.oclog.wheelBlocked) {
+                DOMCache.oclog.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
+                DOMCache.oclog.wheelBlocked = true;
+            }
 
-        cleanLogContent: function(content) {
-            return content ? content.replace(/[\r\n]+/g, ' ').replace('##FINISH##', '').trim() : '';
+            if (DOMCache.oclog.children.length === 1 && DOMCache.oclog.firstChild.tagName !== 'DIV') {
+                DOMCache.oclog.innerHTML = '';
+                DOMCache.oclog.scrollTop = 0;
+            }
+
+            var currentCount = DOMCache.oclog.children.length;
+
+            if (allLines.length <= currentCount) {
+                DOMCache.oclog.innerHTML = '';
+                DOMCache.oclog.scrollTop = 0;
+                currentCount = 0;
+            }
+
+            for (var j = currentCount; j < allLines.length; j++) {
+                var color = this.getLogColor(allLines[j]);
+                var text = this.formatLogText(allLines[j]);
+                var div = document.createElement('div');
+                div.style.whiteSpace = 'nowrap';
+                div.innerHTML = '<b style="color:' + color + '">' + text + '</b>';
+                DOMCache.oclog.appendChild(div);
+            }
+
+            while (DOMCache.oclog.children.length > maxLines) {
+                DOMCache.oclog.removeChild(DOMCache.oclog.firstChild);
+            }
+
+            while (DOMCache.oclog.children.length < maxLines) {
+                var spacer = document.createElement('div');
+                spacer.className = 'oc-log-spacer';
+                spacer.style.visibility = 'hidden';
+                spacer.style.whiteSpace = 'nowrap';
+                spacer.textContent = '\u200B';
+                DOMCache.oclog.insertBefore(spacer, DOMCache.oclog.firstChild);
+            }
+
+            DOMCache.oclog.classList.remove('oc-hidden');
+            DOMCache.oclog.style.willChange = 'scroll-position';
+
+            var self = this;
+            function animateScroll() {
+                if (self.scrollAnimId) cancelAnimationFrame(self.scrollAnimId);
+                var start = DOMCache.oclog.scrollTop;
+                var duration = 500;
+                var startTime = null;
+                function step(timestamp) {
+                    if (!DOMCache.oclog) { self.scrollAnimId = null; return; }
+                    if (!startTime) startTime = timestamp;
+                    var elapsed = timestamp - startTime;
+                    var progress = Math.min(elapsed / duration, 1);
+                    var eased = 1 - (1 - progress) * (1 - progress);
+                    var target = Math.max(0, DOMCache.oclog.scrollHeight - DOMCache.oclog.clientHeight);
+                    var distance = target - start;
+                    DOMCache.oclog.scrollTop = Math.round(start + distance * eased);
+                    if (progress < 1) {
+                        self.scrollAnimId = requestAnimationFrame(step);
+                    } else {
+                        self.scrollAnimId = null;
+                        DOMCache.oclog.style.willChange = '';
+                    }
+                }
+                self.scrollAnimId = requestAnimationFrame(step);
+            }
+
+            animateScroll();
         },
 
         getLogColor: function(log) {
             for (var levelKey in window.levelTranslations) {
                 var translatedText = '[' + window.levelTranslations[levelKey] + ']';
-                if (log.includes(translatedText)) {
-                    return "var(--" + levelKey + "-color)";
-                }
+                if (log.indexOf(translatedText) >= 0) return "var(--" + levelKey + "-color)";
             }
             return "var(--info-color)";
         },
@@ -2236,9 +2338,7 @@
                             .replace(/^level=\w+\s*/, '')
                             .replace(/^msg="?([^"]*)"?\s*/, '$1');
 
-            if (cleanText.length > 60) {
-                cleanText = cleanText.substring(0, 57) + '...';
-            }
+            if (cleanText.length > 60) cleanText = cleanText.substring(0, 57) + '...';
 
             return this.escapeHtml(cleanText) || '<%:Processing...%>';
         },
@@ -2290,7 +2390,7 @@
 
             var self = this;
             StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "toolbar_show_sys")%>', function(x, status) {
-                if (x && x.status == 200 && x.responseText != "") {
+                if (x && x.status == 200 && x.responseText != "" && status) {
                     self.retryCount = 0;
                     var cpuColor = status.cpu <= 50 ? "var(--success-color)" : (status.cpu <= 80 ? "var(--tip-color)" : "var(--error-color)");
                     var cpuValue = status.cpu <= 100 ? status.cpu + " %" : "0 %";
@@ -2369,7 +2469,7 @@
 
             var self = this;
             StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "toolbar_show")%>', function(x, status) {
-                if (x && x.status == 200 && x.responseText != "") {
+                if (x && x.status == 200 && x.responseText != "" && status) {
                     self.retryCount = 0;
                     self.updateNetworkStats(status);
                 } else {
@@ -2700,6 +2800,7 @@
         textarea: null,
         statusEl: null,
         initialized: false,
+        bubbleTimer: null,
 
         init: function() {
             if (this.initialized) return;
@@ -2709,7 +2810,12 @@
 
             var floatBtn = document.getElementById('usage-help-float');
             if (floatBtn) {
-                floatBtn.addEventListener('click', function() { UsageHelpManager.show(); });
+                floatBtn.addEventListener('click', function() {
+                    UsageHelpManager.show();
+                });
+                floatBtn.addEventListener('mouseenter', function() {
+                    UsageHelpManager.dismissBubble();
+                });
             }
 
             document.addEventListener('keydown', function(e) {
@@ -2717,6 +2823,8 @@
                     UsageHelpManager.hide();
                 }
             });
+
+            this.startBubbleTimer();
 
             this.initialized = true;
         },
@@ -2743,7 +2851,7 @@
                 document.body.appendChild(this._portal);
                 this._portal.appendChild(this.overlay);
             }
-            this.overlay.style.display = 'flex';
+            this.overlay.classList.add('show');
             if (this.statusEl) {
                 this.statusEl.textContent = '';
             }
@@ -2772,7 +2880,7 @@
 
         hide: function() {
             if (this.overlay) {
-                this.overlay.style.display = 'none';
+                this.overlay.classList.remove('show');
             }
         },
 
@@ -2792,6 +2900,33 @@
                 if (btn) { btn.innerHTML = origHTML; btn.disabled = false; }
                 self.hide();
             }, 2000);
+        },
+
+        startBubbleTimer: function() {
+            var bubble = document.getElementById('usage-help-bubble');
+            if (!bubble) return;
+
+            var delay = Math.random() * 60000;
+            if (delay > 20000) return;
+
+            var self = this;
+            this.bubbleTimer = setTimeout(function() {
+                bubble.classList.add('show');
+            }, Math.min(delay, 5000));
+        },
+
+        dismissBubble: function() {
+            var bubble = document.getElementById('usage-help-bubble');
+            if (!bubble) return;
+            bubble.classList.remove('show');
+            if (this._bubbleAutoHide) {
+                clearTimeout(this._bubbleAutoHide);
+                this._bubbleAutoHide = null;
+            }
+            if (this.bubbleTimer) {
+                clearTimeout(this.bubbleTimer);
+                this.bubbleTimer = null;
+            }
         }
     };
 
@@ -2965,6 +3100,7 @@
     setTimeout(function() {
         OverwriteSubscribeManager.init();
         SubscriptionManager.init();
+        UsageHelpManager.init();
         loadAnnouncement();
     }, 300);
 
@@ -3560,7 +3696,7 @@
                     } else {
                         DOMCache.core_version_text.title = '';
                     }
-                    DOMCache.core_version_display.style.display = 'flex';
+                    DOMCache.core_version_display.classList.remove('oc-hidden');
 
                     var existingDot = DOMCache.core_version_display.querySelector('.update-dot');
 
@@ -3579,7 +3715,7 @@
                         DOMCache.core_version_display.title = '';
                     }
                 } else {
-                    DOMCache.core_version_display.style.display = 'none';
+                    DOMCache.core_version_display.classList.add('oc-hidden');
                     DOMCache.core_version_display.title = '';
                 }
 
@@ -3599,7 +3735,7 @@
                     } else {
                         DOMCache.plugin_version_text.title = '';
                     }
-                    DOMCache.plugin_version_display.style.display = 'flex';
+                    DOMCache.plugin_version_display.classList.remove('oc-hidden');
 
                     var existingDot = DOMCache.plugin_version_display.querySelector('.update-dot');
 
@@ -3618,7 +3754,7 @@
                         DOMCache.plugin_version_display.title = '';
                     }
                 } else {
-                    DOMCache.plugin_version_display.style.display = 'none';
+                    DOMCache.plugin_version_display.classList.add('oc-hidden');
                     DOMCache.plugin_version_display.title = '';
                 }
             }
@@ -3860,8 +3996,6 @@
         }
         StateManager.current_status.clash = isEnabled;
 
-        LogManager.startLogDisplay(isEnabled ? '<%:Starting...%>' : '<%:Stopping...%>');
-
         var requestParams = { action: action };
 
         if (isEnabled) {
@@ -3872,6 +4006,8 @@
                 requestParams.config_file = selectedConfig;
             }
         }
+
+        LogManager.startLogDisplay(isEnabled ? '<%:Starting...%>' : '<%:Stopping...%>');
 
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
             if (x && x.status == 200) {
@@ -4018,8 +4154,6 @@
             toggleElement.disabled = true;
         }
 
-        LogManager.startLogDisplay('<%:Restarting...%>');
-
         var requestParams = { action: 'restart' };
 
         var currentConfigValue = ConfigFileManager.getCurrentConfig();
@@ -4028,6 +4162,8 @@
         if (!currentConfigValue && selectedConfig) {
             requestParams.config_file = selectedConfig;
         }
+
+        LogManager.startLogDisplay('<%:Restarting...%>');
 
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
             if (x && x.status == 200) {
