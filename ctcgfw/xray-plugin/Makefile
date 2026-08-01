@@ -68,7 +68,9 @@ endef
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_XRAY_PLUGIN_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/xray-plugin
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/xray-plugin; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/xray-plugin ; \
+	fi
 endif
 endef
 

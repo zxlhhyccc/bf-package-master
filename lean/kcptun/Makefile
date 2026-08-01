@@ -90,9 +90,11 @@ endif
 $(foreach component,$(KCPTUN_COMPONENTS),
   $(if $(CONFIG_PACKAGE_kcptun-$(component)), \
   ifneq ($(CONFIG_KCPTUN_$(component)_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/$(component); then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component) ; \
+	fi
   endif
-  )
+  ) \
 )
 endef
 

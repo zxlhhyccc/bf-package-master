@@ -44,9 +44,11 @@ define Build/Compile
 $(foreach component,$(FRP_COMPONENTS),
   $(if $(CONFIG_PACKAGE_$(component)), \
   ifneq ($(CONFIG_FRP_$(component)_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/$(component); then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component) ; \
+	fi
   endif
-  )
+  ) \
 )
 endef
 

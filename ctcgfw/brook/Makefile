@@ -72,7 +72,9 @@ endif
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_BROOK_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/brook
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/brook; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/brook ; \
+	fi
 endif
 endef
 

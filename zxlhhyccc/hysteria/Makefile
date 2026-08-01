@@ -93,7 +93,9 @@ endif
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_HYSTERIA_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/app
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/app; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/app ; \
+	fi
 endif
 endef
 

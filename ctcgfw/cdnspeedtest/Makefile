@@ -59,7 +59,9 @@ endif
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_CDNSPEEDTEST_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/CloudflareSpeedTest
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/CloudflareSpeedTest; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/CloudflareSpeedTest ; \
+	fi
 endif
 endef
 

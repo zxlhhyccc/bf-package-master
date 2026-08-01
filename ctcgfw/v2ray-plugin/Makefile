@@ -61,7 +61,9 @@ endef
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_V2RAY_PLUGIN_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray-plugin
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/v2ray-plugin; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray-plugin ; \
+	fi
 endif
 endef
 

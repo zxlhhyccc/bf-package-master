@@ -100,7 +100,9 @@ endef
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifeq ($(CONFIG_ADGUARDHOME_COMPRESS_UPX),y)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/AdGuardHome ; \
+	fi
 endif
 endef
 

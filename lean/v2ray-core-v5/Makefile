@@ -118,7 +118,9 @@ endif
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_V2RAY_CORE-V5_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/main; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main ; \
+	fi
 endif
 endef
 

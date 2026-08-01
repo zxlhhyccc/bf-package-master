@@ -87,7 +87,9 @@ endef
 define Build/Compile
 	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_DDNS-GO_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/ddns-go
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/ddns-go; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/ddns-go ; \
+	fi
 endif
 endef
 
