@@ -76,7 +76,9 @@ define Build/Compile
 	$(call GoPackage/Build/Compile)
 $(foreach component,$(CLOAK_COMPONENTS),
   ifneq ($(CONFIG_CLOAK_$(component)_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component)
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/$(component); then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/$(component) ; \
+	fi
   endif
 )
 endef
