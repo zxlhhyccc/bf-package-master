@@ -23,8 +23,6 @@ function index()
 	entry({"admin", "services", "openclash", "save_corever_branch"},call("action_save_corever_branch"))
 	entry({"admin", "services", "openclash", "update"},call("action_update"))
 	entry({"admin", "services", "openclash", "get_last_version"},call("action_get_last_version"))
-	entry({"admin", "services", "openclash", "update_info"},call("action_update_info"))
-	entry({"admin", "services", "openclash", "update_ma"},call("action_update_ma"))
 	entry({"admin", "services", "openclash", "opupdate"},call("action_opupdate"))
 	entry({"admin", "services", "openclash", "coreupdate"},call("action_coreupdate"))
 	entry({"admin", "services", "openclash", "flush_dns_cache"}, call("action_flush_dns_cache"))
@@ -88,7 +86,7 @@ function index()
 	entry({"admin", "services", "openclash", "myip_check"}, call("action_myip_check"))
 	entry({"admin", "services", "openclash", "website_check"}, call("action_website_check"))
 	entry({"admin", "services", "openclash", "version_history"}, call("action_version_history"))
-	entry({"admin", "services", "openclash", "cdn_info"}, call("action_cdn_info"))
+	entry({"admin", "services", "openclash", "addr_info"}, call("action_cdn_info"))
 	entry({"admin", "services", "openclash", "proxy_info"}, call("action_proxy_info"))
 	entry({"admin", "services", "openclash", "oc_settings"}, call("action_oc_settings"))
 	entry({"admin", "services", "openclash", "switch_oc_setting"}, call("action_switch_oc_setting"))
@@ -195,9 +193,9 @@ local function coremodel()
 		end
 	end
 	if fs.pkg_type() == "opkg" then
-		return SYS.exec("rm -f /var/lock/opkg.lock && opkg status libc 2>/dev/null |grep 'Architecture' |awk -F ': ' '{print $2}' 2>/dev/null")
+		return fs.read_pkg_field("libc", "Architecture")
 	else
-		return SYS.exec("rm -f /lib/apk/db/lock && apk list libc 2>/dev/null |awk '{print $2}'")
+		return fs.read_pkg_field("libc", "A")
 	end
 end
 
@@ -299,9 +297,9 @@ local function opcv()
 		v = info["luci-app-openclash"]["Version"]
 	else
 		if fs.pkg_type() == "opkg" then
-			v = SYS.exec("rm -f /var/lock/opkg.lock && opkg status luci-app-openclash 2>/dev/null |grep 'Version' |awk -F 'Version: ' '{print $2}' |tr -d '\n'")
+			v = fs.read_pkg_field("luci-app-openclash", "Version")
 		else
-			v = SYS.exec("rm -f /lib/apk/db/lock && apk list luci-app-openclash 2>/dev/null|grep 'installed' | grep -oE '[0-9]+(\\.[0-9]+)*' | head -1 |tr -d '\n'")
+			v = fs.read_pkg_field("luci-app-openclash", "V"):match("[%d%.]+") or ""
 		end
 	end
 	if v and v ~= "" then
@@ -364,21 +362,6 @@ local function save_corever_branch()
 	end
 	uci:commit("openclash")
 	return "success"
-end
-
-local function upchecktime()
-	local corecheck = os.date("%Y-%m-%d %H:%M:%S",fs.mtime("/tmp/clash_last_version"))
-	local opcheck
-	if not corecheck or corecheck == "" then
-		opcheck = os.date("%Y-%m-%d %H:%M:%S",fs.mtime("/tmp/openclash_last_version"))
-		if not opcheck or opcheck == "" then
-			return "1"
-		else
-			return opcheck
-		end
-	else
-		return corecheck
-	end
 end
 
 function core_download()
@@ -1579,38 +1562,36 @@ function action_start()
 		"bytes=$(wc -c < \"$logfile\" 2>/dev/null); bytes=${bytes:-0}; " ..
 		"if [ \"$bytes\" -gt 0 ]; then " ..
 		"tail -c +1 \"$logfile\" 2>/dev/null; " ..
-		"if tail -n 1 \"$logfile\" 2>/dev/null | grep -q '##FINISH##'; then " ..
-		"finish_seen=1; else finish_seen=0; fi; " ..
+		"if tail -n 1 \"$logfile\" 2>/dev/null | grep -q '##FINISH##'; then finish_seen=1; else finish_seen=0; fi; " ..
 		"else finish_seen=0; fi; " ..
 		"if [ \"$bytes\" -eq 0 ]; then timeout=30; else timeout=60; fi; " ..
-		"elapsed=0; " ..
-		"finish_elapsed=0; " ..
+		"elapsed=0; finish_elapsed=0; " ..
 		"while true; do " ..
 		"new_bytes=$(wc -c < \"$logfile\" 2>/dev/null); new_bytes=${new_bytes:-0}; " ..
+		"changed=0; " ..
 		"if [ \"$new_bytes\" -gt \"$bytes\" ] 2>/dev/null; then " ..
-		"tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null; bytes=$new_bytes; elapsed=0; " ..
-		"timeout=60; " ..
-		"finish_seen=0; " ..
-		"finish_elapsed=0; " ..
-		"if tail -n 1 \"$logfile\" 2>/dev/null | grep -q '##FINISH##'; then " ..
-		"finish_seen=1; " ..
+		"changed=1; " ..
+		"if [ \"$(tail -c 1 \"$logfile\" 2>/dev/null)\" = \"$(printf '\\n')\" ]; then " ..
+		"tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null; bytes=$new_bytes; " ..
+		"else tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null | awk '{ if (p) printf \"%%s\\n\", prev; prev = $0; p = 1 }'; " ..
+		"bytes=$((new_bytes - $(tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null | awk 'END { print length($0) }'))); " ..
 		"fi; " ..
 		"elif [ \"$new_bytes\" -lt \"$bytes\" ] 2>/dev/null; then " ..
-		"echo '##TRUNCATED##'; " ..
-		"tail -c +1 \"$logfile\" 2>/dev/null; bytes=$new_bytes; elapsed=0; " ..
-		"timeout=60; " ..
-		"finish_seen=0; " ..
-		"finish_elapsed=0; " ..
-		"if tail -n 1 \"$logfile\" 2>/dev/null | grep -q '##FINISH##'; then " ..
-		"finish_seen=1; " ..
+		"changed=1; " ..
+		"if [ \"$(tail -c 1 \"$logfile\" 2>/dev/null)\" = \"$(printf '\\n')\" ]; then " ..
+		"tail -c +1 \"$logfile\" 2>/dev/null; bytes=$new_bytes; " ..
+		"else tail -c +1 \"$logfile\" 2>/dev/null | awk '{ if (p) printf \"%%s\\n\", prev; prev = $0; p = 1 }'; " ..
+		"bytes=$((new_bytes - $(tail -c +1 \"$logfile\" 2>/dev/null | awk 'END { print length($0) }'))); " ..
 		"fi; " ..
+		"fi; " ..
+		"if [ $changed -eq 1 ]; then " ..
+		"elapsed=0; timeout=60; finish_seen=0; finish_elapsed=0; " ..
+		"if tail -n 1 \"$logfile\" 2>/dev/null | grep -q '##FINISH##'; then finish_seen=1; fi; " ..
 		"fi; " ..
 		"sleep 1; elapsed=$((elapsed + 1)); " ..
 		"if [ \"$finish_seen\" -eq 1 ]; then " ..
 		"finish_elapsed=$((finish_elapsed + 1)); " ..
-		"if [ $finish_elapsed -ge 10 ]; then " ..
-		"exit 0; " ..
-		"fi; " ..
+		"if [ $finish_elapsed -ge 10 ]; then exit 0; fi; " ..
 		"elif [ $elapsed -ge $timeout ]; then " ..
 		"exit 0; " ..
 		"fi; done",
@@ -1661,35 +1642,15 @@ function action_update()
 	HTTP.prepare_content("application/json")
 	HTTP.write_json({
 		coremodel = coremodel(),
-		coremetacv = coremetacv(),
-		corelv = corelv(),
-		opcv = opcv(),
-		oplv = oplv(),
-		upchecktime = upchecktime();
-	})
-end
-
-function action_update_info()
-	HTTP.prepare_content("application/json")
-	HTTP.write_json({
 		corever = corever(),
 		release_branch = release_branch(),
 		smart_enable = smart_enable(),
 		oix_core = is_oix(),
-		opcv = opcv(),
-		coremetacv = coremetacv(),
-		pkg_type = fs.pkg_type()
-	})
-end
-
-function action_update_ma()
-	HTTP.prepare_content("application/json")
-	HTTP.write_json({
-		oplv = oplv(),
 		pkg_type = fs.pkg_type(),
-		oix_core = is_oix(),
+		coremetacv = coremetacv(),
 		corelv = corelv(),
-		corever = corever();
+		opcv = opcv(),
+		oplv = oplv();
 	})
 end
 
@@ -1894,18 +1855,21 @@ function action_gen_debug_logs()
 	local logfile = "/tmp/openclash_debug.log"
 
 	local cmd = string.format(
-		": > '%s'; " ..
+		"logfile='%s'; : > \"$logfile\"; " ..
 		"/usr/share/openclash/openclash_debug.sh >/dev/null 2>&1 & DEBUG_PID=$!; " ..
-		"bytes=0; stable=0; elapsed=0; while true; do " ..
-		"new_bytes=$(wc -c < '%s' 2>/dev/null); " ..
+		"bytes=0; elapsed=0; while true; do " ..
+		"new_bytes=$(wc -c < \"$logfile\" 2>/dev/null); new_bytes=${new_bytes:-0}; " ..
 		"if [ \"$new_bytes\" -gt \"$bytes\" ] 2>/dev/null; then " ..
-		"tail -c +$((bytes + 1)) '%s'; bytes=$new_bytes; stable=0; elapsed=0; " ..
-		"else stable=$((stable + 1)); fi; " ..
+		"if [ \"$(tail -c 1 \"$logfile\" 2>/dev/null)\" = \"$(printf '\\n')\" ]; then " ..
+		"tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null; bytes=$new_bytes; " ..
+		"else tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null | awk '{ if (p) printf \"%%s\\n\", prev; prev = $0; p = 1 }'; " ..
+		"bytes=$((new_bytes - $(tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null | awk 'END { print length($0) }'))); " ..
+		"fi; elapsed=0; fi; " ..
 		"if ! kill -0 $DEBUG_PID 2>/dev/null; then " ..
-		"if [ $stable -ge 2 ]; then exit 0; fi; " ..
+		"exit 0; " ..
 		"fi; sleep 1; elapsed=$((elapsed + 1)); " ..
-		"if [ $elapsed -ge 120 ]; then exit 0; fi; done",
-		logfile, logfile, logfile
+		"if [ $elapsed -ge 60 ]; then exit 0; fi; done",
+		logfile
 	)
 	local reader = ltn12_popen(cmd)
 	if not reader then return end
@@ -1921,10 +1885,7 @@ function action_gen_debug_logs()
 			if not nl then break end
 			local line = buf:sub(1, nl - 1)
 			buf = buf:sub(nl + 1)
-			line = line:gsub("^%s+", ""):gsub("%s+$", "")
-			if line ~= "" then
-				HTTP.write(line .. "\n")
-			end
+			HTTP.write(line .. "\n")
 		end
 	end
 	reader.kill()
@@ -3304,13 +3265,13 @@ end
 
 function action_cdn_info()
 	HTTP.prepare_content("text/plain; charset=utf-8")
-	local cdns_raw = HTTP.formvalue("cdns")
+	local cdns_raw = HTTP.formvalue("addrs")
 	local branch = HTTP.formvalue("branch") or "dev"
 	local plugin_ver = HTTP.formvalue("plugin_ver") or ""
 	local core_ver = HTTP.formvalue("core_ver") or ""
 
 	if not cdns_raw or cdns_raw == "" then
-		HTTP.write('{"complete":true,"error":"Missing cdns parameter"}\n')
+		HTTP.write('{"complete":true,"error":"Missing addrs parameter"}\n')
 		return
 	end
 
@@ -3352,7 +3313,7 @@ function action_cdn_info()
 	if not force and not merge and parsed_cache then
 		if parsed_cache.result then
 			for cdn, info in pairs(parsed_cache.result) do
-				info.cdn = cdn
+				info.addr = cdn
 				HTTP.write(json.stringify(info) .. "\n")
 			end
 		end
@@ -3431,7 +3392,7 @@ function action_cdn_info()
 		for cdn, info in pairs(parsed_cache.result) do
 			if seen[cdn] and type(info) == "table" and not result[cdn] then
 				result[cdn] = info
-				result[cdn].cdn = cdn
+				result[cdn].addr = cdn
 				write_padded(json.stringify(info))
 			end
 		end
@@ -3559,7 +3520,7 @@ printf '{"plugin_ver":"%%s","core_meta_ver":"%%s","core_smart_ver":"%%s","latenc
 					if not result[cdn] then
 						result[cdn] = { plugin_ver = "", core_meta_ver = "", latency = nil }
 					end
-					result[cdn].cdn = cdn
+					result[cdn].addr = cdn
 					write_padded(json.stringify(result[cdn]))
 					queries[cdn] = nil
 				else
@@ -3573,7 +3534,7 @@ printf '{"plugin_ver":"%%s","core_meta_ver":"%%s","core_smart_ver":"%%s","latenc
 						if not result[cdn] then
 							result[cdn] = { plugin_ver = "", core_meta_ver = "", latency = nil }
 						end
-						result[cdn].cdn = cdn
+						result[cdn].addr = cdn
 						write_padded(json.stringify(result[cdn]))
 						queries[cdn] = nil
 					end
@@ -3606,7 +3567,7 @@ printf '{"plugin_ver":"%%s","core_meta_ver":"%%s","core_smart_ver":"%%s","latenc
 	for cdn, q in pairs(queries) do
 		if not completed[cdn] then
 			result[cdn] = { plugin_ver = "", core_meta_ver = "", latency = nil }
-			result[cdn].cdn = cdn
+			result[cdn].addr = cdn
 			pcall(nixio.kill, q.pid, nixio.const.SIGTERM)
 			pcall(nixio.waitpid, q.pid, 0)
 			pcall(q.fdi.close, q.fdi)

@@ -73,7 +73,7 @@
                                     <button type="button" class="icon-btn action-btn" id="go_star" title="<%:Star%>" onclick="return homepage()"><svg width="14" height="14"><use href="#oc-icon-star"/></svg></button>
                                     <button type="button" class="icon-btn action-btn" id="go_telegram" title="<%:Telegram%>" onclick="return telegrampage()"><svg width="14" height="14"><use href="#oc-icon-telegram"/></svg></button>
                                     <button type="button" class="icon-btn action-btn" id="go_sponsor" title="<%:Sponsor%>" onclick="return sponsorpage()"><svg width="14" height="14"><use href="#oc-icon-heart"/></svg></button>
-                                    <button type="button" class="icon-btn action-btn" id="logo_btn" title="Mihomo" onclick="return go_mihomo();">
+                                    <button type="button" class="icon-btn action-btn" id="logo_btn" title="Mihomo" onclick="return winOpen('https://www.github.com/metacubex/mihomo');">
                                         <img id="_logo" src="/luci-static/resources/openclash/img/logo.png?v=<%=plugin_version%>" loading="lazy" width="14px" height="14px" alt="Mihomo"/>
                                         <span class="logo-text">Powered by <span class="mihomo-link">Mihomo</span></span>
                                     </button>
@@ -2087,14 +2087,123 @@
             }
 
             var self = this;
+            var hasInitialMessage = !!initialMessage;
+            // Clear the log before streaming so the operation API is served first and the stream does not block it
             XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function() {
-                self.startStreaming(!!initialMessage);
+                if (self.streamingXHR) {
+                    self.streamingXHR.abort();
+                    self.streamingXHR = null;
+                }
+                var xhr = new XMLHttpRequest();
+                xhr.timeout = 0;
+                xhr.open('GET', '<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>', true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                var stopTimer = null;
+                var streamEnded = false;
+                var gotData = false;
+
+                function finalCleanup() {
+                    if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+                    if (self.streamingXHR === xhr) {
+                        self.streamingXHR = null;
+                    }
+                    var capturedXhr = xhr;
+                    setTimeout(function() {
+                        if (self.streamingXHR !== capturedXhr && !self.streamingXHR) {
+                            if (DOMCache.oclog) {
+                                DOMCache.oclog.classList.add('oc-hidden');
+                                DOMCache.oclog.innerHTML = '';
+                            }
+                        }
+                    }, 1000);
+                }
+
+                xhr.onprogress = function() {
+                    if (self.streamingXHR !== xhr) return;
+                    if (streamEnded) return;
+                    var text = xhr.responseText;
+                    var hasFinish = text.indexOf('##FINISH##') >= 0;
+                    if (text && self.checkForErrors(text)) {
+                        streamEnded = true;
+                        self.stopLogDisplay();
+                        return;
+                    }
+                    var raw = (text || '').replace(/##FINISH##/g, '');
+                    if (raw.trim()) {
+                        gotData = true;
+                        self.retryCount = 0;
+                        if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+                        self.displayLog(raw);
+                    }
+                    if (hasFinish) {
+                        gotData = true;
+                        if (stopTimer) clearTimeout(stopTimer);
+                        stopTimer = setTimeout(function() {
+                            streamEnded = true;
+                            finalCleanup();
+                        }, 10000);
+                    }
+                };
+
+                xhr.onload = function() {
+                    if (self.streamingXHR !== xhr) return;
+                    if (streamEnded) return;
+                    if (!gotData) {
+                        streamEnded = true;
+                        if (hasInitialMessage) {
+                            stopTimer = setTimeout(function() {
+                                self.stopLogDisplay();
+                                if (self.retryCount < self.maxRetries * 2) {
+                                    self.retryCount++;
+                                    var delay = Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 5000);
+                                    setTimeout(function() {
+                                        if (!self.streamingXHR) self.startLogDisplay();
+                                    }, delay);
+                                }
+                            }, 5000);
+                            return;
+                        }
+                        self.stopLogDisplay();
+                        if (self.retryCount < self.maxRetries * 2) {
+                            self.retryCount++;
+                            var delay = Math.max(5000, Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 10000));
+                            setTimeout(function() {
+                                if (!self.streamingXHR) self.startLogDisplay();
+                            }, delay);
+                        }
+                        return;
+                    }
+                    if (!stopTimer) {
+                        stopTimer = setTimeout(function() {
+                            streamEnded = true;
+                            finalCleanup();
+                        }, 5000);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    if (self.streamingXHR !== xhr) return;
+                    streamEnded = true;
+                    self.stopLogDisplay();
+                    if (self.retryCount < self.maxRetries) {
+                        self.retryCount++;
+                        var delay = Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 5000);
+                        setTimeout(function() {
+                            if (!self.streamingXHR) self.startLogDisplay();
+                        }, delay);
+                    }
+                };
+
+                xhr.send();
+                self.streamingXHR = xhr;
             });
         },
 
         stopLogDisplay: function() {
-            cancelAnimationFrame(this.scrollAnimId);
-            this.scrollAnimId = null;
+            if (DOMCache.oclog && DOMCache.oclog._ocScrollAnimId) {
+                cancelAnimationFrame(DOMCache.oclog._ocScrollAnimId);
+                DOMCache.oclog._ocScrollAnimId = null;
+            }
             var xhr = this.streamingXHR;
             this.streamingXHR = null;
             if (xhr) {
@@ -2108,116 +2217,6 @@
                     }
                 }, 1000);
             }
-        },
-
-        startStreaming: function(hasInitialMessage) {
-            var self = this;
-            if (this.streamingXHR) {
-                this.streamingXHR.abort();
-                this.streamingXHR = null;
-            }
-            var xhr = new XMLHttpRequest();
-            xhr.timeout = 0;
-            xhr.open('GET', '<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>', true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            var stopTimer = null;
-            var streamEnded = false;
-            var gotData = false;
-
-            function finalCleanup() {
-                if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
-                if (self.streamingXHR === xhr) {
-                    self.streamingXHR = null;
-                }
-                var capturedXhr = xhr;
-                setTimeout(function() {
-                    if (self.streamingXHR !== capturedXhr && !self.streamingXHR) {
-                        if (DOMCache.oclog) {
-                            DOMCache.oclog.classList.add('oc-hidden');
-                            DOMCache.oclog.innerHTML = '';
-                        }
-                    }
-                }, 1000);
-            }
-
-            xhr.onprogress = function() {
-                if (self.streamingXHR !== xhr) return;
-                if (streamEnded) return;
-                var text = xhr.responseText;
-                var hasFinish = text.indexOf('##FINISH##') >= 0;
-                if (text && self.checkForErrors(text)) {
-                    streamEnded = true;
-                    self.stopLogDisplay();
-                    return;
-                }
-                var raw = (text || '').replace(/##FINISH##/g, '');
-                if (raw.trim()) {
-                    gotData = true;
-                    self.retryCount = 0;
-                    if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
-                    self.displayLog(raw);
-                }
-                if (hasFinish) {
-                    gotData = true;
-                    if (stopTimer) clearTimeout(stopTimer);
-                    stopTimer = setTimeout(function() {
-                        streamEnded = true;
-                        finalCleanup();
-                    }, 10000);
-                }
-            };
-
-            xhr.onload = function() {
-                if (self.streamingXHR !== xhr) return;
-                if (streamEnded) return;
-                if (!gotData) {
-                    streamEnded = true;
-                    if (hasInitialMessage) {
-                        stopTimer = setTimeout(function() {
-                            self.stopLogDisplay();
-                            if (self.retryCount < self.maxRetries * 2) {
-                                self.retryCount++;
-                                var delay = Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 5000);
-                                setTimeout(function() {
-                                    if (!self.streamingXHR) self.startLogDisplay();
-                                }, delay);
-                            }
-                        }, 5000);
-                        return;
-                    }
-                    self.stopLogDisplay();
-                    if (self.retryCount < self.maxRetries * 2) {
-                        self.retryCount++;
-                        var delay = Math.max(5000, Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 10000));
-                        setTimeout(function() {
-                            if (!self.streamingXHR) self.startLogDisplay();
-                        }, delay);
-                    }
-                    return;
-                }
-                if (!stopTimer) {
-                    stopTimer = setTimeout(function() {
-                        streamEnded = true;
-                        finalCleanup();
-                    }, 5000);
-                }
-            };
-
-            xhr.onerror = function() {
-                if (self.streamingXHR !== xhr) return;
-                streamEnded = true;
-                self.stopLogDisplay();
-                if (self.retryCount < self.maxRetries) {
-                    self.retryCount++;
-                    var delay = Math.min(self.retryDelay * Math.pow(2, self.retryCount - 1), 5000);
-                    setTimeout(function() {
-                        if (!self.streamingXHR) self.startLogDisplay();
-                    }, delay);
-                }
-            };
-
-            xhr.send();
-            this.streamingXHR = xhr;
         },
 
         checkForErrors: function(log) {
@@ -2241,7 +2240,7 @@
             var lines = logContent.split('\n');
             var allLines = [];
             for (var i = 0; i < lines.length; i++) {
-                var t = lines[i].replace('##FINISH##', '').trim();
+                var t = lines[i].replace('##FINISH##', '').trim().replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s*/, '');
                 if (t) allLines.push(t);
             }
             if (allLines.length === 0) return;
@@ -2270,8 +2269,8 @@
             }
 
             for (var j = currentCount; j < allLines.length; j++) {
-                var color = this.getLogColor(allLines[j]);
-                var text = this.formatLogText(allLines[j]);
+                var color = ocGetLogColor(allLines[j]);
+                var text = allLines[j];
                 var div = document.createElement('div');
                 div.style.whiteSpace = 'nowrap';
                 div.innerHTML = '<b style="color:' + color + '">' + text + '</b>';
@@ -2294,59 +2293,7 @@
             DOMCache.oclog.classList.remove('oc-hidden');
             DOMCache.oclog.style.willChange = 'scroll-position';
 
-            var self = this;
-            function animateScroll() {
-                if (self.scrollAnimId) cancelAnimationFrame(self.scrollAnimId);
-                var start = DOMCache.oclog.scrollTop;
-                var duration = 500;
-                var startTime = null;
-                function step(timestamp) {
-                    if (!DOMCache.oclog) { self.scrollAnimId = null; return; }
-                    if (!startTime) startTime = timestamp;
-                    var elapsed = timestamp - startTime;
-                    var progress = Math.min(elapsed / duration, 1);
-                    var eased = 1 - (1 - progress) * (1 - progress);
-                    var target = Math.max(0, DOMCache.oclog.scrollHeight - DOMCache.oclog.clientHeight);
-                    var distance = target - start;
-                    DOMCache.oclog.scrollTop = Math.round(start + distance * eased);
-                    if (progress < 1) {
-                        self.scrollAnimId = requestAnimationFrame(step);
-                    } else {
-                        self.scrollAnimId = null;
-                        DOMCache.oclog.style.willChange = '';
-                    }
-                }
-                self.scrollAnimId = requestAnimationFrame(step);
-            }
-
-            animateScroll();
-        },
-
-        getLogColor: function(log) {
-            for (var levelKey in window.levelTranslations) {
-                var translatedText = '[' + window.levelTranslations[levelKey] + ']';
-                if (log.indexOf(translatedText) >= 0) return "var(--" + levelKey + "-color)";
-            }
-            return "var(--info-color)";
-        },
-
-        formatLogText: function(log) {
-            if (!log) return '<%:Processing...%>';
-
-            var cleanText = log.replace(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[.\d]*Z?\s*/, '')
-                            .replace(/^time="[^"]*"\s*/, '')
-                            .replace(/^level=\w+\s*/, '')
-                            .replace(/^msg="?([^"]*)"?\s*/, '$1');
-
-            if (cleanText.length > 60) cleanText = cleanText.substring(0, 57) + '...';
-
-            return this.escapeHtml(cleanText) || '<%:Processing...%>';
-        },
-
-        escapeHtml: function(text) {
-            var div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            ocAnimateScroll(DOMCache.oclog);
         }
     };
 
@@ -3556,7 +3503,7 @@
 
     var all_one_key_update = debounceButton(function(btn) {
         btn.value = '<%:Checking...%>';
-        select_git_cdn();
+        update();
         btn.value = '<%:Check Update%>';
         btn.disabled = false;
         return false;
@@ -3655,10 +3602,6 @@
 
     function sponsorpage() {
         winOpen('https://ko-fi.com/vernesong');
-    }
-
-    function go_mihomo() {
-        winOpen('https://www.github.com/metacubex/mihomo');
     }
 
     function clashversion_check() {
@@ -3765,20 +3708,13 @@
         imgobj.src = imgSrc;
     }
 
-    function imgerrorfuns(imgobj, imgSrc) {
-        setTimeout(function() {
-            imgobj.src = imgSrc;
-            imgobj.loading = "lazy";
-        }, 10000);
-    }
-
     function check_core() {
         StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "check_core")%>', function(x, status) {
             if (x && x.status == 200) {
                 if (status.core_status != "1") {
                     var r = confirm("<%:You have not installed the core yet, do you want to download and install it now?%>");
                     if (r == true) {
-                        return select_git_cdn("core_download");
+                        return update("core_download");
                     }
                 }
             }
@@ -4153,6 +4089,10 @@
         if (toggleElement) {
             toggleElement.disabled = true;
         }
+        var restartBtn = document.getElementById('restart_core');
+        if (restartBtn) {
+            restartBtn.disabled = true;
+        }
 
         var requestParams = { action: 'restart' };
 
@@ -4166,6 +4106,9 @@
         LogManager.startLogDisplay('<%:Restarting...%>');
 
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
+            if (restartBtn) {
+                restartBtn.disabled = false;
+            }
             if (x && x.status == 200) {
                 setTimeout(function() {
                     pluginToggleUserAction = false;
