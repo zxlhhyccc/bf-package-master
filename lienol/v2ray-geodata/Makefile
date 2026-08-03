@@ -25,7 +25,7 @@ define Download/geoip
   HASH:=e9cb5a5bd338a9e4a2b9161517e3362da667ce9ff884c62d560d762b526f7e58
 endef
 
-GEOSITE_VER:=202608012248
+GEOSITE_VER:=202608022250
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 define Download/geosite
@@ -35,10 +35,10 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=814a2028109e9e361d67efe9eadb18068c19a72a6eb8f3988da59617f4761fbb
+  HASH:=833992dc7cec47a5b0b8492219c09690362371933931ac9af40a729897579824
 endef
 
-GEOSITE_IRAN_VER:=202607270122
+GEOSITE_IRAN_VER:=202608030119
 GEOSITE_IRAN_FILE:=iran.dat.$(GEOSITE_IRAN_VER)
 define Download/geosite-ir
 #  URL:=https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/
