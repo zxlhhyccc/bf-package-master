@@ -1464,6 +1464,9 @@ msgstr "¿Seguro que deseas eliminar todos los archivos del núcleo?"
 msgid "Remove succeeded!"
 msgstr "Eliminación completada."
 
+msgid "Removing..."
+msgstr "Eliminando..."
+
 msgid "Remove failed!"
 msgstr "Error al eliminar."
 
@@ -1679,6 +1682,9 @@ msgstr "No se pudo obtener la versión del núcleo de este enlace, inténtelo m�
 
 msgid "The selected version is the same as the installed version, no need to update"
 msgstr "La versión seleccionada es la misma que la instalada, no es necesario actualizar"
+
+msgid "The selected version is not in the version history, please refresh and try again"
+msgstr "La versión seleccionada no está en el historial de versiones, actualice e inténtelo de nuevo"
 
 msgid "Chnroute Cidr List Download Success, Check Updated..."
 msgstr "Lista CIDR de China (IPv4) descargada correctamente, comprobando actualizaciones..."
@@ -2093,6 +2099,9 @@ msgstr "Prueba de conexión"
 
 msgid "Connection Test Result"
 msgstr "Resultado de la prueba de conexión"
+
+msgid "Backing up..."
+msgstr "Creando copia de seguridad..."
 
 msgid "Backup File"
 msgstr "Archivo de copia de seguridad"

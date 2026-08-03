@@ -4,6 +4,7 @@
     local version_tab = (self and self.version_tab) or false
 %>
 <%+openclash/common%>
+<script src="/luci-static/resources/openclash/js/common.js?v=<%=plugin_version%>"></script>
 <script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%=plugin_version%>"></script>
     <div class="oc">
         <div id="selectPopup" class="select-popup<%= version_tab and ' select-popup-tab' or ' hidden' %>">
@@ -23,18 +24,20 @@
             <div class="select-config-section">
                 <div class="config-grid">
                     <div class="config-item">
-                        <div class="oc-option-title"><svg><use href="#oc-icon-building-broadcast-tower"/></svg><span class="oc-option-text"><%:CPU Arch%></span></div>
+                        <div class="oc-option-title">
+                            <span class="oc-option-text"><%:CPU Arch%></span>
+                        </div>
                         <span class="ver-value" id="CPU_ARCH_VALUE"><%:Collecting data...%></span>
                     </div>
                     <div class="config-item">
-                        <div class="oc-option-title"><svg><use href="#oc-icon-hammer"/></svg><span class="oc-option-text"><%:Compiled Version%></span></div>
+                        <div class="oc-option-title"><span class="oc-option-text"><%:Compiled Version%></span></div>
                         <div class="form-select-wrapper">
                             <select class="select-class oc-arch-select" id="CORE_VERSION" onchange="saveOptions()">
                             </select>
                         </div>
                     </div>
                     <div class="config-item">
-                        <div class="oc-option-title"><svg><use href="#oc-icon-switch"/></svg><span class="oc-option-text"><%:Release Branch%></span></div>
+                        <div class="oc-option-title"><span class="oc-option-text"><%:Release Branch%></span></div>
                         <div class="form-select-wrapper">
                             <select class="select-class" id="RELEASE_BRANCH" onchange="onBranchChange()">
                                 <option value="master">Master</option>
@@ -44,7 +47,7 @@
                     </div>
                     <div class="config-item">
                         <div class="oc-option-title">
-                            <svg><use href="#oc-icon-brain"/></svg><span class="oc-option-text"><%:Smart Core%></span>
+                            <span class="oc-option-text"><%:Smart Core%></span>
                             <a href="javascript:void(0);" onclick="window.open('https://github.com/vernesong/mihomo/releases', '_blank');" class="help-link" title="<%:View core infos that support smart group%>">
                                 <svg width="12" height="12"><use href="#oc-icon-help"/></svg>
                             </a>
@@ -60,25 +63,25 @@
                 <div class="version-card">
                     <div class="version-row">
                         <div class="config-item">
-                            <span class="oc-option-title"><svg><use href="#oc-icon-package"/></svg><span class="oc-option-text"><%:Installed%></span></span>
+                            <span class="oc-option-title"><span class="oc-option-text"><%:Plugin%></span></span>
                             <span class="ver-value" id="installed-plugin">--</span>
                         </div>
                         <div class="config-item">
-                            <span class="oc-option-title"><svg><use href="#oc-icon-list-search"/></svg><span class="oc-option-text"><%:Select Version%></span></span>
+                            <span class="oc-option-title"><span class="oc-option-text"><%:Select Version%></span></span>
                             <div class="form-select-wrapper">
-                                <select class="select-class" id="select-plugin-ver" onchange="forceRefresh=true;refreshAddrInfo()">
+                                <select class="select-class" id="select-plugin-ver" onchange="forceRefresh=true;refreshAddrInfo({cancel:true})">
                                     <option value="__latest__"><%:Latest%></option>
                                 </select>
                             </div>
                         </div>
                         <div class="config-item">
-                            <span class="oc-option-title"><svg><use href="#oc-icon-cpu"/></svg><span class="oc-option-text"><%:Installed%></span></span>
+                            <span class="oc-option-title"><span class="oc-option-text"><%:Core%></span></span>
                             <span class="ver-value" id="installed-core">--</span>
                         </div>
                         <div class="config-item">
-                            <span class="oc-option-title"><svg><use href="#oc-icon-list-search"/></svg><span class="oc-option-text"><%:Select Version%></span></span>
+                            <span class="oc-option-title"><span class="oc-option-text"><%:Select Version%></span></span>
                             <div class="form-select-wrapper">
-                                <select class="select-class" id="select-core-ver" onchange="forceRefresh=true;refreshAddrInfo()">
+                                <select class="select-class" id="select-core-ver" onchange="forceRefresh=true;refreshAddrInfo({cancel:true})">
                                     <option value="__latest__"><%:Latest%></option>
                                 </select>
                             </div>
@@ -90,10 +93,10 @@
 
             <div class="select-popup-body" id="addr-list-body">
                 <div class="select-option addr-header">
-                    <span class="addr-header-label"><%:Address%></span>
-                    <span class="addr-header-label"><%:Latency%></span>
-                    <span class="addr-header-label"><%:Plugin%></span>
-                    <span class="addr-header-label"><%:Core%>
+                    <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-link-tabler"/></svg></span><span><%:Address%></span></span>
+                    <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-speedtest"/></svg></span><span><%:Latency%></span></span>
+                    <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-package"/></svg></span><span><%:Plugin%></span></span>
+                    <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-cpu"/></svg></span><span><%:Core%></span>
                         <a href="javascript:void(0);" class="help-link" title="<%:Core path:%>/etc/openclash/core/clash_meta" onclick="return false;">
                             <svg width="12" height="12"><use href="#oc-icon-help"/></svg>
                         </a>
@@ -145,15 +148,15 @@
                 </div>
                 <button type="button" class="footer-btn" onclick="return backup_file(this)">
                     <svg width="14" height="14"><use href="#oc-icon-download"/></svg>
-                    <%:Backup File%>
+                    <span><%:Backup File%></span>
                 </button>
                 <button type="button" class="footer-btn" onclick="return restore_config(this)">
                     <svg width="14" height="14"><use href="#oc-icon-history"/></svg>
-                    <%:Restore Default%>
+                    <span><%:Restore Default%></span>
                 </button>
-                <button type="button" class="footer-btn footer-btn-danger" onclick="return remove_all_core(this)">
+                <button type="button" class="footer-btn" onclick="return remove_all_core(this)">
                     <svg width="14" height="14"><use href="#oc-icon-trash"/></svg>
-                    <%:Remove Core%>
+                    <span><%:Remove Core%></span>
                 </button>
             </div>
         </div>
@@ -172,11 +175,18 @@
     var refreshTimer = null;
     var versionRetryTimer = null;
     var retryTimer = null;
+    var addrInfoBusy = false;
+    var addrInfoXHR = null;
+    var versionHistoryBusy = false;
+    var versionHistoryXHR = null;
     var hintTimer = null;
     var defaultTipTimer = null;
     var logStreamXHR = null;
     var logStreamReconnect = null;
     var logStreamActive = false;
+    var logRetryCount = 0;
+    var lastLogLineCount = null;
+    var logMaxWaitTimer = null;
     var selectedAddr = null;
     var fetchedBranch = null;
     var _isOix = false;
@@ -233,10 +243,6 @@
             defaultTipTimer = null;
             showDefaultNote();
         }, 5000);
-    }
-
-    function clearHint() {
-        showDefaultNote();
     }
 
     function classifyAddr(url) {
@@ -313,9 +319,6 @@
     function makeVerCell(addrUrl, type, version) {
         var branch = fetchedBranch || release_branch.value || 'dev';
         var arch = core_version.value;
-        if (type === 'core' && (!arch || arch === '0')) {
-            return version;
-        }
         var selectEl = type === 'plugin'
             ? document.getElementById('select-plugin-ver')
             : document.getElementById('select-core-ver');
@@ -334,19 +337,18 @@
                 verText = selectedOption.getAttribute('data-ver');
             }
 
-            if (isLatest && type === 'core' && !_isOix) {
-                verText = 'Latest';
-            }
-
             if (!verText) return null;
         }
 
         var useVersion = (verText === 'Latest') ? '' : verText;
         var sha = useVersion ? findSHAbyVersion(selectEl, useVersion) : '';
         var dlUrl = buildDownloadURL(addrUrl, type, branch, useVersion, sha, arch);
-        if (!dlUrl) return verText;
 
-        return '<a href="javascript:void(0)" class="ver-link" data-type="' + type + '" data-ver="' + escAttr(useVersion) + '" data-dl="' + escAttr(dlUrl) + '" title="<%:Click to Install%>">' + verText + '</a>' +
+        var verLink = '<a href="javascript:void(0)" class="ver-link" data-type="' + type + '" data-ver="' + escAttr(useVersion) + '" data-dl="' + escAttr(dlUrl) + '" title="<%:Click to Install%>">' + verText + '</a>';
+        if (!dlUrl) {
+            return verLink;
+        }
+        return verLink +
             '<a href="' + escAttr(dlUrl) + '" target="_blank" rel="noopener" class="dl-btn" title="<%:Download%>"><svg width="11" height="11"><use href="#oc-icon-download"/></svg></a>';
     }
 
@@ -423,8 +425,8 @@
                     coreEl.textContent = info.core_error === 'timeout' ? '<%:Access Timed Out%>' : '<%:Access Denied%>';
                     coreEl.classList.add('has-data', 'err');
                 } else {
-                    coreEl.textContent = '--';
-                    coreEl.classList.remove('has-data', 'err');
+                    coreEl.textContent = '<%:Access Timed Out%>';
+                    coreEl.classList.add('has-data', 'err');
                 }
             }
         }
@@ -461,7 +463,13 @@
         refreshTimer = setInterval(refreshAddrInfo, ocRandomInterval(10000, 20000));
     }
 
-    function fetchVersionHistory(force) {
+    function fetchVersionHistory(force, opts) {
+        if (versionHistoryBusy) {
+            if (!(opts && opts.cancel)) return;
+            if (versionHistoryXHR) { try { versionHistoryXHR.abort(); } catch(e) {} versionHistoryXHR = null; }
+            versionHistoryBusy = false;
+        }
+        versionHistoryBusy = true;
         var branch = fetchedBranch || release_branch.value || 'dev';
         var pluginSelect = document.getElementById('select-plugin-ver');
         var coreSelect = document.getElementById('select-core-ver');
@@ -598,7 +606,14 @@
                 versionRetryTimer = setInterval(fetchVersionHistory, 10000);
             }
         };
+        xhr.onloadend = function() {
+            if (versionHistoryXHR === xhr) {
+                versionHistoryXHR = null;
+                versionHistoryBusy = false;
+            }
+        };
         xhr.send();
+        versionHistoryXHR = xhr;
     }
 
     function saveOptions() {
@@ -614,16 +629,16 @@
         if (versionRetryTimer) { clearInterval(versionRetryTimer); versionRetryTimer = null; }
         if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
         saveOptions();
-        fetchVersionHistory();
+        fetchVersionHistory(false, {cancel: true});
         forceRefresh = true;
-        refreshAddrInfo();
+        refreshAddrInfo({cancel: true});
     }
 
     function onSmartChange() {
         saveOptions();
-        fetchVersionHistory();
+        fetchVersionHistory(false, {cancel: true});
         forceRefresh = true;
-        refreshAddrInfo();
+        refreshAddrInfo({cancel: true});
     }
 
     function refreshAddrInfo(opts) {
@@ -633,6 +648,12 @@
             if (v && v !== 'custom' && isValidURL(v)) addrs.push(v);
         });
         if (addrs.length === 0) return;
+        if (addrInfoBusy) {
+            if (!(opts && opts.cancel)) return;
+            if (addrInfoXHR) { try { addrInfoXHR.abort(); } catch(e) {} addrInfoXHR = null; }
+            addrInfoBusy = false;
+        }
+        addrInfoBusy = true;
 
         var branch = fetchedBranch || release_branch.value || 'dev';
         var smart = smart_enable.value || '0';
@@ -652,7 +673,7 @@
             params.force = '1';
             forceRefresh = false;
             infoCache = {};
-            clearHint();
+            showDefaultNote();
             document.querySelectorAll('#addr-list-body .addr-row').forEach(function(row) {
                 var latencyEl = row.querySelector('.addr-status');
                 var verSpans = row.querySelectorAll('.ver-text');
@@ -674,13 +695,16 @@
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         var lastLen = 0;
         var hasComplete = false;
+        var pendingBuf = '';
         xhr.onprogress = function() {
             if (xhr.status != 200) return;
             var text = xhr.responseText;
             if (text.length <= lastLen) return;
             var newText = text.substring(lastLen);
             lastLen = text.length;
-            var lines = newText.split('\n');
+            pendingBuf += newText;
+            var lines = pendingBuf.split('\n');
+            pendingBuf = lines.pop();
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].trim();
                 if (!line) continue;
@@ -693,8 +717,7 @@
                         }
                         continue;
                     }
-                    var addrUrl = info.addr;
-                    if (!addrUrl) continue;
+                    var addrUrl = info.addr;                    if (!addrUrl) continue;
                     var rows = document.querySelectorAll('#addr-list-body .addr-row[data-value="' + CSS.escape(addrUrl) + '"]');
                     rows.forEach(function(row) { updateAddrRow(row, addrUrl, info); });
                 } catch(e) {}
@@ -713,7 +736,9 @@
             if (text.length > lastLen) {
                 var newText = text.substring(lastLen);
                 lastLen = text.length;
-                var lines = newText.split('\n');
+                pendingBuf += newText;
+                var lines = pendingBuf.split('\n');
+                pendingBuf = lines.pop();
                 for (var i = 0; i < lines.length; i++) {
                     var line = lines[i].trim();
                     if (!line) continue;
@@ -744,7 +769,61 @@
             if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
             retryTimer = setInterval(refreshAddrInfo, 10000);
         };
+        xhr.onloadend = function() {
+            if (addrInfoXHR === xhr) {
+                addrInfoXHR = null;
+                addrInfoBusy = false;
+            }
+        };
         xhr.send();
+        addrInfoXHR = xhr;
+    }
+
+    function initHeaderDrag() {
+        var popup = document.getElementById('selectPopup');
+        var header = popup ? popup.querySelector('.select-popup-header') : null;
+        if (!popup || !header || popup.classList.contains('select-popup-tab')) return;
+        if (header.dataset.ocDragInit) return;
+        header.dataset.ocDragInit = '1';
+        header.classList.add('oc-draggable');
+
+        var dragging = false;
+        var startX = 0, startY = 0, startLeft = 0, startTop = 0;
+
+        header.addEventListener('pointerdown', function(e) {
+            if (e.target.closest && e.target.closest('button, a, select, input')) return;
+            dragging = true;
+            var rect = popup.getBoundingClientRect();
+            startX = e.clientX;
+            startY = e.clientY;
+            startLeft = rect.left;
+            startTop = rect.top;
+            popup.style.transform = 'none';
+            popup.style.left = rect.left + 'px';
+            popup.style.top = rect.top + 'px';
+            popup.style.transition = 'none';
+            if (header.setPointerCapture) {
+                try { header.setPointerCapture(e.pointerId); } catch(err) {}
+            }
+            e.preventDefault();
+        });
+
+        header.addEventListener('pointermove', function(e) {
+            if (!dragging) return;
+            popup.style.left = (startLeft + (e.clientX - startX)) + 'px';
+            popup.style.top = (startTop + (e.clientY - startY)) + 'px';
+        });
+
+        function stopDrag(e) {
+            if (!dragging) return;
+            dragging = false;
+            popup.style.transition = '';
+            if (header.releasePointerCapture) {
+                try { header.releasePointerCapture(e.pointerId); } catch(err) {}
+            }
+        }
+        header.addEventListener('pointerup', stopDrag);
+        header.addEventListener('pointercancel', stopDrag);
     }
 
     function update(btn, type) {
@@ -762,6 +841,7 @@
         selectPopup.classList.remove('hidden');
         selectPopup.onclick = function(event) { click_handler(event); };
         initAllData();
+        initHeaderDrag();
     }
 
     function handleVersionUpdate(verLink) {
@@ -771,17 +851,27 @@
         var ver = verLink.getAttribute('data-ver') || '';
         var dlUrl = verLink.getAttribute('data-dl') || '';
 
-        if (!dlUrl) {
-            var branch = fetchedBranch || release_branch.value || 'dev';
-            var arch = core_version.value;
-            var selectEl = type === 'plugin'
-                ? document.getElementById('select-plugin-ver')
-                : document.getElementById('select-core-ver');
-            var sha = ver ? findSHAbyVersion(selectEl, ver) : '';
+        var branch = fetchedBranch || release_branch.value || 'dev';
+        var arch = core_version.value;
+        var selectEl = type === 'plugin'
+            ? document.getElementById('select-plugin-ver')
+            : document.getElementById('select-core-ver');
+
+        if (type === 'core' && (!arch || arch === '0')) {
+            showHint('<%:No Compiled Version Selected, Please Select In Update Page And Try Again%>');
+            return;
+        }
+        var sha = ver ? findSHAbyVersion(selectEl, ver) : '';
+        if (ver && !sha && !(type === 'core' && _isOix)) {
+            showHint('<%:The selected version is not in the version history, please refresh and try again%>');
+            return;
+        }
+
+        if (ver) {
             dlUrl = buildDownloadURL(addrUrl, type, branch, ver, sha, arch);
         }
 
-        clearHint();
+        showDefaultNote();
 
         var addrInfo = infoCache[addrUrl];
         if (!addrInfo || addrInfo.latency == null) {
@@ -813,7 +903,7 @@
             }
         }
 
-        startLog('<%:Checking...%>');
+        startLog('<%:Checking...%>', false, type === 'core' ? 'openclash_core.sh' : 'openclash_update.sh');
 
         var addr = addrUrl;
         if (addr === 'https://raw.githubusercontent.com/') addr = '';
@@ -865,14 +955,14 @@
                 listBody.insertBefore(div, document.getElementById('custom-addr-option'));
                 customInput.classList.add('oc-hidden');
                 addBtn.classList.add('oc-hidden');
-                refreshAddrInfo({merge: true});
+                refreshAddrInfo({merge: true, cancel: true});
             } else {
                 alert("<%:Please enter a valid URL!%>");
             }
         } else if (optionElem && optionElem.classList.contains('addr-row')) {
             var addr = optionElem.dataset.value;
 
-            clearHint();
+            showDefaultNote();
 
             var addrInfo = infoCache[addr];
             if (!addrInfo || addrInfo.latency == null) {
@@ -912,6 +1002,15 @@
             var useCoreVer = (s === '1' && addrInfo.core_smart_ver) ? addrInfo.core_smart_ver : addrInfo.core_meta_ver;
             var coreSHA = (!isCoreLatest && useCoreVer) ? findSHAbyVersion(coreSel, useCoreVer) : '';
 
+            if (currentDownloadType !== 'core_download' && !isPluginLatest && addrInfo.plugin_ver && !pluginSHA) {
+                showHint('<%:The selected version is not in the version history, please refresh and try again%>');
+                return;
+            }
+            if (!isCoreLatest && useCoreVer && !coreSHA) {
+                showHint('<%:The selected version is not in the version history, please refresh and try again%>');
+                return;
+            }
+
             if (currentDownloadType !== 'core_download') {
                 // One-key update: both plugin and core will be updated
                 if (!pluginVer) {
@@ -946,7 +1045,7 @@
                 }
             }
 
-            startLog('<%:Checking...%>');
+            startLog('<%:Checking...%>', false, currentDownloadType === 'core_download' ? 'openclash_core.sh' : 'openclash_update.sh');
 
             if (addr === 'https://raw.githubusercontent.com/') addr = '';
 
@@ -967,14 +1066,14 @@
     }
 
     function refreshAllData() {
-        clearHint();
+        showDefaultNote();
         infoCache = {};
         forceRefresh = true;
         if (versionRetryTimer) { clearInterval(versionRetryTimer); versionRetryTimer = null; }
         if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
         if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
-        fetchVersionHistory(true);
-        refreshAddrInfo();
+        fetchVersionHistory(true, {cancel: true});
+        refreshAddrInfo({cancel: true});
         refreshTimer = setInterval(refreshAddrInfo, ocRandomInterval(10000, 20000));
     }
 
@@ -984,8 +1083,12 @@
         var addBtn = document.getElementById('addCustomOption');
         if (!versionTabMode) {
             popup.classList.add('hidden');
+            popup.style.transform = '';
+            popup.style.left = '';
+            popup.style.top = '';
+            popup.style.transition = '';
         }
-        if (!logStreamActive) { clearHint(); }
+        if (!logStreamActive) { showDefaultNote(); }
         if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
         if (versionRetryTimer) { clearInterval(versionRetryTimer); versionRetryTimer = null; }
         if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
@@ -993,115 +1096,208 @@
         addBtn.classList.add('oc-hidden');
     }
 
+    function setBtnBusy(btn, busy, busyText) {
+        if (!btn) return;
+        var btnText = btn.querySelector('span:not(.loading-spinner)');
+        if (busy) {
+            if (btnText && !btn.dataset.ocBtnOriginalText) {
+                btn.dataset.ocBtnOriginalText = btnText.textContent;
+            }
+            if (btnText && busyText) { btnText.textContent = busyText; }
+            ocSetBtnLoading(btn, true);
+        } else {
+            ocSetBtnLoading(btn, false);
+            if (btnText && btn.dataset.ocBtnOriginalText) {
+                btnText.textContent = btn.dataset.ocBtnOriginalText;
+                delete btn.dataset.ocBtnOriginalText;
+            }
+        }
+    }
+
     function remove_all_core(btn) {
-        btn.disabled = true;
         if (confirm('<%:Are you sure want to remove all core files?%>')) {
+            setBtnBusy(btn, true, '<%:Removing...%>');
             XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "remove_all_core")%>', null, function(x) {
                 alert((x && x.status == 200) ? '<%:Remove succeeded!%>' : '<%:Remove failed!%>');
-                btn.disabled = false;
+                setBtnBusy(btn, false);
             });
         }
         return false;
     }
 
     function backup_file(btn) {
-        btn.disabled = true;
-        window.location.href = document.getElementById('BACKUP_SELECT').value;
-        btn.disabled = false;
+        var endpoint = document.getElementById('BACKUP_SELECT').value;
+        var url = '<%=luci.dispatcher.build_url("admin", "services", "openclash")%>' + '/' + endpoint;
+        setBtnBusy(btn, true, '<%:Backing up...%>');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'blob';
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onload = function() {
+            setBtnBusy(btn, false);
+            if (xhr.status == 200 && xhr.response) {
+                var disposition = xhr.getResponseHeader('Content-Disposition') || '';
+                var match = disposition.match(/filename="?([^";]+)"?/);
+                var filename = match ? match[1] : endpoint + '.tar.gz';
+                var blobUrl = URL.createObjectURL(xhr.response);
+                var a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 1000);
+            } else {
+                alert('<%:Backup failed!%>');
+            }
+        };
+        xhr.onerror = function() {
+            setBtnBusy(btn, false);
+            alert('<%:Backup failed!%>');
+        };
+        xhr.send();
         return false;
     }
 
     function restore_config(btn) {
-        btn.disabled = true;
         if (confirm('<%:Are you sure want to restore the default config?%>')) {
+            setBtnBusy(btn, true, '<%:Restoring...%>');
             XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "restore")%>', null, function(x) {
+                setBtnBusy(btn, false);
                 if (x && x.status == 200) {
                     alert('<%:Restore succeeded!%>');
                 } else {
                     alert('<%:Restore failed!%>');
                 }
-                btn.disabled = false;
                 window.location.href = '<%=luci.dispatcher.build_url("admin", "services", "openclash", "settings")%>';
             });
         }
         return false;
     }
 
-    function startLog(initialMessage) {
+    function startLog(initialMessage, skipClearLog, scriptName) {
         if (logStreamXHR) { logStreamXHR.abort(); logStreamXHR = null; }
         if (logStreamReconnect) { clearTimeout(logStreamReconnect); logStreamReconnect = null; }
+        if (initialMessage) {
+            logRetryCount = 0;
+            lastLogLineCount = null;
+        }
         logStreamActive = true;
 
-        showLogLine('<b style="color:var(--info-color)">' + (initialMessage || '<%:Processing...%>') + '</b>');
+        var watchMode = !!scriptName && scriptName !== 'view';
+        var streamUrl = '<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>';
+        if (watchMode) {
+            streamUrl += '?script=' + encodeURIComponent(scriptName);
+        }
 
-        XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function() {
-            if (logStreamXHR) { logStreamXHR.abort(); logStreamXHR = null; }
-            var xhr = new XMLHttpRequest();
-            xhr.timeout = 0;
-            xhr.open('GET', '<%=luci.dispatcher.build_url("admin", "services", "openclash", "startlog")%>', true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            var streamEnded = false;
-            var stopTimer = null;
-
-            function finalCleanup() {
-                if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
-                if (logStreamXHR === xhr) { logStreamXHR = null; }
-                try { xhr.abort(); } catch(e) {}
+        if (initialMessage) {
+            if (logMaxWaitTimer) { clearTimeout(logMaxWaitTimer); }
+            logMaxWaitTimer = setTimeout(function() {
+                if (logStreamXHR) { logStreamXHR.abort(); logStreamXHR = null; }
                 logStreamActive = false;
                 var hint = document.getElementById('version-hint');
                 if (hint) { hint.classList.remove('logging'); }
-                showDefaultNote();
+            }, 600000);
+        }
+
+        if (initialMessage) {
+            showLogLine('<b style="color:var(--info-color)">' + initialMessage + '</b>');
+        }
+
+        function openStream() {
+            if (logStreamXHR) { logStreamXHR.abort(); logStreamXHR = null; }
+            var xhr = new XMLHttpRequest();
+            xhr.timeout = 0;
+            xhr.open('GET', streamUrl, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            var streamEnded = false;
+            var gotData = false;
+            var processedLines = 0;
+            var finishTimer = null;
+
+            function finalCleanup(showDefault) {
+                if (logStreamXHR === xhr) { logStreamXHR = null; }
+                try { xhr.abort(); } catch(e) {}
+                logStreamActive = false;
+                if (showDefault) {
+                    var hint = document.getElementById('version-hint');
+                    if (hint) { hint.classList.remove('logging'); }
+                    showDefaultNote();
+                }
             }
 
             xhr.onprogress = function() {
                 if (logStreamXHR !== xhr) return;
                 if (streamEnded) return;
                 var text = xhr.responseText || '';
-                var hasFinish = text.indexOf('##FINISH##') >= 0;
-                if (text.match(/level=(fatal|error)/)) {
-                    streamEnded = true;
-                    finalCleanup();
-                    var msgParts = text.split('msg=');
-                    var errorMsg = (msgParts.length > 1 ? msgParts[1] : text).replace(/##FINISH##/g, '').replace(/"/g, '').trim();
-                    if (errorMsg) alert('<%:OpenClash Start Failed%>:\n\n' + errorMsg);
-                    return;
-                }
-                var raw = text.replace(/##FINISH##/g, '');
+                var startLine = (lastLogLineCount != null) ? lastLogLineCount : 0;
+                if (processedLines > startLine) startLine = processedLines;
+                var lines = text.split('\n');
+                var hasPartial = text.length > 0 && text.charAt(text.length - 1) !== '\n';
+                var endIdx = hasPartial ? lines.length - 1 : lines.length;
+                var newChunk = lines.slice(startLine, endIdx).join('\n');
+                processedLines = endIdx;
+                var raw = newChunk.replace(/##FINISHED##|##CONTINUE##|##FINISH##/g, '');
                 if (raw.trim()) {
-                    if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+                    gotData = true;
                     displayLog(raw);
                 }
-                if (hasFinish) {
-                    if (stopTimer) clearTimeout(stopTimer);
-                    stopTimer = setTimeout(function() {
+                if (/##FINISHED##\s*$/.test(text) && !finishTimer) {
+                    finishTimer = setTimeout(function() {
                         streamEnded = true;
-                        finalCleanup();
-                    }, 5000);
+                        finalCleanup(true);
+                    }, 10000);
                 }
             };
 
             xhr.onload = function() {
                 if (logStreamXHR !== xhr) return;
                 if (streamEnded) return;
-                if (!stopTimer) {
-                    stopTimer = setTimeout(function() {
-                        streamEnded = true;
-                        finalCleanup();
-                    }, 5000);
+                var text = xhr.responseText || '';
+                if (!watchMode || /##FINISHED##\s*$/.test(text)) {
+                    if (!finishTimer) {
+                        finishTimer = setTimeout(function() {
+                            streamEnded = true;
+                            finalCleanup(true);
+                        }, 10000);
+                    }
+                    return;
                 }
+                if (finishTimer) { clearTimeout(finishTimer); finishTimer = null; }
+                streamEnded = true;
+                lastLogLineCount = text.replace(/##FINISHED##\s*$|##CONTINUE##\s*$/, '').replace(/\n+$/, '').split('\n').length;
+                finalCleanup(false);
+                if (logStreamReconnect) clearTimeout(logStreamReconnect);
+                logStreamReconnect = setTimeout(function() {
+                    if (!logStreamXHR) startLog(null, true, scriptName);
+                }, 1000);
             };
 
             xhr.onerror = function() {
                 if (logStreamXHR !== xhr) return;
+                if (finishTimer) { clearTimeout(finishTimer); finishTimer = null; }
                 streamEnded = true;
-                finalCleanup();
-                if (logStreamReconnect) clearTimeout(logStreamReconnect);
-                logStreamReconnect = setTimeout(function() { startLog(); }, 3000);
+                lastLogLineCount = (xhr.responseText || '').replace(/##FINISHED##\s*$|##CONTINUE##\s*$/, '').replace(/\n+$/, '').split('\n').length;
+                finalCleanup(false);
+                if (watchMode) {
+                    if (logStreamReconnect) clearTimeout(logStreamReconnect);
+                    logStreamReconnect = setTimeout(function() {
+                        if (!logStreamXHR) startLog(null, true, scriptName);
+                    }, 1000);
+                }
             };
 
             xhr.send();
             logStreamXHR = xhr;
-        });
+        }
+
+        if (skipClearLog) {
+            openStream();
+        } else {
+            XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "del_start_log")%>', null, function() {
+                openStream();
+            });
+        }
     }
 
     function displayLog(logContent) {
@@ -1111,15 +1307,12 @@
         var lines = logContent.split('\n');
         var allLines = [];
         for (var i = 0; i < lines.length; i++) {
-            var t = lines[i].replace('##FINISH##', '').trim().replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s*/, '');
+            var t = lines[i].replace(/##FINISHED##|##CONTINUE##|##FINISH##/g, '').trim().replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s*/, '');
             if (t) allLines.push(t);
         }
         if (allLines.length === 0) return;
 
         var maxLines = 3;
-        if (allLines.length > maxLines) {
-            allLines = allLines.slice(allLines.length - maxLines);
-        }
 
         if (!hint.classList.contains('logging')) {
             hint.classList.add('logging');
@@ -1127,23 +1320,27 @@
             hint.scrollTop = 0;
         }
 
-        var currentCount = hint.children.length;
-        if (allLines.length <= currentCount) {
-            hint.innerHTML = '';
-            hint.scrollTop = 0;
-            currentCount = 0;
+        var existing = [];
+        for (var i = 0; i < hint.children.length; i++) {
+            var child = hint.children[i];
+            if (child.tagName === 'DIV' && child.textContent !== '\u200B' && child.firstChild && child.firstChild.textContent) {
+                existing.push(child.firstChild.textContent);
+            }
         }
 
-        for (var j = currentCount; j < allLines.length; j++) {
-            var color = ocGetLogColor(allLines[j]);
+        var merged = existing.concat(allLines);
+        if (merged.length > maxLines) {
+            merged = merged.slice(merged.length - maxLines);
+        }
+
+        hint.innerHTML = '';
+        hint.scrollTop = 0;
+        for (var j = 0; j < merged.length; j++) {
+            var color = ocGetLogColor(merged[j]);
             var div = document.createElement('div');
             div.style.whiteSpace = 'nowrap';
-            div.innerHTML = '<b style="color:' + color + '">' + allLines[j] + '</b>';
+            div.innerHTML = '<b style="color:' + color + '">' + merged[j] + '</b>';
             hint.appendChild(div);
-        }
-
-        while (hint.children.length > maxLines) {
-            hint.removeChild(hint.firstChild);
         }
 
         while (hint.children.length < maxLines) {
@@ -1166,5 +1363,16 @@
         }
         initAllData();
     }
+
+    function stopLogStream() {
+        if (logStreamReconnect) { clearTimeout(logStreamReconnect); logStreamReconnect = null; }
+        if (logMaxWaitTimer) { clearTimeout(logMaxWaitTimer); logMaxWaitTimer = null; }
+        if (logStreamXHR) { logStreamXHR.abort(); logStreamXHR = null; }
+        logStreamActive = false;
+        var hint = document.getElementById('version-hint');
+        if (hint) { hint.classList.remove('logging'); }
+    }
+    window.addEventListener('beforeunload', stopLogStream);
+    window.addEventListener('pagehide', stopLogStream);
 //]]>
 </script>
