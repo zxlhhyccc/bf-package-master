@@ -3,7 +3,6 @@
     local plugin_version = fs.oc_version()
     local version_tab = (self and self.version_tab) or false
 %>
-<%+openclash/common%>
 <script src="/luci-static/resources/openclash/js/common.js?v=<%=plugin_version%>"></script>
 <script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%=plugin_version%>"></script>
     <div class="oc">
@@ -30,9 +29,28 @@
                         <span class="ver-value" id="CPU_ARCH_VALUE"><%:Collecting data...%></span>
                     </div>
                     <div class="config-item">
-                        <div class="oc-option-title"><span class="oc-option-text"><%:Compiled Version%></span></div>
+                        <div class="oc-option-title"><span class="oc-option-text"><%:Compiled Version%><b> *</b></span></div>
                         <div class="form-select-wrapper">
-                            <select class="select-class oc-arch-select" id="CORE_VERSION" onchange="saveOptions()">
+                            <select class="select-class oc-arch-select" id="CORE_VERSION" onchange="onArchChange()">
+                                <option value="linux-386"><%:linux-386%></option>
+                                <option value="linux-amd64-v1"><%:linux-amd64-v1(x86-64)%></option>
+                                <option value="linux-amd64-v2"><%:linux-amd64-v2(x86-64)%></option>
+                                <option value="linux-amd64-v3"><%:linux-amd64-v3(x86-64)%></option>
+                                <option value="linux-armv5"><%:linux-armv5%></option>
+                                <option value="linux-armv6"><%:linux-armv6%></option>
+                                <option value="linux-armv7"><%:linux-armv7%></option>
+                                <option value="linux-arm64"><%:linux-arm64(armv8)%></option>
+                                <option value="linux-loong64-abi1"><%:linux-loong64-abi1%></option>
+                                <option value="linux-loong64-abi2"><%:linux-loong64-abi2%></option>
+                                <option value="linux-riscv64"><%:linux-riscv64%></option>
+                                <option value="linux-s390x"><%:linux-s390x%></option>
+                                <option value="linux-mips-hardfloat"><%:linux-mips-hardfloat%></option>
+                                <option value="linux-mips-softfloat"><%:linux-mips-softfloat%></option>
+                                <option value="linux-mips64"><%:linux-mips64%></option>
+                                <option value="linux-mips64le"><%:linux-mips64le%></option>
+                                <option value="linux-mipsle-softfloat"><%:linux-mipsle-softfloat%></option>
+                                <option value="linux-mipsle-hardfloat"><%:linux-mipsle-hardfloat%></option>
+                                <option value="0"><%:Not Set%></option>
                             </select>
                         </div>
                     </div>
@@ -63,25 +81,25 @@
                 <div class="version-card">
                     <div class="version-row">
                         <div class="config-item">
-                            <span class="oc-option-title"><span class="oc-option-text"><%:Plugin%></span></span>
+                            <span class="oc-option-title"><span class="oc-option-text"><%:Plugin Version%></span></span>
                             <span class="ver-value" id="installed-plugin">--</span>
                         </div>
                         <div class="config-item">
                             <span class="oc-option-title"><span class="oc-option-text"><%:Select Version%></span></span>
                             <div class="form-select-wrapper">
-                                <select class="select-class" id="select-plugin-ver" onchange="forceRefresh=true;refreshAddrInfo({cancel:true})">
+                                <select class="select-class" id="select-plugin-ver" onchange="forceRefresh=true;refreshAddrInfo({cancel:true,user:true})">
                                     <option value="__latest__"><%:Latest%></option>
                                 </select>
                             </div>
                         </div>
                         <div class="config-item">
-                            <span class="oc-option-title"><span class="oc-option-text"><%:Core%></span></span>
+                            <span class="oc-option-title"><span class="oc-option-text"><%:Core Version%></span></span>
                             <span class="ver-value" id="installed-core">--</span>
                         </div>
                         <div class="config-item">
                             <span class="oc-option-title"><span class="oc-option-text"><%:Select Version%></span></span>
                             <div class="form-select-wrapper">
-                                <select class="select-class" id="select-core-ver" onchange="forceRefresh=true;refreshAddrInfo({cancel:true})">
+                                <select class="select-class" id="select-core-ver" onchange="forceRefresh=true;refreshAddrInfo({cancel:true,user:true})">
                                     <option value="__latest__"><%:Latest%></option>
                                 </select>
                             </div>
@@ -92,48 +110,64 @@
             <div class="ver-hint" id="version-hint"></div>
 
             <div class="select-popup-body" id="addr-list-body">
+                <div class="addr-list-scroll">
                 <div class="select-option addr-header">
+                    <span class="addr-header-label"><span class="addr-header-index">#</span></span>
                     <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-link-tabler"/></svg></span><span><%:Address%></span></span>
                     <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-speedtest"/></svg></span><span><%:Latency%></span></span>
                     <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-package"/></svg></span><span><%:Plugin%></span></span>
                     <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-cpu"/></svg></span><span><%:Core%></span>
-                        <a href="javascript:void(0);" class="help-link" title="<%:Core path:%>/etc/openclash/core/clash_meta" onclick="return false;">
+                        <div class="help-link" title="<%:Core path:%>/etc/openclash/core/clash_meta">
                             <svg width="12" height="12"><use href="#oc-icon-help"/></svg>
-                        </a>
+                        </div>
+                    </span>
+                    <span class="addr-header-label"><span class="addr-header-icon"><svg><use href="#oc-icon-zap"/></svg></span><span><%:Proxy%></span>
+                        <div class="help-link" title="<%:Proxy The GitHub Address In The Config And OpenClash With Proxy(CDN) To Prevent File Download Failed.%>">
+                            <svg width="12" height="12"><use href="#oc-icon-help"/></svg>
+                        </div>
                     </span>
                 </div>
-                <div class="select-option addr-row" data-value="https://raw.githubusercontent.com/">
-                    <span class="addr-row-url">https://raw.githubusercontent.com/ (<%:RAW address%>)</span>
-                    <span class="addr-status">--</span>
-                    <span class="ver-text ver-plugin">--</span>
-                    <span class="ver-text ver-core">--</span>
+                    <div class="select-option addr-row" data-value="https://raw.githubusercontent.com/">
+                        <span class="addr-row-index"></span>
+                        <span class="addr-row-url">https://raw.githubusercontent.com/</span>
+                        <span class="addr-status">--</span>
+                        <span class="ver-text ver-plugin">--</span>
+                        <span class="ver-text ver-core">--</span>
+                        <span class="addr-proxy-static"><%:RAW%></span>
+                    </div>
+                    <div class="select-option addr-row" data-value="https://fastly.jsdelivr.net/">
+                        <span class="addr-row-index"></span>
+                        <span class="addr-row-url">https://fastly.jsdelivr.net/</span>
+                        <span class="addr-status">--</span>
+                        <span class="ver-text ver-plugin">--</span>
+                        <span class="ver-text ver-core">--</span>
+                    </div>
+                    <div class="select-option addr-row" data-value="https://testingcf.jsdelivr.net/">
+                        <span class="addr-row-index"></span>
+                        <span class="addr-row-url">https://testingcf.jsdelivr.net/</span>
+                        <span class="addr-status">--</span>
+                        <span class="ver-text ver-plugin">--</span>
+                        <span class="ver-text ver-core">--</span>
+                    </div>
+                    <div class="select-option addr-row" data-value="https://cdn.jsdelivr.net/">
+                        <span class="addr-row-index"></span>
+                        <span class="addr-row-url">https://cdn.jsdelivr.net/</span>
+                        <span class="addr-status">--</span>
+                        <span class="ver-text ver-plugin">--</span>
+                        <span class="ver-text ver-core">--</span>
+                    </div>
+                    <div class="select-option" data-value="custom" id="custom-addr-option">
+                        <span><%:Custom Your CDN URL%></span>
+                        <span class="oc-flex-center" style="height:100%;">
+                            <svg width="18" height="18"><use href="#oc-icon-chevron-down"/></svg>
+                        </span>
+                    </div>
+                    <input type="text" id="customOptionInput" class="custom-option-input oc-hidden" value="" placeholder="<%:Type CDN URL, Format Like%> https://ghfast.top/">
+                    <div class="select-option oc-hidden" id="addCustomOption"><%:Add%></div>
                 </div>
-                <div class="select-option addr-row" data-value="https://fastly.jsdelivr.net/">
-                    <span class="addr-row-url">https://fastly.jsdelivr.net/</span>
-                    <span class="addr-status">--</span>
-                    <span class="ver-text ver-plugin">--</span>
-                    <span class="ver-text ver-core">--</span>
+                <div class="addr-list-loading oc-hidden" id="addr-list-loading">
+                    <div class="addr-list-spinner"></div>
                 </div>
-                <div class="select-option addr-row" data-value="https://testingcf.jsdelivr.net/">
-                    <span class="addr-row-url">https://testingcf.jsdelivr.net/</span>
-                    <span class="addr-status">--</span>
-                    <span class="ver-text ver-plugin">--</span>
-                    <span class="ver-text ver-core">--</span>
-                </div>
-                <div class="select-option addr-row" data-value="https://cdn.jsdelivr.net/">
-                    <span class="addr-row-url">https://cdn.jsdelivr.net/</span>
-                    <span class="addr-status">--</span>
-                    <span class="ver-text ver-plugin">--</span>
-                    <span class="ver-text ver-core">--</span>
-                </div>
-                <div class="select-option" data-value="custom" id="custom-addr-option">
-                    <span><%:Custom Your CDN URL%></span>
-                    <span class="oc-flex-center" style="height:100%;">
-                        <svg width="18" height="18"><use href="#oc-icon-chevron-down"/></svg>
-                    </span>
-                </div>
-                <input type="text" id="customOptionInput" class="custom-option-input oc-hidden" value="https://ghfast.top/" placeholder="<%:Type CDN URL, Format Like%> https://ghfast.top/">
-                <div class="select-option oc-hidden" id="addCustomOption"><%:Add%></div>
             </div>
             <div class="select-popup-footer" id="select-popup-footer">
                 <div class="form-select-wrapper">
@@ -159,14 +193,15 @@
                     <span><%:Remove Core%></span>
                 </button>
             </div>
+            <div class="select-popup-status-bar">
+                <div class="select-popup-status" id="addr-list-status"><%:Fetching data...%></div>
+                <div class="select-popup-tip"><%:Click%> <b><%:link%></b> <%:to update all, click%> <b><%:version%></b> <%:to update individually%></div>
+            </div>
         </div>
     </div>
 
 <script type="text/javascript">
 //<![CDATA[
-    function ocRandomInterval(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
     var core_version = document.getElementById('CORE_VERSION');
     var release_branch = document.getElementById('RELEASE_BRANCH');
     var smart_enable = document.getElementById('SMART_ENABLE');
@@ -177,6 +212,11 @@
     var retryTimer = null;
     var addrInfoBusy = false;
     var addrInfoXHR = null;
+    var addrInfoError = false;
+    var addrDataReceived = false;
+    var reqUpdateDone = false;
+    var reqVersionHistoryDone = false;
+    var reqAddrInfoDone = false;
     var versionHistoryBusy = false;
     var versionHistoryXHR = null;
     var hintTimer = null;
@@ -187,12 +227,26 @@
     var logRetryCount = 0;
     var lastLogLineCount = null;
     var logMaxWaitTimer = null;
-    var selectedAddr = null;
     var fetchedBranch = null;
     var _isOix = false;
     var _pkgType = 'opkg';
     var forceRefresh = false;
     var infoCache = {};
+    var currentProxyAddr = '';
+
+    window.levelTranslations = {
+        'info': '<%:Info%>',
+        'warning': '<%:Warning%>',
+        'error': '<%:Error%>',
+        'debug': '<%:Debug%>',
+        'tip': '<%:Tip%>',
+        'watchdog': '<%:Watchdog%>',
+        'fatal': '<%:Fatal%>'
+    };
+
+    function ocRandomInterval(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 
     function isValidURL(str) {
         var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
@@ -288,9 +342,12 @@
 
         if (sha) {
             var refPath = (type === 'plugin') ? branch : branch + '/' + coreSubPath;
-            return isJsDelivr
-                ? addr + 'gh/vernesong/OpenClash@' + sha + '/' + refPath + '/' + filename
-                : 'https://raw.githubusercontent.com/vernesong/OpenClash/' + sha + '/' + refPath + '/' + filename;
+            if (isJsDelivr)
+                return addr + 'gh/vernesong/OpenClash@' + sha + '/' + refPath + '/' + filename;
+            else if (classifyAddr(addr) === 'raw')
+                return 'https://raw.githubusercontent.com/vernesong/OpenClash/' + sha + '/' + refPath + '/' + filename;
+            else
+                return addr + 'https://raw.githubusercontent.com/vernesong/OpenClash/' + sha + '/' + refPath + '/' + filename;
         } else {
             if (isJsDelivr)
                 return addr + 'gh/vernesong/OpenClash@' + pathPrefix + '/' + filename;
@@ -440,7 +497,63 @@
         };
     }
 
-    function initAllData() {
+    function buildAddrRows(st) {
+        var listBody = document.querySelector('#addr-list-body .addr-list-scroll') || document.getElementById('addr-list-body');
+        var customOpt = document.getElementById('custom-addr-option');
+        var existing = {};
+        listBody.querySelectorAll('.addr-row').forEach(function(row) {
+            var v = row.dataset.value;
+            if (v) existing[v] = true;
+        });
+        function addRow(val) {
+            if (!val || existing[val]) return;
+            var div = document.createElement('div');
+            div.className = 'select-option addr-row';
+            div.dataset.value = val;
+            div.innerHTML = '<span class="addr-row-index"></span><span class="addr-row-url">' + val + '</span><span class="addr-status">--</span><span class="ver-text ver-plugin">--</span><span class="ver-text ver-core">--</span>';
+            listBody.insertBefore(div, customOpt);
+            existing[val] = true;
+        }
+        var mod = st.github_address_mod;
+        if (mod && mod !== '0') addRow(mod);
+        (st.cdn_list || []).forEach(addRow);
+    }
+
+    function renderProxyStates() {
+        document.querySelectorAll('#addr-list-body .addr-row').forEach(function(row) {
+            if (classifyAddr(row.dataset.value) === 'raw') return;
+            var el = row.querySelector('.addr-proxy');
+            if (!el) {
+                el = document.createElement('span');
+                el.className = 'addr-proxy';
+                row.appendChild(el);
+            }
+            var on = (row.dataset.value === currentProxyAddr);
+            el.textContent = on ? '<%:Enabled%>' : '<%:Disabled%>';
+            el.className = 'addr-proxy ' + (on ? 'on' : 'off');
+        });
+    }
+
+    function toggleProxy(row) {
+        var val = row.dataset.value;
+        if (!val) return;
+        var newVal = (val === currentProxyAddr) ? '0' : val;
+        XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "save_github_address_mod")%>', {value: newVal}, function(x) {
+            if (x && x.status == 200) {
+                currentProxyAddr = newVal;
+                renderProxyStates();
+            } else {
+                showHint('<%:Failed to save%>');
+            }
+        });
+    }
+
+    function fetchUpdateInfo(opts) {
+        core_version.disabled = true;
+        release_branch.disabled = true;
+        smart_enable.disabled = true;
+        document.getElementById('select-plugin-ver').disabled = true;
+        document.getElementById('select-core-ver').disabled = true;
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "update")%>', null, function(x, st) {
             if (x && x.status == 200) {
                 if (st.corever && st.corever != '0') core_version.value = st.corever; else core_version.value = '0';
@@ -454,22 +567,35 @@
                 if (cpuArchEl) {
                     cpuArchEl.textContent = (st.coremodel && st.coremodel != '') ? st.coremodel : '--';
                 }
+                currentProxyAddr = (st.github_address_mod || '0');
+                buildAddrRows(st);
+                renderProxyStates();
             }
+            core_version.disabled = false;
+            release_branch.disabled = false;
+            smart_enable.disabled = false;
             fetchedBranch = release_branch.value;
-            fetchVersionHistory();
-            refreshAddrInfo();
+            updateDataStatus({ update: true });
+            fetchVersionHistory(!!(opts && opts.force), {cancel: true});
+            refreshAddrInfo({cancel: true, user: true});
         });
+    }
+
+    function initAllData() {
+        fetchUpdateInfo();
         if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
         refreshTimer = setInterval(refreshAddrInfo, ocRandomInterval(10000, 20000));
     }
 
     function fetchVersionHistory(force, opts) {
+        if (document.getElementById('selectPopup').classList.contains('hidden')) return;
         if (versionHistoryBusy) {
             if (!(opts && opts.cancel)) return;
             if (versionHistoryXHR) { try { versionHistoryXHR.abort(); } catch(e) {} versionHistoryXHR = null; }
             versionHistoryBusy = false;
         }
         versionHistoryBusy = true;
+        updateDataStatus({ version: false });
         var branch = fetchedBranch || release_branch.value || 'dev';
         var pluginSelect = document.getElementById('select-plugin-ver');
         var coreSelect = document.getElementById('select-core-ver');
@@ -611,6 +737,7 @@
                 versionHistoryXHR = null;
                 versionHistoryBusy = false;
             }
+            updateDataStatus({ version: true });
         };
         xhr.send();
         versionHistoryXHR = xhr;
@@ -624,24 +751,80 @@
         },function() {});
     }
 
+    function onArchChange() {
+        saveOptions();
+        document.querySelectorAll('#addr-list-body .addr-row').forEach(function(row) {
+            var addrUrl = row.dataset.value;
+            if (!addrUrl || addrUrl === 'custom') return;
+            var info = infoCache[addrUrl];
+            if (info) updateAddrRow(row, addrUrl, info);
+        });
+    }
+
     function onBranchChange() {
         fetchedBranch = release_branch.value;
         if (versionRetryTimer) { clearInterval(versionRetryTimer); versionRetryTimer = null; }
         if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
         saveOptions();
+        resetDataStatus(true);
         fetchVersionHistory(false, {cancel: true});
         forceRefresh = true;
-        refreshAddrInfo({cancel: true});
+        refreshAddrInfo({cancel: true, user: true});
     }
 
     function onSmartChange() {
         saveOptions();
+        resetDataStatus(true);
         fetchVersionHistory(false, {cancel: true});
         forceRefresh = true;
-        refreshAddrInfo({cancel: true});
+        refreshAddrInfo({cancel: true, user: true});
+    }
+
+    function setAddrListLoading(loading) {
+        var overlay = document.getElementById('addr-list-loading');
+        if (overlay) overlay.classList.toggle('oc-hidden', !loading);
+    }
+
+    function clearAddrRows() {
+        document.querySelectorAll('#addr-list-body .addr-row').forEach(function(row) {
+            var latencyEl = row.querySelector('.addr-status');
+            var verSpans = row.querySelectorAll('.ver-text');
+            if (latencyEl) {
+                latencyEl.textContent = '--';
+                latencyEl.className = 'addr-status';
+            }
+            verSpans.forEach(function(el) {
+                el.textContent = '--';
+                el.classList.remove('has-data', 'err');
+            });
+        });
+    }
+
+    function updateDataStatus(flags) {
+        if (flags) {
+            if ('update' in flags) reqUpdateDone = flags.update;
+            if ('version' in flags) reqVersionHistoryDone = flags.version;
+            if ('addr' in flags) reqAddrInfoDone = flags.addr;
+        }
+        var status = document.getElementById('addr-list-status');
+        if (!status) return;
+        if (addrInfoError) {
+            status.textContent = '<%:Failed to get data, will retry%>';
+            return;
+        }
+        status.textContent = (reqUpdateDone && reqVersionHistoryDone && reqAddrInfoDone) ? '<%:Ready%>' : '<%:Fetching data...%>';
+    }
+
+    function resetDataStatus(keepUpdate) {
+        if (!keepUpdate) reqUpdateDone = false;
+        reqVersionHistoryDone = false;
+        reqAddrInfoDone = false;
+        addrInfoError = false;
+        updateDataStatus();
     }
 
     function refreshAddrInfo(opts) {
+        if (document.getElementById('selectPopup').classList.contains('hidden')) return;
         var addrs = [];
         document.querySelectorAll('#addr-list-body .addr-row').forEach(function(row) {
             var v = row.dataset.value;
@@ -654,6 +837,7 @@
             addrInfoBusy = false;
         }
         addrInfoBusy = true;
+        if (opts && opts.user) updateDataStatus({ addr: false });
 
         var branch = fetchedBranch || release_branch.value || 'dev';
         var smart = smart_enable.value || '0';
@@ -673,20 +857,11 @@
             params.force = '1';
             forceRefresh = false;
             infoCache = {};
+            addrDataReceived = false;
             showDefaultNote();
-            document.querySelectorAll('#addr-list-body .addr-row').forEach(function(row) {
-                var latencyEl = row.querySelector('.addr-status');
-                var verSpans = row.querySelectorAll('.ver-text');
-                if (latencyEl) {
-                    latencyEl.textContent = '--';
-                    latencyEl.className = 'addr-status';
-                }
-                verSpans.forEach(function(el) {
-                    el.textContent = '--';
-                    el.classList.remove('has-data', 'err');
-                });
-            });
+            clearAddrRows();
         }
+        if (opts && opts.user && !addrDataReceived) setAddrListLoading(true);
         var url = '<%=luci.dispatcher.build_url("admin", "services", "openclash", "addr_info")%>?' +
             Object.keys(params).map(function(k) { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); }).join('&');
         var xhr = new XMLHttpRequest();
@@ -694,7 +869,6 @@
         xhr.open('GET', url, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         var lastLen = 0;
-        var hasComplete = false;
         var pendingBuf = '';
         xhr.onprogress = function() {
             if (xhr.status != 200) return;
@@ -711,13 +885,14 @@
                 try {
                     var info = JSON.parse(line);
                     if (info.complete) {
-                        hasComplete = true;
                         if (info.error === 'version_stale') {
                             fetchVersionHistory(true);
                         }
                         continue;
                     }
-                    var addrUrl = info.addr;                    if (!addrUrl) continue;
+                    var addrUrl = info.addr;
+                    if (!addrUrl) continue;
+                    if (!addrDataReceived) { addrDataReceived = true; setAddrListLoading(false); }
                     var rows = document.querySelectorAll('#addr-list-body .addr-row[data-value="' + CSS.escape(addrUrl) + '"]');
                     rows.forEach(function(row) { updateAddrRow(row, addrUrl, info); });
                 } catch(e) {}
@@ -727,11 +902,13 @@
             if (xhr.status != 200 || !xhr.responseText) {
                 if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
                 if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+                addrInfoError = true;
                 if (!retryTimer) {
                     retryTimer = setInterval(refreshAddrInfo, 10000);
                 }
                 return;
             }
+            addrInfoError = false;
             var text = xhr.responseText;
             if (text.length > lastLen) {
                 var newText = text.substring(lastLen);
@@ -745,7 +922,6 @@
                     try {
                         var info = JSON.parse(line);
                         if (info.complete) {
-                            hasComplete = true;
                             if (info.error === 'version_stale') {
                                 fetchVersionHistory(true);
                             }
@@ -753,6 +929,7 @@
                         }
                         var addrUrl = info.addr;
                         if (!addrUrl) continue;
+                        if (!addrDataReceived) { addrDataReceived = true; setAddrListLoading(false); }
                         var rows = document.querySelectorAll('#addr-list-body .addr-row[data-value="' + CSS.escape(addrUrl) + '"]');
                         rows.forEach(function(row) { updateAddrRow(row, addrUrl, info); });
                     } catch(e) {}
@@ -767,6 +944,7 @@
         xhr.onerror = function() {
             if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
             if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
+            addrInfoError = true;
             retryTimer = setInterval(refreshAddrInfo, 10000);
         };
         xhr.onloadend = function() {
@@ -774,6 +952,7 @@
                 addrInfoXHR = null;
                 addrInfoBusy = false;
             }
+            if (opts && opts.user) updateDataStatus({ addr: true });
         };
         xhr.send();
         addrInfoXHR = xhr;
@@ -835,11 +1014,13 @@
         customOptionInput.classList.add('oc-hidden');
         addCustomOption.classList.add('oc-hidden');
         customOptionInput.value = 'https://ghfast.top/';
-        selectedAddr = null;
         fetchedBranch = null;
+        addrDataReceived = false;
+        resetDataStatus();
 
         selectPopup.classList.remove('hidden');
         selectPopup.onclick = function(event) { click_handler(event); };
+        setAddrListLoading(true);
         initAllData();
         initHeaderDrag();
     }
@@ -862,7 +1043,9 @@
             return;
         }
         var sha = ver ? findSHAbyVersion(selectEl, ver) : '';
-        if (ver && !sha && !(type === 'core' && _isOix)) {
+        var selOpt = selectEl.options[selectEl.selectedIndex];
+        var isLatest = !selOpt || selOpt.value === '__latest__';
+        if (ver && !sha && !isLatest && !(type === 'core' && _isOix)) {
             showHint('<%:The selected version is not in the version history, please refresh and try again%>');
             return;
         }
@@ -918,11 +1101,28 @@
         }
     }
 
+    function initPopupResizeObserver() {
+        var popup = document.getElementById('selectPopup');
+        if (!popup || typeof ResizeObserver === 'undefined') return;
+        if (popup.dataset.ocResizeInit) return;
+        popup.dataset.ocResizeInit = '1';
+        new ResizeObserver(function() {
+            if (popup.offsetWidth > 0 && popup.offsetHeight > 0) {
+                if (popup.classList.contains('select-popup-tab')) return;
+                if (popup.style.left || popup.style.top) return;
+                popup.style.transform = 'translate(' + Math.round(-popup.offsetWidth / 2) + 'px, ' + Math.round(-popup.offsetHeight / 2) + 'px)';
+            }
+        }).observe(popup);
+    }
+
     function click_handler(event) {
         var target = event.target;
         var customInput = document.getElementById('customOptionInput');
         var addBtn = document.getElementById('addCustomOption');
         var optionElem = target.closest ? target.closest('.select-option') : null;
+
+        var staticEl = target.closest ? target.closest('.addr-proxy-static') : null;
+        if (staticEl) return;
 
         var verLink = target.closest ? target.closest('.ver-link') : null;
         if (verLink) {
@@ -931,6 +1131,12 @@
         }
         var dlBtn = target.closest ? target.closest('.dl-btn') : null;
         if (dlBtn) {
+            return;
+        }
+        var proxyEl = target.closest ? target.closest('.addr-proxy') : null;
+        if (proxyEl) {
+            var prow = proxyEl.closest('.addr-row');
+            if (prow) toggleProxy(prow);
             return;
         }
 
@@ -947,19 +1153,20 @@
         } else if (target === addBtn) {
             var val = customInput.value.trim();
             if (val !== '' && isValidURL(val)) {
-                var listBody = document.getElementById('addr-list-body');
+                var listBody = document.querySelector('#addr-list-body .addr-list-scroll') || document.getElementById('addr-list-body');
                 var div = document.createElement('div');
                 div.className = 'select-option addr-row';
                 div.dataset.value = val;
-                div.innerHTML = '<span class="addr-row-url">' + val + '</span><span class="addr-status">--</span><span class="ver-text ver-plugin">--</span><span class="ver-text ver-core">--</span>';
+                div.innerHTML = '<span class="addr-row-index"></span><span class="addr-row-url">' + val + '</span><span class="addr-status">--</span><span class="ver-text ver-plugin">--</span><span class="ver-text ver-core">--</span>';
                 listBody.insertBefore(div, document.getElementById('custom-addr-option'));
                 customInput.classList.add('oc-hidden');
                 addBtn.classList.add('oc-hidden');
-                refreshAddrInfo({merge: true, cancel: true});
+                renderProxyStates();
+                refreshAddrInfo({merge: true, cancel: true, user: true});
             } else {
                 alert("<%:Please enter a valid URL!%>");
             }
-        } else if (optionElem && optionElem.classList.contains('addr-row')) {
+        } else if (optionElem && optionElem.classList.contains('addr-row') && target.closest('.addr-row-url')) {
             var addr = optionElem.dataset.value;
 
             showDefaultNote();
@@ -1068,12 +1275,16 @@
     function refreshAllData() {
         showDefaultNote();
         infoCache = {};
+        addrDataReceived = false;
+        resetDataStatus();
+        setAddrListLoading(true);
         forceRefresh = true;
+        clearAddrRows();
         if (versionRetryTimer) { clearInterval(versionRetryTimer); versionRetryTimer = null; }
         if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
         if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
-        fetchVersionHistory(true, {cancel: true});
-        refreshAddrInfo({cancel: true});
+        fetchedBranch = null;
+        fetchUpdateInfo({force: true});
         refreshTimer = setInterval(refreshAddrInfo, ocRandomInterval(10000, 20000));
     }
 
@@ -1088,6 +1299,10 @@
             popup.style.top = '';
             popup.style.transition = '';
         }
+        if (addrInfoXHR) { try { addrInfoXHR.abort(); } catch(e) {} addrInfoXHR = null; }
+        if (versionHistoryXHR) { try { versionHistoryXHR.abort(); } catch(e) {} versionHistoryXHR = null; }
+        addrInfoBusy = false;
+        versionHistoryBusy = false;
         if (!logStreamActive) { showDefaultNote(); }
         if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
         if (versionRetryTimer) { clearInterval(versionRetryTimer); versionRetryTimer = null; }
@@ -1361,6 +1576,8 @@
         if (tabPopup) {
             tabPopup.onclick = function(event) { click_handler(event); };
         }
+        setAddrListLoading(true);
+        resetDataStatus();
         initAllData();
     }
 
@@ -1374,5 +1591,6 @@
     }
     window.addEventListener('beforeunload', stopLogStream);
     window.addEventListener('pagehide', stopLogStream);
+    initPopupResizeObserver();
 //]]>
 </script>
