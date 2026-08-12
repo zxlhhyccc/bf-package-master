@@ -5,16 +5,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sing-box
-PKG_VERSION:=1.13.15
+PKG_VERSION:=1.13.18
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=b43456c0cb2d4d7b81664010b2149a35ed6e3f6c245d78bcc7caf27c46eca816
+PKG_HASH:=e41ed9d7adecd7597c1d5cc91818366a9538d94b41c244225ac40ac948c643f5
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
+PKG_CPE_ID:=cpe:/a:sagernet:sing-box
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_COMPRESS_GOPROXY \
@@ -22,11 +23,13 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_SING_BOX_TINY_COMPRESS_GOPROXY \
 	CONFIG_SING_BOX_TINY_COMPRESS_UPX \
 	CONFIG_SING_BOX_TINY_BUILD_ACME \
+	CONFIG_SING_BOX_TINY_BUILD_CCME \
 	CONFIG_SING_BOX_TINY_BUILD_CLASH_API \
 	CONFIG_SING_BOX_TINY_BUILD_DHCP \
 	CONFIG_SING_BOX_TINY_BUILD_EMBEDDED_TOR \
 	CONFIG_SING_BOX_TINY_BUILD_GRPC \
 	CONFIG_SING_BOX_TINY_BUILD_GVISOR \
+	CONFIG_SING_BOX_TINY_BUILD_OCM \
 	CONFIG_SING_BOX_TINY_BUILD_QUIC \
 	CONFIG_SING_BOX_TINY_BUILD_TAILSCALE \
 	CONFIG_SING_BOX_TINY_BUILD_UTLS \
@@ -40,7 +43,7 @@ PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/sagernet/sing-box
 GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/sing-box
-GO_PKG_LDFLAGS:=-s -w 
+GO_PKG_LDFLAGS:=-s -w -checklinkname=0
 GO_PKG_LDFLAGS_X:=$(GO_PKG)/constant.Version=v$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
@@ -109,25 +112,31 @@ define Package/sing-box-tiny/config
     config SING_BOX_TINY_BUILD_ACME
     bool "Build with ACME TLS certificate issuer support"
 
+    config SING_BOX_TINY_BUILD_CCM
+    bool "Build with Claude Code Multiplexer service support"
+
     config SING_BOX_TINY_BUILD_CLASH_API
     bool "Build with Clash API support"
     default y
 
     config SING_BOX_TINY_BUILD_DHCP
-    bool "Build with DHCP support"
+    bool "Build with DHCP support, see DHCP DNS transport."
 
     config SING_BOX_TINY_BUILD_EMBEDDED_TOR
     bool "Build with embedded Tor support"
     depends on BROKEN
 
     config SING_BOX_TINY_BUILD_GRPC
-    bool "Build with standard gPRC support"
+    bool "Build with standard gRPC support"
     help
       Standard gRPC has good compatibility but poor performance.
 
     config SING_BOX_TINY_BUILD_GVISOR
     bool "Build with gVisor support"
     default y if aarch64||arm||i386||x86_64
+
+    config SING_BOX_TINY_BUILD_OCM
+    bool "Build with OpenAI Codex Multiplexer service support"
 
     config SING_BOX_TINY_BUILD_QUIC
     bool "Build with QUIC support"
@@ -159,11 +168,13 @@ ifeq ($(BUILD_VARIANT),full)
 else
   GO_PKG_TAGS:=$(subst $(space),$(comma),$(strip \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_ACME),with_acme) \
+	$(if $(CONFIG_SING_BOX_TINY_BUILD_CCM),with_ccm) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_CLASH_API),with_clash_api) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_DHCP),with_dhcp) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_EMBEDDED_TOR),with_embedded_tor) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_GRPC),with_grpc) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_GVISOR),with_gvisor) \
+	$(if $(CONFIG_SING_BOX_TINY_BUILD_OCM),with_ocm) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_QUIC),with_quic) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_TAILSCALE),with_tailscale) \
 	$(if $(CONFIG_SING_BOX_TINY_BUILD_UTLS),with_utls) \
