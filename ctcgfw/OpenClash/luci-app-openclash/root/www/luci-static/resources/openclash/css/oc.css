@@ -970,7 +970,8 @@ html[data-darkmode="true"] .oc svg {
 .oc .config-select {
     width: 100%;
     height: var(--control-height);
-    padding: 5px 12px;
+    padding: 0 12px;
+    line-height: calc(var(--control-height) - 2px);
     border: 1px solid var(--border-light) !important;
     background-color: var(--bg-white) !important;
     border-radius: var(--radius-sm);
@@ -7088,7 +7089,7 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .card-row:nth-child(3), .oc .card-row:nth-child(4) { min-height: auto; }
     .oc .config-file-content { flex-direction: column; gap: 5px; }
     .oc .config-selector { min-width: 150px; flex: 1; }
-    .oc .config-select { min-width: 150px; font-size: 13px; padding: 4px 10px; }
+    .oc .config-select { min-width: 150px; font-size: 13px; padding: 0 10px; }
     .oc .config-select option { font-size: 13px; padding: 6px 10px; }
     .oc .config-selector::after { right: 10px; border-left: 3px solid transparent; border-right: 3px solid transparent; border-top: 3px solid var(--text-secondary); }
     .oc .config-subscription-info { margin-left: 12px; }
@@ -7243,7 +7244,7 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .card-row:nth-child(1), .oc .card-row:nth-child(2),
     .oc .card-row:nth-child(3), .oc .card-row:nth-child(4) { min-height: auto; }
     .oc .config-selector { min-width: 110px; flex: 1; }
-    .oc .config-select { min-width: 110px; font-size: 12px; padding: 4px 8px; }
+    .oc .config-select { min-width: 110px; font-size: 12px; padding: 0 8px; }
     .oc .config-select option { font-size: 12px; padding: 5px 8px; }
     .oc .config-selector::after { right: 8px; }
     .oc .card-value { font-size: 11px; min-height: 28px; }
