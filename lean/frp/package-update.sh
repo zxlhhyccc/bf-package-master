@@ -1,11 +1,6 @@
 #!/bin/bash
-# 自动更新 Xray-core 版本、commit 并计算 HASH
 
-set -e
-
-BUILD_DIR="$(find "$HOME" -maxdepth 3 -type d -name "ax6-6.6" 2>/dev/null | head -n1)"
-
-pushd "$BUILD_DIR" > /dev/null || exit 1
+set -x
 
 if [ -z "$GITHUB_TOKEN" ] && [ -f ".git-credentials" ]; then
     GITHUB_TOKEN=$(grep -oP 'https://[^:]+:\K[^@]+' ".git-credentials" | head -n1)
@@ -13,52 +8,38 @@ fi
 
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
-OLD_VER=$(grep -oP '^PKG_VERSION:=\K.*' "$CURDIR/Makefile")
-OLD_COMMIT=$(grep -oP '^PKG_SOURCE_VERSION:=\K.*' "$CURDIR/Makefile")
-OLD_CHECKSUM=$(grep -oP '^PKG_MIRROR_HASH:=\K.*' "$CURDIR/Makefile")
+function update() {
+	local type="$1"
+	local repo="$2"
+	local res="$3"
+	local tag ver sha old_hash line commit
 
-REPO="https://github.com/fatedier/frp"
-REPO_API="https://api.github.com/repos/fatedier/frp/releases/latest"
+	tag="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "https://api.github.com/repos/$repo/releases/latest" | jq -r ".tag_name" | sed 's/v//')"
+	[ -n "$tag" ] || return 1
 
-# 获取新 TAG、COMMIT 等
-TAG="$(curl -H "Authorization: $GITHUB_TOKEN" -sL "$REPO_API" | jq -r ".tag_name")"
-COMMIT="$(git ls-remote "$REPO" "refs/heads/master" | cut -f1)"
-VER="${TAG#v}"  # TAG 形如 v1.8.11
+        ver="$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
 
-# 如果版本或 commit 变了，才清除并更新
-if [ "$VER" != "$OLD_VER" ] || [ "$COMMIT" != "$OLD_COMMIT" ]; then
-    echo "⬆️  新版本: $VER / $COMMIT，旧版本: $OLD_VER / $OLD_COMMIT"
+	[ "$tag" != "$ver" ] || return 2
 
-    # 删除旧源码包和哈希
-    rm -f dl/frp-${OLD_VER}.tar.gz
+	# 清理指定包的编译缓存
+	if [ -n "$type" ]; then
+		rm -f "dl/${type}-${ver}.tar.gz" 2>/dev/null
+		make package/${type}/clean V=s
+	fi
 
-    # 清理旧缓存（触发重新编译）
-    make package/frp/clean V=s
+	line="$(awk "/PKG_VERSION:=/ {print NR}" "$CURDIR/Makefile")"
+	sed -i -e "$((line))s/PKG_VERSION:=.*/PKG_VERSION:=$tag/" "$CURDIR/Makefile"
 
-    # 修改 Makefile 中的版本和提交哈希
-    ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
-        -e "s|^PKG_VERSION:=.*|PKG_VERSION:=${VER}|" \
-        -e "s|^PKG_SOURCE_VERSION:=.*|PKG_SOURCE_VERSION:=${COMMIT}|" \
-        -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=|"
+	sha="$(curl -sL https://codeload.github.com/$repo/tar.gz/v$tag | sha256sum | awk '{print $1}')"
+	[ -n "$sha" ] || return 1
 
-    echo "🧹 清空旧 HASH：$OLD_CHECKSUM"
+	old_hash="$(awk -F "PKG_HASH:=" '{print $2}' "$CURDIR/Makefile" | xargs)"
+	line="$(awk "/PKG_HASH:=/ {print NR}" "$CURDIR/Makefile")"	
+	[ "$sha" != "$old_hash" ] || return 2
+	
+	   sed -i -e "$((line))s/PKG_HASH:=.*/PKG_HASH:=$sha/" "$CURDIR/Makefile"
 
-    # 重新下载源码包
-    make package/frp/download V=s
+	  commit="$(git ls-remote https://github.com/$repo.git HEAD | cut -f1)"
+}
 
-    # 重新生成校验和
-    TARFILE="dl/frp-${VER}.tar.gz"
-    if [ -f "$TARFILE" ]; then
-        CHECKSUM=$(./staging_dir/host/bin/mkhash sha256 "$TARFILE")
-        ./staging_dir/host/bin/sed -i "$CURDIR/Makefile" \
-            -e "s|^PKG_MIRROR_HASH:=.*|PKG_MIRROR_HASH:=${CHECKSUM}|"
-        echo "✅ 校验和已更新：$CHECKSUM"
-    else
-        echo "⚠️ 未找到源码包：$TARFILE"
-        exit 1
-    fi
-else
-    echo "✅ 无需更新，版本和 commit 均一致"
-fi
-
-popd
+update "frp" "fatedier/frp" "frp-"$(awk -F "PKG_VERSION:=" '{print $2}' "$CURDIR/Makefile" | xargs)"" 
