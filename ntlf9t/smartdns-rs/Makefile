@@ -16,14 +16,11 @@ PKG_SOURCE_VERSION:=788e83fa72477ebcf1c6a7f4482359353d29c480
 PKG_MIRROR_HASH:=d7e7e8a0cf9d9ad3ff8e5779e9d59087ec3d343cc675296d9819f47e5d582a5a
 
 PKG_CONFIG_DEPENDS:= \
-	CONFIG_SMARTDNS-RS_COMPRESS_GOPROXY \
 	CONFIG_SMARTDNS-RS_COMPRESS_UPX
 
-PKG_MAINTAINER:=Zxlhhyccc <zxlhhyccc@gmail.com>
+PKG_MAINTAINER:=Zxlhhyccc <zxlhhy@gmail.com>
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=LICENSE
-
-PKG_BUILD_PARALLEL:=1
 
 PKG_BUILD_DEPENDS:=rust/host
 PKG_BUILD_PARALLEL:=1
@@ -47,20 +44,11 @@ define Package/smartdns-rs/description
 endef
 
 define Package/smartdns-rs/config
-    config SMARTDNS-RS_COMPRESS_GOPROXY
-      bool "Compiling with GOPROXY proxy"
-      default n
-
     config SMARTDNS-RS_COMPRESS_UPX
       bool "Compress executable files with UPX"
       depends on !mips64
       default n
 endef
-
-ifneq ($(CONFIG_SMARTDNS-RS_COMPRESS_GOPROXY),)
-      export GO111MODULE=on
-      export GOPROXY=https://goproxy.baidu.com
-endif
 
 define Package/smartdns-rs/conffiles
 /etc/config/smartdns
@@ -71,15 +59,15 @@ define Build/Compile
 	#$(call Build/Compile/Cargo,, smartdns)
 	$(call Build/Compile/Cargo)
 ifneq ($(CONFIG_SMARTDNS-RS_COMPRESS_UPX),)
-	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns
-	#$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/smartdns
+	#$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(PKG_INSTALL_DIR)/bin/smartdns
   endif
 endef
 
 define Package/smartdns-rs/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns $(1)/usr/sbin/
-	#$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/smartdns $(1)/usr/sbin/
+	#$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/stripped/smartdns $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/smartdns $(1)/usr/sbin/
 
 	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/smartdns $(1)/etc/config
 	#$(INSTALL_BIN) $(CURDIR)/conf/smartdns.init $(1)/etc/init.d/smartdns
