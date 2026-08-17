@@ -1,6 +1,6 @@
 --- a/Makefile	2026-07-18 21:45:15.662143000 +0800
 +++ b/Makefile	2026-07-18 21:45:29.886143000 +0800
-@@ -14,10 +14,14 @@
+@@ -14,9 +14,13 @@
  PKG_CONFIG_DEPENDS:= \
  	CONFIG_PACKAGE_$(PKG_NAME)_Iptables_Transparent_Proxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_Nftables_Transparent_Proxy \
@@ -10,12 +10,11 @@
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Geoview \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
- 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
 +	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server \
  	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Libev_Client \
-@@ -33,16 +37,39 @@
+@@ -32,16 +36,38 @@
  LUCI_TITLE:=LuCI support for PassWall
  LUCI_PKGARCH:=all
  LUCI_DEPENDS:=+coreutils +coreutils-base64 +coreutils-nohup +coreutils-timeout +curl \
@@ -29,7 +28,6 @@
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS:dns2socks \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
-+	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD:pdnsd-alt \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client:shadowsocks-rust-sslocal \
 +	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server:shadowsocks-rust-ssserver \
@@ -59,7 +57,7 @@
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -52,10 +79,12 @@
+@@ -51,10 +77,12 @@
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -72,7 +70,7 @@
  	select PACKAGE_ipt2socks
  	select PACKAGE_nftables
  	select PACKAGE_kmod-nft-socket
-@@ -63,88 +92,87 @@
+@@ -62,82 +90,82 @@
  	select PACKAGE_kmod-nft-nat
  	select PACKAGE_kmod-nf-reject
  	select PACKAGE_kmod-nf-reject6
@@ -104,12 +102,6 @@
  config PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria
  	bool "Include Hysteria"
 -	select PACKAGE_hysteria
- 	default n
- 
- config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
- 	bool "Include NaiveProxy"
- 	depends on !(arc||armeb||loongarch64||mips||mips64||powerpc||TARGET_gemini)
--	select PACKAGE_naiveproxy
  	default n
  
 +config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
@@ -221,9 +213,9 @@
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -488,6 +501,17 @@ o.validate = function(self, value, t)
- 	return value
- end
+@@ -495,6 +508,17 @@ o.validate = function(self, value, t)
+ o:depends({dns_mode = "sing-box", dns_shunt = "chinadns-ng"})
+ o:depends({smartdns_dns_mode = "sing-box", dns_shunt = "smartdns"})
  
 +--[[
 +o = s:taboption("DNS", Flag, "dns_cache", translate("Cache Resolved"))
@@ -276,7 +268,7 @@
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1225,6 +1225,12 @@ start_dns() {
+@@ -1219,6 +1219,12 @@ start_dns() {
  				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
@@ -289,7 +281,7 @@
  			}
  		;;
  		auto)
-@@ -1337,6 +1343,19 @@ start_dns() {
+@@ -1332,6 +1338,19 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -309,7 +301,7 @@
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1346,6 +1365,11 @@ start_dns() {
+@@ -1341,6 +1360,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -321,7 +313,7 @@
  		else
  			TUN_DNS=${REMOTE_DNS}
  			echolog "  - udp://${TUN_DNS}"
-@@ -1359,6 +1383,12 @@ start_dns() {
+@@ -1354,6 +1378,12 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -334,7 +326,7 @@
  		}
  	;;
  	esac
-@@ -1491,6 +1521,73 @@ start_dns() {
+@@ -1486,6 +1516,73 @@ start_dns() {
  	fi
  }
  
@@ -408,7 +400,7 @@
  start_haproxy() {
  	[ "$(config_t_get global_haproxy balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -2025,7 +2122,8 @@ get_config() {
+@@ -2023,7 +2120,8 @@ get_config() {
  	CLIENT_PROXY=$(config_t_get global client_proxy 1)
  	DNS_SHUNT=$(config_t_get global dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"

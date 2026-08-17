@@ -1,0 +1,143 @@
+diff -uNr a/luasrc/model/cbi/passwall/client/type/naive.lua b/luasrc/model/cbi/passwall/client/type/naive.lua
+--- a/luasrc/model/cbi/passwall/client/type/naive.lua	1970-01-01 08:00:00.000000000 +0800
++++ b/luasrc/model/cbi/passwall/client/type/naive.lua	2026-08-17 20:45:15.759824412 +0800
+@@ -0,0 +1,37 @@
++local m, s = ...
++
++if not api.is_finded("naive") then
++	return
++end
++
++type_name = "Naiveproxy"
++
++-- [[ Naive ]]
++
++s.fields["type"]:value(type_name, "NaiveProxy")
++
++if s.val["type"] ~= type_name then
++	return
++end
++
++local option_prefix = "naive_"
++
++local function _n(name)
++	return option_prefix .. name
++end
++
++o = s:option(ListValue, _n("protocol"), translate("Protocol"))
++o:value("https", translate("HTTPS"))
++o:value("quic", translate("QUIC"))
++
++o = s:option(Value, _n("address"), translate("Address (Support Domain Name)"))
++
++o = s:option(Value, _n("port"), translate("Port"))
++o.datatype = "port"
++
++o = s:option(Value, _n("username"), translate("Username"))
++
++o = s:option(Value, _n("password"), translate("Password"))
++o.password = true
++
++api.luci_types(arg[1], m, s, type_name, option_prefix)
+diff -uNr a/luasrc/passwall/util_naiveproxy.lua b/luasrc/passwall/util_naiveproxy.lua
+--- a/luasrc/passwall/util_naiveproxy.lua	1970-01-01 08:00:00.000000000 +0800
++++ b/luasrc/passwall/util_naiveproxy.lua	2026-08-17 20:46:47.143820157 +0800
+@@ -0,0 +1,42 @@
++module("luci.passwall.util_naiveproxy", package.seeall)
++local api = require "luci.passwall.api"
++local jsonc = api.jsonc
++
++function gen_config(var)
++	local node_id = var["node"]
++	if not node_id then
++		print("node 不能为空")
++		return
++	end
++	local node = api.uci_get_c(node_id)
++	local run_type = var["run_type"]
++	local local_addr = var["local_addr"]
++	local local_port = var["local_port"]
++	local server_host = var["server_host"] or (node.address or ""):lower()
++	local server_port = var["server_port"] or node.port
++
++	if api.is_ipv6(server_host) then
++		server_host = api.get_ipv6_full(server_host)
++	end
++	local server = server_host .. ":" .. server_port
++
++	local config = {
++		listen = run_type .. "://" .. local_addr .. ":" .. local_port,
++		proxy = node.protocol .. "://" .. node.username .. ":" .. node.password .. "@" .. server
++	}
++
++	return jsonc.stringify(config, 1)
++end
++
++_G.gen_config = gen_config
++
++if arg[1] then
++	local func =_G[arg[1]]
++	if func then
++		local var = nil
++		if arg[2] then
++			var = jsonc.parse(arg[2])
++		end
++		print(func(var))
++	end
++end
+diff -uNr a/Makefile b/Makefile
+--- a/Makefile	2026-08-17 20:40:41.675837000 +0800
++++ b/Makefile	2026-08-17 20:42:33.399831971 +0800
+@@ -20,6 +20,7 @@
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Geoview \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria \
++	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client \
+ 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server \
+@@ -43,6 +44,7 @@
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_DNS2SOCKS:dns2socks \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Haproxy:haproxy \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria:hysteria \
++	+PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy:naiveproxy \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD:pdnsd-alt \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Client:shadowsocks-rust-sslocal \
+ 	+PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Rust_Server:shadowsocks-rust-ssserver \
+@@ -117,6 +119,11 @@
+ 	bool "Include Hysteria"
+ 	default n
+ 
++ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
++ 	bool "Include NaiveProxy"
++ 	depends on !(arc||armeb||loongarch64||mips||mips64||powerpc||TARGET_gemini)
++ 	default n
++
+ config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
+ 	bool "Include PDNSD"
+ 	default y
+diff -uNr a/root/usr/share/passwall/app.sh b/root/usr/share/passwall/app.sh
+--- a/root/usr/share/passwall/app.sh	2026-08-17 20:40:41.675837000 +0800
++++ b/root/usr/share/passwall/app.sh	2026-08-17 20:44:25.891826734 +0800
+@@ -13,6 +13,7 @@
+ UTIL_SINGBOX=$LUA_UTIL_PATH/util_sing-box.lua
+ UTIL_SS=$LUA_UTIL_PATH/util_shadowsocks.lua
+ UTIL_XRAY=$LUA_UTIL_PATH/util_xray.lua
++UTIL_NAIVE=$LUA_UTIL_PATH/util_naiveproxy.lua
+ UTIL_HYSTERIA2=$LUA_UTIL_PATH/util_hysteria2.lua
+ SINGBOX_BIN=$(first_type $(config_t_get global_app sing_box_file) sing-box)
+ XRAY_BIN=$(first_type $(config_t_get global_app xray_file) xray)
+@@ -455,6 +456,13 @@
+ 		[ -n "$no_run" ] && _args="${_args} no_run=1"
+ 		run_xray flag=$flag node=$node socks_address=$bind socks_port=$socks_port config_file=$config_file log_file=$log_file ${_args}
+ 	;;
++	naiveproxy)
++		json_add_string "run_type" "socks"
++		json_add_string "local_addr" "$bind"
++		json_add_string "local_port" "$socks_port"
++		lua $UTIL_NAIVE gen_config "$(json_dump)" > $config_file
++		[ -n "$no_run" ] || ln_run "$(first_type naive)" naive $log_file "$config_file"
++	;;
+ 	ssr)
+ 		json_add_string "local_addr" "$bind"
+ 		json_add_string "local_port" "$socks_port"

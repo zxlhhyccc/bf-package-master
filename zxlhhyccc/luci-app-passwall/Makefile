@@ -119,10 +119,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria
 	bool "Include Hysteria"
 	default n
 
-config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
-	bool "Include NaiveProxy"
-	depends on !(arc||armeb||loongarch64||mips||mips64||powerpc||TARGET_gemini)
-	default n
+ config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+ 	bool "Include NaiveProxy"
+ 	depends on !(arc||armeb||loongarch64||mips||mips64||powerpc||TARGET_gemini)
+ 	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
 	bool "Include PDNSD"
