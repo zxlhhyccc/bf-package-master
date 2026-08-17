@@ -1,0 +1,26 @@
+diff -uNr a/build/gen.py b/build/gen.py
+--- a/build/gen.py	2026-08-15 12:32:28.912969000 +0800
++++ b/build/gen.py	2026-08-15 14:21:10.172158899 +0800
+@@ -529,10 +529,19 @@
+ 
+   if not platform.is_msvc():
+     clang_major = get_clang_major_version(cxx)
++    if clang_major is not None and clang_major >= 17:
++        # Use libc++ with Clang. This is required for C++23 library
++        # features such as std::expected on systems where Clang otherwise
++        # defaults to GCC's libstdc++.
++        cflags.append('-stdlib=libc++')
++        ldflags.append('-stdlib=libc++')
++
+     # Clang before 17 uses the draft spelling for C++23.
+-    cxx_standard = ('-std=c++2b'
+-                    if clang_major is not None and clang_major < 17
+-                    else '-std=c++23')
++    cxx_standard = (
++        '-std=c++2b'
++        if clang_major is not None and clang_major < 17
++        else '-std=c++23'
++    )
+ 
+     if options.debug:
+       cflags.extend(['-O0', '-g'])

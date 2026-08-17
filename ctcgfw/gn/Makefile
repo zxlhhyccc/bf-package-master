@@ -43,7 +43,7 @@ define Host/Configure
 endef
 
 define Host/Compile
-	+$(NINJA) -C $(HOST_BUILD_DIR)/out gn
+	+$(NINJA) -C $(HOST_BUILD_DIR)/out
 endef
 
 define Host/Install
