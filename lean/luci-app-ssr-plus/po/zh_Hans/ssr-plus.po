@@ -3385,7 +3385,7 @@ msgstr "有效的地址:端口"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/client.lua:229
 msgid "valid address:port (comma separated)"
-msgstr ""
+msgstr "有效地址：端口（用逗号分隔）"
 
 #: applications/luci-app-ssr-plus/luasrc/model/cbi/shadowsocksr/server-config.lua:82
 msgid "warning! Please do not reuse the port!"
