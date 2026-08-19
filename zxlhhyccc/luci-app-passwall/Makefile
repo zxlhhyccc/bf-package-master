@@ -7,8 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-passwall
-PKG_VERSION:=26.8.12
-PKG_RELEASE:=1
+PKG_VERSION:=26.8.19
+PKG_RELEASE:=2
 PKG_PO_VERSION:=$(PKG_VERSION)
 
 PKG_CONFIG_DEPENDS:= \
@@ -119,10 +119,10 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Hysteria
 	bool "Include Hysteria"
 	default n
 
- config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
- 	bool "Include NaiveProxy"
- 	depends on !(arc||armeb||loongarch64||mips||mips64||powerpc||TARGET_gemini)
- 	default n
+config PACKAGE_$(PKG_NAME)_INCLUDE_NaiveProxy
+	bool "Include NaiveProxy"
+	depends on !(arc||armeb||loongarch64||mips||mips64||powerpc||TARGET_gemini)
+	default n
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_PDNSD
 	bool "Include PDNSD"
