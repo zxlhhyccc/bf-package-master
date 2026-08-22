@@ -54,9 +54,9 @@
        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104336
 --- a/src/gn/command_suggest.cc
 +++ b/src/gn/command_suggest.cc
-@@ -444,7 +444,14 @@ bool OutputSuggestions(const std::vector
+@@ -566,7 +566,14 @@ SuggestResult OutputSuggestions(const st
      }
-     return false;
+     return SuggestResult::kFailure;
    }
 +#if defined(GN_CLANG_BEFORE_16)
 +  const auto& [structured_includer, structured_dep_kind] =
