@@ -48,8 +48,10 @@ function gen_config_server(node)
 		ignoreClientBandwidth = (node.hysteria2_ignoreClientBandwidth == "1") and true or false,
 		disableUDP = (node.hysteria2_udp == "0") and true or false,
 		realm = (node.hysteria2_realms and node.hysteria2_realm_stun) and {
-			stunServers = node.hysteria2_realm_stun
-		} or nil
+			stunServers = node.hysteria2_realm_stun,
+			portMapping = (node.hysteria2_realm_upnp == "1") and { enabled = true } or nil
+		} or nil,
+		ech = (node.ech_keyFile and node.ech_keyFile ~= "") and { keyPath = node.ech_keyFile } or nil
 	}
 
 	if config.obfs and config.obfs.gecko then
@@ -73,8 +75,7 @@ function gen_config(var)
 		return
 	end
 	local node = api.uci_get_c(node_id)
-	local local_tcp_redir_port = var["local_tcp_redir_port"]
-	local local_udp_redir_port = var["local_udp_redir_port"]
+	local local_redir_port = var["local_redir_port"]
 	local local_socks_address = var["local_socks_address"] or "0.0.0.0"
 	local local_socks_port = var["local_socks_port"]
 	local local_socks_username = var["local_socks_username"]
@@ -102,7 +103,8 @@ function gen_config(var)
 			return server
 		end)(),
 		realm = (node.hysteria2_realms and node.hysteria2_realm_stun) and {
-			stunServers = node.hysteria2_realm_stun
+			stunServers = node.hysteria2_realm_stun,
+			portMapping = (node.hysteria2_realm_upnp == "1") and { enabled = true } or nil
 		} or nil,
 		transport = {
 			type = "udp",
@@ -139,6 +141,7 @@ function gen_config(var)
 			sni = node.tls_serverName,
 			insecure = (node.tls_allowInsecure == "1") and true or false,
 			pinSHA256 = (node.tls_pinSHA256) and node.tls_pinSHA256 or nil,
+			ech = (node.ech == "1") and node.ech_config or nil
 		},
 		quic = {
 			initStreamReceiveWindow = (node.hysteria2_recv_window) and tonumber(node.hysteria2_recv_window) or nil,
@@ -170,14 +173,14 @@ function gen_config(var)
 			username = (local_http_username and local_http_password) and local_http_username or nil,
 			password = (local_http_username and local_http_password) and local_http_password or nil,
 		} or nil,
-		tcpRedirect = ("redirect" == tcp_proxy_way and local_tcp_redir_port) and {
-			listen = "0.0.0.0:" .. local_tcp_redir_port
+		tcpRedirect = ("redirect" == tcp_proxy_way and local_redir_port) and {
+			listen = "0.0.0.0:" .. local_redir_port
 		} or nil,
-		tcpTProxy = ("tproxy" == tcp_proxy_way and local_tcp_redir_port) and {
-			listen = "0.0.0.0:" .. local_tcp_redir_port
+		tcpTProxy = ("tproxy" == tcp_proxy_way and local_redir_port) and {
+			listen = "0.0.0.0:" .. local_redir_port
 		} or nil,
-		udpTProxy = (local_udp_redir_port) and {
-			listen = "0.0.0.0:" .. local_udp_redir_port
+		udpTProxy = (local_redir_port) and {
+			listen = "0.0.0.0:" .. local_redir_port
 		} or nil
 	}
 

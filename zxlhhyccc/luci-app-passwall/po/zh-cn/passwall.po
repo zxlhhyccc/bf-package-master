@@ -94,11 +94,8 @@ msgstr "清除"
 msgid "Main switch"
 msgstr "主开关"
 
-msgid "TCP Node"
-msgstr "TCP 节点"
-
-msgid "UDP Node"
-msgstr "UDP 节点"
+msgid "Proxy Node"
+msgstr "代理节点"
 
 msgid "Edit Current Node"
 msgstr "编辑当前节点"
@@ -115,11 +112,11 @@ msgstr "当前节点"
 msgid "Listen Port"
 msgstr "监听端口"
 
+msgid "Port Status"
+msgstr "端口状态"
+
 msgid "0 is not use"
 msgstr "0 为不使用"
-
-msgid "Same as the tcp node"
-msgstr "与 TCP 节点相同"
 
 msgid "Current node: %s"
 msgstr "当前节点：%s"
@@ -139,8 +136,8 @@ msgstr "%s 不能为空。"
 msgid "Filter Mode"
 msgstr "过滤模式"
 
-msgid "TCP node must be '%s' type to use FakeDNS."
-msgstr "TCP 节点必须是 '%s' 类型才能使用 FakeDNS。"
+msgid "Node must be '%s' type to use FakeDNS."
+msgstr "节点必须是 '%s' 类型才能使用 FakeDNS。"
 
 msgid "Direct DNS"
 msgstr "直连 DNS"
@@ -439,8 +436,14 @@ msgstr "你确定要删除选择的节点吗？"
 msgid "You no select nodes !"
 msgstr "你没有选择任何节点！"
 
-msgid "Are you sure set to"
-msgstr "你确定要设为"
+msgid "Set as the main proxy node:"
+msgstr "应用为主代理节点："
+
+msgid "Set as the routing rule node:"
+msgstr "应用为分流规则节点："
+
+msgid "Are you sure set this node?"
+msgstr "你确定要设置这个节点吗？"
 
 msgid "the server?"
 msgstr "服务器吗？"
@@ -1577,6 +1580,12 @@ msgstr "本机监听"
 msgid "When selected, it can only be accessed localhost."
 msgstr "当勾选时，只能本机访问。"
 
+msgid "Firewall Allow"
+msgstr "允许通过防火墙"
+
+msgid "Source zone"
+msgstr "源区域"
+
 msgid "Accept LAN Access"
 msgstr "接受局域网访问"
 
@@ -1603,6 +1612,9 @@ msgstr "公钥文件绝对路径"
 
 msgid "Private key absolute path"
 msgstr "私钥文件绝对路径"
+
+msgid "ECH key absolute path"
+msgstr "ECH 密钥绝对路径"
 
 msgid "Can't find this file!"
 msgstr "找不到这个文件！"
@@ -1633,9 +1645,6 @@ msgstr "日志"
 
 msgid "Enable Node Log"
 msgstr "启用节点日志"
-
-msgid "%s Node Log"
-msgstr "%s 节点日志"
 
 msgid "Log Level"
 msgstr "日志等级"
@@ -1995,8 +2004,14 @@ msgstr "上传恢复"
 msgid "CLOSE WIN"
 msgstr "关闭窗口"
 
-msgid "Restore to default configuration"
-msgstr "恢复默认配置"
+msgid "Reset %s Configuration"
+msgstr "重置%s配置"
+
+msgid "Client"
+msgstr "客户端"
+
+msgid "Server"
+msgstr "服务端"
 
 msgid "Do Reset"
 msgstr "执行重置"
@@ -2010,11 +2025,11 @@ msgstr "文件类型无效，请上传一个 .tar.gz 文件。"
 msgid "File size exceeds 10MB limit."
 msgstr "文件大小超过 10MB 限制。"
 
-msgid "Do you want to restore the client to default settings?"
-msgstr "是否要恢复客户端默认配置？"
+msgid "Do you want to restore the %s to default settings?"
+msgstr "是否要恢复%s默认配置？"
 
-msgid "Are you sure you want to restore the client to default settings?"
-msgstr "是否真的要恢复客户端默认配置？"
+msgid "Are you sure you want to restore the %s to default settings?"
+msgstr "是否真的要恢复%s默认配置？"
 
 msgid "_urltest"
 msgstr "URLTest"
@@ -2142,8 +2157,8 @@ msgstr "调整分组"
 msgid "Reassign Node Group"
 msgstr "调整节点分组"
 
-msgid "Currently using %s node"
-msgstr "当前使用的 %s 节点"
+msgid "Currently using node"
+msgstr "当前使用的节点"
 
 msgid "Search nodes..."
 msgstr "搜索节点…"
@@ -2163,6 +2178,9 @@ msgstr "Gecko 包大小（最小）"
 msgid "Gecko Packet Size (max)"
 msgstr "Gecko 包大小（最大）"
 
+msgid "Enable UPnP/NAT-PMP port mapping on your gateway to improve hole punching success."
+msgstr "在网关上启用 UPnP/NAT-PMP 端口映射以提升打洞成功率。"
+
 msgid "valid time (hh:mm)"
 msgstr "有效时间（hh:mm）"
 
@@ -2174,3 +2192,6 @@ msgstr "密码套件"
 
 msgid "Configures the list of supported cipher suites, separated by :"
 msgstr "配置支持的密码套件列表，以冒号 (:) 分隔。"
+
+msgid "Connection Reuse"
+msgstr "连接复用"

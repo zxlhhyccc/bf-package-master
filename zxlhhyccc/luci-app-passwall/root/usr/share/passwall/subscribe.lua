@@ -136,15 +136,13 @@ end
 -- 获取各项动态配置的当前服务器，可以用 get 和 set， get必须要获取到节点表
 local CONFIG = {}
 do
-	local function import_config(protocol)
-		local name = string.upper(protocol)
+	if true then
 		local szType = "@global[0]"
-		local option = protocol .. "_node"
-		
+		local option = "node"
 		local node_id = uci_get(szType, option)
 		CONFIG[#CONFIG + 1] = {
 			log = true,
-			remarks = name .. "节点",
+			remarks = "全局节点",
 			currentNode = (function(id)
 				local section = id and uci_get(id) or nil
 				if not section then return nil end
@@ -159,8 +157,6 @@ do
 			end
 		}
 	end
-	import_config("tcp")
-	import_config("udp")
 
 	if true then
 		local i = 0
@@ -255,30 +251,27 @@ do
 
 	if true then
 		local i = 0
-		local options = {"tcp", "udp"}
 		uci_foreach("acl_rule", function(t)
 			i = i + 1
-			for index, value in ipairs(options) do
-				local option = value .. "_node"
-				local node_id = t[option]
-				CONFIG[#CONFIG + 1] = {
-					log = true,
-					id = t[".name"],
-					remarks = "访问控制列表[" .. i .. "]",
-					currentNode = (function(id)
-						local section = id and uci_get(id) or nil
-						if not section then return nil end
-						if section[".type"] == "socks" then
-							return { Socks = id }
-						end
-						return section
-					end)(node_id),
-					set = function(o, server)
-						uci_set(t[".name"], option, server)
-						o.newNodeId = server
+			local option = "node"
+			local node_id = t[option]
+			CONFIG[#CONFIG + 1] = {
+				log = true,
+				id = t[".name"],
+				remarks = "访问控制列表[" .. i .. "]",
+				currentNode = (function(id)
+					local section = id and uci_get(id) or nil
+					if not section then return nil end
+					if section[".type"] == "socks" then
+						return { Socks = id }
 					end
-				}
-			end
+					return section
+				end)(node_id),
+				set = function(o, server)
+					uci_set(t[".name"], option, server)
+					o.newNodeId = server
+				end
+			}
 		end)
 	end
 
@@ -1054,7 +1047,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 			log("跳过 Trojan 节点，因未适配到 Trojan 核心程序，或未正确设置节点使用类型。")
 			return nil
 		end
-		
+
 		local alias = ""
 		if content:find("#") then
 			local idx_sp = content:find("#")
@@ -1398,7 +1391,7 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 			content = content:sub(0, idx_sp - 1)
 		end
 		result.remarks = UrlDecode(alias)
-		
+
 		local query = split(content:gsub("/%?", "?"), '%?')
 		local host_port = query[1]
 		local params = {}
@@ -1474,6 +1467,10 @@ local function processData(szType, content, add_mode, group, sub_cfg)
 		result.hysteria2_up_mbps = params.upmbps or (sub_cfg and sub_hy_up_mbps or nil)
 		result.hysteria2_down_mbps = params.downmbps or (sub_cfg and sub_hy_down_mbps or nil)
 		result.hysteria2_hop = params.mport
+		if params.ech and params.ech ~= "" then
+			result.ech = "1"
+			result.ech_config = params.ech
+		end
 		if params["obfs-password"] or params["obfs_password"] then
 			result.hysteria2_obfs_type = params.obfs or "salamander"
 			result.hysteria2_obfs_password = params["obfs-password"] or params["obfs_password"]

@@ -510,7 +510,7 @@ local function fetch_rule(rule_name, rule_type, url, exclude_domain, max_retries
 				local set_name = "psw_" .. rule_name
 				if rule_name == "chnroute" then set_name = "psw_chn"
 				elseif rule_name == "chnroute6" then set_name = "psw_chn6" end
-                
+
 				local addr_type = (rule_type == "ip4") and "ipv4_addr" or "ipv6_addr"
 				gen_cache(set_name, addr_type, file_tmp, nft_file)
 				os.execute(string.format("mv -f %s %s.nft", nft_file, rule_final_path))
@@ -726,13 +726,21 @@ if geo2rule == "1" then
 	end
 
 	-- 如果是手动更新(arg2存在)始终生成规则
-	if arg2 then geoip_update_ok, geosite_update_ok = true, true end
-	chnroute_update, chnroute6_update, gfwlist_update, chnlist_update = "1", "1", "1", "1"
+	if arg2 then
+		geoip_update_ok, geosite_update_ok = true, true
+	end
+	if not rollback then
+		chnroute_update, chnroute6_update, gfwlist_update, chnlist_update = "1", "1", "1", "1"
+	end
 
 	if geoip_update_ok then
 		if fs.access(asset_location .. "geoip.dat") then
-			safe_call(fetch_chnroute, "生成chnroute发生错误...")
-			safe_call(fetch_chnroute6, "生成chnroute6发生错误...")
+			if chnroute_update == "1" then
+				safe_call(fetch_chnroute, "生成chnroute发生错误...")
+			end
+			if chnroute6_update == "1" then
+				safe_call(fetch_chnroute6, "生成chnroute6发生错误...")
+			end
 		else
 			log("geoip.dat 文件不存在,跳过规则生成。")
 		end
@@ -740,8 +748,12 @@ if geo2rule == "1" then
 
 	if geosite_update_ok then
 		if fs.access(asset_location .. "geosite.dat") then
-			safe_call(fetch_gfwlist, "生成gfwlist发生错误...")
-			safe_call(fetch_chnlist, "生成chnlist发生错误...")
+			if gfwlist_update == "1" then
+				safe_call(fetch_gfwlist, "生成gfwlist发生错误...")
+			end
+			if chnlist_update == "1" then
+				safe_call(fetch_chnlist, "生成chnlist发生错误...")
+			end
 		else
 			log("geosite.dat 文件不存在,跳过规则生成。")
 		end

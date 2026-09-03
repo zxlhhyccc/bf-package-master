@@ -63,7 +63,7 @@ end)
 
 o = s:option(Value, "port", "Socks " .. translate("Listen Port"))
 o.default = n + 1080
-o.datatype = "port"
+o.datatype = "range(1,65535)"
 o.rmempty = false
 
 if has_singbox or has_xray then
@@ -160,7 +160,7 @@ o = s:option(Value, "autoswitch_retry_num", translate("Timeout retry num"))
 o.datatype = "range(1,5)"
 o.default = 1
 o:depends("enable_autoswitch", true)
-	
+
 o = s:option(Flag, "autoswitch_restore_switch", translate("Restore Switch"), translate("Immediately switch back to the main node when it becomes available."))
 o:depends("enable_autoswitch", true)
 

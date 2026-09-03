@@ -119,11 +119,8 @@ o:value("1", "Nftables")
 
 ---- Check the transparent proxy component
 local handle = io.popen("lsmod")
-local mods = ""
-if handle then
-	mods = handle:read("*a") or ""
-	handle:close()
-end
+local mods = handle and handle:read("*a") or ""
+if handle then handle:close() end
 
 if (mods:find("REDIRECT") and mods:find("TPROXY")) or (mods:find("nft_redir") and mods:find("nft_tproxy")) then
 	o = s:option(ListValue, "tcp_proxy_way", translate("TCP Proxy Way"))
@@ -196,7 +193,7 @@ if has_xray then
 	o.default = 0
 	o.description = translate("Override the connection destination address with the sniffed domain.<br />Otherwise use sniffed domain for routing only.<br />If using shunt nodes, configure the domain shunt rules correctly.")
 
-	local domains_excluded = string.format("/usr/share/%s/domains_excluded", m.config)
+	local domains_excluded = string.format("/usr/share/%s/rules/domains_excluded", m.config)
 	o = s_xray:option(TextValue, "excluded_domains", translate("Excluded Domains"), translate("If the traffic sniffing result is in this list, the destination address will not be overridden."))
 	o.rows = 15
 	o.wrap = "off"
