@@ -236,6 +236,12 @@ load_acl() {
 			}
 			[ -n "$(get_cache_var "ACL_${sid}_dns_port")" ] && dns_redirect_port=$(get_cache_var "ACL_${sid}_dns_port")
 			[ -n "$(get_cache_var "ACL_${sid}_fakedns")" ] && use_fakedns=$(get_cache_var "ACL_${sid}_fakedns")
+
+			([ -n "$node" ] && ([ "$node" = "default" ] || [ "$node" = "$NODE" ])) && {
+				use_global_config=1
+				unset node
+			}
+
 			[ -n "$node" ] && {
 				if [ "$(config_get_type $node)" = "socks" ]; then
 					node_remark="Socks 配置($(config_n_get $node port) 端口)"
@@ -411,7 +417,7 @@ load_acl() {
 					[ "$_ipv4" != "1" ] && $ip6t_n -A PSW_DNS $(comment "$remarks") -p udp ${_ipt_source} --dport 53 -j REDIRECT --to-ports ${dns_redirect} 2>/dev/null
 					$ipt_n -A PSW_DNS $(comment "$remarks") -p tcp ${_ipt_source} --dport 53 -j REDIRECT --to-ports ${dns_redirect}
 					[ "$_ipv4" != "1" ] && $ip6t_n -A PSW_DNS $(comment "$remarks") -p tcp ${_ipt_source} --dport 53 -j REDIRECT --to-ports ${dns_redirect} 2>/dev/null
-					[ -z "$(get_cache_var "ACL_${sid}_default")" ] && echolog "     - ${msg}使用与全局配置不相同节点，已将DNS强制重定向到专用 DNS 服务器。"
+					[ -z "$(get_cache_var "ACL_${sid}_default")" ] && echolog "     - ${msg}与全局配置不同节点，DNS 重定向到专用 DNS 服务器 [${dns_redirect}]。"
 				fi
 
 				[ -n "$tcp_port" ] || [ -n "$udp_port" ] && {
@@ -1060,7 +1066,7 @@ add_firewall_rule() {
 	$ipt_n -A PSW_OUTPUT $(dst $IPSET_LAN) -j RETURN
 	$ipt_n -A PSW_OUTPUT $(dst $IPSET_VPS) -j RETURN
 	[ "${USE_DIRECT_LIST}" = "1" ] && $ipt_n -A PSW_OUTPUT $(dst $IPSET_WHITE) -j RETURN
-	$ipt_n -A PSW_OUTPUT -m mark --mark 255 -j RETURN
+	$ipt_n -A PSW_OUTPUT -m mark --mark 0xff/0xff -j RETURN
 
 	$ipt_n -N PSW_DNS
 	if [ $(config_n_get @global[0] dns_redirect "1") = "0" ]; then
@@ -1115,7 +1121,7 @@ add_firewall_rule() {
 	[ "${USE_BLOCK_LIST}" = "1" ] && $ipt_m -A PSW_OUTPUT $(dst $IPSET_BLOCK) -j MARK --set-mark 88
 	[ "${USE_DIRECT_LIST}" = "1" ] && $ipt_m -A PSW_OUTPUT $(dst $IPSET_WHITE) -j RETURN
 	$ipt_m -A PSW_OUTPUT -m conntrack --ctdir REPLY -j RETURN
-	$ipt_m -A PSW_OUTPUT -m mark --mark 255 -j RETURN
+	$ipt_m -A PSW_OUTPUT -m mark --mark 0xff/0xff -j RETURN
 
 	ip rule add fwmark ${FWMARK} table 999 priority 999
 	ip route add local 0.0.0.0/0 dev lo table 999
@@ -1130,7 +1136,7 @@ add_firewall_rule() {
 		$ip6t_n -A PSW_OUTPUT $(dst $IPSET_LAN6) -j RETURN
 		$ip6t_n -A PSW_OUTPUT $(dst $IPSET_VPS6) -j RETURN
 		[ "${USE_DIRECT_LIST}" = "1" ] && $ip6t_n -A PSW_OUTPUT $(dst $IPSET_WHITE6) -j RETURN
-		$ip6t_n -A PSW_OUTPUT -m mark --mark 255 -j RETURN
+		$ip6t_n -A PSW_OUTPUT -m mark --mark 0xff/0xff -j RETURN
 	}
 
 	$ip6t_n -N PSW_DNS
@@ -1167,7 +1173,7 @@ add_firewall_rule() {
 	insert_rule_before "$ip6t_m" "PREROUTING" "PSW" "-p tcp -m socket -j PSW_DIVERT"
 
 	$ip6t_m -N PSW_OUTPUT
-	$ip6t_m -A PSW_OUTPUT -m mark --mark 255 -j RETURN
+	$ip6t_m -A PSW_OUTPUT -m mark --mark 0xff/0xff -j RETURN
 	$ip6t_m -A PSW_OUTPUT $(dst $IPSET_LAN6) -j RETURN
 	$ip6t_m -A PSW_OUTPUT $(dst $IPSET_VPS6) -j RETURN
 	[ "${USE_BLOCK_LIST}" = "1" ] && $ip6t_m -A PSW_OUTPUT $(dst $IPSET_BLOCK6) -j MARK --set-mark 88

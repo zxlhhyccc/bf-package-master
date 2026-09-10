@@ -203,7 +203,7 @@
  o:depends({ dns_shunt = "chinadns-ng", _node_sel_other = "1" })
  o:depends({ dns_shunt = "dnsmasq", _node_sel_other = "1" })
  o.write = function(self, section, value)
-@@ -385,6 +394,8 @@ o.validate = function(self, value, t)
+@@ -387,6 +396,8 @@ o.validate = function(self, value, t)
  	end
  	return value
  end
@@ -212,7 +212,7 @@
  o:depends({dns_mode = "dns2socks"})
  
  ---- DNS Forward
-@@ -399,6 +410,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+@@ -401,6 +412,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -221,7 +221,7 @@
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -467,6 +480,17 @@ o.validate = function(self, value, t)
+@@ -471,6 +484,17 @@ o.validate = function(self, value, t)
  o:depends({dns_mode = "sing-box", dns_shunt = "chinadns-ng"})
  o:depends({smartdns_dns_mode = "sing-box", dns_shunt = "smartdns"})
  
@@ -276,8 +276,8 @@
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1055,6 +1055,12 @@ start_dns() {
- 				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_c_dns}"
+@@ -1074,6 +1074,12 @@ start_dns() {
+ 				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_local_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
 +			} || {
@@ -289,7 +289,7 @@
  			}
  		;;
  		auto)
-@@ -1165,6 +1171,19 @@ start_dns() {
+@@ -1187,6 +1193,19 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -309,7 +309,7 @@
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1174,6 +1193,11 @@ start_dns() {
+@@ -1196,6 +1215,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -321,7 +321,7 @@
  		else
  			TUN_DNS=${REMOTE_DNS}
  			echolog "  - udp://${TUN_DNS}"
-@@ -1187,6 +1211,12 @@ start_dns() {
+@@ -1209,6 +1233,12 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -334,7 +334,7 @@
  		}
  	;;
  	esac
-@@ -1320,6 +1350,73 @@ start_dns() {
+@@ -1342,6 +1372,73 @@ start_dns() {
  	fi
  }
  
@@ -408,7 +408,7 @@
  start_haproxy() {
  	[ "$(config_n_get @global_haproxy[0] balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -1761,7 +1858,8 @@ get_config() {
+@@ -1795,7 +1892,8 @@ get_config() {
  	CLIENT_PROXY=$(config_n_get @global[0] client_proxy 1)
  	DNS_SHUNT=$(config_n_get @global[0] dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
@@ -416,5 +416,5 @@
 +	#DNS_MODE=$(config_n_get @global[0] dns_mode tcp)
 +	DNS_MODE=$(config_n_get @global[0] dns_mode pdnsd)
  	[ "$DNS_SHUNT" = "smartdns" ] && DNS_MODE=$(config_n_get @global[0] smartdns_dns_mode socks)
- 	REMOTE_DNS=$(normalize_dns "$(config_n_get @global[0] remote_dns 1.1.1.1:53)")
+ 	REMOTE_DNS=$(normalize_dns "$(config_n_get @global[0] remote_dns 1.1.1.1)")
  	USE_DEFAULT_DNS=$(config_n_get @global[0] use_default_dns direct)

@@ -112,6 +112,10 @@ o:value("", translate("Close"))
 o.group = {""}
 
 current_node_id = m:get(s.section, "node")
+local node_value = s.fields["node"]:formvalue(s.section)
+if node_value then
+	current_node_id = node_value
+end
 current_node = current_node_id and m:get(current_node_id) or {}
 
 -- Shunt Start
@@ -120,17 +124,10 @@ if (has_singbox or has_xray) and #nodes_table > 0 then
 		if current_node.protocol == "_shunt" then
 			local shunt_lua = loadfile("/usr/lib/lua/luci/model/cbi/passwall/client/include/shunt_options.lua")
 			setfenv(shunt_lua, getfenv(1))(m, s, {
-				s_cfgid = s.section,
-				node_id = current_node_id,
 				node = current_node,
-				socks_list = socks_list,
-				urltest_list = urltest_list,
-				balancing_list = balancing_list,
-				iface_list = iface_list,
-				normal_list = normal_list,
 				verify_option = s.fields["node"],
 				tab = "Shunt",
-				tab_desc = translate("Shunt Rule")
+				tab_desc = translate("Shunt Rule"),
 			})
 		end
 	else
@@ -139,7 +136,7 @@ if (has_singbox or has_xray) and #nodes_table > 0 then
 		tips.cfgvalue = function(t, n)
 			return string.format('<a style="color: red">%s</a>', translate("There are no available nodes, please add or subscribe nodes first."))
 		end
-		tips:depends({ node = "", ["!reverse"] = true })
+		tips:depends("_node", "1")
 		for k, v in pairs(shunt_list) do
 			tips:depends("node", v.id)
 		end
@@ -153,7 +150,7 @@ o = s:taboption("Main", Value, "node_socks_port", translate("Node") .. " Socks "
 o.default = 1070
 o.placeholder = 1070
 o.datatype = "range(1,65535)"
-o:depends({ node = "", ["!reverse"] = true })
+o:depends("_node", "1")
 --[[
 if has_singbox or has_xray then
 	o = s:taboption("Main", Value, "node_http_port", translate("Node") .. " HTTP " .. translate("Listen Port") .. " " .. translate("0 is not use"))
@@ -163,17 +160,20 @@ end
 ]]--
 o = s:taboption("Main", Flag, "node_socks_bind_local", translate("Node") .. " Socks " .. translate("Bind Local"), translate("When selected, it can only be accessed localhost."))
 o.default = "1"
-o:depends({ node = "", ["!reverse"] = true })
+o:depends("_node", "1")
+
+o = s:taboption("Main", HideValue, "node_save_before", "")
+o.value = current_node[".name"]
+o.cbid = function(self, section) return "node_save_before" end
+
+o = s:taboption("Main", HideValue, "_node", "")
+o:depends({ node = "",  ['!reverse'] = true })
 
 -- Node → DNS Depends Settings
-o = s:taboption("Main", DummyValue, "_node_sel_shunt", "")
-o.template = m:template_path("/cbi/hidevalue")
-o.value = "1"
+o = s:taboption("Main", HideValue, "_node_sel_shunt", "")
 o:depends({ node = "__always__" })
 
-o = s:taboption("Main", DummyValue, "_node_sel_other", "")
-o.template = m:template_path("/cbi/hidevalue")
-o.value = "1"
+o = s:taboption("Main", HideValue, "_node_sel_other", "")
 o:depends({ _node_sel_shunt = "1",  ['!reverse'] = true })
 
 -- [[ DNS Settings ]]--
@@ -373,6 +373,8 @@ o:value("tcp", "TCP")
 o:value("udp", "UDP")
 o:value("doh", "DoH")
 o:value("http3", "HTTP3(DoH3)")
+o:value("tls", "TLS(DoT)")
+o:value("quic", "QUIC(DoQ)")
 o:depends("dns_mode", "sing-box")
 o:depends("smartdns_dns_mode", "sing-box")
 o.cfgvalue = function(self, section)
@@ -419,6 +421,8 @@ o:depends({xray_dns_mode = "udp"})
 o:depends({xray_dns_mode = "tcp"})
 o:depends({singbox_dns_mode = "udp"})
 o:depends({singbox_dns_mode = "tcp"})
+o:depends({singbox_dns_mode = "tls"})
+o:depends({singbox_dns_mode = "quic"})
 
 ---- DoH
 o = s:taboption("DNS", Value, "remote_dns_doh", translate("Remote DNS DoH"))
@@ -580,7 +584,7 @@ o:value("disable", translate("No Proxy"))
 o:value("proxy", translate("Proxy"))
 o.default = "proxy"
 
-o = s:taboption("Proxy", DummyValue, "switch_mode", " ")
+o = s:taboption("Proxy", DummyValue, "switch_mode", "")
 o.template = m:template_path("/global/proxy")
 
 ---- Check the transparent proxy component
@@ -661,6 +665,8 @@ o.template = m:template_path("/global/faq")
 s:tab("maintain", translate("Maintain"))
 o = s:taboption("maintain", DummyValue, "")
 o.template = m:template_path("/global/backup")
+
+m:appendTemplate("/include/node_change", { verify_option = s.fields["node"], shunt_list = api.jsonc.stringify(shunt_list) })
 
 -- [[ Socks Server ]]--
 o = s:taboption("Main", Flag, "socks_enabled", "Socks " .. translate("Main switch"))
@@ -771,7 +777,7 @@ for k, v in pairs(nodes_table) do
 	if #normal_list == 0 and #iface_list == 0 then
 		break
 	end
-	if v.protocol == "_shunt" then
+	if v.protocol and v.protocol == "_shunt" then
 		if has_singbox or has_xray then
 			o_node:value(v.id, v["remark"])
 			o_node.group[#o_node.group+1] = (v.group and v.group ~= "") and v.group or translate("default")
@@ -799,7 +805,7 @@ for k, v in pairs(nodes_table) do
 	end
 end
 
-m:appendTemplate("/global/footer", {shunt_list = api.jsonc.stringify(shunt_list)})
+m:appendTemplate("/global/footer")
 
 m:appendTemplate("/cbi/sortable", {sectiontype = s2.sectiontype})
 

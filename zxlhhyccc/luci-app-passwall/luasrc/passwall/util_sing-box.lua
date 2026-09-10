@@ -1127,8 +1127,10 @@ function gen_config(var)
 	local direct_dns_query_strategy = var["direct_dns_query_strategy"]
 	local remote_dns_udp_server = var["remote_dns_udp_server"]
 	local remote_dns_udp_port = var["remote_dns_udp_port"]
+	local remote_dns_quic = var["remote_dns_quic"]
 	local remote_dns_tcp_server = var["remote_dns_tcp_server"]
 	local remote_dns_tcp_port = var["remote_dns_tcp_port"]
+	local remote_dns_tls = var["remote_dns_tls"]
 	local remote_dns_doh = var["remote_dns_doh"]
 	local remote_dns_http3 = var["remote_dns_http3"]
 	local remote_dns_client_ip = var["remote_dns_client_ip"]
@@ -1196,7 +1198,7 @@ function gen_config(var)
 							format = format,
 							path = _type == "local" and w or nil,
 							url = _type == "remote" and w or nil,
-							http_client = _type == "remote" and "remote_http_client" or nil,
+							http_client = (_type == "remote" and version_ge_1_14_0) and "remote_http_client" or nil,
 							--update_interval = _type == "remote" and "1d" or nil,
 						}
 					end
@@ -1883,13 +1885,19 @@ function gen_config(var)
 			remote_server.type = "udp"
 			remote_server.server = remote_dns_udp_server
 			remote_server.server_port = server_port
-
+			if remote_dns_quic then
+				remote_server.type = "quic"
+				remote_server.server_port = tonumber(remote_dns_udp_port) or 853
+			end
 		elseif remote_dns_tcp_server then
 			local server_port = tonumber(remote_dns_tcp_port) or 53
 			remote_server.type = "tcp"
 			remote_server.server = remote_dns_tcp_server
 			remote_server.server_port = server_port
-
+			if remote_dns_tls then
+				remote_server.type = "tls"
+				remote_server.server_port = tonumber(remote_dns_tcp_port) or 853
+			end
 		elseif remote_dns_doh then
 			local _a = api.parseDoH(remote_dns_doh)
 			if _a then
@@ -2208,13 +2216,9 @@ function gen_config(var)
 		})
 	else
 		table.insert(dns.rules, 1, {
-			action = "evaluate",
+			preferred_by = "hosts",
+			action = "route",
 			server = "hosts"
-		})
-		table.insert(dns.rules, 2, {
-			match_response = true,
-			ip_accept_any = true,
-			action = "respond"
 		})
 	end
 
@@ -2281,7 +2285,7 @@ function gen_config(var)
 			-- 实验性
 			experimental = experimental,
 			-- HTTP Client
-			http_clients = http_clients
+			http_clients = version_ge_1_14_0 and http_clients or nil,
 		}
 		table.insert(outbounds, {
 			type = "direct",
