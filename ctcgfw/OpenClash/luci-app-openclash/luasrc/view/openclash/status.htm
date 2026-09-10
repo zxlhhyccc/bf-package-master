@@ -83,9 +83,20 @@
                         <!-- Row 2: Running Mode & Proxy Mode -->
                         <div class="card-row dual-cards mode-row">
                             <div class="sub-card">
-                                <div class="card-title"><%:Running Mode%></div>
+                                <div class="stats-card-header">
+                                    <div class="stats-title"><%:Running Mode%></div>
+                                    <span class="mode-pill" id="mode-pill">
+                                        <input type="radio" id="dns_fakeip" name="radios-dns" value="fake-ip" onclick="return switch_dns_mode(this.value)"/>
+                                        <label for="dns_fakeip" class="mode-pill-opt" title="<%:Fake-IP%>">
+                                            <svg width="13" height="13"><use href="#oc-icon-cloud-search"/></svg>
+                                        </label>
+                                        <input type="radio" id="dns_redirhost" name="radios-dns" value="redir-host" onclick="return switch_dns_mode(this.value)"/>
+                                        <label for="dns_redirhost" class="mode-pill-opt" title="<%:Redir-Host%>">
+                                            <svg width="13" height="13"><use href="#oc-icon-device-desktop-search"/></svg>
+                                        </label>
+                                    </span>
+                                </div>
                                 <div class="card-content">
-                                    <div class="card-value"><span id="_mode" class="value-indicator"><%:Collecting data...%></span></div>
                                     <div class="card-controls">
                                         <div id="radio-ru-mode" class="cbi-button-group oc-inline-flex">
                                             <input type="radio" id="normal" name="radios-ru" value="" onclick="return switch_run_mode(this.value)"/>
@@ -99,7 +110,9 @@
                                 </div>
                             </div>
                             <div class="sub-card">
-                                <div class="card-title"><%:Proxy Mode%></div>
+                                <div class="stats-card-header">
+                                    <div class="stats-title"><%:Proxy Mode%></div>
+                                </div>
                                 <div class="card-content">
                                     <div class="card-controls">
                                         <div id="radio-mode" class="cbi-button-group oc-inline-flex">
@@ -279,6 +292,7 @@
                                     <button class="dashboard-btn" id="_webm"><%:Collecting data...%></button>
                                     <button class="dashboard-btn" id="_webz"><%:Collecting data...%></button>
                                     <button class="dashboard-btn" id="_webo"><%:Collecting data...%></button>
+                                    <button class="dashboard-btn hidden" id="_web_external"><%:Collecting data...%></button>
                                 </div>
                             </div>
                         </div>
@@ -300,10 +314,14 @@
                         <div class="stats-section">
                             <div class="stats-card-header">
                                 <div class="stats-title"><%:Statistics%></div>
-                                <button type="button" class="icon-btn stats-view-toggle" id="stats-view-toggle" title="<%:Toggle Chart%>">
-                                    <svg id="stats-chart-icon" width="14" height="14"><use href="#oc-icon-chart"/></svg>
-                                    <svg id="stats-cards-icon" width="14" height="14" class="oc-hidden"><use href="#oc-icon-grid"/></svg>
-                                </button>
+                                <div class="icon-pill stats-view-toggle" id="stats-view-toggle" role="group" aria-label="<%:View Mode%>">
+                                    <button type="button" class="icon-pill-opt" id="stats-cards-btn" title="<%:Cards%>" data-view="cards">
+                                        <svg width="13" height="13"><use href="#oc-icon-grid"/></svg>
+                                    </button>
+                                    <button type="button" class="icon-pill-opt" id="stats-chart-btn" title="<%:Chart%>" data-view="chart">
+                                        <svg width="13" height="13"><use href="#oc-icon-chart"/></svg>
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-row stats-grid" id="stats-view-cards">
                                 <div class="sub-card stat-item"><span class="stat-label"><%:Up%></span><span id="upload_" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span><span class="stat-unit">KB/S</span></span></div>
@@ -388,11 +406,13 @@
     };
     var DOMCache = {
         clash: document.getElementById('_clash'),
-        mode: document.getElementById('_mode'),
+        dns_fakeip: document.getElementById('dns_fakeip'),
+        dns_redirhost: document.getElementById('dns_redirhost'),
         web: document.getElementById('_web'),
         webo: document.getElementById('_webo'),
         webm: document.getElementById('_webm'),
         webz: document.getElementById('_webz'),
+        web_external: document.getElementById('_web_external'),
         daip: document.getElementById('_daip'),
         oclog: document.getElementById('_oclog'),
         close_all_connection: document.getElementById('_close_all_connection_btn'),
@@ -429,7 +449,9 @@
     };
 
     var getDashboardBaseURL = ocGetDashboardBaseURL;
+    var getDashboardWebSocketOrigin = ocGetDashboardWebSocketOrigin;
     var buildDashboardURL = ocBuildDashboardURL;
+    var buildExternalDashboardURL = ocBuildExternalDashboardURL;
     var bytesToSize = ocFormatBytes;
     var debounceButton = ocDebounce;
 
@@ -3089,8 +3111,10 @@
             document.getElementById('stats-view-chart').classList.toggle('oc-hidden', this.view !== 'chart');
             var statsTabs = document.getElementById('stats-tabs');
             if (statsTabs) statsTabs.classList.toggle('oc-hidden', this.view !== 'chart');
-            document.getElementById('stats-chart-icon').classList.toggle('oc-hidden', this.view !== 'cards');
-            document.getElementById('stats-cards-icon').classList.toggle('oc-hidden', this.view !== 'chart');
+            var cardsBtn = document.getElementById('stats-cards-btn');
+            var chartBtn = document.getElementById('stats-chart-btn');
+            if (cardsBtn) cardsBtn.classList.toggle('active', this.view === 'cards');
+            if (chartBtn) chartBtn.classList.toggle('active', this.view === 'chart');
         },
 
         initCardDots: function() {
@@ -3215,9 +3239,13 @@
 
         bind: function() {
             var self = this;
-            var toggle = document.getElementById('stats-view-toggle');
-            if (toggle) {
-                toggle.addEventListener('click', function() { self.toggleView(); });
+            var cardsBtn = document.getElementById('stats-cards-btn');
+            var chartBtn = document.getElementById('stats-chart-btn');
+            if (cardsBtn) {
+                cardsBtn.addEventListener('click', function() { self.setView('cards'); });
+            }
+            if (chartBtn) {
+                chartBtn.addEventListener('click', function() { self.setView('chart'); });
             }
             var tabs = document.getElementById('stats-tabs');
             if (tabs) {
@@ -3257,8 +3285,10 @@
             }
         },
 
-        toggleView: function() {
-            this.view = this.view === 'cards' ? 'chart' : 'cards';
+        setView: function(view) {
+            if (view !== 'cards' && view !== 'chart') return;
+            if (this.view === view) return;
+            this.view = view;
             this.applyView();
             this.notifyDataSource();
             localStorage.setItem('oc-stats-view', this.view);
@@ -3590,6 +3620,8 @@
 
     var pluginToggleUserAction = false;
 
+    get_op_mode();
+
     XHR.poll(5, '<%=luci.dispatcher.build_url("admin", "services", "openclash", "status")%>', null, function(x, status) {
         if (x && x.status == 200) {
             var updates = [];
@@ -3604,13 +3636,6 @@
             }
 
             if (status.run_mode && !SettingsManager.pendingOperations.has('run_mode_' + status.run_mode)) {
-                if (status.run_mode.indexOf("fake-ip") === 0) {
-                    DOMCache.mode.innerHTML = "<b style=color:var(--success-color)><%:Fake-IP%></b>";
-                    DOMCache.radio_run_normal.innerHTML = "<%:Enhance%>";
-                } else if (status.run_mode.indexOf("redir-host") === 0) {
-                    DOMCache.mode.innerHTML = "<b style=color:var(--success-color)><%:Redir-Host%></b>";
-                    DOMCache.radio_run_normal.innerHTML = "<%:Compat%>";
-                }
                 var expectedValue = status.run_mode.split("-")[2] == undefined ? "" : ("-" + status.run_mode.split("-")[2]);
                 for (var i = 0; i < DOMCache.radio_ru.length; i++) {
                     if (DOMCache.radio_ru[i].value == expectedValue && !DOMCache.radio_ru[i].checked) {
@@ -3658,6 +3683,9 @@
             var webzContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Zashboard%>" onclick="return net_zashboard(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Zashboard%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
             updates.push({element: DOMCache.webz, content: webzContent});
 
+            var externalWebContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:External Dashboard%>" onclick="return external_dashboard(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:External Dashboard%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
+            updates.push({element: DOMCache.web_external, content: externalWebContent});
+
             var closeConnContent = status.clash ? '<input type="button" class="dashboard-btn" value="<%:Close Connect%>" onclick="return b_close_all_connection(this)"/>' : '<input type="button" class="dashboard-btn" value="<%:Close Connect%>" onclick="event.preventDefault(); event.stopPropagation(); return false;"/>';
             updates.push({element: document.getElementById('_close_all_connection_btn'), content: closeConnContent});
 
@@ -3688,21 +3716,16 @@
                 DOMCache.webz.classList.add('hidden');
             }
 
+            DOMCache.web_external.classList.toggle('hidden', !ocGetCustomDashboardURL(status));
+
             StateManager.current_status = status;
 
             if (status.daip) {
                 var daipContent, dapoContent;
 
-                if (status.daip && window.location.hostname == status.daip) {
-                    dapoContent = status.cn_port ? ":"+status.cn_port : "";
-                    daipContent = status.daip ? "<b style=color:var(--success-color)>"+status.daip+dapoContent+"</b>" : "<b style=color:var(--error-color)>"+"<%:Not Set%>"+"</b>";
-                } else if (status.daip && window.location.hostname != status.daip && status.db_foward_domain && status.db_foward_port) {
-                    dapoContent = status.db_foward_port ? ":"+status.db_foward_port : "";
-                    daipContent = status.db_foward_domain ? "<b style=color:var(--success-color)>"+status.db_foward_domain+dapoContent+"</b>" : "<b style=color:var(--error-color)>"+"<%:Not Set%>"+"</b>";
-                } else {
-                    dapoContent = status.cn_port ? ":"+status.cn_port : "";
-                    daipContent = status.daip ? "<b style=color:var(--success-color)>"+status.daip+dapoContent+"</b>" : "<b style=color:var(--error-color)>"+"<%:Not Set%>"+"</b>";
-                }
+                var dashboardBase = getDashboardBaseURL(status);
+                dapoContent = dashboardBase.port ? ":" + dashboardBase.port : "";
+                daipContent = "<b style=color:var(--success-color)>" + dashboardBase.host + dapoContent + "</b>";
 
                 DOMCache.daip.innerHTML = daipContent;   
 
@@ -3832,29 +3855,10 @@
             return false;
         }
 
-        StatsWSMeta.protocol = getWebSocketProtocol(status);
+        StatsWSMeta.protocol = getDashboardWebSocketOrigin(status);
         StatsWSMeta.token = status.dase;
         syncDataSource();
         return true;
-    }
-
-    function getWebSocketProtocol(status) {
-        var protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
-        var host, port;
-
-        if (status.daip && window.location.hostname === status.daip) {
-            host = status.daip;
-            port = status.cn_port;
-        } else if (status.daip && window.location.hostname !== status.daip && 
-                   status.db_foward_domain && status.db_foward_port) {
-            host = status.db_foward_domain;
-            port = status.db_foward_port;
-        } else {
-            host = status.daip;
-            port = status.cn_port;
-        }
-
-        return protocol + host + ":" + port;
     }
 
     function AnnouncementAnimator(config) {
@@ -4147,14 +4151,6 @@
 
         StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "get_run_mode")%>', function(x, status) {
             if (x && x.status == 200 && status.mode) {
-                if (status.mode == "fake-ip" || status.mode == "fake-ip-tun" || status.mode == "fake-ip-mix") {
-                    DOMCache.mode.innerHTML = "<b style=color:var(--success-color)><%:Fake-IP%></b>";
-                    DOMCache.radio_run_normal.innerHTML = "<%:Enhance%>";
-                } else if (status.mode == "redir-host" || status.mode == "redir-host-tun" ||  status.mode == "redir-host-mix") {
-                    DOMCache.mode.innerHTML = "<b style=color:var(--success-color)><%:Redir-Host%></b>";
-                    DOMCache.radio_run_normal.innerHTML = "<%:Compat%>";
-                }
-
                 var expectedValue = status["mode"].split("-")[2] == undefined ? "" : ("-" + status["mode"].split("-")[2]);
                 var operationKey = 'run_mode_' + status.mode;
 
@@ -4176,6 +4172,79 @@
             value, 
             '<%=luci.dispatcher.build_url("admin", "services", "openclash", "switch_run_mode")%>'
         );
+    }
+
+    var currentDnsMode = '';
+
+    function setDnsModeUI(mode) {
+        currentDnsMode = mode;
+        if (DOMCache.dns_fakeip) DOMCache.dns_fakeip.checked = (mode === 'fake-ip');
+        if (DOMCache.dns_redirhost) DOMCache.dns_redirhost.checked = (mode === 'redir-host');
+        if (DOMCache.radio_run_normal) {
+            DOMCache.radio_run_normal.innerHTML = (mode === 'fake-ip') ? '<%:Enhance%>' : '<%:Compat%>';
+        }
+    }
+
+    function get_op_mode() {
+        StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "op_mode")%>', function(x, status) {
+            if (x && x.status == 200 && status.op_mode) {
+                setDnsModeUI(status.op_mode);
+            }
+        }, true);
+    }
+
+    function switch_dns_mode(value) {
+        var opKey = 'dns_mode_' + value;
+        if (SettingsManager.pendingOperations.has(opKey) || value === currentDnsMode) {
+            return false;
+        }
+        SettingsManager.pendingOperations.add(opKey);
+        SettingsManager.pausePoll('run_mode', 3000);
+
+        var previous = currentDnsMode;
+
+        LogManager.startLogDisplay('<%:Saving...%>', false, 'init');
+        setDnsModeUI(value);
+        if (DOMCache.dns_fakeip) DOMCache.dns_fakeip.disabled = true;
+        if (DOMCache.dns_redirhost) DOMCache.dns_redirhost.disabled = true;
+        for (var r = 0; r < DOMCache.radio_ru.length; r++) {
+            DOMCache.radio_ru[r].disabled = true;
+        }
+
+        var suffix = '';
+        var ru = document.getElementsByName("radios-ru");
+        for (var i = 0; i < ru.length; i++) {
+            if (ru[i].checked) {
+                suffix = ru[i].value;
+                break;
+            }
+        }
+
+        function finish(success) {
+            SettingsManager.pendingOperations.delete(opKey);
+            if (DOMCache.dns_fakeip) DOMCache.dns_fakeip.disabled = false;
+            if (DOMCache.dns_redirhost) DOMCache.dns_redirhost.disabled = false;
+            for (var r = 0; r < DOMCache.radio_ru.length; r++) {
+                DOMCache.radio_ru[r].disabled = false;
+            }
+            if (success) {
+                get_op_mode();
+            } else {
+                setDnsModeUI(previous);
+                alert('<%:Switch mode failed!%>');
+            }
+        }
+
+        XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "switch_mode")%>', null, function(x1) {
+            if (!x1 || x1.status != 200) {
+                setTimeout(function() { finish(false); }, 1500);
+                return;
+            }
+            XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "switch_run_mode")%>', { run_mode: suffix }, function(x2) {
+                setTimeout(function() { finish(x2 && x2.status == 200); }, 1500);
+            });
+        });
+        return true;
     }
 
     function ws_tmessage(event) {
@@ -4330,6 +4399,17 @@
         return false;
     }
 
+    function external_dashboard(btn) {
+        btn.disabled = true;
+        btn.value = '<%:External Dashboard%>';
+        var status = StateManager.current_status;
+        if (!status) { setTimeout(function() { external_dashboard(btn); }, 500); return false; }
+        var url = buildExternalDashboardURL(status);
+        if (url) winOpen(url);
+        btn.disabled = false;
+        return false;
+    }
+
     function homepage() {
         winOpen('https://github.com/vernesong/OpenClash');
     }
@@ -4480,28 +4560,18 @@
     }
 
     function copyAddress() {
+        var currentStatus = StateManager.current_status;
+        var externalURL = currentStatus ? buildExternalDashboardURL(currentStatus) : '';
+        if (externalURL) {
+            ocCopyToClipboard(externalURL, DOMCache.copy_address, '<%:Control panel address copied:%> ', '<%:Copy failed, please copy manually:%>');
+            return false;
+        }
+
         XHR.get('<%=luci.dispatcher.build_url("admin", "services", "openclash", "dashboard_type")%>', null, function(x, status) {
             if (x && x.status == 200) {
                 var panel = status.default_dashboard;
                 if (panel && StateManager.current_status[panel]) {
-                    var url;
-                    var currentStatus = StateManager.current_status;
-                    if (currentStatus.daip && window.location.hostname == currentStatus.daip) {
-                        url = 'http://' + window.location.hostname + ':' + currentStatus.cn_port + '/ui/' + panel;
-                    } else if (currentStatus.daip && window.location.hostname != currentStatus.daip && currentStatus.db_foward_domain && currentStatus.db_foward_port) {
-                        var ui_proto = currentStatus.db_forward_ssl == 0 ? 'http://' : 'https://';
-                        url = ui_proto + currentStatus.db_foward_domain + ':' + currentStatus.db_foward_port + '/ui/' + panel;
-                    } else {
-                        url = 'http://' + window.location.hostname + ':' + currentStatus.cn_port + '/ui/' + panel;
-                    }
-
-                    if (panel === 'zashboard' || panel === 'metacubexd') {
-                        url += '/#/setup?hostname=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? window.location.hostname : (currentStatus.db_foward_domain || window.location.hostname)) + '&port=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? currentStatus.cn_port : (currentStatus.db_foward_port || currentStatus.cn_port)) + (currentStatus.dase ? '&secret=' + currentStatus.dase : '');
-                    } else if (panel === 'yacd') {
-                        url += '/?hostname=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? window.location.hostname : (currentStatus.db_foward_domain || window.location.hostname)) + '&port=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? currentStatus.cn_port : (currentStatus.db_foward_port || currentStatus.cn_port)) + (currentStatus.dase ? '&secret=' + currentStatus.dase : '');
-                    } else if (panel === 'dashboard') {
-                        url += '/#/?host=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? window.location.hostname : (currentStatus.db_foward_domain || window.location.hostname)) + '&port=' + (currentStatus.daip && window.location.hostname == currentStatus.daip ? currentStatus.cn_port : (currentStatus.db_foward_port || currentStatus.cn_port)) + (currentStatus.dase ? '&secret=' + currentStatus.dase : '');
-                    }
+                    var url = buildDashboardURL(currentStatus, panel, panel === 'zashboard' || panel === 'metacubexd');
 
                     ocCopyToClipboard(url, DOMCache.copy_address, '<%:Control panel address copied:%> ', '<%:Copy failed, please copy manually:%>');
                 } else {
