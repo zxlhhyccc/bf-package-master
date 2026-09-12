@@ -176,15 +176,7 @@ elif [ -n "$OP_CV" ] && [ -n "$OP_LV" ] && version_compare "$OP_CV" "$OP_LV" && 
    else
       CHECKSUM_FILENAME="luci-app-openclash-${LAST_VER}.apk"
    fi
-   if [ "$github_address_mod" != "0" ]; then
-      if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
-         CHECKSUM_URL="${github_address_mod}gh/vernesong/OpenClash@package/${RELEASE_BRANCH}/checksums.txt"
-      else
-         CHECKSUM_URL="${github_address_mod}https://raw.githubusercontent.com/vernesong/OpenClash/package/${RELEASE_BRANCH}/checksums.txt"
-      fi
-   else
-      CHECKSUM_URL="https://raw.githubusercontent.com/vernesong/OpenClash/package/${RELEASE_BRANCH}/checksums.txt"
-   fi
+   CHECKSUM_URL="https://raw.githubusercontent.com/vernesong/OpenClash/package/${RELEASE_BRANCH}/checksums.txt"
 else
    if [ -z "$PLUGIN_LATEST" ] || [ -z "$OP_CV" ] || [ -z "$OP_LV" ]; then
       LOG_ERROR "Failed to get version information, please try again later..."

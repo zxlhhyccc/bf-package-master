@@ -107,7 +107,7 @@ if type == "dns" then
 	if wan then
 		for o = 1, #(rv.wan) do
 			for i = 1, #(rv.wan[o].dns) do
-				if rv.wan[o].dns[i] ~= rv.wan[o].gwaddr and rv.wan[o].dns[i] ~= rv.wan[o].ipaddr then
+				if rv.wan[o].dns[i] ~= rv.wan[o].ipaddr then
 					print(rv.wan[o].dns[i])
 				end
 			end
@@ -119,7 +119,7 @@ if type == "dns6" then
 	if wan6 then
 		for o = 1, #(rv.wan6) do
 			for i = 1, #(rv.wan6[o].dns) do
-				if rv.wan6[o].dns[i] ~= rv.wan6[o].gw6addr and rv.wan6[o].ip6addr then
+				if rv.wan6[o].dns[i] ~= rv.wan6[o].ip6addr then
 					print(rv.wan6[o].dns[i])
 				end
 			end

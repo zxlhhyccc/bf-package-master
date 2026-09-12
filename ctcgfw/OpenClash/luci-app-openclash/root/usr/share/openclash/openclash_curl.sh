@@ -230,8 +230,8 @@ verify_sha256_checksum() {
         | awk -v n="$expected_name" '$2 ~ n {print $1; exit} $0 ~ n {print $1; exit}')
 
     if [ -z "$expected_hash" ]; then
-        LOG_ERROR "Checksum file unavailable or entry not found, abort update for【$expected_name】"
-        return 1
+        LOG_WARN "Checksum file unavailable or entry not found, skip verification for【$expected_name】"
+        return 0
     fi
 
     local actual_hash

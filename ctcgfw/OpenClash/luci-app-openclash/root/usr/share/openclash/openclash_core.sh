@@ -107,24 +107,21 @@ if [ -n "$DIRECT_CORE_URL" ] || [ "$CORE_CV" != "$CORE_LV" ] || [ -z "$CORE_CV" 
          CHECKSUM_FILENAME="mihomo-${CPU_MODEL}-${CORE_LV}.gz"
          if [ "$github_address_mod" != "0" ] && [ "$github_address_mod" != "https://cdn.jsdelivr.net/" ] && [ "$github_address_mod" != "https://fastly.jsdelivr.net/" ] && [ "$github_address_mod" != "https://testingcf.jsdelivr.net/" ]; then
             DOWNLOAD_URL="${github_address_mod}${OIX_CORE_URL}"
-            CHECKSUM_URL="${github_address_mod}${OIX_CHECKSUM_URL}"
          else
             DOWNLOAD_URL="$OIX_CORE_P_URL"
-            CHECKSUM_URL="$OIX_CHECKSUM_URL"
          fi
+         CHECKSUM_URL="$OIX_CHECKSUM_URL"
       else
          CHECKSUM_FILENAME="clash-${CPU_MODEL}.tar.gz"
+         CHECKSUM_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/${CORE_URL_PATH}/checksums.txt"
          if [ "$github_address_mod" != "0" ]; then
             if [ "$github_address_mod" == "https://cdn.jsdelivr.net/" ] || [ "$github_address_mod" == "https://fastly.jsdelivr.net/" ] || [ "$github_address_mod" == "https://testingcf.jsdelivr.net/" ]; then
                DOWNLOAD_URL="${github_address_mod}gh/vernesong/OpenClash@core/${CORE_URL_PATH}/clash-${CPU_MODEL}.tar.gz"
-               CHECKSUM_URL="${github_address_mod}gh/vernesong/OpenClash@core/${CORE_URL_PATH}/checksums.txt"
             else
                DOWNLOAD_URL="${github_address_mod}https://raw.githubusercontent.com/vernesong/OpenClash/core/${CORE_URL_PATH}/clash-${CPU_MODEL}.tar.gz"
-               CHECKSUM_URL="${github_address_mod}https://raw.githubusercontent.com/vernesong/OpenClash/core/${CORE_URL_PATH}/checksums.txt"
             fi
          else
             DOWNLOAD_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/${CORE_URL_PATH}/clash-${CPU_MODEL}.tar.gz"
-            CHECKSUM_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/${CORE_URL_PATH}/checksums.txt"
          fi
       fi
 

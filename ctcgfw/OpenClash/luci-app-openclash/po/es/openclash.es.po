@@ -1659,8 +1659,8 @@ msgstr "Error al verificar el núcleo:"
 msgid "Checksum Verification Failed"
 msgstr "Fallo de la verificación de Checksum"
 
-msgid "Checksum file unavailable or entry not found, abort update for"
-msgstr "Archivo de verificación de Checksum no disponible o entrada no encontrada, se aborta la actualización"
+msgid "Checksum file unavailable or entry not found, skip verification for"
+msgstr "Archivo de verificación de Checksum no disponible o entrada no encontrada, se omite la verificación"
 
 msgid "Checksum mismatch for"
 msgstr "La verificación de Checksum no coincide"

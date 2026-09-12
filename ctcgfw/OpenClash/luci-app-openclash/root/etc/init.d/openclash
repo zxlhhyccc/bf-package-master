@@ -295,6 +295,7 @@ revert_dnsmasq()
    masq_port=$(uci -q get dhcp.@dnsmasq[0].port)
    if [ "$(nslookup www.apple.com 127.0.0.1:${masq_port} >/dev/null 2>&1 || echo $?)" = "1" ]; then
       resolv_file=$(uci -q get dhcp.@dnsmasq[0].resolvfile)
+      [ -z "$resolv_file" ] && resolv_file="/tmp/resolv.conf.d/resolv.conf.auto"
       wan_dns=$(/usr/share/openclash/openclash_get_network.lua "dns")
       wan6_dns=$(/usr/share/openclash/openclash_get_network.lua "dns6")
       mkdir -p "$(dirname "$resolv_file")"
@@ -307,7 +308,7 @@ revert_dnsmasq()
          done
       fi
       if [ -n "$wan6_dns" ]; then
-         echo "# Interface LAN6" > "$resolv_file"
+         echo "# Interface LAN6" >> "$resolv_file"
          for dns6 in $wan6_dns; do
             echo "nameserver $dns6" >> "$resolv_file"
          done

@@ -1662,8 +1662,8 @@ msgstr "内核校验失败:"
 msgid "Checksum Verification Failed"
 msgstr "Checksum 校验失败"
 
-msgid "Checksum file unavailable or entry not found, abort update for"
-msgstr "Checksum 校验文件不可用或未找到条目，终止更新"
+msgid "Checksum file unavailable or entry not found, skip verification for"
+msgstr "Checksum 校验文件不可用或未找到条目，跳过校验"
 
 msgid "Checksum mismatch for"
 msgstr "Checksum 校验不匹配"
