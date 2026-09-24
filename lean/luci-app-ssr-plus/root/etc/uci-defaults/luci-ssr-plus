@@ -51,7 +51,6 @@ if [ -s "/etc/config/shadowsocksr" ]; then
         uci -q set shadowsocksr.@server_subscribe[0].sub_convert='1'
     fi
 
-
     if ! uci -q get shadowsocksr.@server_subscribe[0].config_auto_update_mode > /dev/null; then
         uci -q set shadowsocksr.@server_subscribe[0].config_auto_update_mode='0'
     fi
@@ -83,6 +82,18 @@ if [ -s "/etc/config/shadowsocksr" ]; then
 
     if ! uci -q get shadowsocksr.@global[0].component_mirror > /dev/null; then
         uci -q set shadowsocksr.@global[0].component_mirror='direct'
+    fi
+
+    if ! uci -q get shadowsocksr.@global[0].yacd_type > /dev/null; then
+        uci -q set shadowsocksr.@global[0].yacd_type='Meta'
+    fi
+
+    if ! uci -q get shadowsocksr.@global[0].dashboard_type > /dev/null; then
+        uci -q set shadowsocksr.@global[0].dashboard_type='Official'
+    fi
+
+    if ! uci -q get shadowsocksr.@global[0].default_dashboard > /dev/null; then
+        uci -q set shadowsocksr.@global[0].default_dashboard='zashboard'
     fi
 
     if ! uci -q get shadowsocksr.@global[0].filter_aaaa > /dev/null; then
