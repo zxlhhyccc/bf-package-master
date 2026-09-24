@@ -1,0 +1,11 @@
+--- a/package/openwrt/files/etc/init.d/smartdns
++++ b/package/openwrt/files/etc/init.d/smartdns
+@@ -218,7 +218,7 @@
+ 	local IS_URI="0"
+ 
+ 	config_get_bool enabled "$section" "enabled" "1"
+-	config_get port "$section" "port" ""
++	config_get port "$section" "port" "53"
+ 	config_get type "$section" "type" "udp"
+ 	config_get ip "$section" "ip" ""
+ 	config_get tls_host_verify "$section" "tls_host_verify" ""

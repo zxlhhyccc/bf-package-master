@@ -46,6 +46,12 @@ function getServiceStatus() {
 		});
 }
 
+function smartdnsServiceStatus() {
+	return Promise.all([
+		getServiceStatus()
+	]);
+}
+
 function smartdnsRenderStatus(res) {
 	var renderHTML = "";
 	var isRunning = res[0];
@@ -120,7 +126,7 @@ return view.extend({
 		s.anonymous = true;
 		s.render = function (section_id) {
 			var renderStatus = function () {
-				return L.resolveDefault(getServiceStatus()).then(function (res) {
+				return L.resolveDefault(smartdnsServiceStatus()).then(function (res) {
 					var view = document.getElementById("service_status");
 					if (view == null) {
 						return;
@@ -175,6 +181,16 @@ return view.extend({
 		o.default = 53;
 		o.datatype = "port";
 		o.rempty = false;
+		o.formvalue = function(section_id) {
+			var val = form.Value.prototype.formvalue.apply(this, arguments);
+			if (val == null || String(val).trim() === "") {
+				return "53";
+			}
+			return String(val).trim();
+		};
+		o.remove = function(section_id) {
+			return uci.set('smartdns', section_id, 'port', '53');
+		};
 
 		// auto-conf-dnsmasq;
 		o = s.taboption("settings", form.Flag, "auto_set_dnsmasq", _("Automatically Set Dnsmasq"), _("Automatically set as upstream of dnsmasq when port changes."));
@@ -327,6 +343,16 @@ return view.extend({
 		o.default = 853;
 		o.datatype = "port";
 		o.rempty = false;
+		o.formvalue = function(section_id) {
+			var val = form.Value.prototype.formvalue.apply(this, arguments);
+			if (val == null || String(val).trim() === "") {
+				return "853";
+			}
+			return String(val).trim();
+		};
+		o.remove = function(section_id) {
+			return uci.set('smartdns', section_id, 'port', '853');
+		};
 		o.depends('tls_server', '1');
 
 		// Enable DOH server;
@@ -343,6 +369,16 @@ return view.extend({
 		o.default = 843;
 		o.datatype = "port";
 		o.rempty = false;
+		o.formvalue = function(section_id) {
+			var val = form.Value.prototype.formvalue.apply(this, arguments);
+			if (val == null || String(val).trim() === "") {
+				return "843";
+			}
+			return String(val).trim();
+		};
+		o.remove = function(section_id) {
+			return uci.set('smartdns', section_id, 'port', '843');
+		};
 		o.depends('doh_server', '1');
 
 		o = s.taboption("advanced", form.Value, "bind_cert", _("Server Cert"), _("Server certificate file path."));
@@ -583,6 +619,16 @@ return view.extend({
 		o.default = 6553;
 		o.datatype = "port";
 		o.rempty = false;
+		o.formvalue = function(section_id) {
+			var val = form.Value.prototype.formvalue.apply(this, arguments);
+			if (val == null || String(val).trim() === "") {
+				return "6553";
+			}
+			return String(val).trim();
+		};
+		o.remove = function(section_id) {
+			return uci.set('smartdns', section_id, 'port', '6553');
+		};
 
 		// Enable TCP server;
 		o = s.taboption("seconddns", form.Flag, "seconddns_tcp_server", _("TCP Server"), _("Enable TCP DNS Server"));
@@ -800,7 +846,7 @@ return view.extend({
 		so.value("ip-set", _("ip-set file (/etc/smartdns/ip-set)"));
 		so.value("other", _("other file (/etc/smartdns/download)"));
 		so.default = "list";
-		so.rempty = false;
+		so.rmempty = false;
 
 		so = ss.option(form.Value, 'desc', _('Description'), _('Description'));
 		so.rmempty = true;
