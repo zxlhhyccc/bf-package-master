@@ -85,7 +85,7 @@ if [ -s "/etc/config/shadowsocksr" ]; then
     fi
 
     if ! uci -q get shadowsocksr.@global[0].yacd_type > /dev/null; then
-        uci -q set shadowsocksr.@global[0].yacd_type='Meta'
+        uci -q set shadowsocksr.@global[0].yacd_type='Official'
     fi
 
     if ! uci -q get shadowsocksr.@global[0].dashboard_type > /dev/null; then
@@ -93,7 +93,7 @@ if [ -s "/etc/config/shadowsocksr" ]; then
     fi
 
     if ! uci -q get shadowsocksr.@global[0].default_dashboard > /dev/null; then
-        uci -q set shadowsocksr.@global[0].default_dashboard='zashboard'
+        uci -q set shadowsocksr.@global[0].default_dashboard='yacd'
     fi
 
     if ! uci -q get shadowsocksr.@global[0].filter_aaaa > /dev/null; then
