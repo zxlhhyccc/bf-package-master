@@ -118,29 +118,42 @@ function copy_instance(var)
 	local TMP_DNSMASQ_PATH = var["-TMP_DNSMASQ_PATH"]
 	local conf_lines = {}
 	local DEFAULT_DNSMASQ_CFGID = sys.exec("echo -n $(uci -q show dhcp.@dnsmasq[0] | awk 'NR==1 {split($0, conf, /[.=]/); print conf[2]}')")
-	for line in io.lines("/tmp/etc/dnsmasq.conf." .. DEFAULT_DNSMASQ_CFGID) do
-		local filter
-		if line:find("passwall") then filter = true end
-		if line:find("ubus") then filter = true end
-		if line:find("dhcp") then filter = true end
-		if line:find("server=") == 1 then filter = true end
-		if line:find("port=") == 1 then filter = true end
-		if line:find("min%-cache%-ttl") == 1 then filter = true end
-		if line:find("conf%-dir=") == 1 then
-			filter = true
-			if TMP_DNSMASQ_PATH then
-				local tmp_path = line:sub(1 + #"conf-dir=")
-				sys.call(string.format("cp -r %s/* %s/ 2>/dev/null", tmp_path, TMP_DNSMASQ_PATH))
+	local conf_file = "/var/etc/dnsmasq.conf." .. DEFAULT_DNSMASQ_CFGID
+
+	local retry = 5
+	while not fs.access(conf_file) and retry > 0 do
+		api.nixio.nanosleep(1, 0)
+		retry = retry - 1
+	end
+
+	if fs.access(conf_file) then
+		for line in io.lines(conf_file) do
+			local filter
+			if line:find("passwall") then filter = true end
+			if line:find("ubus") then filter = true end
+			if line:find("dhcp") then filter = true end
+			if line:find("server=") == 1 then filter = true end
+			if line:find("port=") == 1 then filter = true end
+			if line:find("min%-cache%-ttl") == 1 then filter = true end
+			if line:find("conf%-dir=") == 1 then
+				filter = true
+				if TMP_DNSMASQ_PATH then
+					local tmp_path = line:sub(1 + #"conf-dir=")
+					sys.call(string.format("cp -r %s/* %s/ 2>/dev/null", tmp_path, TMP_DNSMASQ_PATH))
+				end
+			end
+			if line:find("address=") == 1 or (line:find("server=") == 1 and line:find("/")) then filter = nil end
+			if not filter then
+				tinsert(conf_lines, line)
 			end
 		end
-		if line:find("address=") == 1 or (line:find("server=") == 1 and line:find("/")) then filter = nil end
-		if not filter then
-			tinsert(conf_lines, line)
-		end
+	else
+		sys.call("logger -t passwall 'ERROR: dnsmasq config " .. conf_file .. " not found after 5s wait! DNS hijacking will fail.'")
 	end
+
 	tinsert(conf_lines, "port=" .. LISTEN_PORT)
 	if TMP_DNSMASQ_PATH then
-		sys.call("rm -rf " .. TMP_DNSMASQ_PATH .. "/*passwall*")
+		api.remove(TMP_DNSMASQ_PATH .. "/*passwall*")
 	end
 	if var["-return"] == "1" then
 		return conf_lines
@@ -320,18 +333,31 @@ function add_rule(var)
 		pipe:close()
 	end
 
-	local cache_text = ""
-	local nodes_address_md5 = sys.exec("echo -n $(uci show passwall | grep '\\.address') | md5sum")
-	local new_rules = sys.exec("echo -n $(find /usr/share/passwall/rules -type f | xargs md5sum)")
-	local new_text = TMP_DNSMASQ_PATH .. DNSMASQ_CONF_FILE .. DEFAULT_DNS .. LOCAL_DNS .. TUN_DNS .. USE_DEFAULT_DNS .. CHINADNS_DNS .. USE_DIRECT_LIST .. USE_PROXY_LIST .. USE_BLOCK_LIST .. USE_GFW_LIST .. CHN_LIST .. DEFAULT_PROXY_MODE .. NO_PROXY_IPV6 .. nodes_address_md5 .. new_rules .. NFTFLAG
-	if fs.access(CACHE_TEXT_FILE) then
-		for line in io.lines(CACHE_TEXT_FILE) do
-			cache_text = line
+	local function get_dns_config_key()
+		local address_md5 = api.md5_string(sys.exec([[uci show passwall | grep -E '\.(address|download_address|domain_resolver_dns|domain_resolver_dns_https)=|^passwall\.sub_[^.]+\.url=' | cut -d "'" -f 2 | sort -u]]))
+		local new_rules = sys.exec([[
+		for f in \
+			/usr/share/passwall/rules/chnlist \
+			/usr/share/passwall/rules/gfwlist \
+			/etc/passwall/rules/direct_host \
+			/etc/passwall/rules/proxy_host \
+			/etc/passwall/rules/block_host
+		do
+			[ -f "$f" ] && md5sum "$f" | awk '{printf "%s", $1}'
+		done
+		]])
+		local SHUNT_LIST = ""
+		if IS_SHUNT_NODE then
+			local t = api.uci_get_c(NODE)
+			api.uci_foreach_c("shunt_rules", function(s)
+				local _node_id = t[s[".name"]]
+				if _node_id and t["shunt_group"] == s.group then
+					SHUNT_LIST = SHUNT_LIST .. (s.domain_list or "") .. (_node_id:sub(1, 1) == "_" and "not-node" or "node")
+				end
+			end)
 		end
-	end
-
-	if cache_text ~= new_text then
-		api.remove(CACHE_DNS_PATH .. "*")
+		new_rules = new_rules .. api.md5_string(SHUNT_LIST)
+		return TMP_DNSMASQ_PATH .. DNSMASQ_CONF_FILE .. DEFAULT_DNS .. LOCAL_DNS .. TUN_DNS .. USE_DEFAULT_DNS .. CHINADNS_DNS .. USE_DIRECT_LIST .. USE_PROXY_LIST .. USE_BLOCK_LIST .. USE_GFW_LIST .. CHN_LIST .. DEFAULT_PROXY_MODE .. NO_PROXY_IPV6 .. address_md5 .. new_rules .. NFTFLAG
 	end
 
 	local dnsmasq_default_dns
@@ -361,13 +387,29 @@ function add_rule(var)
 	local setflag_4= (NFTFLAG == "1") and "4#inet#passwall#" or ""
 	local setflag_6= (NFTFLAG == "1") and "6#inet#passwall#" or ""
 
+	local new_text = ""
+	if USE_CHINADNS_NG == "0" then
+		local cache_text = ""
+		if fs.access(CACHE_TEXT_FILE) then
+			for line in io.lines(CACHE_TEXT_FILE) do
+				cache_text = line
+			end
+		end
+		new_text = get_dns_config_key()
+		if cache_text == "" or new_text == "" or cache_text ~= new_text then
+			api.remove(CACHE_DNS_PATH .. "*")
+		end
+	else
+		api.remove(CACHE_DNS_PATH .. "*")
+	end
+
 	if not fs.access(CACHE_DNS_PATH) then
 		fs.mkdir(CACHE_DNS_PATH)
 
 		--屏蔽列表
 		if USE_CHINADNS_NG == "0" and USE_BLOCK_LIST == "1" then
 			local geosite_arg = ""
-			local f = io.open("/usr/share/passwall/rules/block_host")
+			local f = io.open("/etc/passwall/rules/block_host")
 			if f then
 				for line in f:lines() do
 					if not line:find("#") and line:find("geosite:") then
@@ -442,7 +484,7 @@ function add_rule(var)
 				}
 				--始终用国内DNS解析直连（白名单）列表
 				local geosite_arg = ""
-				local f = io.open("/usr/share/passwall/rules/direct_host")
+				local f = io.open("/etc/passwall/rules/direct_host")
 				if f then
 					for line in f:lines() do
 						if not line:find("#") and line:find("geosite:") then
@@ -492,7 +534,7 @@ function add_rule(var)
 				end
 				--始终使用远程DNS解析代理（黑名单）列表
 				local geosite_arg = ""
-				local f = io.open("/usr/share/passwall/rules/proxy_host")
+				local f = io.open("/etc/passwall/rules/proxy_host")
 				if f then
 					for line in f:lines() do
 						if not line:find("#") and line:find("geosite:") then
@@ -607,56 +649,33 @@ function add_rule(var)
 						end
 					end
 					f:close()
-					log(string.format("  - 中国域名表(chnroute)：%s", fwd_dns or "默认"))
+					log(string.format("  - 中国域名表(chnlist)：%s", fwd_dns or "默认"))
 				end
 			end
 		end
 
 		--分流规则
-		if IS_SHUNT_NODE and USE_CHINADNS_NG == "0" then
+		if IS_SHUNT_NODE and USE_CHINADNS_NG == "0" and only_global ~= 1 then
 			local t = api.uci_get_c(NODE)
 			local default_node_id = t["default_node"] or "_direct"
 			api.uci_foreach_c("shunt_rules", function(s)
 				local _node_id = t[s[".name"]]
-				if _node_id and _node_id ~= "_blackhole" and t["shunt_group"] == s.group then
+				if _node_id and t["shunt_group"] == s.group then
 					if _node_id == "_default" then
 						_node_id = default_node_id
 					end
 
-					fwd_dns = nil
-					no_ipv6 = nil
+					fwd_dns = TUN_DNS
 
-					local sets = {}
-
-					if _node_id == "_direct" then
-						fwd_dns = LOCAL_DNS
-						if USE_DIRECT_LIST == "1" then
-							table.insert(sets, setflag_4 .. "psw_white")
-							table.insert(sets, setflag_6 .. "psw_white6")
-						else
-							local set_name = "psw_shunt"
-							local set6_name = "psw_shunt6"
-							if FLAG ~= "default" then
-								set_name = "psw_" .. FLAG .. "_shunt"
-								set6_name = "psw_" .. FLAG .. "_shunt6"
-							end
-							table.insert(sets, setflag_4 .. set_name)
-							table.insert(sets, setflag_6 .. set6_name)
-						end
-					else
-						local set_name = "psw_shunt"
-						local set6_name = "psw_shunt6"
-						if FLAG ~= "default" then
-							set_name = "psw_" .. FLAG .. "_shunt"
-							set6_name = "psw_" .. FLAG .. "_shunt6"
-						end
-						fwd_dns = TUN_DNS
-						table.insert(sets, setflag_4 .. set_name)
-						if NO_PROXY_IPV6 ~= "1" then
-							table.insert(sets, setflag_6 .. set6_name)
-						else
-							no_ipv6 = true
-						end
+					local sets = {
+						setflag_4 .. "psw_shunt",
+						setflag_6 .. "psw_shunt6"
+					}
+					if FLAG ~= "default" then
+						sets = {
+							setflag_4 .. "psw_" .. FLAG .. "_shunt",
+							setflag_6 .. "psw_" .. FLAG .. "_shunt6"
+						}
 					end
 
 					local domain_list = s.domain_list or ""
@@ -672,10 +691,6 @@ function add_rule(var)
 								end
 								line = api.get_std_domain(line)
 								add_excluded_domain(line)
-
-								if no_ipv6 then
-									set_domain_address(line, "::")
-								end
 								set_domain_dns(line, fwd_dns)
 								set_domain_ipset(line, table.concat(sets, ","))
 							end
@@ -685,18 +700,13 @@ function add_rule(var)
 					if USE_GFW_LIST == "1" and CHN_LIST == "0" and USE_GEOVIEW == "1" and geosite_arg ~= "" then  --仅GFW模式解析geosite
 						foreach_geosite(geosite_arg, function(line)
 							add_excluded_domain(line)
-							if no_ipv6 then
-								set_domain_address(line, "::")
-							end
 							set_domain_dns(line, fwd_dns)
 							set_domain_ipset(line, table.concat(sets, ","))
 						end)
 						log(string.format("  - 解析分流规则(%s) Geosite 完成", s.remarks))
 					end
 
-					if _node_id ~= "_direct" then
-						log(string.format("  - Sing-Box/Xray分流规则(%s)：%s", s.remarks, fwd_dns or "默认"))
-					end
+					log(string.format("  - Sing-Box/Xray分流规则(%s)：%s", s.remarks, fwd_dns or "默认"))
 				end
 			end)
 		elseif only_global == 1 and NO_PROXY_IPV6 == "1" then
@@ -749,6 +759,8 @@ function add_rule(var)
 		local f_out = io.open(CACHE_TEXT_FILE, "a")
 		f_out:write(new_text)
 		f_out:close()
+	else
+		log("  - 从缓存加载 Dnsmasq 域名分流规则。")
 	end
 
 	if USE_CHINADNS_NG == "0" then
@@ -797,7 +809,7 @@ function add_rule(var)
 	end
 
 	if USE_CHINADNS_NG == "0" then
-		log("  - PassWall必须依赖于Dnsmasq，如果你自行配置了错误的DNS流程，将会导致域名(直连/代理域名)分流失效！！！")
+		log("  - PassWall必须依赖于Dnsmasq，如果你自行配置了错误的DNS流程，将会导致域名(直连/代理)分流失效！！！")
 	end
 end
 

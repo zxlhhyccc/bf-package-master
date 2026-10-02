@@ -1461,7 +1461,7 @@ msgid "Private Key"
 msgstr "私钥"
 
 msgid "Pre shared key"
-msgstr "额外的对称加密密钥"
+msgstr "预共享密钥"
 
 msgid "Allowed IPs"
 msgstr "允许的 IP"
@@ -1610,20 +1610,29 @@ msgstr "远程端口"
 msgid "as:"
 msgstr "如："
 
-msgid "Public key absolute path"
-msgstr "公钥文件绝对路径"
+msgid "Path to the certificate file"
+msgstr "证书文件路径"
 
-msgid "Private key absolute path"
-msgstr "私钥文件绝对路径"
+msgid "Path to the private key file"
+msgstr "私钥文件路径"
 
-msgid "ECH key absolute path"
-msgstr "ECH 密钥绝对路径"
+msgid "Path to the ECH key file"
+msgstr "ECH 密钥路径"
 
 msgid "Can't find this file!"
 msgstr "找不到这个文件！"
 
-msgid "Public key and Private key path can not be empty!"
-msgstr "公钥和私钥文件路径不能为空！"
+msgid "Certificate and Private key path can not be empty!"
+msgstr "证书和私钥文件路径不能为空！"
+
+msgid "Certificate and Private key PEM can not be empty!"
+msgstr "证书和私钥 PEM 不能为空！"
+
+msgid "Use PEM"
+msgstr "使用 PEM"
+
+msgid "Use certificate and private key PEM content."
+msgstr "使用证书和私钥的 PEM 内容。"
 
 msgid "Server-Side"
 msgstr "服务器端"
@@ -1651,36 +1660,6 @@ msgstr "启用节点日志"
 
 msgid "Log Level"
 msgstr "日志等级"
-
-msgid "Advanced log feature"
-msgstr "高级日志功能"
-
-msgid "For professionals only."
-msgstr "仅限专业人士使用。"
-
-msgid "Persist log file directory"
-msgstr "持久性日志文件目录"
-
-msgid "The path to the directory used to store persist log files, the \"/\" at the end can be omitted. Leave it blank to disable this feature."
-msgstr "用来存储持久性日志文件的目录路径，末尾的 “/” 可以省略。留空以禁用此功能。"
-
-msgid "Logging to system log"
-msgstr "记录到系统日志"
-
-msgid "Logging to the system log for more advanced functions. For example, send logs to a dedicated log server."
-msgstr "将日志记录到系统日志，以实现更加高级的功能。例如，把日志发送到专门的日志服务器。"
-
-msgid "Log Event Filter"
-msgstr "日志事件过滤器"
-
-msgid "Support regular expression."
-msgstr "支持正则表达式。"
-
-msgid "Shell Command"
-msgstr "Shell 命令"
-
-msgid "Shell command to execute, replace log content with %s."
-msgstr "要执行的 Shell 命令，用 %s 代替日志内容。"
 
 msgid "Not enabled log"
 msgstr "未启用日志"
@@ -1753,12 +1732,6 @@ msgstr "XUDP 最大并发连接数"
 
 msgid "Padding"
 msgstr "填充"
-
-msgid "Enable early data"
-msgstr "启用前置数据"
-
-msgid "Early data length"
-msgstr "前置数据最大长度"
 
 msgid "Early data header name"
 msgstr "前置数据 HTTP 头名"
@@ -1852,6 +1825,12 @@ msgstr "TLS 证书（PEM）"
 
 msgid "Full certificate (chain), PEM format."
 msgstr "完整证书（链），PEM 格式。"
+
+msgid "TLS Private Key (PEM)"
+msgstr "TLS 私钥（PEM）"
+
+msgid "Private key in PEM format."
+msgstr "PEM 格式的私钥。"
 
 msgid "ECH Config"
 msgstr "ECH 配置"
