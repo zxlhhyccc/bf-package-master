@@ -127,13 +127,22 @@
                         </div>
                     </span>
                 </div>
+                    <div class="addr-empty oc-hidden" id="addr-list-empty">
+                        <span class="addr-empty-icon"><svg width="22" height="22"><use href="#oc-icon-alert-circle"/></svg></span>
+                        <span class="addr-empty-title" id="addr-empty-title"></span>
+                        <span class="addr-empty-text" id="addr-empty-text"></span>
+                        <button type="button" class="addr-empty-btn" onclick="return refreshAllData()">
+                            <svg width="13" height="13"><use href="#oc-icon-refresh"/></svg>
+                            <span><%:Retry%></span>
+                        </button>
+                    </div>
                     <div class="select-option addr-row" data-value="https://raw.githubusercontent.com/">
                         <span class="addr-row-index"></span>
                         <span class="addr-row-url">https://raw.githubusercontent.com/</span>
                         <span class="addr-status">--</span>
                         <span class="ver-text ver-plugin">--</span>
                         <span class="ver-text ver-core">--</span>
-                        <span class="addr-proxy-static"><%:RAW%></span>
+                        <span class="addr-proxy-static"><svg width="12" height="12"><use href="#oc-icon-brand-github"/></svg><%:RAW%></span>
                     </div>
                     <div class="select-option addr-row" data-value="https://fastly.jsdelivr.net/">
                         <span class="addr-row-index"></span>
@@ -235,6 +244,7 @@
     var forceRefresh = false;
     var infoCache = {};
     var currentProxyAddr = '';
+    var addrSortDirty = true;
 
     window.levelTranslations = {
         'info': '<%:Info%>',
@@ -279,8 +289,8 @@
         if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
         if (defaultTipTimer) { clearTimeout(defaultTipTimer); defaultTipTimer = null; }
         var tips = [
-            '<%:Note: if the update fails, you can manually download and upload%>',
-            '<%:Note: the client may not support update, because the firmware with squashfs format will not release flash space after updating%>'
+            '<%:Note: manual upload works if the update fails%>',
+            '<%:Note: squashfs firmware may not free disk space%>'
         ];
         var tip = tips[Math.floor(Math.random() * tips.length)];
         hint.innerHTML = '<svg><use href="#oc-icon-alert-circle"/></svg><span>' + tip + '</span>';
@@ -402,25 +412,95 @@
             '<a href="' + escAttr(dlUrl) + '" target="_blank" rel="noopener" class="dl-btn" title="<%:Download%>"><svg width="11" height="11"><use href="#oc-icon-download"/></svg></a>';
     }
 
+    var verColsTimer = null;
+
+    // the plugin and core columns are as wide as the versions in them need: the widest cell is
+    // measured and written as a custom property, so the header and the rows stay on the same tracks
+    // and a version with a long suffix is not cut behind an ellipsis
+    function syncVersionColumns() {
+        var body = document.getElementById('addr-list-body');
+        if (!body) return;
+        var widest = { plugin: 0, core: 0 };
+        document.querySelectorAll('#addr-list-body .addr-row .ver-text').forEach(function (cell) {
+            var link = cell.querySelector('.ver-link');
+            if (!link) return;
+            var key = cell.classList.contains('ver-plugin') ? 'plugin' : (cell.classList.contains('ver-core') ? 'core' : null);
+            if (!key) return;
+            // the range reads the full text even while the cell clips it, the paddings and the download
+            // button are what the cell has to hold around that text
+            var range = document.createRange();
+            range.selectNodeContents(link);
+            var linkStyle = getComputedStyle(link);
+            var cellStyle = getComputedStyle(cell);
+            var btn = cell.querySelector('.dl-btn');
+            var width = range.getBoundingClientRect().width
+                + parseFloat(linkStyle.paddingLeft) + parseFloat(linkStyle.paddingRight)
+                + parseFloat(cellStyle.paddingLeft) + parseFloat(cellStyle.paddingRight)
+                + (btn ? btn.offsetWidth + parseFloat(cellStyle.columnGap || 0) : 0)
+                + 2;
+            if (width > widest[key]) widest[key] = width;
+        });
+        if (widest.plugin > 0) body.style.setProperty('--addr-ver-plugin', Math.ceil(widest.plugin) + 'px');
+        if (widest.core > 0) body.style.setProperty('--addr-ver-core', Math.ceil(widest.core) + 'px');
+    }
+
+    function queueVersionColumns() {
+        if (verColsTimer) return;
+        verColsTimer = setTimeout(function () {
+            verColsTimer = null;
+            syncVersionColumns();
+        }, 60);
+    }
+
+    // a breakpoint change also changes the font size of the cells, so the measurement is redone
+    function resetVersionColumns() {
+        var body = document.getElementById('addr-list-body');
+        if (!body) return;
+        body.style.removeProperty('--addr-ver-plugin');
+        body.style.removeProperty('--addr-ver-core');
+        queueVersionColumns();
+    }
+
     function updateAddrRow(row, addrUrl, info) {
         var smart = smart_enable.value || '0';
         var latencyEl = row.querySelector('.addr-status');
         var verSpans = row.querySelectorAll('.ver-text');
         var pluginEl = verSpans[0];
         var coreEl = verSpans[1];
+        var coreVer = (smart === '1' && info.core_smart_ver) ? info.core_smart_ver : info.core_meta_ver;
+        var errText = '';
+        if (info.latency === -1) {
+            errText = '<%:Access Timed Out%>';
+        } else if (info.latency === -2) {
+            errText = '<%:Access Denied%>';
+        } else if (info.latency > 0 && (!info.plugin_ver || !coreVer)) {
+            errText = info.core_error === 'timeout' ? '<%:Access Timed Out%>' : '<%:Access Denied%>';
+        }
+        row.classList.toggle('row-error', !!errText);
+
+        infoCache[addrUrl] = {
+            plugin_ver: info.plugin_ver || null,
+            core_meta_ver: info.core_meta_ver || null,
+            core_smart_ver: info.core_smart_ver || null,
+            latency: info.latency,
+            core_error: info.core_error || null,
+            error: errText || null
+        };
+
+        if (errText) {
+            latencyEl.textContent = errText;
+            latencyEl.className = 'addr-status err';
+            latencyEl.title = '';
+            if (pluginEl) { pluginEl.textContent = '--'; pluginEl.classList.remove('has-data', 'err'); }
+            if (coreEl) { coreEl.textContent = '--'; coreEl.classList.remove('has-data', 'err'); }
+            queueVersionColumns();
+            return;
+        }
 
         if (info.latency != null && info.latency > 0) {
             var ms = parseInt(info.latency);
             latencyEl.textContent = ms + ' ms';
             latencyEl.className = 'addr-status ' + (ms <= 500 ? 'fast' : ms <= 1000 ? 'medium' : 'slow');
-            latencyEl.title = '';
-        } else if (info.latency === -1) {
-            latencyEl.textContent = '<%:Access Timed Out%>';
-            latencyEl.className = 'addr-status err';
-            latencyEl.title = '';
-        } else if (info.latency === -2) {
-            latencyEl.textContent = '<%:Access Denied%>';
-            latencyEl.className = 'addr-status err';
             latencyEl.title = '';
         } else {
             latencyEl.textContent = '--';
@@ -434,60 +514,22 @@
                 pluginEl.classList.add('has-data');
                 pluginEl.classList.remove('err');
             } else {
-                var selLink = makeVerCell(addrUrl, 'plugin');
-                if (selLink) {
-                    pluginEl.innerHTML = selLink;
-                    pluginEl.classList.add('has-data');
-                    pluginEl.classList.remove('err');
-                } else if (info.latency === -1 || info.latency === -2) {
-                    pluginEl.textContent = info.latency === -1 ? '<%:Access Timed Out%>' : '<%:Access Denied%>';
-                    pluginEl.classList.add('has-data', 'err');
-                } else {
-                    pluginEl.textContent = '--';
-                    pluginEl.classList.remove('has-data', 'err');
-                }
+                pluginEl.textContent = '--';
+                pluginEl.classList.remove('has-data', 'err');
             }
         }
         if (coreEl) {
-            var coreVer = (smart === '1' && info.core_smart_ver) ? info.core_smart_ver : info.core_meta_ver;
             if (coreVer) {
                 coreEl.innerHTML = makeVerCell(addrUrl, 'core', coreVer);
                 coreEl.classList.add('has-data');
                 coreEl.classList.remove('err');
-            } else if (info.latency === -1 || info.latency === -2 || info.latency === -3 || info.latency == null) {
-                if (info.latency === -1) {
-                    coreEl.textContent = '<%:Access Timed Out%>';
-                    coreEl.classList.add('has-data', 'err');
-                } else if (info.latency === -2) {
-                    coreEl.textContent = '<%:Access Denied%>';
-                    coreEl.classList.add('has-data', 'err');
-                } else {
-                    coreEl.textContent = '--';
-                    coreEl.classList.remove('has-data', 'err');
-                }
             } else {
-                var selLink = makeVerCell(addrUrl, 'core');
-                if (selLink) {
-                    coreEl.innerHTML = selLink;
-                    coreEl.classList.add('has-data');
-                    coreEl.classList.remove('err');
-                } else if (info.core_error) {
-                    coreEl.textContent = info.core_error === 'timeout' ? '<%:Access Timed Out%>' : '<%:Access Denied%>';
-                    coreEl.classList.add('has-data', 'err');
-                } else {
-                    coreEl.textContent = '<%:Access Timed Out%>';
-                    coreEl.classList.add('has-data', 'err');
-                }
+                coreEl.textContent = '--';
+                coreEl.classList.remove('has-data', 'err');
             }
         }
 
-        infoCache[addrUrl] = {
-            plugin_ver: info.plugin_ver || null,
-            core_meta_ver: info.core_meta_ver || null,
-            core_smart_ver: info.core_smart_ver || null,
-            latency: info.latency,
-            core_error: info.core_error || null
-        };
+        queueVersionColumns();
     }
 
     function buildAddrRows(st) {
@@ -506,6 +548,7 @@
             div.innerHTML = '<span class="addr-row-index"></span><span class="addr-row-url">' + val + '</span><span class="addr-status">--</span><span class="ver-text ver-plugin">--</span><span class="ver-text ver-core">--</span>';
             listBody.insertBefore(div, customOpt);
             existing[val] = true;
+            addrSortDirty = true;
         }
         var mod = st.github_address_mod;
         if (mod && mod !== '0') addRow(mod);
@@ -807,7 +850,62 @@
                 el.textContent = '--';
                 el.classList.remove('has-data', 'err');
             });
+            row.classList.remove('row-error');
         });
+        addrSortDirty = true;
+        updateAddrListState();
+    }
+
+    function addrLatencyRank(addrUrl) {
+        var info = infoCache[addrUrl];
+        if (!info || info.error || info.latency == null || info.latency <= 0) return Infinity;
+        return info.latency;
+    }
+
+    function sortAddrRows() {
+        var listBody = document.querySelector('#addr-list-body .addr-list-scroll') || document.getElementById('addr-list-body');
+        var customOpt = document.getElementById('custom-addr-option');
+        if (!listBody || !customOpt) return;
+        var rows = Array.prototype.slice.call(listBody.querySelectorAll('.addr-row'));
+        var pinned = [];
+        var sortable = [];
+        rows.forEach(function(row) {
+            if (classifyAddr(row.dataset.value) === 'raw') pinned.push(row);
+            else sortable.push(row);
+        });
+        sortable.sort(function(a, b) {
+            var ka = addrLatencyRank(a.dataset.value);
+            var kb = addrLatencyRank(b.dataset.value);
+            if (ka === kb) return 0;
+            return ka < kb ? -1 : 1;
+        });
+        pinned.concat(sortable).forEach(function(row) { listBody.insertBefore(row, customOpt); });
+    }
+
+    function updateAddrListState() {
+        var card = document.getElementById('addr-list-empty');
+        var scroll = document.querySelector('#addr-list-body .addr-list-scroll');
+        if (!card || !scroll) return;
+        var rows = Array.prototype.slice.call(scroll.querySelectorAll('.addr-row'));
+        var known = 0;
+        var reachable = 0;
+        rows.forEach(function(row) {
+            var info = infoCache[row.dataset.value];
+            if (!info || info.latency == null) return;
+            known++;
+            if (info.latency > 0 || info.latency === -3) reachable++;
+        });
+        var mode = rows.length === 0 ? 'empty' : (known > 0 && reachable === 0 ? 'error' : '');
+        card.classList.toggle('err', mode === 'error');
+        card.classList.toggle('oc-hidden', !mode);
+        scroll.classList.toggle('all-failed', mode === 'error');
+        if (!mode) return;
+        document.getElementById('addr-empty-title').textContent = mode === 'empty'
+            ? '<%:No mirror address%>'
+            : '<%:All mirrors are unreachable%>';
+        document.getElementById('addr-empty-text').textContent = mode === 'empty'
+            ? '<%:Add a custom CDN address below, then retry.%>'
+            : '<%:Check the network or proxy settings, then retry.%>';
     }
 
     function updateDataStatus(flags) {
@@ -898,6 +996,11 @@
                         if (info.error === 'version_stale') {
                             fetchVersionHistory(true);
                         }
+                        if (addrSortDirty) {
+                            addrSortDirty = false;
+                            sortAddrRows();
+                        }
+                        updateAddrListState();
                         continue;
                     }
                     var addrUrl = info.addr;
@@ -935,6 +1038,11 @@
                             if (info.error === 'version_stale') {
                                 fetchVersionHistory(true);
                             }
+                            if (addrSortDirty) {
+                                addrSortDirty = false;
+                                sortAddrRows();
+                            }
+                            updateAddrListState();
                             continue;
                         }
                         var addrUrl = info.addr;
@@ -1049,7 +1157,7 @@
             : document.getElementById('select-core-ver');
 
         if (type === 'core' && (!arch || arch === '0')) {
-            showHint('<%:No Compiled Version Selected, Please Select In Update Page And Try Again%>');
+            showHint('<%:No Compiled Version Selected, Please Select In Update Page And Try Again!%>');
             return;
         }
         var sha = ver ? findSHAbyVersion(selectEl, ver) : '';
@@ -1171,6 +1279,7 @@
                 listBody.insertBefore(div, document.getElementById('custom-addr-option'));
                 customInput.classList.add('oc-hidden');
                 addBtn.classList.add('oc-hidden');
+                addrSortDirty = true;
                 renderProxyStates();
                 refreshAddrInfo({merge: true, cancel: true, user: true});
             } else {
@@ -1199,7 +1308,7 @@
             var s = smart_enable.value;
 
             if (!arch || arch === '0') {
-                showHint('<%:No Compiled Version Selected, Please Select In Update Page And Try Again%>');
+                showHint('<%:No Compiled Version Selected, Please Select In Update Page And Try Again!%>');
                 return;
             }
 
@@ -1672,6 +1781,7 @@
     }
     window.addEventListener('beforeunload', stopLogStream);
     window.addEventListener('pagehide', stopLogStream);
+    window.addEventListener('resize', resetVersionColumns);
     initPopupResizeObserver();
 //]]>
 </script>

@@ -124,7 +124,8 @@ o:depends("en_mode", "fake-ip-mix")
 o:value("system", translate("System　"))
 o:value("gvisor", translate("gVisor"))
 o:value("mixed", translate("Mixed"))
-o.default = "system"
+o:value("mips", translate("Mips"))
+o.default = "mips"
 
 o = s:taboption("op_mode", ListValue, "proxy_mode", translate("Proxy Mode"))
 o.description = translate("Select Proxy Mode")
@@ -516,6 +517,18 @@ o.default = 0
 o:value("0", translate("Disable"))
 o:value("1", translate("Bypass Mainland China"))
 o:value("2", translate("Bypass Overseas"))
+
+if op_mode == "fake-ip" then
+o = s:taboption("traffic_control", ListValue, "china_ip_route_domain_source", translate("China IP Route Domain Source"))
+o.description = translate("Select The China Domain Data Source Used by China IP Route in Fake-IP Mode. MetaCubeX Uses cn.mrs from MetaCubeX/meta-rules-dat; GeoSite Uses The cn Category in The Current GeoSite Database")
+o:value("mrs", translate("MetaCubeX Rules cn.mrs (Default)"))
+o:value("geosite", translate("GeoSite Rules geosite:cn"))
+o.default = "mrs"
+o:depends("china_ip_route", "1")
+o:depends("china_ip_route", "2")
+o:depends("china_ip6_route", "1")
+o:depends("china_ip6_route", "2")
+end
 
 o = s:taboption("traffic_control", Flag, "intranet_allowed", translate("Only intranet allowed"))
 o.description = translate("When Enabled, The Control Panel And The Connection Broker Port Will Not Be Accessible From The Public Network")
@@ -1263,6 +1276,12 @@ o.default = "9090"
 o.datatype = "port"
 o.rmempty = false
 o.description = translate("Dashboard Address Example:").." "..font_green..bold_on..lan_ip..':'..cn_port..'/ui/yacd'..'、'..lan_ip..':'..cn_port..'/ui/dashboard'..bold_off..font_off
+local cn_port_write = o.write
+o.write = function(self, section, value)
+	local ret = cn_port_write(self, section, value)
+	SYS.exec("/usr/share/openclash/openclash_nginx.sh >/dev/null 2>&1 &")
+	return ret
+end
 
 o = s:taboption("dashboard", Value, "dashboard_password")
 o.title = translate("Dashboard Secret")
@@ -1388,7 +1407,8 @@ o:depends({ipv6_mode= "3", en_mode = "fake-ip"})
 o:value("system", translate("System　"))
 o:value("gvisor", translate("gVisor"))
 o:value("mixed", translate("Mixed"))
-o.default = "system"
+o:value("mips", translate("Mips"))
+o.default = "mips"
 
 o = s:taboption("ipv6", Flag, "enable_v6_udp_proxy", translate("Proxy UDP Traffics"))
 o.description = translate("The Servers Must Support UDP forwarding").."<br>"..font_red..bold_on..translate("If Docker is Installed, UDP May Not Forward Normally")..bold_off..font_off

@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://whois.pconline.com.cn">
 <link rel="preconnect" href="https://api.ip.sb">
 <link rel="preconnect" href="https://api.ipify.org">
-<link rel="preconnect" href="http://myip.ipip.net">
+<link rel="preconnect" href="https://myip.ipip.net">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
 <title>IP 地址查询</title>
@@ -149,6 +149,30 @@
     }
     var overflowTitleFrame = null;
     var overflowTitleElements = null;
+    var cardHeightFrame = null;
+    function syncCardHeights() {
+        if (cardHeightFrame) return;
+        var schedule = window.requestAnimationFrame || function(callback) { return setTimeout(callback, 0); };
+        cardHeightFrame = schedule(function() {
+            cardHeightFrame = null;
+            var items = document.querySelectorAll('.myip-card-item');
+            if (!items.length) return;
+            items.forEach(function(item) {
+                item.style.transition = 'none';
+                item.style.minHeight = '';
+            });
+            var max = 0;
+            items.forEach(function(item) {
+                var h = item.getBoundingClientRect().height;
+                if (h > max) max = h;
+            });
+            max = max ? Math.ceil(max) + 'px' : '';
+            items.forEach(function(item) {
+                item.style.minHeight = max;
+                item.style.transition = '';
+            });
+        });
+    }
     function addTitleOnOverflow() {
         if (overflowTitleFrame) return;
         var schedule = window.requestAnimationFrame || function(callback) { return setTimeout(callback, 0); };
@@ -165,6 +189,7 @@
                     span.removeAttribute('title');
                 }
             });
+            syncCardHeights();
         });
     }
     function ip_skk()
@@ -221,12 +246,12 @@
     var SpeedHistory = {
         max: 10,
         data: { baidu:[], 163:[], github:[], youtube:[] },
-        _prevPath: { baidu: null, 163: null, github: null, youtube: null },
+        prevPath: { baidu: null, 163: null, github: null, youtube: null },
         push: function(svc, ms) {
             this.data[svc].push(ms);
             if (this.data[svc].length > this.max) this.data[svc].shift();
         },
-        _buildPath: function(pts) {
+        buildPath: function(pts) {
             var w = 90, h = 20, pad = 4;
             var max = Math.max.apply(null, pts), min = Math.min.apply(null, pts);
             var range = max - min || 1;
@@ -272,14 +297,14 @@
                 return;
             }
 
-            var g = this._buildPath(pts);
+            var g = this.buildPath(pts);
             var points = g.points || [];
 
             var ghostHTML = '';
-            if (this._prevPath[svc] && pts.length >= 3) {
-                ghostHTML = '<path d="' + this._prevPath[svc] + '" class="spark-ghost" style="stroke:' + stroke + '"/>';
+            if (this.prevPath[svc] && pts.length >= 3) {
+                ghostHTML = '<path d="' + this.prevPath[svc] + '" class="spark-ghost" style="stroke:' + stroke + '"/>';
             }
-            this._prevPath[svc] = g.d;
+            this.prevPath[svc] = g.d;
 
             el.innerHTML =
                 '<svg viewBox="0 0 ' + g.w + ' ' + g.h + '" class="myip-sparkline-svg">' +
@@ -395,7 +420,7 @@
         },
         reset: function(svc) {
             this.data[svc] = [];
-            this._prevPath[svc] = null;
+            this.prevPath[svc] = null;
         }
     };
 
@@ -528,7 +553,7 @@
             document.head.appendChild(script);
         },
         getIpipIP: () => {
-            IP.get(`http://myip.ipip.net?z=${random}`, 'text')
+            IP.get(`https://myip.ipip.net?z=${random}`, 'text')
             .then(resp => {
                 const ipMatch = resp.data.match(/当前 IP：([0-9A-Fa-f:.]+)/);
                 const geoMatch = resp.data.match(/来自于：(.+)/);
@@ -971,10 +996,16 @@
         } else {
             update_eye_icon(true);
         }
+
+        syncCardHeights();
     }
 
     window.addEventListener('load', function() {
         init_page();
+    });
+
+    window.addEventListener('resize', function() {
+        syncCardHeights();
     });
 
     window.addEventListener('beforeunload', function() {

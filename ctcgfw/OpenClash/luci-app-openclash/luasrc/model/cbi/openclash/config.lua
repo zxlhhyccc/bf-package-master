@@ -180,7 +180,7 @@ sz=tb:option(DummyValue,"size",translate("Size"))
 st.template="openclash/cfg_check"
 sb.template="openclash/sub_info_show"
 
-btnis=tb:option(Button,"switch",translate("SwiTch"))
+btnis=tb:option(Button,"switch",translate("Switch"))
 btnis.render=function(o,t,a)
 	if not e[t] then return false end
 	if fs.IsYamlExt(e[t].name) then
@@ -330,7 +330,7 @@ o = promg:option(Button, "proxy_mg", " ")
 o.inputtitle = translate("Proxy Provider File List")
 o.inputstyle = "reload"
 o.write = function()
-	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "proxy-provider-file-manage"))
+	HTTP.redirect(DISP.build_url("admin", "services", "openclash", "proxy-providers-file-manage"))
 end
 
 o = promg:option(Button, "rule_mg", " ")

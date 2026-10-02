@@ -3200,10 +3200,6 @@ html[data-darkmode="true"] .oc #config-mode-tabs .mode-tab.active {
     background: var(--primary-color);
     color: var(--text-on-primary);
 }
-html[data-darkmode="true"] .oc .config-editor-content {
-    border-bottom: 1px solid var(--border-light);
-    border-top: 1px solid var(--border-light);
-}
 html[data-darkmode="true"] .oc .overwrite-banner {
     background: var(--error-a20);
 }
@@ -3223,7 +3219,7 @@ html[data-darkmode="true"] .oc .overwrite-banner svg circle {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: var(--overlay-bg);
-    z-index: 5;
+    z-index: 1000;
     display: none;
     align-items: center;
     justify-content: center;
@@ -3331,12 +3327,19 @@ html[data-darkmode="true"] .oc .overwrite-banner svg circle {
     background: var(--bg-white);
     z-index: 2;
 }
+.oc .config-editor-body {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    container-type: inline-size;
+}
 .oc .config-editor-content {
     flex: 1;
+    min-width: 0;
     position: relative;
     overflow: hidden;
-    border-bottom: 1px solid var(--border-light);
-    border-top: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
 }
 .oc .config-editor-loading {
     position: absolute;
@@ -3620,52 +3623,292 @@ html[data-darkmode="true"] .oc .overwrite-config-option-state {
     opacity: 0.6;
     cursor: not-allowed;
 }
-.oc .overwrite-card-row {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: var(--section-gap);
-    padding: 8px;
-    max-width: 100%;
-    min-width: 0;
-    align-items: stretch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) var(--bg-gray);
-}
-.oc .overwrite-card-row::-webkit-scrollbar {
-    height: 8px;
-}
-.oc .overwrite-card-row::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 4px;
-}
-.oc .overwrite-card-row::-webkit-scrollbar-track {
-    background: var(--bg-gray);
-    border-radius: 4px;
-}
-.oc .sub-card.overwrite-item {
-    width: 190px;
-    max-width: 220px;
+.oc .overwrite-side {
     flex: 0 0 auto;
-    box-sizing: border-box;
-    gap: var(--section-gap);
-    height: 75px;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-right: none;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
-.oc .sub-card.overwrite-item,
-.oc .sub-card.overwrite-item:active,
-.oc .sub-card.overwrite-item:focus {
-    -webkit-tap-highlight-color: transparent;
+.oc .overwrite-side.rail {
+    width: 46px;
+}
+@container (max-width: 1040px) {
+    .oc .overwrite-side {
+        width: 208px;
+    }
+}
+@container (max-width: 860px) {
+    .oc .overwrite-side {
+        width: 184px;
+    }
+}
+@container (max-width: 700px) {
+    .oc .overwrite-side {
+        width: 164px;
+    }
+}
+.oc .overwrite-side-head,
+.oc .overwrite-side-foot {
+    display: flex;
+    align-items: center;
+    gap: var(--tight-gap);
+    height: 48px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    background: var(--bg-gray);
+}
+.oc .overwrite-side-head {
+    border-bottom: 1px solid var(--border-light);
+}
+.oc .overwrite-side-foot {
+    border-top: 1px solid var(--border-light);
+}
+.oc .overwrite-side-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-title);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.oc .overwrite-side-count {
+    flex: 0 0 auto;
+    font-size: 11px;
+    line-height: 16px;
+    padding: 0 6px;
+    border: 1px solid var(--border-light);
+    border-radius: 9px;
+    background: var(--bg-white);
+    color: var(--text-secondary);
+}
+.oc .overwrite-side-foot .footer-btn {
+    height: 32px;
+    padding: 0 10px;
+}
+.oc .overwrite-side-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: var(--tight-gap);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--bg-gray);
+    scrollbar-gutter: stable;
+}
+.oc .overwrite-side-body::-webkit-scrollbar {
+    width: 6px;
+}
+.oc .overwrite-side-body::-webkit-scrollbar-track {
+    background: var(--bg-gray);
+    border-radius: 3px;
+}
+.oc .overwrite-side-body::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
+.oc .overwrite-side-body::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
 }
 .oc .overwrite-drag-line {
-    display: block;
-    min-width: 4px;
-    width: 4px;
-    background: var(--primary-color);
+    position: absolute;
+    left: 4px;
+    width: 0;
+    height: 2px;
     border-radius: 2px;
-    margin: 0 2px;
-    align-self: stretch;
-    height: auto;
+    background: var(--primary-color);
+    pointer-events: none;
+    z-index: 5;
 }
+.oc .overwrite-item-tag {
+    flex: 0 0 auto;
+    padding: 0 4px;
+    font-size: 10px;
+    line-height: 14px;
+    border: 1px solid var(--border-light);
+    border-radius: 7px;
+    background: var(--bg-gray);
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+.oc .overwrite-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--tight-gap);
+    padding: 5px 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    -webkit-tap-highlight-color: transparent;
+}
+.oc .overwrite-item:hover {
+    background: var(--hover-bg);
+}
+.oc .overwrite-item.active {
+    background: var(--bg-gray);
+}
+.oc .overwrite-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 5px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--primary-color);
+}
+.oc .overwrite-item.dragging {
+    opacity: 0.55;
+    box-shadow: 0 6px 14px var(--overlay-bg);
+}
+.oc .overwrite-item-avatar {
+    display: none;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-gray);
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.oc .overwrite-item-avatar.cjk {
+    font-size: 13px;
+    font-weight: 500;
+}
+.oc .overwrite-item-tag.builtin {
+    border-color: transparent;
+    background: var(--primary-a30);
+    color: var(--primary-color);
+}
+.oc .overwrite-item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.oc .overwrite-item-line,
+.oc .overwrite-item-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--tight-gap);
+    min-width: 0;
+}
+.oc .overwrite-item-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.oc .overwrite-item-sub {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-size: 11px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.oc .overwrite-item.off .overwrite-item-title {
+    color: var(--text-secondary);
+}
+.oc .overwrite-item.unconfigured .overwrite-item-title {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.oc .overwrite-item.unconfigured .overwrite-item-avatar {
+    background: transparent;
+    border: 1px dashed var(--border-color);
+}
+.oc .overwrite-item.unconfigured .overwrite-item-extra {
+    display: none;
+}
+.oc .overwrite-item-extra {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+}
+.oc .overwrite-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 0 0 auto;
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+}
+.oc .overwrite-item:hover .overwrite-item-actions,
+.oc .overwrite-item.active .overwrite-item-actions {
+    opacity: 1;
+}
+.oc .overwrite-item-actions .icon-btn {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    border: none;
+    background: transparent;
+}
+.oc .overwrite-item-actions .icon-btn svg {
+    width: 11px !important;
+    height: 11px !important;
+}
+.oc .overwrite-side.rail .overwrite-side-title,
+.oc .overwrite-side.rail .overwrite-side-count,
+.oc .overwrite-side.rail .overwrite-item-main,
+.oc .overwrite-side.rail .footer-btn span {
+    display: none;
+}
+.oc .overwrite-side.rail .overwrite-side-head {
+    justify-content: center;
+    padding: 0 4px;
+}
+.oc .overwrite-side.rail .overwrite-side-foot {
+    padding: 0 8px;
+}
+.oc .overwrite-side.rail .overwrite-side-foot .footer-btn {
+    padding: 0;
+}
+.oc .overwrite-side.rail .overwrite-side-body {
+    scrollbar-gutter: auto;
+}
+.oc .overwrite-side.rail .overwrite-item {
+    justify-content: center;
+    padding: 5px 0;
+}
+.oc .overwrite-side.rail .overwrite-item.active {
+    background: transparent;
+}
+.oc .overwrite-side.rail .overwrite-item.active::before {
+    display: none;
+}
+.oc .overwrite-side.rail .overwrite-item-avatar {
+    display: flex;
+}
+.oc .overwrite-side.rail .overwrite-item.active .overwrite-item-avatar {
+    background: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
 .oc .oc-switch {
     position: relative;
     display: inline-block;
@@ -3711,57 +3954,6 @@ html[data-darkmode="true"] .oc .overwrite-config-option-state {
 .oc .oc-switch input:checked + .oc-switch-slider:before {
     transform: translateX(16px);
 }
-.overwrite-add-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--primary-color);
-}
-.overwrite-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--card-grid-gap);
-}
-.overwrite-title {
-    font-weight: bold;
-    font-size: 15px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 70%;
-    color: var(--text-title);
-}
-.overwrite-info {
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-.overwrite-refresh-btn {
-    position: absolute;
-    right: 72px;
-    bottom: 8px;
-}
-.overwrite-gear-btn {
-    position: absolute;
-    right: 40px;
-    bottom: 8px;
-}
-.overwrite-del-btn {
-    position: absolute;
-    right: 8px;
-    bottom: 8px;
-}
-.sub-card.overwrite-item.active {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px var(--primary-color);
-}
-.sub-card.overwrite-item.dragging {
-    opacity: 0.5;
-    z-index: 1000;
-    box-shadow: 0 8px 16px var(--overlay-bg);
-    transition: none !important;
-}
 
 /* ==========================================================================
  * SECTION 3.5: config_merge_editor.htm — merge/compare toolbar
@@ -3779,9 +3971,15 @@ html[data-darkmode="true"] .oc .overwrite-config-option-state {
 
 .oc #oc-merge-toggle-btn.oc-usage-help-float {
     position: absolute;
-    bottom: 16px;
-    right: 40px;
+    bottom: 24px;
+    right: 24px;
     z-index: 10;
+}
+
+/* keeps the compare button identical to the overview float buttons */
+.oc #oc-merge-toggle-btn.oc-usage-help-float svg {
+    width: 24px;
+    height: 24px;
 }
 
 /* ---- CBI section description ---- */
@@ -4112,9 +4310,9 @@ html[data-darkmode="true"] .oc .myip-card-icon.ic-youtube { color: #FF4444; }
 
 .oc .myip-ip-addr {
     flex-shrink: 0;
-    height: var(--myip-mid-h);
+    min-height: var(--myip-mid-h);
     font-size: 13px; color: var(--text-primary);
-    overflow: hidden; text-align: center;
+    text-align: center;
     font-weight: 500; width: 100%;
     display: flex;
     align-items: center;
@@ -4127,13 +4325,13 @@ html[data-darkmode="true"] .oc .myip-card-icon.ic-youtube { color: #FF4444; }
 .oc .myip-ip-geo {
     font-size: 12px; line-height: 1.3;
     color: var(--text-secondary);
-    overflow: hidden; text-align: center;
+    text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
     white-space: normal; width: 100%;
     flex-shrink: 0;
-    height: var(--myip-bottom-h);
+    min-height: var(--myip-bottom-h);
 }
 
 .oc .myip-check-row {
@@ -4445,6 +4643,27 @@ html[data-darkmode="true"] .oc .developer-label {
         0 3px 10px rgba(102, 126, 234, 0.25),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
     border-color: rgba(255, 255, 255, 1);
+}
+
+.oc .developer-avatar.developer-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+    user-select: none;
+}
+
+/* the ellipsis glyph sits on the baseline ~1/3em below the line box center, lift it to the optical center */
+.oc .developer-more-dots {
+    display: block;
+    line-height: 1;
+    transform: translateY(-0.333em);
+}
+
+.oc .developer-avatar.developer-more:hover {
+    transform: scale(1.08);
 }
 
 @keyframes rotate {
@@ -6736,11 +6955,22 @@ html[data-darkmode=true] .oc .oix-msg-bar svg { color: inherit; }
 }
 
 .oc .select-popup-body {
+    --addr-head-bg: var(--bg-gray);
+    --addr-row-bg: var(--bg-white);
+    --addr-row-alt: var(--bg-light);
+    /* the plugin and core columns are as wide as the versions shown in them: the script measures the
+     * widest cell and overwrites these, so a long version is never shortened behind an ellipsis. The
+     * table is kept at least as wide as its columns too, otherwise the part of a column that hangs
+     * out of a row box is painted without the row background */
+    --addr-ver-plugin: 84px;
+    --addr-ver-core: 110px;
+    --addr-cols: calc(44px + 110px + 88px + var(--addr-ver-plugin) + var(--addr-ver-core) + 5 * 8px + 2 * 16px);
     position: relative;
     overflow: hidden;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-md);
-    background: var(--bg-gray);
+    background: var(--addr-row-bg);
+    box-shadow: var(--shadow-sm);
 }
 .oc .addr-list-scroll {
     max-height: 300px;
@@ -6748,6 +6978,26 @@ html[data-darkmode=true] .oc .oix-msg-bar svg { color: inherit; }
     overflow-x: auto;
     scrollbar-gutter: stable;
     counter-reset: addr-row;
+    background: var(--addr-row-bg, var(--bg-white));
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+.oc .addr-list-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.oc .addr-list-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.oc .addr-list-scroll::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: var(--border-color);
+    background-clip: content-box;
+}
+.oc .addr-list-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+    background-clip: content-box;
 }
 
 .oc .addr-list-loading {
@@ -6949,6 +7199,7 @@ html[data-darkmode=true] .oc .oix-msg-bar svg { color: inherit; }
     box-sizing: border-box;
 }
 .oc .ver-hint {
+    --hint-line-max: 80%;
     display: none;
     justify-content: center;
     align-items: center;
@@ -6976,8 +7227,13 @@ html[data-darkmode="true"] .oc .ver-hint {
     display: block;
 }
 .oc .ver-hint span {
-    flex: unset;
-    text-align: center;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: var(--hint-line-max);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
     display: inline-block;
     line-height: 1.5;
     vertical-align: middle;
@@ -7001,15 +7257,6 @@ html[data-darkmode=true] .oc .ver-hint.note {
 html[data-darkmode=true] .oc .ver-hint.note svg {
     stroke: var(--info-color);
 }
-.oc .ver-hint.note span {
-    flex: unset;
-    min-width: 0;
-    max-width: 80%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: left;
-}
 .oc .ver-hint.logging {
     box-sizing: border-box;
     height: calc(1.5em + 18px);
@@ -7026,7 +7273,7 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     white-space: nowrap;
     line-height: calc(1.5em + 16px);
     flex-shrink: 0;
-    max-width: 80%;
+    max-width: var(--hint-line-max);
     text-align: left;
 }
 .oc .ver-hint.logging div > b {
@@ -7110,17 +7357,17 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
 .oc .addr-row,
 .oc .addr-header {
     display: grid;
-    min-width: 398px;
-    grid-template-columns: 44px minmax(0, 1fr) 110px minmax(84px, 0.5fr) minmax(110px, 0.85fr) 88px;
+    min-width: var(--addr-cols, 508px);
+    grid-template-columns: 44px minmax(0, 1fr) 110px minmax(var(--addr-ver-plugin), 0.5fr) minmax(var(--addr-ver-core), 0.85fr) 88px;
     gap: 8px;
     align-items: center;
 }
 .oc #custom-addr-option {
-    min-width: 398px;
+    min-width: var(--addr-cols, 508px);
 }
 .oc .custom-option-input,
 .oc #addCustomOption {
-    min-width: 398px;
+    min-width: var(--addr-cols, 508px);
 }
 .oc .addr-header-index {
     font-size: 12px;
@@ -7153,8 +7400,8 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     text-align: center;
     font-size: 12px;
     line-height: 1.3;
-    padding: 2px 4px;
-    border-radius: var(--radius-sm);
+    padding: 2px 7px 2px 5px;
+    border-radius: 999px;
     font-variant-numeric: tabular-nums;
     box-sizing: border-box;
     border: 1px solid transparent;
@@ -7172,7 +7419,7 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     font-size: 12px;
     line-height: 1.3;
     padding: 2px 6px;
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
     box-sizing: border-box;
     border: 1px solid transparent;
     font-variant-numeric: tabular-nums;
@@ -7193,7 +7440,7 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     font-size: 12px;
     line-height: 1.3;
     padding: 2px 6px;
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
     box-sizing: border-box;
     font-variant-numeric: tabular-nums;
     justify-self: center;
@@ -7203,6 +7450,15 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     border: 1px dashed var(--primary-color);
     user-select: none;
     cursor: pointer;
+}
+/* same horizontal footprint as the toggle circle (1.02em + .42em of .68em font),
+   so both pills keep exactly the same width; the chain icon reads as "direct link" */
+.oc .addr-proxy-static svg {
+    width: 1.15em;
+    height: 1.15em;
+    margin: 0 .156em 0 0;
+    flex-shrink: 0;
+    display: block;
 }
 .oc .addr-row .ver-text {
     font-size: 12px;
@@ -7228,6 +7484,15 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     border-radius: var(--radius-sm);
     transition: background-color var(--transition-fast), color var(--transition-fast);
 }
+
+/* a version cell never shrinks below the widest version of its column (the script measures that and
+ * writes the two custom properties), so the version is not cut behind an ellipsis on a narrow screen */
+.oc .addr-row .ver-text.ver-plugin {
+    min-width: var(--addr-ver-plugin, 84px);
+}
+.oc .addr-row .ver-text.ver-core {
+    min-width: var(--addr-ver-core, 110px);
+}
 .oc .addr-row .ver-text.ver-plugin.has-data .ver-link {
     background: var(--primary-a20);
     color: var(--primary-color);
@@ -7248,8 +7513,10 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     display: inline-block;
     min-width: 0;
     max-width: 100%;
-    white-space: normal;
-    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
     color: inherit;
     text-decoration: none;
     cursor: pointer;
@@ -7307,7 +7574,7 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     padding: 6px 16px;
     border-bottom: 2px solid var(--border-light);
     cursor: default;
-    background: var(--bg-gray);
+    background: var(--addr-head-bg, var(--bg-gray));
     position: sticky;
     top: 0;
     z-index: 6;
@@ -7342,6 +7609,151 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     width: 12px;
     height: 12px;
     display: block;
+}
+
+/* Address list: zebra rows, hover accent, and the mirror currently in use */
+.oc .select-option.addr-row:nth-of-type(even) {
+    background: var(--addr-row-alt, var(--bg-light));
+}
+.oc .select-option.addr-row:has(.addr-proxy.on) {
+    background: var(--primary-a5);
+    box-shadow: inset 3px 0 0 var(--primary-color);
+}
+.oc .select-option.addr-row:hover {
+    background: var(--primary-a5);
+    box-shadow: inset 3px 0 0 var(--primary-color);
+}
+.oc .select-option.addr-header:hover {
+    background: var(--addr-head-bg, var(--bg-gray));
+    color: var(--text-secondary);
+}
+
+/* Latency badge: status dot in front of the value */
+.oc .addr-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.oc .addr-status.fast::before,
+.oc .addr-status.medium::before,
+.oc .addr-status.slow::before,
+.oc .addr-status.err::before {
+    content: '';
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    margin-right: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .8;
+}
+
+/* Proxy toggle: circular glyph in front of the state word */
+.oc .addr-proxy::before {
+    content: '';
+    flex-shrink: 0;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: .42em;
+    border-radius: 50%;
+    color: #fff;
+    font-size: .68em;
+    font-weight: 700;
+    line-height: 1.5em;
+    text-align: center;
+}
+.oc .addr-proxy.on::before {
+    content: '✓';
+    background: var(--success-color);
+}
+.oc .addr-proxy.off::before {
+    content: '✕';
+    background: var(--error-color);
+}
+
+.oc .addr-row.row-error .ver-text {
+    visibility: hidden;
+}
+.oc .addr-row.row-error .addr-row-index { grid-column: 1; grid-row: 1; }
+.oc .addr-row.row-error .addr-row-url { grid-column: 2; grid-row: 1; }
+.oc .addr-row.row-error .addr-status {
+    grid-column: 3 / span 3;
+    grid-row: 1;
+    justify-self: center;
+    margin-left: 0;
+    padding: 2px 12px;
+}
+.oc .addr-row.row-error .ver-plugin { grid-column: 4; grid-row: 1; }
+.oc .addr-row.row-error .ver-core { grid-column: 5; grid-row: 1; }
+.oc .addr-row.row-error .addr-proxy,
+.oc .addr-row.row-error .addr-proxy-static { grid-column: 6; grid-row: 1; }
+
+/* Empty / error state of the mirror list */
+.oc .addr-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 22px 16px;
+    text-align: center;
+}
+.oc .addr-empty.err {
+    background: var(--error-a10);
+}
+.oc .addr-empty-icon {
+    display: block;
+    color: var(--text-secondary);
+    opacity: .75;
+}
+.oc .addr-empty.err .addr-empty-icon {
+    color: var(--error-color);
+    opacity: 1;
+}
+.oc .addr-empty-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.oc .addr-empty-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    max-width: 420px;
+}
+.oc .addr-empty-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    margin-top: 4px;
+    padding: 0 14px;
+    border: 1px solid var(--primary-color);
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: var(--text-on-primary, #fff);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+.oc .addr-empty-btn:hover {
+    filter: brightness(1.08);
+}
+.oc .addr-empty-btn svg {
+    width: 13px;
+    height: 13px;
+    display: block;
+}
+/* every mirror failed: the notice above carries the message, keep the rows readable
+   but dim the report columns only so the proxy toggle stays clearly usable */
+.oc .addr-list-scroll.all-failed .addr-row .addr-row-index,
+.oc .addr-list-scroll.all-failed .addr-row .addr-row-url,
+.oc .addr-list-scroll.all-failed .addr-row .addr-status {
+    opacity: .5;
+}
+.oc .addr-list-scroll.all-failed .addr-row:hover .addr-row-index,
+.oc .addr-list-scroll.all-failed .addr-row:hover .addr-row-url,
+.oc .addr-list-scroll.all-failed .addr-row:hover .addr-status {
+    opacity: 1;
 }
 
 [data-darkmode=true] .oc .addr-row .ver-text.ver-plugin.has-data .ver-link {
@@ -7385,6 +7797,13 @@ html[data-darkmode=true] .oc .ver-hint.note svg {
     color: var(--error-color);
     background: var(--error-a10);
 }
+html[data-darkmode=true] .oc .select-popup-body {
+    --addr-head-bg: var(--bg-light);
+}
+html[data-darkmode=true] .oc .addr-proxy.on::before,
+html[data-darkmode=true] .oc .addr-proxy.off::before {
+    color: var(--bg-white);
+}
 
 html[data-darkmode=true] .oc .select-class {
     background: var(--bg-white) !important;
@@ -7407,7 +7826,1024 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
 }
 
 /* ==========================================================================
- * SECTION 14: @media queries — 4-stage responsive: 1024 / 768 / 480 / 320
+ * SECTION 15: guide.htm (quick start page) + floating button stack
+ * ========================================================================== */
+.oc .oc-float-stack {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.oc .oc-float-stack .oc-usage-help-float {
+    position: relative;
+    right: auto;
+    bottom: auto;
+}
+
+/* bubbles point left inside the stack, otherwise each one would cover the button above it */
+.oc .oc-float-stack .oc-usage-help-bubble {
+    bottom: 10px;
+    right: calc(100% + 10px);
+}
+
+.oc .oc-float-stack .oc-usage-help-bubble::after {
+    top: 50%;
+    right: auto;
+    left: 100%;
+    margin-top: -6px;
+    border: 6px solid transparent;
+    border-left-color: var(--text-primary, #374151);
+}
+
+.oc .oc-usage-help-float.oc-guide-float {
+    background: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* the .oc class sits on the tour root itself (it carries the theme variables), so the root rules
+ * are compound selectors while everything inside is a normal descendant */
+.oc.guide-tour {
+    display: none;
+}
+
+.oc.guide-tour.on {
+    display: block;
+}
+
+/* the four panels only block clicks outside the hole, the dim itself is painted by the spotlight
+ * shadow below, so the rounded hole stays free of corner gaps */
+.oc .guide-tour-mask {
+    position: fixed;
+    z-index: 20000;
+    background: transparent;
+    transition: opacity 0.18s ease;
+}
+
+.oc.guide-tour.full-dim .guide-tour-mask {
+    background: var(--overlay-bg, rgba(15, 23, 42, 0.5));
+}
+
+.oc .guide-spot {
+    position: fixed;
+    z-index: 20001;
+    border-radius: 10px;
+    box-shadow: 0 0 0 3px var(--primary-color), 0 0 0 9999px var(--overlay-bg, rgba(15, 23, 42, 0.5));
+    pointer-events: none;
+    transition: top 0.22s ease, left 0.22s ease, width 0.22s ease, height 0.22s ease, opacity 0.18s ease;
+}
+
+.oc .guide-spot::after {
+    content: '';
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    bottom: -7px;
+    left: -7px;
+    border: 3px solid rgba(59, 130, 246, 0.5);
+    border-radius: 14px;
+    animation: guide-spot-pulse 1.8s ease-out infinite;
+}
+
+@keyframes guide-spot-pulse {
+    0% { opacity: 0.9; transform: scale(0.995); }
+    70% { opacity: 0; transform: scale(1.02); }
+    100% { opacity: 0; transform: scale(1.02); }
+}
+
+/* the dialog already dims the page, and its content must stay above the spotlight shadow */
+.oc.guide-tour.dialog .guide-spot {
+    box-shadow: 0 0 0 3px var(--primary-color);
+}
+
+.oc .guide-spot.hidden {
+    display: none;
+}
+
+/* the first placement of a step must not animate, the callout would be seen flying to position */
+.oc.guide-tour.no-anim .guide-spot {
+    transition: none;
+}
+
+.oc.guide-tour.no-anim .guide-spot::after {
+    animation: none;
+}
+
+.oc.guide-tour.busy .guide-tour-mask,
+.oc.guide-tour.busy .guide-spot,
+.oc.guide-tour.busy .guide-pop {
+    opacity: 0;
+}
+
+.oc.guide-tour.busy .guide-pop {
+    visibility: hidden;
+    transition: none;
+}
+
+.oc.guide-tour.closing .guide-tour-mask,
+.oc.guide-tour.closing .guide-spot,
+.oc.guide-tour.closing .guide-pop {
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.oc .guide-pop {
+    position: fixed;
+    z-index: 20002;
+    width: 390px;
+    max-width: calc(100vw - 24px);
+    padding: 14px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    background: var(--bg-white);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.34);
+    transition: opacity 0.18s ease;
+}
+/* the lead of a step is its first paragraph: a cover image, a heading or a list that opens a step
+ * keeps its own style, and the frame is mirrored on both sides. It is indigo on purpose, so the
+ * opening line does not read as one of the blue tags, info notes or tips below it */
+.oc .guide-pop-body > p:first-of-type:not(.guide-sub):not(.guide-wait):not(.guide-tip):not(.guide-info):not(.guide-careful):not(.guide-note) {
+    margin-top: 0;
+    color: var(--text-secondary);
+    padding: 7px 10px;
+    border: 1px solid rgba(99, 102, 241, 0.24);
+    border-left: 3px solid #4f46e5;
+    border-right: 3px solid #4f46e5;
+    border-radius: 6px;
+    background: rgba(99, 102, 241, 0.07);
+    font-weight: 600;
+    line-height: 1.55;
+}
+
+.oc .guide-pop-body b {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.oc .guide-pop-body p {
+    margin: 0 0 6px;
+}
+
+/* a term row is one "name: explanation" pair; a heading over a list is not a term row */
+.oc .guide-pop-body > p:not(:first-of-type):not(.guide-sub):not(.guide-tip):not(.guide-info):not(.guide-careful):not(.guide-note):not(.guide-wait) {
+    margin-top: 6px;
+    padding: 6px 9px;
+    border: 1px solid var(--border-light);
+    border-radius: 5px;
+    background: var(--bg-gray);
+}
+
+.oc .guide-pop-body .guide-sub {
+    margin: 11px 0 0;
+    padding: 0 2px;
+    border: 0;
+    background: none;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.oc .guide-pop-body > .guide-sub:first-child {
+    margin-top: 0;
+}
+
+/* the colon behind a label is drawn here, so each language gets its own punctuation */
+.oc .guide-pop-body .guide-sep::after {
+    content: ': ';
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
+    content: '：';
+}
+
+/* the illustration that opens the first step and closes the last one */
+.oc .guide-pop-body .guide-cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 0 11px;
+    color: var(--primary-color);
+}
+
+.oc .guide-pop-body .guide-cover .cv-bg {
+    fill: currentColor;
+    fill-opacity: 0.05;
+    stroke: currentColor;
+    stroke-opacity: 0.16;
+}
+
+.oc .guide-pop-body .guide-cover .cv-beam {
+    fill: currentColor;
+    fill-opacity: 0.07;
+}
+
+.oc .guide-pop-body .guide-cover .cv-card,
+.oc .guide-pop-body .guide-cover .cv-ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-opacity: 0.32;
+}
+
+.oc .guide-pop-body .guide-cover .cv-line,
+.oc .guide-pop-body .guide-cover .cv-dot {
+    fill: currentColor;
+    fill-opacity: 0.45;
+}
+
+.oc .guide-pop-body .guide-cover .cv-faint {
+    fill-opacity: 0.16;
+}
+
+.oc .guide-pop-body .guide-cover .cv-switch,
+.oc .guide-pop-body .guide-cover .cv-cursor {
+    fill: currentColor;
+}
+
+.oc .guide-pop-body .guide-cover .cv-knob {
+    fill: var(--bg-white);
+}
+
+.oc .guide-pop-body .guide-cover .cv-cursor {
+    stroke: var(--bg-white);
+    stroke-width: 1.4;
+}
+
+.oc .guide-pop-body .guide-cover .cv-check,
+.oc .guide-pop-body .guide-cover .cv-spark {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.oc .guide-pop-body .guide-cover .cv-wave {
+    fill: none;
+    stroke: currentColor;
+    stroke-opacity: 0.45;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.oc .guide-pop-body p:last-child {
+    margin-bottom: 0;
+}
+
+.oc .guide-pop-body li::marker {
+    color: var(--primary-color);
+}
+
+.oc .guide-pop-body code {
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    font-size: 12px;
+}
+
+.oc .guide-pop-body .guide-tag {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 0 6px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 15px;
+    vertical-align: 1px;
+    white-space: nowrap;
+}
+
+.oc .guide-pop-body .guide-tag.req {
+    background: rgba(59, 130, 246, 0.14);
+    color: #2563eb;
+}
+
+.oc .guide-pop-body .guide-tag.opt {
+    background: rgba(100, 116, 139, 0.16);
+    color: #475569;
+}
+
+.oc .guide-pop-body .guide-tag.rec {
+    background: rgba(16, 185, 129, 0.16);
+    color: #047857;
+}
+
+.oc .guide-pop-body .guide-tag.care {
+    background: rgba(245, 158, 11, 0.2);
+    color: #b45309;
+}
+
+.oc .guide-pop-body .guide-tip,
+.oc .guide-pop-body .guide-info,
+.oc .guide-pop-body .guide-careful {
+    position: relative;
+    margin: 8px 0 0;
+    padding: 6px 10px 6px 27px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.oc .guide-pop-body > .guide-note:not(.oc-hidden) {
+    margin: 8px 0 0;
+    padding: 6px 9px;
+    border: 1px solid var(--border-light);
+    border-left: 2px solid var(--border-light);
+    border-radius: 5px;
+    background: var(--bg-gray);
+    line-height: 1.55;
+}
+
+.oc .guide-pop-body .guide-tip::before,
+.oc .guide-pop-body .guide-info::before,
+.oc .guide-pop-body .guide-careful::before {
+    position: absolute;
+    left: 8px;
+    /* the mark is centred on the first line of the note: 6px of padding plus the optical centre of
+     * a 12px line at 1.6, less half of the mark, so it does not sit high over a line of chinese */
+    top: 10px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 13px;
+    text-align: center;
+}
+
+.oc .guide-pop-body .guide-tip {
+    background: rgba(16, 185, 129, 0.09);
+    border-left: 3px solid #10b981;
+    border-right: 3px solid #10b981;
+}
+
+.oc .guide-pop-body .guide-tip::before {
+    content: '✓';
+    background: #10b981;
+}
+
+.oc .guide-pop-body .guide-info {
+    background: rgba(59, 130, 246, 0.09);
+    border-left: 3px solid var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+}
+
+.oc .guide-pop-body .guide-info::before {
+    content: 'i';
+    background: var(--primary-color);
+}
+
+.oc .guide-pop-body .guide-careful {
+    background: rgba(245, 158, 11, 0.11);
+    border-left: 3px solid #f59e0b;
+    border-right: 3px solid #f59e0b;
+}
+
+.oc .guide-pop-body .guide-careful::before {
+    content: '!';
+    background: #f59e0b;
+}
+
+.oc .guide-pop-body ol,
+.oc .guide-pop-body ul {
+    margin: 6px 0 8px;
+    padding: 3px 10px 3px 29px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    background: var(--bg-gray);
+}
+
+.oc .guide-pop-body ul {
+    list-style: disc;
+}
+
+.oc .guide-pop-body ol {
+    list-style: decimal;
+}
+
+/* the log.htm section resets list markers on every item (this beats the ul), restore them here */
+.oc .guide-pop-body ul li {
+    list-style: disc;
+}
+
+.oc .guide-pop-body ol li {
+    list-style: decimal;
+}
+
+.oc .guide-pop-body li {
+    margin: 0;
+    padding: 5px 0;
+}
+
+.oc .guide-pop-body li + li {
+    border-top: 1px solid var(--border-light);
+}
+
+.oc .guide-pop-body code {
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: var(--bg-gray);
+}
+
+.oc .guide-pop-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-light);
+}
+
+.oc .guide-actions {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    max-width: 100%;
+    margin-left: auto;
+}
+
+.oc .guide-pop.compact {
+    padding: 8px 10px;
+}
+
+/* a callout that is narrow on its own (a side placement on a wide screen, or any phone) stacks its
+ * footer: the step marks take a row of their own, both rows centred */
+.oc .guide-pop.narrow .guide-pop-foot {
+    gap: 6px;
+    justify-content: center;
+}
+
+.oc .guide-pop.narrow .guide-pop-foot .guide-dots {
+    flex: 1 0 100%;
+    justify-content: safe center;
+}
+
+.oc .guide-pop.narrow .guide-actions {
+    flex: 1 0 100%;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 6px;
+    margin-left: 0;
+}
+
+.oc .guide-pop.narrow .guide-pop-foot .guide-actions .btn {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 8px;
+}
+
+/* compact only trades vertical room for the callout, the progress marks keep their size: the row
+ * scrolls instead, and a shrunken mark reads as a different step count */
+
+.oc .guide-pop.compact .guide-pop-head {
+    margin-bottom: 3px;
+}
+
+.oc .guide-pop.compact .guide-pop-foot {
+    margin-top: 4px;
+    padding-top: 5px;
+    gap: 6px;
+}
+
+.oc .guide-pop.compact .guide-actions {
+    gap: 6px;
+}
+
+.oc .guide-pop.compact .guide-pop-body {
+    line-height: 1.55;
+}
+
+.oc .guide-pop.compact .guide-note,
+.oc .guide-pop.compact .guide-wait {
+    margin-top: 5px;
+}
+
+.oc .guide-pop.compact .guide-pop-section {
+    display: none;
+}
+
+/* the row shrinks before any button does and never falls below the mark it has to show, the rest
+ * of it scrolls into reach with the current step centred instead of being cut off. The padding
+ * keeps the ring of the current mark inside the box that clips the row, at either end of the row */
+.oc .guide-dots {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+/* between two steps of the same group the callout follows the ring over, while the first
+ * placement of a step stays instant (that is the no-anim state) */
+.oc.guide-tour:not(.no-anim) .guide-pop {
+    transition: top 0.22s ease, left 0.22s ease, opacity 0.18s ease;
+}
+
+.oc .guide-pop.wide {
+    width: 530px;
+}
+
+.oc .guide-pop.wide-dots {
+    width: 530px;
+}
+
+.oc .guide-pop.from-next {
+    animation: guide-pop-in-next 0.24s ease;
+}
+
+.oc .guide-pop.from-prev {
+    animation: guide-pop-in-prev 0.24s ease;
+}
+
+@keyframes guide-pop-in-next {
+    from { opacity: 0; translate: 0 7px; }
+    to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes guide-pop-in-prev {
+    from { opacity: 0; translate: 0 -7px; }
+    to { opacity: 1; translate: 0 0; }
+}
+
+.oc .guide-pop.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.oc .guide-pop .guide-arrow {
+    position: absolute;
+    /* keeps a freshly rebuilt arrow off the title until the script places it */
+    top: -6px;
+    left: 32px;
+    width: 12px;
+    height: 12px;
+    background: var(--bg-white);
+    transform: rotate(45deg);
+}
+
+.oc .guide-pop-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.oc .guide-pop-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.1px;
+}
+
+.oc .guide-pop-step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.oc .guide-pop-section {
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--bg-gray);
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.oc .guide-pop-section.cfg {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+}
+
+.oc .guide-pop-section.ovr {
+    background: rgba(139, 92, 246, 0.14);
+    color: #6d28d9;
+}
+
+.oc .guide-pop-section.upd {
+    background: rgba(245, 158, 11, 0.16);
+    color: #b45309;
+}
+
+.oc .guide-pop-count {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--primary-a10, #eff6ff);
+    color: var(--primary-color);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+}
+
+.oc .guide-pop-body {
+    max-height: 52vh;
+    /* a long step scrolls its own text area, so the space for that bar is reserved up front: the copy
+     * keeps the width it was measured with and never ends up under the scrollbar. The bar itself is
+     * thin, and long words wrap instead of asking for a sideways scroll */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    overflow-wrap: break-word;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    text-align: left;
+}
+
+.oc .guide-pop-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.oc .guide-pop-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.oc .guide-pop-body::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--scrollbar-thumb);
+}
+
+.oc .guide-pop-body::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+.oc .guide-dots::-webkit-scrollbar {
+    display: none;
+}
+
+.oc .guide-dots i {
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.18);
+    transition: width 0.24s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oc .guide-dots i.done {
+    background: rgba(59, 130, 246, 0.45);
+}
+
+.oc .guide-dots i.on {
+    width: 16px;
+    background: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22);
+}
+
+.oc .guide-dots.dense {
+    gap: 3px;
+}
+
+.oc .guide-dots.dense i {
+    width: 5px;
+    height: 5px;
+}
+
+.oc .guide-dots.dense i.on {
+    width: 13px;
+}
+
+.oc .guide-dots.tiny {
+    gap: 2px;
+}
+
+.oc .guide-dots.tiny i {
+    width: 4.5px;
+    height: 4.5px;
+}
+
+.oc .guide-dots.tiny i.on {
+    width: 11px;
+    box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.22);
+}
+
+.oc .guide-pop-foot .btn {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.oc .guide-pop-foot .cancel-btn,
+.oc .guide-pop-foot .guide-skip {
+    border: 1px solid var(--border-light);
+    background: var(--bg-white);
+    color: var(--text-secondary);
+}
+
+.oc .guide-pop-foot .cancel-btn:hover,
+.oc .guide-pop-foot .guide-skip:hover {
+    background: var(--bg-light);
+    color: var(--text-primary);
+}
+
+.oc .guide-pop-foot .upload-btn {
+    border: 1px solid var(--primary-color);
+    background: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.oc .guide-pop-foot .upload-btn:hover:not(:disabled) {
+    border-color: var(--btn-primary-hover, #2563eb);
+    background: var(--btn-primary-hover, #2563eb);
+}
+
+.oc .guide-pop-foot .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.oc .guide-note code {
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: var(--bg-gray);
+}
+
+.oc .guide-note {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.oc .guide-pop .guide-progress {
+    position: absolute;
+    top: 6px;
+    left: 16px;
+    right: 16px;
+    height: 3px;
+    display: flex;
+    gap: 3px;
+}
+
+.oc .guide-pop .guide-progress i {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--bg-gray);
+    transition: background-color 0.22s ease;
+}
+
+.oc .guide-pop .guide-progress i.done {
+    background: var(--primary-a20, #dbeafe);
+}
+
+.oc .guide-pop .guide-progress i.on {
+    background: var(--primary-color);
+}
+
+.oc .guide-pop .guide-wait {
+    margin: 10px 0 0;
+    padding: 6px 8px;
+    border-left: 3px solid var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+    border-radius: var(--radius-sm);
+    background: var(--primary-a10, #eff6ff);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.oc .guide-pop .guide-live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* the add module window is created on demand and carries its own inline z-index. It sits above the
+ * spotlight so the ring of the step before is hidden behind it, while the callout stays readable
+ * and the tips of its own steps go above the window again */
+body.oc-guide-open #overwrite-add-model {
+    z-index: 20080 !important;
+}
+
+body.oc-guide-open .guide-pop {
+    z-index: 20095 !important;
+}
+
+body.oc-guide-open .guide-tour.inadd .guide-spot {
+    z-index: 20090;
+}
+
+@keyframes guide-beacon {
+    0%, 100% { box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), 0 0 0 0 rgba(59, 130, 246, 0.5); }
+    50% { box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), 0 0 0 9px rgba(59, 130, 246, 0); }
+}
+
+.oc .oc-usage-help-float.oc-guide-float.beacon {
+    animation: guide-beacon 2s ease-out infinite;
+}
+
+.oc .guide-arch {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.oc .guide-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.oc .guide-checkbox input[type="checkbox"] {
+    flex: 0 0 auto;
+    margin: 2px 0 0;
+}
+
+html[data-darkmode=true] .oc .guide-pop-count {
+    background: #16233d;
+    color: #93c5fd;
+}
+
+html[data-darkmode=true] .oc .guide-pop-section {
+    background: rgba(148, 163, 184, 0.18);
+    color: var(--text-secondary);
+}
+
+html[data-darkmode=true] .oc .guide-pop-section.cfg {
+    background: rgba(96, 165, 250, 0.18);
+    color: #93c5fd;
+}
+
+html[data-darkmode=true] .oc .guide-pop-section.ovr {
+    background: rgba(167, 139, 250, 0.2);
+    color: #c4b5fd;
+}
+
+html[data-darkmode=true] .oc .guide-pop-section.upd {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+html[data-darkmode=true] .oc .guide-dots i {
+    background: rgba(147, 197, 253, 0.24);
+}
+
+html[data-darkmode=true] .oc .guide-dots i.done {
+    background: rgba(147, 197, 253, 0.5);
+}
+
+html[data-darkmode=true] .oc .guide-dots i.on {
+    background: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.22);
+}
+
+/* dims the callout's grey blocks on the dark panel so the text on them stays readable */
+html[data-darkmode=true] .oc .guide-pop-body {
+    --bg-gray: rgba(148, 163, 184, 0.12);
+}
+
+html[data-darkmode=true] .oc .guide-pop-body code {
+    background: rgba(96, 165, 250, 0.16);
+    color: #93c5fd;
+}
+
+html[data-darkmode=true] .oc .guide-pop-body .guide-tag.req {
+    background: rgba(96, 165, 250, 0.2);
+    color: #93c5fd;
+}
+
+html[data-darkmode=true] .oc .guide-pop-body .guide-tag.opt {
+    background: rgba(148, 163, 184, 0.22);
+    color: #cbd5e1;
+}
+
+html[data-darkmode=true] .oc .guide-pop-body .guide-tag.rec {
+    background: rgba(52, 211, 153, 0.2);
+    color: #34d399;
+}
+
+html[data-darkmode=true] .oc .guide-pop-body .guide-tag.care {
+    background: rgba(251, 191, 36, 0.22);
+    color: #fbbf24;
+}
+
+html[data-darkmode=true] .oc .guide-pop-body .guide-tip {
+    background: rgba(16, 185, 129, 0.14);
+}
+
+html[data-darkmode=true] .oc .guide-pop-body .guide-info {
+    background: rgba(59, 130, 246, 0.14);
+}
+
+html[data-darkmode=true] .oc .guide-pop-body .guide-careful {
+    background: rgba(245, 158, 11, 0.16);
+}
+
+html[data-darkmode=true] .oc .guide-spot {
+    box-shadow: 0 0 0 3px var(--primary-color), 0 0 0 9999px rgba(2, 6, 23, 0.66);
+}
+
+html[data-darkmode=true] .oc.guide-tour.full-dim .guide-tour-mask {
+    background: rgba(2, 6, 23, 0.66);
+}
+
+/* dialogs opened from inside the tour have to sit above the mask and the callout */
+body.oc-guide-open .config-upload-model-overlay {
+    z-index: 20060;
+}
+
+body.oc-guide-open .select-popup {
+    z-index: 20055;
+}
+
+/* inside a dialog the tour drops its own mask (the dialog already dims the page) and lifts the
+ * spot plus the callout above that dialog */
+.oc.guide-tour.dialog .guide-tour-mask {
+    display: none;
+}
+
+.oc.guide-tour.dialog .guide-spot {
+    z-index: 20070;
+}
+
+.oc.guide-tour.dialog .guide-pop {
+    z-index: 20071;
+}
+
+.oc .guide-pop.bottom-sheet {
+    top: auto !important;
+    left: 12px !important;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    max-width: none;
+}
+
+.oc .guide-pop.bottom-sheet.sheet-top {
+    top: 12px !important;
+    bottom: auto;
+}
+
+.oc .guide-pop.bottom-sheet .guide-arrow {
+    display: none;
+}
+
+.oc .guide-pop.bottom-sheet .guide-pop-body,
+.oc .guide-pop.bottom-sheet.log .guide-pop-body {
+    max-height: 38vh;
+}
+
+.oc .guide-pop.center .guide-pop-body {
+    max-height: 52vh;
+}
+
+.oc .guide-prefs {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px 14px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+/* the hint takes a row of its own under the checkbox, its own top margin would push it out of line */
+.oc .guide-prefs .guide-tip {
+    flex: 1 0 100%;
+    margin: 0;
+}
+
+/* ======================================================================
+ * Responsive rules: 1024 / 768 / 480 / 320
  * ========================================================================== */
 
 /* ---- Stage 1: ≤1024px (large tablet / small desktop) ---- */
@@ -7451,8 +8887,15 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .config-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
     .oc .config-item { width: 100%; max-width: 100%; }
     .oc .select-class { max-width: 100%; font-size: 13px; }
-    .oc .addr-row, .oc .addr-header { grid-template-columns: 40px minmax(0, 1fr) 92px minmax(72px, 0.5fr) minmax(96px, 0.85fr) 76px; gap: 6px; }
-    .oc .addr-row-url { font-size: 12px; }
+    .oc .select-popup { min-width: 80%; width: 80%; }
+    .oc .addr-row, .oc .addr-header { grid-template-columns: 24px minmax(96px, 1fr) 64px minmax(var(--addr-ver-plugin), 0.5fr) minmax(var(--addr-ver-core), 0.85fr) 78px; gap: 6px; }
+    .oc .select-popup-body {
+        --addr-ver-plugin: 96px;
+        --addr-ver-core: 166px;
+        --addr-cols: calc(24px + 96px + 64px + 78px + var(--addr-ver-plugin) + var(--addr-ver-core) + 5 * 6px + 2 * 16px);
+    }
+    .oc .addr-row-url { font-size: 11px; }
+    .oc .addr-status { font-size: 10px; }
     .oc .addr-status { font-size: 11px; }
     .oc .addr-proxy, .oc .addr-proxy-static { font-size: 11px; }
     .oc .addr-row .ver-text { font-size: 11px; }
@@ -7476,6 +8919,12 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
 
     /* myip.htm */
     .oc .myip-main-card { max-width: 100%; width: 100%; }
+
+    .oc .guide-pop,
+    .oc .guide-pop.wide,
+    .oc .guide-pop.wide-dots {
+        width: min(520px, calc(100vw - 24px));
+    }
 }
 
 /* ---- Stage 2: ≤768px (tablet portrait) ---- */
@@ -7492,6 +8941,10 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     #debug-rendered .pre-copy-btn svg { width: 12px; height: 12px; }
     /* log.htm - tab menu responsive font */
     #tab-header ul.oc-tabmenu li { font-size: 12px; }
+    /* floating action buttons - status/merge/log pages */
+    .oc .oc-usage-help-float { width: 44px; height: 44px; }
+    .oc .oc-float-stack .oc-usage-help-float svg,
+    .oc #oc-merge-toggle-btn.oc-usage-help-float svg { width: 22px; height: 22px; }
     /* status.htm - main cards */
     .oc .main-cards-container { max-width: 100%; width: 100%; gap: 10px; }
     .oc .main-card { grid-template-rows: auto auto auto auto; }
@@ -7502,7 +8955,8 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .stats-legend { flex: 1 1 100%; flex-wrap: wrap; justify-content: safe center; gap: 4px 10px; max-width: 100%; white-space: normal; overflow: hidden; }
     .oc .stats-legend-item { font-size: 11px; }
     .oc .stats-section .card-row.stats-grid { min-height: 240px; }
-    .oc .announcement-banner { width: 85%; max-width: 98%; }
+    .oc .announcement-banner { width: 85%; max-width: 98%; height: 36px; }
+    .oc .announcement-content { font-size: 13px; }
     .oc .dashboard-btn { font-size: 10px !important; height: 40px !important; }
     .oc .card-value { font-size: 13px; }
     .oc .value-indicator { font-size: 11px; padding: 5px 5px; }
@@ -7536,9 +8990,9 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     /* config_edit.htm */
     .oc .config-editor-model { width: 95vw; height: 80vh; min-width: 320px; }
     .oc .config-editor-actions { gap: 5px; }
-    .oc .overwrite-card-row { gap: 6px; }
-    .oc .sub-card.overwrite-item { width: 185px; max-width: 200px; gap: var(--content-gap); }
-    .oc .overwrite-drag-line { margin: -2px; width: 2px; }
+    .oc .overwrite-side.rail { width: 42px; }
+    .oc .overwrite-side-head,
+    .oc .overwrite-side-foot { height: 44px; }
     .oc .config-editor-title #editTitle {
         flex: 0 1 auto;
         min-width: 0;
@@ -7591,7 +9045,8 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .card .general .oix-result, .oc .card .general .oix-result2 { font-size: 14px; width: 50%; }
     .oc .card .general .more { bottom: 4px; padding-right: 10px; }
     .oc .card .general .more p { font-size: 13px; }
-    .oc .oix-announcement { width: 85%; max-width: 98%; }
+    .oc .oix-announcement { width: 85%; max-width: 98%; height: 36px; }
+    .oc .oix-announcement-content { font-size: 13px; }
 
     /* update.htm */
     .oc .select-popup { min-width: 80%; width: 80%; padding: var(--card-outer-padding); max-height: 90vh; overflow-y: auto; }
@@ -7608,16 +9063,21 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .version-card { margin-bottom: 6px; }
     .oc #addr-list-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .oc .addr-row, .oc .addr-header {
-        grid-template-columns: 36px minmax(44px, 1fr) 80px minmax(66px, 0.5fr) minmax(86px, 0.85fr) 68px;
+        grid-template-columns: 20px minmax(96px, 1fr) 66px minmax(var(--addr-ver-plugin), 0.5fr) minmax(var(--addr-ver-core), 0.85fr) 70px;
         gap: 4px;
+    }
+    .oc .select-popup-body {
+        --addr-ver-plugin: 92px;
+        --addr-ver-core: 157px;
+        --addr-cols: calc(20px + 96px + 66px + 70px + var(--addr-ver-plugin) + var(--addr-ver-core) + 5 * 4px + 2 * 12px);
     }
     .oc .addr-row {
         min-height: 52px;
         align-items: center;
     }
-    .oc .addr-row-url { font-size: 11px; }
+    .oc .addr-row-url { font-size: 10px; }
     .oc .addr-status { font-size: 10px; }
-    .oc .addr-proxy, .oc .addr-proxy-static { font-size: 10px; }
+    .oc .addr-proxy, .oc .addr-proxy-static { font-size: 10px; padding: 2px 5px; }
     .oc .addr-row-index, .oc .addr-header-index { font-size: 10px; }
     .oc .addr-row .ver-text { font-size: 10px; padding: 2px 3px; gap: 3px; }
     .oc .addr-header-label { font-size: 10px; }
@@ -7630,13 +9090,13 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
         line-height: 20px;
     }
     .oc .footer-btn { font-size: 12px; padding: 6px 10px; height: 32px; }
-    .oc .ver-hint.note span { white-space: normal; }
 
     /* developer.htm */
     .oc .developer-grid { gap: 6px 25px; }
     .oc .developer-avatar { width: 45px; height: 45px; border-width: 2px; }
     .oc .developer-avatar-container { min-width: 45px; width: 45px; }
     .oc .developer-label { font-size: 9px; padding: 2px 4px; margin-top: 6px; }
+    .oc .developer-avatar.developer-more { font-size: 21px; }
 
     /* sub_info_show.htm tabs */
     .sub_tab, .sub_tab_show { font-size: 10px; }
@@ -7648,6 +9108,13 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .sub_provider_item { width: 80px; min-height: 32px; }
     .sub_provider_name { font-size: 10px; }
     .sub_provider_percent { font-size: 10px; }
+
+    .oc .guide-pop,
+    .oc .guide-pop.wide,
+    .oc .guide-pop.wide-dots {
+        width: calc(100vw - 24px);
+    }
+    .oc .guide-pop-body { max-height: 42vh; }
 }
 
 /* ---- Stage 3: ≤480px (mobile phone) ---- */
@@ -7664,11 +9131,17 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     #debug-rendered .pre-copy-btn svg { width: 11px; height: 11px; }
     /* log.htm - tab menu responsive font */
     #tab-header ul.oc-tabmenu li { font-size: 11px; }
+    /* floating action buttons - status/merge/log pages */
+    .oc .oc-usage-help-float { width: 40px; height: 40px; }
+    .oc .oc-float-stack .oc-usage-help-float svg,
+    .oc #oc-merge-toggle-btn.oc-usage-help-float svg { width: 20px; height: 20px; }
+    .oc #oc-merge-toggle-btn.oc-usage-help-float { right: 16px; bottom: 16px; }
     /* status.htm - main cards */
     .oc .main-cards-container { gap: 8px; max-width: 100%; width: 100%; }
     .oc .card-row.dual-cards { grid-template-columns: minmax(0, 1fr); }
     .oc .card-row.stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .oc .announcement-banner { width: 90%; max-width: 100%; }
+    .oc .announcement-banner { width: 90%; max-width: 100%; height: 34px; }
+    .oc .announcement-content { font-size: 12px; }
     .oc .icon-btn { width: 24px; height: 24px; min-width: 24px; }
     .oc .subscription-overwrite-tag { height: 24px; width: fit-content; font-size: 10px; padding: 0 6px; }
     .oc .icon-btn svg { width: 12px !important; height: 12px !important; }
@@ -7751,7 +9224,8 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .card .general .more { bottom: 2px; padding-right: 8px; }
     .oc .card .general .btn { width: 60px !important; height: 60px !important; font-size: 10px; padding: 0 !important; }
     .oc .card .general .more p { font-size: 11px; }
-    .oc .oix-announcement { width: 90%; max-width: 100%; }
+    .oc .oix-announcement { width: 90%; max-width: 100%; height: 34px; }
+    .oc .oix-announcement-content { font-size: 12px; }
     .oix-header { align-items: center; justify-content: center; }
     .oix-settings-grid { grid-template-columns: 1fr; }
     .oix-card-span-2 { grid-column: auto; }
@@ -7771,8 +9245,13 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .version-card { margin-bottom: 4px; }
     .oc .config-item { gap: 6px; }
     .oc .addr-row, .oc .addr-header {
-        grid-template-columns: 32px minmax(28px, 0.5fr) 66px minmax(64px, 1.1fr) minmax(74px, 1.15fr) 68px;
+        grid-template-columns: 20px minmax(72px, 1fr) 60px minmax(var(--addr-ver-plugin), 0.5fr) minmax(var(--addr-ver-core), 0.85fr) 62px;
         gap: 3px;
+    }
+    .oc .select-popup-body {
+        --addr-ver-plugin: 80px;
+        --addr-ver-core: 110px;
+        --addr-cols: calc(20px + 72px + 60px + 62px + var(--addr-ver-plugin) + var(--addr-ver-core) + 5 * 3px + 2 * 10px);
     }
     .oc .addr-row {
         min-height: 48px;
@@ -7780,7 +9259,7 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     }
     .oc .addr-row-url { font-size: 10px; }
     .oc .addr-status { font-size: 9px; }
-    .oc .addr-proxy, .oc .addr-proxy-static { font-size: 9px; }
+    .oc .addr-proxy, .oc .addr-proxy-static { font-size: 9px; padding: 2px 4px; }
     .oc .addr-row-index, .oc .addr-header-index { font-size: 9px; }
     .oc .addr-row .ver-text { font-size: 9px; padding: 1px 2px; }
     .oc .addr-header-label { font-size: 9px; }
@@ -7799,6 +9278,7 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .developer-avatar { width: 35px; height: 35px; }
     .oc .developer-avatar-container { min-width: 35px; width: 35px; }
     .oc .developer-label { font-size: 7px; padding: 1px 3px; margin-top: 3px; }
+    .oc .developer-avatar.developer-more { font-size: 17px; }
 
     /* sub_info_show.htm tabs */
     .sub_tab, .sub_tab_show { font-size: 9px; }
@@ -7810,6 +9290,19 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .sub_provider_name { font-size: 9px; }
     .sub_provider_percent { font-size: 9px; }
 
+
+.oc .guide-pop.bottom-sheet .guide-pop-body { max-height: 30vh; }
+    .oc .guide-pop-head { flex-wrap: wrap; row-gap: 4px; }
+    .oc .guide-pop-title { font-size: 13.5px; }
+    .oc .guide-pop-section { display: none; }
+    .oc .guide-pop-foot { gap: 6px; justify-content: center; }
+    /* the row keeps the marks at full size here: even at 320px the whole tour fits on its own line,
+     * and "safe center" leaves the first marks reachable if a very long tour ever overflows */
+    .oc .guide-pop-foot .guide-dots { flex: 1 0 100%; justify-content: safe center; }
+    .oc .guide-actions { flex: 1 0 100%; flex-wrap: nowrap; justify-content: center; gap: 6px; margin-left: 0; }
+    .oc .guide-pop-foot .guide-actions .btn { flex: 1 1 0; min-width: 0; padding: 0 5px; font-size: 11px; }
+    .oc .guide-pop-foot .btn { min-width: 0; height: 28px; padding: 0 9px; font-size: 11.5px; }
+    .oc .oc-float-stack { right: 16px; bottom: 16px; }
 }
 
 /* ---- Stage 4: ≤320px (small mobile) ---- */
@@ -7826,6 +9319,10 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     #debug-rendered .pre-copy-btn svg { width: 10px; height: 10px; }
     /* log.htm - tab menu responsive font */
     #tab-header ul.oc-tabmenu li { font-size: 10px; }
+    /* floating action buttons - status/merge/log pages */
+    .oc .oc-usage-help-float { width: 36px; height: 36px; }
+    .oc .oc-float-stack .oc-usage-help-float svg,
+    .oc #oc-merge-toggle-btn.oc-usage-help-float svg { width: 18px; height: 18px; }
     /* status.htm - Running Mode mode-pill */
     .oc .mode-pill .mode-pill-opt { padding: 2px 5px; font-size: 8px; }
     /* developer.htm */
@@ -7833,6 +9330,9 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .developer-avatar { width: 30px; height: 30px; }
     .oc .developer-avatar-container { min-width: 30px; width: 30px; }
     .oc .developer-label { font-size: 6px; padding: 1px 2px; margin-top: 3px; }
+    .oc .developer-avatar.developer-more { font-size: 14px; }
+    .oc .announcement-banner, .oc .oix-announcement { height: 32px; }
+    .oc .announcement-content, .oc .oix-announcement-content { font-size: 12px; }
 
     /* sub_info_show.htm tabs */
     .sub_tab, .sub_tab_show { font-size: 8px; }
@@ -7843,6 +9343,10 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .sub_provider_item { width: 60px; min-height: 28px; }
     .sub_provider_name { font-size: 8px; }
     .sub_provider_percent { font-size: 8px; }
+
+    .oc .guide-pop { padding: 10px 12px; }
+    .oc .guide-pop-body { max-height: 34vh; font-size: 12px; }
+    .oc .guide-pop-foot .btn { padding: 0 7px; font-size: 11px; }
 }
 
 /* ---- developer.htm: desktop enhancement ---- */
@@ -7851,6 +9355,7 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
     .oc .developer-avatar { width: 60px; height: 60px; border-width: 3px; }
     .oc .developer-avatar-container { min-width: 60px; width: 60px; }
     .oc .developer-label { font-size: 11px; padding: 3px 8px; margin-top: 6px; }
+    .oc .developer-avatar.developer-more { font-size: 28px; }
 }
 
 /* ---- log.htm: device capability detection ---- */
@@ -7878,4 +9383,19 @@ html[data-darkmode=true] .oc #addCustomOption:hover {
 @media (pointer: coarse) and (max-width: 320px) {
     #debug-rendered .pre-copy-btn { width: 28px; height: 28px; }
     #debug-rendered .pre-copy-btn svg { width: 14px; height: 14px; }
+}
+
+@media (hover: none) {
+    .oc .overwrite-item-actions {
+        opacity: 1;
+    }
+    .oc .overwrite-item-actions .icon-btn {
+        width: 22px !important;
+        height: 22px !important;
+        min-width: 22px !important;
+    }
+    .oc .overwrite-item-actions .icon-btn svg {
+        width: 13px !important;
+        height: 13px !important;
+    }
 }

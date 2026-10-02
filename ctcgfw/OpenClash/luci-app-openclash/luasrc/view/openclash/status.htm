@@ -8,7 +8,6 @@
 <head>
 <script src="/luci-static/resources/openclash/js/common.js?v=<%=plugin_version%>"></script>
 <link rel="stylesheet" href="/luci-static/resources/openclash/css/oc.css?v=<%=plugin_version%>">
-<script src="/luci-static/resources/openclash/js/cm6.min.js?v=<%=plugin_version%>"></script>
 <script src="/luci-static/resources/openclash/js/chart.umd.min.js?v=<%=plugin_version%>"></script>
 </head>
 <fieldset class="cbi-section">
@@ -88,11 +87,11 @@
                                     <span class="mode-pill" id="mode-pill">
                                         <input type="radio" id="dns_fakeip" name="radios-dns" value="fake-ip" onclick="return switch_dns_mode(this.value)"/>
                                         <label for="dns_fakeip" class="mode-pill-opt" title="<%:Fake-IP%>">
-                                            <svg width="13" height="13"><use href="#oc-icon-cloud-search"/></svg>
+                                            <svg width="13" height="13"><use href="#oc-icon-cloud"/></svg>
                                         </label>
                                         <input type="radio" id="dns_redirhost" name="radios-dns" value="redir-host" onclick="return switch_dns_mode(this.value)"/>
                                         <label for="dns_redirhost" class="mode-pill-opt" title="<%:Redir-Host%>">
-                                            <svg width="13" height="13"><use href="#oc-icon-device-desktop-search"/></svg>
+                                            <svg width="13" height="13"><use href="#oc-icon-device-desktop"/></svg>
                                         </label>
                                     </span>
                                 </div>
@@ -241,7 +240,7 @@
                                             <select id="config_file_select" class="config-select"><option value=""><%:Collecting data...%></option></select>
                                         </div>
                                         <div class="card-actions">
-                                            <button type="button" class="icon-btn action-btn" id="switch_config" title="<%:SwiTch%>" onclick="return switchConfig()"><svg width="14" height="14"><use href="#oc-icon-switch"/></svg></button>
+                                            <button type="button" class="icon-btn action-btn" id="switch_config" title="<%:Switch%>" onclick="return switchConfig()"><svg width="14" height="14"><use href="#oc-icon-switch"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="update_config" title="<%:Update%>" onclick="return updateConfig()"><svg width="14" height="14"><use href="#oc-icon-update"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="edit_config" title="<%:Edit%>" onclick="return editConfig()"><svg width="14" height="14"><use href="#oc-icon-edit"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="edit_subscribe" title="<%:Edit Subscription%>" onclick="return editSubscribe()"><svg width="14" height="14"><use href="#oc-icon-settings"/></svg></button>
@@ -382,10 +381,16 @@
                 </div>
             </div>
 
-            <!-- Usage Help Button -->
-            <div class="oc-usage-help-float" id="usage-help-float" title="<%:Usage Help%>" onclick="UsageHelpManager.show()">
-                <svg width="24" height="24"><use href="#oc-icon-usage-help"/></svg>
-                <span class="oc-usage-help-bubble" id="usage-help-bubble"><%:Click to get usage help%></span>
+            <!-- Floating buttons: quick start guide + usage help -->
+            <div class="oc-float-stack" id="oc-float-stack">
+                <button type="button" class="oc-usage-help-float oc-guide-float" id="guide-float" title="<%:Quick Start%>" onclick="openGuide()">
+                    <svg width="24" height="24" aria-hidden="true"><use href="#oc-icon-bulb"/></svg>
+                    <span class="oc-usage-help-bubble" id="guide-bubble"><%:First time here? Let me give you a quick tour of the page features%></span>
+                </button>
+                <button type="button" class="oc-usage-help-float" id="usage-help-float" title="<%:Usage Help%>" onclick="UsageHelpManager.show()">
+                    <svg width="24" height="24"><use href="#oc-icon-usage-help"/></svg>
+                    <span class="oc-usage-help-bubble" id="usage-help-bubble"><%:Click to get usage help%></span>
+                </button>
             </div>
             </div>
         </td>
@@ -395,6 +400,7 @@
 
 <script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%=plugin_version%>"></script>
 <script type="text/javascript">//<![CDATA[
+    window.ocCM6Url = '/luci-static/resources/openclash/js/cm6.min.js?v=<%=plugin_version%>';
     window.levelTranslations = {
         'info': '<%:Info%>',
         'warning': '<%:Warning%>',
@@ -900,6 +906,7 @@
         currentConfigIndex: -1,
         selectElement: null,
         rawCurrentConfig: '',
+        configListLoaded: false,
 
         init: function() {
             this.selectElement = document.getElementById('config_file_select');
@@ -1039,6 +1046,9 @@
                     this.retryGetConfigList = null;
                 }
 
+                this.configListLoaded = true;
+                autoOpenGuide();
+
             } catch (e) {
                 this.handleConfigListError();
             }
@@ -1051,6 +1061,8 @@
 
             this.toggleEmptyState(true);
             this.hideSubscriptionDisplay();
+            this.configListLoaded = true;
+            autoOpenGuide();
 
             if (!this.retryGetConfigList) {
                 var self = this;
@@ -1236,8 +1248,6 @@
             if (!fileName) return '<%:Unknown%>';
 
             var name = fileName.split('/').pop().split('\\').pop();
-
-            //name = name.replace(/\.(yaml|yml)$/i, '');
 
             if (name.length > 30) {
                 name = name.substring(0, 27) + '...';
@@ -2051,8 +2061,9 @@
 
         isModuleForCurrentConfig: function(moduleInfo, currentConfigPath) {
             var configList = this.parseModuleConfigList(moduleInfo ? moduleInfo.config : null);
+            // an empty match list never applies (init.d skips overwrite modules without config)
             if (!configList.length) {
-                return true;
+                return false;
             }
 
             if (configList.indexOf('all') !== -1) {
@@ -2467,15 +2478,16 @@
                 if (x && x.status == 200 && x.responseText != "" && status) {
                     self.retryCount = 0;
                     var cpuValueNumber = Number(status.cpu);
-                    if (!isFinite(cpuValueNumber) || cpuValueNumber < 0 || cpuValueNumber > 100) cpuValueNumber = 0;
+                    if (!isFinite(cpuValueNumber) || cpuValueNumber < 0) cpuValueNumber = 0;
                     var cpuColor = cpuValueNumber <= 50 ? "var(--success-color)" : (cpuValueNumber <= 80 ? "var(--tip-color)" : "var(--error-color)");
-                    var cpuValue = cpuValueNumber + " %";
+                    var cpuValue = ocFormatOneDecimal(cpuValueNumber) + " %";
                     document.getElementById("cpu_t").innerHTML = ocStatHtml(cpuValue, cpuColor);
 
                     var loadValue = parseFloat(status.load_avg) || 0;
                     if (!isFinite(loadValue) || loadValue < 0) loadValue = 0;
                     var loadColor = loadValue <= 50 ? "var(--success-color)" : (loadValue <= 80 ? "var(--tip-color)" : "var(--error-color)");
-                    document.getElementById("load_a").innerHTML = ocStatHtml(loadValue + " %", loadColor);
+                    var loadText = ocFormatOneDecimal(loadValue);
+                    document.getElementById("load_a").innerHTML = ocStatHtml(loadText + " %", loadColor);
                     StatsChart.feed("cpu", cpuValueNumber);
                     StatsChart.feed("load", loadValue);
                 } else {
@@ -2947,21 +2959,31 @@
                 this.statusEl.textContent = '';
             }
 
+            var self = this;
             if (!this.editor) {
                 var prompt = this.buildPrompt();
                 this.textarea.value = prompt;
-                var container = document.getElementById('usage-help-editor');
-                var isDark = isDarkBackground(document.body);
-                var exts = [CM6.lineNumbers(), CM6.EditorView.lineWrapping, CM6.themeExtension(isDark), CM6.markdown()];
-                var view = new CM6.EditorView({
-                    state: CM6.EditorState.create({ doc: prompt, extensions: exts })
+                this.statusEl.textContent = '<%:Loading...%>';
+                ocRequireCM6(function() {
+                    var container = document.getElementById('usage-help-editor');
+                    var isDark = isDarkBackground(document.body);
+                    var exts = [CM6.lineNumbers(), CM6.EditorView.lineWrapping, CM6.themeExtension(isDark), CM6.markdown()];
+                    var view = new CM6.EditorView({
+                        state: CM6.EditorState.create({ doc: prompt, extensions: exts })
+                    });
+                    container.innerHTML = '';
+                    container.appendChild(view.dom);
+                    self.editor = view;
+                    self.statusEl.textContent = '';
+                    setTimeout(function() {
+                        if (self.editor && self.editor.contentDOM) {
+                            self.editor.focus();
+                        }
+                    }, 100);
                 });
-                container.innerHTML = '';
-                container.appendChild(view.dom);
-                this.editor = view;
+                return;
             }
 
-            var self = this;
             setTimeout(function() {
                 if (self.editor && self.editor.contentDOM) {
                     self.editor.focus();
@@ -3331,7 +3353,7 @@
 
         formatLegendValue: function(key, val) {
             if (key === 'mem') return Math.round(val) + ' MB';
-            if (key === 'cpu' || key === 'load') return Math.round(val) + ' %';
+            if (key === 'cpu' || key === 'load') return ocFormatOneDecimal(val) + ' %';
             if (key === 'conn') return String(Math.round(val));
             return String(Math.round(val * 10) / 10);
         },
@@ -3619,6 +3641,8 @@
     StatsChart.init();
 
     var pluginToggleUserAction = false;
+    var coreMissing = null;
+    var autoGuideChecked = false;
 
     get_op_mode();
 
@@ -3781,6 +3805,11 @@
         SubscriptionManager.init();
         UsageHelpManager.init();
         loadAnnouncement();
+        var guideBubble = document.getElementById('guide-bubble');
+        if (guideBubble && localStorage.getItem('oc_guide_done') !== '1') {
+            guideBubble.classList.add('show');
+            setTimeout(function() { guideBubble.classList.remove('show'); }, 6000);
+        }
     }, 300);
 
     setTimeout(function() { check_core(); }, 1000);
@@ -4549,14 +4578,27 @@
     function check_core() {
         StateManager.cachedXHRGet('<%=luci.dispatcher.build_url("admin", "services", "openclash", "check_core")%>', function(x, status) {
             if (x && x.status == 200) {
-                if (status.core_status != "1") {
-                    var r = confirm("<%:You have not installed the core yet, do you want to download and install it now?%>");
-                    if (r == true) {
-                        return update("core_download");
-                    }
-                }
+                coreMissing = (status.core_status != "1");
+                autoOpenGuide();
             }
         });
+    }
+
+    // the guide start depends on the config list as well, so wait until both answers are in
+    function autoOpenGuide() {
+        if (autoGuideChecked || coreMissing !== true || !ConfigFileManager.configListLoaded) return;
+        autoGuideChecked = true;
+        if (localStorage.getItem('oc_guide_autostart') === '0') return;
+        openGuide(ConfigFileManager.configList.length > 0);
+    }
+
+    // The core is missing: open the quick start guide (a modal on this page) instead of the
+    // plain confirm() dialog. A fresh device starts on the guide's first page, a missing core
+    // alone jumps straight to the core task. "oc_guide_autostart" keeps users that opted out
+    // from being pushed.
+    function openGuide(atPending) {
+        if (typeof Guide !== 'undefined') Guide.open(atPending);
+        return false;
     }
 
     function copyAddress() {
