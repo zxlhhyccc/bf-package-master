@@ -52,6 +52,7 @@ var ConfigEditor = {
         this.model = document.getElementById('config-editor-model');
         this.overwriteSidePanel = document.getElementById('overwrite-side-panel');
         this.mergeViewActive = false;
+        this.lastFocus = null;
 
         if (!this.overlay || !this.model) {
             return;
@@ -62,6 +63,8 @@ var ConfigEditor = {
         if (host && host.classList && host.classList.contains('oc') && host.parentNode !== document.body) {
             document.body.appendChild(host);
         }
+
+        if (this.model) this.model.setAttribute('tabindex', '-1');
 
         this.bindEvents();
         this.restoreOverwriteSide();
@@ -90,6 +93,21 @@ var ConfigEditor = {
                 self.toggleFullscreen(false);
             } else if (e.key === 'Escape' && !self.isFullscreen) {
                 self.closeEditor();
+            } else if (e.key === 'Tab') {
+                var active = document.activeElement;
+                // CM6 owns Tab inside the editor (indent/autocomplete), never steal it
+                if (!active || e.defaultPrevented || (active.closest && active.closest('.cm-editor'))) return;
+                var list = self.getFocusables();
+                if (!list.length) return;
+                var first = list[0];
+                var last = list[list.length - 1];
+                if (!e.shiftKey && (active === last || !self.model.contains(active))) {
+                    e.preventDefault();
+                    first.focus();
+                } else if (e.shiftKey && (active === first || !self.model.contains(active))) {
+                    e.preventDefault();
+                    last.focus();
+                }
             }
         });
 
@@ -131,10 +149,12 @@ var ConfigEditor = {
                     self.showMergeView();
                     self.currentViewMode = 'original';
                     layoutBtn.title = '<%:Restore%>';
+                    layoutBtn.setAttribute('aria-label', '<%:Restore%>');
                     layoutBtn.innerHTML = ocIcons.SVG_RESTORE;
                 } else {
                     self.hideMergeView();
                     layoutBtn.title = '<%:Compare%>';
+                    layoutBtn.setAttribute('aria-label', '<%:Compare%>');
                     layoutBtn.innerHTML = ocIcons.SVG_COMPARE;
                 }
             });
@@ -193,12 +213,16 @@ var ConfigEditor = {
         if (layoutBtn) layoutBtn.classList.remove('oc-hidden');
 
         if (!configFile) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return;
         }
 
         this.currentConfigFile = configFile;
+        this.lastFocus = document.activeElement;
         this.overlay.classList.add('show');
+        if (this.model) {
+            try { this.model.focus(); } catch (e) {}
+        }
 
         this.model.classList.remove('maximized');
         this.model.classList.remove('minimized');
@@ -254,7 +278,11 @@ var ConfigEditor = {
         if (!this.currentConfigFile) {
             this.currentConfigFile = '/etc/openclash/custom/openclash_custom_overwrite.sh';
         }
+        this.lastFocus = document.activeElement;
         this.overlay.classList.add('show');
+        if (this.model) {
+            try { this.model.focus(); } catch (e) {}
+        }
 
         this.model.classList.remove('maximized');
         this.model.classList.remove('minimized');
@@ -318,6 +346,10 @@ var ConfigEditor = {
 
     hide: function() {
         this.overlay.classList.remove('show');
+        if (this.lastFocus && typeof this.lastFocus.focus === 'function') {
+            try { this.lastFocus.focus(); } catch (e) {}
+        }
+        this.lastFocus = null;
 
         this.destroyEditor();
         this.finishOverwriteDrag();
@@ -343,9 +375,19 @@ var ConfigEditor = {
         if (layoutBtn) {
             layoutBtn.classList.remove('active');
             layoutBtn.title = '<%:Compare%>';
+            layoutBtn.setAttribute('aria-label', '<%:Compare%>');
             layoutBtn.innerHTML = ocIcons.SVG_COMPARE;
         }
-        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%>';
+        if (editor_help) editor_help.innerHTML = ocEditorHelpHtml(false);
+    },
+
+    getFocusables: function() {
+        var nodes = this.model.querySelectorAll('button:not([disabled]):not(.oc-hidden), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [contenteditable="true"]');
+        var list = [];
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].offsetParent !== null || nodes[i] === document.activeElement) list.push(nodes[i]);
+        }
+        return list;
     },
 
     resetModelStyles: function() {
@@ -384,8 +426,6 @@ var ConfigEditor = {
             }
             if (saveBtn) {
                 saveBtn.disabled = !this.isModified;
-                saveBtn.style.opacity = this.isModified ? '1' : '0.5';
-                saveBtn.style.cursor = this.isModified ? 'pointer' : 'not-allowed';
             }
             return;
         }
@@ -395,16 +435,12 @@ var ConfigEditor = {
                 tabRuntime.classList.remove('active');
                 if (saveBtn) {
                     saveBtn.disabled = !this.isModified;
-                    saveBtn.style.opacity = this.isModified ? '1' : '0.5';
-                    saveBtn.style.cursor = this.isModified ? 'pointer' : 'not-allowed';
                 }
             } else {
                 tabOriginal.classList.remove('active');
                 tabRuntime.classList.add('active');
                 if (saveBtn) {
                     saveBtn.disabled = true;
-                    saveBtn.style.opacity = '0.5';
-                    saveBtn.style.cursor = 'not-allowed';
                 }
             }
         }
@@ -593,7 +629,7 @@ var ConfigEditor = {
         }
         if (container) container.classList.remove('oc-hidden');
         if (statusText) statusText.textContent = '<%:Loading...%>';
-        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F10</b> <%:to toggle differences,%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%>';
+        if (editor_help) editor_help.innerHTML = ocEditorHelpHtml(true);
 
         var getOriginal = function() {
             return new Promise(function(resolve, reject) {
@@ -688,14 +724,16 @@ var ConfigEditor = {
         if (layoutBtn) {
             layoutBtn.classList.remove('active');
             layoutBtn.title = '<%:Compare%>';
+            layoutBtn.setAttribute('aria-label', '<%:Compare%>');
             layoutBtn.innerHTML = ocIcons.SVG_COMPARE;
         }
 
-        if (editor_help) editor_help.innerHTML = '<%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%>';
+        if (editor_help) editor_help.innerHTML = ocEditorHelpHtml(false);
     },
 
-    saveConfigContent: function() {
+    saveConfigContent: function(onDone) {
         if (!this.editorInstance || !this.isModified) {
+            if (onDone) onDone(false);
             return;
         }
 
@@ -717,8 +755,8 @@ var ConfigEditor = {
 
         if (!content) {
             saveBtn.disabled = false;
-            statusText.textContent = '<%:Save failed%>';
-            alert('<%:Config file content is empty%>');
+            statusText.textContent = '<%:Config file content is empty%>';
+            if (onDone) onDone(false);
             return;
         }
 
@@ -746,6 +784,7 @@ var ConfigEditor = {
                 self.isModified = false;
                 self.updateSaveButtonState();
                 statusText.textContent = '<%:Saved successfully%>';
+                if (onDone) onDone(true);
 
                 setTimeout(function() {
                     if (statusText && statusText.textContent === '<%:Saved successfully%>') {
@@ -753,11 +792,11 @@ var ConfigEditor = {
                     }
                 }, 3000);
             } else {
-                statusText.textContent = '<%:Save failed%>';
-                alert('<%:Failed to save config file:%> ' + (data.message || '<%:Unknown error%>'));
+                statusText.textContent = '<%:Save failed%>: ' + (data.message || '<%:Unknown error%>');
+                if (onDone) onDone(false);
 
                 setTimeout(function() {
-                    if (statusText && statusText.textContent === '<%:Save failed%>') {
+                    if (statusText && statusText.textContent.indexOf('<%:Save failed%>') === 0) {
                         statusText.textContent = '<%:Ready%>';
                     }
                 }, 3000);
@@ -765,14 +804,14 @@ var ConfigEditor = {
         })
         .catch(function(err) {
             saveBtn.disabled = false;
-            statusText.textContent = '<%:Save failed%>';
-            alert('<%:Failed to save config file:%> ' + err.message);
+            statusText.textContent = '<%:Failed to save config file:%> ' + err.message;
+            if (onDone) onDone(false);
         });
     },
 
     downloadConfigContent: function() {
         if (!this.editorInstance) {
-            alert('<%:Editor not ready%>');
+            document.getElementById('config-editor-status-text').textContent = '<%:Editor not ready%>';
             return;
         }
 
@@ -822,7 +861,7 @@ var ConfigEditor = {
             }
 
         } catch (error) {
-            alert('<%:Download failed:%> ' + error.message);
+            document.getElementById('config-editor-status-text').textContent = '<%:Download failed:%> ' + error.message;
         }
     },
 
@@ -1009,7 +1048,7 @@ var ConfigEditor = {
             }
 
             appendAvatar(customItem, customName);
-            appendMain(customItem, customName, '<%:Local Mod%>', '<%:Built-in%>', 'builtin');
+            appendMain(customItem, customName, '<%:Local Mod%>', '<%:Builtin%>', 'builtin');
 
             customItem.onclick = function() {
                 selectFile(customFile.path);
@@ -1028,7 +1067,7 @@ var ConfigEditor = {
             var registered = !!self.overwriteSubInfo[name];
             var enable = typeof sub.enable !== 'undefined' ? sub.enable : 0;
             var builtin = OC_BUILTIN_OVERWRITE.indexOf(name) !== -1;
-            var tagText = !registered ? '<%:Unset%>' : (builtin ? '<%:Built-in%>' : '');
+            var tagText = !registered ? '<%:Unset%>' : (builtin ? '<%:Builtin%>' : '');
             var tagClass = (registered && builtin) ? 'builtin' : '';
 
             var item = document.createElement('div');
@@ -1202,7 +1241,17 @@ var ConfigEditor = {
             del.innerHTML = '<svg width="14" height="14"><use href="#oc-icon-trash"/></svg>';
             del.onclick = function(e) {
                 e.stopPropagation();
-                if (confirm('<%:Are you sure you want to delete this module and its subscription info?%>')) {
+                ocConfirm({
+                    title: '<%:Delete module%>',
+                    body: '<%:Are you sure you want to delete this module and its subscription info?%> <%:This cannot be undone%>',
+                    buttons: [
+                        { label: '<%:Cancel%>', value: null },
+                        { label: '<%:OK%>', value: 'delete', kind: 'danger' }
+                    ]
+                }).then(function(choice) {
+                    if (choice !== 'delete') {
+                        return;
+                    }
                     fetch('/cgi-bin/luci/admin/services/openclash/delete_overwrite_file', {
                         method: 'POST',
                         body: new URLSearchParams({ filename: name })
@@ -1228,7 +1277,7 @@ var ConfigEditor = {
                             statusText.textContent = '<%:Delete failed%>: ' + (data.message || '');
                         }
                     });
-                }
+                });
             };
             actions.appendChild(del);
 
@@ -2199,11 +2248,11 @@ var ConfigEditor = {
             if (tabFile.classList.contains('active')) {
                 var filename = filenameInput.value.trim();
                 if (!filename) {
-                    alert('<%:Please enter a module name%>');
+                    ocAlert('<%:Please enter a module name%>');
                     return;
                 }
                 if (filename === 'openclash_custom_overwrite.sh') {
-                    alert('<%:openclash_custom_overwrite.sh already exists and cannot be added again%>');
+                    ocAlert('<%:openclash_custom_overwrite.sh already exists and cannot be added again%>');
                     return;
                 }
                 if (selectedFile) {
@@ -2247,7 +2296,7 @@ var ConfigEditor = {
                     };
                     reader.readAsText(selectedFile, 'UTF-8');
                 } else {
-                    alert('<%:No Specify Upload File%>');
+                    ocAlert('<%:No Specify Upload File%>');
                     return;
                 }
             } else {
@@ -2263,19 +2312,19 @@ var ConfigEditor = {
                     selectedConfigPaths = ['all'];
                 }
                 if (!filename) {
-                    alert('<%:Please enter a module name%>');
+                    ocAlert('<%:Please enter a module name%>');
                     return;
                 }
                 if (filename === 'openclash_custom_overwrite.sh') {
-                    alert('<%:openclash_custom_overwrite.sh already exists and cannot be added again%>');
+                    ocAlert('<%:openclash_custom_overwrite.sh already exists and cannot be added again%>');
                     return;
                 }
                 if (type === 'http' && !url) {
-                    alert('<%:Please enter subscription URL%>');
+                    ocAlert('<%:Please enter subscription URL%>');
                     return;
                 }
                 if (type === 'http' && !/^https?:\/\/[^ \n|]+$/.test(url)) {
-                    alert('<%:Invalid subscription URL format, only single HTTP/HTTPS link is supported%>');
+                    ocAlert('<%:Invalid subscription URL format, only single HTTP/HTTPS link is supported%>');
                     return;
                 }
                 var formData = new FormData();
@@ -2469,20 +2518,20 @@ var ConfigEditor = {
             }
 
             if (!newName) {
-                alert('<%:Please enter a module name%>');
+                ocAlert('<%:Please enter a module name%>');
                 return;
             }
             if (newName === 'openclash_custom_overwrite.sh') {
-                alert('<%:openclash_custom_overwrite.sh already exists and cannot be added again%>');
+                ocAlert('<%:openclash_custom_overwrite.sh already exists and cannot be added again%>');
                 return;
             }
             if (type === 'http') {
                 if (!url) {
-                    alert('<%:Please enter subscription URL%>');
+                    ocAlert('<%:Please enter subscription URL%>');
                     return;
                 }
                 if (!/^https?:\/\/[^ \n|]+$/.test(url)) {
-                    alert('<%:Invalid subscription URL format, only single HTTP/HTTPS link is supported%>');
+                    ocAlert('<%:Invalid subscription URL format, only single HTTP/HTTPS link is supported%>');
                     return;
                 }
             }
@@ -2564,21 +2613,41 @@ var ConfigEditor = {
     },
 
     closeEditor: function() {
-        if (this.isModified) {
-            var r = confirm('<%:You have unsaved changes. Are you sure you want to close?%>');
-            if (!r) {
-                return;
-            }
-        }
-        this.hideMergeView();
-        this.hide();
+        var self = this;
+        var finish = function() {
+            self.hideMergeView();
+            self.hide();
 
-        if (window.OverwriteSubscribeManager && window.OverwriteSubscribeManager.load) {
-            window.OverwriteSubscribeManager.load(true);
+            if (window.OverwriteSubscribeManager && window.OverwriteSubscribeManager.load) {
+                window.OverwriteSubscribeManager.load(true);
+            }
+            try {
+                window.dispatchEvent(new Event('oc-overwrite-updated'));
+            } catch (e) {}
+        };
+
+        if (!this.isModified) {
+            finish();
+            return;
         }
-        try {
-            window.dispatchEvent(new Event('oc-overwrite-updated'));
-        } catch (e) {}
+
+        ocConfirm({
+            title: '<%:Configuration has unsaved changes%>',
+            body: '<%:Closing will discard the changes%>',
+            buttons: [
+                { label: '<%:Cancel%>', value: null },
+                { label: '<%:Close without saving%>', value: 'discard', kind: 'danger' },
+                { label: '<%:Save and close%>', value: 'save', kind: 'primary' }
+            ]
+        }).then(function(choice) {
+            if (choice === 'discard') {
+                finish();
+            } else if (choice === 'save') {
+                self.saveConfigContent(function(saved) {
+                    if (saved) finish();
+                });
+            }
+        });
     },
 
     updateZoom: function(newZoom) {

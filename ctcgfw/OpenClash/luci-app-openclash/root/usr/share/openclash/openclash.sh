@@ -29,6 +29,9 @@ CLASH="/etc/openclash/clash"
 CLASH_CONFIG="/etc/openclash"
 restart=0
 only_download=0
+norestart=0
+exit_code=0
+[ "$2" = "norestart" ] && norestart=1
 
 inc_job_counter
 
@@ -209,7 +212,7 @@ config_su_check()
       uci -q set openclash.config.config_path="$CONFIG_FILE"
       uci commit openclash
    fi
-   if [ "$CONFIG_FILE" == "$CONFIG_PATH" ]; then
+   if [ "$CONFIG_FILE" == "$CONFIG_PATH" ] && [ "$norestart" -eq 0 ]; then
       restart=1
    fi
 }
@@ -218,6 +221,7 @@ config_error()
 {
    LOG_ERROR "【$name】Update Error, Please Try Again Later..."
    rm -rf "$CFG_FILE" 2>/dev/null
+   exit_code=1
 }
 
 change_dns()
@@ -358,6 +362,8 @@ sub_info_get()
    config_get "template" "$section" "template" ""
    config_get "node_type" "$section" "node_type" ""
    config_get "rule_provider" "$section" "rule_provider" ""
+   config_get "tfo" "$section" "tfo" ""
+   config_get "tls13" "$section" "tls13" ""
    config_get "custom_template_url" "$section" "custom_template_url" ""
    config_get "de_ex_keyword" "$section" "de_ex_keyword" ""
    config_get "sub_ua" "$section" "sub_ua" "clash-verge/v2.4.5"
@@ -391,6 +397,18 @@ sub_info_get()
       rule_provider="&expand=false&classic=true"
    else
       rule_provider=""
+   fi
+
+   if [ "$tfo" == "true" ]; then
+      tfo="&tfo=true"
+   else
+      tfo=""
+   fi
+
+   if [ "$tls13" == "true" ]; then
+      tls13="&tls13=true"
+   else
+      tls13=""
    fi
 
    if [ -n "$2" ] && [ "$2" != "$CONFIG_FILE" ] && [ "$2" != "$name" ]; then
@@ -432,7 +450,7 @@ sub_info_get()
          template_path_encode=$(urlencode "$template_path")
          [ -n "$key_match_param" ] && key_match_param="$(urlencode "(?i)$key_match_param")"
          [ -n "$key_ex_match_param" ] && key_ex_match_param="$(urlencode "(?i)$key_ex_match_param")"
-         subscribe_url_param="?target=clash&new_name=true&url=$subscribe_url&config=$template_path_encode&include=$key_match_param&exclude=$key_ex_match_param&emoji=$emoji&list=false&sort=$sort$udp&scv=$skip_cert_verify&append_type=$node_type&fdn=true$rule_provider$append_custom_params"
+         subscribe_url_param="?target=clash&new_name=true&url=$subscribe_url&config=$template_path_encode&include=$key_match_param&exclude=$key_ex_match_param&emoji=$emoji&list=false&sort=$sort$udp&scv=$skip_cert_verify&append_type=$node_type&fdn=true$rule_provider$tfo$tls13$append_custom_params"
          c_address="$convert_address"
       else
          subscribe_url=$address
@@ -480,3 +498,6 @@ config_load "openclash"
 config_foreach sub_info_get "config_subscribe" "$1"
 dec_job_counter_and_restart "$restart"
 del_lock
+
+# the caller (luci) judges the update result by this exit code
+exit "$exit_code"

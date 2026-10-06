@@ -1,6 +1,7 @@
 <%-
 local fs = require "luci.openclash"
-local logged_in = fs.uci_get_config("config", "oix_token") and true or false
+local saved_token = fs.uci_get_config("config", "oix_token") and true or false
+local logged_in = saved_token
 local checkin_enabled = fs.uci_get_config("config", "oix_checkin") == "1"
 local checkin_interval = fs.uci_get_config("config", "oix_checkin_interval") or "1"
 local checkin_multiple = fs.uci_get_config("config", "oix_checkin_multiple") or "1"
@@ -12,9 +13,9 @@ local function oix_logo_img(cls)
 end
 -%>
 <div class="oc">
-	<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
-	<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-settings.css?v=<%="@OPENCLASH_VERSION@"%>">
-	<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
+	<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
+	<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-settings.css?v=@OPENCLASH_VERSION@">
+	<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
 	<fieldset class="cbi-section oix-panel">
 		<div id="oix-msg-bar" class="oix-msg-bar oc-hidden"></div>
 		<div id="oix-login-section" class="<%= logged_in and 'oc-hidden' or '' %>">
@@ -41,8 +42,7 @@ end
 					</div>
 				<div class="oix-field-group">
 					<div class="oix-input-wrap">
-					<input type="password" id="oix-passwd" class="oix-input oix-input-ok oix-input-has-icon" placeholder="<%:Account Password%>" autocomplete="current-password"
-							value="<%= fs.uci_get_config('config', 'oix_passwd') or '' %>">
+					<input type="password" id="oix-passwd" class="oix-input oix-input-ok oix-input-has-icon" placeholder="<%:Account Password%>" autocomplete="current-password">
 						<button type="button" class="oix-pwd-toggle" onclick="OixCloud.togglePwd('oix-passwd')"
 							data-show="<%:Show Password%>" data-hide="<%:Hide Password%>"
 							title="<%:Show Password%>">
@@ -67,8 +67,7 @@ end
 				<div class="oix-field-group">
 					<div class="oix-input-wrap">
 					<input type="password" id="oix-token" class="oix-input oix-input-ok oix-input-has-icon" placeholder="<%:Please enter your oixCloud token%>"
-						autocomplete="off"
-							value="<%= fs.uci_get_config('config', 'oix_token') or '' %>">
+						autocomplete="off">
 						<button type="button" class="oix-pwd-toggle" onclick="OixCloud.togglePwd('oix-token')"
 							data-show="<%:Show Token%>" data-hide="<%:Hide Token%>"
 							title="<%:Show Token%>">
@@ -232,7 +231,7 @@ end
 	</fieldset>
 </div>
 
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>
 <script type="text/javascript">//<![CDATA[
 window.ocOixBoot = {
     loggedIn: <%= logged_in and 'true' or 'false' %>,
@@ -242,4 +241,4 @@ window.ocOixBoot = {
     defaultParams: '<%= oix_default_params %>'
 };
 //]]></script>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=oix_login&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=oix_login&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>

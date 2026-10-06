@@ -134,20 +134,20 @@
     text-overflow: ellipsis;
 }
 
+#tab-content {
+    position: relative;
+    min-height: 540px;
+}
+
+/* Panes stay alive and laid out; the inactive ones are moved off-screen with a
+   transform so switching never re-computes styles/layout for their content. */
 #tab-content .dom {
-    visibility: hidden;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    pointer-events: none;
+    transform: translateX(-200%);
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-}
-
-#tab-content .dom.active {
-    visibility: visible;
-    position: static;
-    pointer-events: auto;
 }
 
 #tab-content .dom ul li {
@@ -203,7 +203,7 @@
     background: var(--primary-color, #3b82f6);
     color: var(--text-on-primary, #fff);
     border-color: var(--primary-color, #3b82f6);
-    box-shadow: 0 1px 2px 0 rgba(59, 130, 246, .08);
+    box-shadow: 0 1px 2px 0 var(--primary-a10);
 }
 
 .oc .oc-input-textarea {
@@ -257,7 +257,7 @@ html[data-darkmode=true] .oc #tab-header ul.oc-tabmenu li.oc-tab-disabled {
 }
 
 html[data-darkmode=true] .oc #tab-header ul.oc-tabmenu li.oc-tab-disabled a {
-    color: var(--text-on-primary, #fff) !important;
+    color: var(--text-primary) !important;
 }
 
 html[data-darkmode=true] .oc #tab-header ul.oc-tabmenu li:not(.oc-tab):hover,

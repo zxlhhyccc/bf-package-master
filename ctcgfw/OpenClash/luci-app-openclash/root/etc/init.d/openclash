@@ -847,6 +847,9 @@ check_core_status()
 
 start_run_core()
 {
+   # Set TCP Fast Open blackhole timeout to 0 (disable detection) for nodes TFO availability
+   [ -e /proc/sys/net/ipv4/tcp_fastopen_blackhole_timeout_sec ] && echo 0 > /proc/sys/net/ipv4/tcp_fastopen_blackhole_timeout_sec 2>/dev/null
+
    ulimit -SHn 1000000
    ulimit -v unlimited
    ulimit -u unlimited
@@ -3894,6 +3897,7 @@ stop_service()
                 /tmp/openclash_cdn_info.json \
                 /tmp/openclash.change \
                 /tmp/openclash_announcement \
+                /tmp/openclash_tpl_cache \
                 ${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute_pass.conf \
                 ${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute6_pass.conf \
                 ${DNSMASQ_CONF_DIR}/dnsmasq_openclash_custom_domain.conf

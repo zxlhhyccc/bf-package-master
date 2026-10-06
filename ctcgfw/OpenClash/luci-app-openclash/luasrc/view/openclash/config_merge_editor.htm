@@ -1,6 +1,6 @@
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-config.css?v=<%="@OPENCLASH_VERSION@"%>">
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-config.css?v=@OPENCLASH_VERSION@">
 
 <div id="my_editor_div" class="oc-flex-center">
 	<div id="config-mode-tabs" class="oc-flex-center" style="width:100%;">
@@ -22,12 +22,12 @@
 </button>
 
 <div id="oc-merge-help" class="oc-hidden">
-	<span id="oc-merge-help-normal"><%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%></span>
-	<span id="oc-merge-help-merge" class="oc-hidden"><%:Press%> <b style="color:var(--success-color)">F10</b> <%:to toggle differences,%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%></span>
+	<span id="oc-merge-help-normal"></span>
+	<span id="oc-merge-help-merge" class="oc-hidden"></span>
 </div>
 
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=merge_editor&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=merge_editor&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
 <script type="text/javascript">//<![CDATA[
 
 (function() {
@@ -39,14 +39,13 @@ if (myEditor_use && myEditor_def) {
 	var myEditor_div_use = document.getElementById("cbi-table-1-user");
 	var myEditor_div_def = document.getElementById("cbi-table-1-default");
 
-	myEditor_div_def.parentNode.parentNode.style.cssText = "text-align: left !important";
+	// clear the inline styles LuCI leaves on the cells; the def cell must not carry
+	// .oc-merge-value: its display:revert !important would beat the inline display:none
+	myEditor_div_def.parentNode.parentNode.style.cssText = "";
+	myEditor_div_def.parentNode.parentNode.classList.add('oc-merge-td');
 	myEditor_div_def.parentNode.className = 'cbi-value';
-	myEditor_div_def.parentNode.style.display = "revert";
-	myEditor_div_def.parentNode.style.width = "100%";
 
-	myEditor_div_use.parentNode.className = 'cbi-value';
-	myEditor_div_use.parentNode.style.display = "revert";
-	myEditor_div_use.parentNode.style.width = "100%";
+	myEditor_div_use.parentNode.className = 'cbi-value oc-merge-value';
 
 	myEditor_use.style.display = 'none';
 	myEditor_def.style.display = 'none';

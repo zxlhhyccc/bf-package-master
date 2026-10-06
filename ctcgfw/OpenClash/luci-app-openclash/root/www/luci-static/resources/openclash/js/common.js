@@ -33,28 +33,15 @@ function ocRequireCM6(cb) {
     };
     s.onerror = function() {
         window.ocCM6State = 0;
+        // wake the waiters anyway so editors fall back to their textarea instead of keeping the overlay
+        var failed = window.ocCM6Waiters;
         window.ocCM6Waiters = [];
+        for (var i = 0; i < failed.length; i++) {
+            try { failed[i](); } catch (e) {}
+        }
     };
     document.head.appendChild(s);
 }
-
-// Drop LuCI's global prefers-reduced-motion media rule
-(function() {
-    var sheets = document.styleSheets;
-    for (var i = sheets.length - 1; i >= 0; i--) {
-        try {
-            var rules = sheets[i].cssRules || sheets[i].rules;
-            if (!rules) continue;
-            for (var j = rules.length - 1; j >= 0; j--) {
-                var rule = rules[j];
-                if (rule.type === CSSRule.MEDIA_RULE &&
-                    /prefers-reduced-motion.*reduce/.test(rule.conditionText)) {
-                    sheets[i].deleteRule(j);
-                }
-            }
-        } catch(e) {}
-    }
-})();
 
 function luminanceFromColor(color) {
     var r, g, b;
@@ -132,6 +119,12 @@ function isDarkBackground(element) {
     return lum < 128;
 }
 
+/* palette ids, kept in sync with the panel list in status.js */
+var ocThemeNames = ['classic', 'cyan', 'indigo', 'graphite', 'amber', 'imperial', 'rose', 'smoky', 'custom'];
+
+// non-null while the colour picker shows an unsaved preview (set/cleared by the theme panel)
+var ocCustomPreviewHex = null;
+
 function ocApplyRootTheme() {
     var t = localStorage.getItem('oc-theme') || 'auto',
         d;
@@ -143,6 +136,10 @@ function ocApplyRootTheme() {
         d = document.body ? isDarkBackground(document.body) : detectInitialAutoDark();
     }
     document.documentElement.setAttribute('data-darkmode', d ? 'true' : 'false');
+    var n = localStorage.getItem('oc-theme-name') || 'classic';
+    if (ocThemeNames.indexOf(n) < 0) n = 'classic';
+    document.documentElement.setAttribute('data-oc-theme', n);
+    ocApplyCustomAccent();
     var m = document.querySelector('meta[name="color-scheme"]');
     if (!m) {
         m = document.createElement('meta');
@@ -150,6 +147,150 @@ function ocApplyRootTheme() {
         document.head.appendChild(m);
     }
     m.content = d ? 'dark' : 'light';
+}
+
+function ocHexToRgb(hex) {
+    return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+}
+
+// amt > 0 mixes towards white, amt < 0 towards black
+function ocShadeHex(hex, amt) {
+    var rgb = ocHexToRgb(hex).map(function(v) {
+        return Math.max(0, Math.min(255, Math.round(amt >= 0 ? v + (255 - v) * amt : v * (1 + amt))));
+    });
+    return '#' + rgb.map(function(v) {
+        return ('0' + v.toString(16)).slice(-2);
+    }).join('');
+}
+
+function ocHexToHsl(hex) {
+    var rgb = ocHexToRgb(hex).map(function(v) { return v / 255; }),
+        max = Math.max(rgb[0], rgb[1], rgb[2]),
+        min = Math.min(rgb[0], rgb[1], rgb[2]),
+        l = (max + min) / 2,
+        d = max - min,
+        h = 0,
+        s = 0;
+    if (d) {
+        s = d / (1 - Math.abs(2 * l - 1));
+        if (max === rgb[0]) h = (rgb[1] - rgb[2]) / d + (rgb[1] < rgb[2] ? 6 : 0);
+        else if (max === rgb[1]) h = (rgb[2] - rgb[0]) / d + 2;
+        else h = (rgb[0] - rgb[1]) / d + 4;
+        h *= 60;
+    }
+    return [h, s * 100, l * 100];
+}
+
+function ocHslHex(h, s, l) {
+    s /= 100;
+    l /= 100;
+    var c = (1 - Math.abs(2 * l - 1)) * s,
+        x = c * (1 - Math.abs(h / 60 % 2 - 1)),
+        m = l - c / 2,
+        rgb = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x] : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
+    return '#' + rgb.map(function(v) {
+        return ('0' + Math.round((v + m) * 255).toString(16)).slice(-2);
+    }).join('');
+}
+
+function ocAccentVars(hex, dark) {
+    var base = dark ? ocShadeHex(hex, 0.25) : hex,
+        rgb = ocHexToRgb(base),
+        lum = rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722,
+        hsl = ocHexToHsl(hex),
+        hue = hsl[0],
+        sat = hsl[1],
+        vars = '--primary-color:' + base + ';'
+            + '--btn-primary-hover:' + ocShadeHex(base, dark ? -0.15 : -0.12) + ';'
+            + '--text-on-primary:' + (lum > 170 ? '#1f2937' : '#ffffff') + ';'
+            + '--announcement-end:' + ocShadeHex(base, -0.35) + ';'
+            + '--radio-hover-bg:rgba(' + rgb.join(', ') + ',' + (dark ? '0.2' : '0.1') + ');'
+            + '--primary-a5:rgba(' + rgb.join(', ') + ',0.05);'
+            + '--primary-a10:rgba(' + rgb.join(', ') + ',0.1);'
+            + '--primary-a20:rgba(' + rgb.join(', ') + ',0.2);'
+            + '--primary-a30:rgba(' + rgb.join(', ') + ',0.3);'
+            + '--primary-a40:rgba(' + rgb.join(', ') + ',0.4);'
+            + '--primary-a50:rgba(' + rgb.join(', ') + ',0.5);'
+            + '--primary-a60:rgba(' + rgb.join(', ') + ',0.6);';
+    // surfaces and texts tinted by the accent hue, mirroring the named palettes
+    if (dark) {
+        vars += '--primary-bright:' + ocShadeHex(base, 0.15) + ';--primary-soft:' + ocShadeHex(base, 0.35) + ';'
+            + '--bg-white:' + ocHslHex(hue, Math.min(sat, 30), 11) + ';'
+            + '--bg-light:' + ocHslHex(hue, Math.min(sat, 30), 14) + ';'
+            + '--bg-gray:' + ocHslHex(hue, Math.min(sat, 28), 18) + ';'
+            + '--text-primary:' + ocHslHex(hue, Math.min(sat, 35), 94) + ';'
+            + '--text-secondary:' + ocHslHex(hue, Math.min(sat, 18), 70) + ';'
+            + '--text-title:' + ocHslHex(hue, Math.min(sat, 35), 92) + ';'
+            + '--border-light:' + ocHslHex(hue, Math.min(sat, 26), 24) + ';'
+            + '--switch-off-bg:' + ocHslHex(hue, Math.min(sat, 24), 28) + ';'
+            + '--tab-text-dark:' + ocHslHex(hue, Math.min(sat, 18), 70) + ';'
+            + '--tab-hover-dark-bg:' + ocHslHex(hue, Math.min(sat, 28), 18) + ';';
+    } else {
+        vars += '--bg-light:' + ocHslHex(hue, Math.min(sat, 35), 98) + ';'
+            + '--bg-gray:' + ocHslHex(hue, Math.min(sat, 35), 95) + ';'
+            + '--text-primary:' + ocHslHex(hue, Math.min(sat, 18), 16) + ';'
+            + '--text-secondary:' + ocHslHex(hue, Math.min(sat, 12), 44) + ';'
+            + '--text-title:' + ocHslHex(hue, Math.min(sat, 20), 14) + ';'
+            + '--border-light:' + ocHslHex(hue, Math.min(sat, 28), 90) + ';'
+            + '--switch-off-bg:' + ocHslHex(hue, Math.min(sat, 30), 92) + ';';
+    }
+    return vars;
+}
+
+function ocSafeHex(hex) {
+    hex = (hex || '').toLowerCase();
+    return /^#[0-9a-f]{6}$/.test(hex) ? hex : '#3b82f6';
+}
+
+function ocApplyCustomAccent() {
+    var styleEl = document.getElementById('oc-custom-theme'),
+        name = localStorage.getItem('oc-theme-name') || 'classic',
+        hex = ocCustomPreviewHex;
+    if (!hex && name !== 'custom') {
+        if (styleEl) styleEl.parentNode.removeChild(styleEl);
+        return;
+    }
+    hex = ocSafeHex(hex || localStorage.getItem('oc-theme-custom'));
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'oc-custom-theme';
+        document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = 'html[data-oc-theme="custom"] .oc{' + ocAccentVars(hex, false) + '}'
+        + 'html[data-darkmode="true"][data-oc-theme="custom"] .oc{' + ocAccentVars(hex, true) + '}';
+}
+
+// the router-side copy (uci theme_mode/theme_name/theme_custom) wins on load so every
+// browser follows the theme that was saved once
+function ocSyncThemeFromUci() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/cgi-bin/luci/admin/services/openclash/theme_get', true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4 || xhr.status !== 200) return;
+        var d = null;
+        try { d = JSON.parse(xhr.responseText); } catch (e) { return; }
+        if (!d) return;
+        var changed = false;
+        if (d.mode && d.mode !== (localStorage.getItem('oc-theme') || 'auto')) { localStorage.setItem('oc-theme', d.mode); changed = true; }
+        if (d.name && d.name !== (localStorage.getItem('oc-theme-name') || 'classic')) { localStorage.setItem('oc-theme-name', d.name); changed = true; }
+        if (d.custom && /^#[0-9a-f]{6}$/i.test(d.custom) && d.custom !== localStorage.getItem('oc-theme-custom')) { localStorage.setItem('oc-theme-custom', d.custom); changed = true; }
+        if (!changed) return;
+        ocUpdateTheme();
+        if (typeof DarkModeDetector !== 'undefined') DarkModeDetector.init();
+        if (typeof StatsChart !== 'undefined' && StatsChart.refresh) StatsChart.refresh();
+    };
+    xhr.send();
+}
+
+function ocSaveThemeToUci() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/cgi-bin/luci/admin/services/openclash/theme_save', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.send('mode=' + encodeURIComponent(localStorage.getItem('oc-theme') || 'auto')
+        + '&name=' + encodeURIComponent(localStorage.getItem('oc-theme-name') || 'classic')
+        + '&custom=' + encodeURIComponent(localStorage.getItem('oc-theme-custom') || ''));
 }
 
 function ocInitTheme() {
@@ -160,6 +301,7 @@ function ocInitTheme() {
     window.ocThemeInited = true;
 
     ocApplyRootTheme();
+    ocSyncThemeFromUci();
 
     var needsCorrection = (localStorage.getItem('oc-theme') || 'auto') === 'auto';
 
@@ -195,14 +337,14 @@ if (window.matchMedia && !window.ocThemeMediaBound) {
 
 // Level tag text shown in logs, used to colour whole lines by their [Info]/[Warning]/... tag
 function ocGetLogColor(log) {
-    if (log.indexOf('[<%:Info%>]') >= 0) return 'var(--info-color)';
+    if (log.indexOf('[<%:Info%>]') >= 0) return 'var(--primary-color)';
     if (log.indexOf('[<%:Warning%>]') >= 0) return 'var(--warning-color)';
     if (log.indexOf('[<%:Error%>]') >= 0) return 'var(--error-color)';
     if (log.indexOf('[<%:Debug%>]') >= 0) return 'var(--debug-color)';
     if (log.indexOf('[<%:Tip%>]') >= 0) return 'var(--tip-color)';
     if (log.indexOf('[<%:Watchdog%>]') >= 0) return 'var(--watchdog-color)';
     if (log.indexOf('[<%:Fatal%>]') >= 0) return 'var(--fatal-color)';
-    return 'var(--info-color)';
+    return 'var(--primary-color)';
 }
 
 function ocLogLevelText(level) {
@@ -247,73 +389,34 @@ function ocMaxScroll(element) {
     return Math.max(0, contentHeight - element.clientHeight);
 }
 
-// Scroll to the bottom. One batch animates at a time, further requests set ocScrollPending
-// and the flush callback re-renders the accumulated lines.
-function ocAnimateScroll(element, flush, isFirst) {
+// Scroll to the bottom, centring the last line (upstream behaviour). A new call cancels the
+// running animation and restarts from the current position.
+function ocAnimateScroll(element) {
     if (!element) return;
-
-    if (element.ocScrollAnim) {
-        element.ocScrollPending = true;
-        if (flush) element.ocScrollFlush = flush;
-        return;
-    }
-    if (flush) element.ocScrollFlush = flush;
-
-    var target = ocMaxScroll(element);
-
+    if (element.ocScrollAnimId) cancelAnimationFrame(element.ocScrollAnimId);
     var start = element.scrollTop;
-    var distance = target - start;
-
-    var duration = isFirst ? 500 : Math.min(3600, Math.max(500, distance * 10));
-
-    if (!isFirst && distance <= 0.5) {
-        element.scrollTop = target;
-        element.ocScrollAnim = null;
-        element.ocScrollAnimId = null;
-        element.style.willChange = '';
-        if (element.ocScrollPending) {
-            element.ocScrollPending = false;
-            if (element.ocScrollFlush) element.ocScrollFlush();
-        }
-        return;
-    }
-
-    var animation = {
-        raf: null,
-        start: start,
-        target: target,
-        distance: distance,
-        duration: duration,
-        startTime: null
-    };
-    element.ocScrollAnim = animation;
-    element.style.willChange = 'scroll-position';
-
+    var duration = 500;
+    var startTime = null;
     function step(timestamp) {
-        if (element.ocScrollAnim !== animation) return;
-        if (!animation.startTime) animation.startTime = timestamp;
-        var elapsed = timestamp - animation.startTime;
-        var progress = Math.min(elapsed / animation.duration, 1);
-        var eased = 1 - Math.pow(1 - progress, 3);
-        element.scrollTop = Math.min(animation.target, animation.start + animation.distance * eased);
+        if (!startTime) startTime = timestamp;
+        var elapsed = timestamp - startTime;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased = 1 - (1 - progress) * (1 - progress);
+        var lastChild = element.lastElementChild || element.lastChild;
+        var lastLineH = (lastChild && lastChild.offsetHeight) ? lastChild.offsetHeight : 0;
+        var maxScroll = Math.max(0, element.scrollHeight - element.clientHeight);
+        var target = Math.max(0, element.scrollHeight - (element.clientHeight + lastLineH) / 2);
+        if (target > maxScroll) target = maxScroll;
+        var distance = target - start;
+        element.scrollTop = Math.round(start + distance * eased);
         if (progress < 1) {
-            animation.raf = requestAnimationFrame(step);
-            element.ocScrollAnimId = animation.raf;
+            element.ocScrollAnimId = requestAnimationFrame(step);
         } else {
-            if (Math.abs(element.scrollTop - animation.target) > 0.5) {
-                element.scrollTop = animation.target;
-            }
-            element.ocScrollAnim = null;
             element.ocScrollAnimId = null;
             element.style.willChange = '';
-            if (element.ocScrollPending) {
-                element.ocScrollPending = false;
-                if (element.ocScrollFlush) element.ocScrollFlush();
-            }
         }
     }
-    animation.raf = requestAnimationFrame(step);
-    element.ocScrollAnimId = animation.raf;
+    element.ocScrollAnimId = requestAnimationFrame(step);
 }
 
 function ocPad2(n) {
@@ -788,7 +891,12 @@ function ocRequireScript(url, cb) {
     };
     s.onerror = function() {
         window.ocScriptState[url] = 0;
+        // wake the waiters anyway so editors fall back to their textarea instead of keeping the overlay
+        var failed = window.ocScriptWaiters[url] || [];
         window.ocScriptWaiters[url] = [];
+        for (var i = 0; i < failed.length; i++) {
+            try { failed[i](); } catch (e) {}
+        }
     };
     document.head.appendChild(s);
 }
@@ -807,7 +915,9 @@ function ocQueueEditor(container, factory, onReady) {
         started = true;
         ocRequireCM6(function() {
             var view = null;
-            try { view = factory(); } catch (e) { if (window.console) console.error(e); }
+            var failed = false;
+            try { view = factory(); } catch (e) { failed = true; if (window.console) console.error(e); }
+            if (failed) ocEditorFallback(container.querySelector('textarea'));
             if (view && typeof onReady === 'function') {
                 try { onReady(view); } catch (e) {}
             }
@@ -837,6 +947,29 @@ function ocQueueEditor(container, factory, onReady) {
         }
         fallbackCheck();
     }
+}
+
+// textarea fallback for a failed CM6 bundle or editor factory: show it again
+// instead of leaving the loading overlay behind
+function ocEditorFallback(id) {
+    if (!id || !id.parentNode) return;
+    var container = id.parentNode;
+    id.style.display = '';
+    if (!container.querySelector('.oc-editor-fallback')) {
+        var box = document.createElement('div');
+        box.className = 'oc-editor-fallback';
+        box.textContent = '<%:Editor failed to load, showing the plain text box%>';
+        container.insertBefore(box, id);
+    }
+    ocHideLoading(container);
+}
+
+// Single source for the F10/F11/Esc key hint line shared by the config editors.
+function ocEditorHelpHtml(withCompare) {
+    var html = '<%:Press%>' + (withCompare ? ' <b class="oc-kbd">F10</b> <%:to toggle differences,%>' : '') +
+        ' <b class="oc-kbd">F11</b> <%:for fullscreen,%> <b class="oc-kbd">Esc</b> <%:to exit fullscreen,%>' +
+        ' <b class="oc-kbd">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%>';
+    return html;
 }
 
 // Load an external script (and its optional companion stylesheet) once the anchor
@@ -921,6 +1054,8 @@ function ocCreateLogStream(opts) {
         function finishPermanent() {
             xhr = null;
             if (maxWaitTimer) { clearTimeout(maxWaitTimer); maxWaitTimer = null; }
+            // update the cursor before closing so a restart with skipLines resumes exactly here
+            rememberLines();
             try { req.abort(); } catch (e) {}
             if (opts.onFinish) opts.onFinish();
         }
@@ -931,7 +1066,7 @@ function ocCreateLogStream(opts) {
                 streamEnded = true;
                 if (xhr !== req) return;
                 finishPermanent();
-            }, 10000);
+            }, opts.finishDelayMs || 10000);
         }
 
         function reconnect() {
@@ -1001,15 +1136,15 @@ function ocCreateLogStream(opts) {
     };
 }
 
-window.ocCopyToClipboard = function(text, btnElement, successMessage, failMessage) {
+window.ocCopyToClipboard = function(text, btnElement, failMessage) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(function() {
             ocShowCopySuccess(btnElement);
         }).catch(function() {
-            ocFallbackCopy(text, btnElement, successMessage, failMessage);
+            ocFallbackCopy(text, btnElement, failMessage);
         });
     } else {
-        ocFallbackCopy(text, btnElement, successMessage, failMessage);
+        ocFallbackCopy(text, btnElement, failMessage);
     }
 };
 
@@ -1024,7 +1159,7 @@ function ocShowCopySuccess(element) {
     }, 1500);
 }
 
-function ocFallbackCopy(text, btnElement, successMessage, failMessage) {
+function ocFallbackCopy(text, btnElement, failMessage) {
     var ta = document.createElement('textarea');
     ta.value = text;
     ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
@@ -1088,6 +1223,163 @@ function ocSetBtnBusy(btn, busy, busyText) {
             delete btn.dataset.ocBtnOriginalText;
         }
     }
+}
+
+// bottom-right transient toasts; the stack element carries .oc itself so it keeps the
+// theme variables on pages without a common .oc root wrapper.
+// Toast whitelist: the client page (status.js/config_edit.js/oixcloud.htm) and the log page;
+// other pages use inline status feedback instead
+function ocToast(message, kind) {
+    if (!message) return null;
+    message = String(message).replace(/\s*[:：]\s*$/, '');
+    var stack = document.getElementById('ocToastStack');
+    if (!stack) {
+        stack = document.createElement('div');
+        stack.id = 'ocToastStack';
+        stack.className = 'oc oc-toast-stack';
+        stack.setAttribute('role', 'region');
+        stack.setAttribute('aria-label', 'Notifications');
+        document.body.appendChild(stack);
+    }
+    stack.style.bottom = ocToastClearance() + 'px';
+    if (kind !== 'success' && kind !== 'error') kind = 'info';
+    var icons = {
+        success: '<polyline points="20 6 9 17 4 12"></polyline>',
+        error: '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>',
+        info: '<circle cx="12" cy="12" r="9"></circle><line x1="12" y1="11" x2="12" y2="16"></line><line x1="12" y1="8" x2="12" y2="8.01"></line>'
+    };
+    var toast = document.createElement('div');
+    toast.className = 'oc-toast oc-toast-' + kind;
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = '<span class="oc-toast-badge"><svg class="oc-toast-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + icons[kind] + '</svg></span><span class="oc-toast-text"></span>';
+    toast.querySelector('.oc-toast-text').textContent = message;
+    stack.appendChild(toast);
+    while (stack.children.length > 4) stack.removeChild(stack.firstChild);
+    var dismissed = false;
+    function dismiss() {
+        if (dismissed) return;
+        dismissed = true;
+        toast.classList.add('oc-toast-out');
+        setTimeout(function() {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 190);
+    }
+    toast.addEventListener('click', dismiss);
+    setTimeout(dismiss, 3200);
+    return toast;
+}
+
+// keep toasts clear of the floating action buttons (CSS default when the page has none)
+function ocToastClearance() {
+    var clearance = 86;
+    var floats = document.querySelectorAll('.oc-usage-help-float');
+    for (var i = 0; i < floats.length; i++) {
+        var r = floats[i].getBoundingClientRect();
+        if (!r.width && !r.height) continue;
+        var need = window.innerHeight - r.top + 12;
+        if (need > clearance) clearance = need;
+    }
+    return clearance;
+}
+
+// input modal replacing native prompt() (unavailable in embedded browsers);
+// onSubmit(value, setError, close)
+function ocPrompt(title, value, onSubmit) {
+    var overlay = document.createElement('div');
+    overlay.className = 'oc oc-prompt-overlay';
+    overlay.innerHTML =
+        '<div class="oc-prompt" role="dialog" aria-modal="true">' +
+        '<div class="oc-prompt-title"></div>' +
+        '<input class="oc-prompt-input" type="text" spellcheck="false">' +
+        '<div class="oc-prompt-error" role="alert"></div>' +
+        '<div class="oc-prompt-actions">' +
+        '<button type="button" class="footer-btn oc-prompt-cancel"></button>' +
+        '<button type="button" class="footer-btn oc-prompt-ok"></button>' +
+        '</div></div>';
+    var win = overlay.firstElementChild;
+    var input = win.querySelector('.oc-prompt-input');
+    var err = win.querySelector('.oc-prompt-error');
+    var prevFocus = document.activeElement;
+    win.querySelector('.oc-prompt-title').textContent = title || '';
+    win.querySelector('.oc-prompt-cancel').textContent = '<%:Cancel%>';
+    win.querySelector('.oc-prompt-ok').textContent = '<%:OK%>';
+    input.value = value || '';
+    function close() {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        document.removeEventListener('keydown', onKey, true);
+        if (prevFocus && prevFocus.focus) prevFocus.focus();
+    }
+    function submit() {
+        onSubmit(input.value.trim(), function(text) { err.textContent = text || ''; }, close);
+    }
+    function onKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+        else if (e.key === 'Enter' && e.target === input) { e.preventDefault(); submit(); }
+    }
+    win.querySelector('.oc-prompt-cancel').addEventListener('click', close);
+    win.querySelector('.oc-prompt-ok').addEventListener('click', submit);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(overlay);
+    input.focus();
+    input.select();
+    return overlay;
+}
+
+// confirm modal: resolves the chosen button value, null when dismissed (Esc/backdrop);
+// options.buttons: {label, value, kind: 'primary' | 'danger'}
+function ocConfirm(options) {
+    options = options || {};
+    return new Promise(function(resolve) {
+        var overlay = document.createElement('div');
+        overlay.className = 'oc oc-confirm-overlay';
+        var buttonsHtml = '';
+        (options.buttons || []).forEach(function(b, i) {
+            var kind = b.kind === 'primary' ? ' oc-confirm-primary'
+                : (b.kind === 'danger' ? ' oc-confirm-danger' : '');
+            buttonsHtml += '<button type="button" class="oc-confirm-btn' + kind +
+                '" data-index="' + i + '"></button>';
+        });
+        overlay.innerHTML =
+            '<div class="oc-confirm" role="dialog" aria-modal="true">' +
+            '<div class="oc-confirm-title"></div>' +
+            '<div class="oc-confirm-body"></div>' +
+            '<div class="oc-confirm-actions">' + buttonsHtml + '</div>' +
+            '</div>';
+        var win = overlay.firstElementChild;
+        var prevFocus = document.activeElement;
+        if (options.title) {
+            win.querySelector('.oc-confirm-title').textContent = options.title;
+        } else {
+            win.querySelector('.oc-confirm-title').remove();
+        }
+        win.querySelector('.oc-confirm-body').textContent = options.body || '';
+        var nodes = win.querySelectorAll('.oc-confirm-btn');
+        var i;
+        for (i = 0; i < nodes.length; i++) {
+            nodes[i].textContent = (options.buttons[i] && options.buttons[i].label) || '';
+            nodes[i].addEventListener('click', (function(index) {
+                return function() { close(options.buttons[index].value); };
+            })(i));
+        }
+        function close(value) {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            document.removeEventListener('keydown', onKey, true);
+            if (prevFocus && prevFocus.focus) prevFocus.focus();
+            resolve(value);
+        }
+        function onKey(e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
+                close(null);
+            }
+        }
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) close(null); });
+        document.addEventListener('keydown', onKey, true);
+        document.body.appendChild(overlay);
+        if (nodes.length) nodes[0].focus();
+    });
 }
 
 ocInitTheme();

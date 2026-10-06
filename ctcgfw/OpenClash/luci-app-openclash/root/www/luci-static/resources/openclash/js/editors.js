@@ -6,6 +6,19 @@
 // unreliable because CM6 can pass either a Transaction (with docChanged)
 // or a TransactionSpec (without docChanged) to dispatch().
 
+// Streamed viewers replace their whole document on every update; dispatching
+// a minimal edit keeps that proportional to what actually changed.
+function ocDiffSetValue(view, value) {
+    value = value || '';
+    var old = view.state.doc.toString();
+    if (old === value) return;
+    var oldLen = old.length, newLen = value.length;
+    var prefix = 0, suffix = 0;
+    while (prefix < oldLen && prefix < newLen && old.charCodeAt(prefix) === value.charCodeAt(prefix)) prefix++;
+    while (suffix < oldLen - prefix && suffix < newLen - prefix && old.charCodeAt(oldLen - 1 - suffix) === value.charCodeAt(newLen - 1 - suffix)) suffix++;
+    view.dispatch({ changes: { from: prefix, to: oldLen - suffix, insert: value.slice(prefix, newLen - suffix) } });
+}
+
 function editor(id, readOnly, wid, height) {
     id.style.display = 'none';
     id.parentNode.classList.add('oc');
@@ -122,19 +135,14 @@ function log_editor(id, name, readOnly, wid, height, onReady) {
         if (CM6.dispatchTheme) CM6.dispatchTheme(view, isDark);
         window['editor_' + name] = view;
         if (id.value && id.value.length > 0) {
-            requestAnimationFrame(function() {
-                if (view.state && view.state.doc) {
-                    var txt = view.state.doc.toString();
-                    if (txt) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: txt } });
-                }
-            });
+            requestAnimationFrame(function() { view.requestMeasure(); });
         }
         if (wid && height) {
             view.dom.style.width = wid;
             view.dom.style.height = height;
         }
         view.getValue = function() { return view.state.doc.toString(); };
-        view.setValue = function(v) { view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: v || '' } }); };
+        view.setValue = function(v) { ocDiffSetValue(view, v); };
         view.refresh = function() { view.dispatch({}); if (view.requestMeasure) view.requestMeasure(); };
         view.getScrollInfo = function() { var sd = view.scrollDOM; return { top: sd.scrollTop, left: sd.scrollLeft, height: sd.scrollHeight, width: sd.scrollWidth, clientHeight: sd.clientHeight, clientWidth: sd.clientWidth }; };
         view.scrollTo = function(l, t) { if (typeof l === 'object') { t = l.top; l = l.left; } view.scrollDOM.scrollTop = t || 0; view.scrollDOM.scrollLeft = l || 0; };
@@ -177,19 +185,14 @@ function markdown_editor(id, name, readOnly, wid, height, onReady) {
         if (CM6.dispatchTheme) CM6.dispatchTheme(view, isDark);
         window['editor_' + name] = view;
         if (id.value && id.value.length > 0) {
-            requestAnimationFrame(function() {
-                if (view.state && view.state.doc) {
-                    var txt = view.state.doc.toString();
-                    if (txt) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: txt } });
-                }
-            });
+            requestAnimationFrame(function() { view.requestMeasure(); });
         }
         if (wid && height) {
             view.dom.style.width = wid;
             view.dom.style.height = height;
         }
         view.getValue = function() { return view.state.doc.toString(); };
-        view.setValue = function(v) { view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: v || '' } }); };
+        view.setValue = function(v) { ocDiffSetValue(view, v); };
         view.refresh = function() { view.dispatch({}); };
         view.dom = view.dom;
         return view;

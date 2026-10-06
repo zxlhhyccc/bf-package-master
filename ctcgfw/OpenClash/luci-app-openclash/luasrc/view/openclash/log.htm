@@ -1,21 +1,21 @@
 <%+cbi/valueheader%>
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-log.css?v=<%="@OPENCLASH_VERSION@"%>">
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-log.css?v=@OPENCLASH_VERSION@">
 <body>
     <div id="tab" class="oc">
         <div id="tab-header">
-            <ul class="oc-tabmenu">
-                <li name="tab-header" class="oc-tab"><a href="#"><svg width="14" height="14"><use href="#oc-icon-package"/></svg><span><%:Plugin Logs%></span></a></li>
-                <li name="tab-header" class="oc-tab-disabled"><a href="#"><svg width="14" height="14"><use href="#oc-icon-cpu"/></svg><span><%:Core Logs%></span></a></li>
-                <li name="tab-header" class="oc-tab-disabled"><a href="#"><svg width="14" height="14"><use href="#oc-icon-bug"/></svg><span><%:Debug Logs%></span></a></li>
+            <ul class="oc-tabmenu" role="tablist">
+                <li name="tab-header" class="oc-tab" role="tab" aria-selected="true"><a href="#"><svg width="14" height="14"><use href="#oc-icon-package"/></svg><span><%:Plugin Logs%></span></a></li>
+                <li name="tab-header" class="oc-tab-disabled" role="tab" aria-selected="false"><a href="#"><svg width="14" height="14"><use href="#oc-icon-cpu"/></svg><span><%:Core Logs%></span></a></li>
+                <li name="tab-header" class="oc-tab-disabled" role="tab" aria-selected="false"><a href="#"><svg width="14" height="14"><use href="#oc-icon-bug"/></svg><span><%:Debug Logs%></span></a></li>
             </ul>
         </div>
         <div id="tab-content">
             <div class="dom" style="display: block;">
-                <textarea id="cbid.openclash.config.clog" class="oc-input-textarea" style="display:inline" data-update="change" rows="32" cols="60" readonly="readonly" ></textarea>
+                <textarea id="cbid.openclash.config.clog" class="oc-input-textarea" style="display:inline" data-update="change" rows="32" cols="60" readonly="readonly" spellcheck="false" wrap="off" ></textarea>
             </div>
             <div class="dom">
-                <textarea id="core_log" class="oc-input-textarea" style="display:inline" data-update="change" rows="32" cols="60" readonly="readonly" ></textarea>
+                <textarea id="core_log" class="oc-input-textarea" style="display:inline" data-update="change" rows="32" cols="60" readonly="readonly" spellcheck="false" wrap="off" ></textarea>
                 <div class="radio-button">
                     <input type="radio" id="info" name="radios" value="info" checked onclick="return switch_log_level(this.value)"/>
                     <label for="info"><%:Info%></label>
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="dom">
-                <textarea id="debug_log" class="oc-input-textarea oc-hidden" data-update="change" rows="32" cols="60" readonly="readonly" ></textarea>
+                <textarea id="debug_log" class="oc-input-textarea oc-hidden" data-update="change" rows="32" cols="60" readonly="readonly" spellcheck="false" wrap="off" ></textarea>
                 <div id="debug-render-wrapper">
                     <div id="debug-rendered"></div>
                     <div class="oc-usage-help-float" id="debug-copy-source" onclick="copyDebugSource()" title="<%:Copy Debug%>"><svg width="20" height="20"><use href="#oc-icon-copy"/></svg></div>
@@ -41,16 +41,15 @@
 
 <div class="oc oc-text-center oc-w100">
     <div class="select-popup-footer log-footer">
-        <button type="button" class="footer-btn" id="stop_refresh_button" onclick="return stop_refresh()"><svg width="14" height="14"><use href="#oc-icon-player-pause"/></svg><span><%:Stop Refresh%></span></button>
-        <button type="button" class="footer-btn" id="start_refresh_button" onclick="return start_refresh()"><svg width="14" height="14"><use href="#oc-icon-player-play"/></svg><span><%:Start Refresh%></span></button>
-        <button type="button" class="footer-btn" id="del_log_button" onclick="return del_log()"><svg width="14" height="14"><use href="#oc-icon-trash"/></svg><span><%:Clean%></span></button>
+        <button type="button" class="footer-btn" id="toggle_refresh_button" onclick="return toggle_refresh(this)"><svg width="14" height="14"><use href="#oc-icon-player-pause"/></svg><span><%:Stop Refresh%></span></button>
+        <button type="button" class="footer-btn" id="del_log_button" onclick="return del_log()"><svg width="14" height="14"><use href="#oc-icon-trash"/></svg><span><%:Clear Log%></span></button>
         <button type="button" class="footer-btn" id="down_log_button" onclick="return download_log()"><svg width="14" height="14"><use href="#oc-icon-download"/></svg><span><%:Download Log%></span></button>
         <button type="button" class="footer-btn" id="gen_debug_button" onclick="return gen_debug_logs()"><svg width="14" height="14"><use href="#oc-icon-play-bugs"/></svg><span><%:Generate Logs%></span></button>
     </div>
 </div>
 </body>
 
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=log&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=log&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
 <%+cbi/valuefooter%>

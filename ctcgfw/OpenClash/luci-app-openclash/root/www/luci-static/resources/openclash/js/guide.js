@@ -12,6 +12,8 @@ var Guide = {
     step: 0,
     // the tour walks the overview page by default, and switches to a dialog group while one is open
     group: 'main',
+    mode: 'main',
+    mainKeys: ['intro', 'core', 'config', 'select', 'start', 'done'],
     dialogReturn: 0,
     groupReturn: null,
     rafPending: false,
@@ -41,6 +43,7 @@ var Guide = {
     gliding: 0,
     dialogGrace: 0,
     autoOpened: null,
+    extraOpen: false,
     // the window an entrance step just opened, the tour continues as soon as it is on screen
     pendingEntry: null,
     lastPlaceFallback: false,
@@ -100,7 +103,7 @@ var Guide = {
             body: function () {
                 return '<p><%:Five buttons next to the list:%></p>'
                     + '<ul>'
-                    + '<li><b><%:Switch%></b><span class="guide-sep"></span><%:apply the selected config and restart OpenClash%></li>'
+                    + '<li><b><%:SwiTch%></b><span class="guide-sep"></span><%:apply the selected config and restart OpenClash%></li>'
                     + '<li><b><%:Update%></b><span class="guide-sep"></span><%:download the subscription again%></li>'
                     + '<li><b><%:Edit%></b><span class="guide-sep"></span><%:open this config in the editor%></li>'
                     + '<li><b><%:Edit Subscription%></b><span class="guide-sep"></span><%:change the link, the User-Agent or the conversion%></li>'
@@ -219,7 +222,7 @@ var Guide = {
                 return '<p><%:Two versions update on their own:%></p>'
                     + '<ul>'
                     + '<li><b><%:Plugin Version%></b><span class="guide-sep"></span><%:the LuCI plugin%></li>'
-                    + '<li><b><%:Core Version%></b><span class="guide-sep"></span><%:the Mihomo core that carries the traffic%></li>'
+                    + '<li><b><%:Core Version%></b><span class="guide-sep"></span><%:the core that carries the traffic%></li>'
                     + '</ul>'
                     + '<p class="guide-careful"><%:No Core Version line means there is no core yet, Check Update below installs one%></p>';
             }
@@ -400,6 +403,10 @@ var Guide = {
             body: function () {
                 return '<svg class="guide-cover" viewBox="0 0 320 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect class="cv-bg" x="0.5" y="0.5" width="319" height="83" rx="12"/><circle class="cv-ring" cx="96" cy="42" r="24"/><path class="cv-check" d="M85 42.5 l8 8 l16 -18"/><path class="cv-wave" d="M150 60 l10 -14 l9 9 l12 -20 l9 11 l8 -6"/><path class="cv-spark" d="M240 26 l0 10 M235 31 l10 0"/><path class="cv-spark" d="M268 46 l0 8 M264 50 l8 0"/><circle class="cv-dot" cx="230" cy="54" r="3"/><circle class="cv-dot cv-faint" cx="248" cy="62" r="3"/></svg>'
                     + '<p id="guide-summary"></p>'
+                    + '<ul class="guide-receipt" id="guide-receipt"></ul>'
+                    + (Guide.mode === 'main'
+                        ? '<button type="button" class="btn upload-btn guide-more" onclick="Guide.walkPage()"><%:Continue with the rest of the page%></button>'
+                        : '')
                     + '<div class="guide-prefs">'
                     + '<label class="guide-checkbox"><input type="checkbox" id="guide-autostart" onchange="Guide.setAutostart(this.checked)"> <%:Open this guide automatically when the core is missing%></label>'
                     + '<p class="guide-tip"><%:You can reopen this guide anytime with the “Quick Start” button at the bottom right%></p>'
@@ -520,6 +527,18 @@ var Guide = {
             }
         },
         {
+            key: 'preview',
+            title: '<%:Preview%>',
+            target: function () { return Guide.boxOf('#template-preview-btn'); },
+            tab: 'subscribe',
+            place: 'bottom',
+            prepare: function () { Guide.ensureChecked('#sub-convert-enable'); },
+            body: function () {
+                return '<p><%:Look inside the template before using it: its groups and rule flow%></p>'
+                    + '<p class="guide-info"><%:The template is fetched once and kept in the router cache%></p>';
+            }
+        },
+        {
             key: 'convswitches',
             title: '<%:Conversion switches%>',
             target: function () { return Guide.boxOf('#emoji-enable'); },
@@ -608,6 +627,7 @@ var Guide = {
             place: 'top',
             body: function () {
                 return '<p><%:The blue button downloads the subscription and writes the YAML for you%></p>'
+                    + '<p class="guide-info"><%:The run stays on the progress page; when it ends press View Summary to inspect the result or switch over%></p>'
                     + '<p class="guide-info"><%:The Update button in the config list refreshes it later%></p>';
             }
         }
@@ -928,13 +948,17 @@ var Guide = {
 
     start: function (atPending) {
         this.running = true;
+        this.busy = false;
+        this.handoff = 0;
         this.leftGroup = '';
         this.lastStepInAdd = false;
         this.pendingEntry = null;
         this.pinnedStep = false;
+        this.extraOpen = false;
         // the status page passes false for a fresh device: the tour opens on its first page instead of the pending task
         this.pageStart = (atPending === false);
         this.group = 'main';
+        this.mode = 'main';
         this.dialogReturn = 0;
         this.groupReturn = null;
         var tour = document.getElementById('guide-tour');
@@ -942,11 +966,12 @@ var Guide = {
             clearTimeout(this.closingTimer);
             this.closingTimer = null;
         }
-        tour.classList.remove('closing', 'busy', 'no-anim', 'dialog');
+        tour.classList.remove('closing', 'busy', 'no-anim', 'dialog', 'paused', 'extra-hold');
         tour.classList.add('on');
         // tells the stylesheet to keep dialogs opened from the tour above the mask
         document.body.classList.add('oc-guide-open');
         this.refresh(true);
+        this.watchExtra();
         var self = this;
         if (!this.timer) {
             this.timer = setInterval(function () { self.refresh(false); }, 15000);
@@ -957,7 +982,9 @@ var Guide = {
                 if (!self.running) return;
                 if (self.gliding) return;
                 self.targetWaits++;
+                self.watchBusy();
                 self.watchDialogs();
+                self.watchExtra();
                 self.layout();
             }, 400);
         }
@@ -977,13 +1004,17 @@ var Guide = {
         this.running = false;
         this.group = 'main';
         this.dialogReturn = 0;
+        this.extraOpen = false;
         this.pendingEntry = null;
         // Done and Skip fade the whole overlay out instead of dropping it in one frame
+        this.busy = false;
+        this.handoff = 0;
         var tour = document.getElementById('guide-tour');
+        tour.classList.remove('paused');
         tour.classList.add('closing');
         if (this.closingTimer) clearTimeout(this.closingTimer);
         this.closingTimer = setTimeout(function () {
-            tour.classList.remove('on', 'closing', 'dialog');
+            tour.classList.remove('on', 'closing', 'dialog', 'extra-hold');
             Guide.closingTimer = null;
         }, 180);
         document.body.classList.remove('oc-guide-open');
@@ -1016,13 +1047,21 @@ var Guide = {
 
     finish: function () { return this.close(); },
 
-    // the task a device still needs with the lowest priority wins: the core first, then the config
+    walkPage: function () {
+        this.mode = 'full';
+        this.show(0, 1);
+        return false;
+    },
+
+    // lowest priority pending task wins (core first, then config); the position is read
+    // back from the lineup actually walked, which can be shorter than the full list
     firstPending: function () {
         var done = this.doneMap();
+        var steps = this.groupSteps();
         var best = -1;
         var bestPriority = 99;
-        for (var i = 0; i < this.steps.length; i++) {
-            var step = this.steps[i];
+        for (var i = 0; i < steps.length; i++) {
+            var step = steps[i];
             if (!done.hasOwnProperty(step.key) || done[step.key]) continue;
             var priority = step.priority || 50;
             if (priority < bestPriority) {
@@ -1035,7 +1074,7 @@ var Guide = {
 
     // lands on the task this device still needs (core, then config) unless the reader moved first
     pickStart: function () {
-        if (this.pinnedStep || this.pageStart) return false;
+        if (this.pinnedStep || this.pageStart || this.busy) return false;
         var s = this.state;
         var missing = (s.core === false)
             || (s.core === true && s.configLoaded && s.configs.length === 0);
@@ -1147,7 +1186,30 @@ var Guide = {
         if (this.group === 'subscribe') return this.subscribeSteps;
         if (this.group === 'overwrite') return this.overwriteSteps;
         if (this.group === 'update') return this.updateSteps;
-        return this.steps;
+        return (this.mode === 'full') ? this.pageLineup() : this.setupLineup();
+    },
+
+    setupLineup: function () {
+        if (!this.setupSteps) {
+            var out = [];
+            for (var i = 0; i < this.steps.length; i++) {
+                if (this.mainKeys.indexOf(this.steps[i].key) >= 0) out.push(this.steps[i]);
+            }
+            this.setupSteps = out;
+        }
+        return this.setupSteps;
+    },
+
+    pageLineup: function () {
+        if (!this.walkSteps) {
+            var out = [];
+            for (var i = 0; i < this.steps.length; i++) {
+                var key = this.steps[i].key;
+                if (key === 'done' || this.mainKeys.indexOf(key) < 0) out.push(this.steps[i]);
+            }
+            this.walkSteps = out;
+        }
+        return this.walkSteps;
     },
 
     activeSteps: function () {
@@ -1157,6 +1219,65 @@ var Guide = {
             if (!steps[i].when || steps[i].when()) out.push(steps[i]);
         }
         return out;
+    },
+
+    configEditorOpen: function () {
+        var editor = document.getElementById('config-editor-overlay');
+        return !!(editor && editor.classList.contains('show'));
+    },
+
+    // the add window walks its progress/result pages and hands over to the config editor:
+    // the form steps would point at hidden fields, so the tour waits until the form is back
+    subFlowBusy: function () {
+        var overlay = (typeof ConfigUploader !== 'undefined') ? ConfigUploader.overlay : null;
+        if (overlay && overlay.classList.contains('show')) {
+            var form = overlay.querySelector('#sub-form-content');
+            return !!(form && form.classList.contains('oc-hidden'));
+        }
+        if (this.handoff) {
+            if (this.configEditorOpen()) return true;
+            // give the editor a moment to show up, then let the tour go again
+            if (Date.now() - this.handoff < 1500) return true;
+            this.handoff = 0;
+        }
+        return false;
+    },
+
+    watchBusy: function () {
+        var overlay = (typeof ConfigUploader !== 'undefined') ? ConfigUploader.overlay : null;
+        var overlayOpen = !!(overlay && overlay.classList.contains('show'));
+        if (this.busy && !overlayOpen && !this.handoff) this.handoff = Date.now();
+        var busy = this.subFlowBusy();
+        var was = this.busy;
+        this.busy = busy;
+        if (was === busy) return;
+        var tour = document.getElementById('guide-tour');
+        if (tour) tour.classList.toggle('paused', busy);
+        if (was && !busy && this.running) this.show(this.step);
+    },
+
+    // reader-opened windows take the stage: the tour hides until they close
+    extraWindows: ['core-start-overlay', 'template-preview-overlay', 'subscription-url-overlay', 'config-editor-overlay', 'overwrite-add-model'],
+
+    extraWindowOpen: function () {
+        // the overwrite sub tour runs inside these two windows, so they are not foreign to it
+        var own = (this.group === 'overwrite');
+        for (var i = 0; i < this.extraWindows.length; i++) {
+            var id = this.extraWindows[i];
+            if (own && (id === 'config-editor-overlay' || id === 'overwrite-add-model')) continue;
+            var el = document.getElementById(id);
+            if (el && getComputedStyle(el).display !== 'none') return true;
+        }
+        return false;
+    },
+
+    watchExtra: function () {
+        var open = this.extraWindowOpen();
+        if (open === this.extraOpen) return;
+        this.extraOpen = open;
+        var tour = document.getElementById('guide-tour');
+        if (tour) tour.classList.toggle('extra-hold', open);
+        if (!open && this.running) this.show(this.step);
     },
 
     // the dialog the user is looking at right now, upload and update tell themselves apart by class
@@ -1178,7 +1299,8 @@ var Guide = {
     watchDialogs: function () {
         // a dialog that is closing still counts as open for a moment, the tour must not jump back
         if (Date.now() < (this.dialogGrace || 0)) return;
-        var open = this.visibleDialog();
+        var busy = this.subFlowBusy();
+        var open = busy ? null : this.visibleDialog();
         // the window the guide just opened must hand over to the steps that belong to it
         if (this.pendingEntry) {
             var entry = this.pendingEntry;
@@ -1199,8 +1321,10 @@ var Guide = {
         }
         if (!open) {
             this.autoOpened = null;
-            this.leftGroup = '';
-            if (this.group !== 'main') this.leaveGroup();
+            if (!busy) {
+                this.leftGroup = '';
+                if (this.group !== 'main') this.leaveGroup(false, true);
+            }
             return;
         }
         // a window the user deliberately walked out of stays shut until it is closed
@@ -1217,9 +1341,8 @@ var Guide = {
         this.show(0);
     },
 
-    // walking out of a sub tour by hand also closes its window, so the overview tour does not keep
-    // running behind a window the user left. A sub tour the user finished or skipped carries the
-    // overview one step on, a window closed from the page does not: its step stays, the button reopens it
+    // leaving a sub tour by hand closes its window too; a sub tour finished, skipped or closed
+    // from the page carries the overview one step on (its step has served its purpose)
     leaveGroup: function (byUser, advance) {
         this.pinnedStep = true;
         this.pendingEntry = null;
@@ -1626,7 +1749,7 @@ var Guide = {
             + '<span class="guide-pop-count">' + (pos + 1) + ' / ' + active.length + '</span></span></div>'
             + '<div class="guide-pop-body">' + step.body() + '<p class="guide-wait oc-hidden" id="guide-wait"></p></div>'
             + '<div class="guide-pop-foot">'
-            + '<div class="guide-dots' + density + '">' + dots + '</div>'
+            + '<div class="guide-dots' + density + '" role="img" aria-label="' + '<%:Step%>' + ' ' + (pos + 1) + ' / ' + active.length + '">' + dots + '</div>'
             + '<div class="guide-actions">'
             + '<button type="button" class="btn cancel-btn guide-skip" title="' + skipTip + '" onclick="Guide.' + (inDialog ? 'leaveGroup(true, true)' : 'close()') + '">'
             + (inDialog ? '<%:Skip Section%>' : '<%:Skip Tour%>') + '</button>'
@@ -1672,7 +1795,7 @@ var Guide = {
         if (!live) return;
         var active = this.activeSteps();
         var step = this.groupSteps()[this.step];
-        live.textContent = (typeof step.title === 'function' ? step.title() : step.title) + ' – ' + (active.indexOf(step) + 1) + ' / ' + active.length;
+        live.textContent = '<%:Step%> ' + (active.indexOf(step) + 1) + ' / ' + active.length + ': ' + (typeof step.title === 'function' ? step.title() : step.title);
     },
 
     // Joyride and friends keep the keyboard inside the callout, otherwise Tab escapes to the page
@@ -2239,6 +2362,19 @@ var Guide = {
             this.setHtml(summary, (ok === 5)
                 ? '<%:Setup finished: the core is installed, a config is selected and OpenClash is running%>'
                 : '<%:Some steps are still pending, you can reopen this guide and continue from there%>');
+        }
+        var receipt = document.getElementById('guide-receipt');
+        if (receipt) {
+            var rows = [
+                { ok: s.core === true, text: '<%:Core updated%>' },
+                { ok: s.configs.length > 0, text: '<%:Config added%>' },
+                { ok: s.running, text: '<%:OpenClash started%>' }
+            ];
+            var lines = '';
+            for (var r = 0; r < rows.length; r++) {
+                lines += '<li class="' + (rows[r].ok ? 'ok' : 'miss') + '">' + rows[r].text + '</li>';
+            }
+            this.setHtml(receipt, lines);
         }
         var auto = document.getElementById('guide-autostart');
         if (auto) auto.checked = (localStorage.getItem('oc_guide_autostart') !== '0');

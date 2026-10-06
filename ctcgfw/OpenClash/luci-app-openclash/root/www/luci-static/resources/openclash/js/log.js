@@ -24,6 +24,12 @@ var editor_core;
 var editor_debug;
 var coreLogAccumulator = '';
 var pollInterval = 1000;
+var debugRenderToken = 0;
+// LF-normalized copy of the source the debug view currently shows (textarea values drop CR)
+var debugRenderedSrc = '';
+var tabPanes = document.getElementsByClassName('dom');
+var activeTabPane = -1;
+activateTabPane(0);
 
 function accumulateCoreLog(linesArr) {
     var reversed = linesArr.slice().reverse();
@@ -75,7 +81,7 @@ function switch_log_level(value)
     if (!coreWebSocket || coreWebSocket.readyState !== WebSocket.OPEN) {
         XHR.get('<%=url("admin", "services", "openclash", "switch_log")%>', {log_level: value}, function(x, status) {
             if (!x || x.status != 200) {
-                alert(' <%:Log Level%>: ' + value + ' <%:switching failed!%>');
+                ocToast(' <%:Log Level%>: ' + value + ' <%:switching failed!%>', 'error');
                 return
             }
         });
@@ -97,6 +103,22 @@ function start_refresh() {
     coreLogWebSocket();
     r=setTimeout("poll_log()",1000);
     return
+};
+
+function toggle_refresh(btn) {
+    var paused = btn.dataset.paused === '1';
+    if (paused) start_refresh(); else stop_refresh();
+    setRefreshButton(btn, !paused);
+    return false;
+};
+
+function setRefreshButton(btn, paused) {
+    btn.dataset.paused = paused ? '1' : '0';
+    var use = btn.querySelector('use');
+    if (use) use.setAttribute('href', paused ? '#oc-icon-player-play' : '#oc-icon-player-pause');
+    var span = btn.querySelector('span');
+    if (span) span.textContent = paused ? '<%:Start Refresh%>' : '<%:Stop Refresh%>';
+    btn.classList.toggle('active', paused);
 };
 
 function createAndDownloadFile(fileName, content) {
@@ -173,6 +195,8 @@ function restoreDebugEditor() {
     var rendered = document.getElementById('debug-rendered');
     if (wrapper) { wrapper.style.display = 'none'; }
     if (rendered) { rendered.innerHTML = ''; }
+    debugRenderToken++;
+    debugRenderedSrc = '';
     dl.value = "";
     if (typeof editor_debug !== 'undefined' && editor_debug) {
         editor_debug.setValue("");
@@ -432,7 +456,7 @@ function load_debug_log()
                 editor_debug.setValue(x.responseText);
                 setCursorToFirstLineEnd(editor_debug);
             }
-            renderDebugView();
+            if (x.responseText.replace(/\r/g, '') !== debugRenderedSrc) renderDebugView();
         }
         else
         {
@@ -842,6 +866,23 @@ function poll_log(){
     );
 };
 
+function syncTabHeight() {
+    var tc = document.getElementById('tab-content');
+    if (!tc || activeTabPane < 0 || !tabPanes[activeTabPane]) return;
+    tc.style.height = tabPanes[activeTabPane].offsetHeight + 'px';
+}
+
+// Panes stay alive and laid out; switching only moves the inactive ones
+// off-screen with a composited transform (no style/layout invalidation).
+function activateTabPane(id) {
+    activeTabPane = +id;
+    for (var i = 0; i < tabPanes.length; i++) {
+        tabPanes[i].style.transform = (i === activeTabPane) ? 'none' : 'translateX(-200%)';
+        tabPanes[i].style.zIndex = (i === activeTabPane) ? '1' : '';
+    }
+    syncTabHeight();
+}
+
 window.onload = function(){
     var titles = document.getElementsByName('tab-header');
     var divs = document.getElementsByClassName('dom');
@@ -850,7 +891,11 @@ window.onload = function(){
     var tc = document.getElementById('tab-content');
     if (tc) tc.style.position = 'relative';
 
-    divs[0].classList.add('active');
+    activateTabPane(0);
+    if (window.ResizeObserver) {
+        var paneResizer = new ResizeObserver(function() { syncTabHeight(); });
+        for (var p = 0; p < tabPanes.length; p++) paneResizer.observe(tabPanes[p]);
+    }
 
     for(var i=0; i<titles.length; i++){
         var li = titles[i];
@@ -862,10 +907,11 @@ window.onload = function(){
                 for(var j=0; j<titles.length; j++){
                     if (titles[j].className === 'oc-tab') prevTabId = j;
                     titles[j].className = 'oc-tab-disabled';
-                    divs[j].classList.remove('active');
+                    titles[j].setAttribute('aria-selected', 'false');
                 }
                 tab.className = 'oc-tab';
-                divs[tab.id].classList.add('active');
+                tab.setAttribute('aria-selected', 'true');
+                activateTabPane(tab.id);
 
                 if (prevTabId == 1 && editor_core) {
                     coreLogAccumulator = editor_core.getValue();
@@ -891,7 +937,7 @@ window.onload = function(){
                 if (tab.id == 2) {
                     if (typeof editor_debug !== 'undefined' && editor_debug) {
                         setCursorToFirstLineEnd(editor_debug);
-                    } else {
+                    } else if (!debugRenderedSrc) {
                         load_debug_log();
                     }
                 }
@@ -907,7 +953,83 @@ window.onload = function(){
     }
     get_log_level();
     poll_log();
+    // Preload the debug log in the background (upstream behavior) so opening
+    // the debug tab never starts the fetch and render at click time.
+    ocRequireCM6(function() {
+        setTimeout(load_debug_log, 500);
+    });
 };
+
+function debugParts(text) {
+    var parts = [];
+    var lines = text.split('\n');
+    var buf = [];
+    var size = 0;
+    var fenced = false;
+    var target = 24000;
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].replace(/^\s+/, '').indexOf('```') === 0) fenced = !fenced;
+        buf.push(lines[i]);
+        size += lines[i].length + 1;
+        if (!fenced && size >= target) {
+            parts.push(buf.join('\n'));
+            buf = [];
+            size = 0;
+        }
+    }
+    if (buf.length) parts.push(buf.join('\n'));
+    return parts;
+}
+
+function decorateDebugBlocks(host) {
+    var pres = host.querySelectorAll('pre');
+    var copyIcon = '<svg width="14" height="14"><use href="#oc-icon-copy"/></svg>';
+    for (var i = 0; i < pres.length; i++) {
+        (function(pre) {
+            if (pre.parentNode && pre.parentNode.classList.contains('pre-copy-wrap')) return;
+            var btn = document.createElement('div');
+            btn.className = 'pre-copy-btn';
+            btn.title = '<%:Copy%>';
+            btn.innerHTML = copyIcon;
+            btn.onclick = function(e) {
+                e.stopPropagation();
+                var text = pre.textContent || '';
+                ocCopyToClipboard(text, btn);
+            };
+            var wrap = document.createElement('div');
+            wrap.className = 'pre-copy-wrap';
+            pre.parentNode.insertBefore(wrap, pre);
+            wrap.appendChild(pre);
+            wrap.appendChild(btn);
+        })(pres[i]);
+    }
+}
+
+// Render the debug log in fence-balanced chunks, one per frame: a single
+// pass over a large log blocks the page for seconds.
+function renderDebugChunks(host, text) {
+    var token = ++debugRenderToken;
+    if (typeof CM6 === 'undefined' || !CM6.renderMarkdown) {
+        host.innerHTML = text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+        return;
+    }
+    debugRenderedSrc = text.replace(/\r/g, '');
+    var parts = debugParts(text);
+    var index = 0;
+    host.innerHTML = '';
+    function schedule(fn) {
+        if (document.visibilityState === 'visible' && window.requestAnimationFrame) requestAnimationFrame(fn);
+        else setTimeout(fn, 16);
+    }
+    function step() {
+        if (token !== debugRenderToken) return;
+        host.insertAdjacentHTML('beforeend', CM6.renderMarkdown(parts[index]));
+        index++;
+        if (index >= parts.length) { decorateDebugBlocks(host); return; }
+        schedule(step);
+    }
+    step();
+}
 
 function renderDebugView(src) {
     var wrapper = document.getElementById('debug-render-wrapper');
@@ -931,39 +1053,13 @@ function renderDebugView(src) {
             cms[i].style.setProperty('display', 'none', 'important');
         }
 
-        if (typeof CM6 !== 'undefined' && CM6.renderMarkdown) {
-            rendered.innerHTML = CM6.renderMarkdown(src);
-        } else {
-            rendered.innerHTML = src.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-        }
-
-        var pres = rendered.querySelectorAll('pre');
-        var copyIcon = '<svg width="14" height="14"><use href="#oc-icon-copy"/></svg>';
-        for (var i = 0; i < pres.length; i++) {
-            (function(pre) {
-                if (pre.parentNode && pre.parentNode.classList.contains('pre-copy-wrap')) return;
-                var btn = document.createElement('div');
-                btn.className = 'pre-copy-btn';
-                btn.title = '<%:Copy%>';
-                btn.innerHTML = copyIcon;
-                btn.onclick = function(e) {
-                    e.stopPropagation();
-                    var text = pre.textContent || '';
-                    ocCopyToClipboard(text, btn);
-                };
-                var wrap = document.createElement('div');
-                wrap.className = 'pre-copy-wrap';
-                pre.parentNode.insertBefore(wrap, pre);
-                wrap.appendChild(pre);
-                wrap.appendChild(btn);
-            })(pres[i]);
-        }
-
         wrapper.style.display = 'block';
         dl.style.display = 'none';
         if (dl.parentNode && dl.parentNode.className.indexOf('oc') < 0) {
             dl.parentNode.classList.add('oc');
         }
+
+        renderDebugChunks(rendered, src);
     }
 
     if (typeof CM6 !== 'undefined' && CM6.ensureMarkdown) {

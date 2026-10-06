@@ -1065,7 +1065,7 @@
                     if (!x || x.status != 200) showHint('<%:Failed to save%>');
                 });
             } else {
-                alert('<%:Please enter a valid URL!%>');
+                showHint('<%:Please enter a valid URL!%>');
             }
         } else if (optionElem && optionElem.classList.contains('addr-row') && target.closest('.addr-row-url')) {
             var addr = optionElem.dataset.value;
@@ -1216,13 +1216,23 @@
     }
 
     function remove_all_core(btn) {
-        if (confirm('<%:Are you sure want to remove all core files?%>')) {
+        ocConfirm({
+            title: '<%:Remove all core files%>',
+            body: '<%:Are you sure want to remove all core files?%>',
+            buttons: [
+                { label: '<%:Cancel%>', value: null },
+                { label: '<%:OK%>', value: 'delete', kind: 'danger' }
+            ]
+        }).then(function(choice) {
+            if (choice !== 'delete') {
+                return;
+            }
             ocSetBtnBusy(btn, true, '<%:Removing...%>');
             XHR.get('<%=url("admin", "services", "openclash", "remove_all_core")%>', null, function(x) {
-                alert((x && x.status == 200) ? '<%:Remove succeeded!%>' : '<%:Remove failed!%>');
+                showHint((x && x.status == 200) ? '<%:Remove succeeded!%>' : '<%:Remove failed!%>');
                 ocSetBtnBusy(btn, false);
             });
-        }
+        });
         return false;
     }
 
@@ -1249,30 +1259,39 @@
                 document.body.removeChild(a);
                 setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 1000);
             } else {
-                alert('<%:Backup failed!%>');
+                showHint('<%:Backup failed!%>');
             }
         };
         xhr.onerror = function() {
             ocSetBtnBusy(btn, false);
-            alert('<%:Backup failed!%>');
+            showHint('<%:Backup failed!%>');
         };
         xhr.send();
         return false;
     }
 
     function restore_config(btn) {
-        if (confirm('<%:Are you sure want to restore the default config?%>')) {
+        ocConfirm({
+            title: '<%:Restore default configuration%>',
+            body: '<%:Are you sure want to restore the default config?%> <%:This cannot be undone%>',
+            buttons: [
+                { label: '<%:Cancel%>', value: null },
+                { label: '<%:OK%>', value: 'restore', kind: 'danger' }
+            ]
+        }).then(function(choice) {
+            if (choice !== 'restore') {
+                return;
+            }
             ocSetBtnBusy(btn, true, '<%:Restoring...%>');
             XHR.get('<%=url("admin", "services", "openclash", "restore")%>', null, function(x) {
                 ocSetBtnBusy(btn, false);
                 if (x && x.status == 200) {
-                    alert('<%:Restore succeeded!%>');
+                    window.location.href = '<%=url("admin", "services", "openclash", "settings")%>';
                 } else {
-                    alert('<%:Restore failed!%>');
+                    showHint('<%:Restore failed!%>');
                 }
-                window.location.href = '<%=url("admin", "services", "openclash", "settings")%>';
             });
-        }
+        });
         return false;
     }
 
@@ -1294,13 +1313,10 @@
             if (initialHint) {
                 initialHint.classList.add('logging');
                 initialHint.innerHTML = '';
-                initialHint.ocScrollPending = false;
-                initialHint.ocScrollFlush = null;
                 if (initialHint.ocScrollAnimId) {
                     cancelAnimationFrame(initialHint.ocScrollAnimId);
                 }
                 initialHint.ocScrollAnimId = null;
-                initialHint.ocScrollAnim = null;
                 initialHint.style.willChange = '';
                 initialHint.scrollTop = 0;
             }
@@ -1311,9 +1327,6 @@
             if (!hint) return;
             if (hint.ocScrollAnimId) { cancelAnimationFrame(hint.ocScrollAnimId); }
             hint.ocScrollAnimId = null;
-            hint.ocScrollAnim = null;
-            hint.ocScrollPending = false;
-            hint.ocScrollFlush = null;
             hint.style.willChange = '';
             hint.classList.remove('logging');
             showDefaultNote();
@@ -1322,7 +1335,7 @@
         var stream = ocCreateLogStream({
             url: '<%=url("admin", "services", "openclash", "startlog")%>',
             script: scriptName,
-            initialMessage: initialMessage ? '<b style="color:var(--info-color)">' + initialMessage + '</b>' : '',
+            initialMessage: initialMessage ? '<b style="color:var(--primary-color)">' + initialMessage + '</b>' : '',
             skipLines: lastLogLineCount,
             onSkipLines: function(n) { lastLogLineCount = n; },
             maxWaitMs: initialMessage ? 600000 : 0,
@@ -1361,13 +1374,6 @@
         hint.appendChild(fragment);
     }
 
-    function flushUpdateLog() {
-        var hint = document.getElementById('version-hint');
-        if (!hint) return;
-        renderUpdateLog();
-        ocAnimateScroll(hint, flushUpdateLog);
-    }
-
     function displayLog(logContent) {
         var hint = document.getElementById('version-hint');
         if (!hint) return;
@@ -1380,18 +1386,9 @@
         }
         if (allLines.length === 0) return;
 
-        var isFirst = logLines.length === 0 && allLines.length === 1;
         logLines = logLines.concat(allLines);
-
-        // A batch is still animating: buffer the lines and let the current
-        // animation finish before rendering the next batch.
-        if (hint.ocScrollAnim) {
-            ocAnimateScroll(hint, flushUpdateLog);
-            return;
-        }
-
         renderUpdateLog();
-        ocAnimateScroll(hint, flushUpdateLog, isFirst);
+        ocAnimateScroll(hint);
     }
 
     showDefaultNote();
@@ -1412,12 +1409,9 @@
         }
         var hint = document.getElementById('version-hint');
         if (hint) {
-            hint.ocScrollPending = false;
-            hint.ocScrollFlush = null;
             if (hint.ocScrollAnimId) {
                 cancelAnimationFrame(hint.ocScrollAnimId);
                 hint.ocScrollAnimId = null;
-                hint.ocScrollAnim = null;
                 hint.style.willChange = '';
             }
             hint.classList.remove('logging');

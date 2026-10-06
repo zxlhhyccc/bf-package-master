@@ -10,6 +10,11 @@ var ocLang = window.ocLang || '';
     function ocJsUrl(name) { return '/cgi-bin/luci/admin/services/openclash/translate_js?f=' + name.replace(/\.js$/, '') + '&v=' + (window.ocPluginVer || '') + '&l=' + ocLang; }
     function ocCssUrl(name) { return '/luci-static/resources/openclash/css/' + name + '?v=' + (window.ocPluginVer || ''); }
 
+    // Operation failures surface as non-blocking toasts instead of ocAlert() on the client page
+    function ocAlert(message) {
+        if (window.ocToast) ocToast(String(message), 'error');
+    }
+
     function ocFormatOneDecimal(val) {
         var num = Number(val);
         if (!isFinite(num)) num = 0;
@@ -1799,6 +1804,12 @@ var ocLang = window.ocLang || '';
         stream: null,
         lastLogLineCount: null,
         logLines: [],
+        scriptDone: true,
+
+        // marks a restart so a later-opened log dialog resumes the session with a live clock
+        markCoreStart: function() {
+            try { sessionStorage.setItem('ocCoreStartAt', String(Date.now())); } catch (e) {}
+        },
 
         // Clear the log before streaming so the operation API is served first and the stream does not block it
         startLogDisplay: function(initialMessage, skipClearLog, scriptName) {
@@ -1810,36 +1821,17 @@ var ocLang = window.ocLang || '';
                     return;
                 }
             }
+            this.scriptDone = false;
             if (initialMessage) {
                 this.lastLogLineCount = null;
                 this.logLines = [];
-                if (DOMCache.oclog) {
-                    DOMCache.oclog.ocScrollPending = false;
-                    DOMCache.oclog.ocScrollFlush = null;
-                    if (DOMCache.oclog.ocScrollAnimId) {
-                        cancelAnimationFrame(DOMCache.oclog.ocScrollAnimId);
-                    }
+                if (DOMCache.oclog && DOMCache.oclog.ocScrollAnimId) {
+                    cancelAnimationFrame(DOMCache.oclog.ocScrollAnimId);
                     DOMCache.oclog.ocScrollAnimId = null;
-                    DOMCache.oclog.ocScrollAnim = null;
-                    DOMCache.oclog.style.willChange = '';
-                    DOMCache.oclog.scrollTop = 0;
                 }
             }
 
             var self = this;
-
-            function resetLogScroll() {
-                if (DOMCache.oclog) {
-                    if (DOMCache.oclog.ocScrollAnimId) {
-                        cancelAnimationFrame(DOMCache.oclog.ocScrollAnimId);
-                    }
-                    DOMCache.oclog.ocScrollAnimId = null;
-                    DOMCache.oclog.ocScrollAnim = null;
-                    DOMCache.oclog.ocScrollPending = false;
-                    DOMCache.oclog.ocScrollFlush = null;
-                    DOMCache.oclog.style.willChange = '';
-                }
-            }
 
             var stream = ocCreateLogStream({
                 url: '<%=url("admin", "services", "openclash", "startlog")%>',
@@ -1851,7 +1843,7 @@ var ocLang = window.ocLang || '';
                 display: function(text) { self.displayLog(text); },
                 onFinish: function() {
                     self.stream = null;
-                    resetLogScroll();
+                    self.scriptDone = true;
                     setTimeout(function() {
                         if (!DOMCache.oclog) return;
                         if (!self.stream || !self.stream.isRunning()) {
@@ -1877,15 +1869,12 @@ var ocLang = window.ocLang || '';
                 this.stream.abort();
                 this.stream = null;
             }
+            this.scriptDone = true;
+            if (DOMCache.oclog && DOMCache.oclog.ocScrollAnimId) {
+                cancelAnimationFrame(DOMCache.oclog.ocScrollAnimId);
+                DOMCache.oclog.ocScrollAnimId = null;
+            }
             if (DOMCache.oclog) {
-                DOMCache.oclog.ocScrollPending = false;
-                DOMCache.oclog.ocScrollFlush = null;
-                if (DOMCache.oclog.ocScrollAnimId) {
-                    cancelAnimationFrame(DOMCache.oclog.ocScrollAnimId);
-                    DOMCache.oclog.ocScrollAnimId = null;
-                    DOMCache.oclog.ocScrollAnim = null;
-                    DOMCache.oclog.style.willChange = '';
-                }
                 setTimeout(function() {
                     if (!LogManager.stream || !LogManager.stream.isRunning()) {
                         DOMCache.oclog.classList.add('oc-hidden');
@@ -1893,43 +1882,6 @@ var ocLang = window.ocLang || '';
                     }
                 }, 1000);
             }
-        },
-
-        renderLog: function() {
-            var el = DOMCache.oclog;
-            if (!el) return;
-            if (!el.wheelBlocked) {
-                el.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
-                el.wheelBlocked = true;
-            }
-            var minVisibleLines = 8;
-            var merged = this.logLines;
-            el.innerHTML = '';
-            var fragment = document.createDocumentFragment();
-            for (var j = 0; j < merged.length; j++) {
-                var color = ocGetLogColor(merged[j]);
-                var div = document.createElement('div');
-                div.style.whiteSpace = 'nowrap';
-                div.innerHTML = '<b style="color:' + color + '">' + merged[j] + '</b>';
-                fragment.appendChild(div);
-            }
-            for (var spacerCount = merged.length; spacerCount < minVisibleLines; spacerCount++) {
-                var spacer = document.createElement('div');
-                spacer.className = 'oc-log-spacer';
-                spacer.style.visibility = 'hidden';
-                spacer.style.whiteSpace = 'nowrap';
-                spacer.textContent = '\u200B';
-                fragment.insertBefore(spacer, fragment.firstChild);
-            }
-            el.appendChild(fragment);
-            el.classList.remove('oc-hidden');
-        },
-
-        flushLog: function() {
-            var el = DOMCache.oclog;
-            if (!el) return;
-            LogManager.renderLog();
-            ocAnimateScroll(el, LogManager.flushLog);
         },
 
         displayLog: function(logContent) {
@@ -1941,21 +1893,54 @@ var ocLang = window.ocLang || '';
                 if (t) allLines.push(t);
             }
             if (allLines.length === 0) return;
-
-            var isFirst = this.logLines.length === 0 && allLines.length === 1;
             this.logLines = this.logLines.concat(allLines);
 
-            // A batch is still animating: buffer the lines and let the current
-            // animation finish before rendering the next batch.
-            if (DOMCache.oclog.ocScrollAnim) {
-                ocAnimateScroll(DOMCache.oclog, LogManager.flushLog);
-                return;
+            var maxLines = 3;
+            var el = DOMCache.oclog;
+
+            if (!el.wheelBlocked) {
+                el.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
+                el.wheelBlocked = true;
             }
 
-            this.renderLog();
-            ocAnimateScroll(DOMCache.oclog, LogManager.flushLog, isFirst);
+            var merged = this.logLines.slice(this.logLines.length - maxLines);
+
+            el.innerHTML = '';
+            el.scrollTop = 0;
+            for (var j = 0; j < merged.length; j++) {
+                var color = ocGetLogColor(merged[j]);
+                var div = document.createElement('div');
+                div.style.whiteSpace = 'nowrap';
+                div.innerHTML = '<b style="color:' + color + '">' + merged[j] + '</b>';
+                el.appendChild(div);
+            }
+            while (el.children.length < maxLines) {
+                var spacer = document.createElement('div');
+                spacer.className = 'oc-log-spacer';
+                spacer.style.visibility = 'hidden';
+                spacer.style.whiteSpace = 'nowrap';
+                spacer.textContent = '\u200B';
+                el.insertBefore(spacer, el.firstChild);
+            }
+
+            el.classList.remove('oc-hidden');
+            el.style.willChange = 'scroll-position';
+            ocAnimateScroll(el);
         }
     };
+
+    // the start-flow dialog reuses this stream instead of opening a second one
+    window.ocStatusLogLines = function() { return LogManager.logLines || []; };
+    window.ocStatusScriptDone = function() { return !!LogManager.scriptDone; };
+    // dialog-started switches register like the page's own restart buttons (stamp + init watch)
+    window.ocStatusMarkCoreStart = function() {
+        LogManager.markCoreStart();
+        LogManager.startLogDisplay('<%:Switching Config...%>', false, 'init');
+    };
+
+    if (DOMCache.oclog) {
+        DOMCache.oclog.addEventListener('click', function() { ocOpenCoreStartFlow(); });
+    }
 
     var SystemStatusManager = {
         pollTimer: null,
@@ -2044,8 +2029,8 @@ var ocLang = window.ocLang || '';
         isEnabled: false,
 
         ZERO_STATS: [
-            {id: "upload_", html: ocStatHtml("0 B/S")},
-            {id: "download_", html: ocStatHtml("0 B/S")},
+            {id: "upload_", html: ocStatHtml("0 B/s")},
+            {id: "download_", html: ocStatHtml("0 B/s")},
             {id: "uploadtotal_", html: ocStatHtml("0 KB")},
             {id: "downloadtotal_", html: ocStatHtml("0 KB")},
             {id: "mem_t", html: ocStatHtml("0 KB")},
@@ -2109,8 +2094,8 @@ var ocLang = window.ocLang || '';
             if (!isFinite(mem)) mem = 0;
             if (!isFinite(connections)) connections = 0;
             var updates = [
-                {element: document.getElementById("upload_"), content: ocStatHtml(bytesToSize(up) + "/S")},
-                {element: document.getElementById("download_"), content: ocStatHtml(bytesToSize(down) + "/S")},
+                {element: document.getElementById("upload_"), content: ocStatHtml(bytesToSize(up) + "/s")},
+                {element: document.getElementById("download_"), content: ocStatHtml(bytesToSize(down) + "/s")},
                 {element: document.getElementById("uploadtotal_"), content: ocStatHtml(bytesToSize(upTotal))},
                 {element: document.getElementById("downloadtotal_"), content: ocStatHtml(bytesToSize(downTotal))},
                 {element: document.getElementById("mem_t"), content: ocStatHtml(bytesToSize(mem))},
@@ -2316,7 +2301,9 @@ var ocLang = window.ocLang || '';
                     self.pausedPolls.delete(pollName);
 
                     if (!x || x.status !== 200) {
-                        alert(self.getErrorMessage(setting));
+                        ocAlert(self.getErrorMessage(setting));
+                    } else if (window.ocToast) {
+                        ocToast('<%:Switch Successful%>', 'success');
                     }
                 }, 1500);
             });
@@ -3711,6 +3698,7 @@ var ocLang = window.ocLang || '';
     }
 
     function switch_run_mode(value) {
+        LogManager.markCoreStart();
         LogManager.startLogDisplay('<%:Saving...%>', false, 'init');
         return SettingsManager.switchSetting(
             'run_mode',
@@ -3748,6 +3736,7 @@ var ocLang = window.ocLang || '';
 
         var previous = currentDnsMode;
 
+        LogManager.markCoreStart();
         LogManager.startLogDisplay('<%:Saving...%>', false, 'init');
         setDnsModeUI(value);
         if (DOMCache.dns_fakeip) DOMCache.dns_fakeip.disabled = true;
@@ -3776,7 +3765,7 @@ var ocLang = window.ocLang || '';
                 get_op_mode();
             } else {
                 setDnsModeUI(previous);
-                alert('<%:Switch mode failed!%>');
+                ocAlert('<%:Switch mode failed!%>');
             }
         }
 
@@ -3806,8 +3795,8 @@ var ocLang = window.ocLang || '';
         }
         var uploadElement = document.getElementById("upload_");
         var downloadElement = document.getElementById("download_");
-        uploadElement.innerHTML = data.up ? ocStatHtml(bytesToSize(data.up) + "/S") : ocStatHtml("0 B/S");
-        downloadElement.innerHTML = data.down ? ocStatHtml(bytesToSize(data.down) + "/S") : ocStatHtml("0 B/S");
+        uploadElement.innerHTML = data.up ? ocStatHtml(bytesToSize(data.up) + "/s") : ocStatHtml("0 B/s");
+        downloadElement.innerHTML = data.down ? ocStatHtml(bytesToSize(data.down) + "/s") : ocStatHtml("0 B/s");
         StatsChart.feed("up", data.up ? (data.up / 1048576) : 0);
         StatsChart.feed("down", data.down ? (data.down / 1048576) : 0);
     }
@@ -4137,7 +4126,7 @@ var ocLang = window.ocLang || '';
         var currentStatus = StateManager.current_status;
         var externalURL = currentStatus ? buildExternalDashboardURL(currentStatus) : '';
         if (externalURL) {
-            ocCopyToClipboard(externalURL, DOMCache.copy_address, '<%:Control panel address copied:%> ', '<%:Copy failed, please copy manually:%>');
+            ocCopyToClipboard(externalURL, DOMCache.copy_address, '<%:Copy failed, please copy manually:%>');
             return false;
         }
 
@@ -4147,14 +4136,14 @@ var ocLang = window.ocLang || '';
                 if (panel && StateManager.current_status[panel]) {
                     var url = buildDashboardURL(currentStatus, panel, panel === 'zashboard' || panel === 'metacubexd');
 
-                    ocCopyToClipboard(url, DOMCache.copy_address, '<%:Control panel address copied:%> ', '<%:Copy failed, please copy manually:%>');
+                    ocCopyToClipboard(url, DOMCache.copy_address, '<%:Copy failed, please copy manually:%>');
                 } else {
                     var fallbackUrl = 'http://' + (StateManager.current_status.daip || 'unknown') + ':' + (StateManager.current_status.cn_port || '9090') + '/ui/zashboard/#/';
-                    ocCopyToClipboard(fallbackUrl, DOMCache.copy_address, '<%:Control panel address copied:%> ', '<%:Copy failed, please copy manually:%>');
+                    ocCopyToClipboard(fallbackUrl, DOMCache.copy_address, '<%:Copy failed, please copy manually:%>');
                 }
             } else {
                 var fallbackUrl = 'http://' + (StateManager.current_status.daip || 'unknown') + ':' + (StateManager.current_status.cn_port || '9090') + '/ui/zashboard/#/';
-                ocCopyToClipboard(fallbackUrl, DOMCache.copy_address, '<%:Control panel address copied:%> ', '<%:Copy failed, please copy manually:%>');
+                ocCopyToClipboard(fallbackUrl, DOMCache.copy_address, '<%:Copy failed, please copy manually:%>');
             }
         });
         return false;
@@ -4163,10 +4152,10 @@ var ocLang = window.ocLang || '';
     function copySecret() {
         var secret = StateManager.current_status.dase || '';
         if (secret === '') {
-            alert('<%:No control panel secret set%>');
+            ocAlert('<%:No control panel secret set%>');
             return false;
         }
-        ocCopyToClipboard(secret, DOMCache.copy_secret, '<%:Control panel secret copied:%> ', '<%:Copy failed, please copy manually:%>');
+        ocCopyToClipboard(secret, DOMCache.copy_secret, '<%:Copy failed, please copy manually:%>');
         return false;
     }
 
@@ -4174,12 +4163,12 @@ var ocLang = window.ocLang || '';
         if (StateManager.cached_proxy_info) {
             if (StateManager.cached_proxy_info.auth_user && StateManager.cached_proxy_info.auth_pass) {
                 var authText = StateManager.cached_proxy_info.auth_user + ':' + StateManager.cached_proxy_info.auth_pass;
-                ocCopyToClipboard(authText, DOMCache.copy_mix_secret, '<%:Proxy auth info copied:%> ', '<%:Copy failed, please copy manually:%>');
+                ocCopyToClipboard(authText, DOMCache.copy_mix_secret, '<%:Copy failed, please copy manually:%>');
             } else {
-                alert('<%:No proxy auth info set%>');
+                ocAlert('<%:No proxy auth info set%>');
             }
         } else {
-            alert('<%:Proxy info not available, please try again later%>');
+            ocAlert('<%:Proxy info not available, please try again later%>');
         }
         return false;
     }
@@ -4193,14 +4182,15 @@ var ocLang = window.ocLang || '';
                 proxyText = StateManager.cached_proxy_info.auth_user + ':' + StateManager.cached_proxy_info.auth_pass + '@' + proxyText;
             }
             proxyText = 'http://' + proxyText;
-            ocCopyToClipboard(proxyText, DOMCache.copy_mix_address, '<%:Mix proxy address copied:%> ', '<%:Copy failed, please copy manually:%>');
+            ocCopyToClipboard(proxyText, DOMCache.copy_mix_address, '<%:Copy failed, please copy manually:%>');
         } else {
-            alert('<%:Proxy info not available, please try again later%>');
+            ocAlert('<%:Proxy info not available, please try again later%>');
         }
         return false;
     }
 
     function switch_oc_setting_oversea(value) {
+        LogManager.markCoreStart();
         LogManager.startLogDisplay('<%:Saving...%>', false, 'view');
         return SettingsManager.switchSetting(
             'oversea',
@@ -4252,9 +4242,9 @@ var ocLang = window.ocLang || '';
             }, function(x, data) {
                 if (x && x.status == 200 && data.pac_url) {
                     if (data.error && data.error !== "") {
-                        alert(data.error);
+                        ocAlert(data.error);
                     }
-                    ocCopyToClipboard(data.pac_url, DOMCache.copy_pac_config, '<%:PAC file URL copied:%> ', '<%:Copy failed, please copy manually:%>');
+                    ocCopyToClipboard(data.pac_url, DOMCache.copy_pac_config, '<%:Copy failed, please copy manually:%>');
                 } else if (data.error) {
                     errorinfos = {
                         'Proxy service not running': '<%:Proxy service not running%>',
@@ -4262,13 +4252,13 @@ var ocLang = window.ocLang || '';
                         'Failed to write PAC file': '<%:Failed to write PAC file%>'
                     };
                     var errorMsg = errorinfos[data.error] || data.error;
-                    alert('<%:PAC file generation failed%>: ' + errorMsg);
+                    ocAlert('<%:PAC file generation failed%>: ' + errorMsg);
                 } else {
-                    alert('<%:PAC file generation failed%>');
+                    ocAlert('<%:PAC file generation failed%>');
                 }
             });
         } else {
-            alert('<%:Proxy service not available, please try again later%>');
+            ocAlert('<%:Proxy service not available, please try again later%>');
         }
         return false;
     }
@@ -4280,7 +4270,7 @@ var ocLang = window.ocLang || '';
             var currentConfig = ConfigFileManager.getCurrentConfig() || ConfigFileManager.getSelectedConfig();
             if (!currentConfig) {
                 toggleElement.checked = false;
-                alert('<%:Please select a config file first%>');
+                ocAlert('<%:Please select a config file first%>');
                 return false;
             }
         }
@@ -4310,8 +4300,8 @@ var ocLang = window.ocLang || '';
             }
         }
 
+        if (isEnabled) LogManager.markCoreStart();
         LogManager.startLogDisplay(isEnabled ? '<%:Starting...%>' : '<%:Stopping...%>', false, 'init');
-
         XHR.get('<%=url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
             if (x && x.status == 200) {
                 setTimeout(function() {
@@ -4325,7 +4315,7 @@ var ocLang = window.ocLang || '';
                 var errorMessage = isEnabled ?
                     '<%:Failed to start OpenClash%>' :
                     '<%:Failed to stop OpenClash%>';
-                alert(errorMessage);
+                ocAlert(errorMessage);
 
                 if (DOMCache.clash) {
                     DOMCache.clash.innerHTML = '<b style="color:var(--error-color)"><%:Operation Failed%></b>';
@@ -4358,12 +4348,13 @@ var ocLang = window.ocLang || '';
     function switchConfig() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return false;
         }
 
         pluginToggleUserAction = true;
 
+        LogManager.markCoreStart();
         LogManager.startLogDisplay('<%:Switching Config...%>', false, 'init');
 
         XHR.get('<%=url("admin", "services", "openclash", "switch_config")%>', {
@@ -4376,7 +4367,7 @@ var ocLang = window.ocLang || '';
                     updatePluginToggleState(StateManager.current_status.clash || false);
                 }, 2000);
             } else {
-                alert('<%:Failed to switch config file:%> ' + (status.message || '<%:Unknown error%>'));
+                ocAlert('<%:Failed to switch config file:%> ' + (status.message || '<%:Unknown error%>'));
 
                 if (DOMCache.oclog) {
                     DOMCache.oclog.innerHTML = '<b style="color:var(--error-color)"><%:Switch Failed%></b>';
@@ -4392,18 +4383,19 @@ var ocLang = window.ocLang || '';
     function updateConfig() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return false;
         }
 
         var filename = SubscriptionManager.extractFilename(currentConfig);
         if (!filename) {
-            alert('<%:Invalid config file selected%>');
+            ocAlert('<%:Invalid config file selected%>');
             return false;
         }
 
         pluginToggleUserAction = true;
 
+        LogManager.markCoreStart();
         LogManager.startLogDisplay('<%:Updating Config...%>', false, 'openclash.sh');
 
         XHR.get('<%=url("admin", "services", "openclash", "update_config")%>', {
@@ -4427,7 +4419,7 @@ var ocLang = window.ocLang || '';
                         DOMCache.oclog.innerHTML = '<b style="color:var(--error-color)"><%:Update Failed%></b>';
                     }
 
-                    alert('<%:Failed to update config file:%> ' + (status.message || status.error || '<%:Unknown error%>'));
+                    ocAlert('<%:Failed to update config file:%> ' + (status.message || status.error || '<%:Unknown error%>'));
                 }
             } else {
                 pluginToggleUserAction = false;
@@ -4436,7 +4428,7 @@ var ocLang = window.ocLang || '';
                     DOMCache.oclog.innerHTML = '<b style="color:var(--error-color)"><%:Update Failed%></b>';
                 }
 
-                alert('<%:Failed to update config file, please try again later%>');
+                ocAlert('<%:Failed to update config file, please try again later%>');
             }
         });
 
@@ -4446,7 +4438,7 @@ var ocLang = window.ocLang || '';
     function restartCore() {
         var currentConfig = ConfigFileManager.getCurrentConfig() || ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return false;
         }
 
@@ -4470,6 +4462,7 @@ var ocLang = window.ocLang || '';
             requestParams.config_file = selectedConfig;
         }
 
+        LogManager.markCoreStart();
         LogManager.startLogDisplay('<%:Restarting...%>', false, 'init');
 
         XHR.get('<%=url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
@@ -4486,7 +4479,7 @@ var ocLang = window.ocLang || '';
                 if (toggleElement) {
                     toggleElement.disabled = false;
                 }
-                alert('<%:Failed to restart core%>');
+                ocAlert('<%:Failed to restart core%>');
 
                 pluginToggleUserAction = false;
             }
@@ -4497,7 +4490,7 @@ var ocLang = window.ocLang || '';
     function refreshSubscriptionInfo() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return false;
         }
 
@@ -4511,62 +4504,105 @@ var ocLang = window.ocLang || '';
         return false;
     }
 
+    // editor scripts can fail silently or come from a stale cache: probe the global,
+    // retry once cache-busted, then tell the user
+    function requireEditorScript(script, globalName, cb) {
+        var settled = false;
+        var ready = function() { return typeof window[globalName] !== 'undefined'; };
+        var url = function(bust) { return ocJsUrl(script) + (bust ? '&ocbust=' + Date.now() : ''); };
+        var done = function() {
+            if (settled || !ready()) return;
+            settled = true;
+            cb();
+        };
+        ocRequireScript(url(false), done);
+        setTimeout(function() {
+            done();
+            if (settled) return;
+            ocRequireScript(url(true), done);
+            setTimeout(function() {
+                done();
+                if (!settled) ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
+            }, 5000);
+        }, 1500);
+    }
+
     function setSubscriptionUrl() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return false;
         }
 
         var filename = SubscriptionManager.extractFilename(currentConfig);
         if (!filename) {
-            alert('<%:Invalid config file selected%>');
+            ocAlert('<%:Invalid config file selected%>');
             return false;
         }
 
-        function showSetter() {
+        requireEditorScript('config_upload.js', 'ConfigUploader', function() {
             if (typeof SubscriptionUrlSetter !== 'undefined' && SubscriptionUrlSetter.show) {
                 SubscriptionUrlSetter.show(filename, "refreshSubscriptionInfo()");
             } else {
-                alert('<%:Config editor not ready, please try again%>');
+                ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
             }
-        }
-        if (typeof SubscriptionUrlSetter !== 'undefined' && SubscriptionUrlSetter.show) {
-            showSetter();
-        } else {
-            ocRequireScript(ocJsUrl('config_upload.js'), showSetter);
-        }
+        });
 
         return false;
     }
 
     function uploadConfig() {
-        function showUploader() {
+        requireEditorScript('config_upload.js', 'ConfigUploader', function() {
             if (typeof ConfigUploader !== 'undefined' && ConfigUploader.show) {
                 ConfigUploader.show("ConfigFileManager.refreshConfigList()");
             } else {
-                alert('<%:Config editor not ready, please try again%>');
+                ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
             }
-        }
-        if (typeof ConfigUploader !== 'undefined' && ConfigUploader.show) {
-            showUploader();
-        } else {
-            ocRequireScript(ocJsUrl('config_upload.js'), showUploader);
-        }
+        });
 
         return false;
+    }
+
+    function showConfigSummary() {
+        var currentConfig = ConfigFileManager.getSelectedConfig();
+        if (!currentConfig) {
+            ocAlert('<%:Please select a config file first%>');
+            return false;
+        }
+        var filename = SubscriptionManager.extractFilename(currentConfig);
+        if (!filename) {
+            ocAlert('<%:Invalid config file selected%>');
+            return false;
+        }
+
+        function openSummary() {
+            if (typeof ConfigUploader !== 'undefined' && ConfigUploader.showSummary) {
+                ConfigUploader.showSummary(filename, "ConfigFileManager.refreshConfigList()");
+            } else {
+                ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
+            }
+        }
+        requireEditorScript('config_upload.js', 'ConfigUploader', openSummary);
+
+        return false;
+    }
+
+    function ocOpenCoreStartFlow() {
+        requireEditorScript('config_upload.js', 'CoreStartFlow', function() {
+            if (typeof CoreStartFlow !== 'undefined' && CoreStartFlow.view) CoreStartFlow.view();
+        });
     }
 
     function editSubscribe() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return false;
         }
 
         var filename = SubscriptionManager.extractFilename(currentConfig);
         if (!filename) {
-            alert('<%:Invalid config file selected%>');
+            ocAlert('<%:Invalid config file selected%>');
             return false;
         }
 
@@ -4574,20 +4610,15 @@ var ocLang = window.ocLang || '';
             filename: filename
         }, function(x, status) {
             if (x.status == 200) {
-                    var showSubscribeEditor = function() {
+                    requireEditorScript('config_upload.js', 'ConfigUploader', function() {
                         if (typeof ConfigUploader !== 'undefined' && ConfigUploader.showEditSubscribe) {
                             ConfigUploader.showEditSubscribe(status, filename, "ConfigFileManager.refreshConfigList()");
                         } else {
-                            alert('<%:Config editor not ready, please try again%>');
+                            ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
                         }
-                    };
-                    if (typeof ConfigUploader !== 'undefined' && ConfigUploader.showEditSubscribe) {
-                        showSubscribeEditor();
-                    } else {
-                        ocRequireScript(ocJsUrl('config_upload.js'), showSubscribeEditor);
-                    }
+                    });
                 } else {
-                    alert('<%:Failed to get subscribe data%>');
+                    ocAlert('<%:Failed to get subscribe data%>');
                 }
             });
 
@@ -4597,22 +4628,21 @@ var ocLang = window.ocLang || '';
     function editConfig() {
         var currentConfig = ConfigFileManager.getSelectedConfig();
         if (!currentConfig) {
-            alert('<%:Please select a config file first%>');
+            ocAlert('<%:Please select a config file first%>');
             return false;
         }
 
         if (typeof ConfigEditor !== 'undefined' && ConfigEditor.show) {
             ConfigEditor.show(currentConfig);
         } else {
-            var showEditor = function() {
+            ocLoadCss(ocCssUrl('oc-config-edit.css'));
+            requireEditorScript('config_edit.js', 'ConfigEditor', function() {
                 if (typeof ConfigEditor !== 'undefined' && ConfigEditor.show) {
                     ConfigEditor.show(currentConfig);
                 } else {
-                    alert('<%:Config editor not ready, please try again%>');
+                    ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
                 }
-            };
-            ocLoadCss(ocCssUrl('oc-config-edit.css'));
-            ocRequireScript(ocJsUrl('config_edit.js'), showEditor);
+            });
         }
 
         return false;
@@ -4622,15 +4652,14 @@ var ocLang = window.ocLang || '';
         if (typeof ConfigEditor !== 'undefined' && ConfigEditor.showOverwrite) {
             ConfigEditor.showOverwrite();
         } else {
-            var showOverwrite = function() {
+            ocLoadCss(ocCssUrl('oc-config-edit.css'));
+            requireEditorScript('config_edit.js', 'ConfigEditor', function() {
                 if (typeof ConfigEditor !== 'undefined' && ConfigEditor.showOverwrite) {
                     ConfigEditor.showOverwrite();
                 } else {
-                    alert('<%:Config editor not ready, please try again%>');
+                    ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
                 }
-            };
-            ocLoadCss(ocCssUrl('oc-config-edit.css'));
-            ocRequireScript(ocJsUrl('config_edit.js'), showOverwrite);
+            });
         }
 
         return false;
@@ -4658,15 +4687,188 @@ var ocLang = window.ocLang || '';
         return false;
     }
 
-    function toggleThemeMode() {
-        var themes = ['light', 'dark', 'auto'];
-        var currentTheme = localStorage.getItem('oc-theme') || 'auto';
-        var currentIndex = themes.indexOf(currentTheme);
-        if (currentIndex === -1) currentIndex = 2;
-        var newIndex = (currentIndex + 1) % themes.length;
-        var newTheme = themes[newIndex];
-        localStorage.setItem('oc-theme', newTheme);
-        ocUpdateTheme();
-        DarkModeDetector.init();
-        StatsChart.refresh();
+    var themePanel = null;
+    var themePanelOpen = false;
+
+    var themeChoices = [
+        { id: 'classic', name: '<%:Classic Blue%>', sw: ['#3b82f6', '#60a5fa'] },
+        { id: 'cyan', name: '<%:Nocturne Cyan%>', sw: ['#0e7490', '#22d3ee'] },
+        { id: 'indigo', name: '<%:Indigo Voyage%>', sw: ['#4f46e5', '#818cf8'] },
+        { id: 'graphite', name: '<%:Graphite Silver%>', sw: ['#374151', '#9ca3af'] },
+        { id: 'amber', name: '<%:Ember Amber%>', sw: ['#b45309', '#f59e0b'] },
+        { id: 'imperial', name: '<%:Imperial Purple%>', sw: ['#6a0dad', '#c084fc'] },
+        { id: 'rose', name: '<%:Sweet Rose%>', sw: ['#d6256a', '#f06292'] },
+        { id: 'smoky', name: '<%:Smoky Pink%>', sw: ['#a8557d', '#e89aaf'] }
+    ];
+
+    function buildThemePanel() {
+        var panel = document.createElement('div');
+        panel.className = 'oc oc-theme-panel oc-hidden';
+        panel.id = 'oc-theme-panel';
+        panel.setAttribute('role', 'dialog');
+        panel.setAttribute('aria-label', '<%:Switch Theme%>');
+
+        var themes = themeChoices.map(function(t) {
+            return '<button type="button" class="tp-theme" data-theme="' + t.id + '" aria-pressed="false">'
+                + '<span class="tp-sw"><i style="background:' + t.sw[0] + '"></i><i style="background:' + t.sw[1] + '"></i></span>'
+                + '<span class="tp-name">' + t.name + '</span></button>';
+        }).join('');
+
+        panel.innerHTML = '<div class="tp-head">'
+            + '<div class="tp-title"><%:Switch Theme%></div>'
+            + '<button type="button" class="icon-btn" id="tp-close" title="<%:Close%>"><svg width="14" height="14"><use href="#oc-icon-close"/></svg></button>'
+            + '</div>'
+            + '<div class="tp-label"><%:Mode%></div>'
+            + '<div class="tp-seg" id="tp-modes">'
+            + '<button type="button" class="tp-opt" data-mode="light" aria-pressed="false"><%:Light%></button>'
+            + '<button type="button" class="tp-opt" data-mode="dark" aria-pressed="false"><%:Dark%></button>'
+            + '<button type="button" class="tp-opt" data-mode="auto" aria-pressed="false"><%:Auto%></button>'
+            + '</div>'
+            + '<div class="tp-label"><span><%:Theme%></span><span class="tp-hint"><%:Applies to all OpenClash pages%></span></div>'
+            + '<div class="tp-grid" id="tp-themes">' + themes + '</div>'
+            + '<div class="tp-custom" id="tp-custom">'
+            + '<label class="tp-custom-main" for="tp-color">'
+            + '<span class="tp-sw" id="tp-custom-sw"><i></i><i></i></span>'
+            + '<span class="tp-name"><%:Custom%></span>'
+            + '<span class="tp-hex" id="tp-custom-hex"></span>'
+            + '</label>'
+            + '<button type="button" class="tp-custom-apply" id="tp-custom-apply"><%:Apply%></button>'
+            + '<input type="color" id="tp-color" value="#3b82f6">'
+            + '</div>';
+
+        panel.addEventListener('click', function(e) {
+            var t = e.target;
+            while (t && t !== panel && !t.classList.contains('tp-opt') && !t.classList.contains('tp-theme')) t = t.parentNode;
+            if (!t || t === panel) return;
+            if (t.classList.contains('tp-opt')) {
+                localStorage.setItem('oc-theme', t.getAttribute('data-mode'));
+                ocUpdateTheme();
+                DarkModeDetector.init();
+                StatsChart.refresh();
+            } else {
+                ocCustomPreviewHex = null;
+                localStorage.setItem('oc-theme-name', t.getAttribute('data-theme'));
+                localStorage.removeItem('oc-theme-custom');
+                ocApplyRootTheme();
+                StatsChart.refresh();
+            }
+            ocSaveThemeToUci();
+            syncThemePanel();
+        });
+
+        panel.querySelector('#tp-close').addEventListener('click', function() { setThemePanel(false); });
+        var colorInput = panel.querySelector('#tp-color');
+        function previewCustom(hex) {
+            hex = hex.toLowerCase();
+            var sw = panel.querySelectorAll('#tp-custom-sw i');
+            sw[0].style.background = hex;
+            sw[1].style.background = ocShadeHex(hex, 0.25);
+            panel.querySelector('#tp-custom-hex').textContent = hex;
+        }
+        colorInput.addEventListener('input', function() { previewCustom(colorInput.value); });
+        colorInput.addEventListener('change', function() {
+            var hex = colorInput.value.toLowerCase();
+            previewCustom(hex);
+            ocCustomPreviewHex = hex;
+            document.documentElement.setAttribute('data-oc-theme', 'custom');
+            ocApplyCustomAccent();
+            StatsChart.refresh();
+        });
+        panel.querySelector('#tp-custom-apply').addEventListener('click', function() {
+            ocCustomPreviewHex = null;
+            localStorage.setItem('oc-theme-custom', colorInput.value.toLowerCase());
+            localStorage.setItem('oc-theme-name', 'custom');
+            ocApplyRootTheme();
+            ocSaveThemeToUci();
+            StatsChart.refresh();
+            setThemePanel(false);
+        });
+
+        document.body.appendChild(panel);
+        return panel;
+    }
+
+    function syncThemePanel() {
+        if (!themePanel) return;
+        var mode = localStorage.getItem('oc-theme') || 'auto';
+        var name = localStorage.getItem('oc-theme-name') || 'classic';
+        var opts = themePanel.querySelectorAll('.tp-opt');
+        for (var i = 0; i < opts.length; i++) {
+            var on = opts[i].getAttribute('data-mode') === mode;
+            opts[i].classList.toggle('on', on);
+            opts[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+        }
+        var cards = themePanel.querySelectorAll('.tp-theme');
+        for (var j = 0; j < cards.length; j++) {
+            var sel = cards[j].getAttribute('data-theme') === name;
+            cards[j].classList.toggle('on', sel);
+            cards[j].setAttribute('aria-pressed', sel ? 'true' : 'false');
+        }
+        var custom = themePanel.querySelector('#tp-custom');
+        if (custom) {
+            var hex, pair;
+            if (name === 'custom') {
+                hex = ocSafeHex(localStorage.getItem('oc-theme-custom'));
+                pair = [hex, ocShadeHex(hex, 0.25)];
+            } else {
+                var choice = null;
+                for (var k = 0; k < themeChoices.length; k++) {
+                    if (themeChoices[k].id === name) choice = themeChoices[k];
+                }
+                pair = choice ? choice.sw : ['#3b82f6', '#60a5fa'];
+                hex = pair[0];
+            }
+            custom.classList.toggle('on', name === 'custom');
+            themePanel.querySelector('#tp-color').value = hex;
+            var sw = custom.querySelectorAll('.tp-sw i');
+            sw[0].style.background = pair[0];
+            sw[1].style.background = pair[1];
+            themePanel.querySelector('#tp-custom-hex').textContent = hex;
+        }
+    }
+
+    function positionThemePanel() {
+        var btn = document.getElementById('theme-toggle');
+        if (!themePanel || !btn) return;
+        var r = btn.getBoundingClientRect();
+        var w = themePanel.offsetWidth;
+        var h = themePanel.offsetHeight;
+        var left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8));
+        var top = r.bottom + 8;
+        if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 8);
+        themePanel.style.left = left + 'px';
+        themePanel.style.top = top + 'px';
+    }
+
+    function setThemePanel(open) {
+        if (!themePanel) themePanel = buildThemePanel();
+        themePanelOpen = open;
+        themePanel.classList.toggle('oc-hidden', !open);
+        var btn = document.getElementById('theme-toggle');
+        if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+            syncThemePanel();
+            positionThemePanel();
+        } else {
+            if (ocCustomPreviewHex) {
+                ocCustomPreviewHex = null;
+                ocApplyRootTheme();
+            }
+            if (btn && themePanel.contains(document.activeElement)) {
+                btn.focus();
+            }
+        }
+    }
+
+    function openThemePanel(btn) {
+        if (!themePanel) {
+            themePanel = buildThemePanel();
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && themePanelOpen) setThemePanel(false);
+            });
+            window.addEventListener('resize', function() { if (themePanelOpen) positionThemePanel(); });
+            window.addEventListener('scroll', function() { if (themePanelOpen) positionThemePanel(); }, true);
+        }
+        setThemePanel(!themePanelOpen);
+        return false;
     }

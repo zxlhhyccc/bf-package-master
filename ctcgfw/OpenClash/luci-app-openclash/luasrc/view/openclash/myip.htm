@@ -1,7 +1,3 @@
-<html>
-<head>
-<meta charset="utf-8">
-<meta http-equiv="x-dns-prefetch-control" content="on">
 <link rel="dns-prefetch" href="//whois.pconline.com.cn">
 <link rel="dns-prefetch" href="//api.ip.sb">
 <link rel="dns-prefetch" href="//api.ipify.org">
@@ -10,10 +6,6 @@
 <link rel="preconnect" href="https://api.ip.sb">
 <link rel="preconnect" href="https://api.ipify.org">
 <link rel="preconnect" href="https://myip.ipip.net">
-<meta name="referrer" content="no-referrer">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
-<title>IP 地址查询</title>
-</head>
 
 <fieldset class="cbi-section">
     <table width="100%">
@@ -138,8 +130,7 @@
     </table>
 </fieldset>
 
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>
 <script>
-ocLazyScriptOnView(document.querySelector('.myip-main-card'), '/cgi-bin/luci/admin/services/openclash/translate_js?f=myip&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>');
+ocLazyScriptOnView(document.querySelector('.myip-main-card'), '/cgi-bin/luci/admin/services/openclash/translate_js?f=myip&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>');
 </script>
-</html>

@@ -30,8 +30,8 @@ for dev in SYS.exec("ls -1 /sys/class/net/ 2>/dev/null"):gmatch("[^%s]+") do
 	end
 end
 
-font_green = [[<b style=color:green>]]
-font_red = [[<b style=color:red>]]
+font_green = [[<b class="oc-txt-good">]]
+font_red = [[<b class="oc-txt-bad">]]
 font_off = [[</b>]]
 bold_on = [[<strong>]]
 bold_off = [[</strong>]]

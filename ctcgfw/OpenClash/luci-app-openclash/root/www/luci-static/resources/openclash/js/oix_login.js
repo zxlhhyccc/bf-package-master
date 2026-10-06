@@ -460,7 +460,7 @@ var OixCloud = {
     },
 
     openWebsite: function() {
-        window.open('http://bit.ly/oixcloud-register');
+        window.open('https://oixcloud.com/');
     }
 };
 

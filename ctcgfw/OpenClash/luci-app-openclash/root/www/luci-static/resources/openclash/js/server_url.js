@@ -758,7 +758,8 @@ function export_url(btn, urlname, sid) {
                 url = exportMieru(sid);
                 break;
             default:
-                s.innerHTML = "<font style=\"color:red\">" + '<%:Unsupported protocol type%>' + "</font>";
+                s.className = 'oc-status-err';
+                s.textContent = '<%:Unsupported protocol type%>';
                 return false;
         }
 
@@ -770,17 +771,21 @@ function export_url(btn, urlname, sid) {
             textarea.select();
             try {
                 document.execCommand("copy");
-                s.innerHTML = "<font style=\"color:green\">" + '<%:Copy%>' + " " + type.toUpperCase() + " " + '<%:to clipboard successfully%>' + "</font>";
+                s.className = 'oc-status-ok';
+                s.textContent = '<%:Copy%>' + " " + type.toUpperCase() + " " + '<%:to clipboard successfully%>';
             } catch (ex) {
-                s.innerHTML = "<font style=\"color:red\">" + '<%:Unable to copy%>' + " " + type.toUpperCase() + " " + '<%:to clipboard%>' + "</font>";
+                s.className = 'oc-status-err';
+                s.textContent = '<%:Unable to copy%>' + " " + type.toUpperCase() + " " + '<%:to clipboard%>';
             } finally {
                 document.body.removeChild(textarea);
             }
         } else {
-            s.innerHTML = "<font style=\"color:red\">" + '<%:Export failed%>' + "</font>";
+            s.className = 'oc-status-err';
+            s.textContent = '<%:Export failed%>';
         }
     } catch (e) {
-        s.innerHTML = "<font style=\"color:red\">" + '<%:Export error%>' + "</font>";
+        s.className = 'oc-status-err';
+        s.textContent = '<%:Export error%>';
         return false;
     }
 
@@ -1629,14 +1634,17 @@ function import_url(btn, urlname, sid) {
 
     var ssrurl = prompt('<%:Paste sharing link here%>', "");
     if (ssrurl == null || ssrurl == "") {
-        s.innerHTML = "<font style=\"color:red\">" + '<%:User cancelled%>' + "</font>";
+        s.className = 'oc-status-err';
+        s.textContent = '<%:User cancelled%>';
         return false;
     }
-    s.innerHTML = "";
+    s.textContent = '';
+    s.className = '';
 
     var ssu = ssrurl.split('://');
     if (ssu.length < 2) {
-        s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+        s.className = 'oc-status-err';
+        s.textContent = '<%:Invalid format%>';
         return false;
     }
 
@@ -1650,66 +1658,82 @@ function import_url(btn, urlname, sid) {
         switch (scheme) {
             case "ss":
                 if (parseSS(ssu[1], sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "ssr":
                 if (parseSSR(ssu[1], sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "vmess":
                 if (parseVmess(ssu[1], sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "vless":
                 if (parseVless(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "trojan":
                 if (parseTrojan(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "hysteria":
                 if (parseHysteria(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "hysteria2":
             case "hy2":
                 if (parseHysteria2(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "tuic":
                 if (parseTuic(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
@@ -1717,44 +1741,54 @@ function import_url(btn, urlname, sid) {
             case "socks5":
             case "socks5h":
                 if (parseSocks(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "http":
             case "https":
                 if (parseHttp(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "anytls":
                 if (parseAnyTLS(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             case "mierus":
                 if (parseMieru(ssrurl, sid)) {
-                    s.innerHTML = "<font style=\"color:green\">" + '<%:Import configuration information successfully%>' + "</font>";
+                    s.className = 'oc-status-ok';
+                    s.textContent = '<%:Import configuration information successfully%>';
                 } else {
-                    s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                    s.className = 'oc-status-err';
+                    s.textContent = '<%:Invalid format%>';
                 }
                 break;
 
             default:
-                s.innerHTML = "<font style=\"color:red\">" + '<%:Invalid format%>' + "</font>";
+                s.className = 'oc-status-err';
+                s.textContent = '<%:Invalid format%>';
                 endImportOtherParameters();
                 return false;
         }
     } catch (e) {
-        s.innerHTML = "<font style=\"color:red\">" + '<%:Parse error%>' + "</font>";
+        s.className = 'oc-status-err';
+        s.textContent = '<%:Parse error%>';
         endImportOtherParameters();
         return false;
     }

@@ -7,8 +7,8 @@
 local diag_host = "www.instagram.com"
 local dns_host = "www.instagram.com"
 %>
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-settings.css?v=<%="@OPENCLASH_VERSION@"%>">
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-settings.css?v=@OPENCLASH_VERSION@">
 
 <script type="text/javascript">//<![CDATA[
 	function show_diag_info(addr)
@@ -22,11 +22,11 @@ local dns_host = "www.instagram.com"
 				legend.textContent = '<%:Connection Test Result%>';
 				if (x && x.status == 200 && x.responseText != "")
 				{
-					output.innerHTML = '';
+					output.innerHTML = '<div class="oc-oplog"><div class="oc-oplog-h"><b><%:Connection Test Result%></b><span class="oc-oplog-live"><i></i>LIVE</span></div><div class="oc-editor-host"></div></div>';
 					var ta = document.createElement('textarea');
 					ta.style.width = '100%';
 					ta.value = x.responseText.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l !== ''; }).join('\n');
-					output.appendChild(ta);
+					output.querySelector('.oc-editor-host').appendChild(ta);
 					other_editor(ta, true, '100%', '400px');
 				}
 				else if (x.status == 500)
@@ -35,7 +35,7 @@ local dns_host = "www.instagram.com"
 				}
 				else
 				{
-					output.innerHTML = '<span class="error"><%:Could not find any connection logs!%></br></br><%:1. It may be that the plugin is not running%></br></br><%:2. It may be that the cache causes the browser to directly use the IP for access%></br></br><%:3. It may be that DNS hijacking did not take effect, so clash unable to reverse the domain name%></br></br><%:4. It may be that the filled address cannot be resolved and connected%></span>';
+					output.innerHTML = '<span class="error"><%:Could not find any connection logs!%></br></br><%:1. It may be that the plugin is not running%></br></br><%:2. It may be that the cache causes the browser to directly use the IP for access%></br></br><%:3. It may be that DNS hijacking did not take effect, so the domain name cannot be reversed%></br></br><%:4. It may be that the filled address cannot be resolved and connected%></span>';
 				}
 			});
 		}
@@ -50,12 +50,12 @@ local dns_host = "www.instagram.com"
 		if (legend && output)
 		{
 			output.innerHTML =
-				'<span class="loading-spinner" style="vertical-align:middle"></span> ' +
-				'<%:Waiting for command to complete...%>';
+				'<div class="oc-oplog"><div class="oc-oplog-h"><b><%:Connection Test Result%></b><span class="oc-oplog-live"><i></i>LIVE</span></div>' +
+				'<div class="oc-oplog-body"><span class="loading-spinner" style="vertical-align:middle"></span> <%:Waiting for command to complete...%></div></div>';
 
 			legend.textContent = '<%:Collecting data...%>';
 			legend.parentNode.classList.remove('oc-hidden');
-			legend.style.display = 'block';
+			legend.style.display = 'none';
 		}
 
 		let HTTP = {
@@ -94,12 +94,12 @@ local dns_host = "www.instagram.com"
 		if (legend && output)
 		{
 			output.innerHTML =
-				'<span class="loading-spinner" style="vertical-align:middle"></span> ' +
-				'<%:Waiting for command to complete...%>';
+				'<div class="oc-oplog"><div class="oc-oplog-h"><b><%:DNS Test Result%></b><span class="oc-oplog-live"><i></i>LIVE</span></div>' +
+				'<div class="oc-oplog-body"><span class="loading-spinner" style="vertical-align:middle"></span> <%:Waiting for command to complete...%></div></div>';
 
 			legend.textContent = '<%:Collecting data...%>';
 			legend.parentNode.classList.remove('oc-hidden');
-			legend.style.display = 'block';
+			legend.style.display = 'none';
 		}
 
 		if (legend && output)
@@ -108,11 +108,11 @@ local dns_host = "www.instagram.com"
 				legend.textContent = '<%:DNS Test Result%>';
 				if (x && x.status == 200 && x.responseText != "")
 				{
-					output.innerHTML = '';
+					output.innerHTML = '<div class="oc-oplog"><div class="oc-oplog-h"><b><%:DNS Test Result%></b><span class="oc-oplog-live"><i></i>LIVE</span></div><div class="oc-editor-host"></div></div>';
 					var ta = document.createElement('textarea');
 					ta.style.width = '100%';
 					ta.value = x.responseText.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l !== ''; }).join('\n');
-					output.appendChild(ta);
+					output.querySelector('.oc-editor-host').appendChild(ta);
 					other_editor(ta, true, '100%', '400px');
 				}
 				else if (x.status == 500)

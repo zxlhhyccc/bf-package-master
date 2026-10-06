@@ -1,5 +1,4 @@
 // oc-icons.js — OpenClash unified SVG icon library
-// Include in HTM files: <script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
 (function() {
 	if (window.ocIconsLoaded) return;
 	window.ocIconsLoaded = true;

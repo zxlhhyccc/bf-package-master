@@ -151,6 +151,7 @@ cat > "$DEBUG_LOG" <<-EOF
 | 系统运行时间 | $(uptime 2>/dev/null) |
 | IPV6-DHCP | $(uci -q get dhcp.lan.dhcpv6 || echo "未配置") |
 | DNS劫持 | $(dns_re "$enable_redirect_dns") |
+| TFO 黑洞超时（秒） | $(cat /proc/sys/net/ipv4/tcp_fastopen_blackhole_timeout_sec 2>/dev/null || echo "不支持") |
 
 ### 磁盘与内存
 

@@ -23,7 +23,7 @@ html[data-darkmode="true"] .oc .version-display .update-dot {
 }
 
 html[data-darkmode="true"] .oc .announcement-banner {
-    background: linear-gradient(135deg, var(--announcement-end), var(--slate-400));
+    background: linear-gradient(135deg, var(--announcement-end), var(--primary-color));
 }
 
 html[data-darkmode="true"] .oc .announcement-banner::before {
@@ -175,7 +175,6 @@ html[data-darkmode="true"] .oc .config-select:focus {
 .oc .sub-card:hover {
     background: var(--hover-bg, #f3f4f6);
     border-color: var(--primary-color, #3b82f6);
-    transform: translateY(-2px);
     box-shadow: var(--shadow-sm);
 }
 
@@ -718,6 +717,13 @@ html[data-darkmode="true"] .oc .config-select:focus {
     padding-top: 0;
     padding-bottom: 0;
     min-width: 0;
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.oc #_oclog:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .oc #_oclog::before,
@@ -762,7 +768,6 @@ html[data-darkmode="true"] .oc .config-select:focus {
 .oc #_oclog > div {
     min-width: 0;
     max-width: 100%;
-    animation: oclogSlideIn 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .oc #_oclog > div > b {
@@ -770,11 +775,6 @@ html[data-darkmode="true"] .oc .config-select:focus {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-@keyframes oclogSlideIn {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
 }
 
 .oc .dashboard-buttons,
@@ -1491,7 +1491,6 @@ html[data-darkmode="true"] .oc .config-select:focus {
 .oc .stats-section:hover {
     background: var(--hover-bg, #f3f4f6);
     border-color: var(--primary-color, #3b82f6);
-    transform: translateY(-2px);
     box-shadow: var(--shadow-sm);
 }
 
@@ -1891,7 +1890,6 @@ html[data-darkmode="true"] .oc .myip-footer p {
 .oc .myip-check-section:hover {
     background: var(--hover-bg, #f3f4f6);
     border-color: var(--primary-color, #3b82f6);
-    transform: translateY(-2px);
     box-shadow: var(--shadow-sm);
 }
 
@@ -2208,17 +2206,17 @@ html[data-darkmode="true"] .oc .myip-card-icon.ic-youtube { color: #FF4444; }
     vertical-align: middle;
 }
 
-.oc .myip-toolbar #mode-icon .mode-body { fill: var(--primary-color); stroke: currentColor; }
+.oc .myip-toolbar #mode-icon .mode-body { fill: var(--primary-color); stroke: var(--primary-color); }
 
 .oc .myip-toolbar #mode-icon .mode-line,
 .oc .myip-toolbar #mode-icon .mode-dot { fill: var(--text-on-primary); stroke: var(--text-on-primary); }
 
 .oc .myip-toolbar #mode-icon .mode-antenna { stroke: currentColor; }
 
-.oc .myip-toolbar #mode-icon.mode-browser .mode-body { fill: var(--text-secondary); }
+.oc .myip-toolbar #mode-icon.mode-browser .mode-body { fill: none; stroke: currentColor; }
 
 .oc .myip-toolbar #mode-icon.mode-browser .mode-line,
-.oc .myip-toolbar #mode-icon.mode-browser .mode-dot { fill: var(--bg-white); stroke: var(--bg-white); }
+.oc .myip-toolbar #mode-icon.mode-browser .mode-dot { fill: currentColor; stroke: currentColor; }
 
 .oc .developer-container {
     background: var(--bg-white);
@@ -2280,6 +2278,11 @@ html[data-darkmode="true"] .oc .myip-card-icon.ic-youtube { color: #FF4444; }
     background: linear-gradient(45deg, var(--indigo) 0%, var(--grape) 100%);
     padding: 1px;
     overflow: hidden;
+}
+
+.oc .developer-avatar.developer-avatar-offline {
+    opacity: 0.4;
+    filter: grayscale(0.6);
 }
 
 .oc .developer-avatar-container::before {
@@ -2465,7 +2468,7 @@ html[data-darkmode="true"] .oc .card .general .oix-info::-webkit-scrollbar-thumb
 }
 
 html[data-darkmode="true"] .oc .oix-announcement {
-      background: linear-gradient(135deg, var(--announcement-end), var(--slate-400));
+      background: linear-gradient(135deg, var(--announcement-end), var(--primary-color));
 }
 
 html[data-darkmode="true"] .oc .oix-announcement::before {
@@ -2490,6 +2493,7 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
 }
 
 .oc .card {
+    --oix-cover-width: 150px;
     width: 100%;
     height: 250px;
     background-color: var(--bg-white);
@@ -2511,7 +2515,7 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
 
 .oc .card .additional {
     position: absolute;
-    width: 150px;
+    width: var(--oix-cover-width);
     height: 100%;
     background: linear-gradient(var(--card-accent), var(--bg-white));
     transition: width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), border-radius 0.5s ease;
@@ -2527,11 +2531,11 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
 }
 
 .oc .card .additional.collapsed {
-    width: 150px;
+    width: var(--oix-cover-width);
 }
 
 .oc .card .additional .user-card {
-    width: 150px;
+    width: var(--oix-cover-width);
     height: 100%;
     position: relative;
     display: flex;
@@ -2638,13 +2642,12 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     width: auto;
     height: 100%;
     position: relative;
-    margin-left: 180px;
+    margin-left: var(--oix-cover-width);
     top: 0;
     right: 0;
     z-index: 1;
     overflow: hidden;
-    padding-top: 0;
-    padding-right: 10px;
+    padding: 0 10px;
     transition: margin-left 0.5s ease, opacity 0.5s ease;
     opacity: 1;
 }
@@ -2653,7 +2656,7 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     font-size: 30px;
     text-align: center;
     padding-top: 10px;
-    margin: 0 0 0 -15%;
+    margin: 0;
     line-height: 35px;
     color: var(--text-title) !important;
 }
@@ -2663,7 +2666,7 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     width: 90%;
     height: 65%;
     display: grid;
-    grid-template-columns: 1fr 1fr 120px;
+    grid-template-columns: 1fr 1fr auto;
     gap: 5%;
     position: absolute;
     margin: 0 auto;
@@ -2691,10 +2694,7 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 100px;
-    width: 100%;
     height: 100%;
-    padding-right: 10px;
 }
 
 .oc .card .general .oix-btn-container {
@@ -2761,13 +2761,14 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
 }
 
 .oc .card .general .btn {
-    color: white !important;
+    color: var(--text-on-primary) !important;
     border-color: var(--card-accent) !important;
     background: var(--card-btn-bg);
     background-color: var(--primary-color) !important;
     box-shadow: var(--card-shadow);
     border-radius: 6px;
     width: 90px;
+    margin: 0;
     height: 90px !important;
     font-size: 15px;
     font-weight: bold;
@@ -2963,7 +2964,7 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
 
 .oc .oc-usage-help-float.oc-guide-float {
     background: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 12px var(--primary-a40);
 }
 
 /* the .oc class sits on the tour root itself (it carries the theme variables), so the root rules
@@ -2977,8 +2978,8 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
 }
 
 @keyframes guide-beacon {
-    0%, 100% { box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), 0 0 0 0 rgba(59, 130, 246, 0.5); }
-    50% { box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), 0 0 0 9px rgba(59, 130, 246, 0); }
+    0%, 100% { box-shadow: 0 4px 12px var(--primary-a40), 0 0 0 0 var(--primary-a50); }
+    50% { box-shadow: 0 4px 12px var(--primary-a40), 0 0 0 9px transparent; }
 }
 
 .oc .oc-usage-help-float.oc-guide-float.beacon {
@@ -3010,11 +3011,10 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
         .oc .card-row:nth-child(3), .oc .card-row:nth-child(4) { min-height: auto; }
     /* oixcloud.htm */
     .oc .oix-main-container { width: calc(100% - 32px); }
-    .oc .card .additional.collapsed { width: 140px; }
-    .oc .card .additional .user-card { width: 140px; }
+    .oc .card { --oix-cover-width: 140px; }
     .oc .card .additional .more-info h1 { font-size: 1.8rem; }
     .oc .card .additional .coords { font-size: 0.95rem; }
-    .oc .card .general { margin-left: 120px; padding-right: 8px; }
+    .oc .card .general { padding: 0 8px; }
     .oc .card .general .more { bottom: 6px; padding-right: 12px; }
     .oc .oix-announcement { width: 80%; max-width: 95%; }
     /* status.htm - statistics chart */
@@ -3077,16 +3077,15 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     .oc .myip-footer p { font-size: 13px !important; line-height: 18px !important; }
     /* oixcloud.htm */
     .oc .oix-main-container { width: 100%; }
-    .oc .card .additional.collapsed { width: 125px; }
-    .oc .card .additional .user-card { width: 125px; }
+    .oc .card { --oix-cover-width: 125px; }
     .oc .card .additional .more-info h1 { font-size: 1.5rem; }
     .oc .card .additional .coords { font-size: 0.8rem; }
-    .oc .card .general { margin-left: 110px; padding-right: 6px; }
+    .oc .card .general { padding: 0 6px; }
     .oc .card .general h1 { font-size: 24px; line-height: 30px; margin: 0; }
-    .oc .card .general .oix-info { grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: 12px; padding-right: 8px; height: 50%; }
+    .oc .card .general .oix-info { grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: 12px; padding: 0 8px; height: 50%; }
     .oc .card .general .oix-info-right { justify-content: flex-start; padding-top: 8px; gap: 12px; }
     .oc .card .general .btn { width: 80px !important; height: 80px !important; font-size: 14px; padding: 0 !important; }
-    .oc .card .general .oix-title { width: 50%; }
+    .oc .card .general .oix-title { width: 50%; font-size: 14px; }
     .oc .card .general .oix-result, .oc .card .general .oix-result2 { font-size: 14px; width: 50%; }
     .oc .card .general .more { bottom: 4px; padding-right: 10px; }
     .oc .card .general .more p { font-size: 13px; }
@@ -3154,14 +3153,13 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     .oc .myip-footer p { font-size: 11px !important; line-height: 16px !important; }
     /* oixcloud.htm */
     .oc .center { padding: 8px; }
-    .oc .card .additional.collapsed { width: 115px; }
-    .oc .card .additional .user-card { width: 115px; }
+    .oc .card { --oix-cover-width: 115px; }
     .oc .card .additional .more-info h1 { font-size: 1.3rem; }
     .oc .card .additional .coords { font-size: 0.7rem; }
-    .oc .card .general { margin-left: 120px; padding-right: 4px; }
+    .oc .card .general { padding: 0 4px; }
     .oc .card .general .oix-info { height: 50%; }
     .oc .card .general h1 { font-size: 18px; line-height: 26px; margin: 0; }
-    .oc .card .general .oix-title { width: 50%; }
+    .oc .card .general .oix-title { width: 50%; font-size: 12px; }
     .oc .card .general .oix-result, .oc .card .general .oix-result2 { font-size: 12px; width: 50%; }
     .oc .card .general .more { bottom: 2px; padding-right: 8px; }
     .oc .card .general .btn { width: 60px !important; height: 60px !important; font-size: 10px; padding: 0 !important; }

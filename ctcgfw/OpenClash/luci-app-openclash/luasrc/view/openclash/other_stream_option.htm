@@ -2,7 +2,7 @@
 <%
 	local stream_id_name = string.gsub(self.value, "%W", "")
 %>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=other_stream_option&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=other_stream_option&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
 
 <input type="button" class="btn cbi-button cbi-input-reload" value="<%:Unlock Test(Select)%>" onclick="return ocStreamTest(this, 'manual', '<%=self.value%>', '<%=stream_id_name%>')" data-url="<%=luci.dispatcher.build_url("admin", "services", "openclash", "manual_stream_unlock_test")%>" />
 <input type="button" class="btn cbi-button cbi-input-reload" value="<%:All Proxies Test%>" onclick="return ocStreamTest(this, 'all', '<%=self.value%>', '<%=stream_id_name%>')" data-url="<%=luci.dispatcher.build_url("admin", "services", "openclash", "all_proxies_stream_test")%>" />

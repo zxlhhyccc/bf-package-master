@@ -1,14 +1,14 @@
 <%
     local version_tab = (self and self.version_tab) or false
 %>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
 <%
     -- update popup CSS rides along with update.js; on the settings version tab the popup
     -- is visible right away, so keep a static link there to avoid an unstyled flash
     if version_tab then
 %>
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-update.css?v=<%="@OPENCLASH_VERSION@"%>">
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-update.css?v=@OPENCLASH_VERSION@">
 <% end %>
     <div class="oc">
         <div id="selectPopup" class="select-popup<%= version_tab and ' select-popup-tab' or ' hidden' %>">
@@ -31,7 +31,7 @@
                         <div class="oc-option-title">
                             <span class="oc-option-text"><%:CPU Arch%></span>
                         </div>
-                        <span class="ver-value" id="CPU_ARCH_VALUE"><%:Collecting data...%></span>
+                        <span class="ver-value" id="CPU_ARCH_VALUE"><span class="oc-sk"></span></span>
                     </div>
                     <div class="config-item">
                         <div class="oc-option-title"><span class="oc-option-text"><%:Compiled Version%><b> *</b></span></div>
@@ -87,7 +87,7 @@
                     <div class="version-row">
                         <div class="config-item">
                             <span class="oc-option-title"><span class="oc-option-text"><%:Plugin Version%></span></span>
-                            <span class="ver-value" id="installed-plugin"><%:Collecting data...%></span>
+                            <span class="ver-value" id="installed-plugin"><span class="oc-sk"></span></span>
                         </div>
                         <div class="config-item">
                             <span class="oc-option-title"><span class="oc-option-text"><%:Select Version%></span></span>
@@ -99,7 +99,7 @@
                         </div>
                         <div class="config-item">
                             <span class="oc-option-title"><span class="oc-option-text"><%:Core Version%></span></span>
-                            <span class="ver-value" id="installed-core"><%:Collecting data...%></span>
+                            <span class="ver-value" id="installed-core"><span class="oc-sk"></span></span>
                         </div>
                         <div class="config-item">
                             <span class="oc-option-title"><span class="oc-option-text"><%:Select Version%></span></span>
@@ -214,7 +214,7 @@
         </div>
     </div>
 
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>
 <script>
-ocLazyScriptOnView(document.getElementById('selectPopup'), '/cgi-bin/luci/admin/services/openclash/translate_js?f=update&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>', '/luci-static/resources/openclash/css/oc-update.css?v=<%="@OPENCLASH_VERSION@"%>');
+ocLazyScriptOnView(document.getElementById('selectPopup'), '/cgi-bin/luci/admin/services/openclash/translate_js?f=update&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>', '/luci-static/resources/openclash/css/oc-update.css?v=@OPENCLASH_VERSION@');
 </script>

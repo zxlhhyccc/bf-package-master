@@ -9,8 +9,8 @@ local uci = require "luci.model.uci".cursor()
 local json = require "luci.jsonc"
 local datatype = require "luci.cbi.datatypes"
 
-font_green = [[<b style=color:green>]]
-font_red = [[<b style=color:red>]]
+font_green = [[<b class="oc-txt-good">]]
+font_red = [[<b class="oc-txt-bad">]]
 font_off = [[</b>]]
 bold_on = [[<strong>]]
 bold_off = [[</strong>]]

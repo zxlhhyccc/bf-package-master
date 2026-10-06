@@ -1,8 +1,8 @@
 <html>
 <head>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-client.css?v=<%="@OPENCLASH_VERSION@"%>">
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-client.css?v=@OPENCLASH_VERSION@">
 </head>
 <fieldset class="cbi-section">
     <table width="100%">
@@ -55,10 +55,10 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button type="button" class="icon-btn theme-toggle-btn" id="theme-toggle" onclick="toggleThemeMode()">
-                                        <svg id="sun-icon" width="14" height="14"><use href="#oc-icon-sun"/></svg>
-                                        <svg id="moon-icon" width="14" height="14" class="oc-hidden"><use href="#oc-icon-moon"/></svg>
-                                        <svg id="auto-icon" width="14" height="14" class="oc-hidden"><use href="#oc-icon-auto-theme"/></svg>
+                                    <button type="button" class="icon-btn theme-toggle-btn" id="theme-toggle" title="<%:Switch Theme%>" aria-haspopup="dialog" aria-expanded="false" onclick="return openThemePanel(this)">
+                                        <svg id="sun-icon" width="14" height="14"><title><%:Light Mode%></title><use href="#oc-icon-sun"/></svg>
+                                        <svg id="moon-icon" width="14" height="14" class="oc-hidden"><title><%:Dark Mode%></title><use href="#oc-icon-moon"/></svg>
+                                        <svg id="auto-icon" width="14" height="14" class="oc-hidden"><title><%:Auto Mode%></title><use href="#oc-icon-auto-theme"/></svg>
                                     </button>
                                     <button type="button" class="icon-btn action-btn" id="go_wiki" title="<%:Wiki%>" onclick="return wikipage()"><svg width="14" height="14"><use href="#oc-icon-wiki"/></svg></button>
                                     <button type="button" class="icon-btn action-btn" id="go_tutorials" title="<%:Tutorials%>" onclick="return gitbookpage()"><svg width="14" height="14"><use href="#oc-icon-book"/></svg></button>
@@ -66,7 +66,7 @@
                                     <button type="button" class="icon-btn action-btn" id="go_telegram" title="<%:Telegram%>" onclick="return telegrampage()"><svg width="14" height="14"><use href="#oc-icon-telegram"/></svg></button>
                                     <button type="button" class="icon-btn action-btn" id="go_sponsor" title="<%:Sponsor%>" onclick="return sponsorpage()"><svg width="14" height="14"><use href="#oc-icon-heart"/></svg></button>
                                     <button type="button" class="icon-btn action-btn" id="logo_btn" title="Mihomo" onclick="return winOpen('https://www.github.com/metacubex/mihomo');">
-                                        <img id="_logo" src="/luci-static/resources/openclash/img/logo.png?v=<%="@OPENCLASH_VERSION@"%>" loading="lazy" width="14px" height="14px" alt="Mihomo"/>
+                                        <img id="_logo" src="/luci-static/resources/openclash/img/logo.png?v=@OPENCLASH_VERSION@" loading="lazy" width="14px" height="14px" alt="Mihomo"/>
                                         <span class="logo-text">Powered by <span class="mihomo-link">Mihomo</span></span>
                                     </button>
                                 </div>
@@ -213,7 +213,10 @@
                                                             <svg width="14" height="14"><use href="#oc-icon-refresh"/></svg>
                                                         </button>
                                                         <button type="button" class="icon-btn action-btn" id="config-subscription-url" title="<%:Specify URL%>" onclick="return setSubscriptionUrl()">
-                                                            <svg width="14" height="14"><use href="#oc-icon-chat"/></svg>
+                                                            <svg width="14" height="14"><use href="#oc-icon-link-tabler"/></svg>
+                                                        </button>
+                                                        <button type="button" class="icon-btn action-btn" id="config_summary" title="<%:Config Summary%>" onclick="return showConfigSummary()">
+                                                            <svg width="14" height="14"><use href="#oc-icon-list"/></svg>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -234,7 +237,7 @@
                                             <select id="config_file_select" class="config-select"><option value=""><%:Collecting data...%></option></select>
                                         </div>
                                         <div class="card-actions">
-                                            <button type="button" class="icon-btn action-btn" id="switch_config" title="<%:Switch%>" onclick="return switchConfig()"><svg width="14" height="14"><use href="#oc-icon-switch"/></svg></button>
+                                            <button type="button" class="icon-btn action-btn" id="switch_config" title="<%:SwiTch%>" onclick="return switchConfig()"><svg width="14" height="14"><use href="#oc-icon-switch"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="update_config" title="<%:Update%>" onclick="return updateConfig()"><svg width="14" height="14"><use href="#oc-icon-update"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="edit_config" title="<%:Edit%>" onclick="return editConfig()"><svg width="14" height="14"><use href="#oc-icon-edit"/></svg></button>
                                             <button type="button" class="icon-btn action-btn" id="edit_subscribe" title="<%:Edit Subscription%>" onclick="return editSubscribe()"><svg width="14" height="14"><use href="#oc-icon-settings"/></svg></button>
@@ -317,8 +320,8 @@
                                 </div>
                             </div>
                             <div class="card-row stats-grid" id="stats-view-cards">
-                                <div class="sub-card stat-item"><span class="stat-label"><%:Up%></span><span id="upload_" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span><span class="stat-unit">KB/S</span></span></div>
-                                <div class="sub-card stat-item"><span class="stat-label"><%:Down%></span><span id="download_" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span><span class="stat-unit">KB/S</span></span></div>
+                                <div class="sub-card stat-item"><span class="stat-label"><%:Up%></span><span id="upload_" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span><span class="stat-unit">KB/s</span></span></div>
+                                <div class="sub-card stat-item"><span class="stat-label"><%:Down%></span><span id="download_" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span><span class="stat-unit">KB/s</span></span></div>
                                 <div class="sub-card stat-item"><span class="stat-label"><%:Up Total%></span><span id="uploadtotal_" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span><span class="stat-unit">KB</span></span></div>
                                 <div class="sub-card stat-item"><span class="stat-label"><%:Down Total%></span><span id="downloadtotal_" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span><span class="stat-unit">KB</span></span></div>
                                 <div class="sub-card stat-item"><span class="stat-label"><%:Connect%></span><span id="connect_t" class="stat-value"><span class="stat-num" style="color:var(--success-color)">0</span></span></div>
@@ -392,6 +395,6 @@
 </table>
 </fieldset>
 
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=status&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=status&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
 </html>

@@ -32,9 +32,9 @@
     right: -7px;
     bottom: -7px;
     left: -7px;
-    border: 3px solid rgba(59, 130, 246, 0.5);
+    border: 3px solid var(--primary-a50);
     border-radius: 14px;
-    animation: guide-spot-pulse 1.8s ease-out infinite;
+    animation: guide-spot-pulse 1.8s ease-out 3;
 }
 
 @keyframes guide-spot-pulse {
@@ -69,6 +69,27 @@
 
 .oc.guide-tour.busy .guide-pop {
     visibility: hidden;
+    transition: none;
+}
+
+/* while the add window shows its progress/result pages the form steps would point at
+   hidden fields, so the whole overlay waits until the form is back */
+.oc.guide-tour.paused .guide-tour-mask,
+.oc.guide-tour.paused .guide-spot,
+.oc.guide-tour.paused .guide-pop {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: none;
+}
+
+/* a reader-opened window owns the stage: the tour stays hidden until it closes */
+.oc.guide-tour.extra-hold .guide-tour-mask,
+.oc.guide-tour.extra-hold .guide-spot,
+.oc.guide-tour.extra-hold .guide-pop {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
     transition: none;
 }
 
@@ -233,7 +254,7 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 .oc .guide-pop-body code {
     padding: 1px 5px;
     border-radius: 5px;
-    background: rgba(59, 130, 246, 0.1);
+    background: var(--primary-a10);
     color: var(--primary-color);
     font-size: 12px;
 }
@@ -252,8 +273,8 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 }
 
 .oc .guide-pop-body .guide-tag.req {
-    background: rgba(59, 130, 246, 0.14);
-    color: #2563eb;
+    background: var(--primary-a20);
+    color: var(--btn-primary-hover);
 }
 
 .oc .guide-pop-body .guide-tag.opt {
@@ -274,13 +295,17 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 .oc .guide-pop-body .guide-tip,
 .oc .guide-pop-body .guide-info,
 .oc .guide-pop-body .guide-careful {
+    --note-fs: 12px;
+    --note-lh: 1.6;
+    --note-pad: 6px;
+    --note-mark: 13px;
     position: relative;
     margin: 8px 0 0;
-    padding: 6px 10px 6px 27px;
+    padding: var(--note-pad) 10px var(--note-pad) 27px;
     border: 1px solid var(--border-light);
     border-radius: 8px;
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: var(--note-fs);
+    line-height: var(--note-lh);
 }
 
 .oc .guide-pop-body > .guide-note:not(.oc-hidden) {
@@ -298,9 +323,8 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 .oc .guide-pop-body .guide-careful::before {
     position: absolute;
     left: 8px;
-    /* the mark is centred on the first line of the note: 6px of padding plus the optical centre of
-     * a 12px line at 1.6, less half of the mark, so it does not sit high over a line of chinese */
-    top: 10px;
+    /* first-line centring: padding + (line box − mark) / 2, all derived from the note tokens */
+    top: calc(var(--note-pad) + (var(--note-lh) * var(--note-fs) - var(--note-mark)) / 2);
     width: 13px;
     height: 13px;
     border-radius: 50%;
@@ -318,12 +342,12 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 }
 
 .oc .guide-pop-body .guide-tip::before {
-    content: '✓';
-    background: #10b981;
+    content: '';
+    background-color: #10b981;
 }
 
 .oc .guide-pop-body .guide-info {
-    background: rgba(59, 130, 246, 0.09);
+    background: var(--primary-a10);
     border-left: 3px solid var(--primary-color);
     border-right: 3px solid var(--primary-color);
 }
@@ -342,6 +366,10 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 .oc .guide-pop-body .guide-careful::before {
     content: '!';
     background: #f59e0b;
+}
+
+.oc .guide-pop-body .guide-info::before {
+    color: var(--text-on-primary);
 }
 
 .oc .guide-pop-body ol,
@@ -561,8 +589,8 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 }
 
 .oc .guide-pop-section.cfg {
-    background: rgba(59, 130, 246, 0.12);
-    color: #2563eb;
+    background: var(--primary-a20);
+    color: var(--btn-primary-hover);
 }
 
 .oc .guide-pop-section.ovr {
@@ -627,18 +655,18 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
     width: 6px;
     height: 6px;
     border-radius: 999px;
-    background: rgba(59, 130, 246, 0.18);
+    background: var(--primary-a20);
     transition: width 0.24s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .oc .guide-dots i.done {
-    background: rgba(59, 130, 246, 0.45);
+    background: var(--primary-a50);
 }
 
 .oc .guide-dots i.on {
     width: 16px;
     background: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.22);
+    box-shadow: 0 0 0 2px var(--primary-a20);
 }
 
 .oc .guide-dots.dense {
@@ -665,10 +693,11 @@ html[lang^="zh"] .oc .guide-pop-body .guide-sep::after {
 
 .oc .guide-dots.tiny i.on {
     width: 11px;
-    box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.22);
+    box-shadow: 0 0 0 1.5px var(--primary-a20);
 }
 
-.oc .guide-pop-foot .btn {
+.oc .guide-pop-foot .btn,
+.oc .guide-pop-body .guide-more {
     flex: 0 1 auto;
     min-width: 0;
     max-width: 100%;
@@ -810,8 +839,8 @@ body.oc-guide-open .guide-tour.inadd .guide-spot {
 }
 
 html[data-darkmode=true] .oc .guide-pop-count {
-    background: #16233d;
-    color: #93c5fd;
+    background: var(--primary-a20);
+    color: var(--primary-soft);
 }
 
 html[data-darkmode=true] .oc .guide-pop-section {
@@ -820,8 +849,8 @@ html[data-darkmode=true] .oc .guide-pop-section {
 }
 
 html[data-darkmode=true] .oc .guide-pop-section.cfg {
-    background: rgba(96, 165, 250, 0.18);
-    color: #93c5fd;
+    background: var(--primary-a20);
+    color: var(--primary-soft);
 }
 
 html[data-darkmode=true] .oc .guide-pop-section.ovr {
@@ -835,16 +864,16 @@ html[data-darkmode=true] .oc .guide-pop-section.upd {
 }
 
 html[data-darkmode=true] .oc .guide-dots i {
-    background: rgba(147, 197, 253, 0.24);
+    background: var(--primary-a20);
 }
 
 html[data-darkmode=true] .oc .guide-dots i.done {
-    background: rgba(147, 197, 253, 0.5);
+    background: var(--primary-a50);
 }
 
 html[data-darkmode=true] .oc .guide-dots i.on {
     background: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.22);
+    box-shadow: 0 0 0 2px var(--primary-a20);
 }
 
 /* dims the callout's grey blocks on the dark panel so the text on them stays readable */
@@ -853,13 +882,13 @@ html[data-darkmode=true] .oc .guide-pop-body {
 }
 
 html[data-darkmode=true] .oc .guide-pop-body code {
-    background: rgba(96, 165, 250, 0.16);
-    color: #93c5fd;
+    background: var(--primary-a20);
+    color: var(--primary-soft);
 }
 
 html[data-darkmode=true] .oc .guide-pop-body .guide-tag.req {
-    background: rgba(96, 165, 250, 0.2);
-    color: #93c5fd;
+    background: var(--primary-a20);
+    color: var(--primary-soft);
 }
 
 html[data-darkmode=true] .oc .guide-pop-body .guide-tag.opt {
@@ -882,7 +911,7 @@ html[data-darkmode=true] .oc .guide-pop-body .guide-tip {
 }
 
 html[data-darkmode=true] .oc .guide-pop-body .guide-info {
-    background: rgba(59, 130, 246, 0.14);
+    background: var(--primary-a20);
 }
 
 html[data-darkmode=true] .oc .guide-pop-body .guide-careful {
@@ -955,6 +984,52 @@ body.oc-guide-open .config-upload-model-overlay {
 .oc .guide-prefs .guide-tip {
     flex: 1 0 100%;
     margin: 0;
+}
+
+.oc .guide-pop-body .guide-receipt {
+    margin: 8px 0 0;
+    padding: 4px 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    background: var(--bg-gray);
+    list-style: none;
+}
+
+.oc .guide-pop-body .guide-receipt:empty {
+    display: none;
+}
+
+.oc .guide-pop-body .guide-receipt li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 3px 0;
+    list-style: none;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.oc .guide-pop-body .guide-receipt li::before {
+    content: '○';
+    width: 13px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    text-align: center;
+}
+
+.oc .guide-pop-body .guide-receipt li.ok::before {
+    content: '✓';
+    color: #10b981;
+}
+
+.oc .guide-pop-body .guide-receipt li.miss {
+    color: var(--text-secondary);
+}
+
+.oc .guide-pop-body .guide-more {
+    display: block;
+    width: 100%;
+    margin: 8px 0 0;
 }
 
 /* ==========================================================================

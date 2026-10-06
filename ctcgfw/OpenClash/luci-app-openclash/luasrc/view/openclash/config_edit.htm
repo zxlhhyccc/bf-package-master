@@ -1,22 +1,22 @@
 <div class="oc">
     <div class="config-editor-model-overlay" id="config-editor-overlay">
-        <div class="config-editor-model" id="config-editor-model">
+        <div class="config-editor-model" id="config-editor-model" role="dialog" aria-modal="true" aria-labelledby="editTitle">
             <div class="config-editor-header">
                 <div class="config-editor-title">
                     <span id="editTitle"><%:File Edit%>: </span>
                     <span class="config-file-name" id="config-file-name"><%:Loading...%></span>
                 </div>
                 <div class="config-editor-actions">
-                    <button type="button" class="icon-btn oc-hidden" id="config-editor-layout" title="<%:Compare%>">
+                    <button type="button" class="icon-btn oc-hidden" id="config-editor-layout" title="<%:Compare%>" aria-label="<%:Compare%>">
                         <svg width="14" height="14"><use href="#oc-icon-compare"/></svg>
                     </button>
-                    <button type="button" class="icon-btn" id="config-editor-download" title="<%:Download%>">
+                    <button type="button" class="icon-btn" id="config-editor-download" title="<%:Download%>" aria-label="<%:Download%>">
                         <svg width="14" height="14"><use href="#oc-icon-download"/></svg>
                     </button>
-                    <button type="button" class="icon-btn" id="config-editor-save" title="<%:Save%>">
+                    <button type="button" class="icon-btn" id="config-editor-save" title="<%:Save%>" aria-label="<%:Save%>">
                         <svg width="14" height="14"><use href="#oc-icon-save"/></svg>
                     </button>
-                    <button type="button" class="icon-btn" id="config-editor-close" title="<%:Close%>">
+                    <button type="button" class="icon-btn" id="config-editor-close" title="<%:Close%>" aria-label="<%:Close%>">
                         <svg width="14" height="14"><use href="#oc-icon-close"/></svg>
                     </button>
                 </div>
@@ -70,7 +70,7 @@
                     <span id="config-editor-status-text"><%:Ready%></span>
                 </div>
                 <div class="config-editor-help">
-                    <span id="config-editor-help"><%:Press%> <b style="color:var(--success-color)">F11</b> <%:for fullscreen,%> <b style="color:var(--success-color)">Esc</b> <%:to exit fullscreen,%> <b style="color:var(--success-color)">Ctrl + <%:Mouse Wheel%></b> <%:to zoom%></span>
+                    <span id="config-editor-help"></span>
                 </div>
                 <div class="config-editor-resize-handle" id="config-editor-resize-handle"></div>
             </div>
@@ -78,5 +78,5 @@
     </div>
 </div>
 
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>

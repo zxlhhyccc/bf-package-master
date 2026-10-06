@@ -1,13 +1,13 @@
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
-<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=common&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
+<link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
 
 <%-
 local path_info = os.getenv("PATH_INFO") or ""
 local sid = path_info:match("(cfg[0-9a-f]+)") or ""
 -%>
 
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
-<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=editors&v=<%="@OPENCLASH_VERSION@"%>&l=<%=luci.i18n.context.lang%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>
+<script src="/cgi-bin/luci/admin/services/openclash/translate_js?f=editors&v=@OPENCLASH_VERSION@&l=<%=luci.i18n.context.lang%>"></script>
 <script type="text/javascript">//<![CDATA[
 
 (function() {

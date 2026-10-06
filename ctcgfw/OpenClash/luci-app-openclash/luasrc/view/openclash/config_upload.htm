@@ -1,8 +1,8 @@
 <div class="oc">
-    <link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=<%="@OPENCLASH_VERSION@"%>">
-    <link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-upload.css?v=<%="@OPENCLASH_VERSION@"%>">
+    <link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-common.css?v=@OPENCLASH_VERSION@">
+    <link rel="stylesheet" href="/luci-static/resources/openclash/css/oc-upload.css?v=@OPENCLASH_VERSION@">
     <div class="config-upload-model-overlay" id="config-upload-overlay">
-        <div class="config-upload-model" id="config-upload-model">
+        <div class="config-upload-model" id="config-upload-model" role="dialog" aria-modal="true" aria-labelledby="config-upload-title">
             <div class="config-upload-header">
                 <div class="config-upload-title" id="config-upload-title">
                     <span><%:Add Config File%></span>
@@ -13,7 +13,7 @@
                     </button>
                 </div>
             </div>
-            <div class="config-upload-content">
+            <div class="config-upload-content" id="sub-form-content">
                 <div class="upload-mode-selector">
                     <div class="mode-tabs">
                         <button type="button" class="mode-tab active" id="upload-mode-file" data-mode="file">
@@ -57,11 +57,12 @@
                         <div class="form-group">
                             <label for="subscribe-url-input"><%:Subscription URL%>:<span class="guide-tag req"><%:Required%></span></label>
                             <textarea id="subscribe-url-input" placeholder="<%:Enter subscription URL or multiple links (one per line)%>" class="form-textarea" rows="4"></textarea>
+                            <div class="form-error oc-hidden" id="subscribe-url-error"></div>
                             <div class="form-help"><%:URI and subscription address is supported when online subscription conversion enabled, multiple links should be one per line or separated by%> |</div>
                         </div>
 
                         <div class="form-group">
-                            <label for="subscribe-ua-input"><%:User-Agent%> (<%:Optional%>):</label>
+                            <label for="subscribe-ua-input"><%:User-Agent%>:<span class="guide-tag opt"><%:Optional%></span></label>
                             <div class="form-select-wrapper">
                                 <select id="subscribe-ua-input" class="form-select">
                                     <option value="clash-verge/v2.4.5">clash-verge/v2.4.5</option>
@@ -79,7 +80,7 @@
                                 <span class="checkmark"></span>
                                 <%:Subscribe Convert Online%>
                             </label>
-                            <div class="form-help"><%:Convert Subscribe Online With Template%></div>
+                            <div class="oc-fold-sum" id="sum-convert"></div>
                         </div>
 
                         <div class="sub-convert-options oc-hidden" id="sub-convert-options">
@@ -95,16 +96,21 @@
                                     </div>
                                     <input type="text" id="convert-address-custom" placeholder="<%:Enter custom convert address%>" class="form-input oc-hidden" style="margin-top: 8px;" />
                                     <div id="subconverter-version-status-upload" class="subconverter-version-status" data-state="idle" hidden>
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M5 14h14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Z"/><path d="M7 7h.01M7 17h.01"/></svg>
                                         <span class="subconverter-version-label"></span>
                                         <span class="subconverter-version-text"></span>
                                     </div>
-                                    <div class="form-help"><%:Note: There is A Risk of Privacy Leakage in Online Convert%></div>
+                                    <div class="oc-warn-strip">
+                                        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 3 2 20h20ZM12 10v4m0 3h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        <span><%:Note: There is A Risk of Privacy Leakage in Online Convert%></span>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="template-select"><%:Template Name%>:</label>
-                                    <div class="form-select-wrapper">
-                                        <select id="template-select" class="form-select">
+                                    <div class="oc-tpl-select-row">
+                                        <div class="form-select-wrapper">
+                                            <select id="template-select" class="form-select">
                                             <%
                                             local file = io.open("/usr/share/openclash/res/sub_ini.list", "r")
                                             if file then
@@ -125,6 +131,8 @@
                                             end
                                             %>
                                         </select>
+                                    </div>
+                                    <button type="button" class="oc-tpl-open" id="template-preview-btn" title="<%:Preview%>"><svg width="13" height="13"><use href="#oc-icon-eye"/></svg><span><%:Preview%></span></button>
                                     </div>
                                 </div>
 
@@ -185,6 +193,23 @@
                                         </label>
                                     </div>
                                 </div>
+
+                                <div class="form-row">
+                                    <div class="form-group form-half">
+                                        <label class="form-checkbox">
+                                            <input type="checkbox" id="tfo-enable">
+                                            <span class="checkmark"></span>
+                                            <%:TFO Enable%>
+                                        </label>
+                                    </div>
+                                    <div class="form-group form-half">
+                                        <label class="form-checkbox">
+                                            <input type="checkbox" id="tls13-enable">
+                                            <span class="checkmark"></span>
+                                            <%:TLS 1.3%>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="sub-convert-options">
@@ -202,19 +227,19 @@
                                 <span class="checkmark"></span>
                                 <%:Node Filtering%>
                             </label>
-                            <div class="form-help"><%:Show node filter options%></div>
+                            <div class="oc-fold-sum" id="sum-filter"></div>
                         </div>
 
                         <div class="advanced-options-container oc-hidden" id="keyword-options-container">
                             <div class="sub-convert-options">
                                 <div class="form-group">
-                                    <label for="keyword-input"><%:Keyword Match%> (<%:Optional%>):</label>
+                                    <label for="keyword-input"><%:Keyword Match%>:<span class="guide-tag opt"><%:Optional%></span></label>
                                     <textarea id="keyword-input" placeholder="<%:Enter keywords to include nodes (one per line)%>" class="form-textarea" rows="2"></textarea>
                                     <div class="form-help"><%:eg: hk or tw&bgp%></div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="exclude-keyword-input"><%:Exclude Keyword Match%> (<%:Optional%>):</label>
+                                    <label for="exclude-keyword-input"><%:Exclude Keyword Match%>:<span class="guide-tag opt"><%:Optional%></span></label>
                                     <textarea id="exclude-keyword-input" placeholder="<%:Enter keywords to exclude nodes (one per line)%>" class="form-textarea" rows="2"></textarea>
                                     <div class="form-help"><%:eg: hk or tw&bgp%></div>
                                 </div>
@@ -253,15 +278,15 @@
                             <label class="form-checkbox">
                                 <input type="checkbox" id="advanced-options-enable">
                                 <span class="checkmark"></span>
-                                <%:Advanced Options%>
+                                <%:Advanced Subscription Options%>
                             </label>
-                            <div class="form-help"><%:Show more subscription options%></div>
+                            <div class="oc-fold-sum" id="sum-advanced"></div>
                         </div>
 
                         <div class="advanced-options-container oc-hidden" id="advanced-options-container">
                             <div class="sub-convert-options">
                                 <div class="form-group">
-                                    <label><%:Custom Headers%> (<%:Optional%>):</label>
+                                    <label><%:Custom Headers%>:<span class="guide-tag opt"><%:Optional%></span></label>
                                     <div class="form-help" style="margin-bottom:0;"><%:Add custom HTTP headers to the subscription request%></div>
                                     <div id="subscribe-headers-container" class="oc-hidden"></div>
                                     <button type="button" id="subscribe-headers-add" class="add-row-btn"><svg><use href="#oc-icon-add"/></svg><span><%:Add Header%></span></button>
@@ -309,6 +334,7 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="form-error oc-hidden" id="age-key-error"></div>
                             </div>
                         </div>
                     </div>
@@ -318,6 +344,7 @@
                     <input type="text" id="config-filename-input" placeholder="<%:Enter config name (without extension)%>" class="form-input"/>
                     <div class="filename-extension">.yaml</div>
                 </div>
+                <div class="form-error oc-hidden" id="config-filename-error"></div>
 
                 <div class="upload-progress oc-hidden" id="upload-progress">
                     <div class="progress-bar">
@@ -326,19 +353,117 @@
                     <div class="progress-text" id="upload-progress-text"><%:Processing...%> 0%</div>
                 </div>
             </div>
-            <div class="config-upload-footer">
+            <div class="config-upload-footer" id="sub-form-footer">
                 <div class="config-upload-status">
-                    <span id="config-upload-status-text"><%:Ready to add config%></span>
+                    <span id="config-upload-status-text" aria-live="polite"><%:Ready to add config%></span>
                 </div>
                 <div class="config-upload-buttons">
                     <button type="button" class="btn cancel-btn" id="config-upload-cancel"><%:Cancel%></button>
                     <button type="button" class="btn upload-btn" id="config-upload-submit" disabled><%:Add Config%></button>
                 </div>
             </div>
+            <div class="config-upload-content oc-hidden" id="sub-view-progress">
+                <div class="oc-sub-stepper" id="sub-stepper">
+                    <div class="oc-sub-step active"><i><span class="oc-spin"></span></i><span><%:Subscribe%></span></div>
+                    <div class="oc-sub-step"><i>2</i><span><%:File download%></span></div>
+                    <div class="oc-sub-step"><i>3</i><span><%:File verification%></span></div>
+                    <div class="oc-sub-step"><i>4</i><span><%:Apply config%></span></div>
+                </div>
+                <div class="oc-sub-console">
+                    <div class="oc-sub-console-h"><span><%:Log%></span><span class="oc-sub-live"><i></i>LIVE</span></div>
+                    <div class="oc-sub-console-b" id="sub-log-host"></div>
+                </div>
+                <div class="oc-sub-note oc-sub-note-error oc-hidden" id="sub-error-note">
+                    <span id="sub-error-text"></span>
+                    <span class="oc-sub-note-actions">
+                        <button type="button" class="btn" id="sub-retry-btn"><%:Retry%></button>
+                        <button type="button" class="btn" id="sub-retry-plain-btn"><%:Retry without convert%></button>
+                    </span>
+                </div>
+                <div class="oc-sub-elapsed">
+                    <span><%:Elapsed%> <b id="sub-elapsed">00:00</b></span>
+                    <button type="button" class="oc-sub-help-btn" id="sub-help-btn"><%:Problem?%></button>
+                </div>
+            </div>
+            <div class="config-upload-footer oc-hidden" id="sub-progress-footer">
+                <div class="config-upload-status"><span id="sub-progress-status"><%:Running, cannot cancel%></span></div>
+                <div class="config-upload-buttons">
+                    <button type="button" class="btn cancel-btn" id="sub-progress-cancel" disabled><%:Cancel%></button>
+                    <button type="button" class="btn upload-btn" id="sub-progress-primary" disabled><span class="oc-spin"></span><%:Processing...%></button>
+                </div>
+            </div>
+            <div class="config-upload-content oc-hidden" id="sub-view-result">
+                <div class="oc-sub-bar-top">
+                    <b id="sub-result-name"></b>
+                    <span class="oc-tpl-cache" id="sub-result-updated"></span>
+                </div>
+                <div class="oc-sub-chips" id="sub-result-chips"></div>
+                <div class="oc-sub-stats" id="sub-result-stats"></div>
+                <div class="oc-sub-note oc-sub-note-info oc-hidden" id="sub-provider-note"></div>
+                <div class="oc-sub-note oc-sub-note-warn oc-hidden" id="sub-age-note"></div>
+                <div class="oc-sub-box oc-hidden" id="sub-info-box">
+                    <div class="oc-sub-sec" id="sub-info-title"><%:Subscription Info%></div>
+                    <div class="oc-sub-subinfo-list" id="sub-subinfo"></div>
+                </div>
+                <div class="oc-charts-grid oc-hidden" id="sub-charts-slot"></div>
+                <div class="oc-sub-box" id="sub-groups-box">
+                    <div class="oc-sub-sec" id="sub-groups-title"><%:Strategy Groups%></div>
+                    <div class="oc-tpl-tabs" id="sub-struct-tabs">
+                        <button type="button" class="oc-tpl-tab active" data-tab="groups"><%:Group Structure%></button>
+                        <button type="button" class="oc-tpl-tab" data-tab="rules"><%:Rule Flow%></button>
+                    </div>
+                    <div class="oc-tpl-pane" id="sub-pane-groups"></div>
+                    <div class="oc-tpl-pane oc-hidden" id="sub-pane-rules"></div>
+                </div>
+                <div class="oc-sub-note oc-sub-note-ok oc-hidden" id="sub-check-note"><span>✓</span><span><%:Config check passed%></span></div>
+            </div>
+            <div class="config-upload-footer oc-hidden" id="sub-result-footer">
+                <div class="config-upload-status"><span id="sub-result-status"><%:Config saved%></span></div>
+                <div class="config-upload-buttons">
+                    <button type="button" class="btn cancel-btn" id="sub-refresh-btn"><%:Refresh%></button>
+                    <button type="button" class="btn upload-btn" id="sub-switch-btn"><%:Switch and enable%></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="config-upload-model-overlay" id="core-start-overlay">
+        <div class="config-upload-model" id="core-start-model" role="dialog" aria-modal="true">
+            <div class="config-upload-header">
+                <div class="config-upload-title" id="core-start-title"><%:Program starting...%></div>
+                <button type="button" class="icon-btn" id="core-start-close">
+                    <svg width="14" height="14"><use href="#oc-icon-close"/></svg>
+                </button>
+            </div>
+            <div class="config-upload-content" id="core-start-content">
+                <div class="oc-sub-stepper" id="sw-stepper">
+                    <div class="oc-sub-step active"><i><span class="oc-spin"></span></i><span><%:Executing%></span></div>
+                    <div class="oc-sub-step"><i>2</i><span><%:Core startup%></span></div>
+                    <div class="oc-sub-step"><i>3</i><span><%:Remaining setup%></span></div>
+                    <div class="oc-sub-step"><i>4</i><span><%:Start complete%></span></div>
+                </div>
+                <div class="oc-sub-console">
+                    <div class="oc-sub-console-h"><span><%:Log%></span><span class="oc-sub-live"><i></i>LIVE</span></div>
+                    <div class="oc-sub-console-b" id="sw-log-host"></div>
+                </div>
+                <div class="oc-sub-note oc-sub-note-error oc-hidden" id="sw-error-note">
+                    <span id="sw-error-text"></span>
+                </div>
+                <div class="oc-sub-elapsed">
+                    <span><%:Elapsed%> <b id="sw-elapsed">00:00</b></span>
+                    <button type="button" class="oc-sub-help-btn" id="sw-help-btn"><%:Problem?%></button>
+                </div>
+            </div>
+            <div class="config-upload-footer" id="core-start-footer">
+                <div class="config-upload-status"><span id="sw-status"></span></div>
+                <div class="config-upload-buttons">
+                    <button type="button" class="btn upload-btn oc-hidden" id="sw-retry-btn"><%:Retry%></button>
+                    <button type="button" class="btn cancel-btn" id="sw-close-btn"><%:Close%></button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="config-upload-model-overlay" id="subscription-url-overlay">
-        <div class="config-upload-model" id="subscription-url-model">
+        <div class="config-upload-model" id="subscription-url-model" role="dialog" aria-modal="true">
             <div class="config-upload-header">
                 <div class="config-upload-title"><%:Set Subscription Info URL%></div>
                 <button type="button" class="icon-btn" onclick="SubscriptionUrlSetter.hide()">
@@ -352,7 +477,7 @@
                 </div>
             </div>
             <div class="config-upload-footer">
-                <div class="config-upload-status"></div>
+                <div class="config-upload-status" id="subscription-url-status" aria-live="polite"></div>
                 <div class="config-upload-buttons">
                     <button type="button" class="btn cancel-btn" onclick="SubscriptionUrlSetter.hide()"><%:Cancel%></button>
                     <button type="button" class="btn upload-btn" onclick="SubscriptionUrlSetter.submit()"><%:Submit%></button>
@@ -360,6 +485,46 @@
             </div>
         </div>
     </div>
+    <div class="config-upload-model-overlay" id="template-preview-overlay">
+        <div class="config-upload-model summary-wide" id="template-preview-model" role="dialog" aria-modal="true">
+            <div class="config-upload-header">
+                <div class="config-upload-title"><%:Convert Template Preview%></div>
+                <button type="button" class="icon-btn" id="template-preview-close">
+                    <svg width="14" height="14"><use href="#oc-icon-close"/></svg>
+                </button>
+            </div>
+            <div class="config-upload-content">
+                <div class="oc-sub-bar-top">
+                    <b id="tpl-name"></b>
+                    <span class="oc-tpl-cache" id="tpl-cache"></span>
+                </div>
+                <div class="oc-sub-chips">
+                    <a id="tpl-source" href="javascript:void(0)" target="_blank" rel="noopener" class="oc-sub-chip oc-tpl-source-chip"></a>
+                </div>
+                <div class="oc-sub-stats" id="tpl-stats"></div>
+                <div class="oc-charts-grid oc-hidden" id="tpl-charts"></div>
+                <div class="oc-sub-box">
+                    <div class="oc-sub-sec"><%:Template structure%></div>
+                    <div class="oc-tpl-tabs" id="tpl-tabs">
+                        <button type="button" class="oc-tpl-tab active" data-tab="groups"><%:Group Structure%></button>
+                        <button type="button" class="oc-tpl-tab" data-tab="rules"><%:Rule Flow%></button>
+                        <button type="button" class="oc-tpl-tab" data-tab="extra"><%:Extra Settings%></button>
+                    </div>
+                    <div class="oc-tpl-pane" id="tpl-pane-groups"></div>
+                    <div class="oc-tpl-pane oc-hidden" id="tpl-pane-rules"></div>
+                    <div class="oc-tpl-pane oc-hidden" id="tpl-pane-extra"></div>
+                </div>
+                <div class="oc-sub-note oc-sub-note-error oc-hidden" id="tpl-error"><span id="tpl-error-text"></span></div>
+            </div>
+            <div class="config-upload-footer">
+                <div class="config-upload-status"><span id="tpl-status"><%:Template parsed%></span></div>
+                <div class="config-upload-buttons">
+                    <button type="button" class="btn cancel-btn" id="tpl-refresh-btn"><%:Refresh%></button>
+                    <button type="button" class="btn upload-btn" id="tpl-close-btn"><%:Close%></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="/luci-static/resources/openclash/js/oc-icons.js?v=<%="@OPENCLASH_VERSION@"%>"></script>
+<script src="/luci-static/resources/openclash/js/oc-icons.js?v=@OPENCLASH_VERSION@"></script>

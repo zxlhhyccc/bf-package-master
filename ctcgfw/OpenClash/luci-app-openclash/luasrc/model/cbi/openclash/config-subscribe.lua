@@ -9,7 +9,7 @@ local UTIL = require "luci.util"
 local fs = require "luci.openclash"
 local uci = require "luci.model.uci".cursor()
 
-font_red = [[<b style=color:red>]]
+font_red = [[<b class="oc-txt-bad">]]
 font_off = [[</b>]]
 bold_on = [[<strong>]]
 bold_off = [[</strong>]]

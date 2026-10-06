@@ -26,6 +26,21 @@
     height: 24px;
 }
 
+/* LuCI's multi-value table leaves its own styles on these cells; the merge editors
+   need plain full-width cells */
+.oc .oc-merge-td {
+    text-align: left !important;
+}
+
+.oc .oc-merge-value {
+    display: revert !important;
+    width: 100%;
+}
+
+.oc .oc-merge-area {
+    height: 700px;
+}
+
 html[data-darkmode="true"] .oc .oc-merge-editor-bar {
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
@@ -105,6 +120,7 @@ html[data-darkmode="true"] .oc .oc-merge-editor-bar {
 .oc .text_show {
     display: block;
     width: 100%;
+    font-size: clamp(8px, 0.57vw + 6.2px, 12px);
     color: var(--text-primary);
     line-height: 1.2;
     white-space: nowrap;
@@ -116,6 +132,17 @@ html[data-darkmode="true"] .oc .oc-merge-editor-bar {
     user-select: none;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
+}
+
+.oc .sub-info-status {
+    display: block;
+    width: 100%;
+    font-size: clamp(8px, 0.57vw + 6.2px, 12px);
+    line-height: 1.4;
+}
+
+.oc .sub-info-status.err {
+    color: var(--error-color, #dc2626);
 }
 
 .oc .text_show::-webkit-scrollbar {
@@ -266,7 +293,7 @@ html[data-darkmode="true"] .oc .oc-merge-editor-bar {
 .sub-info-url-form-textarea:focus {
     outline: none;
     border-color: var(--primary-color, #3b82f6);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 2px var(--primary-a10);
 }
 
 .sub-info-url-form-textarea::placeholder {
@@ -297,7 +324,7 @@ html[data-darkmode="true"] .oc .oc-merge-editor-bar {
 
 .sub-info-url-submit-btn {
     background: var(--primary-color, #3b82f6);
-    color: white;
+    color: var(--text-on-primary, #ffffff);
     border-color: var(--primary-color, #3b82f6);
 }
 
@@ -366,7 +393,7 @@ html[data-darkmode="true"] .oc .sub-info-url-form-textarea {
 
 html[data-darkmode="true"] .oc .sub-info-url-form-textarea:focus {
     border-color: var(--primary-color, #60a5fa);
-    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+    box-shadow: 0 0 0 2px var(--primary-a10);
 }
 
 html[data-darkmode="true"] .oc .sub-info-url-form-textarea::placeholder {

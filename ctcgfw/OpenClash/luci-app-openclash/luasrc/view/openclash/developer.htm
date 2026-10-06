@@ -128,15 +128,23 @@
         window.open('https://github.com/MetaCubeX');
     }
     function oixcloud_rediret() {
-        window.open('http://bit.ly/oixcloud-register');
+        window.open('https://oixcloud.com/');
     }
     function more_rediret() {
         window.open('https://github.com/vernesong/OpenClash/graphs/contributors');
     }
 
     function imgerrorfun(imgobj, imgSrc) {
+        var tries = parseInt(imgobj.dataset.retry || '0', 10) + 1;
+        imgobj.dataset.retry = tries;
+        if (tries > 3) {
+            imgobj.onerror = null;
+            imgobj.src = '/luci-static/resources/openclash/img/logo.png';
+            imgobj.classList.add('developer-avatar-offline');
+            return;
+        }
         setTimeout(function() {
-            imgobj.src = imgSrc;
+            imgobj.src = imgSrc + (imgSrc.indexOf('?') === -1 ? '?' : '&') + 'r=' + Date.now();
         }, 1000 * 10);
     }
 

@@ -99,6 +99,9 @@ function index()
 	entry({"admin", "services", "openclash", "config_file_save"}, call("action_config_file_save"))
 	entry({"admin", "services", "openclash", "upload_config"}, call("action_upload_config"))
 	entry({"admin", "services", "openclash", "add_subscription"}, call("action_add_subscription"))
+	entry({"admin", "services", "openclash", "config_stats"}, call("action_config_stats"))
+	entry({"admin", "services", "openclash", "runtime_stats"}, call("action_runtime_stats"))
+	entry({"admin", "services", "openclash", "template_preview"}, call("action_template_preview"))
 	entry({"admin", "services", "openclash", "subconverter_version"}, call("action_subconverter_version"))
 	entry({"admin", "services", "openclash", "generate_age_key"}, call("action_generate_age_key"))
 	entry({"admin", "services", "openclash", "cal_age_public_key"}, call("action_cal_age_public_key"))
@@ -116,6 +119,8 @@ function index()
 	entry({"admin", "services", "openclash", "oix_login_info_save"}, call("oix_login_info_save"))
 	entry({"admin", "services", "openclash", "oix_params_sync"}, call("oix_params_sync"))
 	entry({"admin", "services", "openclash", "oix_params_get"}, call("oix_params_get"))
+	entry({"admin", "services", "openclash", "theme_get"}, call("action_theme_get"))
+	entry({"admin", "services", "openclash", "theme_save"}, call("action_theme_save"))
 end
 
 local SYS = require "luci.sys"
@@ -145,6 +150,29 @@ end
 
 local function is_running()
 	return SYS.call("pidof clash >/dev/null") == 0
+end
+
+-- the procd instance state is the authority after an init.d restart, pidof can still
+-- see a dying process; nil means ubus itself is unavailable
+local function service_running()
+	local out = SYS.exec("ubus call service list '{\"name\":\"openclash\"}' 2>/dev/null")
+	if not out or out == "" then
+		return nil
+	end
+	local ok, data = pcall(json.parse, out)
+	if not ok or type(data) ~= "table" or type(data.openclash) ~= "table" then
+		return nil
+	end
+	local instances = data.openclash.instances
+	if type(instances) ~= "table" then
+		return false
+	end
+	for _, inst in pairs(instances) do
+		if type(inst) == "table" and inst.running == true then
+			return true
+		end
+	end
+	return false
 end
 
 local CONFIG_PATH_PREFIX = "/etc/openclash/config/"
@@ -432,6 +460,7 @@ function action_flush_smart_cache()
 	})
 end
 
+-- no_restart is passed by the config upload flow, which restarts at its own switch step
 function action_update_config()
 	-- filename is basename
 	local filename = HTTP.formvalue("filename")
@@ -446,7 +475,10 @@ function action_update_config()
 		return
 	end
 
-	local update_result = SYS.call(string.format("/usr/share/openclash/openclash.sh '%s' >/dev/null 2>&1", filename))
+	local no_restart = HTTP.formvalue("no_restart")
+	local restart_arg = no_restart == "1" and " norestart" or ""
+
+	local update_result = SYS.call(string.format("/usr/share/openclash/openclash.sh '%s'%s >/dev/null 2>&1", filename, restart_arg))
 
 	if update_result == 0 then
 		HTTP.write_json({
@@ -883,9 +915,11 @@ function sub_info_get()
 	sub_ua = "Clash"
 	sub_headers = ""
 
+	-- the config list passes the file name; subscription entries are keyed by the bare config name
+	local base = filename and filename:gsub("%.ya?ml$", "") or filename
 	uci:foreach("openclash", "config_subscribe",
 		function(s)
-			if s.name == filename then
+			if s.name == filename or s.name == base then
 				if s.sub_ua then
 					sub_ua = s.sub_ua
 				end
@@ -898,8 +932,8 @@ function sub_info_get()
 		end
 	)
 
-	if filename and not is_start() then
-		url_result = get_sub_url(filename)
+	if base and not is_start() then
+		url_result = get_sub_url(base)
 
 		if url_result then
 			if url_result.type == "single" then
@@ -1647,6 +1681,7 @@ function action_translate_js()
 	local i18n = require("luci.i18n")
 	if i18n.loadc then i18n.loadc("openclash") end
 	HTTP.prepare_content("application/javascript; charset=UTF-8")
+	-- safe to cache long: the htm templates stamp the script URL per release
 	HTTP.header("Cache-Control", "private, max-age=31536000, immutable")
 	require("luci.template").render_string(src)
 end
@@ -1875,7 +1910,7 @@ function action_start()
 			"bytes=$(wc -c < \"$logfile\" 2>/dev/null); bytes=${bytes:-0}; " ..
 			"[ \"$bytes\" -gt 0 ] && tail -c +1 \"$logfile\" 2>/dev/null; " ..
 			"seen=0; [ \"$bytes\" -gt 0 ] && seen=1; " ..
-			"elapsed=0; i=1; total=%d; " ..
+			"elapsed=0; i=1; miss=0; total=%d; " ..
 			"while true; do " ..
 			"new_bytes=$(wc -c < \"$logfile\" 2>/dev/null); new_bytes=${new_bytes:-0}; " ..
 			"if [ \"$new_bytes\" -gt \"$bytes\" ] 2>/dev/null; then " ..
@@ -1883,25 +1918,26 @@ function action_start()
 			"tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null; bytes=$new_bytes; " ..
 			"else tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null | awk '{ if (p) printf \"%%s\\n\", prev; prev = $0; p = 1 }'; " ..
 			"bytes=$((new_bytes - $(tail -c +$((bytes + 1)) \"$logfile\" 2>/dev/null | awk 'END { print length($0) }'))); " ..
-			"fi; " ..
+			"fi; seen=1; " ..
 			"elif [ \"$new_bytes\" -lt \"$bytes\" ] 2>/dev/null; then " ..
 			"if [ \"$(tail -c 1 \"$logfile\" 2>/dev/null)\" = \"$(printf '\\n')\" ]; then " ..
 			"tail -c +1 \"$logfile\" 2>/dev/null; bytes=$new_bytes; " ..
 			"else tail -c +1 \"$logfile\" 2>/dev/null | awk '{ if (p) printf \"%%s\\n\", prev; prev = $0; p = 1 }'; " ..
 			"bytes=$((new_bytes - $(tail -c +1 \"$logfile\" 2>/dev/null | awk 'END { print length($0) }'))); " ..
+			"fi; seen=1; " ..
 			"fi; " ..
-			"fi; " ..
-			"found=0; " ..
+			"found=0; i=1; " ..
 			"while [ \"$i\" -le \"$total\" ]; do " ..
 			"liveness=$(check_liveness \"$i\"); " ..
 			"if [ \"$liveness\" -gt 0 ] 2>/dev/null; then found=1; seen=1; break; fi; " ..
 			"i=$((i + 1)); " ..
 			"done; " ..
-			"if [ \"$found\" = \"1\" ]; then " ..
+			"if [ \"$found\" = \"1\" ]; then miss=0; " ..
 			"if [ \"$elapsed\" -ge 50 ]; then echo '##CONTINUE##'; exit 0; fi; " ..
 			"else " ..
-			"if [ \"$seen\" -eq 1 ]; then echo '##FINISHED##'; exit 0; fi; " ..
-			"if [ \"$elapsed\" -ge 5 ]; then echo '##FINISHED##'; exit 0; fi; " ..
+			"miss=$((miss + 1)); " ..
+			"if [ \"$seen\" -eq 1 ] && [ \"$miss\" -ge 3 ]; then echo '##FINISHED##'; exit 0; fi; " ..
+			"if [ \"$elapsed\" -ge 8 ]; then echo '##FINISHED##'; exit 0; fi; " ..
 			"fi; " ..
 			"sleep 1; elapsed=$((elapsed + 1)); " ..
 			"done",
@@ -4966,6 +5002,8 @@ function action_add_subscription()
 	local sort = HTTP.formvalue("sort") or "false"
 	local node_type = HTTP.formvalue("node_type") or "false"
 	local rule_provider = HTTP.formvalue("rule_provider") or "false"
+	local tfo = HTTP.formvalue("tfo") or "false"
+	local tls13 = HTTP.formvalue("tls13") or "false"
 	local custom_params = HTTP.formvalue("custom_params") or ""
 	local keyword_option = HTTP.formvalue("keyword_option") or "0"
 	local keyword = HTTP.formvalue("keyword") or ""
@@ -5123,6 +5161,8 @@ function action_add_subscription()
 		uci:set("openclash", section_id, "sort", sort)
 		uci:set("openclash", section_id, "node_type", node_type)
 		uci:set("openclash", section_id, "rule_provider", rule_provider)
+		uci:set("openclash", section_id, "tfo", tfo)
+		uci:set("openclash", section_id, "tls13", tls13)
 
 		uci:delete("openclash", section_id, "custom_params")
 		if custom_params and custom_params ~= "" and sub_convert == "1" then
@@ -5188,6 +5228,476 @@ function action_add_subscription()
 			message = "Failed to add/update subscription configuration"
 		})
 	end
+end
+
+function action_config_stats()
+	local filename = HTTP.formvalue("filename")
+	HTTP.prepare_content("application/json")
+
+	if not filename or filename == "" then
+		HTTP.write_json({ status = "error", message = "Missing filename" })
+		return
+	end
+
+	local base = filename:match("([^/]+)$")
+	if not base or not is_safe_filename(base) then
+		HTTP.write_json({ status = "error", message = "Invalid filename" })
+		return
+	end
+
+	local path = "/etc/openclash/config/" .. base
+	if not fs.access(path) and not base:match("%.ya?ml$") then
+		path = path .. ".yaml"
+	end
+	if not fs.access(path) then
+		HTTP.write_json({ status = "error", message = "Config file not found" })
+		return
+	end
+
+	-- a running config is answered by the core; static=1 parses the stored file instead (core unreachable)
+	local active_path = fs.uci_get_config("config", "config_path")
+	if active_path == path and HTTP.formvalue("static") ~= "1" then
+		local st = fs.stat(path)
+		HTTP.write_json({
+			status = "success",
+			active = true,
+			size = (st and st.size) or 0,
+			mtime = (st and st.mtime) and os.date("%Y-%m-%d %H:%M:%S", st.mtime) or ""
+		})
+		return
+	end
+
+	local stats = SYS.exec(string.format("/usr/share/openclash/yml_stats_get.sh %s 2>/dev/null", UTIL.shellquote(path)))
+	stats = stats:gsub("%s+$", "")
+	if stats == "" or not stats:find("{", 1, true) then
+		HTTP.write_json({ status = "error", message = "Stats unavailable" })
+		return
+	end
+	local decoded = json.parse(stats)
+	if decoded and type(decoded) == "table" then
+		local st = fs.stat(path)
+		decoded.size = (st and st.size) or 0
+		HTTP.write_json(decoded)
+	else
+		HTTP.write(stats)
+	end
+end
+
+local function core_api_get(path)
+	local ip = daip()
+	local port = cn_port()
+	local secret = dase() or ""
+	if not ip or not port then
+		return nil
+	end
+
+	local cmd = string.format('curl -sL -m 5 --retry 1 -H %s http://"%s":"%s"%s 2>/dev/null',
+		UTIL.shellquote("Authorization: Bearer " .. secret), ip, port, path)
+	local out = SYS.exec(cmd)
+	if not out or out == "" then
+		return nil
+	end
+	return out
+end
+
+function action_runtime_stats()
+	HTTP.prepare_content("application/json")
+
+	local service_up = service_running()
+	local offline = { status = "success", online = false }
+	if service_up ~= nil then offline.service_running = service_up end
+
+	if not is_running() then
+		HTTP.write_json(offline)
+		return
+	end
+
+	local version_data = nil
+	local version_raw = core_api_get("/version")
+	if version_raw and version_raw:find("version") then
+		version_data = json.parse(version_raw)
+	end
+	if not version_data then
+		HTTP.write_json(offline)
+		return
+	end
+
+	local result = {
+		status = "success",
+		online = true,
+		version = version_data.version or "",
+		nodes = { total = 0, types = {} },
+		rules = { total = 0, types = {} },
+		providers = { total = 0, items = {} }
+	}
+	if service_up ~= nil then result.service_running = service_up end
+
+	local proxies_raw = core_api_get("/proxies")
+	local proxies = proxies_raw and json.parse(proxies_raw) or nil
+	if proxies and type(proxies.proxies) == "table" then
+		-- the core reports group types in CamelCase without dashes (Selector, URLTest, ...)
+		local group_types = { select = true, urltest = true, fallback = true, loadbalance = true, smart = true, relay = true, selector = true }
+		local builtin_types = { direct = true, reject = true, rejectdrop = true, pass = true, passrule = true, compatible = true }
+		local group_names = {}
+		for name, p in pairs(proxies.proxies) do
+			local t = string.lower(p.type or "")
+			if group_types[(t:gsub("%-", ""))] and name ~= "GLOBAL" then
+				group_names[name] = true
+			end
+		end
+		for name, p in pairs(proxies.proxies) do
+			-- provider nodes are not listed in /proxies, the rest are groups and builtin entries
+			local t = p.type or "unknown"
+			local tk = string.lower(t):gsub("%-", "")
+			if name ~= "GLOBAL" and not group_names[name] and not builtin_types[tk] then
+				result.nodes.total = result.nodes.total + 1
+				result.nodes.types[t] = (result.nodes.types[t] or 0) + 1
+			end
+		end
+		local ref_counts = {}
+		for name, p in pairs(proxies.proxies) do
+			if group_names[name] and type(p.all) == "table" then
+				local seen = {}
+				for _, m in ipairs(p.all) do
+					if type(m) == "string" and m ~= name and group_names[m] and not seen[m] then
+						seen[m] = true
+						ref_counts[m] = (ref_counts[m] or 0) + 1
+					end
+				end
+			end
+		end
+		local groups_out = {}
+		for name, p in pairs(proxies.proxies) do
+			if group_names[name] and type(p.all) == "table" then
+				local members, seen = {}, {}
+				local node_count = 0
+				for _, m in ipairs(p.all) do
+					if type(m) == "string" and m ~= name and not seen[m] then
+						seen[m] = true
+						if m == "DIRECT" then
+							members[#members + 1] = { k = "direct", v = "DIRECT" }
+						elseif m:match("^REJECT") or m == "PASS" then
+							members[#members + 1] = { k = "reject", v = m }
+						elseif group_names[m] then
+							members[#members + 1] = { k = "ref", v = m }
+						else
+							node_count = node_count + 1
+						end
+					end
+				end
+				if node_count > 0 then
+					members[#members + 1] = { k = "nodes", v = node_count }
+				end
+				groups_out[#groups_out + 1] = { n = name, t = p.type, refs = ref_counts[name] or 0, members = members }
+			end
+		end
+		table.sort(groups_out, function(a, b)
+			if a.refs ~= b.refs then return a.refs > b.refs end
+			return a.n < b.n
+		end)
+		result.structure = result.structure or {}
+		result.structure.groups = groups_out
+	end
+
+	local rules_raw = core_api_get("/rules")
+	local rules = rules_raw and json.parse(rules_raw) or nil
+	if rules and type(rules.rules) == "table" then
+		result.rules.total = #rules.rules
+		-- map the core's CamelCase types (DomainSuffix / RuleSet) back to the config
+		-- spelling so both stats sources feed the same charts
+		local rule_type_names = {
+			domain = "DOMAIN", domainsuffix = "DOMAIN-SUFFIX", domainkeyword = "DOMAIN-KEYWORD",
+			domainregex = "DOMAIN-REGEX", domainwildcard = "DOMAIN-WILDCARD", geosite = "GEOSITE",
+			geoip = "GEOIP", srcgeoip = "SRC-GEOIP", ipasn = "IP-ASN", srcipasn = "SRC-IP-ASN",
+			ipcidr = "IP-CIDR", srcipcidr = "SRC-IP-CIDR", ipsuffix = "IP-SUFFIX", srcipsuffix = "SRC-IP-SUFFIX",
+			srcport = "SRC-PORT", dstport = "DST-PORT", inport = "IN-PORT", dscp = "DSCP",
+			inuser = "IN-USER", inname = "IN-NAME", intype = "IN-TYPE",
+			processname = "PROCESS-NAME", processpath = "PROCESS-PATH",
+			processnameregex = "PROCESS-NAME-REGEX", processpathregex = "PROCESS-PATH-REGEX",
+			processnamewildcard = "PROCESS-NAME-WILDCARD", processpathwildcard = "PROCESS-PATH-WILDCARD",
+			rematchname = "REMATCH-NAME", ruleset = "RULE-SET", match = "MATCH", network = "NETWORK",
+			uid = "UID", ["and"] = "AND", ["or"] = "OR", ["not"] = "NOT",
+		}
+		local targets, order = {}, {}
+		for _, r in ipairs(rules.rules) do
+			local raw_type = type(r) == "table" and type(r.type) == "string" and r.type or ""
+			local tkey = raw_type ~= "" and (string.lower(raw_type):gsub("[^%w]", "")) or ""
+			local tname = rule_type_names[tkey]
+			if tname then
+				result.rules.types[tname] = (result.rules.types[tname] or 0) + 1
+			elseif raw_type ~= "" then
+				result.rules.types[raw_type] = (result.rules.types[raw_type] or 0) + 1
+			end
+			local target = type(r) == "table" and r.proxy or nil
+			if type(target) == "string" and target ~= "" then
+				local entry = targets[target]
+				if not entry then
+					entry = { t = target, c = 0, sets = {}, rules = {} }
+					targets[target] = entry
+					order[#order + 1] = target
+				end
+				entry.c = entry.c + 1
+				local label = type(r.payload) == "string" and r.payload or ""
+				if tkey == "ruleset" then
+					if #entry.sets < 48 and label ~= "" then
+						entry.sets[#entry.sets + 1] = label
+					end
+				elseif #entry.rules < 48 and label ~= "" then
+					entry.rules[#entry.rules + 1] = label
+				end
+			end
+		end
+		local target_list = {}
+		for _, name in ipairs(order) do
+			target_list[#target_list + 1] = targets[name]
+		end
+		result.structure = result.structure or {}
+		result.structure.rules = { targets = target_list }
+	end
+
+	local rprov_raw = core_api_get("/providers/rules")
+	local rprov = rprov_raw and json.parse(rprov_raw) or nil
+	if rprov and type(rprov.providers) == "table" then
+		local prov_count = 0
+		for _ in pairs(rprov.providers) do
+			prov_count = prov_count + 1
+		end
+		result.rules.sets = prov_count
+	end
+
+	local prov_raw = core_api_get("/providers/proxies")
+	local prov = prov_raw and json.parse(prov_raw) or nil
+	if prov and type(prov.providers) == "table" then
+		for name, info in pairs(prov.providers) do
+			-- the smart core exposes every group as a compatible provider, only real ones count
+			if info.vehicleType ~= "Compatible" then
+				local items = type(info.proxies) == "table" and info.proxies or {}
+				local ptypes = {}
+				for _, px in ipairs(items) do
+					local t = type(px) == "table" and px.type or nil
+					if type(t) == "string" and t ~= "" then
+						ptypes[t] = (ptypes[t] or 0) + 1
+					end
+				end
+				table.insert(result.providers.items, { name = name, count = #items, types = ptypes })
+				result.providers.total = result.providers.total + #items
+				result.nodes.total = result.nodes.total + #items
+			end
+		end
+	end
+
+	HTTP.write_json(result)
+end
+
+local TPL_CACHE_DIR = "/tmp/openclash_tpl_cache"
+local TPL_CACHE_TTL = 1800
+
+local function tpl_cache_path(id)
+	local safe = id:gsub("[^%w%.%-]", "_")
+	if #safe > 96 then safe = safe:sub(1, 96) end
+	return TPL_CACHE_DIR .. "/" .. safe
+end
+
+-- Returns ok, fetched; a failed download keeps the expired cache for offline preview.
+local function tpl_fetch(url, path, force)
+	fs.mkdir(TPL_CACHE_DIR)
+	local st = fs.stat(path)
+	if st and st.size > 0 and not force and (os.time() - st.mtime) < TPL_CACHE_TTL then
+		return true, false
+	end
+	local cmd = string.format("curl -sL -m 15 --retry 1 -A %s -o %s %s 2>/dev/null",
+		UTIL.shellquote("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"),
+		UTIL.shellquote(path), UTIL.shellquote(url))
+	SYS.call(cmd)
+	local st2 = fs.stat(path)
+	if st2 and st2.size > 0 then
+		return true, true
+	end
+	return false, false
+end
+
+local function tpl_add_group(acc, line)
+	local parts = {}
+	for tok in line:gmatch("[^`]+") do
+		parts[#parts + 1] = tok
+	end
+	local name = parts[1]
+	if not name or name == "" then return end
+	local members = {}
+	for i = 3, #parts do
+		local arg = parts[i]
+		local k, label
+		local ref = arg:match("^%[%](.+)$")
+		if arg == ".*" then
+			k, label = "all", ".*"
+		elseif ref then
+			if ref == "DIRECT" then
+				k, label = "direct", "DIRECT"
+			elseif ref == "REJECT" or ref:match("^REJECT") or ref == "PASS" then
+				k, label = "reject", ref
+			else
+				k, label = "ref", ref
+			end
+		elseif arg:match("^https?://") then
+			k, label = "test", arg
+		elseif arg:match("^%d+[%d,]*$") then
+			k, label = "param", arg
+		elseif arg:match("[%%%*%[%]%(%)|%^%$\\]") then
+			k, label = "filter", arg
+		else
+			k, label = "node", arg
+		end
+		members[#members + 1] = { k = k, v = label }
+	end
+	acc.groups[#acc.groups + 1] = { name = name, type = parts[2] or "", members = members }
+end
+
+local function tpl_add_ruleset(acc, rest)
+	local target, body = rest:match("^([^,]+),(.+)$")
+	if not target then return end
+	local kind, label
+	if body:match("^%[%]") then
+		kind, label = "rule", body:sub(3)
+	else
+		kind = "file"
+		label = body:match("^[^,]+") or body
+		label = label:match("([^/]+)$") or label
+	end
+	acc.rulesets[#acc.rulesets + 1] = { target = target, kind = kind, label = label }
+end
+
+local function tpl_parse(path, acc, depth, force)
+	local file = io.open(path, "r")
+	if not file then return end
+	local content = file:read("*a")
+	file:close()
+	for line in content:gmatch("[^\r\n]+") do
+		local t = line:gsub("^%s+", ""):gsub("%s+$", "")
+		if t ~= "" and not t:match("^[;#]") and not t:match("^%[.*%]$") then
+			-- imported lists carry bare lines (NAME`type`members / TARGET,url); the main file prefixes them
+			local value, is_group
+			if t:match("^custom_proxy_group=") then
+				value, is_group = t:sub(20), true
+			elseif t:match("^ruleset=") then
+				value = t:sub(9)
+			elseif not t:match("=") and t:match("`") then
+				value, is_group = t, true
+			elseif not t:match("=") and t:match("^[^,]+,.+$") then
+				value = t
+			end
+			local iurl = value and value:match("^!!import:(.+)$") or nil
+			if iurl then
+				if depth < 3 then
+					local ipath = tpl_cache_path(iurl)
+					if tpl_fetch(iurl, ipath, force) then
+						tpl_parse(ipath, acc, depth + 1, force)
+					end
+				end
+			elseif value and is_group then
+				tpl_add_group(acc, value)
+			elseif value then
+				tpl_add_ruleset(acc, value)
+			else
+				local key, val = t:match("^([^=]+)=(.*)$")
+				if key then
+					acc.extra[#acc.extra + 1] = { k = key, v = val }
+				end
+			end
+		end
+	end
+end
+
+function action_template_preview()
+	HTTP.prepare_content("application/json")
+	local name = HTTP.formvalue("name") or ""
+	local custom = HTTP.formvalue("url") or ""
+	local force = HTTP.formvalue("force") == "1"
+
+	local url, cache_id, label
+	if custom ~= "" then
+		if not custom:match("^https?://") then
+			HTTP.write_json({ status = "error", message = "Invalid template URL" })
+			return
+		end
+		url = custom
+		cache_id = "custom_" .. custom
+		label = custom:match("([^/]+)$") or custom
+	else
+		local file = io.open("/usr/share/openclash/res/sub_ini.list", "r")
+		local tpl_file
+		if file then
+			for line in file:lines() do
+				local n, fl, u = line:match("^([^,]*),([^,]*),(.+)$")
+				if n == name and u then
+					url, tpl_file = u, fl
+					break
+				end
+			end
+			file:close()
+		end
+		if not url then
+			HTTP.write_json({ status = "error", message = "Template not found" })
+			return
+		end
+		cache_id = tpl_file or name
+		label = name
+	end
+
+	local path = tpl_cache_path(cache_id)
+	local ok, fetched = tpl_fetch(url, path, force)
+	if not ok then
+		HTTP.write_json({ status = "error", message = "Failed to fetch template" })
+		return
+	end
+
+	local acc = { groups = {}, rulesets = {}, extra = {} }
+	tpl_parse(path, acc, 0, force)
+	if #acc.groups == 0 and #acc.rulesets == 0 then
+		-- the newer YAML templates only fill their structure in at generation time
+		local is_yaml = url:match("%.ya?ml") ~= nil
+		if not is_yaml then
+			local f = io.open(path, "r")
+			if f then
+				local head = f:read(512) or ""
+				f:close()
+				is_yaml = head:match("^%s*custom%s*:") ~= nil
+			end
+		end
+		if is_yaml then
+			HTTP.write_json({ status = "error", message = "YAML template" })
+		else
+			HTTP.write_json({ status = "error", message = "Unsupported template format" })
+		end
+		return
+	end
+
+	local refs = {}
+	local tests, smart = 0, 0
+	for _, g in ipairs(acc.groups) do
+		if g.type == "url-test" or g.type == "fallback" or g.type == "load-balance" then
+			tests = tests + 1
+		elseif g.type == "smart" then
+			smart = smart + 1
+		end
+		for _, m in ipairs(g.members) do
+			if m.k == "ref" then
+				refs[m.v] = (refs[m.v] or 0) + 1
+			end
+		end
+	end
+	for _, g in ipairs(acc.groups) do
+		g.refs = refs[g.name] or 0
+	end
+
+	local st = fs.stat(path)
+	HTTP.write_json({
+		status = "success",
+		source = { name = label, url = url, age = st and (os.time() - st.mtime) or 0, from_cache = not fetched },
+		summary = { groups = #acc.groups, sets = #acc.rulesets, tests = tests, smart = smart },
+		groups = acc.groups,
+		rulesets = acc.rulesets,
+		extra = acc.extra
+	})
 end
 
 function action_upload_overwrite()
@@ -5616,8 +6126,10 @@ function action_get_subscribe_data()
 	end
 
 	local data = {}
+	-- the config list passes the file name; subscription entries are keyed by the bare config name
+	local base = filename:gsub("%.ya?ml$", "")
 	uci:foreach("openclash", "config_subscribe", function(s)
-		if s.name == filename then
+		if s.name == filename or s.name == base then
 			data = s
 			-- UCI list fields: convert to newline-separated strings for frontend
 			local sid = s['.name']
@@ -5632,13 +6144,13 @@ function action_get_subscribe_data()
 	end)
 
 	uci:foreach("openclash", "config_age_secret", function(a)
-		if a.name == filename and (not a.hidden or a.hidden ~= "true") then
+		if (a.name == filename or a.name == base) and (not a.hidden or a.hidden ~= "true") then
 			if a.secret then data.config_age_secret = a.secret end
 			if a.public then data.config_age_public = a.public end
 			if a.algo then data.config_age_algo = a.algo end
 			return false
 		end
-		if a.name == filename and a.hidden and a.hidden == "true" then
+		if (a.name == filename or a.name == base) and a.hidden and a.hidden == "true" then
 			data.config_age_hidden = true
 			return false
 		end
@@ -5902,6 +6414,54 @@ function oix_params_get()
 
 	HTTP.prepare_content("application/json")
 	HTTP.write_json(result)
+end
+
+function action_theme_get()
+	local result = {
+		mode = uci:get("openclash", "config", "theme_mode") or "",
+		name = uci:get("openclash", "config", "theme_name") or "",
+		custom = uci:get("openclash", "config", "theme_custom") or ""
+	}
+	HTTP.prepare_content("application/json")
+	HTTP.write_json(result)
+end
+
+function action_theme_save()
+	local mode = HTTP.formvalue("mode") or ""
+	local name = HTTP.formvalue("name") or ""
+	local custom = HTTP.formvalue("custom")
+	if mode ~= "" then
+		if mode ~= "light" and mode ~= "dark" and mode ~= "auto" then
+			HTTP.status(400, "Invalid mode")
+			HTTP.write_json({status = "error", msg = "invalid mode"})
+			return
+		end
+		uci:set("openclash", "config", "theme_mode", mode)
+	end
+	if name ~= "" then
+		local valid = {classic = true, cyan = true, indigo = true, graphite = true, amber = true, imperial = true, rose = true, smoky = true, custom = true}
+		if not valid[name] then
+			HTTP.status(400, "Invalid theme")
+			HTTP.write_json({status = "error", msg = "invalid theme"})
+			return
+		end
+		uci:set("openclash", "config", "theme_name", name)
+	end
+	if custom ~= nil then
+		custom = custom:lower()
+		if custom == "" then
+			uci:delete("openclash", "config", "theme_custom")
+		elseif custom:match("^#%x%x%x%x%x%x$") then
+			uci:set("openclash", "config", "theme_custom", custom)
+		else
+			HTTP.status(400, "Invalid color")
+			HTTP.write_json({status = "error", msg = "invalid color"})
+			return
+		end
+	end
+	uci:commit("openclash")
+	HTTP.prepare_content("application/json")
+	HTTP.write_json({status = "success"})
 end
 
 local function fetch_oix_sub(token)

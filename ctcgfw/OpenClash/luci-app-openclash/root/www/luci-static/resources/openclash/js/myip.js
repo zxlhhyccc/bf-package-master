@@ -855,6 +855,7 @@
         }
 
         syncCardHeights();
+        if (document.hidden) clearAllIntervals();
     }
 
     // Run immediately when the script is lazy-loaded after the load event.
@@ -877,4 +878,21 @@
     window.addEventListener('pagehide', function() {
         clearAllIntervals();
         abortAllRequests();
+    });
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            clearAllIntervals();
+            return;
+        }
+        startHttpInterval();
+        startIpInterval();
+        HTTP.runcheck();
+        if (localStorage.getItem('privacy_my_ip') !== 'true') {
+            if (use_router_mode) {
+                get_router_ip_info();
+            } else {
+                myip_Load();
+            }
+        }
     });

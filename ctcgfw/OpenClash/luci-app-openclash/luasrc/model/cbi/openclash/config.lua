@@ -8,7 +8,7 @@ local fs = require "luci.openclash"
 local uci = require("luci.model.uci").cursor()
 local CHIF = "0"
 
-font_green = [[<b style=color:green>]]
+font_green = [[<b class="oc-txt-good">]]
 font_off = [[</b>]]
 bold_on = [[<strong>]]
 bold_off = [[</strong>]]
@@ -179,9 +179,9 @@ e[t]={}
 e[t].name=fs.basename(o)
 e[t].mtime=os.date("%Y-%m-%d %H:%M:%S",a.mtime)
 if fs.uci_get_config("config", "config_path") and string.sub(fs.uci_get_config("config", "config_path"), 23, -1) == e[t].name then
-	e[t].state=translate("Enabled")
+	e[t].state="Enabled"
 else
-	e[t].state=translate("Disabled")
+	e[t].state="Disabled"
 end
 e[t].size=fs.filesize(a.size)
 e[t].remove=0
@@ -200,7 +200,7 @@ sz=tb:option(DummyValue,"size",translate("Size"))
 st.template="openclash/cfg_check"
 sb.template="openclash/sub_info_show"
 
-btnis=tb:option(Button,"switch",translate("Switch"))
+btnis=tb:option(Button,"switch",translate("SwiTch"))
 btnis.render=function(o,t,a)
 	if not e[t] then return false end
 	if fs.IsYamlExt(e[t].name) then

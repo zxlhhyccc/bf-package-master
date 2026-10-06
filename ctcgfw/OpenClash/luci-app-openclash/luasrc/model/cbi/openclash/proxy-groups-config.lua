@@ -15,7 +15,7 @@ if not file_path then
 	return
 end
 
-font_red = [[<b style=color:red>]]
+font_red = [[<b class="oc-txt-bad">]]
 font_off = [[</b>]]
 bold_on = [[<strong>]]
 bold_off = [[</strong>]]
