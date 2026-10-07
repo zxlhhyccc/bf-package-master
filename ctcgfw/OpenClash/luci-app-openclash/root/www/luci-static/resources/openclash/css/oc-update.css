@@ -251,13 +251,10 @@
     z-index: 5;
 }
 
-.oc .addr-list-loading .addr-list-spinner {
+.oc .addr-list-loading .loading-spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid var(--border-light);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    border-width: 3px;
 }
 
 .oc .select-popup-status-bar {

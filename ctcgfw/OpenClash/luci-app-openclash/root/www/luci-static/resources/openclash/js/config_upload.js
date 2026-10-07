@@ -797,7 +797,7 @@ var SubPanel = {
                 icon.textContent = '✕';
             } else if (i === this.stage && this.stage < steps.length) {
                 steps[i].classList.add('active');
-                icon.innerHTML = '<span class="oc-spin"></span>';
+                icon.innerHTML = ocSpinnerHtml();
             } else {
                 icon.textContent = String(i + 1);
             }
@@ -842,7 +842,7 @@ var SubPanel = {
                 icon.textContent = '✕';
             } else if (i === this.swStage && this.swStage < steps.length) {
                 steps[i].classList.add('active');
-                icon.innerHTML = '<span class="oc-spin"></span>';
+                icon.innerHTML = ocSpinnerHtml();
             } else {
                 icon.textContent = String(i + 1);
             }
@@ -1054,7 +1054,7 @@ var SubPanel = {
         if (primary) {
             primary.classList.add('oc-hidden');
             primary.disabled = true;
-            primary.innerHTML = '<span class="oc-spin"></span><%:Processing...%>';
+            primary.innerHTML = ocSpinnerHtml() + '<%:Processing...%>';
         }
         var status = this.el('sub-progress-status');
         if (status) status.textContent = '<%:Running, cannot cancel%>';

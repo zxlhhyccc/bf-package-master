@@ -389,6 +389,7 @@ html[data-darkmode="true"] .oc .overwrite-config-option-state {
     padding: var(--tight-gap);
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) var(--bg-gray);
     scrollbar-gutter: stable;
@@ -445,6 +446,9 @@ html[data-darkmode="true"] .oc .overwrite-config-option-state {
     cursor: pointer;
     transition: background var(--transition-fast);
     -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 .oc .overwrite-item:hover {
@@ -469,6 +473,26 @@ html[data-darkmode="true"] .oc .overwrite-config-option-state {
 .oc .overwrite-item.dragging {
     opacity: 0.55;
     box-shadow: 0 6px 14px var(--overlay-bg);
+}
+
+.oc .overwrite-item-grip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 16px;
+    color: var(--text-secondary);
+    opacity: 0.45;
+    cursor: grab;
+    transition: opacity var(--transition-fast);
+}
+
+.oc .overwrite-item:hover .overwrite-item-grip {
+    opacity: 0.9;
+}
+
+.oc .overwrite-item-grip svg {
+    display: block;
 }
 
 .oc .overwrite-item-avatar {
@@ -613,6 +637,10 @@ html[data-darkmode="true"] .oc .overwrite-config-option-state {
 .oc .overwrite-side.rail .overwrite-item {
     justify-content: center;
     padding: 5px 0;
+}
+
+.oc .overwrite-side.rail .overwrite-item-grip {
+    display: none;
 }
 
 .oc .overwrite-side.rail .overwrite-item.active {

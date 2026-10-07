@@ -51,7 +51,7 @@ local dns_host = "www.instagram.com"
 		{
 			output.innerHTML =
 				'<div class="oc-oplog"><div class="oc-oplog-h"><b><%:Connection Test Result%></b><span class="oc-oplog-live"><i></i>LIVE</span></div>' +
-				'<div class="oc-oplog-body"><span class="loading-spinner" style="vertical-align:middle"></span> <%:Waiting for command to complete...%></div></div>';
+				'<div class="oc-oplog-body">' + ocSpinnerRow('<%:Waiting for command to complete...%>') + '</div></div>';
 
 			legend.textContent = '<%:Collecting data...%>';
 			legend.parentNode.classList.remove('oc-hidden');
@@ -95,7 +95,7 @@ local dns_host = "www.instagram.com"
 		{
 			output.innerHTML =
 				'<div class="oc-oplog"><div class="oc-oplog-h"><b><%:DNS Test Result%></b><span class="oc-oplog-live"><i></i>LIVE</span></div>' +
-				'<div class="oc-oplog-body"><span class="loading-spinner" style="vertical-align:middle"></span> <%:Waiting for command to complete...%></div></div>';
+				'<div class="oc-oplog-body">' + ocSpinnerRow('<%:Waiting for command to complete...%>') + '</div></div>';
 
 			legend.textContent = '<%:Collecting data...%>';
 			legend.parentNode.classList.remove('oc-hidden');

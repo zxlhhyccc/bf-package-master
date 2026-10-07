@@ -12,9 +12,12 @@ local HTTP = require "luci.http"
 local FS = require "luci.openclash"
 local JSON = require "luci.jsonc"
 local UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+local UA_SEC_CH_UA = '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"'
 local class_type = type
 local type = arg[1]
 local all_test = arg[2] == "all"
+local check_only = arg[2] == "check"
+local result_output = arg[2] == "result"
 math.randomseed(os.time())
 local status, ip, port, passwd, group_match_name
 local tested_set = {}
@@ -109,27 +112,57 @@ local function get_config(key)
 	return value
 end
 
+local result_st, result_region, result_node
+
+local function probe_status(stat, region)
+	local st = 0
+	if stat == 2 or stat == 3 or stat == 4 then
+		st = 2
+	elseif stat == 1 then
+		st = 1
+	end
+	if st == 2 and (region == nil or region == "") then
+		st = 0
+	end
+	return st
+end
+
+local function print_result(st, region)
+	print(JSON.stringify({ service = type or "", st = st, region = region or "", node = result_node or "" }))
+end
+
+local function record_result(stat, region)
+	result_st = probe_status(stat, region)
+	result_region = region or ""
+end
+
 local unlock_cache = FS.readfile(unlock_cache_file)
 if unlock_cache then
 	unlock_cache_info = JSON.parse(unlock_cache) or {}
 end
 
-if not type then
-	log_error(MSG.err_no_type)
+local function bail(message)
+	if check_only then
+		print_result(0, "")
+	else
+		log_error(message)
+	end
 	os.exit(0)
+end
+
+if not type then
+	bail(MSG.err_no_type)
 end
 
 MSG.group = "【"..type.."】Group:"
 
-local self_status = SYS.exec(string.format('ps -w |grep -v grep |grep -c "openclash_streaming_unlock.lua %s"', type))
+local self_status = SYS.exec(string.format('ps -w |grep -v grep |grep "openclash_streaming_unlock.lua %s" |grep -vc " check"', type))
 local select_logic = get_config("stream_auto_select_logic") or "urltest"
 
 if (tonumber(get_config("router_self_proxy")) or 1) == 0 then
-	log_error(MSG.err_router_self_proxy)
-	os.exit(0)
-elseif tonumber(self_status) > 1 then
-	log_error(MSG.err_multiple_scripts)
-	os.exit(0)
+	bail(MSG.err_router_self_proxy)
+elseif tonumber(self_status) > 1 and not check_only then
+	bail(MSG.err_multiple_scripts)
 end
 
 -- One row per streaming service: setting keys, connection sniff site and host.
@@ -148,6 +181,9 @@ local streams = {
 	["OpenAI"] = { group_key = "stream_auto_select_group_key_openai", group_default = "OpenAI|ChatGPT", region_key = "stream_auto_select_region_key_openai", node_key = "stream_auto_select_node_key_openai", site = "https://chatgpt.com/", host = "chatgpt%.com" },
 	["Claude"] = { group_key = "stream_auto_select_group_key_claude", group_default = "Claude", region_key = "stream_auto_select_region_key_claude", node_key = "stream_auto_select_node_key_claude", site = "https://claude.ai/", host = "claude%.ai" },
 	["Gemini"] = { group_key = "stream_auto_select_group_key_gemini", group_default = "Gemini", region_key = "stream_auto_select_region_key_gemini", node_key = "stream_auto_select_node_key_gemini", site = "https://gemini.google.com/", host = "gemini%.google%.com" },
+	["Bahamut Anime"] = { group_key = "stream_auto_select_group_key_bahamut", group_default = "bahamut|巴哈", region_key = "stream_auto_select_region_key_bahamut", node_key = "stream_auto_select_node_key_bahamut", site = "https://ani.gamer.com.tw/", host = "ani%.gamer%.com%.tw" },
+	["Spotify"] = { group_key = "stream_auto_select_group_key_spotify", group_default = "spotify", region_key = "stream_auto_select_region_key_spotify", node_key = "stream_auto_select_node_key_spotify", site = "https://www.spotify.com", host = "www%.spotify%.com" },
+	["Steam"] = { group_key = "stream_auto_select_group_key_steam", group_default = "steam", region_key = "stream_auto_select_region_key_steam", node_key = "stream_auto_select_node_key_steam", site = "https://store.steampowered.com/app/761830", host = "store%.steampowered%.com" },
 }
 
 local function stream_config(field)
@@ -297,6 +333,10 @@ end
 
 local function get_old_regex(stream_type)
 	return get_cache_value("old_regex", stream_type)
+end
+
+local function probe_context()
+	return get_region_regex() or "", get_old_region(), get_old_regex()
 end
 
 local function write_cache(stream_type, node, value)
@@ -597,6 +637,7 @@ local function table_sort_by_cache(t)
 end
 
 local function set_selected(group, node)
+	result_node = node or ""
 	SYS.exec(string.format("curl -sL -m 5 --retry 2 -w %%{http_code} -o /dev/null -H 'Authorization: Bearer %s' -H 'Content-Type:application/json' -X PUT -d '{\"name\":\"%s\"}' http://%s:%s/proxies/%s", passwd, node, ip, port, urlencode(group)))
 end
 
@@ -652,7 +693,8 @@ end
 local netflix_unlock_test, disney_unlock_test, hbo_max_unlock_test, ytb_unlock_test,
 	tvb_anywhere_unlock_test, prime_video_unlock_test, dazn_unlock_test, paramount_plus_unlock_test,
 	discovery_plus_unlock_test, bilibili_unlock_test, google_not_cn_test, openai_unlock_test,
-	claude_unlock_test, gemini_unlock_test
+	claude_unlock_test, gemini_unlock_test, bahamut_unlock_test, spotify_unlock_test,
+	steam_unlock_test
 
 local unlock_tests = {
 	["Netflix"] = function(tested) return netflix_unlock_test(tested) end,
@@ -669,6 +711,9 @@ local unlock_tests = {
 	["OpenAI"] = function(tested) return openai_unlock_test(tested) end,
 	["Claude"] = function(tested) return claude_unlock_test(tested) end,
 	["Gemini"] = function(tested) return gemini_unlock_test(tested) end,
+	["Bahamut Anime"] = function(tested) return bahamut_unlock_test(tested) end,
+	["Spotify"] = function(tested) return spotify_unlock_test(tested) end,
+	["Steam"] = function(tested) return steam_unlock_test(tested) end,
 }
 
 local function proxy_unlock_test(tested)
@@ -679,7 +724,7 @@ local function proxy_unlock_test(tested)
 	return unlock_test(tested)
 end
 
-local function get_sniffed_group(host)
+local function get_sniffed_chains(host)
 	local con = SYS.exec(string.format('curl -sL -m 5 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://%s:%s/connections', passwd, ip, port))
 	if con then
 		con = JSON.parse(con)
@@ -690,24 +735,47 @@ local function get_sniffed_group(host)
 	for i = 1, #(con.connections) do
 		local metadata = con.connections[i].metadata
 		if metadata and metadata.host and string.match(metadata.host, host) then
-			return con.connections[i].chains[#(con.connections[i].chains)]
+			return con.connections[i].chains
 		end
 	end
 end
 
-local function auto_get_policy_group()
+local function sniff_service_chains()
 	local site = stream_config("site")
 	local host = stream_config("host")
-	if not site then
-		return
+	if not site or not host then
+		return nil
+	end
+	local domain = string.match(site, "^https?://([^/:]+)")
+	local domain_port = string.match(site, "^https://") and 443 or 80
+	if domain then
+		SYS.call(string.format('( (sleep 4) | nc %s %s ) >/dev/null 2>&1 &', domain, domain_port))
+		SYS.call(string.format('( (sleep 4) | openssl s_client -connect %s:%s -servername %s -quiet -no_ign_eof ) >/dev/null 2>&1 &', domain, domain_port, domain))
 	end
 	SYS.call(string.format('curl -sL -m 5 --limit-rate 1k -o /dev/null %s &', site))
-	local group = get_sniffed_group(host)
-	if not group then
-		os.execute("sleep 1")
-		group = get_sniffed_group(host)
+	local deadline = os.time() + 4
+	local polls = 0
+	while os.time() < deadline and polls < 4 do
+		polls = polls + 1
+		local chains = get_sniffed_chains(host)
+		if chains and #chains > 0 then
+			return chains
+		end
+		if polls < 4 then
+			SYS.call("sleep 1")
+		end
 	end
-	return group
+	return nil
+end
+
+local function auto_get_policy_group()
+	local chains = sniff_service_chains()
+	return chains and chains[#chains]
+end
+
+local function sniff_service_node()
+	local chains = sniff_service_chains()
+	return chains and chains[1] or ""
 end
 
 local function load_proxies()
@@ -733,6 +801,35 @@ local function build_key_group(auto_get_group)
 	return key_group
 end
 
+local function current_service_node()
+	port = get_config("cn_port")
+	passwd = get_config("dashboard_password") or ""
+	ip = FS.lanip(true)
+	if not ip or not port then
+		return ""
+	end
+	local node = sniff_service_node()
+	if node ~= "" then
+		return node
+	end
+	local info = SYS.exec(string.format('curl -sL -m 5 --retry 2 -H "Content-Type: application/json" -H "Authorization: Bearer %s" -XGET http://%s:%s/proxies', passwd, ip, port))
+	if not info or info == "" then
+		return ""
+	end
+	info = JSON.parse(info)
+	if not info or not info.proxies then
+		return ""
+	end
+	build_proxy_index(info)
+	local key_group = build_key_group(nil)
+	for _, value in pairs(info.proxies) do
+		if datamatch(value.name, key_group) then
+			return get_group_now(value.name)
+		end
+	end
+	return ""
+end
+
 local function test_matched_group(value, job)
 	--get groups info
 	group_match_name = value.name
@@ -748,6 +845,7 @@ local function test_matched_group(value, job)
 	if status ~= 2 and status ~= 4 then
 		region = proxy_unlock_test(ctx.now)
 	end
+	record_result(status, region)
 	local group_node = get_group_now(value.now)
 	if status == 2 or status == 4 then
 		if region ~= "" then
@@ -841,6 +939,7 @@ local function test_candidate(value, job, nctx, candidate, pnode)
 	set_selected(nctx.name, pnode)
 	local region = proxy_unlock_test(pnode_now)
 	if status == 2 then
+		record_result(status, region)
 		if region ~= "" then
 			table.insert(job.full_support, {candidate, nctx.name, pnode, region})
 			if not all_test then
@@ -921,6 +1020,7 @@ local function test_expand_candidate(value, job, nctx, candidate)
 		now = log_prefix()..MSG.group.."【"..nctx.show.." ➟ "..nctx.now.."】"
 	end
 	if status == 2 then
+		record_result(status, region)
 		if region ~= "" then
 			table.insert(job.full_support, {candidate, nctx.name, candidate, region})
 			if not all_test then
@@ -996,6 +1096,15 @@ local function apply_fallback_select(value, job)
 		end
 	end
 	for _, v in ipairs(fallback_select) do
+		if #job.full_support > 0 then
+			record_result(2, v[4])
+		elseif #job.no_old_region > 0 then
+			record_result(4, v[4])
+		elseif #job.other_region > 0 then
+			record_result(3, v[4])
+		else
+			record_result(1, v[4])
+		end
 		set_selected(value.name, v[1])
 		set_selected(v[2], v[3])
 		local group_now
@@ -1040,6 +1149,7 @@ local function find_new_unlock(value, job)
 			return
 		end
 		local region = proxy_unlock_test(node_now)
+		record_result(status, region)
 		if status == 2 then
 			if region ~= "" then
 				if not all_test then
@@ -1183,6 +1293,12 @@ local function unlock_auto_select()
 	end
 	--write cache
 	FS.writefile(unlock_cache_file, JSON.stringify(unlock_cache_info))
+	if result_st and result_output then
+		if not result_node or result_node == "" then
+			result_node = current_service_node() or ""
+		end
+		print_result(result_st, result_region)
+	end
 end
 
 local function response_code(data)
@@ -1198,6 +1314,17 @@ local function trace_region(data)
 	return string.upper(string.sub(loc, 5, -1))
 end
 
+local function fetch_trace_region(url)
+	for _ = 1, 2 do
+		local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, url))
+		local loc = trace_region(data)
+		if loc then
+			return loc
+		end
+	end
+	return nil
+end
+
 -- Thanks https://github.com/lmc999/RegionRestrictionCheck --
 
 function netflix_unlock_test()
@@ -1208,9 +1335,7 @@ function netflix_unlock_test()
 	local info = SYS.exec(string.format('curl -sLI --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -o /dev/null -w %%{json} -H "Content-Type: application/json" -H "host: www.netflix.com" -H "accept-language: en-US,en;q=0.9" -H "sec-ch-ua: Google Chrome;v=125, Chromium;v=125, Not.A/Brand;v=24" -H "sec-ch-ua-mobile: ?0" -H "sec-ch-ua-platform: Windows" -H "sec-fetch-site: none" -H "sec-fetch-mode: navigate" -H "sec-fetch-user: ?1" -H "sec-fetch-dest: document" -H "%s" -XGET %s', headers, url))
 	local result = {}
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	if info then
 		info = JSON.parse(info)
 	end
@@ -1242,9 +1367,7 @@ function disney_unlock_test()
 	local body = '{"query":"mutation registerDevice($input: RegisterDeviceInput!) { registerDevice(registerDevice: $input) { grant { grantType assertion } } }","variables":{"input":{"deviceFamily":"browser","applicationRuntime":"chrome","deviceProfile":"windows","deviceLanguage":"en","attributes":{"osDeviceIds":[],"manufacturer":"microsoft","model":null,"operatingSystem":"windows","operatingSystemVersion":"10.0","browserName":"chrome","browserVersion":"96.0.4606"}}}}'
 	local region = ""
 	local assertion, disneycookie
-	local regex = get_region_regex() or ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
+	local regex, old_region, old_regex = probe_context()
 
 	local preassertion = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 %s -H 'User-Agent: %s' -H 'content-type: application/json; charset=UTF-8' -d '{\"deviceFamily\":\"browser\",\"applicationRuntime\":\"chrome\",\"deviceProfile\":\"windows\",\"attributes\":{}}' -XPOST %s", auth, UA, url))
 
@@ -1322,9 +1445,7 @@ function hbo_max_unlock_test()
 	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -w '_TAG_%%{http_code}_TAG_' -H 'Content-Type: application/json' -H 'User-Agent: %s' %s", UA, url))
 	local region = ""
 	local outofregion
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	if response_code(data) == 200 then
 		status = 1
 		if string.match(data, "\"isUserOutOfRegion\":%a+") then
@@ -1345,10 +1466,8 @@ function ytb_unlock_test()
 	status = 0
 	local url = "https://m.youtube.com/premium"
 	local region = ""
-	local old_region = get_old_region()
 	local data, he_data
-	local regex = get_region_regex() or ""
-	local old_regex = get_old_regex()
+	local regex, old_region, old_regex = probe_context()
 	data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -w '_TAG_%%{http_code}_TAG_' -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' -b 'YSC=BiCUU3-5Gdk; CONSENT=YES+cb.20220301-11-p0.en+FX+700; GPS=1; VISITOR_INFO1_LIVE=4VwPMkB7W5A; PREF=tz=Asia.Shanghai; _gcl_au=1.1.1809531354.1646633279' %s", UA, url))
 	if response_code(data) == 200 then
 		status = 1
@@ -1376,9 +1495,7 @@ function tvb_anywhere_unlock_test()
 	status = 0
 	local url = "https://uapisfm.tvbanywhere.com.sg/geoip/check/platform/android"
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -w '_TAG_%%{http_code}_TAG_' -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' %s", UA, url))
 	if response_code(data) == 200 then
 		status = 1
@@ -1400,9 +1517,7 @@ function prime_video_unlock_test()
 	status = 0
 	local url = "https://www.primevideo.com"
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -w '_TAG_%%{http_code}_TAG_' -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' %s", UA, url))
 	if response_code(data) == 200 then
 		status = 1
@@ -1419,9 +1534,7 @@ function dazn_unlock_test()
 	status = 0
 	local url = "https://startup.core.indazn.com/misl/v5/Startup"
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -w '_TAG_%%{http_code}_TAG_' -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' -X POST -d '{\"LandingPageKey\":\"generic\",\"Languages\":\"zh-CN,zh,en\",\"Platform\":\"web\",\"PlatformAttributes\":{},\"Manufacturer\":\"\",\"PromoCode\":\"\",\"Version\":\"2\"}' %s", UA, url))
 	if response_code(data) == 200 then
 		status = 1
@@ -1443,9 +1556,7 @@ function paramount_plus_unlock_test()
 	status = 0
 	local url = "https://www.paramountplus.com/"
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -w '_TAG_%%{http_code}_TAG_%%{url_effective}_TAGS_' -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' %s", UA, url))
 	if response_code(data) == 200 then
 		status = 1
@@ -1473,9 +1584,7 @@ function discovery_plus_unlock_test()
 	local url = "https://us1-prod-direct.discoveryplus.com/token?deviceId=d1a4a5d25212400d1e6985984604d740&realm=go&shortlived=true"
 	local url1 = "https://us1-prod-direct.discoveryplus.com/users/me"
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local token_resp = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, url))
 	local token_info = token_resp and JSON.parse(token_resp)
 	if token_info and token_info.data and token_info.data.attributes then
@@ -1543,7 +1652,20 @@ function google_not_cn_test(tested)
 		if tonumber(httpcode) == 200 then
 			status = 2
 			region = "NOT CN"
-			if not all_test and tested then
+			local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 8 --speed-time 5 --speed-limit 1 --max-filesize 3145728 --retry 2 -H 'Accept-Language: en' -H 'User-Agent: %s' 'https://play.google.com/'", UA))
+			local loc = data and string.match(data, '<div class="yVZQTb">([^<(]+)')
+			if loc then
+				loc = string.match(loc, "^%s*(.-)%s*$")
+				if loc ~= "" then
+					region = loc
+				end
+			end
+			local lc = string.lower(region)
+			if lc == "china" or lc == "cn" then
+				region = "CN"
+				status = 1
+			end
+			if status == 2 and not all_test and tested then
 				write_cache(type, "old_region", tested)
 			end
 		else
@@ -1559,21 +1681,16 @@ function openai_unlock_test()
 	local url = "https://api.openai.com/compliance/cookie_requirements"
 	local url2 = "https://ios.chat.openai.com/"
 	local region_url = "https://chat.openai.com/cdn-cgi/trace"
-	local UA_SEC_CH_UA = '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"'
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local region = ""
-	local region_data
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local data = SYS.exec(string.format("curl -sIL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'authority: api.openai.com' -H 'accept: */*' -H 'accept-language: en-US,en;q=0.9' -H 'authorization: Bearer null' -H 'content-type: application/json' -H 'origin: https://platform.openai.com' -H 'referer: https://platform.openai.com/' -H 'sec-ch-ua: %s' -H 'sec-ch-ua-mobile: ?0' -H 'sec-ch-ua-platform: \"Windows\"' -H 'sec-fetch-dest: empty' -H 'sec-fetch-mode: cors' -H 'sec-fetch-site: same-site' -H 'User-Agent: %s' '%s'", UA_SEC_CH_UA, UA, url))
-	local datas = SYS.exec(string.format("curl -sIL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'authority: ios.chat.openai.com' -H 'accept: */*;q=0.8,application/signed-exchange;v=b3;q=0.7' -H 'accept-language: en-US,en;q=0.9' -H 'sec-ch-ua: %s' -H 'sec-ch-ua-mobile: ?0' -H 'sec-ch-ua-platform: \"Windows\"' -H 'sec-fetch-dest: document' -H 'sec-fetch-mode: navigate' -H 'sec-fetch-site: none' -H 'sec-fetch-user: ?1' -H 'upgrade-insecure-requests: 1' -H 'User-Agent: %s' '%s'", UA_SEC_CH_UA, UA, url2))
+	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'authority: api.openai.com' -H 'accept: */*' -H 'accept-language: en-US,en;q=0.9' -H 'authorization: Bearer null' -H 'content-type: application/json' -H 'origin: https://platform.openai.com' -H 'referer: https://platform.openai.com/' -H 'sec-ch-ua: %s' -H 'sec-ch-ua-mobile: ?0' -H 'sec-ch-ua-platform: \"Windows\"' -H 'sec-fetch-dest: empty' -H 'sec-fetch-mode: cors' -H 'sec-fetch-site: same-site' -H 'User-Agent: %s' '%s'", UA_SEC_CH_UA, UA, url))
+	local datas = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'authority: ios.chat.openai.com' -H 'accept: */*;q=0.8,application/signed-exchange;v=b3;q=0.7' -H 'accept-language: en-US,en;q=0.9' -H 'sec-ch-ua: %s' -H 'sec-ch-ua-mobile: ?0' -H 'sec-ch-ua-platform: \"Windows\"' -H 'sec-fetch-dest: document' -H 'sec-fetch-mode: navigate' -H 'sec-fetch-site: none' -H 'sec-fetch-user: ?1' -H 'upgrade-insecure-requests: 1' -H 'User-Agent: %s' '%s'", UA_SEC_CH_UA, UA, url2))
 	if data and datas then
-		if string.find(data, "unsupported_country") or string.find(datas, "VPN") then
+		if string.find(data, "unsupported_country") or string.find(string.lower(datas), "vpn") then
 			status = 1
 		else
 			status = 2
-			region_data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, region_url))
-			local loc = trace_region(region_data)
+			local loc = fetch_trace_region(region_url)
 			if loc then
 				region = loc
 				finish_region_test(region, regex, old_region, old_regex)
@@ -1587,22 +1704,21 @@ function claude_unlock_test()
 	status = 0
 	local url = "https://claude.ai/"
 	local region_url = "https://claude.ai/cdn-cgi/trace"
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
-	local data = SYS.exec(string.format("curl -sIL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, url))
-	if data then
-		if string.find(data, "App unavailable in region") then
+	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -o /dev/null -w %%{url_effective} -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, url))
+	if data and data ~= "" then
+		if string.find(data, "app-unavailable-in-region") then
 			status = 1
-		else
+		elseif data == url then
 			status = 2
-			local region_data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, region_url))
-			local loc = trace_region(region_data)
+			local loc = fetch_trace_region(region_url)
 			if loc then
 				region = loc
 				finish_region_test(region, regex, old_region, old_regex)
 	  		end
+		else
+			status = 1
 		end
 	end
 	return region
@@ -1611,10 +1727,8 @@ end
 function gemini_unlock_test()
 	status = 0
 	local url = "https://gemini.google.com/"
-	local regex = get_region_regex() or ""
+	local regex, old_region, old_regex = probe_context()
 	local region = ""
-	local old_region = get_old_region()
-	local old_regex = get_old_regex()
 	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, url))
 	if not data or string.sub(data, 1, 4) == "curl" then
 		status = 1
@@ -1636,6 +1750,76 @@ function gemini_unlock_test()
 	return region
 end
 
+function bahamut_unlock_test()
+	status = 0
+	local pid = SYS.exec("echo $PPID") or ""
+	pid = pid:gsub("%s+$", "")
+	local jar = "/tmp/oc_bahamut_"..pid..".txt"
+	local regex, old_region, old_regex = probe_context()
+	local region = ""
+	for _ = 1, 2 do
+		local device = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -c %s -H 'User-Agent: %s' 'https://ani.gamer.com.tw/ajax/getdeviceid.php'", jar, UA))
+		local deviceid = device and string.match(device, '"deviceid"%s*:%s*"([^"]+)"')
+		if deviceid then
+			local token = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -b %s -H 'User-Agent: %s' 'https://ani.gamer.com.tw/ajax/token.php?adID=89422&sn=37783&device=%s'", jar, UA, deviceid))
+			local home = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -b %s -H 'accept: */*;q=0.8,application/signed-exchange;v=b3;q=0.7' -H 'accept-language: zh-CN,zh;q=0.9' -H 'User-Agent: %s' 'https://ani.gamer.com.tw/'", jar, UA))
+			if token and home then
+				if string.find(token, "animeSn", 1, true) then
+					status = 2
+					local geo = string.match(home, 'data%-geo="([^"]+)"')
+					if geo then
+						region = string.upper(geo)
+						finish_region_test(region, regex, old_region, old_regex)
+					end
+				else
+					status = 1
+				end
+				break
+			end
+		end
+	end
+	os.remove(jar)
+	return region
+end
+
+function spotify_unlock_test()
+	status = 0
+	local url = "https://spclient.wg.spotify.com/signup/public/v1/account"
+	local body = "birth_day=11&birth_month=11&birth_year=2000&collect_personal_info=undefined&creation_flow=&creation_point=https%%3A%%2F%%2Fwww.spotify.com%%2Fhk-en%%2F&displayname=Test%%20User&gender=male&iagree=1&key=a1e486e2729f46d6bb368d6b2bcda326&platform=www&referrer=&send-email=0&thirdpartyemail=0&identifier_token=AgE6YTvEzkReHNfJpO114514"
+	local regex, old_region, old_regex = probe_context()
+	local region = ""
+	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'User-Agent: %s' -X POST -d '%s' '%s'", UA, body, url))
+	local info = data and JSON.parse(data)
+	if info then
+		local code = tostring(info.status or "")
+		if code == "320" or code == "120" or info.is_country_launched == false then
+			status = 1
+		elseif code == "311" then
+			status = 2
+			if info.country and info.country ~= "" then
+				region = string.upper(info.country)
+				finish_region_test(region, regex, old_region, old_regex)
+			end
+		end
+	end
+	return region
+end
+
+function steam_unlock_test()
+	status = 0
+	local url = "https://store.steampowered.com/app/761830"
+	local regex, old_region, old_regex = probe_context()
+	local region = ""
+	local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'User-Agent: %s' '%s'", UA, url))
+	local currency = data and (string.match(data, '"priceCurrency" content="(%u%u%u)"') or string.match(data, '"priceCurrency"%s*:%s*"(%u%u%u)"'))
+	if currency then
+		status = 2
+		region = currency
+		finish_region_test(region, regex, old_region, old_regex)
+	end
+	return region
+end
+
 local function network_test()
 	local test_url1 = "https://www.gstatic.com/generate_204"
 	local test_url2 = "https://cp.cloudflare.com/generate_204"
@@ -1648,6 +1832,23 @@ local function network_test()
 		end
 	end
 	log_error(MSG.err_network)
+end
+
+if check_only then
+	local ok = pcall(function()
+		local region = proxy_unlock_test() or ""
+		local st = probe_status(status, region)
+		if status and status > 0 then
+			pcall(function()
+				result_node = current_service_node() or ""
+			end)
+		end
+		print_result(st, region)
+	end)
+	if not ok then
+		print_result(0, "")
+	end
+	os.exit(0)
 end
 
 network_test()

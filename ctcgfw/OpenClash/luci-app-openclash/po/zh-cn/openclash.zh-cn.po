@@ -626,6 +626,9 @@ msgstr "哔哩哔哩（Bilibili）"
 msgid "Bahamut"
 msgstr "巴哈姆特（Bahamut）"
 
+msgid "Bahamut Anime"
+msgstr "巴哈姆特动画疯"
+
 msgid "Custom Clash Rules"
 msgstr "*自定义规则"
 
@@ -2520,11 +2523,50 @@ msgstr "解锁检测结果"
 msgid "All Proxies Test Result"
 msgstr "所有节点测试结果"
 
+msgid "Unlock Check"
+msgstr "解锁检查"
+
+msgid "Unlocked"
+msgstr "已解锁"
+
+msgid "Not Unlocked"
+msgstr "未解锁"
+
+msgid "Originals Only"
+msgstr "仅自制"
+
+msgid "Auto Select"
+msgstr "自动选择"
+
+msgid "Selecting..."
+msgstr "选择中..."
+
+msgid "Unlock Services"
+msgstr "解锁服务选择"
+
+msgid "Must Select 4 Services"
+msgstr "必须选择 4 个服务"
+
+msgid "4 Services Selected"
+msgstr "已选择 4 个服务"
+
+msgid "Not Tested"
+msgstr "未检测"
+
+msgid "Unlock check failed, please check the network and try again"
+msgstr "解锁检查失败，请检查网络后重试"
+
 msgid "Something Wrong While Testing..."
 msgstr "发生了一些错误，测试失败..."
 
 msgid "Network instability may occur during testing, Are you sure want to start test?"
 msgstr "测试过程中可能会造成网络不稳定,确定要开始测试吗？"
+
+msgid "Auto select requires the plugin to be enabled"
+msgstr "自动选择需要插件处于启用状态"
+
+msgid "Auto select requires Router-Self Proxy, enable it in Plugin Settings - Traffic Control"
+msgstr "自动选择依赖“路由本机代理”，请在 插件设置-流量控制 中开启"
 
 msgid "Subscription Info"
 msgstr "订阅信息"
@@ -6680,9 +6722,6 @@ msgstr "本地缓存"
 
 msgid "Just fetched"
 msgstr "刚刚获取"
-
-msgid "just now"
-msgstr "刚刚"
 
 msgid "minutes ago"
 msgstr "分钟前获取"

@@ -144,7 +144,7 @@
 
     /* ── Card Titles (large / small cards) ── */
     --card-title-size: 15px;
-    --card-title-size-sm: 12px;
+    --card-title-size-sm: 13px;
 
     /* ── Row Heights (status page) ── */
     --row-1-height: 160px;
@@ -1738,6 +1738,12 @@ html[data-darkmode="true"] .oc #config-mode-tabs .mode-tab.active {
     font-size: 14px;
 }
 
+.oc .config-editor-loading .loading-spinner {
+    width: 22px;
+    height: 22px;
+    border-width: 3px;
+}
+
 .oc .oc-editor-fallback {
     margin: 6px 0;
     padding: 8px 10px;
@@ -1754,14 +1760,19 @@ html[data-darkmode="true"] .oc #config-mode-tabs .mode-tab.active {
 
 .oc .loading-spinner {
     display: inline-block;
-    width: 22px;
-    height: 22px;
-    margin: 0 4px;
-    border: 3px solid var(--border-light);
-    border-top-color: var(--primary-color);
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    border: 2px solid var(--primary-color);
+    border-right-color: transparent;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    vertical-align: middle;
+}
+
+.oc .oc-spinner-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tight-gap);
 }
 
 @keyframes spin {
@@ -2004,12 +2015,8 @@ ul {
 }
 
 .oc .footer-btn .loading-spinner.oc-btn-spinner {
-    width: 1.1em;
-    height: 1.1em;
-    border-width: 2px;
-    margin: 0;
-    border-color: rgba(255, 255, 255, 0.35);
-    border-top-color: var(--text-on-primary);
+    border-color: var(--text-on-primary);
+    border-right-color: transparent;
 }
 
 .oc .footer-btn:disabled,
@@ -2262,18 +2269,14 @@ ul {
 
 @media (prefers-reduced-motion: reduce) {
     .oc-toast-stack .oc-toast { animation: none; transition: none; }
-    /* reduced motion inside our components; spinners, marquees and the oix cover unfold stay running */
-    .oc *:not(.loading-spinner):not(.oc-spin):not(.addr-list-spinner):not(.announcement-content):not(.oix-announcement-content):not(.additional):not(.more-info):not(.general) {
+    /* reduced motion inside our components; spinners, marquees, the oix cover unfold and the developer card hovers stay running */
+    .oc *:not(.loading-spinner):not(.announcement-content):not(.oix-announcement-content):not(.additional):not(.more-info):not(.general):not(.developer-avatar-container):not(.developer-avatar):not(.developer-label) {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    .oc .loading-spinner,
-    .oc .addr-list-spinner {
+    .oc .loading-spinner {
         animation: spin 1s linear infinite !important;
-    }
-    .oc .oc-spin {
-        animation: oc-sub-spin 0.8s linear infinite !important;
     }
 }
 

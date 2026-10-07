@@ -218,6 +218,9 @@ do
    stream_auto_select_openai=$(uci_get_config "stream_auto_select_openai" || echo 0)
    stream_auto_select_claude=$(uci_get_config "stream_auto_select_claude" || echo 0)
    stream_auto_select_gemini=$(uci_get_config "stream_auto_select_gemini" || echo 0)
+   stream_auto_select_bahamut=$(uci_get_config "stream_auto_select_bahamut" || echo 0)
+   stream_auto_select_spotify=$(uci_get_config "stream_auto_select_spotify" || echo 0)
+   stream_auto_select_steam=$(uci_get_config "stream_auto_select_steam" || echo 0)
    upnp_lease_file=$(uci -q get upnpd.config.upnp_lease_file)
 
 #wait for core start complete
@@ -491,6 +494,18 @@ fi
             if [ "$stream_auto_select_gemini" -eq 1 ]; then
                LOG_INFO "【Gemini】Start Auto Select Unlock Proxy..."
                /usr/share/openclash/openclash_streaming_unlock.lua "Gemini" >> $LOG_FILE
+            fi
+            if [ "$stream_auto_select_bahamut" -eq 1 ]; then
+               LOG_INFO "【Bahamut Anime】Start Auto Select Unlock Proxy..."
+               /usr/share/openclash/openclash_streaming_unlock.lua "Bahamut Anime" >> $LOG_FILE
+            fi
+            if [ "$stream_auto_select_spotify" -eq 1 ]; then
+               LOG_INFO "【Spotify】Start Auto Select Unlock Proxy..."
+               /usr/share/openclash/openclash_streaming_unlock.lua "Spotify" >> $LOG_FILE
+            fi
+            if [ "$stream_auto_select_steam" -eq 1 ]; then
+               LOG_INFO "【Steam】Start Auto Select Unlock Proxy..."
+               /usr/share/openclash/openclash_streaming_unlock.lua "Steam" >> $LOG_FILE
             fi
          fi
       fi

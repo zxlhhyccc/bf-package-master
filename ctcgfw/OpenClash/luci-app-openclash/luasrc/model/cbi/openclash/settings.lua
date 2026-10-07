@@ -992,6 +992,87 @@ o.template = "openclash/other_stream_option"
 o.value = "Gemini"
 o:depends("stream_auto_select_gemini", "1")
 
+o = s:taboption("stream_enhance", Flag, "stream_auto_select_bahamut", font_red..translate("Bahamut Anime")..font_off)
+o.default = 0
+o:depends("stream_auto_select", "1")
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_group_key_bahamut", translate("Group Filter"))
+o.placeholder = "bahamut|巴哈"
+o.description = translate("It Will Be Searched According To The Regex When Auto Search Group Fails")
+o:depends("stream_auto_select_bahamut", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_region_key_bahamut", translate("Unlock Region Filter"))
+o.placeholder = "TW"
+o.description = translate("It Will Be Selected Region(Country Shortcode) According To The Regex")
+o:depends("stream_auto_select_bahamut", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_node_key_bahamut", translate("Unlock Nodes Filter"))
+o.description = translate("It Will Be Selected Nodes According To The Regex")
+o:depends("stream_auto_select_bahamut", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", DummyValue, "Bahamut Anime", translate("Manual Test"))
+o.rawhtml = true
+o.template = "openclash/other_stream_option"
+o.value = "Bahamut Anime"
+o:depends("stream_auto_select_bahamut", "1")
+
+o = s:taboption("stream_enhance", Flag, "stream_auto_select_spotify", font_red..translate("Spotify")..font_off)
+o.default = 0
+o:depends("stream_auto_select", "1")
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_group_key_spotify", translate("Group Filter"))
+o.placeholder = "spotify"
+o.description = translate("It Will Be Searched According To The Regex When Auto Search Group Fails")
+o:depends("stream_auto_select_spotify", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_region_key_spotify", translate("Unlock Region Filter"))
+o.placeholder = "HK|SG|US"
+o.description = translate("It Will Be Selected Region(Country Shortcode) According To The Regex")
+o:depends("stream_auto_select_spotify", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_node_key_spotify", translate("Unlock Nodes Filter"))
+o.description = translate("It Will Be Selected Nodes According To The Regex")
+o:depends("stream_auto_select_spotify", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", DummyValue, "Spotify", translate("Manual Test"))
+o.rawhtml = true
+o.template = "openclash/other_stream_option"
+o.value = "Spotify"
+o:depends("stream_auto_select_spotify", "1")
+
+o = s:taboption("stream_enhance", Flag, "stream_auto_select_steam", font_red..translate("Steam")..font_off)
+o.default = 0
+o:depends("stream_auto_select", "1")
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_group_key_steam", translate("Group Filter"))
+o.placeholder = "steam"
+o.description = translate("It Will Be Searched According To The Regex When Auto Search Group Fails")
+o:depends("stream_auto_select_steam", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_region_key_steam", translate("Unlock Region Filter"))
+o.placeholder = "CNY|USD"
+o.description = translate("It Will Be Selected Region(Country Shortcode) According To The Regex")
+o:depends("stream_auto_select_steam", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", Value, "stream_auto_select_node_key_steam", translate("Unlock Nodes Filter"))
+o.description = translate("It Will Be Selected Nodes According To The Regex")
+o:depends("stream_auto_select_steam", "1")
+o.rmempty = true
+
+o = s:taboption("stream_enhance", DummyValue, "Steam", translate("Manual Test"))
+o.rawhtml = true
+o.template = "openclash/other_stream_option"
+o.value = "Steam"
+o:depends("stream_auto_select_steam", "1")
+
 ---- update Settings
 o = s:taboption("geo_update", Flag, "geo_auto_update", font_red..bold_on..translate("Auto Update GeoIP MMDB")..bold_off..font_off)
 o.default = 0
@@ -1400,9 +1481,9 @@ o = s:taboption("ipv6", Value, "fakeip_range6", translate("Fake-IP Range").." (I
 o.description = translate("Set Fake-IP Range").. " (IPv6 Cidr)"
 o:depends("ipv6_dns", "1")
 o:value("0", translate("Disable"))
-o:value("fdfe:dcba:9876::1/64")
+o:value("2001:2::1/64")
 o.default = "0"
-o.placeholder = "fdfe:dcba:9876::1/64"
+o.placeholder = "2001:2::1/64"
 function o.validate(self, value)
 	if value == "0" then
 		return "0"
@@ -1410,7 +1491,7 @@ function o.validate(self, value)
 	if datatype.cidr6(value) then
 		return value
 	end
-	return "fdfe:dcba:9876::1/64"
+	return "2001:2::1/64"
 end
 end
 

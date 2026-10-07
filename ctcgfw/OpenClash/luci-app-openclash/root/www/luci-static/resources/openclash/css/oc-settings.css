@@ -311,12 +311,8 @@ html[data-darkmode=true] .oc .oix-panel::after {
 .oix-btn-sm { padding: 5px 10px; font-size: 12px; }
 
 .oix-btn .loading-spinner.oc-btn-spinner {
-    width: 14px;
-    height: 14px;
-    border-width: 2px;
-    margin: 0;
-    border-color: rgba(255, 255, 255, 0.35);
-    border-top-color: var(--text-on-primary);
+    border-color: var(--text-on-primary);
+    border-right-color: transparent;
 }
 
 .oix-btn:disabled svg,

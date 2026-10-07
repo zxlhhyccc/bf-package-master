@@ -373,10 +373,9 @@ var Guide = {
             target: '.myip-toolbar',
             place: 'bottom',
             body: function () {
-                var hideLabel = Guide.myipHideLabel();
                 return '<p><%:The three header buttons:%></p>'
                     + '<ul>'
-                    + '<li><b>' + hideLabel + '</b><span class="guide-sep"></span><%:blur the addresses before a screenshot%></li>'
+                    + '<li><b><%:Hide IP%></b><span class="guide-sep"></span><%:blur the addresses before a screenshot%></li>'
                     + '<li><b><%:Query Mode%></b><span class="guide-sep"></span><%:starts the check from the router or from the current browser%></li>'
                     + '<li><b><%:Refresh%></b><span class="guide-sep"></span><%:query addresses and latency again%></li>'
                     + '</ul>';
@@ -1173,12 +1172,6 @@ var Guide = {
         var checked = group.querySelector('input[type="radio"]:checked');
         if (checked) out.active = out[checked.id] || checked.value;
         return out;
-    },
-
-    // the icon title of the myip card is what the page shows, the bubble repeats it
-    myipHideLabel: function () {
-        var eye = document.querySelector('#eye-icon title');
-        return (eye && eye.textContent) || 'Hide IP';
     },
 
     groupSteps: function () {

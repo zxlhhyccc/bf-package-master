@@ -352,9 +352,7 @@ function gen_debug_logs()
         if (btnText) { btnText.textContent = '<%:Generating...%>'; }
         btn.disabled = true;
         if (btnSvg) {
-            var spinner = document.createElement('span');
-            spinner.className = 'loading-spinner oc-btn-spinner';
-            btnSvg.replaceWith(spinner);
+            btnSvg.replaceWith(ocSpinner('oc-btn-spinner'));
         }
     }
 

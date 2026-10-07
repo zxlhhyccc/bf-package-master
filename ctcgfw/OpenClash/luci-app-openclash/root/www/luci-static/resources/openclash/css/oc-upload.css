@@ -357,6 +357,18 @@
     cursor: not-allowed;
 }
 
+.oc #sub-progress-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--tight-gap);
+}
+
+.oc #sub-progress-primary .loading-spinner {
+    border-color: var(--text-on-primary);
+    border-right-color: transparent;
+}
+
 .oc .add-row-btn {
     display: inline-flex;
     align-items: center;
@@ -539,8 +551,7 @@ html[data-darkmode="true"] .oc .sub-convert-options .sub-convert-options {
 .oc .oc-sub-step.active span { color: var(--primary-color); font-weight: 600; }
 .oc .oc-sub-step.fail i { background-color: var(--error-color); border-color: var(--error-color); color: var(--text-on-primary); font-size: 0; }
 .oc .oc-sub-step.fail span { color: var(--error-color); font-weight: 600; }
-.oc .oc-spin { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--primary-a20); border-top-color: var(--primary-color); animation: oc-sub-spin .8s linear infinite; }
-@keyframes oc-sub-spin { to { transform: rotate(360deg); } }
+.oc .oc-sub-step i .loading-spinner { width: 10px; height: 10px; }
 @keyframes oc-sub-pop { 0% { transform: scale(.55); } 60% { transform: scale(1.14); } 100% { transform: scale(1); } }
 @keyframes oc-sub-pulse { 0% { box-shadow: 0 0 0 0 var(--primary-a20); } 70% { box-shadow: 0 0 0 9px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 @media (prefers-reduced-motion: reduce) {

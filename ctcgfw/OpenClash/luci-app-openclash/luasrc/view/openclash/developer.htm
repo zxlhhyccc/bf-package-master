@@ -35,16 +35,44 @@
     var oixcloud = document.getElementById('oixcloud');
     var more = document.getElementById('more');
 
+    function devFindContainer(el) {
+        while (el && !(el.classList && el.classList.contains('developer-avatar-container'))) {
+            el = el.parentNode;
+        }
+        return el;
+    }
+
+    function devClearReveal() {
+        var shown = document.querySelector('.developer-avatar-container.dev-reveal');
+        if (shown) shown.classList.remove('dev-reveal');
+    }
+
+    function devTapRedirect(el, fn) {
+        if (!window.matchMedia('(hover: none)').matches) {
+            window[fn]();
+            return false;
+        }
+        var box = devFindContainer(el);
+        if (box && !box.classList.contains('dev-reveal')) {
+            devClearReveal();
+            box.classList.add('dev-reveal');
+            return false;
+        }
+        devClearReveal();
+        window[fn]();
+        return false;
+    }
+
     function createAvatarHTML(src, title, alt, clickHandler) {
         return '<div class="developer-avatar-container">' +
-               '<img src="' + src + '" loading="lazy" class="developer-avatar" title="' + title + '" alt="' + alt + '" onerror="return imgerrorfun(this,this.src)" onclick="return ' + clickHandler + '()" />' +
+               '<img src="' + src + '" loading="lazy" class="developer-avatar" title="' + title + '" alt="' + alt + '" onerror="return imgerrorfun(this,this.src)" onclick="return devTapRedirect(this, \'' + clickHandler + '\')" />' +
                '<div class="developer-label">' + title + '</div>' +
                '</div>';
     }
 
     function createMoreAvatarHTML(title, clickHandler) {
         return '<div class="developer-avatar-container">' +
-               '<div class="developer-avatar developer-more" title="' + title + '" onclick="return ' + clickHandler + '()">' +
+               '<div class="developer-avatar developer-more" title="' + title + '" onclick="return devTapRedirect(this, \'' + clickHandler + '\')">' +
                '<span class="developer-more-dots">...</span>' +
                '</div>' +
                '<div class="developer-label">' + title + '</div>' +
@@ -147,5 +175,10 @@
             imgobj.src = imgSrc + (imgSrc.indexOf('?') === -1 ? '?' : '&') + 'r=' + Date.now();
         }, 1000 * 10);
     }
+
+    document.addEventListener('click', function(e) {
+        if (devFindContainer(e.target)) return;
+        devClearReveal();
+    });
 
 //]]></script>

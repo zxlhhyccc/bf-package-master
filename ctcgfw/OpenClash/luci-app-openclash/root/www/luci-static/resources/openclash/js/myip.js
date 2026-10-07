@@ -60,13 +60,25 @@
     var INTERVAL = {
         HTTP_CHECK_MIN: 20 * 1000,   // accessibility check
         HTTP_CHECK_MAX: 50 * 1000,
+        UNLOCK_CHECK_MIN: 30 * 1000,
+        UNLOCK_CHECK_MAX: 60 * 1000,
         IP_CHECK_MIN: 50 * 1000,     // IP info
         IP_CHECK_MAX: 80 * 1000
     };
 
     function startHttpInterval() {
+        if (unlock_view) return;
         if (refresh_http) clearInterval(refresh_http);
         refresh_http = setInterval(HTTP.runcheck, ocRandomInterval(INTERVAL.HTTP_CHECK_MIN, INTERVAL.HTTP_CHECK_MAX));
+    }
+
+    function startUnlockInterval() {
+        if (!unlock_view || unlock_gear) return;
+        if (refresh_unlock) clearInterval(refresh_unlock);
+        refresh_unlock = setInterval(function() {
+            if (!unlock_view || unlock_gear || Object.keys(unlock_find_keys).length || unlock_xhr) return;
+            run_unlock_check();
+        }, ocRandomInterval(INTERVAL.UNLOCK_CHECK_MIN, INTERVAL.UNLOCK_CHECK_MAX));
     }
 
     function startIpInterval() {
@@ -80,20 +92,23 @@
 
     function clearAllIntervals() {
         if (refresh_http) { clearInterval(refresh_http); refresh_http = null; }
+        if (refresh_unlock) { clearInterval(refresh_unlock); refresh_unlock = null; }
         if (refresh_ip) { clearInterval(refresh_ip); refresh_ip = null; }
     }
 
     function abortAllRequests() {
         if (ipCheckXHR) { try { ipCheckXHR.abort(); } catch(e) {} ipCheckXHR = null; }
         if (httpCheckXHR) { try { httpCheckXHR.abort(); } catch(e) {} httpCheckXHR = null; }
+        if (unlock_xhr) { try { unlock_xhr.abort(); } catch(e) {} unlock_xhr = null; }
     }
 
     var refresh_http;
+    var refresh_unlock;
     var refresh_ip;
     var ipCheckXHR = null;
     var httpCheckXHR = null;
     function querying_html() {
-        return '<span class="loading-spinner"></span><%:Querying...%>';
+        return ocSpinnerRow('<%:Querying...%>');
     }
     $$.getElementById('ip-ipip').innerHTML = querying_html();
     $$.getElementById('ip-ipify').innerHTML = querying_html();
@@ -294,6 +309,7 @@
     }
 
     function updateCheckCard(svc, status, latency) {
+        if (unlock_view) return;
         var dot = document.getElementById('dot-' + svc);
         var lat = document.getElementById('latency-' + svc);
         var spk = document.getElementById('spark-' + svc);
@@ -474,6 +490,7 @@
             img.src = 'https://' + domain + '/favicon.ico?' + (+(new Date));
         },
         runcheck: function() {
+            if (unlock_view) return;
             if (!use_router_mode) {
                 HTTP.checker_browser('baidu', 'www.baidu.com');
                 HTTP.checker_browser('163', 's1.music.126.net/style');
@@ -533,6 +550,894 @@
         }
     };
 
+    var UNLOCK_SERVICES = [
+        { key: 'prime_video', name: 'Amazon Prime Video', short: 'Prime Video', icon: 'oc-icon-brand-primevideo', iconClass: 'ic-primevideo' },
+        { key: 'bahamut', name: 'Bahamut Anime', short: 'Bahamut', icon: 'oc-icon-brand-bahamut', iconClass: 'ic-bahamut' },
+        { key: 'bilibili', name: 'Bilibili', icon: 'oc-icon-brand-bilibili', iconClass: 'ic-bilibili' },
+        { key: 'claude', name: 'Claude', icon: 'oc-icon-brand-claude', iconClass: 'ic-claude' },
+        { key: 'dazn', name: 'DAZN', icon: 'oc-icon-brand-dazn', iconClass: 'ic-dazn' },
+        { key: 'discovery', name: 'Discovery Plus', short: 'Discovery+', icon: 'oc-icon-brand-warnerbros', iconClass: 'ic-discovery' },
+        { key: 'disney', name: 'Disney Plus', short: 'Disney+', icon: 'oc-icon-brand-disney', iconClass: 'ic-disney' },
+        { key: 'gemini', name: 'Gemini', icon: 'oc-icon-brand-gemini', iconClass: 'ic-gemini' },
+        { key: 'google', name: 'Google', icon: 'oc-icon-brand-google', iconClass: 'ic-google' },
+        { key: 'hbo_max', name: 'HBO Max', icon: 'oc-icon-brand-hbomax', iconClass: 'ic-hbomax' },
+        { key: 'netflix', name: 'Netflix', icon: 'oc-icon-brand-netflix', iconClass: 'ic-netflix' },
+        { key: 'openai', name: 'OpenAI', icon: 'oc-icon-brand-openai', iconClass: 'ic-openai' },
+        { key: 'paramount', name: 'Paramount Plus', short: 'Paramount+', icon: 'oc-icon-brand-paramount', iconClass: 'ic-paramount' },
+        { key: 'spotify', name: 'Spotify', icon: 'oc-icon-brand-spotify', iconClass: 'ic-spotify' },
+        { key: 'steam', name: 'Steam', icon: 'oc-icon-brand-steam', iconClass: 'ic-steam' },
+        { key: 'tvb', name: 'TVB Anywhere+', short: 'TVB', icon: 'oc-icon-brand-tvb', iconClass: 'ic-tvb' },
+        { key: 'ytb', name: 'YouTube Premium', short: 'YouTube', icon: 'oc-icon-brand-youtube', iconClass: 'ic-youtube' }
+    ];
+    var ACCESS_SLOTS = ['baidu', '163', 'github', 'youtube'];
+    var unlock_view = false;
+    var unlock_gear = false;
+    var unlock_xhr = null;
+    var unlock_xhr_keys = [];
+    var unlock_dom = null;
+    var unlock_results = {};
+    var unlock_find_keys = {};
+    var unlock_auto_allowed = true;
+    var unlock_auto_reason = '';
+    var unlock_services = ['netflix', 'ytb', 'openai', 'claude'];
+
+    try {
+        var unlock_cache = JSON.parse(localStorage.getItem('myip_unlock_results') || 'null');
+        if (unlock_cache && unlock_cache.data) unlock_results = unlock_cache.data;
+    } catch (e) {
+        unlock_results = {};
+    }
+
+    try {
+        var unlock_services_saved = JSON.parse(localStorage.getItem('myip_unlock_services') || 'null');
+        if (unlock_services_saved && unlock_services_saved.length) {
+            var unlock_services_valid = [];
+            unlock_services_saved.forEach(function(k) {
+                if (unlock_services_valid.length < 4 && unlock_services_valid.indexOf(k) < 0 && unlock_service_index(k) >= 0) {
+                    unlock_services_valid.push(k);
+                }
+            });
+            if (unlock_services_valid.length) unlock_services = unlock_services_valid;
+        }
+    } catch (e) {}
+
+    function unlock_load_services() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/cgi-bin/luci/admin/services/openclash/unlock_services', true);
+        xhr.timeout = 10000;
+        xhr.onloadend = function() {
+            if (xhr.status !== 200) return;
+            var data = null;
+            try { data = JSON.parse(xhr.responseText); } catch (e) { return; }
+            if (!data) return;
+            if (typeof data.auto_ready !== 'undefined') {
+                unlock_auto_allowed = !!data.auto_ready;
+                unlock_auto_reason = unlock_auto_allowed ? '' : (data.enable ? 'self_proxy' : 'enable');
+                unlock_set_find_buttons();
+            }
+            if (!data.services || !data.services.length) return;
+            var valid = [];
+            data.services.forEach(function(k) {
+                if (valid.length < 4 && valid.indexOf(k) < 0 && unlock_service_index(k) >= 0) valid.push(k);
+            });
+            if (!valid.length) return;
+            unlock_services = valid;
+            unlock_save_services();
+            if (unlock_view && !unlock_gear) {
+                unlock_fill_slots();
+                unlock_render_all();
+            }
+        };
+        xhr.send();
+    }
+    unlock_load_services();
+
+    function unlock_service_index(key) {
+        for (var i = 0; i < UNLOCK_SERVICES.length; i++) {
+            if (UNLOCK_SERVICES[i].key === key) return i;
+        }
+        return -1;
+    }
+
+    function unlock_init_dom() {
+        if (unlock_dom) return unlock_dom;
+        unlock_dom = {};
+        ACCESS_SLOTS.forEach(function(slot) {
+            var card = document.querySelector('.myip-check-item[data-svc="' + slot + '"]');
+            var label = card.querySelector('.myip-card-label');
+            unlock_dom[slot] = {
+                card: card,
+                label: label,
+                labelHtml: label.innerHTML,
+                node: card.querySelector('.myip-unlock-node-name'),
+                region: card.querySelector('.myip-unlock-region'),
+                ribbon: card.querySelector('.myip-unlock-ribbon'),
+                spark: document.getElementById('spark-' + slot)
+            };
+        });
+        unlock_watch_region_layout();
+        return unlock_dom;
+    }
+
+    function unlock_save_results() {
+        try {
+            localStorage.setItem('myip_unlock_results', JSON.stringify({ ts: Date.now(), data: unlock_results }));
+        } catch (e) {}
+    }
+
+    function unlock_save_services() {
+        try {
+            localStorage.setItem('myip_unlock_services', JSON.stringify(unlock_services));
+        } catch (e) {}
+    }
+
+    function unlock_is_selected(key) {
+        return unlock_services.indexOf(key) >= 0;
+    }
+
+    function unlock_service(key) {
+        var i = unlock_service_index(key);
+        return i >= 0 ? UNLOCK_SERVICES[i] : null;
+    }
+
+    function unlock_slots() {
+        var keys = [];
+        unlock_services.forEach(function(k) {
+            if (keys.length < 4 && keys.indexOf(k) < 0 && unlock_service_index(k) >= 0) keys.push(k);
+        });
+        return keys;
+    }
+
+    function unlock_slot_index(key) {
+        return unlock_slots().indexOf(key);
+    }
+
+    function unlock_fill_slots() {
+        var dom = unlock_init_dom();
+        var slots = unlock_slots();
+        ACCESS_SLOTS.forEach(function(slot, i) {
+            var d = dom[slot];
+            var svc = slots[i] ? unlock_service(slots[i]) : null;
+            if (!svc) {
+                d.card.style.display = 'none';
+                return;
+            }
+            d.card.style.display = '';
+            d.card.setAttribute('data-svc', svc.key);
+            d.label.innerHTML = '<svg class="myip-card-icon ' + svc.iconClass + '"><use href="#' + svc.icon + '"/></svg><span>' + (svc.short || svc.name) + '</span>';
+            d.label.title = svc.name;
+            d.spark.innerHTML = '';
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'myip-find-btn';
+            btn.setAttribute('data-key', svc.key);
+            btn.textContent = '<%:Auto Select%>';
+            btn.addEventListener('click', function() { unlock_find_node(svc.key); });
+            d.spark.appendChild(btn);
+        });
+        unlock_set_find_buttons();
+    }
+
+    function unlock_set_unlock_icon(gear) {
+        var lock = document.getElementById('unlock-icon-lock');
+        var cog = document.getElementById('unlock-icon-gear');
+        if (!lock || !cog) return;
+        if (gear) {
+            lock.classList.add('oc-hidden');
+            cog.classList.remove('oc-hidden');
+        } else {
+            lock.classList.remove('oc-hidden');
+            cog.classList.add('oc-hidden');
+        }
+    }
+
+    var unlock_gear_list = [];
+    var unlock_gear_rows = {};
+
+    function unlock_gear_input(key) {
+        var row = unlock_gear_rows[key];
+        return row ? row.querySelector('input') : null;
+    }
+
+    function unlock_gear_selected() {
+        return unlock_gear_list.filter(function(k) {
+            var input = unlock_gear_input(k);
+            return !!(input && input.checked);
+        });
+    }
+
+    function unlock_sync_gear(panel) {
+        panel = panel || document.getElementById('myip-unlock-gear');
+        if (!panel) return;
+        var selected = unlock_gear_selected();
+        var full = selected.length >= 4;
+        unlock_gear_list.forEach(function(key) {
+            var row = unlock_gear_rows[key];
+            if (!row) return;
+            var input = row.querySelector('input');
+            var disabled = full && !input.checked;
+            input.disabled = disabled;
+            row.classList.toggle('selected', input.checked);
+            row.classList.toggle('oc-dim', disabled);
+            var state = row.querySelector('.myip-gear-state');
+            if (state) state.textContent = input.checked ? '✓' : '';
+        });
+        var hint = panel.querySelector('.myip-gear-hint');
+        if (hint) {
+            hint.textContent = full ? '<%:4 Services Selected%>' : '<%:Must Select 4 Services%>';
+            hint.classList.toggle('oc-warn', !full);
+        }
+        var ok = panel.querySelector('.myip-gear-ok');
+        if (ok) ok.disabled = selected.length !== 4;
+    }
+
+    var unlock_drag_key = null;
+    var unlock_drag_target = null;
+    var unlock_touch_start = null;
+    var unlock_touch_timer = null;
+    var unlock_touch_row = null;
+    var unlock_touch_moved = false;
+    var unlock_touch_dragging = false;
+
+    function unlock_gear_reorder_dom() {
+        var listEl = document.getElementById('myip-unlock-gear-list');
+        if (!listEl) return;
+        unlock_gear_list.forEach(function(k) {
+            listEl.appendChild(unlock_gear_rows[k]);
+        });
+        unlock_sync_gear();
+    }
+
+    function unlock_gear_drag_clear() {
+        unlock_gear_list.forEach(function(k) {
+            var row = unlock_gear_rows[k];
+            if (row) row.classList.remove('dragging', 'drag-before', 'drag-after');
+        });
+        unlock_drag_key = null;
+        unlock_drag_target = null;
+        if (unlock_touch_timer) {
+            clearTimeout(unlock_touch_timer);
+            unlock_touch_timer = null;
+        }
+        unlock_touch_start = null;
+        unlock_touch_row = null;
+        unlock_touch_moved = false;
+        unlock_touch_dragging = false;
+    }
+
+    function unlock_gear_drop() {
+        if (!unlock_drag_key || unlock_drag_target === null) {
+            unlock_gear_drag_clear();
+            return;
+        }
+        var from = unlock_gear_list.indexOf(unlock_drag_key);
+        var target = unlock_drag_target;
+        if (from >= 0 && target >= 0 && target <= unlock_gear_list.length) {
+            if (from < target) target -= 1;
+            if (target !== from) {
+                unlock_gear_list.splice(from, 1);
+                unlock_gear_list.splice(target, 0, unlock_drag_key);
+                unlock_gear_reorder_dom();
+            }
+        }
+        unlock_gear_drag_clear();
+    }
+
+    function unlock_gear_set_indicator(targetKey, after) {
+        if (!targetKey || targetKey === unlock_drag_key) return;
+        unlock_gear_list.forEach(function(k) {
+            var r = unlock_gear_rows[k];
+            if (r) r.classList.remove('drag-before', 'drag-after');
+        });
+        var row = unlock_gear_rows[targetKey];
+        if (!row) return;
+        row.classList.add(after ? 'drag-after' : 'drag-before');
+        var to = unlock_gear_list.indexOf(targetKey);
+        unlock_drag_target = after ? to + 1 : to;
+    }
+
+    function unlock_gear_indicator_at(clientY) {
+        var keys = unlock_gear_list.filter(function(k) { return !!unlock_gear_rows[k]; });
+        for (var i = 0; i < keys.length; i++) {
+            var rect = unlock_gear_rows[keys[i]].getBoundingClientRect();
+            if (clientY < rect.top + rect.height / 2) {
+                unlock_gear_set_indicator(keys[i], false);
+                return;
+            }
+        }
+        if (keys.length) unlock_gear_set_indicator(keys[keys.length - 1], true);
+    }
+
+    function unlock_gear_autoscroll(clientY) {
+        var listEl = document.getElementById('myip-unlock-gear-list');
+        if (!listEl) return;
+        var rect = listEl.getBoundingClientRect();
+        if (clientY - rect.top < 24 && listEl.scrollTop > 0) {
+            listEl.scrollTop -= 6;
+        } else if (rect.bottom - clientY < 24 && listEl.scrollTop + listEl.clientHeight < listEl.scrollHeight) {
+            listEl.scrollTop += 6;
+        }
+    }
+
+    function unlock_gear_touch_begin(row, touch) {
+        unlock_gear_drag_clear();
+        var key = row.getAttribute('data-key');
+        if (!key) return;
+        unlock_touch_row = row;
+        unlock_touch_start = { x: touch.clientX, y: touch.clientY };
+        unlock_touch_timer = setTimeout(function() {
+            if (unlock_touch_moved || unlock_touch_row !== row) return;
+            unlock_touch_dragging = true;
+            unlock_drag_key = key;
+            unlock_drag_target = null;
+            row.classList.add('dragging');
+            if (navigator.vibrate) navigator.vibrate(50);
+        }, 500);
+    }
+
+    function unlock_gear_touch_end(drop) {
+        if (!unlock_touch_start && !unlock_touch_dragging) return false;
+        var dragging = unlock_touch_dragging;
+        var moved = unlock_touch_moved;
+        if (drop && dragging && unlock_drag_key) {
+            unlock_gear_drop();
+        } else {
+            unlock_gear_drag_clear();
+        }
+        return moved || dragging;
+    }
+
+    function unlock_gear_mouse_begin(row, e) {
+        unlock_gear_drag_clear();
+        var key = row.getAttribute('data-key');
+        if (!key) return;
+        var startX = e.clientX;
+        var startY = e.clientY;
+        var moved = false;
+        var onMove = function(me) {
+            if (!moved) {
+                if (Math.abs(me.clientX - startX) < 6 && Math.abs(me.clientY - startY) < 6) return;
+                moved = true;
+                unlock_drag_key = key;
+                unlock_drag_target = null;
+                row.classList.add('dragging');
+            }
+            me.preventDefault();
+            unlock_gear_indicator_at(me.clientY);
+            unlock_gear_autoscroll(me.clientY);
+        };
+        var onUp = function() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            if (moved && unlock_drag_key) {
+                unlock_gear_drop();
+            } else {
+                unlock_gear_drag_clear();
+            }
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    function unlock_gear_confirm(panel) {
+        var selected = unlock_gear_selected();
+        if (selected.length !== 4) return;
+        var ok = panel.querySelector('.myip-gear-ok');
+        ok.disabled = true;
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/cgi-bin/luci/admin/services/openclash/unlock_services', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.timeout = 15000;
+        xhr.onloadend = function() {
+            var done = false;
+            if (xhr.status === 200) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    done = !!(data && data.services && data.services.join(',') === selected.join(','));
+                } catch (e) {}
+            }
+            ok.disabled = false;
+            if (!done) {
+                ocToast('<%:Save failed%>', 'error');
+                return;
+            }
+            unlock_services = selected;
+            unlock_save_services();
+            ocToast('<%:Saved successfully%>', 'success');
+            unlock_apply_view(true);
+            run_unlock_check(null, true);
+        };
+        xhr.send('services=' + encodeURIComponent(selected.join(',')));
+    }
+
+    function unlock_gear_dom() {
+        var panel = document.getElementById('myip-unlock-gear');
+        if (panel) return panel;
+        panel = document.createElement('div');
+        panel.id = 'myip-unlock-gear';
+        panel.className = 'myip-gear-panel oc-hidden';
+        panel.innerHTML = '<div class="myip-gear-list" id="myip-unlock-gear-list"></div>' +
+            '<div class="myip-gear-footer"><p class="myip-gear-hint"></p><button type="button" class="myip-gear-ok"><%:OK%></button></div>';
+        var listEl = panel.querySelector('.myip-gear-list');
+        var touchPrimary = window.matchMedia && window.matchMedia('(hover: none)').matches;
+        UNLOCK_SERVICES.forEach(function(svc) {
+            var row = document.createElement('div');
+            row.className = 'myip-gear-row';
+            row.setAttribute('data-key', svc.key);
+            row.draggable = !touchPrimary;
+            row.innerHTML = '<label class="myip-gear-left"><input type="checkbox" data-key="' + svc.key + '">' +
+                '<span class="myip-gear-state"></span>' +
+                '<svg class="myip-card-icon ' + svc.iconClass + '"><use href="#' + svc.icon + '"/></svg>' +
+                '<span class="myip-gear-name">' + svc.name + '</span></label>' +
+                '<span class="myip-gear-grip"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></span>';
+            if (touchPrimary) {
+                row.querySelector('.myip-gear-grip').addEventListener('mousedown', function(e) {
+                    if (e.button !== 0) return;
+                    e.preventDefault();
+                    unlock_gear_mouse_begin(row, e);
+                });
+            }
+            unlock_gear_rows[svc.key] = row;
+            listEl.appendChild(row);
+        });
+        panel.addEventListener('change', function(e) {
+            if (!e.target || e.target.type !== 'checkbox') return;
+            unlock_sync_gear(panel);
+        });
+        panel.addEventListener('dragstart', function(e) {
+            var row = e.target && e.target.closest ? e.target.closest('.myip-gear-row') : null;
+            if (!row) return;
+            unlock_drag_key = row.getAttribute('data-key');
+            unlock_drag_target = null;
+            row.classList.add('dragging');
+            if (e.dataTransfer) {
+                e.dataTransfer.effectAllowed = 'move';
+                try { e.dataTransfer.setData('text/plain', unlock_drag_key); } catch (err) {}
+            }
+        });
+        panel.addEventListener('dragover', function(e) {
+            if (!unlock_drag_key) return;
+            e.preventDefault();
+            if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+            var row = e.target && e.target.closest ? e.target.closest('.myip-gear-row') : null;
+            if (!row) return;
+            var rect = row.getBoundingClientRect();
+            unlock_gear_set_indicator(row.getAttribute('data-key'), e.clientY > rect.top + rect.height / 2);
+        });
+        panel.addEventListener('drop', function(e) {
+            if (!unlock_drag_key) return;
+            e.preventDefault();
+            unlock_gear_drop();
+        });
+        panel.addEventListener('dragend', function() {
+            unlock_gear_drag_clear();
+        });
+        panel.addEventListener('touchstart', function(e) {
+            if (e.touches.length !== 1) return;
+            var row = e.target && e.target.closest ? e.target.closest('.myip-gear-row') : null;
+            if (!row || (e.target.closest && e.target.closest('input'))) return;
+            unlock_gear_touch_begin(row, e.touches[0]);
+        });
+        panel.addEventListener('touchmove', function(e) {
+            if (e.touches.length !== 1) return;
+            var touch = e.touches[0];
+            if (unlock_touch_dragging) {
+                e.preventDefault();
+                unlock_gear_indicator_at(touch.clientY);
+                unlock_gear_autoscroll(touch.clientY);
+                return;
+            }
+            if (!unlock_touch_start || unlock_touch_moved) return;
+            if (Math.abs(touch.clientX - unlock_touch_start.x) > 12 || Math.abs(touch.clientY - unlock_touch_start.y) > 12) {
+                unlock_touch_moved = true;
+                if (unlock_touch_timer) {
+                    clearTimeout(unlock_touch_timer);
+                    unlock_touch_timer = null;
+                }
+            }
+        }, { passive: false });
+        panel.addEventListener('touchend', function(e) {
+            var changed = e.changedTouches && e.changedTouches[0];
+            if (unlock_touch_dragging && unlock_drag_target === null && changed) {
+                unlock_gear_indicator_at(changed.clientY);
+            }
+            if (unlock_gear_touch_end(true)) e.preventDefault();
+        });
+        panel.addEventListener('touchcancel', function() {
+            unlock_gear_touch_end(false);
+        });
+        panel.addEventListener('contextmenu', function(e) {
+            if (unlock_touch_start || unlock_touch_dragging) e.preventDefault();
+        });
+        panel.querySelector('.myip-gear-ok').addEventListener('click', function() { unlock_gear_confirm(panel); });
+        document.querySelector('.myip-check-list').appendChild(panel);
+        return panel;
+    }
+
+    var unlock_ribbon_icons = {
+        check: 'M5 12.5l4.5 4.5L19 7',
+        question: 'M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4M12 17l0 .01',
+        cross: 'M6.5 6.5l11 11M17.5 6.5l-11 11',
+        dash: 'M6.5 12h11',
+        dots: 'M7 12h.01M12 12h.01M17 12h.01'
+    };
+
+    function unlock_set_ribbon(d, state, icon, title) {
+        d.ribbon.className = 'myip-unlock-ribbon ' + state;
+        var viewBox = icon === 'question' ? '4.7 4.4 15.2 15.2' : '0 0 24 24';
+        d.ribbon.innerHTML = '<svg viewBox="' + viewBox + '"><path d="' + unlock_ribbon_icons[icon] + '"/></svg>';
+        d.ribbon.title = title;
+    }
+
+    function unlock_set_region(d, region) {
+        d.region.textContent = region;
+        d.region.classList.toggle('oc-hidden', !region);
+        if (region) unlock_align_region(d);
+    }
+
+    function unlock_align_region(d) {
+        if (!d || !d.region || d.region.classList.contains('oc-hidden')) return;
+        var range = document.createRange();
+        range.selectNodeContents(d.node);
+        var rects = range.getClientRects();
+        if (!rects.length) return;
+        var top = rects[0].top;
+        var right = rects[0].right;
+        for (var i = 1; i < rects.length; i++) {
+            if (Math.abs(rects[i].top - top) > 2) break;
+            if (rects[i].right > right) right = rects[i].right;
+        }
+        var parentLeft = d.region.parentNode.getBoundingClientRect().left;
+        var left = Math.round(right - parentLeft + 2);
+        var card = d.region.closest('.myip-main-card');
+        if (card) {
+            var maxLeft = Math.floor(card.getBoundingClientRect().right - d.region.offsetWidth - 4 - parentLeft);
+            if (left > maxLeft) left = maxLeft;
+        }
+        d.region.style.left = left + 'px';
+    }
+
+    function unlock_watch_region_layout() {
+        if (!window.ResizeObserver) return;
+        var observer = new ResizeObserver(function(entries) {
+            if (!unlock_view) return;
+            entries.forEach(function(entry) {
+                ACCESS_SLOTS.forEach(function(slot) {
+                    var d = unlock_dom[slot];
+                    if (d && d.node === entry.target) unlock_align_region(d);
+                });
+            });
+        });
+        ACCESS_SLOTS.forEach(function(slot) {
+            observer.observe(unlock_dom[slot].node);
+        });
+    }
+
+    var unlock_align_frame = null;
+
+    function unlock_schedule_align() {
+        if (!unlock_view || !unlock_dom || unlock_align_frame) return;
+        var schedule = window.requestAnimationFrame || function(callback) { return setTimeout(callback, 0); };
+        unlock_align_frame = schedule(function() {
+            unlock_align_frame = null;
+            if (!unlock_view) return;
+            ACCESS_SLOTS.forEach(function(slot) { unlock_align_region(unlock_dom[slot]); });
+        });
+    }
+
+    var UNLOCK_REGION_CODES = {
+        'HONG KONG': 'HK', 'SINGAPORE': 'SG', 'TAIWAN': 'TW', 'JAPAN': 'JP',
+        'SOUTH KOREA': 'KR', 'KOREA': 'KR', 'UNITED STATES': 'US', 'UNITED KINGDOM': 'UK',
+        'MALAYSIA': 'MY', 'THAILAND': 'TH', 'VIETNAM': 'VN', 'VIET NAM': 'VN',
+        'PHILIPPINES': 'PH', 'INDONESIA': 'ID', 'INDIA': 'IN', 'AUSTRALIA': 'AU',
+        'CANADA': 'CA', 'GERMANY': 'DE', 'FRANCE': 'FR', 'NETHERLANDS': 'NL',
+        'SWITZERLAND': 'CH', 'SWEDEN': 'SE', 'SPAIN': 'ES', 'ITALY': 'IT',
+        'BRAZIL': 'BR', 'MEXICO': 'MX', 'TURKEY': 'TR', 'RUSSIA': 'RU'
+    };
+
+    function unlock_render(key) {
+        var i = unlock_slot_index(key);
+        if (i < 0) return;
+        var d = unlock_init_dom()[ACCESS_SLOTS[i]];
+        var r = unlock_results[key];
+        if (!r) {
+            d.node.textContent = '--';
+            d.node.className = 'myip-unlock-node-name';
+            unlock_set_region(d, '');
+            unlock_set_ribbon(d, 'rib-n', 'dash', '<%:Not Tested%>');
+            return;
+        }
+        var st = Number(r.st) || 0;
+        var text, cls, rib, icon;
+        if (st === 2) {
+            text = '<%:Unlocked%>';
+            cls = 'myip-latency-fast';
+            rib = 'rib-g';
+            icon = 'check';
+        } else if (st === 1) {
+            text = (key === 'netflix') ? '<%:Originals Only%>' : '<%:Not Unlocked%>';
+            cls = 'myip-latency-mid';
+            rib = 'rib-p';
+            icon = 'question';
+        } else {
+            text = '<%:Test failed%>';
+            cls = 'myip-latency-slow';
+            rib = 'rib-r';
+            icon = 'cross';
+        }
+        var regionName = (st !== 0 && r.region) ? String(r.region).toUpperCase() : '';
+        var region = UNLOCK_REGION_CODES[regionName] || regionName;
+        var full = text + (regionName ? ' · ' + regionName : '');
+        d.node.textContent = r.node ? r.node : text;
+        d.node.className = 'myip-unlock-node-name' + (r.node ? '' : ' ' + cls);
+        unlock_set_region(d, region);
+        unlock_set_ribbon(d, rib, icon, full);
+    }
+
+    function unlock_render_all() {
+        UNLOCK_SERVICES.forEach(function(svc) { unlock_render(svc.key); });
+        syncCardHeights();
+    }
+
+    function unlock_set_pending(key) {
+        var i = unlock_slot_index(key);
+        if (i < 0) return;
+        var d = unlock_init_dom()[ACCESS_SLOTS[i]];
+        d.node.innerHTML = '<span class="loading-spinner"></span><%:Testing...%>';
+        d.node.className = 'myip-unlock-node-name';
+        unlock_set_region(d, '');
+        unlock_set_ribbon(d, 'rib-t', 'dots', '<%:Testing...%>');
+    }
+
+    function run_unlock_check(services, manual) {
+        if (!unlock_view) return;
+        var list = (services && services.length) ? services : UNLOCK_SERVICES.map(function(s) { return s.key; }).filter(unlock_is_selected);
+        if (!list.length) return;
+        var prev = unlock_xhr;
+        var prevKeys = unlock_xhr_keys;
+        unlock_xhr = null;
+        unlock_xhr_keys = list;
+        if (prev) {
+            (prevKeys || []).forEach(function(key) {
+                if (list.indexOf(key) < 0) unlock_render(key);
+            });
+            try { prev.abort(); } catch (e) {}
+        }
+        list.forEach(function(key) {
+            if (manual || !unlock_results[key]) unlock_set_pending(key);
+        });
+
+        var xhr = new XMLHttpRequest();
+        var url = '/cgi-bin/luci/admin/services/openclash/unlock_check';
+        if (services && services.length === 1) url += '?service=' + encodeURIComponent(services[0]);
+        xhr.open('GET', url, true);
+        xhr.timeout = 90000;
+        var lastIndex = 0;
+        var pendingBuf = '';
+        var got = {};
+
+        xhr.onprogress = function() {
+            var newText = xhr.responseText.substring(lastIndex);
+            lastIndex = xhr.responseText.length;
+            pendingBuf += newText;
+            var lines = pendingBuf.split('\n');
+            pendingBuf = lines.pop();
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (!line) continue;
+                var obj = null;
+                try { obj = JSON.parse(line); } catch (e) { continue; }
+                if (!obj || !obj.service || list.indexOf(obj.service) < 0) continue;
+                got[obj.service] = true;
+                unlock_results[obj.service] = { st: obj.st, region: obj.region || '', node: obj.node || '', ts: Date.now() };
+                unlock_save_results();
+                if (unlock_view) unlock_render(obj.service);
+            }
+        };
+
+        xhr.onloadend = function() {
+            if (unlock_xhr !== xhr) return;
+            unlock_xhr = null;
+            unlock_xhr_keys = [];
+            if (!unlock_view) return;
+            list.forEach(function(key) {
+                if (!got[key]) {
+                    unlock_results[key] = { st: 0, region: '', node: '', ts: Date.now() };
+                    unlock_render(key);
+                }
+            });
+            unlock_save_results();
+            syncCardHeights();
+            var anyOk = false;
+            list.forEach(function(key) {
+                var r = unlock_results[key];
+                if (r && (Number(r.st) || 0) !== 0) anyOk = true;
+            });
+            if (!anyOk && manual) ocToast('<%:Unlock check failed, please check the network and try again%>', 'error');
+        };
+
+        xhr.send();
+        unlock_xhr = xhr;
+    }
+
+    function unlock_auto_reason_text() {
+        if (unlock_auto_reason === 'enable') return '<%:Auto select requires the plugin to be enabled%>';
+        if (unlock_auto_reason === 'self_proxy') return '<%:Auto select requires Router-Self Proxy, enable it in Plugin Settings - Traffic Control%>';
+        return '';
+    }
+
+    function unlock_set_find_buttons() {
+        var reason = unlock_auto_allowed ? '' : unlock_auto_reason_text();
+        var btns = document.querySelectorAll('.myip-find-btn');
+        Array.prototype.forEach.call(btns, function(b) {
+            var busy = !!unlock_find_keys[b.getAttribute('data-key')];
+            b.disabled = busy;
+            b.classList.toggle('oc-disabled', !busy && !unlock_auto_allowed);
+            if (busy) {
+                b.textContent = '<%:Selecting...%>';
+                b.title = '';
+            } else {
+                b.textContent = '<%:Auto Select%>';
+                b.title = reason;
+            }
+        });
+    }
+
+    function unlock_find_node(key) {
+        var i = unlock_service_index(key);
+        if (i < 0 || unlock_find_keys[key] || !unlock_auto_allowed) return;
+        ocConfirm({
+            title: '<%:Start Test%>',
+            body: '<%:Network instability may occur during testing, Are you sure want to start test?%>',
+            buttons: [
+                { label: '<%:Cancel%>', value: null },
+                { label: '<%:OK%>', value: 'start', kind: 'primary' }
+            ]
+        }).then(function(choice) {
+            if (choice !== 'start') return;
+            unlock_find_keys[key] = true;
+            unlock_set_find_buttons();
+            unlock_set_pending(key);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/cgi-bin/luci/admin/services/openclash/manual_stream_unlock_test?type=' + encodeURIComponent(UNLOCK_SERVICES[i].name) + '&result=1', true);
+            xhr.timeout = 300000;
+            xhr.onloadend = function() {
+                var res = null;
+                if (xhr.status === 200) {
+                    var lines = (xhr.responseText || '').split('\n');
+                    for (var c = lines.length - 1; c >= 0 && !res; c--) {
+                        var line = lines[c].trim();
+                        if (line.charAt(0) !== '{') continue;
+                        try {
+                            var parsed = JSON.parse(line);
+                            if (parsed && parsed.service === UNLOCK_SERVICES[i].name) res = parsed;
+                        } catch (e) {}
+                    }
+                }
+                if (res) {
+                    unlock_results[key] = { st: Number(res.st) || 0, region: res.region || '', node: res.node || '', ts: Date.now() };
+                    unlock_save_results();
+                    if (unlock_view) {
+                        unlock_render(key);
+                        syncCardHeights();
+                        if ((Number(res.st) || 0) === 0) {
+                            ocToast('<%:Unlock check failed, please check the network and try again%>', 'error');
+                        }
+                    }
+                } else {
+                    if (unlock_view) {
+                        unlock_render(key);
+                        ocToast('<%:Something Wrong While Testing...%>', 'error');
+                    }
+                }
+                delete unlock_find_keys[key];
+                unlock_set_find_buttons();
+            };
+            xhr.send();
+        });
+    }
+
+    function unlock_enter_gear() {
+        unlock_gear = true;
+        if (refresh_unlock) { clearInterval(refresh_unlock); refresh_unlock = null; }
+        var panel = unlock_gear_dom();
+        var listEl = panel.querySelector('.myip-gear-list');
+        var selected = unlock_slots();
+        var rest = UNLOCK_SERVICES.map(function(s) { return s.key; }).filter(function(k) { return selected.indexOf(k) < 0; });
+        unlock_gear_list = selected.concat(rest);
+        unlock_gear_list.forEach(function(key) {
+            var input = unlock_gear_input(key);
+            if (input) input.checked = selected.indexOf(key) >= 0;
+            listEl.appendChild(unlock_gear_rows[key]);
+        });
+        unlock_sync_gear(panel);
+        var dom = unlock_init_dom();
+        ACCESS_SLOTS.forEach(function(slot) {
+            dom[slot].card.style.display = 'none';
+        });
+        panel.classList.remove('oc-hidden');
+        unlock_set_unlock_icon(true);
+        var title = document.getElementById('myip-check-title');
+        if (title) title.textContent = '<%:Unlock Services%>';
+        var icon = document.getElementById('unlock-icon');
+        if (icon) {
+            icon.classList.add('oc-unlock-on');
+            var t = icon.querySelector('title');
+            if (t) t.textContent = '<%:Unlock Services%>';
+        }
+        syncCardHeights();
+    }
+
+    function toggle_unlock_by_icon(svgElement) {
+        if (!unlock_view) {
+            unlock_apply_view(true);
+            run_unlock_check();
+        } else if (!unlock_gear) {
+            unlock_enter_gear();
+        } else {
+            unlock_apply_view(false);
+        }
+        return false;
+    }
+
+    function unlock_apply_view(on) {
+        unlock_view = !!on;
+        unlock_gear = false;
+        unlock_gear_drag_clear();
+        localStorage.setItem('myip_unlock_view', unlock_view ? 'true' : 'false');
+        var prev = unlock_xhr;
+        unlock_xhr = null;
+        unlock_xhr_keys = [];
+        if (prev) { try { prev.abort(); } catch (e) {} }
+
+        var dom = unlock_init_dom();
+        var title = document.getElementById('myip-check-title');
+        var icon = document.getElementById('unlock-icon');
+        var mainCard = document.querySelector('.myip-main-card');
+
+        if (unlock_view) {
+            if (mainCard) mainCard.classList.add('oc-unlock-view');
+            unlock_set_unlock_icon(false);
+            unlock_gear_dom().classList.add('oc-hidden');
+            if (title) title.textContent = '<%:Unlock Check%>';
+            if (icon) {
+                icon.classList.add('oc-unlock-on');
+                var t = icon.querySelector('title');
+                if (t) t.textContent = '<%:Unlock Check%>';
+            }
+            if (refresh_http) { clearInterval(refresh_http); refresh_http = null; }
+            if (httpCheckXHR) { try { httpCheckXHR.abort(); } catch (e) {} httpCheckXHR = null; }
+            unlock_fill_slots();
+            unlock_render_all();
+            unlock_set_find_buttons();
+            unlock_load_services();
+            startUnlockInterval();
+        } else {
+            if (refresh_unlock) { clearInterval(refresh_unlock); refresh_unlock = null; }
+            if (mainCard) mainCard.classList.remove('oc-unlock-view');
+            unlock_set_unlock_icon(false);
+            unlock_gear_dom().classList.add('oc-hidden');
+            if (title) title.textContent = '<%:Access Check%>';
+            if (icon) {
+                icon.classList.remove('oc-unlock-on');
+                var t2 = icon.querySelector('title');
+                if (t2) t2.textContent = '<%:Access Check%>';
+            }
+            ACCESS_SLOTS.forEach(function(slot) {
+                var d = dom[slot];
+                d.card.setAttribute('data-svc', slot);
+                d.card.style.display = '';
+                d.label.innerHTML = d.labelHtml;
+                d.label.removeAttribute('title');
+                d.spark.innerHTML = '';
+            });
+            showAllGhosts();
+            HTTP.runcheck();
+            startHttpInterval();
+            syncCardHeights();
+        }
+    }
+
     function myip_Load()
     {
         IP.getPcolIP();
@@ -550,11 +1455,11 @@
         if (isOpen) {
             eyeOpen.classList.remove('oc-hidden');
             eyeClosed.classList.add('oc-hidden');
-            if (titleElement) titleElement.textContent = '<%:Hide IP%>';
+            if (titleElement) titleElement.textContent = '<%:Show IP%>';
         } else {
             eyeOpen.classList.add('oc-hidden');
             eyeClosed.classList.remove('oc-hidden');
-            if (titleElement) titleElement.textContent = '<%:Show IP%>';
+            if (titleElement) titleElement.textContent = '<%:Hide IP%>';
         }
     };
 
@@ -629,6 +1534,7 @@
     }
 
     function showAllGhosts() {
+        if (unlock_view) return;
         ['baidu','163','github','youtube'].forEach(function(svc) {
             SpeedHistory.renderSparkline(svc, document.getElementById('spark-' + svc));
         });
@@ -829,14 +1735,24 @@
             }
             myip_Load();
         }
-        HTTP.runcheck();
+        if (!unlock_view) {
+            HTTP.runcheck();
+        } else if (!unlock_gear) {
+            run_unlock_check(null, true);
+        }
 
         startHttpInterval();
         startIpInterval();
+        startUnlockInterval();
 
         return false;
     }
     function init_page() {
+        if (localStorage.getItem('myip_unlock_view') === 'true') {
+            unlock_apply_view(true);
+            run_unlock_check();
+        }
+
         var saved_mode = localStorage.getItem('myip_check_mode');
         if (saved_mode === 'true' || saved_mode === null) {
             use_router_mode = true;
@@ -869,6 +1785,7 @@
 
     window.addEventListener('resize', function() {
         syncCardHeights();
+        unlock_schedule_align();
     });
 
     window.addEventListener('beforeunload', function() {
@@ -885,9 +1802,13 @@
             clearAllIntervals();
             return;
         }
-        startHttpInterval();
+        if (!unlock_view) {
+            startHttpInterval();
+            HTTP.runcheck();
+        } else {
+            startUnlockInterval();
+        }
         startIpInterval();
-        HTTP.runcheck();
         if (localStorage.getItem('privacy_my_ip') !== 'true') {
             if (use_router_mode) {
                 get_router_ip_info();

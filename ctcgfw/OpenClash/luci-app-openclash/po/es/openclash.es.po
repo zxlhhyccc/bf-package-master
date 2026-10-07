@@ -626,6 +626,9 @@ msgstr "Bilibili"
 msgid "Bahamut"
 msgstr "Bahamut"
 
+msgid "Bahamut Anime"
+msgstr "Bahamut Anime"
+
 msgid "Custom Clash Rules"
 msgstr "Reglas personalizadas"
 
@@ -2513,11 +2516,50 @@ msgstr "Resultado de la prueba de desbloqueo"
 msgid "All Proxies Test Result"
 msgstr "Resultado de la prueba de todos los nodos"
 
+msgid "Unlock Check"
+msgstr "Comprobación de desbloqueo"
+
+msgid "Unlocked"
+msgstr "Desbloqueado"
+
+msgid "Not Unlocked"
+msgstr "No desbloqueado"
+
+msgid "Originals Only"
+msgstr "Solo originales"
+
+msgid "Auto Select"
+msgstr "Auto seleccionar"
+
+msgid "Selecting..."
+msgstr "Seleccionando..."
+
+msgid "Unlock Services"
+msgstr "Servicios de desbloqueo"
+
+msgid "Must Select 4 Services"
+msgstr "Debes seleccionar 4 servicios"
+
+msgid "4 Services Selected"
+msgstr "4 servicios seleccionados"
+
+msgid "Not Tested"
+msgstr "Sin probar"
+
+msgid "Unlock check failed, please check the network and try again"
+msgstr "La comprobación de desbloqueo ha fallado. Comprueba la red e inténtalo de nuevo"
+
 msgid "Something Wrong While Testing..."
 msgstr "Algo ha fallado durante la prueba..."
 
 msgid "Network instability may occur during testing, Are you sure want to start test?"
 msgstr "La prueba puede causar inestabilidad en la red. ¿Seguro que deseas continuar?"
+
+msgid "Auto select requires the plugin to be enabled"
+msgstr "La selección automática requiere que el complemento esté habilitado"
+
+msgid "Auto select requires Router-Self Proxy, enable it in Plugin Settings - Traffic Control"
+msgstr "La selección automática requiere el proxy del propio router; actívalo en Ajustes del complemento - Control de tráfico"
 
 msgid "Subscription Info"
 msgstr "Información de suscripción"
@@ -6709,9 +6751,6 @@ msgstr "Caché local"
 
 msgid "Just fetched"
 msgstr "Recién obtenido"
-
-msgid "just now"
-msgstr "ahora mismo"
 
 msgid "minutes ago"
 msgstr "min hace"

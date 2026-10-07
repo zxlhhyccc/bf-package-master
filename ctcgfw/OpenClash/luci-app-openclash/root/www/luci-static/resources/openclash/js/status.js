@@ -1488,7 +1488,7 @@ var ocLang = window.ocLang || '';
             container.classList.remove('oc-hidden');
 
             if (progressSection) {
-                progressSection.innerHTML = '<div class="subscription-loading"><span class="loading-spinner"></span><%:Collecting data...%></div>';
+                progressSection.innerHTML = '<div class="subscription-loading">' + ocSpinnerRow('<%:Collecting data...%>') + '</div>';
                 progressSection.classList.remove('oc-hidden');
                 progressSection.className = 'subscription-progress';
             }

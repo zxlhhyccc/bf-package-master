@@ -85,6 +85,8 @@ function index()
 	entry({"admin", "services", "openclash", "log"},cbi("openclash/log"),_("Server Logs"), 90).leaf = true
 	entry({"admin", "services", "openclash", "myip_check"}, call("action_myip_check"))
 	entry({"admin", "services", "openclash", "website_check"}, call("action_website_check"))
+	entry({"admin", "services", "openclash", "unlock_check"}, call("action_unlock_check"))
+	entry({"admin", "services", "openclash", "unlock_services"}, call("action_unlock_services"))
 	entry({"admin", "services", "openclash", "version_history"}, call("action_version_history"))
 	entry({"admin", "services", "openclash", "addr_info"}, call("action_cdn_info"))
 	entry({"admin", "services", "openclash", "save_github_address_mod"}, call("action_save_github_address_mod"))
@@ -2499,6 +2501,9 @@ end
 function manual_stream_unlock_test()
 	local type = HTTP.formvalue("type")
 	local cmd = string.format('/usr/share/openclash/openclash_streaming_unlock.lua "%s"', type)
+	if HTTP.formvalue("result") == "1" then
+		cmd = cmd .. ' "result"'
+	end
 	HTTP.prepare_content("text/plain; charset=utf-8")
 	local util = io.popen(cmd)
 	if util and util ~= "" then
@@ -2509,6 +2514,13 @@ function manual_stream_unlock_test()
 				write_padded(trans_line(ln))
 			end
 			if not process_status("openclash_streaming_unlock.lua "..type) or not process_status("openclash_streaming_unlock.lua ") then
+				while true do
+					ln = util:read("*l")
+					if not ln then break end
+					if ln ~= "" then
+						write_padded(trans_line(ln))
+					end
+				end
 				break
 			end
 		end
@@ -3069,6 +3081,210 @@ function latency_test(addr, on_result)
 	result.error = last_failure.error
 	if on_result then on_result(result) end
 	return result
+end
+
+local unlock_service_keys = { "prime_video", "bahamut", "bilibili", "claude", "dazn", "discovery", "disney", "gemini", "google", "hbo_max", "netflix", "openai", "paramount", "spotify", "steam", "tvb", "ytb" }
+local unlock_service_labels = {
+	prime_video = "Amazon Prime Video",
+	bahamut = "Bahamut Anime",
+	bilibili = "Bilibili",
+	claude = "Claude",
+	dazn = "DAZN",
+	discovery = "Discovery Plus",
+	disney = "Disney Plus",
+	gemini = "Gemini",
+	google = "Google",
+	hbo_max = "HBO Max",
+	netflix = "Netflix",
+	openai = "OpenAI",
+	paramount = "Paramount Plus",
+	spotify = "Spotify",
+	steam = "Steam",
+	tvb = "TVB Anywhere+",
+	ytb = "YouTube Premium",
+}
+local unlock_service_default = { "netflix", "ytb", "openai", "claude" }
+
+function action_unlock_check()
+	local service = HTTP.formvalue("service")
+	local services = {}
+	if service and service ~= "" then
+		for _, name in ipairs(unlock_service_keys) do
+			if name == service then
+				services[#services + 1] = name
+			end
+		end
+	else
+		local selected = uci:get("openclash", "config", "unlock_check_services") or ""
+		local seen = {}
+		for name in selected:gmatch("[^,]+") do
+			name = name:match("^%s*(.-)%s*$")
+			if name ~= "" and not seen[name] and #services < 4 then
+				for _, key in ipairs(unlock_service_keys) do
+					if key == name then
+						seen[key] = true
+						services[#services + 1] = key
+						break
+					end
+				end
+			end
+		end
+		if #services == 0 then
+			services = unlock_service_default
+		end
+	end
+
+	HTTP.prepare_content("text/plain; charset=utf-8")
+
+	if #services == 0 then
+		write_padded(json.stringify({ complete = true }))
+		return
+	end
+
+	local queries = {}
+	for _, name in ipairs(services) do
+		local fdi, fdo = nixio.pipe()
+		if fdi and fdo then
+			local cmd = string.format('lua "/usr/share/openclash/openclash_streaming_unlock.lua" "%s" "check"', unlock_service_labels[name] or name)
+			local pid = nixio.fork()
+			if pid > 0 then
+				fdo:close()
+				queries[#queries + 1] = { pid = pid, name = name, fdi = fdi, data = "", done = false }
+			elseif pid == 0 then
+				nixio.dup(fdo, nixio.stdout)
+				fdi:close()
+				fdo:close()
+				nixio.exec("/bin/sh", "-c", cmd)
+			else
+				if fdi then fdi:close() end
+				if fdo then fdo:close() end
+			end
+		end
+	end
+
+	if #queries == 0 then
+		HTTP.prepare_content("application/json")
+		HTTP.write_json({ error = "Failed to create any queries" })
+		return
+	end
+
+	local pending = #queries
+	local delay = 50000000
+	local max_iterations = 280
+
+	for _ = 1, max_iterations do
+		for _, q in ipairs(queries) do
+			if not q.done then
+				local ok_r, buf = pcall(try_read, q.fdi, 4096)
+				if ok_r and buf then
+					q.data = q.data .. buf
+				end
+
+				local ok_w, wpid = pcall(nixio.waitpid, q.pid, "nohang")
+				local finished = false
+				if ok_w and wpid then
+					finished = true
+				else
+					local ok_k, alive = pcall(nixio.kill, q.pid, 0)
+					if not (ok_k and alive) then
+						finished = true
+						pcall(nixio.waitpid, q.pid, 0)
+					end
+				end
+
+				if finished then
+					local guard = 0
+					while guard < 64 do
+						guard = guard + 1
+						local ok_b, b = pcall(try_read, q.fdi, 4096)
+						if not ok_b or not b then break end
+						q.data = q.data .. b
+					end
+					pcall(q.fdi.close, q.fdi)
+					q.done = true
+					pending = pending - 1
+
+					local st = 0
+					local region = ""
+					local node = ""
+					local ok_j, parsed = pcall(json.parse, string.gsub(q.data or "", "%s+$", ""))
+					if ok_j and parsed and type(parsed) == "table" and parsed.st then
+						st = tonumber(parsed.st) or 0
+						region = parsed.region or ""
+						node = parsed.node or ""
+					end
+					write_padded(json.stringify({ service = q.name, st = st, region = region, node = node }))
+				end
+			end
+		end
+
+		if pending == 0 then
+			break
+		end
+
+		nixio.nanosleep(0, delay)
+		delay = math.min(delay * 2, 200000000)
+	end
+
+	for _, q in ipairs(queries) do
+		if not q.done then
+			write_padded(json.stringify({ service = q.name, st = 0, region = "", node = "" }))
+			pcall(nixio.kill, q.pid, nixio.const.SIGTERM)
+			local reaped = false
+			for _ = 1, 20 do
+				local ok_w, wpid = pcall(nixio.waitpid, q.pid, "nohang")
+				if ok_w and wpid then reaped = true break end
+				local ok_k, alive = pcall(nixio.kill, q.pid, 0)
+				if not (ok_k and alive) then
+					pcall(nixio.waitpid, q.pid, 0)
+					reaped = true
+					break
+				end
+				nixio.nanosleep(0, 50000000)
+			end
+			if not reaped then
+				pcall(nixio.kill, q.pid, nixio.const.SIGKILL)
+				pcall(nixio.waitpid, q.pid, 0)
+			end
+			pcall(q.fdi.close, q.fdi)
+		end
+	end
+
+	write_padded(json.stringify({ complete = true }))
+end
+
+function action_unlock_services()
+	local valid = {}
+	for _, name in ipairs(unlock_service_keys) do
+		valid[name] = true
+	end
+	local input = HTTP.formvalue("services")
+	local saved = false
+	local raw = uci:get("openclash", "config", "unlock_check_services") or ""
+	if input and input ~= "" then
+		raw = input
+		saved = true
+	end
+	local seen = {}
+	local list = {}
+	for item in raw:gmatch("[^,]+") do
+		item = item:gsub("^%s+", ""):gsub("%s+$", "")
+		if valid[item] and not seen[item] and #list < 4 then
+			seen[item] = true
+			list[#list + 1] = item
+		end
+	end
+	if #list == 0 then
+		list = unlock_service_default
+	elseif saved then
+		uci:set("openclash", "config", "unlock_check_services", table.concat(list, ","))
+		uci:commit("openclash")
+	end
+	local enable = fs.uci_get_config("config", "enable") == "1"
+	local self_proxy = fs.uci_get_config("config", "router_self_proxy")
+	if self_proxy == nil then self_proxy = "1" end
+	HTTP.prepare_content("application/json")
+	HTTP.write_json({ services = list, enable = enable, auto_ready = enable and self_proxy == "1" })
 end
 
 function action_website_check()

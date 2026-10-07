@@ -17,7 +17,7 @@ function ocStreamTest(btn, kind, type, idName) {
             var title = kind === 'manual' ? '<%:Unlock Test Result%>' : '<%:All Proxies Test Result%>';
             output.innerHTML =
                 '<div class="oc-oplog"><div class="oc-oplog-h"><b>' + title + '</b><span class="oc-oplog-live"><i></i>LIVE</span></div>' +
-                '<div class="oc-oplog-body"><span class="loading-spinner" style="vertical-align:middle"></span> <%:Waiting for command to complete...%></div></div>';
+                '<div class="oc-oplog-body">' + ocSpinnerRow('<%:Waiting for command to complete...%>') + '</div></div>';
             legend.textContent = '<%:Collecting data...%>';
             legend.parentNode.classList.remove('oc-hidden');
             legend.style.display = 'none';

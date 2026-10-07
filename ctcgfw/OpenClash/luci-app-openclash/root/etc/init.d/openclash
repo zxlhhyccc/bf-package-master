@@ -3671,7 +3671,7 @@ get_config()
       fakeip_range6=$(uci_get_config "fakeip_range6")
    fi
    if [ -z "$fakeip_range6" ]; then
-      fakeip_range6="fdfe:dcba:9876::1/64"
+      fakeip_range6="2001:2::1/64"
       fake_ip_range6_enable=0
    else
       fake_ip_range6_enable=1

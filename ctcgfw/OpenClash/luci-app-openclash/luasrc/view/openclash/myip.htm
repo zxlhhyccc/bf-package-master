@@ -48,11 +48,11 @@
 
                             <div class="myip-check-section">
                                 <p class="myip-section-title">
-                                    <%:Access Check%>
+                                    <span id="myip-check-title"><%:Access Check%></span>
                                     <span class="icon-pill myip-toolbar">
                                         <button type="button" class="icon-pill-opt" onclick="return privacy_my_ip(this)">
                                             <svg id="eye-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" overflow="visible" xmlns="http://www.w3.org/2000/svg">
-                                                <title><%:Hide IP%></title>
+                                                <title><%:Show IP%></title>
                                                 <use id="eye-open" href="#oc-icon-eye" x="-2.5" y="-2.5" width="29" height="29"></use>
                                                 <use id="eye-closed" class="oc-hidden" href="#oc-icon-eye-off" x="-2.5" y="-2.5" width="29" height="29"></use>
                                             </svg>
@@ -65,6 +65,13 @@
                                                 <rect class="mode-dot" x="30" y="33" width="3" height="3" rx="1.5"/>
                                                 <path class="mode-antenna" d="M12 28L12 8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
                                                 <path class="mode-antenna" d="M36 28V8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="icon-pill-opt" onclick="return toggle_unlock_by_icon(this)">
+                                            <svg id="unlock-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" overflow="visible" xmlns="http://www.w3.org/2000/svg">
+                                                <title><%:Access Check%></title>
+                                                <use id="unlock-icon-lock" href="#oc-icon-world-check" x="-1.25" y="-1.25" width="26.5" height="26.5"/>
+                                                <use id="unlock-icon-gear" class="oc-hidden" href="#oc-icon-gear" x="1.25" y="1.25" width="21.5" height="21.5"/>
                                             </svg>
                                         </button>
                                         <button type="button" class="icon-pill-opt" onclick="return refresh_myip(this)">
@@ -81,40 +88,48 @@
                                         <span class="myip-card-label"><svg class="myip-card-icon ic-baidu"><use href="#oc-icon-brand-baidu"/></svg><span><%:Baidu Search%></span></span>
                                         <div class="myip-check-row">
                                             <span class="myip-latency" id="latency-baidu">--</span>
-                                            <span class="myip-latency-unit">ms</span>
+                                            <span class="myip-latency-unit" id="unit-baidu">ms</span>
                                             <div class="myip-status-dot testing" id="dot-baidu" title="<%:Testing...%>"></div>
+                                            <span class="myip-unlock-node"><span class="myip-unlock-node-name">--</span><span class="myip-unlock-region oc-hidden"></span></span>
                                         </div>
                                         <div class="myip-sparkline-wrap" id="spark-baidu"></div>
+                                        <span class="myip-unlock-ribbon rib-n"><svg viewBox="0 0 24 24"><path d="M7 12h10"/></svg></span>
                                     </div>
 
                                     <div class="myip-card-item myip-check-item" data-svc="163">
                                         <span class="myip-card-label"><svg class="myip-card-icon ic-netease"><use href="#oc-icon-brand-netease"/></svg><span><%:NetEase Music%></span></span>
                                         <div class="myip-check-row">
                                             <span class="myip-latency" id="latency-163">--</span>
-                                            <span class="myip-latency-unit">ms</span>
+                                            <span class="myip-latency-unit" id="unit-163">ms</span>
                                             <div class="myip-status-dot testing" id="dot-163" title="<%:Testing...%>"></div>
+                                            <span class="myip-unlock-node"><span class="myip-unlock-node-name">--</span><span class="myip-unlock-region oc-hidden"></span></span>
                                         </div>
                                         <div class="myip-sparkline-wrap" id="spark-163"></div>
+                                        <span class="myip-unlock-ribbon rib-n"><svg viewBox="0 0 24 24"><path d="M7 12h10"/></svg></span>
                                     </div>
 
                                     <div class="myip-card-item myip-check-item" data-svc="github">
                                         <span class="myip-card-label"><svg class="myip-card-icon ic-github"><use href="#oc-icon-brand-github"/></svg><span>GitHub</span></span>
                                         <div class="myip-check-row">
                                             <span class="myip-latency" id="latency-github">--</span>
-                                            <span class="myip-latency-unit">ms</span>
+                                            <span class="myip-latency-unit" id="unit-github">ms</span>
                                             <div class="myip-status-dot testing" id="dot-github" title="<%:Testing...%>"></div>
+                                            <span class="myip-unlock-node"><span class="myip-unlock-node-name">--</span><span class="myip-unlock-region oc-hidden"></span></span>
                                         </div>
                                         <div class="myip-sparkline-wrap" id="spark-github"></div>
+                                        <span class="myip-unlock-ribbon rib-n"><svg viewBox="0 0 24 24"><path d="M7 12h10"/></svg></span>
                                     </div>
 
                                     <div class="myip-card-item myip-check-item" data-svc="youtube">
                                         <span class="myip-card-label"><svg class="myip-card-icon ic-youtube"><use href="#oc-icon-brand-youtube"/></svg><span>YouTube</span></span>
                                         <div class="myip-check-row">
                                             <span class="myip-latency" id="latency-youtube">--</span>
-                                            <span class="myip-latency-unit">ms</span>
+                                            <span class="myip-latency-unit" id="unit-youtube">ms</span>
                                             <div class="myip-status-dot testing" id="dot-youtube" title="<%:Testing...%>"></div>
+                                            <span class="myip-unlock-node"><span class="myip-unlock-node-name">--</span><span class="myip-unlock-region oc-hidden"></span></span>
                                         </div>
                                         <div class="myip-sparkline-wrap" id="spark-youtube"></div>
+                                        <span class="myip-unlock-ribbon rib-n"><svg viewBox="0 0 24 24"><path d="M7 12h10"/></svg></span>
                                     </div>
                                 </div>
                             </div>

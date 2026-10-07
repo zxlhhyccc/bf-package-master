@@ -828,6 +828,20 @@ var ocLoadingMap = typeof WeakMap !== 'undefined' ? new WeakMap() : (function(){
     };
 })();
 
+function ocSpinner(className) {
+    var el = document.createElement('span');
+    el.className = 'loading-spinner' + (className ? ' ' + className : '');
+    return el;
+}
+
+function ocSpinnerHtml(className) {
+    return ocSpinner(className).outerHTML;
+}
+
+function ocSpinnerRow(text) {
+    return '<span class="oc-spinner-row">' + ocSpinnerHtml() + '<span>' + text + '</span></span>';
+}
+
 function ocShowLoading(container, message, minHeight) {
     if (!container) return;
     if (ocLoadingMap.get(container)) return;
@@ -837,7 +851,10 @@ function ocShowLoading(container, message, minHeight) {
     if (minHeight) container.style.minHeight = minHeight;
     var el = document.createElement('div');
     el.className = 'config-editor-loading';
-    el.innerHTML = '<div class="loading-spinner"></div><span>' + (message || 'Loading\u2026') + '</span>';
+    var label = document.createElement('span');
+    label.textContent = message || 'Loading\u2026';
+    el.appendChild(ocSpinner());
+    el.appendChild(label);
     container.appendChild(el);
     ocLoadingMap.set(container, { el: el, prevPos: prevPos, prevMinH: prevMinH });
 }
@@ -1180,14 +1197,7 @@ function ocSetBtnLoading(btn, loading) {
     if (loading) {
         if (svg && !btn.dataset.ocSvgHtml) {
             btn.dataset.ocSvgHtml = svg.outerHTML;
-            var spinner = document.createElement('span');
-            spinner.className = 'loading-spinner oc-btn-spinner';
-            spinner.style.verticalAlign = 'middle';
-            var svgW = parseInt(svg.getAttribute('width'), 10);
-            var size = (!isNaN(svgW) && svgW > 0) ? svgW : 14;
-            spinner.style.width = size + 'px';
-            spinner.style.height = size + 'px';
-            btn.replaceChild(spinner, svg);
+            btn.replaceChild(ocSpinner('oc-btn-spinner'), svg);
         }
         btn.disabled = true;
     } else {
