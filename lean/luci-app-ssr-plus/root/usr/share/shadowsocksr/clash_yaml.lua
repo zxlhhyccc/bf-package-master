@@ -394,7 +394,12 @@ local function fetch_ech_config(domain, dns_server)
 	return nil
 end
 
+local function ipv6_enabled()
+	return uci:get_first("shadowsocksr", "global", "ipv6_support", "0") == "1"
+end
+
 local function get_filter_aaaa()
+	if ipv6_enabled() then return "0" end
 	local value = uci:get_first("shadowsocksr", "global", "filter_aaaa", "1")
 	if value == nil or value == "" then
 		value = uci:get_first("shadowsocksr", "global", "mosdns_ipv6", "1")
@@ -1649,7 +1654,8 @@ local function build_single_proxy_runtime_doc(proxy, local_port, socks_port, mod
 
 	local doc = {
 		["allow-lan"] = true,
-		["bind-address"] = "0.0.0.0",
+		["bind-address"] = ipv6_enabled() and "*" or "0.0.0.0",
+		ipv6 = ipv6_enabled(),
 		mode = "rule",
 		["log-level"] = "silent",
 		["find-process-mode"] = "off",
@@ -1761,7 +1767,8 @@ local function build_tuic_runtime_doc(sid, local_port, socks_port, mode)
 
 	local doc = {
 		["allow-lan"] = true,
-		["bind-address"] = "0.0.0.0",
+		["bind-address"] = ipv6_enabled() and "*" or "0.0.0.0",
+		ipv6 = ipv6_enabled(),
 		mode = "rule",
 		["log-level"] = "silent",
 		["find-process-mode"] = "off",
@@ -1841,7 +1848,8 @@ local function build_shadowsocks_runtime_doc(sid, local_port, socks_port, mode)
 
 	local doc = {
 		["allow-lan"] = true,
-		["bind-address"] = "0.0.0.0",
+		["bind-address"] = ipv6_enabled() and "*" or "0.0.0.0",
+		ipv6 = ipv6_enabled(),
 		mode = "rule",
 		["log-level"] = "silent",
 		["find-process-mode"] = "off",
