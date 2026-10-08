@@ -276,7 +276,7 @@
  	list smartdns_remote_dns 'https://1.1.1.1/dns-query'
 --- a/root/usr/share/passwall/app.sh
 +++ b/root/usr/share/passwall/app.sh
-@@ -1103,6 +1103,12 @@ start_dns() {
+@@ -1119,6 +1119,12 @@ start_dns() {
  				echolog "  - ChinaDNS-NG(${LOCAL_DNS}) -> ${china_ng_local_dns}"
  				echolog "  * 请确保上游直连 DNS 支持 TCP 查询。"
  				NEXT_DNS_LISTEN_PORT=$(expr $NEXT_DNS_LISTEN_PORT + 1)
@@ -289,7 +289,7 @@
  			}
  		;;
  		auto)
-@@ -1216,6 +1222,19 @@ start_dns() {
+@@ -1232,6 +1238,19 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -309,7 +309,7 @@
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1225,6 +1244,11 @@ start_dns() {
+@@ -1241,6 +1260,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -321,7 +321,7 @@
  		else
  			TUN_DNS=${REMOTE_DNS}
  			echolog "  - udp://${TUN_DNS}"
-@@ -1238,6 +1262,12 @@ start_dns() {
+@@ -1254,6 +1278,12 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -334,7 +334,7 @@
  		}
  	;;
  	esac
-@@ -1372,6 +1402,73 @@ start_dns() {
+@@ -1388,6 +1416,73 @@ start_dns() {
  	fi
  }
  
@@ -408,7 +408,7 @@
  start_haproxy() {
  	[ "$(config_n_get @global_haproxy[0] balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -1831,7 +1928,8 @@ get_config() {
+@@ -1847,7 +1944,8 @@ get_config() {
  	CLIENT_PROXY=$(config_n_get @global[0] client_proxy 1)
  	DNS_SHUNT=$(config_n_get @global[0] dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
