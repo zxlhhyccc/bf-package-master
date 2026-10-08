@@ -27,7 +27,7 @@ import {
 import {
     syntaxHighlighting, HighlightStyle, bracketMatching,
     foldGutter, indentOnInput, StreamLanguage, foldKeymap, indentUnit,
-    getIndentUnit, ensureSyntaxTree
+    getIndentUnit, ensureSyntaxTree, syntaxTree, Language
 } from "@codemirror/language"
 
 // ---- Tags ----
@@ -652,8 +652,7 @@ const logLanguage = StreamLanguage.define({
         var ch = stream.peek()
         if (!ch) { stream.skipToEnd(); return null }
         if (ch === '\u3010' && stream.match(/\u3010[^\u3011]*\u3011/)) return "bracket"
-        if (state.tabDone) { stream.next(); return "logString" }
-        if (ch === '[') {
+        if (!state.tabDone && ch === '[') {
             if (levelTagMap === null) buildLevelCache()
             var levelMatch = stream.match(levelRegex)
             if (levelMatch) {
@@ -665,8 +664,17 @@ const logLanguage = StreamLanguage.define({
                 return "category"
             }
             if (stream.match(/\[[A-Z][^\]]*\]/)) return "category"
+            stream.next()
+            return "logString"
         }
-        if (ch !== '[') { state.tabDone = true }
+        state.tabDone = true
+        var rest = stream.string, p = stream.pos
+        while (p < rest.length) {
+            var c = rest.charCodeAt(p)
+            if (c === 0x3010 || c <= 32 || c === 0xa0 || c === 0x3000) break
+            p++
+        }
+        if (p > stream.pos) { stream.pos = p; return "logString" }
         stream.next()
         return "logString"
     }
@@ -686,24 +694,46 @@ const logHighlightStyle = HighlightStyle.define([
     { tag: logTag.levelWatchdog, class: "cmt-log-level-watchdog" },
 ])
 
-function syntaxPreload(buffer = 1000) {
+function parseAheadExtension(buffer = 1000, budget = 8, catchup = 45, chunk = 300) {
     return ViewPlugin.fromClass(class {
-        constructor(view) { this.preload(view) }
-        update(u) {
-            if (u.viewportChanged || u.docChanged) {
-                if (this.rafId) cancelAnimationFrame(this.rafId)
-                var self = this
-                this.rafId = requestAnimationFrame(function() {
-                    self.rafId = null
-                    self.preload(u.view)
-                })
-            }
+        constructor(view) {
+            this.view = view
+            this.rafId = null
+            this.schedule()
         }
-        preload(view) {
+        update(u) {
+            this.view = u.view
+            if (u.viewportChanged || u.docChanged) this.schedule()
+        }
+        schedule() {
+            if (this.rafId !== null) return
+            var self = this
+            this.rafId = requestAnimationFrame(function() {
+                self.rafId = null
+                self.step()
+            })
+        }
+        step() {
+            var view = this.view
+            if (!view) return
+            if (!view.state.field(Language.state, false)) return
             var doc = view.state.doc
-            var ll = doc.lineAt(view.viewport.to).number
-            var target = Math.min(ll + buffer, doc.lines)
-            ensureSyntaxTree(view.state, doc.line(target).to, 50)
+            var front = syntaxTree(view.state).length
+            var vpTo = view.viewport.to
+            var frontLine = doc.lineAt(front).number
+            var vpLine = doc.lineAt(vpTo).number
+            var ideal = doc.line(Math.min(vpLine + buffer, doc.lines)).to
+            if (front >= ideal) return
+            var behind = front < vpTo
+            var size = behind ? Math.min(450, Math.max(chunk, Math.ceil((vpLine - frontLine) / 6))) : chunk
+            var to = Math.min(doc.line(Math.min(frontLine + size, doc.lines)).to, ideal)
+            ensureSyntaxTree(view.state, to, behind ? catchup : budget)
+            view.dispatch({})
+            if (syntaxTree(view.state).length < ideal) this.schedule()
+        }
+        destroy() {
+            if (this.rafId !== null) cancelAnimationFrame(this.rafId)
+            this.view = null
         }
     })
 }
@@ -720,8 +750,7 @@ function baseExtensions(extra = [], opts = {}) {
         cmKeymap.of([...defaultKeymap, ...historyKeymap, ...searchKeymap, ...closeBracketsKeymap, ...foldKeymap, { key: 'Tab', run: function(v) { return acceptCompletion(v) || indentMore(v) } }]),
         ...extra
     ]
-    // the merge panes run two editors at once, so the forced viewport parse can be dropped there
-    if (opts.preload !== false) list.push(syntaxPreload())
+    if (opts.preload !== false) list.push(parseAheadExtension())
     return list
 }
 
@@ -1176,7 +1205,7 @@ export {
     defaultKeymap, history, historyKeymap, indentWithTab,
     toggleComment, foldKeymap,
     syntaxHighlighting, HighlightStyle, bracketMatching,
-    foldGutter, indentOnInput, StreamLanguage, indentUnit,
+    foldGutter, indentOnInput, StreamLanguage, indentUnit, ensureSyntaxTree, syntaxTree,
     yaml, markdown, shell, properties,
     linter, lintGutter, yamlLinter,
     search, searchKeymap, highlightSelectionMatches,
@@ -1185,7 +1214,7 @@ export {
     githubDark, githubLight,
     MergeView,
     logLanguage, logHighlightStyle,
-    baseExtensions, syntaxPreload, placeholderExtension, indentMarkerExtension,
+    baseExtensions, parseAheadExtension, placeholderExtension, indentMarkerExtension,
     topSearchExtension, mergeDefaultConfig, mirrorThemeScrollbar,
     themeExtension, dispatchTheme,
     switchHljsTheme, ensureMarkdown, renderMarkdown,

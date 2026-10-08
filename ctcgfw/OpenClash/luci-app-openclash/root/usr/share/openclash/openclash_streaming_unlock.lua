@@ -170,7 +170,7 @@ local streams = {
 	["Netflix"] = { group_key = "stream_auto_select_group_key_netflix", group_default = "netflix|奈飞", region_key = "stream_auto_select_region_key_netflix", node_key = "stream_auto_select_node_key_netflix", site = "https://www.netflix.com", host = "www%.netflix%.com" },
 	["Disney Plus"] = { group_key = "stream_auto_select_group_key_disney", group_default = "disney|迪士尼", region_key = "stream_auto_select_region_key_disney", node_key = "stream_auto_select_node_key_disney", site = "https://www.disneyplus.com", host = "www%.disneyplus%.com" },
 	["HBO Max"] = { group_key = "stream_auto_select_group_key_hbo_max", group_default = "hbo|hbomax|hbo max", region_key = "stream_auto_select_region_key_hbo_max", node_key = "stream_auto_select_node_key_hbo_max", site = "https://www.max.com", host = "www%.max%.com" },
-	["YouTube Premium"] = { group_key = "stream_auto_select_group_key_ytb", group_default = "youtobe|油管", region_key = "stream_auto_select_region_key_ytb", node_key = "stream_auto_select_node_key_ytb", site = "https://m.youtube.com/premium", host = "m%.youtube%.com" },
+	["YouTube Premium"] = { group_key = "stream_auto_select_group_key_ytb", group_default = "youtube|油管", region_key = "stream_auto_select_region_key_ytb", node_key = "stream_auto_select_node_key_ytb", site = "https://m.youtube.com/premium", host = "m%.youtube%.com" },
 	["TVB Anywhere+"] = { group_key = "stream_auto_select_group_key_tvb_anywhere", group_default = "tvb", region_key = "stream_auto_select_region_key_tvb_anywhere", node_key = "stream_auto_select_node_key_tvb_anywhere", site = "https://www.tvbanywhere.com/img/tvb/vip_purchase.png", host = "www%.tvbanywhere%.com" },
 	["Amazon Prime Video"] = { group_key = "stream_auto_select_group_key_prime_video", group_default = "prime video|amazon", region_key = "stream_auto_select_region_key_prime_video", node_key = "stream_auto_select_node_key_prime_video", site = "https://www.primevideo.com", host = "www%.primevideo%.com" },
 	["DAZN"] = { group_key = "stream_auto_select_group_key_dazn", group_default = "dazn", region_key = "stream_auto_select_region_key_dazn", node_key = "stream_auto_select_node_key_dazn", site = "https://www.dazn.com", host = "www%.dazn%.com" },
@@ -740,6 +740,19 @@ local function get_sniffed_chains(host)
 	end
 end
 
+-- The probes resolve through the OpenClash DNS: the router's own resolver may bypass
+-- dnsmasq, and the core only attaches the domain when the query went through it.
+local function resolve_via_openclash_dns(domain)
+	local ip
+	local out = SYS.exec(string.format("nslookup %s 127.0.0.1 2>/dev/null", domain)) or ""
+	for v in out:gmatch("Address: (%d+%.%d+%.%d+%.%d+)") do
+		if v ~= "127.0.0.1" then
+			ip = v
+		end
+	end
+	return ip
+end
+
 local function sniff_service_chains()
 	local site = stream_config("site")
 	local host = stream_config("host")
@@ -748,11 +761,17 @@ local function sniff_service_chains()
 	end
 	local domain = string.match(site, "^https?://([^/:]+)")
 	local domain_port = string.match(site, "^https://") and 443 or 80
+	local probe_target = domain
 	if domain then
-		SYS.call(string.format('( (sleep 4) | nc %s %s ) >/dev/null 2>&1 &', domain, domain_port))
-		SYS.call(string.format('( (sleep 4) | openssl s_client -connect %s:%s -servername %s -quiet -no_ign_eof ) >/dev/null 2>&1 &', domain, domain_port, domain))
+		probe_target = resolve_via_openclash_dns(domain) or domain
+		SYS.call(string.format('( (sleep 4) | nc %s %s ) >/dev/null 2>&1 &', probe_target, domain_port))
+		SYS.call(string.format('( (sleep 4) | openssl s_client -connect %s:%s -servername %s -quiet -no_ign_eof ) >/dev/null 2>&1 &', probe_target, domain_port, domain))
 	end
-	SYS.call(string.format('curl -sL -m 5 --limit-rate 1k -o /dev/null %s &', site))
+	local resolve_arg = ""
+	if probe_target ~= domain then
+		resolve_arg = string.format("--resolve %s:%s:%s ", domain, domain_port, probe_target)
+	end
+	SYS.call(string.format('curl -sL -m 5 --limit-rate 1k -o /dev/null %s%s &', resolve_arg, site))
 	local deadline = os.time() + 4
 	local polls = 0
 	while os.time() < deadline and polls < 4 do
@@ -1315,8 +1334,12 @@ local function trace_region(data)
 end
 
 local function fetch_trace_region(url)
+	local host = string.match(url, "^https?://([^/:]+)")
+	local port = string.match(url, "^https://") and 443 or 80
+	local ip = host and resolve_via_openclash_dns(host)
+	local resolve_arg = ip and string.format("--resolve %s:%s:%s ", host, port, ip) or ""
 	for _ = 1, 2 do
-		local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 -H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", UA, url))
+		local data = SYS.exec(string.format("curl -sL --connect-timeout 5 -m 5 --speed-time 5 --speed-limit 1 --retry 2 %s-H 'Accept-Language: en' -H 'Content-Type: application/json' -H 'User-Agent: %s' '%s'", resolve_arg, UA, url))
 		local loc = trace_region(data)
 		if loc then
 			return loc

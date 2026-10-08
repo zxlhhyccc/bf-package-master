@@ -236,9 +236,13 @@ fi
 #gzip_types: nginx only compresses text/html by default, so the openclash
 #static assets (js/css/svg) and the JSON API answers are sent uncompressed
 if [ -d /etc/nginx/conf.d ]; then
+	UWSGI_TIMEOUT="uwsgi_read_timeout 3600;"
+	GZIP_TYPES="gzip_types text/css application/javascript image/svg+xml application/json;"
+	nginx -V 2>&1 | grep -q 'without-http_uwsgi_module' && UWSGI_TIMEOUT=""
+	nginx -V 2>&1 | grep -q 'without-http_gzip_module' && GZIP_TYPES=""
 	cat > /etc/nginx/conf.d/openclash.conf <<-EOF
-	uwsgi_read_timeout 3600;
-	gzip_types text/css application/javascript image/svg+xml application/json;
+	$UWSGI_TIMEOUT
+	$GZIP_TYPES
 	EOF
 	#same-origin proxy for the dashboard API so https pages can use wss
 	[ -x /usr/share/openclash/openclash_nginx.sh ] && /usr/share/openclash/openclash_nginx.sh -n

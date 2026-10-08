@@ -16,7 +16,7 @@ function M.is_valid_version(s)
 	if not s or s == "" then return false end
 	s = trim(s)
 	if s == "" then return false end
-	if s:match("^<") then return false end
+	if s:match("^<") or s:match("%s") or s:match(":") then return false end
 	return true
 end
 
@@ -303,6 +303,11 @@ local function launch_file_batch(job)
 	end
 end
 
+local function is_version_response(buf)
+	if not buf or buf == "" then return false end
+	return M.is_valid_version(trim(buf:match("^[^\n\r]*") or ""))
+end
+
 local function collect_fork_results(jobs, max_jobs)
 	local results = {}
 	local active = 0
@@ -346,7 +351,7 @@ local function collect_fork_results(jobs, max_jobs)
 							end
 							pcall(child.fdi.close, child.fdi)
 							child.done = true
-							if winner == "" and child.buf ~= "" then
+							if winner == "" and child.buf ~= "" and is_version_response(child.buf) then
 								winner = child.buf
 							end
 						end

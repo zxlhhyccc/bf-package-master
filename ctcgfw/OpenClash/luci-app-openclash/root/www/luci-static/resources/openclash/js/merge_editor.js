@@ -258,8 +258,8 @@ function renderMergeView() {
 
     var isDark = isDarkBackground(document.body);
     var topSearch = (CM6 && CM6.topSearchExtension) ? CM6.topSearchExtension() : null;
-      var extA = [CM6.baseExtensions([], { preload: false }), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Edit original config...%>'), CM6.yaml(), CM6.yamlLinter(), CM6.lintGutter(), CM6.autocompletion({ override: [CM6.mihomoCompletion] }), CM6.indentUnit.of("  "), CM6.indentMarkerExtension()];
-      var extB = [CM6.baseExtensions([], { preload: false }), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Runtime config (read only)%>'), CM6.yaml(), CM6.indentUnit.of("  "), CM6.indentMarkerExtension(), CM6.EditorState.readOnly.of(true)];
+      var extA = [CM6.baseExtensions([], { preload: false }), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Edit original config...%>'), CM6.yaml(), CM6.yamlLinter(), CM6.lintGutter(), CM6.autocompletion({ override: [CM6.mihomoCompletion] }), CM6.indentUnit.of("  "), CM6.indentMarkerExtension(), CM6.parseAheadExtension()];
+      var extB = [CM6.baseExtensions([], { preload: false }), CM6.themeExtension(isDark), CM6.placeholderExtension('<%:Runtime config (read only)%>'), CM6.yaml(), CM6.indentUnit.of("  "), CM6.indentMarkerExtension(), CM6.EditorState.readOnly.of(true), CM6.parseAheadExtension()];
     var mergeDefaults = CM6.mergeDefaultConfig || {};
     if (topSearch) {
         extA.push(topSearch);

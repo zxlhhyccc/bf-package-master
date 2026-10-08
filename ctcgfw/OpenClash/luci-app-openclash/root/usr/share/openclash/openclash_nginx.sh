@@ -23,12 +23,17 @@ location /oc-api/ {
 }
 EOF
 )
+nginx -V 2>&1 | grep -q 'without-http_proxy_module' && NEW=""
 
 if [ -f "$FILE" ] && [ "$(cat "$FILE")" = "$NEW" ]; then
     exit 0
 fi
 
-printf '%s\n' "$NEW" > "$FILE"
+if [ -n "$NEW" ]; then
+    printf '%s\n' "$NEW" > "$FILE"
+else
+    rm -f "$FILE"
+fi
 
 [ "$1" = "-n" ] || /etc/init.d/nginx reload >/dev/null 2>&1
 exit 0

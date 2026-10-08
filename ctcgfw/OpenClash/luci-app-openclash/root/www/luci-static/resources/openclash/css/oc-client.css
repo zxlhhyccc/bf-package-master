@@ -1008,6 +1008,12 @@ html[data-darkmode="true"] .oc .config-select:focus {
     flex-direction: column;
     gap: var(--content-gap);
     margin: auto 0;
+    min-height: 70px;
+    justify-content: center;
+}
+
+.oc .subscription-progress .oc-sk-block {
+    margin: 0;
 }
 
 .oc .subscription-progress-bar {
@@ -1173,6 +1179,7 @@ html[data-darkmode="true"] .oc .config-select:focus {
     display: flex;
     gap: var(--content-gap);
     padding: 8px 0;
+    min-height: 70px;
     max-width: 100%;
     width: 100%;
     overflow-x: auto;

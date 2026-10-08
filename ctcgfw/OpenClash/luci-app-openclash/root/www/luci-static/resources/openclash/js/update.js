@@ -46,6 +46,10 @@
         var hint = document.getElementById('version-hint');
         if (defaultTipTimer) { clearTimeout(defaultTipTimer); defaultTipTimer = null; }
         if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
+        if (hint.ocScrollAnimId) { cancelAnimationFrame(hint.ocScrollAnimId); }
+        hint.ocScrollAnimId = null;
+        hint.style.willChange = '';
+        hint.classList.remove('logging');
         hint.innerHTML = '<svg><use href="#oc-icon-alert-circle"/></svg><span>' + message + '</span>';
         hint.classList.add('show');
         hint.classList.remove('note');
@@ -60,6 +64,10 @@
         var hint = document.getElementById('version-hint');
         if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
         if (defaultTipTimer) { clearTimeout(defaultTipTimer); defaultTipTimer = null; }
+        if (hint.ocScrollAnimId) { cancelAnimationFrame(hint.ocScrollAnimId); }
+        hint.ocScrollAnimId = null;
+        hint.style.willChange = '';
+        hint.classList.remove('logging');
         var tips = [
             '<%:Note: manual upload works if the update fails%>',
             '<%:Note: squashfs firmware may not free disk space%>'
@@ -401,7 +409,7 @@
         if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
         refreshTimer = setInterval(refreshAddrInfo, ocRandomInterval(10000, 20000));
         if (updateInfoTimer) { clearInterval(updateInfoTimer); updateInfoTimer = null; }
-        updateInfoTimer = setInterval(function() { fetchUpdateInfo({silent: true}); }, ocRandomInterval(30000, 60000));
+        updateInfoTimer = setInterval(function() { fetchUpdateInfo({silent: true}); }, ocRandomInterval(15000, 30000));
     }
 
     function fetchVersionHistory(force, opts) {
@@ -1357,21 +1365,26 @@
     function renderUpdateLog() {
         var hint = document.getElementById('version-hint');
         if (!hint) return;
-        if (!hint.classList.contains('logging')) {
-            hint.classList.add('logging');
-            hint.innerHTML = '';
-            hint.scrollTop = 0;
-        }
+        var maxLines = 10;
+        var merged = logLines.slice(logLines.length - maxLines);
+        hint.classList.add('logging');
         hint.innerHTML = '';
-        var fragment = document.createDocumentFragment();
-        for (var j = 0; j < logLines.length; j++) {
-            var color = ocGetLogColor(logLines[j]);
+        hint.scrollTop = 0;
+        for (var j = 0; j < merged.length; j++) {
+            var color = ocGetLogColor(merged[j]);
             var div = document.createElement('div');
             div.style.whiteSpace = 'nowrap';
-            div.innerHTML = '<b style="color:' + color + '">' + logLines[j] + '</b>';
-            fragment.appendChild(div);
+            div.innerHTML = '<b style="color:' + color + '">' + merged[j] + '</b>';
+            hint.appendChild(div);
         }
-        hint.appendChild(fragment);
+        while (hint.children.length < maxLines) {
+            var spacer = document.createElement('div');
+            spacer.className = 'oc-log-spacer';
+            spacer.style.visibility = 'hidden';
+            spacer.style.whiteSpace = 'nowrap';
+            spacer.textContent = '\u200B';
+            hint.insertBefore(spacer, hint.firstChild);
+        }
     }
 
     function displayLog(logContent) {
@@ -1388,6 +1401,7 @@
 
         logLines = logLines.concat(allLines);
         renderUpdateLog();
+        hint.style.willChange = 'scroll-position';
         ocAnimateScroll(hint);
     }
 

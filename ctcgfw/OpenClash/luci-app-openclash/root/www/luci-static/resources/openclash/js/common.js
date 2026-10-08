@@ -1016,6 +1016,7 @@ function ocCreateLogStream(opts) {
     var reconnectTimer = null;
     var maxWaitTimer = null;
     var stopped = false;
+    var initialShown = false;
     var lastLineCount = opts.skipLines != null ? opts.skipLines : null;
     var watchMode = !!opts.script && opts.script !== 'view';
     var streamUrl = opts.url + (watchMode ? '?script=' + encodeURIComponent(opts.script) : '');
@@ -1030,26 +1031,26 @@ function ocCreateLogStream(opts) {
         var streamEnded = false;
         var processedLength = 0;
         var pendingLine = '';
-        var cursorInitialized = false;
+        var skipLeft = lastLineCount == null ? 0 : lastLineCount;
         var finishTimer = null;
 
         function consume(text, flush) {
-            if (!cursorInitialized) {
-                if (lastLineCount != null) {
-                    for (var lineIndex = 0; lineIndex < lastLineCount; lineIndex++) {
-                        var newlineIndex = text.indexOf('\n', processedLength);
-                        if (newlineIndex < 0) {
-                            processedLength = text.length;
-                            break;
-                        }
-                        processedLength = newlineIndex + 1;
-                    }
-                }
-                cursorInitialized = true;
-            }
             if (text.length < processedLength) {
                 processedLength = 0;
                 pendingLine = '';
+                skipLeft = 0;
+            }
+            if (skipLeft > 0) {
+                while (skipLeft > 0) {
+                    var newlineIndex = text.indexOf('\n', processedLength);
+                    if (newlineIndex < 0) {
+                        processedLength = text.length;
+                        break;
+                    }
+                    processedLength = newlineIndex + 1;
+                    skipLeft--;
+                }
+                if (skipLeft > 0) return;
             }
             pendingLine += text.substring(processedLength);
             processedLength = text.length;
@@ -1064,7 +1065,8 @@ function ocCreateLogStream(opts) {
         }
 
         function rememberLines() {
-            lastLineCount = (req.responseText || '').replace(/##FINISHED##\s*$|##CONTINUE##\s*$/, '').replace(/\n+$/, '').split('\n').length;
+            var text = (req.responseText || '').replace(/##FINISHED##\s*$|##CONTINUE##\s*$/, '').replace(/\n+$/, '');
+            lastLineCount = text === '' ? 0 : text.split('\n').length;
             if (opts.onSkipLines) opts.onSkipLines(lastLineCount);
         }
 
@@ -1127,7 +1129,10 @@ function ocCreateLogStream(opts) {
 
         req.send();
         xhr = req;
-        if (opts.initialMessage) opts.display(opts.initialMessage);
+        if (opts.initialMessage && !initialShown) {
+            initialShown = true;
+            opts.display(opts.initialMessage);
+        }
     }
 
     function abort() {

@@ -923,6 +923,7 @@ var SubPanel = {
             exts.push(CM6.keymap.of(CM6.searchKeymap));
             exts.push(CM6.logLanguage);
             exts.push(CM6.syntaxHighlighting(CM6.logHighlightStyle));
+            exts.push(CM6.parseAheadExtension());
             var view = new CM6.EditorView({
                 state: CM6.EditorState.create({ doc: '', extensions: exts })
             });

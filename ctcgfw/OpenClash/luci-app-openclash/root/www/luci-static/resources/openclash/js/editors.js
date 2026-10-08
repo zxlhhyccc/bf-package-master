@@ -8,11 +8,22 @@
 
 // Streamed viewers replace their whole document on every update; dispatching
 // a minimal edit keeps that proportional to what actually changed.
+// Pure appends/prepends (the common stream shapes) skip the char scan entirely.
 function ocDiffSetValue(view, value) {
     value = value || '';
     var old = view.state.doc.toString();
     if (old === value) return;
     var oldLen = old.length, newLen = value.length;
+    if (newLen > oldLen) {
+        if (value.startsWith(old)) {
+            view.dispatch({ changes: { from: oldLen, insert: value.slice(oldLen) } });
+            return;
+        }
+        if (value.endsWith(old)) {
+            view.dispatch({ changes: { from: 0, insert: value.slice(0, newLen - oldLen) } });
+            return;
+        }
+    }
     var prefix = 0, suffix = 0;
     while (prefix < oldLen && prefix < newLen && old.charCodeAt(prefix) === value.charCodeAt(prefix)) prefix++;
     while (suffix < oldLen - prefix && suffix < newLen - prefix && old.charCodeAt(oldLen - 1 - suffix) === value.charCodeAt(newLen - 1 - suffix)) suffix++;
@@ -126,6 +137,7 @@ function log_editor(id, name, readOnly, wid, height, onReady) {
         exts.push(CM6.keymap.of(CM6.searchKeymap));
         exts.push(CM6.logLanguage);
         exts.push(CM6.syntaxHighlighting(CM6.logHighlightStyle));
+        exts.push(CM6.parseAheadExtension());
 
         var view = new CM6.EditorView({
             state: CM6.EditorState.create({ doc: id.value, extensions: exts })
@@ -176,6 +188,7 @@ function markdown_editor(id, name, readOnly, wid, height, onReady) {
         var isDark = isDarkBackground(document.body);
         var exts = [CM6.lineNumbers(), CM6.EditorView.lineWrapping, CM6.themeExtension(isDark), CM6.markdown()];
         if (readOnly) exts.push(CM6.EditorState.readOnly.of(true));
+        exts.push(CM6.parseAheadExtension());
 
         var view = new CM6.EditorView({
             state: CM6.EditorState.create({ doc: id.value || '', extensions: exts })

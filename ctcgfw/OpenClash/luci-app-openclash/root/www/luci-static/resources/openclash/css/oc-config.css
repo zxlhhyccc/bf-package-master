@@ -70,6 +70,7 @@ html[data-darkmode="true"] .oc .oc-merge-editor-bar {
     opacity: 0;
     width: 100%;
     max-width: 100%;
+    min-height: 36px;
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -87,8 +88,22 @@ html[data-darkmode="true"] .oc .oc-merge-editor-bar {
     opacity: 1;
     width: 100%;
     max-width: 100%;
+    min-height: 36px;
     overflow: hidden;
     box-sizing: border-box;
+}
+
+.sub_tab_show .oc-sk-block {
+    height: 14px;
+    margin: 0 0 8px;
+}
+
+.sub_tab_show .oc-sk-block:last-child {
+    margin-bottom: 0;
+}
+
+.sub_tab_show > span {
+    line-height: 36px;
 }
 
 .sub_setting {

@@ -1093,7 +1093,7 @@ body.oc-guide-open .select-popup {
         .oc .config-item .select-class { text-align: left; }
     .oc .select-popup-header { font-size: 16px; margin-bottom: 12px; padding-bottom: 10px; }
     .oc .select-config-section { padding: 10px; margin-bottom: 10px; }
-    .oc .addr-list-scroll { max-height: 200px; }
+    .oc .addr-list-scroll { max-height: 294px; }
     .oc .select-option { padding: 10px 12px; font-size: 13px; align-items: flex-start; gap: 4px; }
     .oc .custom-option-input, .oc #addCustomOption { font-size: 13px; padding: 10px 12px; margin: 8px 0; }
     .oc .version-row { grid-template-columns: 1fr 1fr; gap: 8px; }

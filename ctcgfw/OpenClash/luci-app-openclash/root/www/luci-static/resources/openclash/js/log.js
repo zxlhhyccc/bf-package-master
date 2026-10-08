@@ -23,6 +23,8 @@ var editor_oc;
 var editor_core;
 var editor_debug;
 var coreLogAccumulator = '';
+var coreLogLines = [];
+var logMaxLines = 5000;
 var pollInterval = 1000;
 var debugRenderToken = 0;
 // LF-normalized copy of the source the debug view currently shows (textarea values drop CR)
@@ -33,27 +35,17 @@ activateTabPane(0);
 
 function accumulateCoreLog(linesArr) {
     var reversed = linesArr.slice().reverse();
-    var batchStr = '';
-    for (var k = 0; k < reversed.length; k++) {
-        batchStr += reversed[k] + '\n';
+    if (coreLogLines.length > 0 && reversed.length > 0 && reversed[reversed.length - 1] === coreLogLines[0]) {
+        reversed.pop();
     }
-    if (coreLogAccumulator) {
-        var accFirstLineEnd = coreLogAccumulator.indexOf('\n');
-        var accFirstLine = accFirstLineEnd > 0 ? coreLogAccumulator.substring(0, accFirstLineEnd) : coreLogAccumulator;
-        var batchTrimmed = batchStr.slice(0, -1);
-        var batchLastLineStart = batchTrimmed.lastIndexOf('\n');
-        var batchLastLine = batchLastLineStart > 0 ? batchTrimmed.substring(batchLastLineStart + 1) : batchTrimmed;
-        if (accFirstLine === batchLastLine) {
-            batchStr = batchLastLineStart > 0 ? batchStr.substring(0, batchLastLineStart + 1) : '';
-        }
+    if (reversed.length > 0) {
+        coreLogLines = reversed.concat(coreLogLines);
     }
-    coreLogAccumulator = batchStr + coreLogAccumulator;
-    var accLines = coreLogAccumulator.split('\n');
-    if (accLines.length > 2000) {
-        accLines = accLines.slice(0, 1999);
-        accLines.push('...');
-        coreLogAccumulator = accLines.join('\n');
+    if (coreLogLines.length > logMaxLines) {
+        coreLogLines = coreLogLines.slice(0, logMaxLines - 1);
+        coreLogLines.push('...');
     }
+    coreLogAccumulator = coreLogLines.join('\n');
     cl.value = coreLogAccumulator;
 }
 
@@ -232,6 +224,7 @@ function del_log() {
             cl.value = "";
             coreLogBuffer = [];
             coreLogAccumulator = '';
+            coreLogLines = [];
             log_len = 0;
             if (typeof editor_oc !== 'undefined' && editor_oc) {
                 editor_oc.setValue(lv.value);
@@ -502,25 +495,10 @@ function line_tolocal(input) {
                     }
                 }
             }
+        } catch (e) {}
 
-            try {
-                var dtt = new Date(v.substring(0, 19));
-
-                if (!isNaN(dtt.getTime()) && v.substring(0, 19).match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/)) {
-                    trans_local[local_count] = v;
-                    local_count++;
-                } else {
-                    trans_local[local_count] = v;
-                    local_count++;
-                }
-            } catch (e) {
-                trans_local[local_count] = v;
-                local_count++;
-            }
-        } catch (e) {
-            trans_local[local_count] = v;
-            local_count++;
-        }
+        trans_local[local_count] = v;
+        local_count++;
     }
 
     return trans_local;
@@ -533,6 +511,13 @@ function setCursorToFirstLineEnd(editor) {
         var fl = doc.line(1);
         editor.dispatch({ selection: { anchor: fl.to }, scrollIntoView: true });
     }
+}
+
+function trimEditorLog(view) {
+    var doc = view.state.doc;
+    if (doc.lines <= logMaxLines) return false;
+    view.dispatch({ changes: { from: doc.line(logMaxLines - 1).to, to: doc.length, insert: '\n...' } });
+    return true;
 }
 
 function smoothlyDisplayLogs(newLines, target, isEditor, currentContent, isActiveTab) {
@@ -571,16 +556,11 @@ function smoothlyDisplayLogs(newLines, target, isEditor, currentContent, isActiv
     if ((target === editor_oc && animatingOC) || (target === editor_core && animatingCore) || (target === editor_debug && animatingDebug) || !isActiveTab) {
         var lines = newLines.slice().reverse();
         var content = lines.join('\n') + (lines.length > 0 ? '\n' : '') + (currentContent || '');
-        var allLines = content.split("\n");
-        if (allLines.length > 2000) {
-            allLines = allLines.slice(0, 1999);
-            allLines.push("...");
-            content = allLines.join("\n");
-        }
 
         if (isEditor) {
             var addedLines = lines.length;
             target.setValue(content);
+            trimEditorLog(target);
 
             if (!isAtTop && scrollPosition) {
                 if (cursorPos) {
@@ -608,6 +588,12 @@ function smoothlyDisplayLogs(newLines, target, isEditor, currentContent, isActiv
                 }
             }
         } else {
+            var allLines = content.split("\n");
+            if (allLines.length > logMaxLines) {
+                allLines = allLines.slice(0, logMaxLines - 1);
+                allLines.push("...");
+                content = allLines.join("\n");
+            }
             var oldScrollTop = scrollPosition;
             target.innerHTML = content;
             if (!isAtTop && oldScrollTop) {
@@ -749,17 +735,8 @@ function smoothlyDisplayLogs(newLines, target, isEditor, currentContent, isActiv
                 setCursorToFirstLineEnd(target);
             }
 
-            if (isEditor) {
-                var finalContent = target.getValue();
-                var finalLines = finalContent.split("\n");
-                if (finalLines.length > 2000) {
-                    finalLines = finalLines.slice(0, 1999);
-                    finalLines.push("...");
-                    target.setValue(finalLines.join("\n"));
-                    if (!cursorPos) {
-                        setCursorToFirstLineEnd(target);
-                    }
-                }
+            if (isEditor && trimEditorLog(target) && !cursorPos) {
+                setCursorToFirstLineEnd(target);
             }
         }
     }
@@ -913,6 +890,7 @@ window.onload = function(){
 
                 if (prevTabId == 1 && editor_core) {
                     coreLogAccumulator = editor_core.getValue();
+                    coreLogLines = coreLogAccumulator === '' ? [] : coreLogAccumulator.split('\n');
                     cl.value = coreLogAccumulator;
                 }
 

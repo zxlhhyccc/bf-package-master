@@ -934,6 +934,7 @@ var ocLang = window.ocLang || '';
 
                 if (SubscriptionManager.currentConfigFile !== selectedValue) {
                     SubscriptionManager.currentConfigFile = selectedValue;
+                    SubscriptionManager.retryCount = 0;
                     var detailsSection = document.getElementById('subscription-info-details');
                     if (detailsSection) {
                         detailsSection.style.display = 'none';
@@ -1018,6 +1019,7 @@ var ocLang = window.ocLang || '';
 
             if (SubscriptionManager.currentConfigFile !== filePath) {
                 SubscriptionManager.currentConfigFile = filePath;
+                SubscriptionManager.retryCount = 0;
                 var detailsSection = document.getElementById('subscription-info-details');
                 if (detailsSection) {
                     detailsSection.style.display = 'none';
@@ -1046,7 +1048,7 @@ var ocLang = window.ocLang || '';
     var SubscriptionManager = {
         currentConfigFile: '',
         retryCount: 0,
-        maxRetries: 5,
+        maxRetries: 1,
         updateTimer: null,
         isInitialized: false,
 
@@ -1207,6 +1209,7 @@ var ocLang = window.ocLang || '';
                     }
 
                     var needsErrorHandling = false;
+                    var skipRetry = false;
                     if (x && x.status == 200 && status.providers.length > 0) {
                         var newProvidersLength = status.providers.length;
                         var cachedProvidersLength = (parsedData && parsedData.providers) ? parsedData.providers.length : 0;
@@ -1225,13 +1228,11 @@ var ocLang = window.ocLang || '';
                         }
                     } else {
                         needsErrorHandling = true;
-                        if (!cachedData) {
-                            SubscriptionManager.showNoInfo();
-                        }
+                        skipRetry = (x && x.status == 500 && (String(x.statusText || '') + String(x.responseText || '')).indexOf('Subscription information not found') !== -1);
                     }
 
                     if (needsErrorHandling) {
-                        SubscriptionManager.handleError(status);
+                        SubscriptionManager.handleError(status, skipRetry);
                     }
                 }, true);
             }
@@ -1488,7 +1489,7 @@ var ocLang = window.ocLang || '';
             container.classList.remove('oc-hidden');
 
             if (progressSection) {
-                progressSection.innerHTML = '<div class="subscription-loading">' + ocSpinnerRow('<%:Collecting data...%>') + '</div>';
+                progressSection.innerHTML = '<div class="oc-sk oc-sk-block" style="width:92%"></div><div class="oc-sk oc-sk-block" style="width:55%"></div>';
                 progressSection.classList.remove('oc-hidden');
                 progressSection.className = 'subscription-progress';
             }
@@ -1498,23 +1499,24 @@ var ocLang = window.ocLang || '';
             }
         },
 
-        handleError: function(status) {
-            if (this.retryCount >= this.maxRetries) {
+        handleError: function(status, skipRetry) {
+            if (skipRetry || this.retryCount >= this.maxRetries) {
                 this.retryCount = 0;
-                if (this.currentConfigFile && status && status.providers) {
+                var fail_info = (status && status.providers) ? status : {providers: [], get_time: Math.floor(Date.now() / 1000)};
+                if (this.currentConfigFile) {
                     var errFilename = this.extractFilename(this.currentConfigFile);
                     if (errFilename) {
-                        (window.requestIdleCallback || function(cb) { setTimeout(cb, 1); })(function() { localStorage.setItem('sub_info_' + errFilename, JSON.stringify(status)); });
+                        (window.requestIdleCallback || function(cb) { setTimeout(cb, 1); })(function() { localStorage.setItem('sub_info_' + errFilename, JSON.stringify(fail_info)); });
                     }
                 }
-                if (!status.providers || status.providers.length === 0) {
+                if (!fail_info.providers || fail_info.providers.length === 0) {
                     this.showNoInfo();
-                }
-                if (status.providers && status.providers.length > 0) {
-                    SubscriptionManager.displaySubscriptionInfo(status);
+                } else {
+                    SubscriptionManager.displaySubscriptionInfo(fail_info);
                 }
             } else {
                 this.retryCount++;
+                this.showLoading();
                 setTimeout(function() {
                     SubscriptionManager.getSubscriptionInfo();
                 }, 5000);
@@ -1895,7 +1897,7 @@ var ocLang = window.ocLang || '';
             if (allLines.length === 0) return;
             this.logLines = this.logLines.concat(allLines);
 
-            var maxLines = 3;
+            var maxLines = 10;
             var el = DOMCache.oclog;
 
             if (!el.wheelBlocked) {
@@ -3972,13 +3974,10 @@ var ocLang = window.ocLang || '';
         winOpen('https://ko-fi.com/vernesong');
     }
 
-    // The version endpoints read the core binary and the package database on the
-    // device, so keep them out of the 5s status tick: refresh at most once a
-    // minute and only while the page is visible.
     function clashversion_check() {
         if (document.visibilityState === 'hidden') return;
         var now = Date.now();
-        if (now - lastVersionCheck < 60000) return;
+        if (now - lastVersionCheck < 30000) return;
         lastVersionCheck = now;
 
         function compareVersions(v1, v2) {

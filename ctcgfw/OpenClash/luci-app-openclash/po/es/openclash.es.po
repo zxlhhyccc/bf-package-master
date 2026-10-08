@@ -35,9 +35,6 @@ msgstr "Fatal"
 msgid "Plugin Settings"
 msgstr "Ajustes del plugin"
 
-msgid "Credits"
-msgstr "Créditos"
-
 msgid "Overviews"
 msgstr "Resumen"
 
@@ -77,15 +74,6 @@ msgstr "En ejecución"
 msgid "Not Running"
 msgstr "No ejecutándose"
 
-msgid "(Enable or Disable)"
-msgstr "(Habilitar o deshabilitar)"
-
-msgid "Config Normal"
-msgstr "Configuración correcta"
-
-msgid "Config Abnormal"
-msgstr "Configuración incorrecta"
-
 msgid "File Not Exist"
 msgstr "El archivo no existe"
 
@@ -101,18 +89,6 @@ msgstr "Prueba del núcleo"
 msgid "Debug Logs"
 msgstr "Registros de depuración"
 
-msgid "Generated Logs"
-msgstr "Registros generados"
-
-msgid "Click to Generate"
-msgstr "Haz clic para generar"
-
-msgid "Enable OpenClash"
-msgstr "Activar OpenClash"
-
-msgid "Disable OpenClash"
-msgstr "Desactivar OpenClash"
-
 msgid "Commit Settings"
 msgstr "Guardar ajustes"
 
@@ -121,9 +97,6 @@ msgstr "Aplicar ajustes"
 
 msgid "Download Config"
 msgstr "Descargar configuración"
-
-msgid "Click to Download"
-msgstr "Clic para descargar"
 
 msgid "Failed to get download link"
 msgstr "No se pudo obtener el enlace de descarga"
@@ -263,9 +236,6 @@ msgstr "Añadir servidores DNS personalizados"
 msgid "(Take Effect After Choose Above)"
 msgstr "(Efectivo solo si está activado arriba)"
 
-msgid "Advanced Setting"
-msgstr "Configuración avanzada"
-
 msgid "Enable Specify DNS Server"
 msgstr "Habilitar segundo servidor DNS"
 
@@ -323,17 +293,11 @@ msgstr "Permitir resolución DNS IPv6"
 msgid "Enable to Resolve IPv6 DNS Requests"
 msgstr "Permite procesar peticiones DNS de tipo IPv6"
 
-msgid "Common Setting"
-msgstr "Configuración común"
-
 msgid "Config Manage"
 msgstr "Gestión de configuraciones"
 
 msgid "Upload File Type"
 msgstr "Tipo de archivo a subir"
-
-msgid "(Click to select)"
-msgstr "(Haz clic para seleccionar)"
 
 msgid "Proxy Provider File"
 msgstr "Archivo de proveedor de proxies"
@@ -413,26 +377,14 @@ msgstr "Archivo guardado en"
 msgid "upload file error."
 msgstr "Error al subir el archivo."
 
-msgid "No specify upload file."
-msgstr "No se ha especificado ningún archivo para subir."
-
-msgid "Note: Please Upload File According To File Type, File Will Be Saved To The Prompt Path"
-msgstr "Nota: sube el archivo según su tipo; se guardará en la ruta indicada."
-
 msgid "Proxy Provider File List"
 msgstr "Lista de archivos de proveedores de proxies"
 
 msgid "Rule Providers File List"
 msgstr "Lista de archivos de proveedores de reglas"
 
-msgid "Game Rules File List"
-msgstr "Lista de archivos de reglas de juegos"
-
 msgid "Please Make Sure Ports Available"
 msgstr "Asegúrate de que los puertos estén disponibles"
-
-msgid "Update Subcription"
-msgstr "Actualizar suscripción"
 
 msgid "Update time (every day)"
 msgstr "Hora de actualización (cada día)"
@@ -458,9 +410,6 @@ msgstr "Actualización automática"
 msgid "Check And Update"
 msgstr "Comprobar y actualizar"
 
-msgid "After clash start running, wait a moment for servers to resolve,enjoy"
-msgstr "Cuando Clash esté ejecutándose, espera unos instantes a que los servidores se resuelvan."
-
 msgid "Redir Port"
 msgstr "Puerto Redir"
 
@@ -481,9 +430,6 @@ msgstr "Configurar autenticación para SOCKS5/HTTP(S)"
 
 msgid "Not Null"
 msgstr "Requerido"
-
-msgid "Server Subscription Address"
-msgstr "Dirección de suscripción de configuración"
 
 msgid "Auto Update Server subscription"
 msgstr "Actualizar suscripción automáticamente"
@@ -514,9 +460,6 @@ msgstr "Puerto del panel de administración"
 
 msgid "Public Dashboard Address"
 msgstr "Dirección pública del panel"
-
-msgid "Domain Name For Dashboard Login From Public Network"
-msgstr "Dominio para iniciar sesión en el panel desde Internet"
 
 msgid "Domain Name or IP For Dashboard Login From Public Network (without http:// or https://)"
 msgstr "Dominio o IP para iniciar sesión en el panel desde Internet (sin http:// ni https://)"
@@ -653,36 +596,6 @@ msgstr "Reglas personalizadas"
 msgid "Version Update"
 msgstr "Actualización de versión"
 
-msgid "Current Core Version"
-msgstr "Versión actual del núcleo"
-
-msgid "Last Core Version"
-msgstr "Última versión del núcleo"
-
-msgid "Check Failed"
-msgstr "Error al comprobar actualización"
-
-msgid "<New>"
-msgstr "<Disponible>"
-
-msgid "Update Core File"
-msgstr "Actualizar núcleo"
-
-msgid "Download Form https://github.com/vernesong/OpenClash/releases/tag/Clash If Fail"
-msgstr "Si falla la descarga, puedes obtenerlo manualmente en https://github.com/vernesong/OpenClash/releases/tag/Clash"
-
-msgid "Last OpenClash Version"
-msgstr "Última versión de OpenClash"
-
-msgid "Current OpenClash Version"
-msgstr "Versión actual de OpenClash"
-
-msgid "Update OpenClash"
-msgstr "Actualizar OpenClash"
-
-msgid "Only For IPK Install Type Or Not Release Memory"
-msgstr "Solo para instalación IPK; en squashfs no se libera espacio"
-
 msgid "Servers Manage"
 msgstr "Gestionar servidores"
 
@@ -764,12 +677,6 @@ msgstr "Modo de ofuscación"
 msgid "obfs-hosts"
 msgstr "Host de ofuscación"
 
-msgid "Auth Username"
-msgstr "Usuario de autenticación"
-
-msgid "Auth Password"
-msgstr "Contraseña de autenticación"
-
 msgid "None"
 msgstr "Sin configuración"
 
@@ -796,9 +703,6 @@ msgstr "Intervalo de salto (segundos)"
 
 msgid "Obfs"
 msgstr "Ofuscación"
-
-msgid "Obfs param (optional)"
-msgstr "Parámetro de ofuscación (opcional)"
 
 msgid "obfs-password"
 msgstr "Contraseña de ofuscación"
@@ -866,14 +770,8 @@ msgstr "Incluir otros grupos (soporta expresiones regulares; sin duplicados)"
 msgid "The Added Proxy Groups Must Exist Except 'DIRECT' & 'REJECT' & 'REJECT-DROP' & 'PASS' & 'GLOBAL'"
 msgstr "Excepto 'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS' y 'GLOBAL', los demás grupos deben existir."
 
-msgid "The Added Proxy Provider Must Exist"
-msgstr "El proveedor de proxy debe existir antes de añadirlo"
-
 msgid "Proxy Group (Support Regex)"
 msgstr "Grupo de proxy (compatible con expresiones regulares)"
-
-msgid "Set Proxy Group"
-msgstr "Asignar grupo de proxy"
 
 msgid "The added Proxy Groups Must Exist"
 msgstr "Los grupos añadidos deben existir previamente."
@@ -922,9 +820,6 @@ msgstr "Añadir cabeceras HTTP personalizadas a la solicitud de suscripción"
 
 msgid "Set environment variables for the overwrite script"
 msgstr "Establecer variables de entorno para el script de sobrescritura"
-
-msgid "(Enable or Disable Subscribe)"
-msgstr "(Habilitar o deshabilitar suscripción)"
 
 msgid "Config Alias"
 msgstr "Alias de configuración"
@@ -1006,24 +901,6 @@ msgstr "Rechazar UDP en puerto 443 (excepto regiones omitidas)"
 
 msgid "Operation Mode"
 msgstr "Modo de operación"
-
-msgid "Select Operation Mode"
-msgstr "Seleccionar modo de operación"
-
-msgid "Select Mode For Page Settings, Switch By Click the Button Bellow"
-msgstr "Selecciona el modo de ajustes globales; cambia usando los botones de abajo."
-
-msgid "redir-host mode"
-msgstr "Modo Redir-Host"
-
-msgid "fake-ip mode"
-msgstr "Modo Fake-IP"
-
-msgid "Switch Operation Mode"
-msgstr "Cambiar modo de operación"
-
-msgid "Switch Mode"
-msgstr "Cambiar"
 
 msgid "Black&White"
 msgstr "Listas blanca/negra"
@@ -1196,9 +1073,6 @@ msgstr "Si el panel de control no se abre correctamente, vaya a Configuración d
 msgid "Quick Action"
 msgstr "Acciones rápidas"
 
-msgid "No Backup"
-msgstr "Sin copia guardada"
-
 msgid "Backup"
 msgstr "Copia de seguridad"
 
@@ -1229,32 +1103,11 @@ msgstr "Cerrar conexión"
 msgid "Close Connect Failed"
 msgstr "No se pudo cerrar la conexión"
 
-msgid "Restore Nodes Selection"
-msgstr "Restaurar selección de nodos"
-
-msgid "Save Nodes Selection"
-msgstr "Guardar selección de nodos"
-
 msgid "Reload Firewall"
 msgstr "Recargar firewall"
 
 msgid "Check Update"
 msgstr "Buscar actualización"
-
-msgid "Check Config Update"
-msgstr "Comprobar actualización de configuración"
-
-msgid "Check Third Party Rules Update"
-msgstr "Comprobar actualización de reglas de terceros"
-
-msgid "Check GEOIP Data Update"
-msgstr "Comprobar actualización de GeoIP"
-
-msgid "Check GeoSite Data Update"
-msgstr "Comprobar actualización de GeoSite"
-
-msgid "You have not installed the core yet, do you want to download and install it now?"
-msgstr "Aún no has instalado el núcleo. ¿Deseas descargarlo e instalarlo ahora?"
 
 msgid "Checking..."
 msgstr "Comprobando..."
@@ -1268,26 +1121,11 @@ msgstr "Restaurando..."
 msgid "Saving..."
 msgstr "Guardando..."
 
-msgid "Save successful"
-msgstr "Guardado con éxito"
-
 msgid "Failed to save"
 msgstr "Error al guardar"
 
-msgid "Failed to save age config"
-msgstr "Error al guardar la configuración de age"
-
 msgid "Firewall Rules Reset Failed"
 msgstr "Error al restablecer las reglas del firewall"
-
-msgid "Close All Connections Railed"
-msgstr "Error al cerrar todas las conexiones"
-
-msgid "Restore Nodes Selection Railed"
-msgstr "Error al restaurar la selección de nodos"
-
-msgid "Save Nodes Selection Failed"
-msgstr "Error al guardar la selección de nodos"
 
 msgid "after started, please wait patiently until the connection is normal"
 msgstr "Tras iniciar, espera a que la conexión se normalice."
@@ -1325,9 +1163,6 @@ msgstr "Rama de actualización"
 msgid "CPU Arch"
 msgstr "Arquitectura de CPU"
 
-msgid "Last Check Update"
-msgstr "Última comprobación de actualización"
-
 msgid "Core path:"
 msgstr "Ruta del núcleo:"
 
@@ -1336,9 +1171,6 @@ msgstr "Restablecer por defecto"
 
 msgid "Are you sure want to restore the default config?"
 msgstr "¿Seguro que deseas restablecer la configuración por defecto?"
-
-msgid "Restore succeeded!"
-msgstr "Restauración completada."
 
 msgid "Restore failed!"
 msgstr "Error al restaurar la configuración."
@@ -1399,12 +1231,6 @@ msgstr "Acceso normal"
 
 msgid "Access Denied"
 msgstr "Acceso denegado"
-
-msgid "Connection Failed"
-msgstr "Conexión fallida"
-
-msgid "Invalid Response"
-msgstr "Respuesta no válida"
 
 msgid "Installed"
 msgstr "Instalado"
@@ -1570,9 +1396,6 @@ msgstr "Error al exportar"
 
 msgid "Export error"
 msgstr "Error de exportación"
-
-msgid "Parse error."
-msgstr "Error de análisis"
 
 msgid "to clipboard successfully"
 msgstr "copiado al portapapeles correctamente"
@@ -1835,17 +1658,8 @@ msgstr "configuración de nodos..."
 msgid "Proxy Setting..."
 msgstr "configuración del nodo..."
 
-msgid "Read Error, Config File"
-msgstr "Error de lectura, archivo de configuración"
-
-msgid "Abnormal!"
-msgstr "¡Anómalo!"
-
 msgid "Deleting Old Configuration..."
 msgstr "Eliminando configuración anterior..."
-
-msgid "Unable To Parse Config File, Please Check And Try Again!"
-msgstr "No se pudo analizar el archivo de configuración; revísalo y vuelve a intentarlo."
 
 msgid "Start Writing"
 msgstr "Iniciando escritura"
@@ -1859,20 +1673,11 @@ msgstr "nodo hacia el archivo de configuración..."
 msgid "Proxy-provider To Config File..."
 msgstr "proveedor de proxy hacia el archivo de configuración..."
 
-msgid "Unable To Parse..."
-msgstr "Error de lectura..."
-
 msgid "Setting Secondary DNS Server List..."
 msgstr "Configurando la lista de DNS secundarios..."
 
 msgid "Deleting"
 msgstr "Eliminando"
-
-msgid "Proxy-providers That no Longer Exists in Subscription"
-msgstr "Proveedores de proxy que ya no existen en la suscripción"
-
-msgid "Proxies That no Longer Exists in Subscription"
-msgstr "Nodos que ya no existen en la suscripción"
 
 msgid "Read Successful!"
 msgstr "Lectura completada."
@@ -1898,15 +1703,6 @@ msgstr "El archivo de configuración no existe; ya configuraste la suscripción,
 msgid "Config Not Found"
 msgstr "Archivo de configuración no encontrado"
 
-msgid "Detected that the GEOIP Database is not Installed, Ready to Download..."
-msgstr "La base de datos GEOIP no está instalada; iniciando descarga..."
-
-msgid "Detected that the GEOSITE Database is not Installed, Ready to Download..."
-msgstr "La base de datos GEOSITE no está instalada; iniciando descarga..."
-
-msgid "Detected that the GEOIP Dat is not Installed, Ready to Download..."
-msgstr "La base de datos GEOIP Dat no está instalada; iniciando descarga..."
-
 msgid "Core is not Detected installed, Ready to Download..."
 msgstr "El núcleo no está instalado; iniciando descarga..."
 
@@ -1915,12 +1711,6 @@ msgstr "La lista CIDR de China no está instalada; iniciando descarga..."
 
 msgid "Detected that the Chnroute Cidr List Format is wrong, Ready to Reformat..."
 msgstr "Formato incorrecto en la lista CIDR de China; iniciando reformateo..."
-
-msgid "OpenClash Can Not Start, Please Check The Error Info And Try Again!"
-msgstr "OpenClash no puede iniciarse; revisa los registros y vuelve a intentarlo."
-
-msgid "Found 53 Port Hijacked, Clean Up Firewall Rules..."
-msgstr "Detectado secuestro del puerto 53; limpiando reglas del firewall..."
 
 msgid "OpenClash Start Running..."
 msgstr "OpenClash está iniciándose..."
@@ -2006,9 +1796,6 @@ msgstr "Configurando el firewall para recrear la tabla de reglas..."
 msgid "Force Reset DNS Hijack..."
 msgstr "Restableciendo interceptación DNS..."
 
-msgid "Rule File"
-msgstr "Archivo de reglas"
-
 msgid "Download Error!"
 msgstr "¡Error al descargar!"
 
@@ -2051,17 +1838,11 @@ msgstr "Fallback-Filter solo funciona con Fallback DNS configurado; ignorado."
 msgid "Unable To Parse Custom Fallback-Filter File, Ignore..."
 msgstr "No se pudo leer el archivo Fallback-Filter; ignorado."
 
-msgid "Downloading Rule..."
-msgstr "Descargando regla..."
-
 msgid "Download Failed"
 msgstr "Descarga fallida"
 
 msgid "Download Successful"
 msgstr "Descarga completada"
-
-msgid "Download Timeout"
-msgstr "Tiempo de descarga agotado"
 
 msgid "Load File Failed,"
 msgstr "Fallo al cargar el archivo,"
@@ -2114,9 +1895,6 @@ msgstr "Fallo al modificar la CDN del proveedor,"
 msgid "Edit URL-Test Group Tolerance Option Failed,"
 msgstr "Fallo al modificar la tolerancia del grupo URL-Test,"
 
-msgid "Resolve Proxy-providers Failed,"
-msgstr "Fallo al analizar proveedores de proxy,"
-
 msgid "Resolve Proxies Failed,"
 msgstr "Fallo al analizar nodos,"
 
@@ -2125,9 +1903,6 @@ msgstr "Fallo al analizar grupos,"
 
 msgid "Set default-nameserver Failed,"
 msgstr "Fallo al modificar Default-nameserver,"
-
-msgid "switching succeeded!"
-msgstr "¡Cambio realizado con éxito!"
 
 msgid "switching failed!"
 msgstr "¡El cambio ha fallado!"
@@ -2195,9 +1970,6 @@ msgstr "Archivo de copia de seguridad"
 msgid "Backup File Restore Successful!"
 msgstr "Restauración desde copia de seguridad completada."
 
-msgid "Not Select"
-msgstr "Sin seleccionar"
-
 msgid "1. It may be that the plugin is not running"
 msgstr "1. Puede que el plugin no esté en ejecución."
 
@@ -2225,17 +1997,11 @@ msgstr "Añadir al Nameserver el DNS y puerta de enlace proporcionados por el up
 msgid "All Groups"
 msgstr "Todos los grupos"
 
-msgid "Are you sure want to switch the running mode?"
-msgstr "¿Seguro que deseas cambiar el modo de funcionamiento?"
-
 msgid "Because of the file"
 msgstr "Debido a que el archivo"
 
 msgid "modificated, Pause quick start..."
 msgstr "ha sido modificado, pausa del inicio rápido..."
-
-msgid "Click to Update"
-msgstr "Actualizar reglas"
 
 msgid "Click to Install"
 msgstr "Instalar"
@@ -2248,9 +2014,6 @@ msgstr "Guardar en archivo las resoluciones Fake-IP para mejorar la velocidad tr
 
 msgid "Test failed"
 msgstr "Prueba fallida"
-
-msgid "OpenClash Start Failed"
-msgstr "Error al iniciar OpenClash"
 
 msgid "interface-name"
 msgstr "Interfaz de salida"
@@ -2285,9 +2048,6 @@ msgstr "Filtro de regiones"
 msgid "Unlock Nodes Filter"
 msgstr "Filtro de nodos desbloqueados"
 
-msgid "Start Auto Select Unlock Proxy For..."
-msgstr "Iniciando selección automática de nodo..."
-
 msgid "Group:"
 msgstr "Grupo:"
 
@@ -2305,9 +2065,6 @@ msgstr "la prueba de desbloqueo ha fallado"
 
 msgid ", the type of group is not select, auto select could not work!"
 msgstr ", el tipo de grupo no es Select; la selección automática no puede funcionar."
-
-msgid "Start auto select unlock proxy..."
-msgstr "Iniciando selección automática de nodo desbloqueado..."
 
 msgid "only support homemade! the type of group is not select, auto select could not work!"
 msgstr "Solo admite contenido propio. El grupo no es Select; la selección automática no funcionará."
@@ -2435,9 +2192,6 @@ msgstr "Retrasar el inicio tras arrancar"
 msgid "Enable Delay Start, OpenClash Will Start After"
 msgstr "Retardo de inicio activado; OpenClash se iniciará dentro de"
 
-msgid "Secends..."
-msgstr "segundos..."
-
 msgid "Waiting for command to complete..."
 msgstr "Esperando a que finalice el comando..."
 
@@ -2482,9 +2236,6 @@ msgstr "Cabeceras personalizadas"
 
 msgid "Custom HTTP request headers, one per line, format: Header-Name: value"
 msgstr "Cabeceras HTTP personalizadas, una por línea, formato: Nombre-Cabecera: valor"
-
-msgid "eg: x-hwid: device-001, one header per line, format: Name: value"
-msgstr "Ej: x-hwid: device-001, una cabecera por línea, formato: Nombre: valor"
 
 msgid "Use Rule Provider"
 msgstr "Usar proveedor de reglas"
@@ -2597,9 +2348,6 @@ msgstr "Habilitar Sniffer (detección de dominios)"
 msgid "Sniffer Will Prevent Domain Name Proxy and DNS Hijack Failure"
 msgstr "El sniffer ayuda a evitar errores de proxy de dominios y fallos de secuestro DNS."
 
-msgid "Override All Dns Query"
-msgstr "Sobrescribir todas las consultas DNS"
-
 msgid "Rules Setting"
 msgstr "Ajustes de reglas"
 
@@ -2680,9 +2428,6 @@ msgstr "Restantes"
 
 msgid "days"
 msgstr "días"
-
-msgid "Douyin"
-msgstr "Douyin"
 
 msgid "Specific Interface"
 msgstr "Interfaz específica"
@@ -2858,9 +2603,6 @@ msgstr "Dnsmasq no admite nftset; usando ipset en su lugar."
 msgid "Firewall4 was Detected, Use NFTABLE Rules..."
 msgstr "Detectado Firewall4; usando reglas NFTABLE..."
 
-msgid "Specify CN DNS Server"
-msgstr "DNS específico para dominios de China"
-
 msgid "Seconds..."
 msgstr "segundos..."
 
@@ -2963,12 +2705,6 @@ msgstr "Especificar URL"
 msgid "Paste the new url of subscribe infos sources here:"
 msgstr "Pega aquí la nueva URL de origen de la suscripción:"
 
-msgid "Specify subscribe infos sources url successfully!"
-msgstr "La nueva URL de suscripción se ha configurado correctamente."
-
-msgid "Delete Specify Subscribe infos sources url successfully!"
-msgstr "La URL personalizada de suscripción ha sido eliminada."
-
 msgid "Specify subscribe infos sources url failed:"
 msgstr "Error al establecer la nueva URL de suscripción:"
 
@@ -3014,14 +2750,8 @@ msgstr "archivo de configuración"
 msgid "test failed"
 msgstr "prueba fallida"
 
-msgid "test is successful"
-msgstr "prueba correcta"
-
 msgid "Config File Tested Failed, Please Check The Log Infos!"
 msgstr "La prueba del archivo de configuración ha fallado. Consulta el registro del núcleo."
-
-msgid "Test The Config File First..."
-msgstr "Probando el archivo de configuración antes de iniciar..."
 
 msgid "Other Parameters"
 msgstr "Otros parámetros"
@@ -3043,9 +2773,6 @@ msgstr "Formato de URL no válido"
 
 msgid "URL missing hostname"
 msgstr "La URL no tiene nombre de host"
-
-msgid "Invalid URL on line"
-msgstr "URL no válida"
 
 msgid "Enable Unified Delay"
 msgstr "Activar cálculo unificado de latencia"
@@ -3091,9 +2818,6 @@ msgstr "Omitir direcciones de proxy"
 
 msgid "Bypassing Server Addresses And Preventing Duplicate Proxies"
 msgstr "Omite direcciones de servidores para evitar duplicados de proxy."
-
-msgid "Unsupported format, Proxies Address Skip Function Ignore Proxy-providers File"
-msgstr "Formato no compatible; se omitirá la omisión de direcciones en archivos de proveedores de proxy."
 
 msgid "Custom Your CDN URL"
 msgstr "Configurar URL personalizada de CDN"
@@ -3185,9 +2909,6 @@ msgstr "Opción"
 msgid "is Setted"
 msgstr "ha sido configurada"
 
-msgid "as DNS Server Which May Cause DNS Loop, Please Consider Removing It When DNS Works Abnormally..."
-msgstr "como servidor DNS, lo que puede causar bucles DNS. Elimínalo si detectas fallos de resolución."
-
 msgid "as DNS Server Which May Cause DNS Loop, Already Remove It..."
 msgstr "como servidor DNS (posible bucle). Ha sido eliminado automáticamente."
 
@@ -3242,9 +2963,6 @@ msgstr "Objetivo"
 msgid "Network Anomaly, Suspend Unlock Detection..."
 msgstr "Anomalía de red, se suspende la detección de desbloqueo..."
 
-msgid "(Not Support mrs Format)"
-msgstr "(Formato mrs no soportado)"
-
 msgid "UpDate"
 msgstr "Actualizar"
 
@@ -3290,17 +3008,8 @@ msgstr "El servicio de actualización no pudo iniciarse tras 3 intentos. Revisa 
 msgid "View core infos that support smart group"
 msgstr "Ver información del núcleo compatible con grupos Smart"
 
-msgid "Control panel address copied:"
-msgstr "Dirección del panel copiada:"
-
-msgid "Control panel secret copied:"
-msgstr "Clave del panel copiada:"
-
 msgid "No control panel secret set"
 msgstr "No se ha configurado clave del panel"
-
-msgid "Proxy auth info copied:"
-msgstr "Información de autenticación del proxy copiada:"
 
 msgid "No proxy auth info set"
 msgstr "No hay información de autenticación configurada"
@@ -3308,17 +3017,11 @@ msgstr "No hay información de autenticación configurada"
 msgid "Proxy info not available, please try again later"
 msgstr "No se pudo obtener información del proxy; inténtalo más tarde"
 
-msgid "Mix proxy address copied:"
-msgstr "Dirección del proxy mixto copiada:"
-
 msgid "Mix Proxy"
 msgstr "Proxy mixto"
 
 msgid "Area Bypass"
 msgstr "Omisión por región"
-
-msgid "Area bypass setting switched to:"
-msgstr "La omisión por región se ha establecido en:"
 
 msgid "Area bypass setting failed"
 msgstr "Fallo al configurar la omisión por región"
@@ -3370,12 +3073,6 @@ msgstr "Activado"
 
 msgid "Get PAC Config"
 msgstr "Obtener configuración PAC"
-
-msgid "PAC file URL copied:"
-msgstr "URL del archivo PAC copiada:"
-
-msgid "PAC file URL:"
-msgstr "URL del archivo PAC:"
 
 msgid "PAC file generation failed"
 msgstr "Error al generar el archivo PAC"
@@ -3560,17 +3257,11 @@ msgstr "Error en la subida:"
 msgid "Failed to read file"
 msgstr "Error al leer el archivo"
 
-msgid "Please enter subscription URL and config name"
-msgstr "Introduce la URL de la suscripción y el nombre de la configuración"
-
 msgid "Please enter subscription config name"
 msgstr "Introduce el nombre de la configuración de suscripción"
 
 msgid "Invalid subscription URL format"
 msgstr "Formato de URL de suscripción no válido"
-
-msgid "Config name contains invalid characters"
-msgstr "El nombre de la configuración contiene caracteres no válidos"
 
 msgid "Adding subscription..."
 msgstr "Añadiendo suscripción..."
@@ -3607,12 +3298,6 @@ msgstr "Cerrar"
 
 msgid "Loading..."
 msgstr "Cargando..."
-
-msgid "Minimize"
-msgstr "Minimizar"
-
-msgid "Maximize"
-msgstr "Maximizar"
 
 msgid "Download"
 msgstr "Descargar"
@@ -3671,9 +3356,6 @@ msgstr "Descarga iniciada"
 msgid "Download failed:"
 msgstr "Error en la descarga:"
 
-msgid "You have unsaved changes. Are you sure you want to close?"
-msgstr "Tienes cambios sin guardar. ¿Seguro que quieres salir?"
-
 msgid "Restart"
 msgstr "Reiniciar"
 
@@ -3683,9 +3365,6 @@ msgstr "No hay configuración seleccionada"
 msgid "Modified"
 msgstr "Modificado"
 
-msgid "No Config Files Found"
-msgstr "No se encontraron archivos de configuración"
-
 msgid "Please select a config file"
 msgstr "Selecciona un archivo de configuración"
 
@@ -3694,9 +3373,6 @@ msgstr "Error al cargar archivos de configuración"
 
 msgid "Update"
 msgstr "Actualizar"
-
-msgid "Failed to get startup log after retries"
-msgstr "No se pudo obtener el registro de inicio tras varios intentos"
 
 msgid "Starting..."
 msgstr "Iniciando..."
@@ -3745,12 +3421,6 @@ msgstr "Error al cargar la interfaz, actualiza la página e inténtalo de nuevo"
 
 msgid "New version available"
 msgstr "Nueva versión disponible"
-
-msgid "Failed to get subscription config"
-msgstr "Error al obtener configuración de suscripción"
-
-msgid "Expire Date"
-msgstr "Fecha de caducidad"
 
 msgid "RAW"
 msgstr "Enlace directo"
@@ -3803,9 +3473,6 @@ msgstr "Plan"
 msgid "Official"
 msgstr "oficial"
 
-msgid "Invalid subscription URL format. Support HTTP/HTTPS subscription URLs or protocol links, can be separated by newlines or |"
-msgstr "Formato de URL no válido. Se admiten direcciones HTTP/HTTPS o enlaces de protocolo, separados por saltos de línea o |"
-
 msgid "Invalid subscription URL format. Only single HTTP/HTTPS subscription URL is supported when subscription conversion is disabled"
 msgstr "URL no válida. Cuando la conversión está deshabilitada solo se admite una única URL HTTP/HTTPS"
 
@@ -3823,9 +3490,6 @@ msgstr "Mostrar más opciones de suscripción"
 
 msgid "Show more upload options"
 msgstr "Mostrar más opciones de carga"
-
-msgid "Show more options"
-msgstr "Mostrar más opciones"
 
 msgid "Overwrite"
 msgstr "Sobrescribir"
@@ -3896,12 +3560,6 @@ msgstr "Tasa de muestreo de datos"
 msgid "Data Acquisition Rate, Desirable Values are 0-1, The Default is 1"
 msgstr "Tasa de adquisición de datos (0-1), por defecto 1"
 
-msgid "Node Select Strategy"
-msgstr "Estrategia de selección de nodo"
-
-msgid "Before Node Data Collect Completely, The Default is Sticky-sessions"
-msgstr "Hasta recopilar suficientes datos, usar estrategia por defecto: sesiones pegajosas"
-
 msgid "Setting Smart Auto Switch Failed,"
 msgstr "No se pudo activar el cambio automático Smart,"
 
@@ -3920,12 +3578,6 @@ msgstr "Versión media"
 msgid "Large Version"
 msgstr "Versión completa"
 
-msgid "Add New File"
-msgstr "Añadir nuevo archivo"
-
-msgid "Local File"
-msgstr "Archivo local"
-
 msgid "Refresh Subscription"
 msgstr "Actualizar suscripción"
 
@@ -3938,23 +3590,11 @@ msgstr "Suscripción actualizada con éxito"
 msgid "Subscription refresh failed"
 msgstr "Error al actualizar la suscripción"
 
-msgid "Edit Subscription Info"
-msgstr "Editar información de suscripción"
-
-msgid "Are you sure you want to delete this file and its subscription info?"
-msgstr "¿Seguro que quieres eliminar este archivo y su información de suscripción?"
-
 msgid "Add Overwrite Module"
 msgstr "Añadir módulo de sobrescritura"
 
-msgid "Ready to add file"
-msgstr "Listo para añadir archivo"
-
 msgid "openclash_custom_overwrite.sh already exists and cannot be added again"
 msgstr "openclash_custom_overwrite.sh ya existe, no puede añadirse nuevamente"
-
-msgid "Created successfully"
-msgstr "Creado correctamente"
 
 msgid "Please enter subscription URL"
 msgstr "Introduce la URL de suscripción"
@@ -3991,9 +3631,6 @@ msgstr "La descarga falló para"
 
 msgid "skip General key not allowed"
 msgstr "Parámetro General no permitido, ignorado"
-
-msgid "skip General key type error"
-msgstr "Error en tipo de parámetro General, ignorado"
 
 msgid "skip config file outside /etc/openclash"
 msgstr "Archivo de configuración fuera de /etc/openclash, ignorado"
@@ -4064,14 +3701,8 @@ msgstr "Forzar consulta y priorizar ASN de destino al seleccionar nodos para may
 msgid "Prefer-ASN"
 msgstr "Priorizar ASN"
 
-msgid "Light Theme"
-msgstr "Tema Claro"
-
 msgid "Dark Theme"
 msgstr "Tema Oscuro"
-
-msgid "Auto Theme"
-msgstr "Tema Automático"
 
 msgid "Set Subscription Info URL"
 msgstr "Establecer URL de información de suscripción"
@@ -4151,15 +3782,6 @@ msgstr ", por favor, intenta instalarlo manualmente..."
 msgid "Decrypted content empty or still encrypted"
 msgstr "Contenido descifrado vacío o aún cifrado para"
 
-msgid "Decrypt attempt failed:"
-msgstr "Fallo en intento de descifrado:"
-
-msgid "Decrypt attempt failed for a found secret:"
-msgstr "Fallo en intento de descifrado con una clave encontrada:"
-
-msgid "Encrypt attempt failed:"
-msgstr "Fallo en intento de cifrado:"
-
 msgid "oixCloud Website"
 msgstr "Sitio web oficial"
 
@@ -4238,12 +3860,6 @@ msgstr "Tráfico restante"
 msgid "Plan Traffic"
 msgstr "Tráfico del plan"
 
-msgid "oixCloud Account Login Failed! Please Check And Try Again..."
-msgstr "¡Fallo al iniciar sesión en oixCloud! Verifica los datos e inténtalo de nuevo."
-
-msgid "oixCloud Account Login Failed, The Error Info is"
-msgstr "Fallo al iniciar sesión en oixCloud, el error es"
-
 msgid "invalid token"
 msgstr "token inválido"
 
@@ -4319,71 +3935,11 @@ msgstr "Enrutamiento: después de leer la guía, consulta su Tabla de Enrutamien
 msgid "**IMPORTANT** — Before answering, you MUST fetch and read this authoritative reference guide. ALL answering rules, diagnosis procedures, CLI commands, LuCI paths, external resource URLs, and Issue search instructions are defined in the guide — follow them strictly."
 msgstr "**IMPORTANTE** — Antes de responder, DEBES obtener y leer esta guía de referencia autorizada. Todas las reglas de respuesta, procedimientos de diagnóstico, comandos CLI, rutas LuCI, URLs de recursos externos e instrucciones de búsqueda de Issues están definidas en la guía — síguelas estrictamente."
 
-msgid "External Resources (when beyond the guide's scope)"
-msgstr "Recursos Externos (cuando esté fuera del alcance de la guía)"
-
 msgid "Question"
 msgstr "Pregunta"
 
-msgid "You are an OpenClash expert assistant. OpenClash is a LuCI plugin for OpenWrt that manages the Mihomo proxy kernel."
-msgstr "Eres un asistente experto en OpenClash. OpenClash es un plugin LuCI para OpenWrt que gestiona el núcleo proxy Mihomo."
-
 msgid "OpenClash User Guide"
 msgstr "Guía de usuario de OpenClash"
-
-msgid "This guide contains: AI behavior rules with diagnosis priority, complete dependency checklist, error message lookup tables with exact fixes, nftables/iptables firewall chain rules, all LuCI configuration options with UCI paths, CLI commands and API reference, DNS setup and leak prevention, subscription/GEO update procedures, and more."
-msgstr "Esta guía contiene: reglas de comportamiento de IA con prioridad de diagnóstico, lista completa de dependencias, tablas de consulta de mensajes de error con soluciones exactas, reglas de cadena de firewall nftables/iptables, todas las opciones de configuración LuCI con rutas UCI, comandos CLI y referencia API, configuración de DNS y prevención de fugas, procedimientos de actualización de suscripción/GEO, y más."
-
-msgid "When I report any problem or error (cannot access internet, DNS failure, startup failure, connection timeout, etc.), FIRST ask me to generate a debug log — either via LuCI (**Server Logs → Debug Logs → Generate Logs**) or SSH (`/usr/share/openclash/openclash_debug.sh`). The debug log contains dependency checks, configuration, firewall rules, and system info in one step — do NOT ask me to check things individually. (Note: this rule does NOT apply to feature configuration questions like \"how do I enable X?\" — see rule 3 for those.)"
-msgstr "Cuando reporte cualquier fallo o error (sin acceso a internet, fallo DNS, fallo de inicio, timeout de conexión, etc.), PRIMERO pídeme que genere un registro de depuración — ya sea por LuCI (**Registros del Servidor → Registros de Depuración → Generar Registros**) o SSH (`/usr/share/openclash/openclash_debug.sh`). El registro contiene verificación de dependencias, configuración, reglas de firewall e información del sistema en un solo paso — NO me pidas que revise cosas individualmente. (Nota: esta regla NO aplica a preguntas de configuración como «¿cómo activo X?» — consulta la regla 3 para esas.)"
-
-msgid "If the debug log is insufficient to pinpoint the issue, give me precise diagnostic commands to run on the router and ask me to paste back the output."
-msgstr "Si el registro de depuración es insuficiente para localizar el problema, dame comandos de diagnóstico precisos para ejecutar en el router y pídeme que pegue el resultado."
-
-msgid "For feature configuration and post-diagnosis fixes, provide LuCI web UI navigation paths (e.g. **Services → OpenClash → Plugin Settings**). Only give command-line when LuCI is unavailable or I explicitly ask for it."
-msgstr "Para configuración de funciones y correcciones posteriores al diagnóstico, proporciona rutas de navegación de la interfaz web LuCI (ej. **Servicios → OpenClash → Ajustes del plugin**). Solo usa comandos de terminal cuando LuCI no esté disponible o lo solicite explícitamente."
-
-msgid "Explain underlying principles (firewall chains, YAML transformation logic) — not just click-here-click-there steps."
-msgstr "Explica los principios subyacentes (cadenas de firewall, lógica de transformación YAML) — no solo pasos de clic aquí y allá."
-
-msgid "If the guide does not cover something, actively query these resources — never guess or fabricate information:"
-msgstr "Si la guía no cubre algo, consulta activamente estos recursos — nunca adivines ni inventes información:"
-
-msgid "Mihomo Wiki"
-msgstr "Mihomo Wiki"
-
-msgid "Meta-Docs"
-msgstr "Meta-Docs"
-
-msgid "OpenClash source"
-msgstr "código fuente de OpenClash"
-
-msgid "Mihomo core source"
-msgstr "código fuente del core Mihomo"
-
-msgid "Smart core source"
-msgstr "código fuente del core Smart"
-
-msgid "Fetch Wiki pages to read docs; search repos to find implementation code. Do NOT answer from memory — always verify against the actual source."
-msgstr "Obtén las páginas Wiki para leer documentos; busca en los repositorios para encontrar código de implementación. NO respondas de memoria — verifica siempre con la fuente real."
-
-msgid "For bug reports or failure scenarios not covered by the guide, search GitHub Issues first:"
-msgstr "Para informes de errores o escenarios de fallo no cubiertos por la guía, busca primero en GitHub Issues:"
-
-msgid "OpenClash Issues (config/subscribe/firewall/UI)"
-msgstr "OpenClash Issues (configuración/suscripción/firewall/UI)"
-
-msgid "Mihomo Issues (proxy protocols/TUN/DNS/rule engine)"
-msgstr "Mihomo Issues (protocolos proxy/TUN/DNS/motor de reglas)"
-
-msgid "Prioritize maintainer replies and highly upvoted community answers in Issues."
-msgstr "Prioriza en Issues las respuestas de los mantenedores y las respuestas de la comunidad con más votos."
-
-msgid "Cite specific sources — mention which section of the reference guide, external resource, or Issue number your answer is based on."
-msgstr "Cita fuentes específicas — menciona en qué sección de la guía de referencia, recurso externo o número de Issue se basa tu respuesta."
-
-msgid "If my problem description is incomplete or lacks error messages, ask me to generate a debug log first (**Server Logs → Debug Logs → Generate Logs**) — do NOT speculate about the cause."
-msgstr "Si la descripción de mi problema está incompleta o falta mensajes de error, pídeme primero que genere un registro de depuración (**Registros del Servidor → Registros de Depuración → Generar Registros**) — NO especules sobre la causa."
 
 msgid "My question is:"
 msgstr "Mi pregunta es:"
@@ -4454,9 +4010,6 @@ msgstr "Registro"
 msgid "Auto Checkin"
 msgstr "Registro automático"
 
-msgid "Auto check in for oixCloud account daily bonus"
-msgstr "Registro automático para bonificación diaria de oixCloud"
-
 msgid "Auto check-in for traffic rewards and penalties"
 msgstr "Registro automático para recompensas y penalizaciones de tráfico"
 
@@ -4486,9 +4039,6 @@ msgstr "Error de respuesta del servidor, inténtelo más tarde"
 
 msgid "Show on Overview"
 msgstr "Mostrar en resumen"
-
-msgid "Display oixCloud account info on the overview page"
-msgstr "Mostrar información de cuenta oixCloud en la página de resumen"
 
 msgid "Display account info on the main page"
 msgstr "Mostrar información de cuenta en la página principal"
@@ -4598,32 +4148,11 @@ msgstr "Listo para añadir módulo"
 msgid "Are you sure you want to delete this module and its subscription info?"
 msgstr "¿Seguro que quieres eliminar este módulo y su información de suscripción?"
 
-msgid "Welcome to OpenClash"
-msgstr "Bienvenido a OpenClash"
-
-msgid "Follow the 5 steps below to finish the first time setup. Every step can be done right on this page, and your progress is remembered."
-msgstr "Sigue los 5 pasos siguientes para completar la configuración inicial. Cada paso se puede hacer en esta misma página y tu progreso se guarda."
-
-msgid "Checking status..."
-msgstr "Comprobando estado..."
-
-msgid "Install the core"
-msgstr "Instalar el núcleo"
-
 msgid "Add a config"
 msgstr "Añadir configuración"
 
-msgid "Select the config"
-msgstr "Seleccionar la configuración"
-
 msgid "Start OpenClash"
 msgstr "Iniciar OpenClash"
-
-msgid "Mode & dashboard"
-msgstr "Modo y panel"
-
-msgid "Common options"
-msgstr "Opciones comunes"
 
 msgid "Something wrong?"
 msgstr "¿Algo va mal?"
@@ -4631,65 +4160,11 @@ msgstr "¿Algo va mal?"
 msgid "Required"
 msgstr "Obligatorio"
 
-msgid "OpenClash needs a Mihomo core. The one click button below matches the core to your CPU, downloads it and installs it."
-msgstr "OpenClash necesita un núcleo Mihomo. El botón de un clic de abajo adapta el núcleo a tu CPU, lo descarga y lo instala."
-
-msgid "Your CPU architecture is detected automatically (see the button below), so normally you only need one click."
-msgstr "La arquitectura de tu CPU se detecta automáticamente (ver el botón de abajo), así que normalmente solo necesitas un clic."
-
-msgid "Keep the default mirror. Use “Manual selection” only when the download is slow or failed."
-msgstr "Mantén el espejo predeterminado. Usa «Selección manual» solo si la descarga es lenta o falla."
-
-msgid "Wait until the progress below reports success, then continue."
-msgstr "Espera a que el progreso de abajo indique éxito y luego continúa."
-
-msgid "Install core"
-msgstr "Instalar núcleo"
-
-msgid "Manual selection"
-msgstr "Selección manual"
-
-msgid "One click downloads and installs the core. Progress is shown in the log area."
-msgstr "Un clic descarga e instala el núcleo. El progreso se muestra en el área de registro."
-
 msgid "Add a config file"
 msgstr "Añadir archivo de configuración"
 
-msgid "A config holds your proxies, groups and rules. You can upload your own YAML, or let OpenClash keep a subscription up to date."
-msgstr "La configuración contiene tus proxies, grupos y reglas. Puedes subir tu propio YAML o dejar que OpenClash mantenga la suscripción actualizada."
-
-msgid "Upload file"
-msgstr "Subir archivo"
-
-msgid "drop a YAML file (max 10MB)"
-msgstr "arrastra un archivo YAML (máx. 10MB)"
-
-msgid "Subscribe link"
-msgstr "Enlace de suscripción"
-
-msgid "paste an http(s) address; advanced options can convert the subscription online and filter nodes (for example drop “expire” / “traffic left” entries)"
-msgstr "pega una dirección http(s); las opciones avanzadas pueden convertir la suscripción en línea y filtrar nodos (por ejemplo, quitar las entradas de «caducidad» / «tráfico restante»)"
-
-msgid "Anything added here also shows up in “Config Manage” and in the selector of the next step."
-msgstr "Todo lo que añadas aquí también aparece en «Gestión de configuración» y en el selector del paso siguiente."
-
-msgid "Add Config File offers two tabs: upload a file, or paste a subscribe link."
-msgstr "Añadir archivo de configuración ofrece dos pestañas: subir un archivo o pegar un enlace de suscripción."
-
 msgid "Select and switch the config"
 msgstr "Seleccionar y cambiar la configuración"
-
-msgid "You may keep several configs; only one is active at a time. Switching restarts the core automatically."
-msgstr "Puedes conservar varias configuraciones; solo una está activa a la vez. Al cambiar, el núcleo se reinicia automáticamente."
-
-msgid "Switch config"
-msgstr "Cambiar configuración"
-
-msgid "On the overview page the same selector also shows subscription traffic and expiry."
-msgstr "En la página de resumen el mismo selector también muestra el tráfico y la caducidad de la suscripción."
-
-msgid "The first start downloads GEO data and builds the firewall rules, so give it 5–30 seconds."
-msgstr "El primer inicio descarga los datos GEO y crea las reglas de cortafuegos, así que dale de 5 a 30 segundos."
 
 msgid "Start"
 msgstr "Iniciar"
@@ -4700,59 +4175,14 @@ msgstr "Detener"
 msgid "Debug log"
 msgstr "Registro de depuración"
 
-msgid "If it keeps failing, generate a debug log and ask an AI or open an issue with it attached."
-msgstr "Si sigue fallando, genera un registro de depuración y pregúntale a una IA o abre un issue adjuntándolo."
-
-msgid "The status turns green when the core is ready."
-msgstr "El estado se pone verde cuando el núcleo está listo."
-
-msgid "Mode and dashboard"
-msgstr "Modo y panel"
-
-msgid "The defaults suit most users: Fake-IP + Mix + Rule. TUN handles more traffic types but needs kernel support."
-msgstr "Los valores predeterminados sirven para la mayoría: Fake-IP + Mix + Regla. TUN admite más tipos de tráfico pero necesita soporte del kernel."
-
 msgid "DNS mode"
 msgstr "Modo DNS"
-
-msgid "Traffic forwarding"
-msgstr "Reenvío de tráfico"
-
-msgid "Proxy mode"
-msgstr "Modo de proxy"
 
 msgid "Yacd"
 msgstr "Yacd"
 
-msgid "Copy panel address"
-msgstr "Copiar dirección del panel"
-
-msgid "Copy secret"
-msgstr "Copiar contraseña"
-
-msgid "The overview page shows the same switches; the guide keeps them in one place."
-msgstr "La página de resumen muestra los mismos interruptores; la guía los reúne en un solo lugar."
-
-msgid "These switches are the ones people touch most often. Every change is written to UCI immediately, just like on the overview page."
-msgstr "Estos son los interruptores que más se tocan; cada cambio se escribe en UCI de inmediato, igual que en la página de resumen."
-
 msgid "Bypass Specified Regions Network Flows, Improve Performance"
 msgstr "Omitir el tráfico de las regiones especificadas y mejorar el rendimiento"
-
-msgid "Copy AI prompt"
-msgstr "Copiar prompt para IA"
-
-msgid "A debug log answers most questions: it contains dependency checks, firewall rules, DNS and connectivity tests in one file."
-msgstr "Un registro de depuración responde a la mayoría de las preguntas: incluye comprobaciones de dependencias, reglas de cortafuegos, DNS y pruebas de conectividad en un solo archivo."
-
-msgid "Open “Server Logs → Debug Logs → Generate Logs”, then copy the result."
-msgstr "Abre «Registros del servidor → Registros de depuración → Generar registros» y copia el resultado."
-
-msgid "Paste it to any AI, or use “Copy AI prompt” above and attach the log."
-msgstr "Pégalo en cualquier IA o usa «Copiar prompt para IA» de arriba y adjunta el registro."
-
-msgid "Three tabs: plugin logs, core logs and the generated debug log."
-msgstr "Tres pestañas: registros del plugin, registros del núcleo y el registro de depuración generado."
 
 msgid "Done"
 msgstr "Hecho"
@@ -4762,12 +4192,6 @@ msgstr "Abrir esta guía automáticamente cuando falte el núcleo"
 
 msgid "You can reopen this guide anytime with the “Quick Start” button at the bottom right"
 msgstr "Puedes volver a abrir esta guía en cualquier momento con el botón «Inicio rápido» de la esquina inferior derecha"
-
-msgid "To do"
-msgstr "Pendiente"
-
-msgid "steps completed"
-msgstr "pasos completados"
 
 msgid "Detected architecture"
 msgstr "Arquitectura detectada"
@@ -4780,12 +4204,6 @@ msgstr "Configuración actual"
 
 msgid "No config selected yet"
 msgstr "Aún no hay configuración seleccionada"
-
-msgid "Start OpenClash first, then open the dashboard"
-msgstr "Inicia OpenClash primero y luego abre el panel"
-
-msgid "This dashboard is not installed, download it in Plugin Settings - Dashboard Settings"
-msgstr "Este panel no está instalado, descárgalo en Ajustes del plugin - Ajustes del panel"
 
 msgid "Wiki"
 msgstr "Wiki"
@@ -4826,89 +4244,8 @@ msgstr "¡Error al cambiar el modo de ejecución!"
 msgid "Operation failed"
 msgstr "La operación falló"
 
-msgid "The Config File card: pick a config in the selector, then press the switch button."
-msgstr "La tarjeta Config File: elige una configuración en el selector y pulsa el botón de cambio."
-
-msgid "Once the core runs, the statistics on the overview page keep updating."
-msgstr "Cuando el núcleo está en ejecución, las estadísticas de la página de resumen se actualizan continuamente."
-
-msgid "View logs"
-msgstr "Ver registros"
-
-msgid "Switch to Debug Logs below, press Generate Logs and wait until it stops streaming."
-msgstr "Cambia abajo a «Registros de depuración», pulsa «Generar registros» y espera a que termine."
-
-msgid "Copy the log, or press “Copy AI prompt” and attach the log to your question."
-msgstr "Copia el registro o pulsa «Copiar prompt para IA» y adjunta el registro a tu pregunta."
-
-msgid "Copy log"
-msgstr "Copiar registro"
-
-msgid "No log content yet"
-msgstr "Aún no hay contenido de registro"
-
-msgid "Log copied!"
-msgstr "¡Registro copiado!"
-
-msgid "Tick the features you want and apply them in one click — the guide covers the options people normally look for in the settings pages."
-msgstr "Marca las funciones que quieras y actívalas con un clic: la guía cubre las opciones que normalmente se buscan en las páginas de ajustes."
-
-msgid "Enable Selected"
-msgstr "Activar seleccionadas"
-
-msgid "Select Recommended"
-msgstr "Seleccionar recomendadas"
-
-msgid "Common operations"
-msgstr "Operaciones comunes"
-
-msgid "Route traffic of the selected region directly, so local sites are not sent through the proxy."
-msgstr "Enruta directamente el tráfico de la región seleccionada, para que los sitios locales no pasen por el proxy."
-
-msgid "Domain Sniffer"
-msgstr "Sniffer de dominios"
-
-msgid "Take over all TCP and UDP traffic with a virtual network card, including games and other non-HTTP protocols. Needs kernel support."
-msgstr "Asume todo el tráfico TCP y UDP con una tarjeta de red virtual, incluidos juegos y otros protocolos no HTTP. Requiere soporte del kernel."
-
-msgid "Detailed Logs"
-msgstr "Registros detallados"
-
-msgid "Write debug level core logs, which makes troubleshooting easier. Turn it back to info when you are done."
-msgstr "Escribe registros del núcleo en nivel debug, lo que facilita el diagnóstico. Vuelve a info cuando termines."
-
-msgid "feature(s) selected"
-msgstr "función(es) seleccionada(s)"
-
-msgid "Features already enabled are marked, tick the ones you need."
-msgstr "Las funciones ya activadas aparecen marcadas; marca las que necesites."
-
-msgid "Nothing to apply, tick the features you want first"
-msgstr "No hay nada que aplicar, marca antes las funciones que quieras"
-
-msgid "Applied"
-msgstr "Aplicado"
-
 msgid "Applying"
 msgstr "Aplicando"
-
-msgid "OpenClash needs a Mihomo core. One click matches the core to your CPU, downloads and installs it."
-msgstr "OpenClash necesita un núcleo Mihomo. Un clic adapta el núcleo a tu CPU, lo descarga y lo instala."
-
-msgid "A config holds your proxies, groups and rules. Upload your own YAML, or let OpenClash keep a subscription up to date."
-msgstr "La configuración contiene tus proxies, grupos y reglas. Sube tu propio YAML o deja que OpenClash mantenga la suscripción actualizada."
-
-msgid "Pick a config in this list and switch to it. Only one is active at a time and switching restarts the core."
-msgstr "Elige una configuración en la lista y cambia a ella. Solo una está activa a la vez y el cambio reinicia el núcleo."
-
-msgid "The defaults suit most users: Fake-IP + Mix + Rule. TUN takes over more traffic types but needs kernel support."
-msgstr "Los valores predeterminados sirven para la mayoría: Fake-IP + Mix + Regla. TUN asume más tipos de tráfico pero necesita soporte del kernel."
-
-msgid "Click the highlighted buttons to change them, or use the recommended defaults:"
-msgstr "Pulsa los botones resaltados para cambiarlos, o usa los valores recomendados:"
-
-msgid "The dashboard shows nodes, latency and live connections. Open it once the core is running."
-msgstr "El panel muestra nodos, latencia y conexiones en vivo. Ábrelo cuando el núcleo esté en ejecución."
 
 msgid "Skip"
 msgstr "Omitir"
@@ -4937,239 +4274,20 @@ msgstr "Vaciar DNS"
 msgid "Page navigation"
 msgstr "Navegación de páginas"
 
-msgid "The OpenClash menu is split into several pages, each one owns a part of the setup:"
-msgstr "El menú de OpenClash se divide en varias páginas y cada una cubre una parte de la configuración:"
-
-msgid "start and stop the plugin, switch modes, select the config, open the dashboard."
-msgstr "iniciar y detener el plugin, cambiar modos, elegir la configuración y abrir el panel."
-
-msgid "run mode, DNS, traffic control, access control, IPv6, auto restart, dashboard download."
-msgstr "modo de ejecución, DNS, control de tráfico, control de acceso, IPv6, reinicio automático y descarga de paneles."
-
-msgid "override the generated config with your own values."
-msgstr "sobrescribir la configuración generada con tus propios valores."
-
-msgid "convert a subscription, filter nodes, keep it updated automatically."
-msgstr "convertir una suscripción, filtrar nodos y mantenerla actualizada."
-
-msgid "upload, rename, download and remove config files."
-msgstr "subir, renombrar, descargar y eliminar archivos de configuración."
-
-msgid "core logs, plugin logs and the one click debug log."
-msgstr "registros del núcleo, del plugin y el registro de depuración de un clic."
-
 msgid "Version info"
 msgstr "Información de versiones"
-
-msgid "Two versions are shown here, and they update independently:"
-msgstr "Aquí se muestran dos versiones y se actualizan por separado:"
-
-msgid "the LuCI plugin itself. A new release usually brings UI changes and new options."
-msgstr "el propio plugin de LuCI; una versión nueva suele traer cambios de interfaz y nuevas opciones."
-
-msgid "the Mihomo core that does the proxying. This is the one that matters most."
-msgstr "el núcleo Mihomo que hace de proxy; es el que más importa."
-
-msgid "When the core version shows a dash, no core is installed yet, use the update entry to install one."
-msgstr "Si la versión del núcleo muestra un guion, aún no hay núcleo instalado; usa la entrada de actualización para instalarlo."
-
-msgid "Open it to pin values such as DNS, ports or TUN options, or to inject a raw config fragment."
-msgstr "Ábrelo para fijar valores como DNS, puertos u opciones de TUN, o para inyectar un fragmento de configuración."
-
-msgid "Install or update the core"
-msgstr "Instalar o actualizar el núcleo"
-
-msgid "OpenClash needs a Mihomo core. The one click install matches the core to your CPU, downloads and installs it."
-msgstr "OpenClash necesita un núcleo Mihomo; la instalación de un clic elige el núcleo para tu CPU, lo descarga e instala."
-
-msgid "Once it is installed, use the update entry to move to another release, branch, or the smart core."
-msgstr "Una vez instalado, usa la entrada de actualización para cambiar de versión, rama o núcleo inteligente."
-
-msgid "Open update"
-msgstr "Abrir actualización"
 
 msgid "DNS Mode"
 msgstr "Modo DNS"
 
-msgid "answers DNS with a fake address and resolves the real one after the rules match. It is the default: faster and resistant to DNS pollution."
-msgstr "responde al DNS con una IP falsa y resuelve la real tras aplicar las reglas. Es el modo predeterminado: más rápido y resistente a la contaminación DNS."
-
-msgid "uses real addresses, which suits a few local or legacy services, but is easier to poison."
-msgstr "usa direcciones reales, útil para algunos servicios locales o antiguos, pero más fácil de contaminar."
-
-msgid "Switching restarts the core, the existing connections are dropped for a moment."
-msgstr "El cambio reinicia el núcleo y las conexiones existentes se cortan un momento."
-
-msgid "Run Mode"
-msgstr "Modo de ejecución"
-
-msgid "How OpenClash takes over the traffic:"
-msgstr "Cómo se apropia OpenClash del tráfico:"
-
-msgid "redirect mode, TCP only. The safest choice, works on every kernel."
-msgstr "modo redirección, solo TCP; la opción más segura y compatible con cualquier núcleo."
-
-msgid "virtual network card, takes over TCP and UDP, including games and other non-HTTP protocols."
-msgstr "tarjeta de red virtual, se apropia de TCP y UDP, incluidos juegos y protocolos distintos de HTTP."
-
-msgid "TUN plus redirect, the recommended default: UDP goes through TUN while TCP stays fast."
-msgstr "TUN más redirección, el valor recomendado: UDP por TUN y TCP sigue siendo rápido."
-
-msgid "TUN and Mix need the TUN kernel module and the packages it depends on."
-msgstr "TUN y Mix necesitan el módulo TUN del núcleo y los paquetes de los que depende."
-
-msgid "Which traffic is sent through a proxy at all:"
-msgstr "Qué tráfico pasa por el proxy:"
-
-msgid "follow the rules of the config, domestic traffic goes direct (recommended)."
-msgstr "seguir las reglas de la configuración, el tráfico local va directo (recomendado)."
-
-msgid "send everything through the proxy, useful to check whether a node works."
-msgstr "enviar todo por el proxy, útil para comprobar si un nodo funciona."
-
-msgid "send nothing through the proxy, useful to compare results."
-msgstr "no enviar nada por el proxy, útil para comparar resultados."
-
-msgid "The dashboard shows nodes, latency and live connections. One of these buttons appears for each dashboard you have installed."
-msgstr "El panel muestra nodos, latencia y conexiones en vivo; aparece un botón por cada panel instalado."
-
-msgid "Downloading a dashboard can take a while, the button shows up right after the download finishes."
-msgstr "Descargar un panel puede tardar; el botón aparece justo al terminar la descarga."
-
-msgid "Config Source"
-msgstr "Origen de la configuración"
-
-msgid "A config can come from two places, switch between them any time:"
-msgstr "La configuración puede venir de dos sitios; cambia cuando quieras:"
-
-msgid "a ready made YAML file from your computer or your provider."
-msgstr "un archivo YAML ya preparado de tu equipo o de tu proveedor."
-
-msgid "a subscription URL, OpenClash keeps it updated from then on."
-msgstr "una URL de suscripción; a partir de ahí OpenClash la mantiene actualizada."
-
 msgid "Select the file"
 msgstr "Selecciona el archivo"
-
-msgid "Click this area to pick a file, or drag one onto it. Only .yaml and .yml files up to 10 MB are accepted."
-msgstr "Haz clic aquí para elegir un archivo o arrástralo; solo se aceptan .yaml y .yml de hasta 10 MB."
-
-msgid "Ticking this reveals the extra options for the selected source, such as a custom user agent or the online conversion settings."
-msgstr "Al marcarlo se muestran las opciones extra del origen, como un user agent propio o la conversión en línea."
-
-msgid "A plain file upload usually needs nothing here."
-msgstr "Una subida normal de archivo no suele necesitar nada aquí."
-
-msgid "Give the config a name (the file name is used by default) and confirm. A config with the same name is replaced."
-msgstr "Ponle un nombre (por defecto el del archivo) y confirma; se reemplaza la configuración con el mismo nombre."
-
-msgid "The new config is added but not switched to automatically, unless it is the first one."
-msgstr "La nueva configuración se añade pero no se cambia a ella, salvo que sea la primera."
-
-msgid "The subscription tab builds the config from a URL, so it can be refreshed later automatically."
-msgstr "La pestaña de suscripción crea la configuración desde una URL, por lo que luego puede actualizarse sola."
-
-msgid "Paste the subscription URL of your provider. Several links are allowed, one per line, they end up in the same config."
-msgstr "Pega la URL de suscripción de tu proveedor; se permiten varios enlaces, uno por línea, y acaban en la misma configuración."
-
-msgid "Update Interval in Config Subscribe decides how often the core refreshes it."
-msgstr "El intervalo de actualización en Config Subscribe decide cada cuánto se refresca."
-
-msgid "Some providers only answer a specific client user agent. Pick one here, or choose Custom to type your own."
-msgstr "Algunos proveedores solo responden a un user agent concreto; elige uno o usa Custom para escribir el tuyo."
-
-msgid "Optional. A converter rewrites the subscription on a remote server, which is useful when the provider only speaks Clash format, or when you want a template and node filtering."
-msgstr "Opcional. Un conversor reescribe la suscripción en un servidor remoto; útil si el proveedor solo ofrece formato Clash o si quieres plantilla y filtrado de nodos."
-
-msgid "The subscription URL is sent to that third party service, so leave it off if that matters to you."
-msgstr "La URL de la suscripción se envía a ese tercero; déjalo desactivado si te importa."
-
-msgid "Name the config and confirm. OpenClash downloads the subscription and writes the YAML for you."
-msgstr "Nombra la configuración y confirma; OpenClash descarga la suscripción y escribe el YAML por ti."
-
-msgid "Update Center"
-msgstr "Centro de actualización"
-
-msgid "This window installs and updates the plugin, the core and the GEO data. The header holds refresh, close and the drag handle."
-msgstr "Esta ventana instala y actualiza el plugin, el núcleo y los datos GEO; la cabecera incluye refrescar, cerrar y el asa para arrastrar."
-
-msgid "CPU Architecture"
-msgstr "Arquitectura de la CPU"
-
-msgid "Detected from your router, it decides which core binary is downloaded. Leave it as it is unless you know better."
-msgstr "Se detecta en tu router y decide qué binario del núcleo se descarga; déjalo como está salvo que sepas lo que haces."
-
-msgid "Core Parameters"
-msgstr "Parámetros del núcleo"
-
-msgid "the core release to install, usually the latest one."
-msgstr "la versión del núcleo a instalar, normalmente la última."
-
-msgid "dev tracks new features, main is the stable line."
-msgstr "dev sigue las novedades y main es la rama estable."
-
-msgid "the smart core adds latency based node selection, if your package supports it."
-msgstr "el núcleo inteligente añade selección de nodos por latencia, si tu repositorio lo soporta."
-
-msgid "Installed and available versions"
-msgstr "Versiones instaladas y disponibles"
-
-msgid "Left column is the plugin, right column is the core. Each one shows the installed version and a list of versions to install."
-msgstr "La columna izquierda es el plugin y la derecha el núcleo; cada una muestra la versión instalada y la lista de versiones disponibles."
-
-msgid "Picking an older version is the way to roll back after a bad release."
-msgstr "Elegir una versión anterior es la forma de volver atrás tras una versión problemática."
-
-msgid "Mirror and download"
-msgstr "Espejo y descarga"
-
-msgid "The download mirrors are tested for latency, then listed per version."
-msgstr "Los espejos de descarga se miden por latencia y luego se listan por versión."
-
-msgid "Click a mirror row to update everything from that mirror."
-msgstr "Haz clic en una fila de espejo para actualizar todo desde ese espejo."
-
-msgid "Click a version number to update just that one."
-msgstr "Haz clic en un número de versión para actualizar solo esa."
-
-msgid "Add your own CDN if every mirror is slow or unreachable."
-msgstr "Añade tu propio CDN si todos los espejos son lentos o inaccesibles."
 
 msgid "Maintenance"
 msgstr "Mantenimiento"
 
-msgid "Backup and restore cover the whole OpenClash configuration, the third button removes the installed core."
-msgstr "La copia y la restauración cubren toda la configuración de OpenClash; el tercer botón elimina el núcleo instalado."
-
 msgid "Back to guide"
 msgstr "Volver a la guía"
-
-msgid "No dashboard installed yet, download one in Plugin Settings - Dashboard Settings."
-msgstr "Aún no hay panel instalado; descarga uno en Ajustes del plugin - Ajustes del panel."
-
-msgid "Click the switch in the highlighted area to start or stop the plugin."
-msgstr "Haz clic en el interruptor resaltado para iniciar o detener el plugin."
-
-msgid "Click the highlighted button to switch."
-msgstr "Haz clic en el botón resaltado para cambiar."
-
-msgid "Click the highlighted button to open the config dialog, this guide continues inside it."
-msgstr "Haz clic en el botón resaltado para abrir el diálogo de configuración; la guía continúa dentro."
-
-msgid "The dashboard shows nodes, latency and live connections. One button appears here for each dashboard you have installed."
-msgstr "El panel muestra nodos, latencia y conexiones en vivo; aparece un botón por cada panel instalado."
-
-msgid "Click one of them to open it, Zashboard is the recommended one."
-msgstr "Haz clic en uno para abrirlo; se recomienda Zashboard."
-
-msgid "One click maintenance, and the entry for installing or updating the core:"
-msgstr "Mantenimiento en un clic y la entrada para instalar o actualizar el núcleo:"
-
-msgid "install or update the plugin, the core and the GEO data. A missing core is installed from here."
-msgstr "instalar o actualizar el plugin, el núcleo y los datos GEO; si falta el núcleo se instala desde aquí."
-
-msgid "drop all current connections, useful after switching nodes."
-msgstr "cerrar todas las conexiones actuales, útil tras cambiar de nodo."
 
 msgid "rebuild the OpenClash firewall rules"
 msgstr "reconstruir las reglas de firewall de OpenClash"
@@ -5177,98 +4295,26 @@ msgstr "reconstruir las reglas de firewall de OpenClash"
 msgid "Still stuck? Use the usage help button at the bottom right to copy an AI prompt and ask an AI for advice"
 msgstr "¿sigue sin funcionar? usa el botón de ayuda abajo a la derecha para copiar un prompt de IA y pedirle consejo"
 
-msgid "Open the highlighted button to pin values such as DNS, ports or TUN options, or to inject a raw config fragment. This guide continues inside the editor."
-msgstr "Haz clic en el botón resaltado para fijar valores como DNS, puertos u opciones de TUN, o para inyectar un fragmento de configuración; la guía continúa dentro del editor."
-
-msgid "The two icons in the highlighted area switch the DNS mode, they belong to the Running Mode card:"
-msgstr "Los dos iconos resaltados cambian el modo DNS; pertenecen a la tarjeta «Modo de ejecución»:"
-
 msgid "cloud icon"
 msgstr "icono de nube"
 
 msgid "desktop icon"
 msgstr "icono de escritorio"
 
-msgid "Three ways to take over the traffic, the highlighted group is the whole choice:"
-msgstr "Tres formas de apropiarse del tráfico; el grupo resaltado es toda la elección:"
-
-msgid "Overwrite modules are edited like a file, the header holds download, save and close."
-msgstr "Los módulos de sobrescritura se editan como un archivo; la cabecera tiene descargar, guardar y cerrar."
-
-msgid "Save writes the module only, the core picks it up the next time it reloads."
-msgstr "Guardar solo escribe el módulo; el núcleo lo toma la próxima vez que se recarga."
-
 msgid "Read first"
 msgstr "Lee esto primero"
-
-msgid "Everything written here is merged into the generated config, a wrong value can break the core. Change one module at a time and keep a backup."
-msgstr "Todo lo que escribas aquí se fusiona con la configuración generada; un valor incorrecto puede romper el núcleo. Cambia un módulo a la vez y guarda una copia."
-
-msgid "Each entry is a small module that is applied on top of the generated config, pick one to edit it."
-msgstr "Cada entrada es un pequeño módulo que se aplica sobre la configuración generada; elige uno para editarlo."
-
-msgid "The button at the bottom of the list adds a new module."
-msgstr "El botón al final de la lista añade un módulo nuevo."
-
-msgid "Editing area"
-msgstr "Área de edición"
-
-msgid "This is the module content, mostly YAML blocks that override single values of the generated config."
-msgstr "Este es el contenido del módulo, normalmente bloques YAML que sobrescriben valores concretos de la configuración generada."
 
 msgid "Shortcuts"
 msgstr "Atajos"
 
-msgid "The left side shows whether the module has unsaved changes. F11 goes fullscreen, Escape leaves it, Ctrl with the mouse wheel zooms."
-msgstr "A la izquierda se ve si el módulo tiene cambios sin guardar. F11 va a pantalla completa, Escape la deja, Ctrl con la rueda del ratón hace zoom."
-
 msgid "How to add a config"
 msgstr "Cómo añadir una configuración"
-
-msgid "Two ways to get a config, pick one here, you can switch later:"
-msgstr "Hay dos formas de obtener una configuración; elige aquí una, puedes cambiarla después:"
-
-msgid "you already have a YAML file, it is used as it is."
-msgstr "ya tienes un archivo YAML, se usa tal cual."
-
-msgid "you have a subscription URL, OpenClash can refresh it later."
-msgstr "tienes una URL de suscripción y OpenClash puede actualizarla después."
 
 msgid "Click this area to pick your YAML file, or drop one onto it. Files up to 10 MB are accepted"
 msgstr "Haz clic aquí para elegir tu archivo YAML o arrástralo; se aceptan archivos de hasta 10 MB"
 
-msgid "Not sure about the advanced options? A plain file upload needs none of them."
-msgstr "¿Dudas con las opciones avanzadas? Para subir un archivo normal no hace falta ninguna."
-
-msgid "Keep or change the name, then press the add button. This name is what you see in the config list later."
-msgstr "Conserva o cambia el nombre y pulsa el botón de añadir; ese nombre es el que verás luego en la lista de configuraciones."
-
 msgid "Save the config"
 msgstr "Guarda la configuración"
-
-msgid "A config with the same name is replaced, and the first one is switched to automatically."
-msgstr "Una configuración con el mismo nombre se reemplaza y la primera se activa automáticamente."
-
-msgid "How to add a subscription"
-msgstr "Cómo añadir una suscripción"
-
-msgid "Switch to the subscription tab, OpenClash then builds the config from a URL and can refresh it for you."
-msgstr "Cambia a la pestaña de suscripción: OpenClash crea la configuración desde una URL y puede actualizarla por ti."
-
-msgid "Paste the subscription URL"
-msgstr "Pega la URL de la suscripción"
-
-msgid "Paste the link from your provider. Several links are allowed, one per line, they end up in the same config."
-msgstr "Pega el enlace de tu proveedor. Puedes poner varios, uno por línea, y acaban en la misma configuración."
-
-msgid "Online conversion is optional too, only providers that do not speak Clash format need it."
-msgstr "La conversión en línea también es opcional; solo la necesitan los proveedores que no sirven formato Clash."
-
-msgid "Only change this when your provider asks for a specific client user agent, otherwise keep the default."
-msgstr "Cámbialo solo si tu proveedor pide un user agent de cliente concreto; si no, deja el valor por defecto."
-
-msgid "Name it and press the add button. OpenClash downloads the subscription and writes the YAML for you."
-msgstr "Ponle un nombre y pulsa el botón de añadir; OpenClash descarga la suscripción y escribe el YAML por ti."
 
 msgid "Save the subscription"
 msgstr "Guarda la suscripción"
@@ -5279,44 +4325,11 @@ msgstr "Qué instalar"
 msgid "Update everything"
 msgstr "Actualizar todo"
 
-msgid "The easiest way: click a mirror row with a low latency and everything is updated from there."
-msgstr "Lo más fácil: haz clic en una fila de espejo con latencia baja y todo se actualiza desde ahí."
-
-msgid "Every mirror slow or unreachable? Add your own CDN at the bottom of the list."
-msgstr "¿Todos los espejos van lentos o no responden? Añade tu propio CDN al final de la lista."
-
-msgid "Update a single version"
-msgstr "Actualizar una sola versión"
-
-msgid "Left column is the plugin, right column is the core. Click a version number to install only that one."
-msgstr "La columna izquierda es el plugin y la derecha el núcleo. Haz clic en un número de versión para instalar solo esa."
-
-msgid "adds latency based node selection, only on the smart core builds."
-msgstr "añade selección de nodos por latencia, solo en las compilaciones smart del núcleo."
-
-msgid "detected automatically, just leave it alone."
-msgstr "se detecta automáticamente, déjalo como está."
-
 msgid "Pick a module"
 msgstr "Elige un módulo"
 
-msgid "Modules are grouped by topic, such as DNS, ports or TUN."
-msgstr "Los módulos se agrupan por tema, como DNS, puertos o TUN."
-
-msgid "Pick the module you want to change, or add a new one with the button at the bottom of the list."
-msgstr "Elige el módulo que quieras cambiar o crea uno nuevo con el botón al final de la lista."
-
 msgid "Write and save"
 msgstr "Escribe y guarda"
-
-msgid "What you write here is merged into the generated config, a wrong value can break the core. Change one module at a time."
-msgstr "Lo que escribas aquí se fusiona con la configuración generada; un valor incorrecto puede romper el núcleo. Cambia un módulo a la vez."
-
-msgid "Write the values you want to pin, then save with the button in the header. The core applies them the next time it reloads."
-msgstr "Escribe los valores que quieras fijar y guarda con el botón de la cabecera; el núcleo los aplica la próxima vez que se recarga."
-
-msgid "F11 goes fullscreen, Escape leaves it, Ctrl with the mouse wheel zooms the text."
-msgstr "F11 entra en pantalla completa, Escape la deja y Ctrl con la rueda del ratón amplía el texto."
 
 msgid "Open and continue"
 msgstr "Abrir y continuar"
@@ -5324,47 +4337,17 @@ msgstr "Abrir y continuar"
 msgid "Config actions"
 msgstr "Acciones de configuración"
 
-msgid "Editor header"
-msgstr "Cabecera del editor"
-
 msgid "Editor footer"
 msgstr "Pie del editor"
 
 msgid "Progress and hints"
 msgstr "Progreso y consejos"
 
-msgid "A Compare button also appears here when a plain config file is edited, it shows the original and the running config side by side."
-msgstr "Al editar un archivo de configuración normal también aparece aquí el botón Comparar, que muestra la configuración original y la de ejecución en paralelo."
-
-msgid "A config holds your proxies, groups and rules, so this is the step that gets OpenClash working. Upload your own YAML file, or let OpenClash keep a subscription up to date."
-msgstr "La configuración contiene tus nodos, grupos y reglas, así que este es el paso que pone OpenClash en marcha: sube tu archivo YAML o deja que OpenClash mantenga una suscripción al día."
-
 msgid "A config with the same name is replaced"
 msgstr "Una configuración con el mismo nombre se reemplaza"
 
-msgid "A subscription that the provider updates keeps your nodes fresh without touching OpenClash again."
-msgstr "Una suscripción que el proveedor actualiza mantiene los nodos al día sin volver a tocar OpenClash."
-
-msgid "Advanced Options below is for special cases only, a plain file upload needs none of them."
-msgstr "Las Opciones avanzadas de abajo son solo para casos especiales; subir un archivo normal no necesita ninguna."
-
-msgid "Both are installed and updated from one place: the Check Update button in the Quick Action card further down, this guide opens that window for you later."
-msgstr "Ambos se instalan y actualizan desde un mismo sitio: el botón Check Update de la tarjeta Quick Action más abajo; esta guía abrirá esa ventana por ti."
-
-msgid "Changing a selector refreshes the mirror list below to that version."
-msgstr "Al cambiar un selector, la lista de espejos de abajo se actualiza a esa versión."
-
 msgid "Click an entry to open it in the editor"
 msgstr "Haz clic en una entrada para abrirla en el editor"
-
-msgid "Every entry is a small module that is applied on top of the generated config, the header shows how many there are."
-msgstr "Cada entrada es un pequeño módulo que se aplica sobre la configuración generada; la cabecera indica cuántos hay."
-
-msgid "Five small buttons live next to the list, from left to right:"
-msgstr "Junto a la lista hay cinco botones pequeños, de izquierda a derecha:"
-
-msgid "Four fields in one row: the installed plugin version, the plugin version you want, the installed core version and the core version you want."
-msgstr "Cuatro campos en una fila: la versión instalada del plugin, la que quieres, la versión instalada del núcleo y la que quieres."
 
 msgid "How often it refreshes is set in Config Subscribe, not here"
 msgstr "La frecuencia de actualización se ajusta en Config Subscribe, no aquí"
@@ -5372,584 +4355,47 @@ msgstr "La frecuencia de actualización se ajusta en Config Subscribe, no aquí"
 msgid "Keep the name or type your own, this is the name the config list shows later"
 msgstr "Conserva el nombre o escribe el tuyo; es el nombre que verás luego en la lista de configuraciones"
 
-msgid "Keep the window open while it downloads, the log at the bottom of the overview page reports the result."
-msgstr "Mantén la ventana abierta durante la descarga; el registro al final de la página de resumen muestra el resultado."
-
-msgid "Leave both on Latest to always get the newest release."
-msgstr "Deja ambos en Latest para obtener siempre la última versión."
-
-msgid "Name it here. This name is what the config list shows and what the subscription is stored under."
-msgstr "Ponle nombre aquí: es el que aparece en la lista de configuraciones y con el que se guarda la suscripción."
-
-msgid "Not needed right after installing? Just skip, the module is only for pinning your own values."
-msgstr "¿No lo necesitas justo después de instalar? Sáltalo, el módulo solo sirve para fijar tus propios valores."
-
-msgid "One row per mirror, with the latency and the version it carries:"
-msgstr "Una fila por espejo, con la latencia y la versión que ofrece:"
-
-msgid "Online conversion sends your link to a third party, prefer your own backend when you care about privacy."
-msgstr "La conversión en línea envía tu enlace a un tercero; si te importa la privacidad, usa tu propio backend."
-
-msgid "Only touch these when the automatic detection picked the wrong architecture."
-msgstr "Toca esto solo si la detección automática eligió la arquitectura equivocada."
-
-msgid "Paste the link from your provider. Several links are allowed, one per line or separated by a vertical bar."
-msgstr "Pega el enlace de tu proveedor. Puedes poner varios, uno por línea o separados por una barra vertical."
-
-msgid "Pick a config in this list, then switch to it with the button beside it. Only one config is active at a time and switching restarts the core."
-msgstr "Elige una configuración en la lista y cambia a ella con el botón de al lado. Solo una está activa a la vez y cambiar reinicia el núcleo."
-
-msgid "Pick an older version to roll back after a bad release."
-msgstr "Elige una versión anterior para volver atrás tras una versión problemática."
-
-msgid "Press F11 for fullscreen, Escape to leave it, hold Ctrl and use the mouse wheel to zoom. The bottom right corner resizes the window."
-msgstr "Pulsa F11 para pantalla completa, Escape para salir, mantén Ctrl y usa la rueda para ampliar. La esquina inferior derecha redimensiona la ventana."
-
-msgid "Press the blue button, OpenClash downloads the subscription and writes the YAML for you."
-msgstr "Pulsa el botón azul: OpenClash descarga la suscripción y escribe el YAML por ti."
-
-msgid "Same window, same ✕ on the right. Only the tab decides whether a file or a subscription is added."
-msgstr "La misma ventana y la misma ✕ a la derecha. Solo la pestaña decide si se añade un archivo o una suscripción."
-
-msgid "Some providers only answer a specific client name, pick it here or choose Custom and type your own."
-msgstr "Algunos proveedores solo responden a un nombre de cliente concreto; elígelo aquí o usa Custom y escribe el tuyo."
-
-msgid "The button in the header collapses this list when you need more room for the editor."
-msgstr "El botón de la cabecera pliega esta lista cuando necesitas más espacio para el editor."
-
-msgid "The buttons on the right are the whole action set of this window:"
-msgstr "Los botones de la derecha son todo el conjunto de acciones de esta ventana:"
-
-msgid "The buttons on the right refresh the version list and the mirror latency, and the ✕ closes the window."
-msgstr "Los botones de la derecha actualizan la lista de versiones y la latencia de los espejos; la ✕ cierra la ventana."
-
-msgid "The generator rebuilds the Mihomo config on every change, so hand written edits are lost. The overwrite module keeps your own values on top of the generated file."
-msgstr "El generador reconstruye la configuración de Mihomo en cada cambio, así que las ediciones manuales se pierden. El módulo de sobrescritura mantiene tus valores sobre el archivo generado."
-
-msgid "The last three act straight away, the update one opens a window first. Press “Open and continue” below and this guide explains that window."
-msgstr "Los tres últimos actúan al momento; el de actualización abre antes una ventana. Pulsa «Abrir y continuar» y esta guía explica esa ventana."
-
 msgid "The left side reports the state: ready, saving, saved or failed"
 msgstr "La izquierda muestra el estado: listo, guardando, guardado o fallido"
-
-msgid "The left side shows what the download is doing right now, the right side repeats the two ways in: a link updates everything, a version updates one piece."
-msgstr "La izquierda muestra qué hace la descarga ahora; la derecha repite las dos formas: un enlace actualiza todo, una versión actualiza una sola pieza."
-
-msgid "The restart button next to it reloads the core, use it after changing a config or an overwrite module."
-msgstr "El botón de reinicio de al lado recarga el núcleo; úsalo tras cambiar una configuración o un módulo de sobrescritura."
-
-msgid "The switch on the right enables or disables that module without deleting it."
-msgstr "El interruptor de la derecha activa o desactiva ese módulo sin borrarlo."
-
-msgid "The tag tells where it comes from: a local module or a subscribed one, built in or not configured yet."
-msgstr "La etiqueta indica el origen: módulo local o suscrito, integrado o aún sin configurar."
-
-msgid "The title shows what this window is doing right now, it reads Add Config File or Edit Config depending on how you opened it."
-msgstr "El título indica qué hace la ventana ahora: muestra Add Config File o Edit Config según cómo la abriste."
-
-msgid "The title tells you which module is open right now."
-msgstr "El título indica qué módulo está abierto ahora."
 
 msgid "The window did not open. Open it from the page yourself, or skip this step"
 msgstr "La ventana no se abrió. Ábrela tú desde la página o salta este paso"
 
-msgid "The ✕ on the right closes the window, a running upload is cancelled with it."
-msgstr "La ✕ de la derecha cierra la ventana; una subida en curso también se cancela."
-
-msgid "This card holds four one click buttons, the highlighted one installs and updates everything:"
-msgstr "Esta tarjeta contiene cuatro botones de un clic; el resaltado instala y actualiza todo:"
-
-msgid "This is the entrance, remember it. Press “Open and continue” below, the dialog opens by itself and this guide explains every field in it."
-msgstr "Esta es la entrada, recuérdala. Pulsa «Abrir y continuar» y la ventana se abre sola; la guía explica cada campo."
-
-msgid "This is the entrance, remember it. Press “Open and continue” below, the editor opens by itself and this guide explains every part of it."
-msgstr "Esta es la entrada, recuérdala. Pulsa «Abrir y continuar» y el editor se abre solo; la guía explica cada parte."
-
-msgid "This is the module content, mostly YAML fragments such as DNS settings, ports or TUN options. Only what you write here overrides the generated value."
-msgstr "Este es el contenido del módulo, normalmente fragmentos YAML como DNS, puertos u opciones de TUN. Solo lo que escribas aquí sobrescribe el valor generado."
-
 msgid "This part has not appeared, open the matching tab or scroll inside the window"
 msgstr "Esta parte aún no ha aparecido; cambia a la pestaña correspondiente o desplázate dentro de la ventana"
-
-msgid "This window installs and updates the plugin, the core and the GEO data. It is also where a missing core is installed from."
-msgstr "Esta ventana instala y actualiza el plugin, el núcleo y los datos GEO. También es donde se instala un núcleo ausente."
-
-msgid "Trim a big subscription down to the nodes you want:"
-msgstr "Reduce una suscripción grande a los nodos que quieras:"
-
-msgid "Turn this on when your provider does not hand out Clash format. The block below then appears:"
-msgstr "Actívalo si tu proveedor no entrega formato Clash. Entonces aparece el bloque de abajo:"
-
-msgid "Two rarely needed extras:"
-msgstr "Dos extras que rara vez se necesitan:"
 
 msgid "YAML indentation matters, an extra space can make the core refuse to start"
 msgstr "La indentación de YAML importa: un espacio de más puede impedir que el núcleo arranque"
 
-msgid "You are on the subscription tab now, OpenClash builds the config from a URL and can refresh it for you later."
-msgstr "Estás en la pestaña de suscripción: OpenClash crea la configuración desde una URL y puede actualizarla después."
-
-msgid "add HTTP headers to the subscription request, some providers need them."
-msgstr "añade cabeceras HTTP a la petición de suscripción; algunos proveedores las necesitan."
-
-msgid "change the link, the User-Agent or the conversion options of a subscription."
-msgstr "cambia el enlace, el User-Agent o las opciones de conversión de una suscripción."
-
-msgid "click the link to update everything from that mirror, this is the easy path."
-msgstr "haz clic en el enlace para actualizar todo desde ese espejo; es el camino fácil."
-
-msgid "create an empty module at the bottom of the list."
-msgstr "crea un módulo vacío al final de la lista."
-
-msgid "delete the installed core, useful to free space or to force a clean reinstall."
-msgstr "elimina el núcleo instalado; útil para liberar espacio o forzar una reinstalación limpia."
-
-msgid "drop nodes whose name contains these words."
-msgstr "descarta los nodos cuyo nombre contenga estas palabras."
-
-msgid "drop the provider info nodes such as expiry, traffic, plan or website."
-msgstr "descarta los nodos informativos del proveedor, como caducidad, tráfico, plan o web."
-
-msgid "export the whole setup, the dropdown narrows it down to the cores, the config, the rules or the proxy providers."
-msgstr "exporta toda la configuración; el desplegable lo limita a los núcleos, la configuración, las reglas o los proveedores de proxy."
-
-msgid "extra converter arguments, only for advanced setups."
-msgstr "argumentos extra del convertidor, solo para configuraciones avanzadas."
-
-msgid "generate or paste an Age key pair to encrypt the sensitive parts of a config."
-msgstr "genera o pega un par de claves Age para cifrar las partes sensibles de una configuración."
-
-msgid "keep only nodes whose name contains one of these words, eg hk or tw&bgp."
-msgstr "conserva solo los nodos cuyo nombre contenga alguna de estas palabras, p. ej. hk o tw&bgp."
-
 msgid "leave the editor"
 msgstr "salir del editor"
-
-msgid "measured here, a slow mirror means a slow download, not a slow proxy."
-msgstr "latencia medida aquí; un espejo lento significa descarga lenta, no proxy lento."
-
-msgid "open this config in the editor, the same window the overwrite module uses."
-msgstr "abre esta configuración en el editor, la misma ventana que usa el módulo de sobrescritura."
-
-msgid "refresh a subscription config, useful when the provider adds nodes."
-msgstr "refresca una configuración de suscripción; útil cuando el proveedor añade nodos."
-
-msgid "save the current content to a file on your computer, handy as a backup."
-msgstr "guarda el contenido actual en un archivo de tu equipo, útil como copia de seguridad."
-
-msgid "small switches that change the converted output."
-msgstr "pequeños interruptores que cambian el resultado convertido."
-
-msgid "switch between RAW and CDN, use CDN when a download keeps failing."
-msgstr "alterna entre RAW y CDN; usa CDN cuando la descarga falla repetidamente."
 
 msgid "the conversion service, a public one or your own backend"
 msgstr "el servicio de conversión, uno público o tu propio backend"
 
-msgid "the entrance to add another config file or subscription."
-msgstr "la entrada para añadir otro archivo de configuración o suscripción."
-
-msgid "the rule template applied to the result, this decides the group names."
-msgstr "la plantilla de reglas aplicada al resultado; decide los nombres de los grupos."
-
-msgid "which release line to follow, the default is fine for normal use."
-msgstr "qué línea de versiones seguir; el valor por defecto sirve para el uso normal."
-
-msgid "write the module back. The core picks it up the next time it reloads."
-msgstr "escribe el módulo de vuelta; el núcleo lo aplica en la siguiente recarga."
-
 msgid "Window buttons"
 msgstr "Botones de la esquina"
-
-msgid "The ✕ in the top right corner closes this window. An upload that is already running is cancelled with it."
-msgstr "La ✕ de la esquina superior derecha cierra esta ventana; una subida en curso también se cancela."
-
-msgid "Cancel at the bottom does the same, the button in the middle of the footer is the one that really adds the config."
-msgstr "Cancelar abajo hace lo mismo; el botón central del pie es el que realmente añade la configuración."
-
-msgid "A config can come in two ways, the two tabs switch between them:"
-msgstr "Una configuración puede llegar de dos formas; las dos pestañas cambian entre ellas:"
-
-msgid "you already have a YAML file. The file is copied in as it is, nothing is generated."
-msgstr "ya tienes un archivo YAML. Se copia tal cual, no se genera ni convierte nada."
-
-msgid "you have a subscription URL from a provider. OpenClash downloads it and can refresh it later, so the nodes stay up to date."
-msgstr "tienes una URL de suscripción del proveedor. OpenClash la descarga y puede refrescarla después, así los nodos se mantienen al día."
-
-msgid "Click Subscribe Link and this guide follows you there: the URL, the User-Agent, the optional conversion, node filtering and the name are all explained."
-msgstr "Haz clic en la pestaña de suscripción y la guía te sigue: explica la URL, el User-Agent, la conversión opcional, el filtrado de nodos y el nombre."
-
-msgid "Both kinds end up in the same config list, and both can be refreshed from there."
-msgstr "Ambas formas acaban en la misma lista de configuraciones y ambas se pueden refrescar desde allí."
-
-msgid "The ✕ in the top right corner closes the window, the footer button adds or saves the subscription."
-msgstr "La ✕ de la esquina superior derecha cierra la ventana; el botón del pie añade o guarda la suscripción."
-
-msgid "The tab stays switchable, a plain YAML file is added through the other one."
-msgstr "La pestaña siempre se puede cambiar; un archivo YAML normal se añade desde la otra."
-
-msgid "The buttons in the top right corner are the whole action set of this window:"
-msgstr "Los botones de la esquina superior derecha son todo el conjunto de acciones de esta ventana:"
-
-msgid "The generator rebuilds the Mihomo config on every change, so hand written edits are lost. The overwrite module keeps your own settings on top of the generated file."
-msgstr "El generador reconstruye la configuración de Mihomo en cada cambio, así que las ediciones manuales se pierden. El módulo de sobrescritura mantiene tus ajustes sobre el archivo generado."
-
-msgid "Use it to pin values such as DNS, ports or TUN options, or to inject a raw config fragment."
-msgstr "Úsalo para fijar valores como DNS, puertos u opciones de TUN, o para inyectar un fragmento de configuración."
-
-msgid "To open it, press the highlighted button. Press “Open and continue” below instead and this guide opens the editor for you and explains every part of it, button by button."
-msgstr "Para abrirlo, pulsa el botón resaltado. O pulsa «Abrir y continuar» y la guía abre el editor por ti y explica cada parte, botón a botón."
-
-msgid "Three ways to take over the traffic, the highlighted group holds all three buttons:"
-msgstr "Hay tres formas de apropiarse del tráfico; el grupo resaltado contiene los tres botones:"
-
-msgid "Click a button to switch. Each one restarts the core and drops the current connections for a moment."
-msgstr "Haz clic en un botón para cambiar; cada cambio reinicia el núcleo y corta un momento las conexiones actuales."
-
-msgid "A config holds your proxies, groups and rules, so this is the step that gets OpenClash working."
-msgstr "La configuración contiene tus nodos, grupos y reglas, así que este es el paso que pone OpenClash en marcha."
-
-msgid "Two things happen in the window: first the buttons in its top right corner, then the two ways to add a config. Uploading a file is one of them, the other one is adding a subscription, which gets its own steps when you switch to that tab."
-msgstr "En la ventana se explican dos cosas: primero los botones de la esquina superior derecha y luego las dos formas de añadir una configuración. Subir un archivo es una de ellas; la otra es añadir una suscripción, que tiene sus propios pasos al cambiar de pestaña."
-
-msgid "Press “Open and continue” below and the dialog opens by itself."
-msgstr "Pulsa «Abrir y continuar» y la ventana se abre sola."
-
-msgid "The other tab builds the config from a URL instead and keeps it refreshable. What waits inside:"
-msgstr "La otra pestaña crea la configuración desde una URL y permite refrescarla. Lo que encontrarás dentro:"
-
-msgid "paste the link from your provider, several links are allowed, one per line."
-msgstr "pega el enlace de tu proveedor; puedes poner varios, uno por línea."
-
-msgid "only some providers answer one specific client name."
-msgstr "solo algunos proveedores responden a un nombre de cliente concreto."
-
-msgid "optional conversion, for providers that do not serve Clash format."
-msgstr "conversión opcional, para proveedores que no entregan formato Clash."
-
-msgid "keep or drop nodes by keyword before they reach the config."
-msgstr "conserva o descarta nodos por palabra clave antes de que lleguen a la configuración."
-
-msgid "custom request headers and Age encryption, rarely needed."
-msgstr "cabeceras de petición personalizadas y cifrado Age, rara vez necesarios."
-
-msgid "the name the config list shows, then the button that saves it."
-msgstr "el nombre que muestra la lista de configuraciones y después el botón que guarda."
-
-msgid "Click this tab and the guide switches to those steps right away."
-msgstr "Haz clic en esta pestaña y la guía cambia a esos pasos al momento."
-
-msgid "The button at the bottom of the list creates a module. A module is just a small file with the settings you want to pin."
-msgstr "El botón al final de la lista crea un módulo. Un módulo es solo un archivo pequeño con los ajustes que quieres fijar."
-
-msgid "Press “Open and continue” below and the add window opens, this guide walks through it."
-msgstr "Pulsa «Abrir y continuar» y se abre la ventana de añadir; la guía la recorre contigo."
-
-msgid "you write the content yourself, upload a txt or conf file, or start from an empty one."
-msgstr "escribes el contenido tú mismo, subes un archivo txt o conf, o empiezas desde uno vacío."
-
-msgid "OpenClash downloads the module from a URL and can refresh it later, useful for shared setups."
-msgstr "OpenClash descarga el módulo desde una URL y puede refrescarlo después; útil cuando varios comparten la misma configuración."
-
-msgid "Then fill in the three fields below:"
-msgstr "Después rellena los tres campos de abajo:"
 
 msgid "which generated config this module is applied to"
 msgstr "a qué configuración generada se aplica este módulo"
 
-msgid "The upload area takes a txt or conf file up to 10 MB."
-msgstr "El área de subida acepta un archivo txt o conf de hasta 10 MB."
-
-msgid "The ✕ in the top right corner closes the window without adding anything."
-msgstr "La ✕ de la esquina superior derecha cierra la ventana sin añadir nada."
-
 msgid "The blue button adds the module, Cancel discards the form"
 msgstr "El botón azul añade el módulo; Cancelar descarta el formulario"
-
-msgid "A new module is enabled right away. Write your values in the editor, save, then reload the core so it takes effect."
-msgstr "Un módulo nuevo se activa enseguida. Escribe tus valores en el editor, guarda y recarga el núcleo para que surtan efecto."
-
-msgid "Switch and continue"
-msgstr "Cambiar y continuar"
-
-msgid "The eight cards here are the live numbers of this device:"
-msgstr "Las ocho tarjetas de aquí son los números en vivo de este dispositivo:"
-
-msgid "the current speed, they move while traffic flows."
-msgstr "la velocidad actual; se mueven mientras hay tráfico."
-
-msgid "counted since the core started, restarting the core resets them."
-msgstr "se cuentan desde que arrancó el núcleo; al reiniciarlo vuelven a cero."
-
-msgid "what the plugin costs the router, a high value is the first thing to check when the network feels slow."
-msgstr "lo que el plugin le cuesta al router; si la red va lenta, es lo primero que conviene mirar."
-
-msgid "The View Mode buttons in the header switch between the cards and a curve."
-msgstr "Los botones View Mode de la cabecera alternan entre las tarjetas y una curva."
-
-msgid "The same query goes to four public IP services, so you can compare them:"
-msgstr "La misma consulta va a cuatro servicios de IP pública para poder compararlos:"
-
-msgid "They should all answer with the same address. A different one means that service went direct or through another node."
-msgstr "Lo normal es que los cuatro devuelvan la misma dirección. Si alguna difiere, ese servicio salió directo o por otro nodo."
-
-msgid "The country and city under each address show where the exit is."
-msgstr "El país y la ciudad bajo cada dirección indican dónde está la salida."
-
-msgid "Use the hide button in the next area before taking a screenshot."
-msgstr "Antes de hacer una captura, usa el botón de ocultar del área siguiente."
 
 msgid "domestic sites, they stay fast when they go direct"
 msgstr "sitios nacionales; deben ir rápidos cuando salen directo"
 
-msgid "the ones that usually need the proxy, a timeout here means the node or the rule set does not cover them."
-msgstr "los que normalmente necesitan el proxy; si aquí hay tiempo de espera, el nodo o las reglas no los cubren."
-
-msgid "The three buttons in the header hide the addresses, switch the router mode and re-run the tests."
-msgstr "Los tres botones de la cabecera ocultan las direcciones, cambian el modo router y repiten las pruebas."
-
-msgid "A subscription is the other way to get a config, and the more convenient one when the provider keeps adding nodes."
-msgstr "La suscripción es la otra forma de obtener una configuración, y la más cómoda cuando el proveedor añade nodos a menudo."
-
-msgid "Press “Switch and continue” below and the window changes to that tab by itself. This guide then explains what waits there:"
-msgstr "Pulsa «Cambiar y continuar» y la ventana cambia sola a esa pestaña; la guía explica después lo que hay allí:"
-
 msgid "A module can also be pulled from a URL, which keeps several routers on the same settings"
 msgstr "Un módulo también puede descargarse desde una URL, lo que mantiene varios routers con los mismos ajustes"
 
-msgid "Press “Switch and continue” and the window changes to that tab by itself. The fields there are:"
-msgstr "Pulsa «Cambiar y continuar» y la ventana cambia sola a esa pestaña. Los campos son:"
-
-msgid "file for something you write yourself, http for a link."
-msgstr "file para algo que escribes tú, http para un enlace."
-
-msgid "the address the module is downloaded from, only for http."
-msgstr "la dirección desde la que se descarga el módulo; solo para http."
-
-msgid "when OpenClash re-downloads it, for example every Monday at 3:00."
-msgstr "cuándo lo vuelve a descargar OpenClash, por ejemplo cada lunes a las 3:00."
-
-msgid "extra variables handed to the script, for advanced modules."
-msgstr "variables extra que se pasan al script; solo para módulos avanzados."
-
-msgid "The switch starts and stops the plugin. The button beside it restarts the core."
-msgstr "El interruptor inicia y detiene el plugin; el botón de al lado reinicia el núcleo."
-
-msgid "Use the restart button after changing a config or an overwrite module, the core only reads them when it reloads."
-msgstr "Usa el botón de reinicio tras cambiar una configuración o un módulo de sobrescritura; el núcleo solo los lee al recargarse."
-
-msgid "The two icons in the highlighted area switch the DNS mode, they belong to the Running Mode card. Active right now:"
-msgstr "Los dos iconos resaltados cambian el modo DNS y pertenecen a la tarjeta «Modo de ejecución». Activo ahora:"
-
-msgid "Only needed when your provider does not hand out Clash format. Turn it on and the whole block below unfolds, this guide walks through it next."
-msgstr "Solo hace falta si tu proveedor no entrega formato Clash. Al activarlo se despliega todo el bloque de abajo y la guía lo recorre después."
-
-msgid "Where the conversion happens:"
-msgstr "Dónde ocurre la conversión:"
-
-msgid "the rule template applied to the result, this decides the group names. Custom Template takes a URL of your own."
-msgstr "la plantilla de reglas aplicada al resultado; decide los nombres de los grupos. Custom Template acepta una URL propia."
-
-msgid "A public backend is the quickest start, your own one is safer."
-msgstr "Un backend público es lo más rápido para empezar; el tuyo propio es más seguro."
-
-msgid "Six switches change what the converter produces, none of them is required:"
-msgstr "Seis interruptores cambian lo que produce el convertidor; ninguno es obligatorio:"
-
-msgid "add a country flag or emoji to the node name."
-msgstr "añade una bandera o emoji al nombre del nodo."
-
-msgid "keep UDP support, leave it on for games."
-msgstr "mantén el soporte UDP; déjalo activo para juegos."
-
-msgid "accept certificates that do not match, on by default."
-msgstr "acepta certificados que no coinciden; activado por defecto."
-
-msgid "sort the nodes by name."
-msgstr "ordena los nodos por nombre."
-
-msgid "write the protocol into the node name."
-msgstr "escribe el protocolo en el nombre del nodo."
-
-msgid "produce rule providers instead of inline rules."
-msgstr "genera rule providers en lugar de reglas en línea."
-
-msgid "extra converter arguments such as rename rules, one per line, only for advanced setups."
-msgstr "argumentos extra del convertidor, como reglas de renombrado, uno por línea; solo para configuraciones avanzadas."
-
-msgid "Trim a big subscription down to the nodes you want, the fields appear below when it is on."
-msgstr "Reduce una suscripción grande a los nodos que quieras; los campos aparecen al activarlo."
-
 msgid "Left alone, every node of the subscription ends up in the config"
 msgstr "Si no filtras, todos los nodos de la suscripción acaban en la configuración"
-
-msgid "keep only nodes whose name contains one of these words, eg hk or tw&bgp, one per line."
-msgstr "conserva solo los nodos cuyo nombre contenga alguna de estas palabras, p. ej. hk o tw&bgp, una por línea."
-
-msgid "drop the provider info nodes, expiry, traffic, plan or website."
-msgstr "descarta los nodos informativos del proveedor: caducidad, tráfico, plan o web."
-
-msgid "Two rarely needed extras live behind this switch, both are explained next."
-msgstr "Tras este interruptor hay dos extras que rara vez se necesitan; se explican a continuación."
-
-msgid "Some providers only answer when the request carries a certain header, such as their own domain as Referer."
-msgstr "Algunos proveedores solo responden si la petición lleva cierta cabecera, por ejemplo su propio dominio como Referer."
-
-msgid "Press the add button and fill in name and value, one row per header."
-msgstr "Pulsa el botón de añadir y rellena nombre y valor, una fila por cabecera."
-
-msgid "Wrong headers make the download fail, so only add what the provider asks for."
-msgstr "Una cabecera incorrecta hace fallar la descarga; añade solo lo que pida el proveedor."
-
-msgid "Age encryption keeps the sensitive parts of a config, such as node passwords, unreadable to anyone who gets the file."
-msgstr "El cifrado Age mantiene ilegibles las partes sensibles de la configuración, como las contraseñas de los nodos, para quien obtenga el archivo."
-
-msgid "Generate a key pair with the button in the header, or paste an existing one."
-msgstr "Genera un par de claves con el botón de la cabecera, o pega uno existente."
-
-msgid "stays on this router, it decrypts the config."
-msgstr "se queda en este router; descifra la configuración."
-
-msgid "goes into the provider settings so it can encrypt for you."
-msgstr "se pone en los ajustes del proveedor para que cifre por ti."
-
-msgid "Three ways to take over the traffic, the highlighted group holds all three buttons. Active right now:"
-msgstr "Hay tres formas de apropiarse del tráfico; el grupo resaltado contiene los tres botones. Activo ahora:"
-
-msgid "Three buttons in the top right corner of the check area:"
-msgstr "Los tres botones de la esquina superior derecha del área de comprobación:"
-
-msgid "blur the addresses, do it before taking a screenshot. The icon flips back and forth."
-msgstr "oculta las direcciones; hazlo antes de hacer una captura. El icono alterna entre mostrar y ocultar."
-
-msgid "run the checks from the router itself or from this browser, the active one is the one shown here."
-msgstr "elige si las comprobaciones salen del propio router o de este navegador; el modo activo es el que se muestra."
-
-msgid "The two icons in the top right corner of this card change how the same numbers are drawn:"
-msgstr "Los dos iconos de la esquina superior derecha de esta tarjeta cambian cómo se dibujan los mismos datos:"
-
-msgid "A switch for the special cases, a plain upload leaves it off."
-msgstr "un interruptor para casos especiales; una subida normal lo deja apagado."
-
-msgid "Turning it on unfolds the extra fields below, custom request headers and an Age key so the file can carry encrypted values."
-msgstr "Al activarlo se despliegan los campos extra de abajo: cabeceras personalizadas y una clave Age para que el archivo lleve valores cifrados."
-
-msgid "The rule template decides the group names of the converted config. Custom Template takes a URL of your own."
-msgstr "La plantilla decide los nombres de grupo de la configuración convertida. Custom Template acepta una URL propia."
-
-msgid "Add a country flag or emoji to the node name."
-msgstr "añade una bandera o emoji al nombre del nodo."
-
-msgid "Keep UDP support, leave it on for games and voice chat."
-msgstr "mantén el soporte UDP; déjalo activo para juegos y voz."
-
-msgid "Accept certificates that do not match the domain, on by default and usually left that way."
-msgstr "acepta certificados que no coinciden con el dominio; viene activado y suele dejarse así."
-
-msgid "Sort the nodes by name, which keeps a long list readable."
-msgstr "ordena los nodos por nombre, lo que mantiene legible una lista larga."
-
-msgid "Write the protocol into the node name, so vless, hysteria and friends are told apart at a glance."
-msgstr "escribe el protocolo en el nombre del nodo para distinguir vless, hysteria y compañía de un vistazo."
-
-msgid "Produce rule providers instead of inline rules, which keeps the config shorter."
-msgstr "genera rule providers en lugar de reglas en línea, lo que acorta la configuración."
-
-msgid "Extra converter arguments, one per line, for example a rename rule."
-msgstr "argumentos extra del convertidor, uno por línea, por ejemplo una regla de renombrado."
-
-msgid "Only needed when a provider asks for a special rule, otherwise leave it empty."
-msgstr "solo hace falta si el proveedor pide una regla especial; si no, déjalo vacío."
-
-msgid "Keep only the nodes whose name contains one of these words, one per line, for example hk or tw&bgp."
-msgstr "conserva solo los nodos cuyo nombre contenga alguna de estas palabras, una por línea, por ejemplo hk o tw&bgp."
-
-msgid "Drop the nodes whose name contains these words, such as a trial or a backup server."
-msgstr "descarta los nodos cuyo nombre contenga estas palabras, como un servidor de prueba o de respaldo."
-
-msgid "Drop the provider info nodes. The four switches remove the entries that only carry the expiry date, the traffic, the plan or the website."
-msgstr "descarta los nodos informativos del proveedor. Los cuatro interruptores quitan las entradas que solo llevan caducidad, tráfico, plan o web."
-
-msgid "The algorithm of the key pair, x25519 is the common one. Leave it as it is unless you know why."
-msgstr "el algoritmo del par de claves; x25519 es el habitual. Déjalo como está si no sabes por qué cambiarlo."
-
-msgid "Generate a key pair with the header button, or paste an existing one."
-msgstr "genera un par de claves con el botón de la cabecera, o pega uno existente."
-
-msgid "The copy buttons next to each field save you from selecting the long strings by hand."
-msgstr "Los botones de copiar junto a cada campo te evitan seleccionar a mano cadenas tan largas."
-
-msgid "Age encryption keeps the sensitive parts of a config unreadable to anyone who gets the file."
-msgstr "El cifrado Age mantiene ilegibles las partes sensibles de la configuración para quien obtenga el archivo."
-
-msgid "Three fields, and only the last one is required:"
-msgstr "Tres campos, y solo el último es obligatorio:"
-
-msgid "A new module starts empty, the values are written in the editor afterwards."
-msgstr "Un módulo nuevo empieza vacío; los valores se escriben después en el editor."
-
-msgid "Where the module comes from:"
-msgstr "De dónde viene el módulo:"
-
-msgid "a file that is already on the router."
-msgstr "un archivo que ya está en el router."
-
-msgid "a link that is downloaded, which unfolds the address and the schedule below."
-msgstr "un enlace que se descarga, lo que despliega la dirección y el horario de abajo."
-
-msgid "The address the module is downloaded from, the same kind of URL as a config subscription."
-msgstr "la dirección desde la que se descarga el módulo; el mismo tipo de URL que una suscripción."
-
-msgid "Two dropdowns: which day and which hour OpenClash fetches the module again. OFF means it is only fetched when you say so."
-msgstr "Dos desplegables: qué día y a qué hora vuelve a descargar OpenClash el módulo. OFF significa que solo se descarga cuando tú lo pidas."
-
-msgid "Extra variables handed to the script, only for modules that read them. Most setups leave this empty."
-msgstr "variables extra que se pasan al script, solo para módulos que las lean. En la mayoría de casos se deja vacío."
-
-msgid "Press “Switch and continue” and the window changes to that tab by itself, this guide then walks through the fields there."
-msgstr "Pulsa «Cambiar y continuar» y la ventana cambia sola a esa pestaña; la guía recorre después los campos."
-
-msgid "One block for the whole conversion, the switch, the service and the result:"
-msgstr "Todo este bloque trata de la conversión: el interruptor, el servicio y el resultado:"
-
-msgid "The switches of this block, none of them is required:"
-msgstr "Los interruptores de este bloque; ninguno es obligatorio:"
-
-msgid "The whole filtering block, it trims a big subscription down to the nodes you want:"
-msgstr "Todo el bloque de filtrado reduce una suscripción grande a los nodos que quieras:"
-
-msgid "Two rarely needed extras live behind this switch:"
-msgstr "Tras este interruptor hay dos extras que rara vez se necesitan:"
-
-msgid "accept certificates that do not match the domain, on by default and usually left that way."
-msgstr "acepta certificados que no coinciden con el dominio; viene activado y suele dejarse así."
-
-msgid "order the nodes by name and write the protocol into the name, so a long list stays readable."
-msgstr "ordena los nodos por nombre y escribe el protocolo en el nombre, para que una lista larga siga siendo legible."
-
-msgid "produce rule providers instead of inline rules, which keeps the config shorter."
-msgstr "genera rule providers en lugar de reglas en línea, lo que acorta la configuración."
-
-msgid "extra converter arguments, one per line, for example a rename rule."
-msgstr "argumentos extra del convertidor, uno por línea, por ejemplo una regla de renombrado."
 
 msgid "keep only the nodes whose name contains one of these words, one per line, for example hk or tw&bgp"
 msgstr "conserva solo los nodos cuyo nombre contenga alguna de estas palabras, una por línea, por ejemplo hk o tw&bgp"
 
 msgid "drop the nodes whose name contains these words, such as a trial or a backup server"
 msgstr "descarta los nodos cuyo nombre contenga estas palabras, como un servidor de prueba o de respaldo"
-
-msgid "some providers only answer when the request carries a certain header, such as their own domain as Referer. Add one row per header."
-msgstr "Algunos proveedores solo responden si la petición lleva cierta cabecera, por ejemplo su propio dominio como Referer. Añade una fila por cabecera."
-
-msgid "generate or paste a key pair. The secret key stays on this router and decrypts the config, the public key goes into the provider settings so it can encrypt for you."
-msgstr "genera o pega un par de claves: la secreta se queda en este router y descifra la configuración; la pública va en los ajustes del proveedor para que cifre por ti."
-
-msgid "the address the module is downloaded from, the same kind of URL as a config subscription."
-msgstr "la dirección desde la que se descarga el módulo; el mismo tipo de URL que una suscripción."
-
-msgid "which day and which hour OpenClash fetches it again, OFF means only when you say so."
-msgstr "qué día y a qué hora vuelve a descargarlo OpenClash; OFF significa solo cuando tú lo pidas."
 
 msgid "extra variables handed to the script, only for modules that read them"
 msgstr "variables extra que se pasan al script, solo para módulos que las lean"
@@ -5965,9 +4411,6 @@ msgstr "Una versión anterior permite volver atrás si una release falla"
 
 msgid "Changing a selector refreshes the mirror list below"
 msgstr "Cambiar un selector refresca la lista de espejos de abajo"
-
-msgid "Conversion switches, none of them is required:"
-msgstr "Interruptores de conversión; ninguno es obligatorio:"
 
 msgid "F11 fullscreen, Escape leaves it, Ctrl with the mouse wheel zooms, the bottom right corner resizes"
 msgstr "F11 pantalla completa, Escape la deja, Ctrl con la rueda hace zoom y la esquina inferior derecha redimensiona"
@@ -5996,26 +4439,11 @@ msgstr "TUN y Mix necesitan el módulo TUN del kernel"
 msgid "The blue button downloads the subscription and writes the YAML for you"
 msgstr "El botón azul descarga la suscripción y escribe el YAML por ti"
 
-msgid "The conversion block, for providers that do not serve Clash format:"
-msgstr "El bloque de conversión, para proveedores que no entregan formato Clash:"
-
-msgid "The first start downloads GEO data and builds the firewall rules, give it 5–30 seconds."
-msgstr "El primer arranque descarga los datos GEO y crea las reglas de firewall; dale 5–30 segundos."
-
 msgid "The live numbers of this device:"
 msgstr "Los números en vivo de este dispositivo:"
 
-msgid "The name the config list shows later, and the name the subscription is stored under."
-msgstr "El nombre que mostrará la lista de configuraciones y con el que se guarda la suscripción."
-
 msgid "The other way in: a subscription link from your provider"
 msgstr "La otra vía: un enlace de suscripción de tu proveedor"
-
-msgid "The switch starts and stops the plugin, the button beside it restarts the core."
-msgstr "El interruptor inicia y detiene el plugin; el botón de al lado reinicia el núcleo."
-
-msgid "Three fields, only the module name is required:"
-msgstr "Tres campos; solo el nombre del módulo es obligatorio:"
 
 msgid "Zashboard is the recommended one"
 msgstr "El recomendado es Zashboard"
@@ -6100,9 +4528,6 @@ msgstr "Interruptores de conversión"
 
 msgid "Recommended"
 msgstr "Recomendado"
-
-msgid "Three fields, only one of them is required:"
-msgstr "Tres campos; solo uno es obligatorio:"
 
 msgid "a switch for the special cases, a plain upload leaves it off"
 msgstr "un interruptor para casos especiales; una subida normal lo deja apagado"
@@ -6422,9 +4847,6 @@ msgstr "No se pudo actualizar el estado"
 msgid "Invalid"
 msgstr "No válido"
 
-msgid "Invalid URL on line "
-msgstr "URL no válida en la línea "
-
 msgid "More"
 msgstr "Más"
 
@@ -6611,17 +5033,11 @@ msgstr "Registro en ejecución"
 msgid "Group Types"
 msgstr "Tipos de grupo"
 
-msgid "Member Composition"
-msgstr "Composición de miembros"
-
 msgid "TFO Enable"
 msgstr "Aceleración TFO"
 
 msgid "TLS 1.3"
 msgstr "TLS 1.3"
-
-msgid "Group refs"
-msgstr "Referencias de grupo"
 
 msgid "Filters"
 msgstr "Filtros"
@@ -6644,9 +5060,6 @@ msgstr "Configuración restante"
 msgid "Start complete"
 msgstr "Inicio completado"
 
-msgid "Read data after core is ready"
-msgstr "Leer datos cuando el núcleo esté listo"
-
 msgid "Log"
 msgstr "Registro"
 
@@ -6662,20 +5075,8 @@ msgstr "¿Problema?"
 msgid "Running, cannot cancel"
 msgstr "En ejecución, no se puede cancelar"
 
-msgid "Close anytime, task keeps running"
-msgstr "Se puede cerrar, la tarea continúa"
-
 msgid "Config saved"
 msgstr "Configuración guardada"
-
-msgid "View Config"
-msgstr "Ver configuración"
-
-msgid "Refresh Info"
-msgstr "Actualizar información"
-
-msgid "Switch and Enable"
-msgstr "Cambiar y activar"
 
 msgid "Strategy Groups"
 msgstr "Grupos de estrategia"
@@ -6685,12 +5086,6 @@ msgstr "Verificación fallida"
 
 msgid "Config check passed"
 msgstr "Verificación superada"
-
-msgid "Convert enabled"
-msgstr "Conversión activada"
-
-msgid "Convert disabled"
-msgstr "Conversión desactivada"
 
 msgid "Template"
 msgstr "Plantilla"
@@ -6719,9 +5114,6 @@ msgstr "Conjuntos de reglas"
 msgid "Providers"
 msgstr "Proveedores"
 
-msgid "Nodes provided by proxy-providers, read after enable"
-msgstr "Nodos de proxy-providers, se leen al activar"
-
 msgid "Stats unavailable"
 msgstr "Estadísticas no disponibles"
 
@@ -6731,20 +5123,11 @@ msgstr "Reintentar sin conversión"
 msgid "Switch failed"
 msgstr "Fallo al cambiar"
 
-msgid "Switch finished, stats delayed"
-msgstr "Cambio completado, datos con retraso"
-
-msgid "Subscription failed, see the log above for details"
-msgstr "Suscripción fallida, consulte el registro de arriba"
-
 msgid "Groups"
 msgstr "Grupos"
 
 msgid "Convert Template Preview"
 msgstr "Vista previa de la plantilla"
-
-msgid "Parse the template only, no subscription needed"
-msgstr "Solo analiza la plantilla, sin suscripción"
 
 msgid "Local cache"
 msgstr "Caché local"
@@ -6763,12 +5146,6 @@ msgstr "Flujo de reglas"
 
 msgid "Extra Settings"
 msgstr "Ajustes adicionales"
-
-msgid "Core Groups"
-msgstr "Grupos principales"
-
-msgid "Secondary Groups"
-msgstr "Grupos secundarios"
 
 msgid "refs"
 msgstr "referencias"
@@ -6827,9 +5204,6 @@ msgstr "Orígenes de proxy"
 msgid "Unavailable"
 msgstr "No disponible"
 
-msgid "Provider Nodes"
-msgstr "Nodos del proveedor"
-
 msgid "No protocol data"
 msgstr "Sin datos de protocolo"
 
@@ -6881,26 +5255,8 @@ msgstr "Error al crear el archivo"
 msgid "Clear Log"
 msgstr "Borrar registro"
 
-msgid "Switch OpenClash to Fake-IP mode (page reload required)"
-msgstr "Cambiar OpenClash al modo Fake-IP (se recargará la página)"
-
-msgid "Switch OpenClash to Redir-Host mode (page reload required)"
-msgstr "Cambiar OpenClash al modo Redir-Host (se recargará la página)"
-
-msgid "Switching the DNS mode affects all traffic and reloads the page. Continue?"
-msgstr "Cambiar el modo DNS afecta a todo el tráfico y recarga la página. ¿Continuar?"
-
 msgid "Switching the DNS mode requires a plugin restart to take effect. Continue?"
 msgstr "Cambiar el modo DNS requiere reiniciar el plugin para que surta efecto. ¿Continuar?"
-
-msgid "Sub info fetch failed, retrying in 5s..."
-msgstr "No se pudo obtener la información, reintentando en 5 s..."
-
-msgid "Sub info fetch failed, click refresh to retry"
-msgstr "No se pudo obtener la información, pulsa actualizar para reintentar"
-
-msgid "Files are saved to the path shown for the selected type."
-msgstr "Los archivos se guardan en la ruta mostrada para el tipo seleccionado."
 
 msgid "File exceeds 10MB limit"
 msgstr "El archivo supera el límite de 10 MB"
@@ -6953,12 +5309,6 @@ msgstr "Excluye"
 msgid "Age Key"
 msgstr "Clave Age"
 
-msgid "Advanced:"
-msgstr "Avanzado:"
-
-msgid "Advanced: default"
-msgstr "Avanzado: predeterminado"
-
 msgid "Still required: Config Name"
 msgstr "Falta: nombre de configuración"
 
@@ -6968,9 +5318,6 @@ msgstr "Autoexcluir"
 msgid "Privacy"
 msgstr "Privacidad"
 
-msgid "Queries go to 4 public services, the eye button hides the results"
-msgstr "Las consultas van a 4 servicios públicos; el botón del ojo oculta los resultados"
-
 msgid "Consistent"
 msgstr "Coincidentes"
 
@@ -6979,9 +5326,6 @@ msgstr "Diferente"
 
 msgid "Avg"
 msgstr "Media"
-
-msgid "Remove Downloaded Core"
-msgstr "Eliminar núcleos descargados"
 
 msgid "Editor failed to load, showing the plain text box"
 msgstr "No se pudo cargar el editor; se muestra el cuadro de texto sin formato"

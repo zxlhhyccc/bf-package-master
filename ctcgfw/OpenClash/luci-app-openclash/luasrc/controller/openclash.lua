@@ -2118,7 +2118,7 @@ function action_refresh_log()
 
 	local exclude_pattern = "UDP%-Receive%-Buffer%-Size|^Sec%-Fetch%-Mode|^User%-Agent|^Access%-Control|^Accept|^Origin|^Referer|^Connection|^Pragma|^Cache%-"
 	local core_pattern = "level=|^time="
-	local limit = core_refresh and 1000 or 2000
+	local limit = core_refresh and 2500 or 5000
 	local start_line = (log_len > 0 and total_lines > log_len) and (log_len + 1) or 1
 	local read_count = math.max(0, total_lines - start_line + 1)
 	local core_raw, oc_raw
