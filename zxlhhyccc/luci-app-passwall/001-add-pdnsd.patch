@@ -408,7 +408,7 @@
  start_haproxy() {
  	[ "$(config_n_get @global_haproxy[0] balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -1847,7 +1944,8 @@ get_config() {
+@@ -1841,7 +1938,8 @@ get_config() {
  	CLIENT_PROXY=$(config_n_get @global[0] client_proxy 1)
  	DNS_SHUNT=$(config_n_get @global[0] dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
