@@ -25,7 +25,7 @@ define Download/geoip
   HASH:=771b99547144e9a4547a2c4860d31e9ba1fc52f8f4be98fc485b889b7ae3fd8d
 endef
 
-GEOSITE_VER:=202610072206
+GEOSITE_VER:=202610092207
 #GEOSITE_FILE:=dlc.dat.$(GEOSITE_VER)
 GEOSITE_FILE:=geosite.dat.$(GEOSITE_VER)
 define Download/geosite
@@ -35,7 +35,7 @@ define Download/geosite
 #  URL_FILE:=dlc.dat
   URL_FILE:=geosite.dat
   FILE:=$(GEOSITE_FILE)
-  HASH:=303aeca245efe95c14a3e3cb3c7da1d76f4c51293c0489072b59a34349ce50ed
+  HASH:=79d15a5bd8205d83c377fcfde394500db762b2b400feff24612834e528a111cb
 endef
 
 GEOSITE_IRAN_VER:=202610050227
