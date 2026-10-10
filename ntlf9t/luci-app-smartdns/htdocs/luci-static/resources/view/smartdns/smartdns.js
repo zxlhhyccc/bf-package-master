@@ -351,7 +351,7 @@ return view.extend({
 			return String(val).trim();
 		};
 		o.remove = function(section_id) {
-			return uci.set('smartdns', section_id, 'port', '853');
+			return uci.set('smartdns', section_id, 'tls_server_port', '853');
 		};
 		o.depends('tls_server', '1');
 
@@ -377,7 +377,7 @@ return view.extend({
 			return String(val).trim();
 		};
 		o.remove = function(section_id) {
-			return uci.set('smartdns', section_id, 'port', '843');
+			return uci.set('smartdns', section_id, 'doh_server_port', '843');
 		};
 		o.depends('doh_server', '1');
 
@@ -627,7 +627,7 @@ return view.extend({
 			return String(val).trim();
 		};
 		o.remove = function(section_id) {
-			return uci.set('smartdns', section_id, 'port', '6553');
+			return uci.set('smartdns', section_id, 'seconddns_port', '6553');
 		};
 
 		// Enable TCP server;
