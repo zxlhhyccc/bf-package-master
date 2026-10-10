@@ -59,7 +59,7 @@
  	select PACKAGE_ipset
  	select PACKAGE_ipt2socks
  	select PACKAGE_iptables
-@@ -52,10 +79,12 @@
+@@ -53,10 +80,12 @@
  	select PACKAGE_iptables-mod-socket
  	select PACKAGE_iptables-mod-tproxy
  	select PACKAGE_kmod-ipt-nat
@@ -72,7 +72,7 @@
  	select PACKAGE_ipt2socks
  	select PACKAGE_nftables
  	select PACKAGE_kmod-nft-socket
-@@ -63,88 +92,87 @@
+@@ -64,88 +93,87 @@
  	select PACKAGE_kmod-nft-nat
  	select PACKAGE_kmod-nf-reject
  	select PACKAGE_kmod-nf-reject6
@@ -289,7 +289,7 @@
  			}
  		;;
  		auto)
-@@ -1232,6 +1238,19 @@ start_dns() {
+@@ -1233,6 +1239,19 @@ start_dns() {
  			run_xray ${_args}
  		}
  	;;
@@ -309,7 +309,7 @@
  	udp)
  		UDP_PROXY_DNS=1
  		local china_ng_listen_port=${NEXT_DNS_LISTEN_PORT}
-@@ -1241,6 +1260,11 @@ start_dns() {
+@@ -1242,6 +1261,11 @@ start_dns() {
  			local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -321,7 +321,7 @@
  		else
  			TUN_DNS=${REMOTE_DNS}
  			echolog "  - udp://${TUN_DNS}"
-@@ -1254,6 +1278,12 @@ start_dns() {
+@@ -1255,6 +1279,12 @@ start_dns() {
  			[ "$FILTER_PROXY_IPV6" = "1" ] && DNSMASQ_FILTER_PROXY_IPV6=0 && local no_ipv6_trust="-N"
  			ln_run "$(first_type chinadns-ng)" chinadns-ng "/dev/null" -b :: -l ${china_ng_listen_port} -t ${china_ng_trust_dns} -d gfw ${no_ipv6_trust}
  			echolog "  - ChinaDNS-NG(${TUN_DNS}) -> ${china_ng_trust_dns}"
@@ -334,7 +334,7 @@
  		}
  	;;
  	esac
-@@ -1388,6 +1416,73 @@ start_dns() {
+@@ -1389,6 +1417,73 @@ start_dns() {
  	fi
  }
  
@@ -408,7 +408,7 @@
  start_haproxy() {
  	[ "$(config_n_get @global_haproxy[0] balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -1841,7 +1938,8 @@ get_config() {
+@@ -1843,7 +1940,8 @@ get_config() {
  	CLIENT_PROXY=$(config_n_get @global[0] client_proxy 1)
  	DNS_SHUNT=$(config_n_get @global[0] dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
