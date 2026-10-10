@@ -55,6 +55,12 @@ local b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
 --- LuCI filesystem library.
 module "luci.openclash"
 
+--- Browser-like User-Agent for plugin HTTP requests, some endpoints reject curl's default.
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+
+--- sec-ch-ua client hint of user_agent, the Chrome version has to be bumped together.
+user_agent_ch_ua = '"Google Chrome";v="156", "Chromium";v="156", "Not.A/Brand";v="24"'
+
 --- Test for file access permission on given path.
 -- @class		function
 -- @name		access

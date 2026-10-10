@@ -212,11 +212,7 @@ function del_log() {
     if (activeTabId === 2) {
         restoreDebugEditor();
         XHR.get('<%=url("admin", "services", "openclash", "del_log")%>', {type: "debug"}, function(x, data){
-            if (typeof editor_debug === 'undefined' || !editor_debug) {
-                if (typeof markdown_editor === 'function' && dl) {
-                    markdown_editor(dl, 'debug', true, '100%', '540px');
-                }
-            }
+            ensureDebugEditor();
         });
     } else {
         XHR.get('<%=url("admin", "services", "openclash", "del_log")%>', null, function(x, data){
@@ -364,11 +360,7 @@ function gen_debug_logs()
         titles[2].click();
     }
 
-    if (typeof editor_debug === 'undefined' || !editor_debug) {
-        if (typeof markdown_editor === 'function' && dl) {
-            markdown_editor(dl, 'debug', true, '100%', '540px');
-        }
-    }
+    ensureDebugEditor();
 
     var xhr = new XMLHttpRequest();
     xhr.timeout = 0;
@@ -437,6 +429,12 @@ function gen_debug_logs()
     return;
 };
 
+function ensureDebugEditor() {
+    if (typeof markdown_editor !== 'function' || !dl) return;
+    if (dl.parentNode.ocQueueStarted) return;
+    markdown_editor(dl, 'debug', true, '100%', '540px');
+}
+
 function load_debug_log()
 {
     XHR.get('<%=url("admin", "services", "openclash", "get_debug_logs")%>', null, function(x, status) {
@@ -451,9 +449,7 @@ function load_debug_log()
         }
         else
         {
-            if (typeof markdown_editor === 'function' && dl) {
-                markdown_editor(dl, 'debug', true, '100%', '540px');
-            }
+            ensureDebugEditor();
         }
     });
 };

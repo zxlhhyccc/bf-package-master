@@ -391,31 +391,72 @@ function ocMaxScroll(element) {
 
 // Scroll to the bottom, centring the last line (upstream behaviour). A new call cancels the
 // running animation and restarts from the current position.
-function ocAnimateScroll(element) {
+// Critically damped glide (mobile smooth scroll): no start jerk, decelerating landing, and a glide
+// time scaled by the distance. rows > 0 first rewinds that many rows, so streamed lines slide in
+// like a ticker instead of being swapped in place while the box stands still (which flashes).
+function ocAnimateScroll(element, rows) {
     if (!element) return;
-    if (element.ocScrollAnimId) cancelAnimationFrame(element.ocScrollAnimId);
-    var start = element.scrollTop;
-    var duration = 500;
-    var startTime = null;
-    function step(timestamp) {
-        if (!startTime) startTime = timestamp;
-        var elapsed = timestamp - startTime;
-        var progress = Math.min(elapsed / duration, 1);
-        var eased = 1 - (1 - progress) * (1 - progress);
-        var lastChild = element.lastElementChild || element.lastChild;
-        var lastLineH = (lastChild && lastChild.offsetHeight) ? lastChild.offsetHeight : 0;
-        var maxScroll = Math.max(0, element.scrollHeight - element.clientHeight);
-        var target = Math.max(0, element.scrollHeight - (element.clientHeight + lastLineH) / 2);
-        if (target > maxScroll) target = maxScroll;
-        var distance = target - start;
-        element.scrollTop = Math.round(start + distance * eased);
-        if (progress < 1) {
-            element.ocScrollAnimId = requestAnimationFrame(step);
-        } else {
-            element.ocScrollAnimId = null;
-            element.style.willChange = '';
-        }
+
+    // one read pass so the animation never touches layout again
+    var lastChild = element.lastElementChild || element.lastChild;
+    var lastLineH = (lastChild && lastChild.offsetHeight) ? lastChild.offsetHeight : 0;
+    var scrollHeight = element.scrollHeight;
+    var clientHeight = element.clientHeight;
+    var maxScroll = Math.max(0, scrollHeight - clientHeight);
+    var target = Math.max(0, scrollHeight - (clientHeight + lastLineH) / 2);
+    if (target > maxScroll) target = maxScroll;
+    var from = element.scrollTop;
+
+    if (element.ocScrollAnimId) {
+        if (element.ocScrollTarget === target) return;
+        cancelAnimationFrame(element.ocScrollAnimId);
+        element.ocScrollAnimId = null;
     }
+
+    function settle() {
+        element.scrollTop = target;
+        element.ocScrollAnimId = null;
+        element.ocScrollTarget = null;
+        element.style.willChange = '';
+    }
+
+    // parked on the newest line: make room for the rows this update added
+    if (rows > 0 && lastLineH > 0 && from >= target - 0.5) {
+        from = Math.max(0, target - rows * lastLineH);
+        element.scrollTop = from;
+    }
+
+    var distance = Math.abs(target - from);
+    if (distance <= 0.5) {
+        settle();
+        return;
+    }
+
+    var FRAME_MS = 16.6667;
+    var MAX_SPEED = 1.2;                        // px per ms, keeps long jumps from flying off
+    // glide time grows with the distance: a one-line tick still takes ~430ms so it can be followed,
+    // a full window roll takes 800ms
+    var glide = Math.min(800, 380 + distance * 1.5);  // ms
+    var omega = 6.64 / glide;                         // spring rate in 1/ms
+    // a capped top speed needs a slower rate, which makes long distances glide for longer
+    if (0.368 * distance * omega > MAX_SPEED) omega = MAX_SPEED / (0.368 * distance);
+    var maxElapsed = 6.64 / omega;
+    var dir = target > from ? 1 : -1;
+    var elapsed = 0;
+    var lastTime = null;
+
+    function step(timestamp) {
+        elapsed += lastTime === null ? FRAME_MS : Math.min(timestamp - lastTime, 3 * FRAME_MS);
+        lastTime = timestamp;
+        var moved = distance * (1 - (1 + omega * elapsed) * Math.exp(-omega * elapsed));
+        if (elapsed >= maxElapsed || distance - moved <= 0.5) {
+            settle();
+            return;
+        }
+        element.scrollTop = from + dir * moved;
+        element.ocScrollAnimId = requestAnimationFrame(step);
+    }
+    element.ocScrollTarget = target;
     element.ocScrollAnimId = requestAnimationFrame(step);
 }
 

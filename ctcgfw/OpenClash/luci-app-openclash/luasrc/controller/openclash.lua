@@ -2673,10 +2673,9 @@ function action_myip_check()
 			return nil
 		end
 
-		local ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 		local cmd = string.format(
 			'curl -SsL -m 10 -A "%s" "%s" 2>/dev/null',
-			ua, service.url
+			fs.user_agent, service.url
 		)
 
 		local pid = nixio.fork()
@@ -2865,8 +2864,8 @@ function action_myip_check()
 
 	if result.ipify and result.ipify.ip and result.ipify.ip ~= "" then
 		local geo_cmd = string.format(
-			'curl -sL -m 10 --retry 2 -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" "https://api.ip.sb/geoip/%s" 2>/dev/null',
-			result.ipify.ip
+			'curl -sL -m 10 --retry 2 -A "%s" "https://api.ip.sb/geoip/%s" 2>/dev/null',
+			fs.user_agent, result.ipify.ip
 		)
 		local geo_data = SYS.exec(geo_cmd)
 
@@ -5714,6 +5713,25 @@ local function tpl_cache_path(id)
 	return TPL_CACHE_DIR .. "/" .. safe
 end
 
+-- The github address mod is tried before the direct URL (same rewriting as yml_rules_change.sh).
+local function tpl_source_urls(url)
+	local mod = fs.uci_get_config("config", "github_address_mod") or "0"
+	if mod == "" or mod == "0" then
+		return { url }
+	end
+	if mod == "https://cdn.jsdelivr.net/" or mod == "https://fastly.jsdelivr.net/" or mod == "https://testingcf.jsdelivr.net/" then
+		local owner, repo, file = url:match("^https://raw%.githubusercontent%.com/([^/]+)/([^/]+)/(.+)$")
+		if not owner then
+			return { url }
+		end
+		return { mod .. "gh/" .. owner .. "/" .. repo .. "@" .. file, url }
+	end
+	if url:match("^https://raw%.githubusercontent%.com/") or url:match("^https://gist%.githubusercontent%.com/") or url:match("^https://raw%.github%.com/") then
+		return { mod .. url, url }
+	end
+	return { url }
+end
+
 -- Returns ok, fetched; a failed download keeps the expired cache for offline preview.
 local function tpl_fetch(url, path, force)
 	fs.mkdir(TPL_CACHE_DIR)
@@ -5721,13 +5739,13 @@ local function tpl_fetch(url, path, force)
 	if st and st.size > 0 and not force and (os.time() - st.mtime) < TPL_CACHE_TTL then
 		return true, false
 	end
-	local cmd = string.format("curl -sL -m 15 --retry 1 -A %s -o %s %s 2>/dev/null",
-		UTIL.shellquote("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"),
-		UTIL.shellquote(path), UTIL.shellquote(url))
-	SYS.call(cmd)
-	local st2 = fs.stat(path)
-	if st2 and st2.size > 0 then
-		return true, true
+	for _, source in ipairs(tpl_source_urls(url)) do
+		SYS.call(string.format("curl -sL -m 15 --retry 1 -A %s -o %s %s 2>/dev/null",
+			UTIL.shellquote(fs.user_agent), UTIL.shellquote(path), UTIL.shellquote(source)))
+		local st2 = fs.stat(path)
+		if st2 and st2.size > 0 then
+			return true, true
+		end
 	end
 	return false, false
 end
@@ -6080,6 +6098,7 @@ function action_overwrite_subscribe_info()
 					order = tonumber(s.order) or 0,
 					type = s.type or "file",
 					param = s.param or "",
+					official = tonumber(s.official) or 0,
 					enable = tonumber(s.enable) or 0
 				}
 			end

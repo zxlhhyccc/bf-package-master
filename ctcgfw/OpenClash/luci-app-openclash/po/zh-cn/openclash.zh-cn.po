@@ -1778,6 +1778,9 @@ msgstr "第四步: 重启 Dnsmasq 程序..."
 msgid "Step 5: Delete OpenClash Residue File..."
 msgstr "第五步：删除 OpenClash 残留文件..."
 
+msgid "OpenClash Service Not Running, Exit..."
+msgstr "OpenClash 服务未运行，退出..."
+
 msgid "OpenClash Already Stop!"
 msgstr "OpenClash 已关闭！"
 
@@ -3676,6 +3679,9 @@ msgstr "跳过不支持的覆写命令"
 
 msgid "skip unsafe Overwrite command"
 msgstr "跳过不安全的覆写命令"
+
+msgid "skip Overwrite Module with undefined variable"
+msgstr "跳过变量未定义的覆写模块"
 
 msgid "Processing Overwrite Module"
 msgstr "执行覆写模块"

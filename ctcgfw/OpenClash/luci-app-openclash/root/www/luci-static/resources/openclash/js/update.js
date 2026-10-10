@@ -1368,8 +1368,9 @@
         var maxLines = 10;
         var merged = logLines.slice(logLines.length - maxLines);
         hint.classList.add('logging');
+        // the rebuild collapses the box, so hold the offset (see ocAnimateScroll)
+        var keepOffset = hint.scrollTop;
         hint.innerHTML = '';
-        hint.scrollTop = 0;
         for (var j = 0; j < merged.length; j++) {
             var color = ocGetLogColor(merged[j]);
             var div = document.createElement('div');
@@ -1385,6 +1386,7 @@
             spacer.textContent = '\u200B';
             hint.insertBefore(spacer, hint.firstChild);
         }
+        hint.scrollTop = keepOffset;
     }
 
     function displayLog(logContent) {
@@ -1399,10 +1401,11 @@
         }
         if (allLines.length === 0) return;
 
+        var newRows = Math.min(10, allLines.length);
         logLines = logLines.concat(allLines);
         renderUpdateLog();
         hint.style.willChange = 'scroll-position';
-        ocAnimateScroll(hint);
+        ocAnimateScroll(hint, newRows);
     }
 
     showDefaultNote();

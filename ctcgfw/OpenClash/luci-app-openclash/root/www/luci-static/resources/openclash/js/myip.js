@@ -76,7 +76,7 @@
         if (!unlock_view || unlock_gear) return;
         if (refresh_unlock) clearInterval(refresh_unlock);
         refresh_unlock = setInterval(function() {
-            if (!unlock_view || unlock_gear || Object.keys(unlock_find_keys).length || unlock_xhr) return;
+            if (!unlock_view || unlock_gear || Object.keys(unlock_find_keys).length || Object.keys(unlock_xhrs).length) return;
             run_unlock_check();
         }, ocRandomInterval(INTERVAL.UNLOCK_CHECK_MIN, INTERVAL.UNLOCK_CHECK_MAX));
     }
@@ -99,7 +99,7 @@
     function abortAllRequests() {
         if (ipCheckXHR) { try { ipCheckXHR.abort(); } catch(e) {} ipCheckXHR = null; }
         if (httpCheckXHR) { try { httpCheckXHR.abort(); } catch(e) {} httpCheckXHR = null; }
-        if (unlock_xhr) { try { unlock_xhr.abort(); } catch(e) {} unlock_xhr = null; }
+        unlock_abort_checks();
     }
 
     var refresh_http;
@@ -572,8 +572,8 @@
     var ACCESS_SLOTS = ['baidu', '163', 'github', 'youtube'];
     var unlock_view = false;
     var unlock_gear = false;
-    var unlock_xhr = null;
-    var unlock_xhr_keys = [];
+    var unlock_xhrs = {};
+    var unlock_pending = {};
     var unlock_dom = null;
     var unlock_results = {};
     var unlock_find_keys = {};
@@ -654,6 +654,11 @@
                 ribbon: card.querySelector('.myip-unlock-ribbon'),
                 spark: document.getElementById('spark-' + slot)
             };
+            unlock_dom[slot].ribbon.addEventListener('click', function() {
+                var key = card.getAttribute('data-svc');
+                if (!key || unlock_pending[key]) return;
+                run_unlock_check([key], true);
+            });
         });
         unlock_watch_region_layout();
         return unlock_dom;
@@ -716,6 +721,7 @@
             d.spark.appendChild(btn);
         });
         unlock_set_find_buttons();
+        unlock_sync_ribbons();
     }
 
     function unlock_set_unlock_icon(gear) {
@@ -1069,6 +1075,47 @@
         d.ribbon.title = title;
     }
 
+    // A check in flight shows the ellipsis marker; the busy flag lives in an attribute
+    // because unlock_set_ribbon rewrites className.
+    function unlock_render_ribbon(d, key) {
+        if (unlock_pending[key]) {
+            d.ribbon.setAttribute('data-busy', '');
+            unlock_set_ribbon(d, 'rib-t', 'dots', '<%:Testing...%>');
+            return;
+        }
+        d.ribbon.removeAttribute('data-busy');
+        var r = unlock_results[key];
+        if (!r) {
+            unlock_set_ribbon(d, 'rib-n', 'dash', '<%:Not Tested%>');
+            return;
+        }
+        var st = Number(r.st) || 0;
+        var text, state, icon;
+        if (st === 2) {
+            text = '<%:Unlocked%>';
+            state = 'rib-g';
+            icon = 'check';
+        } else if (st === 1) {
+            text = (key === 'netflix') ? '<%:Originals Only%>' : '<%:Not Unlocked%>';
+            state = 'rib-p';
+            icon = 'question';
+        } else {
+            text = '<%:Test failed%>';
+            state = 'rib-r';
+            icon = 'cross';
+        }
+        var regionName = (st !== 0 && r.region) ? String(r.region).toUpperCase() : '';
+        unlock_set_ribbon(d, state, icon, text + (regionName ? ' · ' + regionName : ''));
+    }
+
+    function unlock_sync_ribbons() {
+        var dom = unlock_init_dom();
+        ACCESS_SLOTS.forEach(function(slot) {
+            var d = dom[slot];
+            unlock_render_ribbon(d, d.card.getAttribute('data-svc'));
+        });
+    }
+
     function unlock_set_region(d, region) {
         d.region.textContent = region;
         d.region.classList.toggle('oc-hidden', !region);
@@ -1140,38 +1187,27 @@
         if (i < 0) return;
         var d = unlock_init_dom()[ACCESS_SLOTS[i]];
         var r = unlock_results[key];
+        unlock_render_ribbon(d, key);
         if (!r) {
             d.node.textContent = '--';
             d.node.className = 'myip-unlock-node-name';
             unlock_set_region(d, '');
-            unlock_set_ribbon(d, 'rib-n', 'dash', '<%:Not Tested%>');
             return;
         }
         var st = Number(r.st) || 0;
-        var text, cls, rib, icon;
+        var cls;
         if (st === 2) {
-            text = '<%:Unlocked%>';
             cls = 'myip-latency-fast';
-            rib = 'rib-g';
-            icon = 'check';
         } else if (st === 1) {
-            text = (key === 'netflix') ? '<%:Originals Only%>' : '<%:Not Unlocked%>';
             cls = 'myip-latency-mid';
-            rib = 'rib-p';
-            icon = 'question';
         } else {
-            text = '<%:Test failed%>';
             cls = 'myip-latency-slow';
-            rib = 'rib-r';
-            icon = 'cross';
         }
         var regionName = (st !== 0 && r.region) ? String(r.region).toUpperCase() : '';
-        var region = UNLOCK_REGION_CODES[regionName] || regionName;
-        var full = text + (regionName ? ' · ' + regionName : '');
-        d.node.textContent = r.node ? r.node : text;
+        var region = st === 0 ? 'N/A' : (UNLOCK_REGION_CODES[regionName] || regionName);
+        d.node.textContent = r.node || '--';
         d.node.className = 'myip-unlock-node-name' + (r.node ? '' : ' ' + cls);
         unlock_set_region(d, region);
-        unlock_set_ribbon(d, rib, icon, full);
     }
 
     function unlock_render_all() {
@@ -1179,37 +1215,104 @@
         syncCardHeights();
     }
 
-    function unlock_set_pending(key) {
+    function unlock_set_pending(key, spinner) {
         var i = unlock_slot_index(key);
         if (i < 0) return;
         var d = unlock_init_dom()[ACCESS_SLOTS[i]];
-        d.node.innerHTML = '<span class="loading-spinner"></span><%:Testing...%>';
-        d.node.className = 'myip-unlock-node-name';
-        unlock_set_region(d, '');
-        unlock_set_ribbon(d, 'rib-t', 'dots', '<%:Testing...%>');
+        if (spinner) {
+            d.node.innerHTML = '<span class="loading-spinner"></span><%:Testing...%>';
+            d.node.className = 'myip-unlock-node-name';
+            unlock_set_region(d, '');
+        }
+        unlock_pending[key] = true;
+        unlock_render_ribbon(d, key);
+    }
+
+    function unlock_abort_checks() {
+        Object.keys(unlock_xhrs).forEach(function(key) {
+            var xhr = unlock_xhrs[key];
+            delete unlock_xhrs[key];
+            delete unlock_pending[key];
+            try { xhr.abort(); } catch (e) {}
+        });
+        unlock_sync_ribbons();
+    }
+
+    function unlock_is_failed(key) {
+        var r = unlock_results[key];
+        return (Number(r && r.st) || 0) === 0;
+    }
+
+    function unlock_notify_failure(keys, manual) {
+        if (!manual || !keys.every(unlock_is_failed)) return;
+        if (keys.some(function(key) { return unlock_xhrs[key]; })) return;
+        ocToast('<%:Unlock check failed, please check the network and try again%>', 'error');
+    }
+
+    // Services that failed are retried once, one parallel request each.
+    function unlock_retry_failed(keys, manual, list) {
+        var left = keys.length;
+        keys.forEach(function(key) {
+            if (unlock_xhrs[key]) { left--; return; }
+            unlock_set_pending(key, manual || !unlock_results[key]);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/cgi-bin/luci/admin/services/openclash/unlock_check?service=' + encodeURIComponent(key), true);
+            xhr.timeout = 90000;
+            xhr.onloadend = function() {
+                if (unlock_xhrs[key] === xhr) {
+                    delete unlock_xhrs[key];
+                    delete unlock_pending[key];
+                    unlock_sync_ribbons();
+                }
+                // A newer request owns the service, so its own callback does the rendering.
+                if (unlock_view && !unlock_xhrs[key]) {
+                    var res = null;
+                    if (xhr.status === 200) {
+                        var lines = (xhr.responseText || '').split('\n');
+                        for (var c = lines.length - 1; c >= 0 && !res; c--) {
+                            var line = lines[c].trim();
+                            if (line.charAt(0) !== '{') continue;
+                            try {
+                                var parsed = JSON.parse(line);
+                                if (parsed && parsed.service === key) res = parsed;
+                            } catch (e) {}
+                        }
+                    }
+                    if (res) {
+                        unlock_results[key] = { st: Number(res.st) || 0, region: res.region || '', node: res.node || '', ts: Date.now() };
+                        unlock_save_results();
+                    }
+                    unlock_render(key);
+                }
+                left--;
+                if (left || !unlock_view) return;
+                syncCardHeights();
+                unlock_notify_failure(list, manual);
+            };
+            xhr.send();
+            unlock_xhrs[key] = xhr;
+        });
+        unlock_sync_ribbons();
     }
 
     function run_unlock_check(services, manual) {
         if (!unlock_view) return;
-        var list = (services && services.length) ? services : UNLOCK_SERVICES.map(function(s) { return s.key; }).filter(unlock_is_selected);
-        if (!list.length) return;
-        var prev = unlock_xhr;
-        var prevKeys = unlock_xhr_keys;
-        unlock_xhr = null;
-        unlock_xhr_keys = list;
-        if (prev) {
-            (prevKeys || []).forEach(function(key) {
-                if (list.indexOf(key) < 0) unlock_render(key);
-            });
-            try { prev.abort(); } catch (e) {}
+        var list = (services && services.length) ? services.slice() : UNLOCK_SERVICES.map(function(s) { return s.key; }).filter(unlock_is_selected);
+        if (services && services.length) {
+            list = list.filter(function(key) { return !unlock_xhrs[key]; });
+        } else {
+            var dropped = Object.keys(unlock_xhrs).filter(function(key) { return list.indexOf(key) < 0; });
+            unlock_abort_checks();
+            dropped.forEach(unlock_render);
         }
+        if (!list.length) return;
         list.forEach(function(key) {
-            if (manual || !unlock_results[key]) unlock_set_pending(key);
+            unlock_set_pending(key, manual || !unlock_results[key]);
         });
 
         var xhr = new XMLHttpRequest();
         var url = '/cgi-bin/luci/admin/services/openclash/unlock_check';
-        if (services && services.length === 1) url += '?service=' + encodeURIComponent(services[0]);
+        if (list.length === 1) url += '?service=' + encodeURIComponent(list[0]);
         xhr.open('GET', url, true);
         xhr.timeout = 90000;
         var lastIndex = 0;
@@ -1229,6 +1332,7 @@
                 try { obj = JSON.parse(line); } catch (e) { continue; }
                 if (!obj || !obj.service || list.indexOf(obj.service) < 0) continue;
                 got[obj.service] = true;
+                delete unlock_pending[obj.service];
                 unlock_results[obj.service] = { st: obj.st, region: obj.region || '', node: obj.node || '', ts: Date.now() };
                 unlock_save_results();
                 if (unlock_view) unlock_render(obj.service);
@@ -1236,9 +1340,12 @@
         };
 
         xhr.onloadend = function() {
-            if (unlock_xhr !== xhr) return;
-            unlock_xhr = null;
-            unlock_xhr_keys = [];
+            if (unlock_xhrs[list[0]] !== xhr) return;
+            list.forEach(function(key) {
+                delete unlock_xhrs[key];
+                delete unlock_pending[key];
+            });
+            unlock_sync_ribbons();
             if (!unlock_view) return;
             list.forEach(function(key) {
                 if (!got[key]) {
@@ -1248,16 +1355,17 @@
             });
             unlock_save_results();
             syncCardHeights();
-            var anyOk = false;
-            list.forEach(function(key) {
-                var r = unlock_results[key];
-                if (r && (Number(r.st) || 0) !== 0) anyOk = true;
-            });
-            if (!anyOk && manual) ocToast('<%:Unlock check failed, please check the network and try again%>', 'error');
+            var failed = list.filter(unlock_is_failed);
+            if (failed.length) {
+                unlock_retry_failed(failed, manual, list);
+                return;
+            }
+            unlock_notify_failure(list, manual);
         };
 
         xhr.send();
-        unlock_xhr = xhr;
+        list.forEach(function(key) { unlock_xhrs[key] = xhr; });
+        unlock_sync_ribbons();
     }
 
     function unlock_auto_reason_text() {
@@ -1297,7 +1405,7 @@
             if (choice !== 'start') return;
             unlock_find_keys[key] = true;
             unlock_set_find_buttons();
-            unlock_set_pending(key);
+            unlock_set_pending(key, true);
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/cgi-bin/luci/admin/services/openclash/manual_stream_unlock_test?type=' + encodeURIComponent(UNLOCK_SERVICES[i].name) + '&result=1', true);
             xhr.timeout = 300000;
@@ -1314,6 +1422,7 @@
                         } catch (e) {}
                     }
                 }
+                delete unlock_pending[key];
                 if (res) {
                     unlock_results[key] = { st: Number(res.st) || 0, region: res.region || '', node: res.node || '', ts: Date.now() };
                     unlock_save_results();
@@ -1385,11 +1494,7 @@
         unlock_gear = false;
         unlock_gear_drag_clear();
         localStorage.setItem('myip_unlock_view', unlock_view ? 'true' : 'false');
-        var prev = unlock_xhr;
-        unlock_xhr = null;
-        unlock_xhr_keys = [];
-        if (prev) { try { prev.abort(); } catch (e) {} }
-
+        unlock_abort_checks();
         var dom = unlock_init_dom();
         var title = document.getElementById('myip-check-title');
         var icon = document.getElementById('unlock-icon');

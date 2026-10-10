@@ -1907,8 +1907,10 @@ var ocLang = window.ocLang || '';
 
             var merged = this.logLines.slice(this.logLines.length - maxLines);
 
+            // the rebuild collapses the box, so hold the offset: a running glide keeps going and a
+            // parked box rewinds only by the rows this update added (see ocAnimateScroll)
+            var keepOffset = el.scrollTop;
             el.innerHTML = '';
-            el.scrollTop = 0;
             for (var j = 0; j < merged.length; j++) {
                 var color = ocGetLogColor(merged[j]);
                 var div = document.createElement('div');
@@ -1926,8 +1928,9 @@ var ocLang = window.ocLang || '';
             }
 
             el.classList.remove('oc-hidden');
+            el.scrollTop = keepOffset;
             el.style.willChange = 'scroll-position';
-            ocAnimateScroll(el);
+            ocAnimateScroll(el, Math.min(maxLines, allLines.length));
         }
     };
 

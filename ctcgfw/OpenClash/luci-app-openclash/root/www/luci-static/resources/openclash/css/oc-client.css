@@ -224,12 +224,67 @@ html[data-darkmode="true"] .oc .config-select:focus {
     font-size: var(--card-title-size-sm);
 }
 
-.oc .version-display-container {
-    position: absolute;
-    right: var(--version-right);
+/* Card titles step down with the card width, capped by the viewport step. */
+@container (max-width: 200px) {
+    .oc .card-title {
+        font-size: min(var(--card-title-size), 14px);
+    }
+
+    .oc .stats-grid .sub-card .card-title {
+        font-size: min(var(--card-title-size-sm), 12px);
+    }
+}
+
+@container (max-width: 150px) {
+    .oc .card-title {
+        font-size: min(var(--card-title-size), 13px);
+    }
+}
+
+@container (max-width: 110px) {
+    .oc .card-title {
+        font-size: min(var(--card-title-size), 12px);
+    }
+}
+
+/* Title + version chips keep one row; the chips shrink and ellipsize instead of covering the title. */
+.oc .status-header-row {
+    --status-header-h: 20px;
     display: flex;
+    align-items: center;
     gap: var(--card-grid-gap);
-    z-index: 2;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 10px;
+}
+
+/* One shared line box keeps the title and the version chips on the same baseline. */
+.oc .status-header-row .card-title,
+.oc .status-header-row .version-display-container,
+.oc .status-header-row .version-display {
+    height: var(--status-header-h);
+    line-height: var(--status-header-h);
+}
+
+.oc .status-header-row .card-title {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+}
+
+.oc .version-display-container {
+    display: flex;
+    align-items: center;
+    gap: var(--card-grid-gap);
+    margin-left: auto;
+    min-width: 0;
+}
+
+.oc .status-header-row .version-display {
+    min-width: 0;
+}
+
+.oc .status-header-row .version-display .version-text {
+    min-width: 0;
 }
 
 .oc .card-content {
@@ -242,9 +297,10 @@ html[data-darkmode="true"] .oc .config-select:focus {
 }
 
 .oc .config-file-content {
+    --file-content-gap: var(--content-gap);
     display: flex;
     flex-direction: column;
-    gap: var(--content-gap);
+    gap: var(--file-content-gap);
     flex: 1;
     min-height: 0;
 }
@@ -493,13 +549,15 @@ html[data-darkmode="true"] .oc .config-select:focus {
 .oc .config-selector {
     position: relative;
     flex: 1;
+    display: flex;
+    align-items: center;
 }
 
 .oc .config-select {
     width: 100%;
-    height: var(--control-height);
+    height: var(--icon-btn-size);
     padding: 0 12px;
-    line-height: calc(var(--control-height) - 2px);
+    line-height: calc(var(--icon-btn-size) - 2px);
     border: 1px solid var(--border-light) !important;
     background-color: var(--bg-white) !important;
     border-radius: var(--radius-sm);
@@ -558,6 +616,8 @@ html[data-darkmode="true"] .oc .config-select:focus {
     gap: var(--card-grid-gap);
     flex-shrink: 0;
     margin: 0;
+    padding-top: 0;
+    min-height: 0;
     flex-direction: row;
 }
 
@@ -570,7 +630,7 @@ html[data-darkmode="true"] .oc .config-select:focus {
     position: relative;
     border: 1px solid var(--border-light);
     box-shadow: var(--shadow-sm);
-    height: var(--control-height);
+    height: var(--control-row-height);
     align-items: center;
     white-space: nowrap;
     width: 100%;
@@ -965,6 +1025,8 @@ html[data-darkmode="true"] .oc .config-select:focus {
     flex-direction: column;
     width: 100%;
     height: 180px;
+    min-height: 0;
+    flex: 0 0 auto;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition-fast);
     position: relative;
@@ -978,7 +1040,7 @@ html[data-darkmode="true"] .oc .config-select:focus {
 .oc .subscription-info-main {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: var(--content-gap);
     flex: 1;
 }
 
@@ -996,7 +1058,7 @@ html[data-darkmode="true"] .oc .config-select:focus {
 .oc .subscription-info-details {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--content-gap);
     flex: 1;
     min-height: 80px;
     padding-left: 20px;
@@ -1078,6 +1140,7 @@ html[data-darkmode="true"] .oc .config-select:focus {
     align-items: center;
     gap: var(--card-grid-gap);
     padding-bottom: 2px;
+    margin-top: 0;
 }
 
 .oc .subscription-overwrite-tags {
@@ -1090,7 +1153,6 @@ html[data-darkmode="true"] .oc .config-select:focus {
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
-    padding-bottom: 2px;
 }
 
 .oc .subscription-overwrite-tags::-webkit-scrollbar {
@@ -1180,6 +1242,7 @@ html[data-darkmode="true"] .oc .config-select:focus {
     gap: var(--content-gap);
     padding: 8px 0;
     min-height: 70px;
+    margin-block: auto;
     max-width: 100%;
     width: 100%;
     overflow-x: auto;
@@ -1328,7 +1391,9 @@ html[data-darkmode="true"] .oc .config-select:focus {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    min-height: var(--control-height);
+    min-height: var(--control-row-height);
+    flex: 0 0 auto;
+    margin-top: calc(var(--content-gap) - var(--file-content-gap));
 }
 
 .oc .config-file-empty-state {
@@ -2018,7 +2083,8 @@ html[data-darkmode="true"] .oc .myip-card-icon.ic-steam { color: #66C0F4; }
     background: var(--primary-color, #3b82f6);
     color: var(--text-on-primary, #ffffff);
     font-size: 11px;
-    line-height: 1;
+    line-height: 20px;
+    white-space: nowrap;
     font-weight: 500;
     cursor: pointer;
     transition: background var(--transition-fast);
@@ -2374,6 +2440,11 @@ html[data-darkmode="true"] .oc .myip-gear-state {
     width: 28px; height: 28px;
     overflow: hidden;
     border-top-right-radius: var(--radius-md, 6px);
+    cursor: pointer;
+}
+
+.oc .myip-unlock-ribbon[data-busy] {
+    cursor: default;
 }
 
 .oc .myip-unlock-ribbon::before {
@@ -3428,7 +3499,7 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     .oc .cbi-button-option { padding: 6px 6px; font-size: 11px; }
     .oc .card-row:nth-child(1), .oc .card-row:nth-child(2),
         .oc .card-row:nth-child(3), .oc .card-row:nth-child(4) { min-height: auto; }
-    .oc .config-file-content { flex-direction: column; gap: 5px; }
+    .oc .config-file-content { --file-content-gap: 5px; }
     .oc .config-selector { min-width: 150px; flex: 1; }
     .oc .config-select { min-width: 150px; font-size: 13px; padding: 0 10px; }
     .oc .config-select option { font-size: 13px; padding: 6px 10px; }
@@ -3494,10 +3565,10 @@ html[data-darkmode="true"] .oc .oix-announcement::before {
     .oc .announcement-banner { width: 90%; max-width: 100%; height: 34px; }
     .oc .announcement-content { font-size: 12px; }
     .oc .subscription-overwrite-tag { height: 24px; width: fit-content; font-size: 10px; padding: 0 6px; }
-    .oc .version-display { max-width: 120px; font-size: 9px; padding: 1px 4px; }
-    .oc .version-display svg { width: 9px; height: 9px; }
+    .oc .version-display { max-width: 120px; font-size: 10px; padding: 1px 4px; }
+    .oc .version-display svg { width: 10px; height: 10px; }
     .oc .dashboard-btn { font-size: 9px !important; height: 25px !important; }
-    .oc .cbi-button-group { padding: 2px; gap: 0; height: 28px; }
+    .oc .cbi-button-group { padding: 2px; gap: 0; }
     .oc input[type="radio"]:checked + .cbi-button-option { min-height: 22px; }
     .oc .cbi-button-option { padding: 4px 4px; font-size: 10px; min-width: 35px; }
     .oc .config-file-top { flex-direction: column; align-items: stretch; gap: 12px; }

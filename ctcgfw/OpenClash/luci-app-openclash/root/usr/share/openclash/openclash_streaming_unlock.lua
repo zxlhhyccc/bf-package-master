@@ -11,8 +11,8 @@ local SYS = require "luci.sys"
 local HTTP = require "luci.http"
 local FS = require "luci.openclash"
 local JSON = require "luci.jsonc"
-local UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-local UA_SEC_CH_UA = '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"'
+local UA = FS.user_agent
+local UA_SEC_CH_UA = FS.user_agent_ch_ua
 local class_type = type
 local type = arg[1]
 local all_test = arg[2] == "all"
@@ -1861,11 +1861,9 @@ if check_only then
 	local ok = pcall(function()
 		local region = proxy_unlock_test() or ""
 		local st = probe_status(status, region)
-		if status and status > 0 then
-			pcall(function()
-				result_node = current_service_node() or ""
-			end)
-		end
+		pcall(function()
+			result_node = current_service_node() or ""
+		end)
 		print_result(st, region)
 	end)
 	if not ok then

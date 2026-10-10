@@ -133,14 +133,16 @@
 
     /* ── Layout & Spacing ── */
     --control-height: 32px;
-    --card-padding: 6px 8px;
+    --control-row-height: 32px;
+    --card-padding-block: 6px;
+    --card-padding: var(--card-padding-block) 8px;
     --card-outer-padding: 12px;
     --section-gap: 12px;
     --card-grid-gap: 8px;
     --card-item-min-height: 100px;
     --content-gap: 10px;
     --tight-gap: 6px;
-    --version-right: 8px;
+    --icon-btn-size: 28px;
 
     /* ── Card Titles (large / small cards) ── */
     --card-title-size: 15px;
@@ -1166,9 +1168,9 @@ html[data-darkmode="true"] .oc svg {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
+    width: var(--icon-btn-size);
+    height: var(--icon-btn-size);
+    min-width: var(--icon-btn-size);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     background: var(--bg-white);
@@ -2067,7 +2069,7 @@ ul {
             margin: 0 auto;
         }
     /* myip.htm */
-    .oc { --card-item-min-height: 80px; }
+    .oc { --card-item-min-height: 80px; --card-title-size: 14px; --card-title-size-sm: 12px; }
     .oc .select-popup-footer { grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 10px; }
     .oc .select-popup-footer .select-class {
             height: 32px;
@@ -2083,7 +2085,6 @@ ul {
     .oc .oc-usage-help-float { width: 40px; height: 40px; }
     .oc .oc-float-stack .oc-usage-help-float svg,
         .oc #oc-merge-toggle-btn.oc-usage-help-float svg { width: 20px; height: 20px; }
-    .oc .icon-btn { width: 24px; height: 24px; min-width: 24px; }
     .oc .icon-btn svg { width: 12px !important; height: 12px !important; }
     .oc .config-file-name { font-size: 15px; }
     /* config_upload.htm */
@@ -2092,7 +2093,7 @@ ul {
     .oc .mode-tab { padding: 10px 12px; font-size: 13px; }
     .oc .mode-tab svg { width: 12px; height: 12px; }
     /* myip.htm */
-    .oc { --card-outer-padding: 8px; --section-gap: 10px; --card-grid-gap: 6px; --card-item-min-height: 70px; }
+    .oc { --card-outer-padding: 8px; --section-gap: 10px; --card-grid-gap: 6px; --card-item-min-height: 70px; --card-title-size: 13px; --icon-btn-size: 24px; --control-row-height: 28px; }
     .oc .select-popup-footer { grid-template-columns: repeat(2, 1fr); gap: 4px; padding: 8px; }
     .oc .select-popup-footer .select-class {
             height: 30px;

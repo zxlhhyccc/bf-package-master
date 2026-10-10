@@ -9,7 +9,6 @@ var ocIcons = {
 };
 
 var OC_CUSTOM_OVERWRITE = 'openclash_custom_overwrite.sh';
-var OC_BUILTIN_OVERWRITE = [OC_CUSTOM_OVERWRITE, 'default', 'Google_Play'];
 
 // Uses EditorView.updateListener instead of view.dispatch override.
 // dispatch() can receive TransactionSpec objects which lack docChanged.
@@ -1070,7 +1069,7 @@ var ConfigEditor = {
             var sub = self.overwriteSubInfo[name] || {};
             var registered = !!self.overwriteSubInfo[name];
             var enable = typeof sub.enable !== 'undefined' ? sub.enable : 0;
-            var builtin = OC_BUILTIN_OVERWRITE.indexOf(name) !== -1;
+            var builtin = sub.official == 1;
             var tagText = !registered ? '<%:Unset%>' : (builtin ? '<%:Builtin%>' : '');
             var tagClass = (registered && builtin) ? 'builtin' : '';
 
