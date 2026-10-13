@@ -486,8 +486,6 @@ local function parseAnytlsShare(content)
 		alpn = params.alpn,
 		pinned_cert = params.pcs,
 		cert_name = params.vcn
-		allow_insecure = (params.insecure == "1" or params.allow_insecure == "1" or params.allowinsecure == "1"),
-		client_fingerprint = params.fp or params.fingerprint or ""
 	}
 end
 

@@ -288,11 +288,11 @@ if args then
 else
 	log("正在更新【GFW列表】数据库")
 	update(uci:get_first("shadowsocksr", "global", "gfwlist_url"), "/etc/ssrplus/gfw_list.conf", "gfw_data", TMP_DNSMASQ_PATH .. "/gfw_list.conf")
-	log("正在更新【国内IP段】数据库")
 	if uci:get_first("shadowsocksr", "global", "ipv6_support", "0") == "1" then
 		log("正在更新【国内IPv6段】数据库")
 		update_ipv6()
 	end
+	log("正在更新【国内IP段】数据库")
 	update(uci:get_first("shadowsocksr", "global", "chnroute_url"), "/etc/ssrplus/china_ssr.txt", "ip_data", TMP_PATH .. "/china_ssr.txt")
 	if uci:get_first("shadowsocksr", "global", "apple_optimization", "0") == "1" then
 		log("正在更新【Apple域名】数据库")

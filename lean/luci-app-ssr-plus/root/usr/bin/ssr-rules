@@ -525,17 +525,17 @@ ipset_nft() {
 	$NFT add rule inet ss_spec ss_spec_wan_ac meta l4proto tcp tcp dport 53 ip daddr 127.0.0.0/8 return
 	[ -n "$server" ] && $NFT add rule inet ss_spec ss_spec_wan_ac meta l4proto tcp tcp dport != 53 ip daddr "$server" return
 
+	# Access control: blacklist -> whitelist -> fplan/bplan — TCP
+	$NFT add rule inet ss_spec ss_spec_wan_ac ip daddr @whitelist return
+	$NFT add rule inet ss_spec ss_spec_wan_ac ip daddr @whitelist_domain return
 	# Music unlocking support
 	if $NFT list set inet ss_spec music >/dev/null 2>&1; then
 		$NFT add rule inet ss_spec ss_spec_wan_ac meta l4proto tcp ip daddr @music return
 	fi
-
-	# Access control: blacklist -> whitelist -> fplan/bplan — TCP
-	$NFT add rule inet ss_spec ss_spec_wan_ac ip daddr @whitelist return
-	$NFT add rule inet ss_spec ss_spec_wan_ac ip daddr @whitelist_domain return
-	$NFT add rule inet ss_spec ss_spec_wan_ac ip saddr @bplan return
 	$NFT add rule inet ss_spec ss_spec_wan_ac ip daddr @blacklist jump ss_spec_wan_fw
 	$NFT add rule inet ss_spec ss_spec_wan_ac ip saddr @fplan jump ss_spec_wan_fw
+	$NFT add rule inet ss_spec ss_spec_wan_ac ip saddr @bplan return
+
 
 	# Set up mode-specific rules
 	case "$RUNMODE" in
@@ -586,10 +586,6 @@ ipset_iptables() {
 	$IPT -A SS_SPEC_WAN_AC -p tcp --dport 53 -d 127.0.0.0/8 -j RETURN
 	[ -n "$server" ] && $IPT -A SS_SPEC_WAN_AC -p tcp ! --dport 53 -d "$server" -j RETURN
 
-	if [ $(ipset list music -name -quiet | grep music) ]; then
-		$IPT -A SS_SPEC_WAN_AC -m set --match-set music dst -j RETURN 2>/dev/null
-	fi
-
 	ipset -N whitelist hash:net 2>/dev/null
 	if [ -f "${xhttp_ip:=/etc/ssrplus/xhttp_address.txt}" ]; then
 		while IFS= read -r ip; do
@@ -598,18 +594,19 @@ ipset_iptables() {
 	fi
 	for ip in $WAN_BP_IP; do ipset -! add whitelist "$ip"; done
 	$IPT -A SS_SPEC_WAN_AC -m set --match-set whitelist dst -j RETURN
+	if [ $(ipset list music -name -quiet | grep music) ]; then
+		$IPT -A SS_SPEC_WAN_AC -m set --match-set music dst -j RETURN 2>/dev/null
+	fi
+	ipset -N blacklist hash:net 2>/dev/null
+	for ip in $WAN_FW_IP; do ipset -! add blacklist "$ip"; done
+	$IPT -A SS_SPEC_WAN_AC -m set --match-set blacklist dst -j SS_SPEC_WAN_FW
+	ipset -N fplan hash:net 2>/dev/null
+	for ip in $LAN_FP_IP; do ipset -! add fplan "$ip"; done
+	$IPT -A SS_SPEC_WAN_AC -m set --match-set fplan src -j SS_SPEC_WAN_FW
 
 	ipset -N bplan hash:net 2>/dev/null
 	for ip in $LAN_BP_IP; do ipset -! add bplan "$ip"; done
 	$IPT -A SS_SPEC_WAN_AC -m set --match-set bplan src -j RETURN
-
-	ipset -N blacklist hash:net 2>/dev/null
-	for ip in $WAN_FW_IP; do ipset -! add blacklist "$ip"; done
-	$IPT -A SS_SPEC_WAN_AC -m set --match-set blacklist dst -j SS_SPEC_WAN_FW
-
-	ipset -N fplan hash:net 2>/dev/null
-	for ip in $LAN_FP_IP; do ipset -! add fplan "$ip"; done
-	$IPT -A SS_SPEC_WAN_AC -m set --match-set fplan src -j SS_SPEC_WAN_FW
 
 	ipset -N gmlan hash:net 2>/dev/null
 	for ip in $LAN_GM_IP; do ipset -! add gmlan "$ip"; done
@@ -688,7 +685,7 @@ fw_rule_iptables() {
 	$IPT -F SS_SPEC_WAN_FW
 
 	for net in \
-		0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 \
+		0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 \
 		172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4
 	do
 		$IPT -A SS_SPEC_WAN_FW -d "$net" -j RETURN
@@ -780,7 +777,7 @@ ac_rule_nft() {
 
 	# Exclude special local addresses
 	if $NFT list chain inet ss_spec ss_spec_prerouting >/dev/null 2>&1; then
-		for net in 0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
+		for net in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
 			$NFT add rule inet ss_spec ss_spec_prerouting ip daddr $net return 2>/dev/null
 		done
 	fi
@@ -865,7 +862,7 @@ ac_rule_nft() {
 		
 		# Exclude special local addresses
 		if $NFT list chain inet ss_spec ss_spec_output >/dev/null 2>&1; then
-			for net in 0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
+			for net in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
 				$NFT add rule inet ss_spec ss_spec_output ip daddr $net return 2>/dev/null
 			done
 		fi
@@ -896,7 +893,7 @@ ac_rule_nft() {
 		
 		# Exclude special local addresses
 		if $NFT list chain inet ss_spec ss_spec_output >/dev/null 2>&1; then
-			for net in 0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
+			for net in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
 				$NFT add rule inet ss_spec ss_spec_output ip daddr $net return 2>/dev/null
 			done
 		fi
@@ -1063,7 +1060,9 @@ tp_rule() {
 	fi
 
 	# Apply sysctl settings for TPROXY
-	[ -n "$TPROXY" ] && set_tproxy_sysctl
+	if [ -n "$TPROXY" ] && [ "$DISABLE_UDP_RULES" != "1" ]; then
+		set_tproxy_sysctl
+	fi
 
 	if [ "$USE_NFT" = "1" ]; then
 		tp_rule_nft
@@ -1258,7 +1257,7 @@ tp_rule_nft() {
 
 	# Exclude special local addresses
 	if $NFT list chain ip ss_spec_mangle ss_spec_tproxy >/dev/null 2>&1; then
-		for net in 0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
+		for net in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
 			$NFT add rule ip ss_spec_mangle ss_spec_tproxy meta l4proto udp ip daddr $net return 2>/dev/null
 		done
 	fi
@@ -1378,7 +1377,7 @@ tp_rule_nft() {
 		fi
 
 		# 内网/回环/私有/组播/保留网段优先直连
-		for net in 0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 \
+		for net in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 \
 			172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
 			$NFT add rule ip ss_spec_mangle output meta l4proto udp ip daddr $net counter return comment "\"$TAG\"" 2>/dev/null
 		done
@@ -1524,7 +1523,7 @@ tp_rule_iptables() {
 	EOF
 
 	for net in \
-		0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 \
+		0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 \
 		172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4
 	do
 		$ipt -A SS_SPEC_TPROXY -p udp -d "$net" -j RETURN
@@ -1614,7 +1613,7 @@ tp_rule_iptables() {
 	# ============================================================
 	if [ "$OUTPUT" = "1" ] && [ -n "$TPROXY" ] && [ "$DISABLE_UDP_RULES" != "1" ]; then
 		# 放行 Loopback 本地回环网络
-		for net in 0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 \
+		for net in 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 \
 			172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4; do
 			$ipt -A OUTPUT -p udp -d "$net" -m comment --comment "$TAG" -j RETURN
 		done
@@ -1766,7 +1765,8 @@ check_nftables_status() {
 
 	# Check if ss_spec tables exist
 	if ! $NFT list table inet ss_spec >/dev/null 2>&1 && \
-	   ! $NFT list table ip ss_spec_mangle >/dev/null 2>&1; then
+	   ! $NFT list table ip ss_spec_mangle >/dev/null 2>&1 && \
+	   ! $NFT list table ip ss_spec_filter >/dev/null 2>&1; then
 		echo "ss_spec tables missing in nftables"
 		return 1
 	fi
@@ -1807,8 +1807,8 @@ compare_rules() {
 
 	# Export current rules to temporary file
 	$NFT list ruleset | awk '
-		/^table (inet ss_spec|ip ss_spec_mangle)/ {flag=1}
-		/^table / && !/^table (inet ss_spec|ip ss_spec_mangle)/ {flag=0}
+		/^table (inet ss_spec|ip ss_spec_mangle|ip ss_spec_filter)/ {flag=1}
+		/^table / && !/^table (inet ss_spec|ip ss_spec_mangle|ip ss_spec_filter)/ {flag=0}
 		flag
 	' > "$rules_file" 2>/dev/null
 
