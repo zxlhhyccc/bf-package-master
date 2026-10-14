@@ -47,6 +47,9 @@ o.cfgvalue = function(self, section)
 end
 
 local dir, fd, clash
+local conf = fs.uci_get_config("config", "config_path")
+if not conf then conf = "/etc/openclash/config/config.yaml" end
+local edit_fd
 dir = "/etc/openclash/config/"
 proxy_pro_dir="/etc/openclash/proxy_provider/"
 rule_pro_dir="/etc/openclash/rule_provider/"
@@ -55,6 +58,20 @@ backup_dir="/tmp/"
 
 HTTP.setfilehandler(
 	function(meta, chunk, eof)
+		if meta and meta.name == "oc_editor_content" then
+			if not edit_fd and chunk then
+				edit_fd = nixio.open(conf, "w")
+			end
+			if edit_fd and chunk then
+				edit_fd:write(chunk)
+			end
+			if eof and edit_fd then
+				edit_fd:close()
+				edit_fd = nil
+			end
+			return
+		end
+
 		local fp = HTTP.formvalue("file_type")
 		if not fd then
 			if not meta then return end
@@ -137,28 +154,11 @@ HTTP.setfilehandler(
 				o.value = translate("File saved to") .. ' "/etc/openclash/core/"'
 			elseif fp == "backup-file" then
 				local archive = backup_dir .. meta.file
-				local quoted = UTIL.shellquote(archive)
-				-- list the archive before touching /etc/openclash: a broken upload used to
-				-- report success because every tar/mv error was discarded, and members with
-				-- absolute or parent-relative paths must not be extracted
-				local listfile = "/tmp/oc_restore.list"
-				local tarok = SYS.call("tar tzf " .. quoted .. " >" .. listfile .. " 2>/dev/null") == 0
-				local has_members = SYS.call("grep -q . " .. listfile) == 0
-				local has_config = SYS.call("grep -Fxq './openclash' " .. listfile) == 0
-				local unsafe = SYS.call("grep -qE '(^|/)\\.\\./|^/' " .. listfile) == 0
-				local restored = false
-				if tarok and has_members and has_config and not unsafe then
-					local extracted = SYS.call("tar -C '/etc/openclash/' -xzf " .. quoted .. " >/dev/null 2>&1") == 0
-					if extracted then
-						restored = SYS.call("mv -f /etc/openclash/openclash /etc/config/openclash >/dev/null 2>&1") == 0
-					end
-				end
-				if restored then
+				if fs.restore_backup(archive) then
 					o.value = translate("Backup File Restore Successful!")
 				else
 					o.value = translate("Backup File Restore Failed!")
 				end
-				SYS.call("rm -f " .. listfile)
 				fs.unlink(archive)
 			end
 		end
@@ -372,9 +372,7 @@ s = m:section(Table, tab)
 s.anonymous = true
 s.addremove = false
 
-local conf = fs.uci_get_config("config", "config_path")
 local dconf = "/usr/share/openclash/res/default.yaml"
-if not conf then conf = "/etc/openclash/config/config.yaml" end
 local conf_name = fs.basename(conf)
 if not conf_name then conf_name = "config.yaml"  end
 local sconf = "/etc/openclash/"..conf_name
@@ -389,7 +387,7 @@ sev.cfgvalue = function(self, section)
 	return fs.readfile(conf) or fs.readfile(dconf) or ""
 end
 sev.write = function(self, section, value)
-if (CHIF == "0") then
+if (CHIF == "0" and value and value ~= "oc-editor-streamed") then
 	value = value:gsub("\r\n?", "\n")
 	local old_value = fs.readfile(conf)
 	if value ~= old_value then

@@ -125,6 +125,7 @@ var Guide = {
             done: function (s) { return s.configs.length > 0; },
             body: function () {
                 return '<p><%:A config holds your proxies, groups and rules, this is the step that gets OpenClash working%><span class="guide-tag req"><%:Required%></span></p>'
+                    + '<p class="guide-tip"><%:Upload a config file, or add a subscription link%></p>'
                     + '<p class="guide-tip"><%:“Open and continue” opens this window and walks you through it%></p>';
             }
         },
@@ -200,8 +201,7 @@ var Guide = {
             place: 'bottom',
             wide: true,
             body: function () {
-                return '<svg class="guide-cover" viewBox="0 0 320 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect class="cv-bg" x="0.5" y="0.5" width="319" height="83" rx="12"/><path class="cv-beam" d="M140 6 L196 6 L248 78 L88 78 Z"/><rect class="cv-card" x="118" y="18" width="150" height="48" rx="10"/><rect class="cv-line" x="132" y="32" width="52" height="7" rx="3.5"/><rect class="cv-line cv-faint" x="132" y="45" width="34" height="7" rx="3.5"/><rect class="cv-switch" x="214" y="32" width="28" height="16" rx="8"/><circle class="cv-knob" cx="234" cy="40" r="5.5"/><path class="cv-cursor" d="M234 45 l0 15 l4.4 -4.4 l2.9 6.3 l3.3 -1.6 l-2.9 -6.2 l6 0 z"/><circle class="cv-dot" cx="112" cy="76" r="3"/><circle class="cv-dot cv-faint" cx="128" cy="76" r="3"/><circle class="cv-dot cv-faint" cx="144" cy="76" r="3"/></svg>'
-                    + '<p><%:Six pages, one job each:%></p>'
+                return '<p><%:Six pages, one job each:%></p>'
                     + '<ul>'
                     + '<li><b><%:Overviews%></b><span class="guide-sep"></span><%:start and stop, modes, config, dashboard%></li>'
                     + '<li><b><%:Plugin Settings%></b><span class="guide-sep"></span><%:run mode, DNS, traffic, access control, IPv6%></li>'
@@ -322,7 +322,7 @@ var Guide = {
             body: function () {
                 return '<p><%:The live numbers of this device:%></p>'
                     + '<ul>'
-                    + '<li><b><%:Up%></b> / <b><%:Down%></b><span class="guide-sep"></span><%:the current speed%></li>'
+                    + '<li><b><%:Upload%></b> / <b><%:Download%></b><span class="guide-sep"></span><%:the current speed%></li>'
                     + '<li><b><%:Up Total%></b> / <b><%:Down Total%></b><span class="guide-sep"></span><%:counted since the core started%></li>'
                     + '<li><b><%:Connect%></b><span class="guide-sep"></span><%:connections the core handles right now%></li>'
                     + '<li><b><%:Ram%></b> / <b><%:CPU%></b><span class="guide-sep"></span><%:memory and CPU used by the core%></li>'
@@ -373,11 +373,12 @@ var Guide = {
             target: '.myip-toolbar',
             place: 'bottom',
             body: function () {
-                return '<p><%:The three header buttons:%></p>'
+                return '<p><%:The four header buttons:%></p>'
                     + '<ul>'
                     + '<li><b><%:Hide IP%></b><span class="guide-sep"></span><%:blur the addresses before a screenshot%></li>'
                     + '<li><b><%:Query Mode%></b><span class="guide-sep"></span><%:starts the check from the router or from the current browser%></li>'
-                    + '<li><b><%:Refresh%></b><span class="guide-sep"></span><%:query addresses and latency again%></li>'
+                    + '<li><b><%:Unlock Check%></b><span class="guide-sep"></span><%:switch the list to unlock checks, press again to pick the services%></li>'
+                    + '<li><b><%:Refresh%></b><span class="guide-sep"></span><%:query the IP addresses, latency and unlock checks again%></li>'
                     + '</ul>';
             }
         },
@@ -437,7 +438,7 @@ var Guide = {
             place: 'bottom',
             tab: 'upload',
             body: function () {
-                return '<p><%:Click this area to pick your YAML file, or drop one onto it. Files up to 10 MB are accepted%><span class="guide-tag req"><%:Required%></span></p>';
+                return '<p><%:Click this area to pick your YAML file, or drop one onto it%><span class="guide-tag req"><%:Required%></span></p>';
             }
         },
         {
@@ -695,31 +696,29 @@ var Guide = {
             place: 'bottom',
             inAdd: true,
             // walking back into these steps must not depend on the window still being open
-            prepare: function () { Guide.ensureAddDialog(); },
+            prepare: function () { Guide.ensureAddDialog(); Guide.ensureAddStep('source'); },
             body: function () {
                 return '<p><%:Two tabs, two sources:%></p>'
                     + '<ul>'
                     + '<li><b><%:Local Module%></b><span class="guide-sep"></span><%:you write the content yourself, or upload a txt or conf file%></li>'
                     + '<li><b><%:Subscribe Link%></b><span class="guide-sep"></span><%:the module is downloaded from a URL and can refresh itself%></li>'
-                    + '</ul>';
+                    + '</ul>'
+                    + '<p class="guide-tip"><%:The window runs in two steps: pick the source here, then review the details%></p>';
             }
         },
         {
             key: 'addfile',
             title: '<%:Local Module%>',
-            target: function () { return Guide.inAddDialog('#overwrite-upload-form-file'); },
+            target: function () { return Guide.inAddDialog('#overwrite-source-file'); },
             place: 'bottom',
             tab: 'moduleFile',
             inAdd: true,
             wide: true,
-            prepare: function () { Guide.ensureAddDialog(); },
+            prepare: function () { Guide.ensureAddDialog(); Guide.ensureAddStep('source'); },
             body: function () {
-                return '<p><%:A local module needs three things:%></p>'
-                    + '<ul>'
-                    + '<li><b><%:Config File%></b><span class="guide-sep"></span><%:which generated config this module is applied to%><span class="guide-tag opt"><%:Optional%></span></li>'
-                    + '<li><b><%:Upload File%></b><span class="guide-sep"></span><%:select a txt or conf file to start from%><span class="guide-tag opt"><%:Optional%></span></li>'
-                    + '<li><b><%:Module Name%></b><span class="guide-sep"></span><%:filled in from the file name, you can change it%><span class="guide-tag req"><%:Required%></span></li>'
-                    + '</ul>';
+                return '<p><%:Select the txt or conf file to upload here:%></p>'
+                    + '<p class="guide-info"><%:As soon as the file is chosen the window reads it and jumps to the details step%></p>'
+                    + '<p class="guide-tip"><%:A file with #! info lines fills the name, description and variables for you%></p>';
             }
         },
         {
@@ -729,51 +728,52 @@ var Guide = {
             place: 'bottom',
             inAdd: true,
             switchTo: 'moduleSubscribe',
-            prepare: function () { Guide.ensureAddDialog(); },
+            prepare: function () { Guide.ensureAddDialog(); Guide.ensureAddStep('source'); },
             body: function () {
                 return '<p><%:A module can also be pulled from a URL, which keeps several routers on the same settings%></p>'
                     + '<p class="guide-tip"><%:Next switches to that tab%></p>';
             }
         },
         {
-            key: 'addfields',
-            title: '<%:Add Overwrite Module%>',
-            target: function () { return Guide.addBoxOf('#overwrite-subscribe-filename'); },
-            holeTo: function () { return Guide.boxList(['#overwrite-subscribe-config-dropdown', '#overwrite-subscribe-type'], true); },
-            place: 'bottom',
-            tab: 'moduleSubscribe',
-            inAdd: true,
-            wide: true,
-            prepare: function () { Guide.ensureAddDialog(); },
-            body: function () {
-                return '<p><%:Fields this tab fills in:%></p>'
-                    + '<ul>'
-                    + '<li><b><%:Module Name%></b><span class="guide-sep"></span><%:the name this module is listed under%><span class="guide-tag req"><%:Required%></span></li>'
-                    + '<li><b><%:Config File%></b><span class="guide-sep"></span><%:which generated config this module is applied to%><span class="guide-tag opt"><%:Optional%></span></li>'
-                    + '<li><b><%:Type%></b><span class="guide-sep"></span><%:http pulls the module from a link%></li>'
-                    + '</ul>';
-            }
-        },
-        {
             key: 'addurl',
             title: '<%:Subscription URL%>',
             target: function () { return Guide.addBoxOf('#overwrite-subscribe-url'); },
-            holeTo: function () { return Guide.boxList(['#overwrite-subscribe-update-days', '#overwrite-subscribe-param-add'], true); },
             place: 'bottom',
             tab: 'moduleSubscribe',
             inAdd: true,
             wide: true,
             prepare: function () {
                 Guide.ensureAddDialog();
-                Guide.ensureAddType('http');
+                Guide.ensureAddStep('source');
             },
             body: function () {
-                return '<p><%:Extra fields for a module that comes from a link:%></p>'
+                return '<p><%:Paste the module link here:%></p>'
+                    + '<p class="guide-tip"><%:Click Next again to continue without the file info%></p>';
+            }
+        },
+        {
+            key: 'addinfo',
+            title: '<%:Fill Module Info%>',
+            target: function () { return Guide.addBoxOf('#overwrite-add-filename'); },
+            holeTo: function () { return Guide.boxList(['#overwrite-add-config', '#overwrite-add-desc'], true); },
+            place: 'bottom',
+            tab: 'moduleSubscribe',
+            inAdd: true,
+            wide: true,
+            prepare: function () {
+                Guide.ensureAddDialog();
+                Guide.ensureAddStep('info');
+            },
+            body: function () {
+                return '<p><%:Everything read from the file can be checked and changed here:%></p>'
                     + '<ul>'
-                    + '<li><b><%:Subscription URL%></b><span class="guide-sep"></span><%:where the module is downloaded from%><span class="guide-tag req"><%:Required%></span></li>'
+                    + '<li><b><%:Module Name%></b><span class="guide-sep"></span><%:the name this module is listed under%><span class="guide-tag req"><%:Required%></span></li>'
+                    + '<li><b><%:Description%></b><span class="guide-sep"></span><%:a short note kept with the module%><span class="guide-tag opt"><%:Optional%></span></li>'
+                    + '<li><b><%:Config File%></b><span class="guide-sep"></span><%:which generated config this module is applied to%><span class="guide-tag opt"><%:Optional%></span></li>'
                     + '<li><b><%:Update Time%></b><span class="guide-sep"></span><%:when it is fetched again, OFF means only on demand%><span class="guide-tag opt"><%:Optional%></span></li>'
                     + '<li><b><%:Environment variable%></b><span class="guide-sep"></span><%:extra variables handed to the script, only for modules that read them%><span class="guide-tag opt"><%:Optional%></span></li>'
-                    + '</ul>';
+                    + '</ul>'
+                    + '<p class="guide-tip"><%:Add turns on once the required fields are filled%></p>';
             }
         },
         {
@@ -783,7 +783,7 @@ var Guide = {
             place: 'top',
             inAdd: true,
             body: function () {
-                return '<p><%:The blue button adds the module, Cancel discards the form%></p>'
+                return '<p><%:Add saves the module, Back returns to the source step%></p>'
                     + '<p class="guide-info"><%:A new module starts off, turn the switch on, then restart OpenClash%></p>';
             }
         },
@@ -798,6 +798,7 @@ var Guide = {
                     + '<ul>'
                     + '<li><b>[YAML]</b><span class="guide-sep"></span><%:YAML fragments such as DNS settings, ports or TUN options%></li>'
                     + '<li><b>[Overwrite]</b> / <b>[General]</b><span class="guide-sep"></span><%:commands or plugin options, for dynamic cases%></li>'
+                    + '<li><b>#!</b><span class="guide-sep"></span><%:optional module info lines read by the add dialog%></li>'
                     + '</ul>'
                     + '<p class="guide-careful"><%:YAML indentation matters, an extra space can make the core refuse to start%></p>';
             }
@@ -1892,12 +1893,11 @@ var Guide = {
         if (!this.entryVisible('module')) this.openStepDialog('module');
     },
 
-    // the url and schedule fields of the add module form only show up for the http type
-    ensureAddType: function (type) {
-        var sel = this.inAddDialog('#overwrite-subscribe-type');
-        if (!sel || sel.value === type) return;
-        sel.value = type;
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
+    // the add module window is a two step wizard, its steps are switched through the editor
+    ensureAddStep: function (step) {
+        if (typeof ConfigEditor !== 'undefined' && ConfigEditor.setAddWizardStep) {
+            ConfigEditor.setAddWizardStep(step);
+        }
     },
 
     // the module list starts collapsed on a narrow screen, its own tour needs it open
@@ -1956,7 +1956,7 @@ var Guide = {
             document.getElementById('guide-tour').classList.add('full-dim');
             spot.classList.add('hidden');
             pop.classList.remove('bottom-sheet', 'sheet-top');
-            pop.classList.add('center');
+            pop.classList.add('guide-center');
             this.sheetSide = null;
             this.sheetTop = false;
             pop.style.top = '';
@@ -1971,7 +1971,7 @@ var Guide = {
         document.getElementById('guide-tour').classList.remove('full-dim');
         // the arrow belongs to the placement paths, a plain layout pass leaves it exactly as it is
         var arrowEl = pop.querySelector('.guide-arrow');
-        pop.classList.remove('center');
+        pop.classList.remove('guide-center');
 
         var r = this.stepRect(step, el);
         var pad = 6;
@@ -2214,16 +2214,13 @@ var Guide = {
 
     // a callout that grew past the edge after its placement is nudged back inside
     clampPop: function (pop, vw, vh) {
-        var r = pop.getBoundingClientRect();
-        var top = r.top;
-        var left = r.left;
-        if (r.bottom > vh - 12) top -= (r.bottom - (vh - 12));
-        if (top < 12) top = 12;
-        if (r.right > vw - 12) left -= (r.right - (vw - 12));
-        if (left < 12) left = 12;
-        top = Math.round(top);
-        left = Math.round(left);
-        if (top !== Math.round(r.top) || left !== Math.round(r.left)) this.setBox(pop, top, left, null, null);
+        // the rect of a callout still gliding in shows where it comes from, so clamp the target it was given
+        var top = parseFloat(pop.style.top);
+        var left = parseFloat(pop.style.left);
+        if (isNaN(top) || isNaN(left)) return;
+        var wantTop = Math.round(Math.max(12, Math.min(top, vh - 12 - pop.offsetHeight)));
+        var wantLeft = Math.round(Math.max(12, Math.min(left, vw - 12 - pop.offsetWidth)));
+        if (wantTop !== top || wantLeft !== left) this.setBox(pop, wantTop, wantLeft, null, null);
     },
 
     // a narrow callout puts its step marks and its buttons on two centred rows, side by side they get squeezed

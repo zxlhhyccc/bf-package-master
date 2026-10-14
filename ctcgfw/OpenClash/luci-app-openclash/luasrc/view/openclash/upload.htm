@@ -82,11 +82,6 @@
 			submitLabel.textContent = '<%:Upload%>';
 			return;
 		}
-		if (f.size > 10 * 1024 * 1024) {
-			submitBtn.disabled = true;
-			submitLabel.textContent = '<%:File exceeds 10MB limit%>';
-			return;
-		}
 		submitBtn.disabled = false;
 		submitLabel.textContent = '<%:Upload%>' + ' ' + f.name;
 	}

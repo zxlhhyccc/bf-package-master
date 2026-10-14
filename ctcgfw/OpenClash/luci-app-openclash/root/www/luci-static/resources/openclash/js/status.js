@@ -1562,6 +1562,8 @@ var ocLang = window.ocLang || '';
         isLoading: false,
         dragBound: false,
         isDragging: false,
+        tapStartX: null,
+        tapStartY: null,
         dragStartX: 0,
         dragStartScrollLeft: 0,
         touchIdentifier: null,
@@ -1607,6 +1609,8 @@ var ocLang = window.ocLang || '';
                     return;
                 }
                 self.isDragging = true;
+                self.tapStartX = e.clientX;
+                self.tapStartY = e.clientY;
                 self.dragStartX = e.pageX - self.container.offsetLeft;
                 self.dragStartScrollLeft = self.container.scrollLeft;
                 self.container.classList.add('dragging');
@@ -1637,6 +1641,8 @@ var ocLang = window.ocLang || '';
                 }
                 var touch = e.touches[0];
                 self.isDragging = true;
+                self.tapStartX = touch.clientX;
+                self.tapStartY = touch.clientY;
                 self.touchIdentifier = touch.identifier;
                 self.dragStartX = touch.pageX - self.container.offsetLeft;
                 self.dragStartScrollLeft = self.container.scrollLeft;
@@ -1675,6 +1681,12 @@ var ocLang = window.ocLang || '';
 
             this.container.addEventListener('dragstart', function(e) {
                 e.preventDefault();
+            });
+
+            this.container.addEventListener('click', function(e) {
+                if (e.target === self.container) {
+                    self.selectTag(null);
+                }
             });
 
             this.dragBound = true;
@@ -1754,6 +1766,7 @@ var ocLang = window.ocLang || '';
                     modules.push({
                         name: moduleName,
                         type: moduleInfo.type || 'unknown',
+                        desc: moduleInfo.desc || '',
                         order: parseInt(moduleInfo.order, 10) || 0
                     });
                 }
@@ -1769,9 +1782,64 @@ var ocLang = window.ocLang || '';
             return modules;
         },
 
+        openModule: function(name) {
+            var open = function() {
+                if (typeof ConfigEditor === 'undefined' || !ConfigEditor.showOverwrite) {
+                    ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
+                    return;
+                }
+                ConfigEditor.currentConfigFile = '/etc/openclash/overwrite/' + name;
+                ConfigEditor.isOverwrite = true;
+                ConfigEditor.showOverwrite();
+            };
+
+            if (typeof ConfigEditor !== 'undefined' && ConfigEditor.showOverwrite) {
+                open();
+                return;
+            }
+
+            ocLoadCss(ocCssUrl('oc-config-edit.css'));
+            requireEditorScript('config_edit.js', 'ConfigEditor', open);
+        },
+
+        selectTag: function(tag) {
+            if (!this.container) return;
+            var selected = this.container.querySelectorAll('.subscription-overwrite-tag.is-selected');
+            for (var i = 0; i < selected.length; i++) {
+                selected[i].classList.remove('is-selected');
+            }
+            if (tag) {
+                tag.classList.add('is-selected');
+            }
+        },
+
+        handleTagClick: function(tag, event) {
+            // a gesture that started on the strip and ended somewhere else was a scroll, not a tap;
+            // the recorded origin only exists while the strip can be dragged
+            if (event && this.hasOverflow() && this.tapStartX !== null) {
+                if (Math.abs(event.clientX - this.tapStartX) > 6 || Math.abs(event.clientY - this.tapStartY) > 6) {
+                    return;
+                }
+            }
+
+            var name = tag.getAttribute('data-module');
+            if (!name) {
+                return;
+            }
+
+            // touch devices have no hover state, so the first tap selects and a second tap opens
+            if (window.matchMedia && window.matchMedia('(hover: none)').matches && !tag.classList.contains('is-selected')) {
+                this.selectTag(tag);
+                return;
+            }
+
+            this.openModule(name);
+        },
+
         render: function(data) {
             if (!this.container) return;
 
+            var self = this;
             var enabledModules = this.getEnabledModules(data);
             this.container.innerHTML = '';
 
@@ -1785,8 +1853,12 @@ var ocLang = window.ocLang || '';
                 var moduleItem = enabledModules[i];
                 var tag = document.createElement('span');
                 tag.className = 'subscription-overwrite-tag ' + this.getTypeClass(moduleItem.type);
-                tag.title = moduleItem.name;
+                tag.title = moduleItem.desc ? moduleItem.name + '\n' + moduleItem.desc : moduleItem.name;
                 tag.textContent = moduleItem.name;
+                tag.setAttribute('data-module', moduleItem.name);
+                tag.addEventListener('click', function(e) {
+                    self.handleTagClick(this, e);
+                });
                 if (moduleItem.type == 'http') {
                     tag.title += ' [<%:HTTP Module%>]';
                 } else if (moduleItem.type == 'file') {
@@ -2622,7 +2694,7 @@ var ocLang = window.ocLang || '';
             }
             this.resetBuffer(Date.now());
             this.metrics = {
-                traffic: { unit: ' MB/s', series: [{ key: 'up', name: '<%:Up%>' }, { key: 'down', name: '<%:Down%>' }] },
+                traffic: { unit: ' MB/s', series: [{ key: 'up', name: '<%:Upload%>' }, { key: 'down', name: '<%:Download%>' }] },
                 memory: { unit: ' MB', series: [{ key: 'mem', name: '<%:Ram%>' }] },
                 cpu: { unit: ' %', series: [{ key: 'cpu', name: '<%:CPU%>' }] },
                 load: { unit: ' %', series: [{ key: 'load', name: '<%:Load Avg%>' }] },
@@ -4305,7 +4377,7 @@ var ocLang = window.ocLang || '';
         if (isEnabled) LogManager.markCoreStart();
         LogManager.startLogDisplay(isEnabled ? '<%:Starting...%>' : '<%:Stopping...%>', false, 'init');
         XHR.get('<%=url("admin", "services", "openclash", "action")%>', requestParams, function(x, status) {
-            if (x && x.status == 200) {
+            if (x && x.status == 200 && status && status.status === 'success') {
                 setTimeout(function() {
                     pluginToggleUserAction = false;
                     updatePluginToggleState(StateManager.current_status.clash || false);
@@ -4471,7 +4543,7 @@ var ocLang = window.ocLang || '';
             if (restartBtn) {
                 restartBtn.disabled = false;
             }
-            if (x && x.status == 200) {
+            if (x && x.status == 200 && status && status.status === 'success') {
                 setTimeout(function() {
                     pluginToggleUserAction = false;
                     updatePluginToggleState(StateManager.current_status.clash || false);
@@ -4561,6 +4633,48 @@ var ocLang = window.ocLang || '';
                 ocAlert('<%:Failed to load the interface, please refresh the page and try again%>');
             }
         });
+
+        return false;
+    }
+
+    var restoreBackupInput = null;
+
+    function restoreBackupFile() {
+        if (!restoreBackupInput) {
+            restoreBackupInput = document.createElement('input');
+            restoreBackupInput.type = 'file';
+            restoreBackupInput.accept = '.tar.gz,.tgz,application/gzip';
+            restoreBackupInput.style.display = 'none';
+            document.body.appendChild(restoreBackupInput);
+
+            restoreBackupInput.addEventListener('change', function() {
+                var file = restoreBackupInput.files && restoreBackupInput.files[0];
+                if (!file) return;
+
+                var formData = new FormData();
+                formData.append('backup_file', file, file.name);
+
+                fetch('<%=url("admin", "services", "openclash", "restore_backup")%>', {
+                    method: 'POST',
+                    body: formData
+                }).then(function(r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                }).then(function(data) {
+                    if (data.status === 'success') {
+                        ocToast('<%:Backup File Restore Successful!%>', 'success');
+                        setTimeout(function() { window.location.reload(); }, 1200);
+                    } else {
+                        ocToast('<%:Backup File Restore Failed!%>', 'error');
+                    }
+                }).catch(function() {
+                    ocToast('<%:Backup File Restore Failed!%>', 'error');
+                });
+            });
+        }
+
+        restoreBackupInput.value = '';
+        restoreBackupInput.click();
 
         return false;
     }

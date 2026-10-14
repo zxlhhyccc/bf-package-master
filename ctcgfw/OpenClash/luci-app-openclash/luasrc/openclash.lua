@@ -42,6 +42,7 @@ local dynamic_uci = require "luci.model.uci".cursor()
 local SYS  = require "luci.sys"
 local HTTP = require "luci.http"
 local json = require "luci.jsonc"
+local UTIL = require "luci.util"
 local i18n = require "luci.i18n"
 
 local type  = type
@@ -301,6 +302,24 @@ function filename(str)
 	end
 end
 
+--- ASCII stays limited to [A-Za-z0-9._- ] so the name is safe in shell, ruby and cron
+--- arguments; non-ASCII (CJK) bytes are allowed, capped to fit the filesystem name limit.
+function is_safe_filename(name)
+	if type(name) ~= "string" or name == "" or #name > 200 or name:sub(1, 1) == "." then
+		return false
+	end
+	if name:match("^ +$") then
+		return false
+	end
+	for i = 1, #name do
+		local byte = name:byte(i)
+		if byte < 0x80 and not string.char(byte):match("[A-Za-z0-9._%- ]") then
+			return false
+		end
+	end
+	return true
+end
+
 function filesize(e)
 	local t=0
 	local a={' KB',' MB',' GB',' TB',' PB'}
@@ -409,6 +428,26 @@ function get_file_path_from_request()
 	end
 
 	return file_path
+end
+
+function restore_backup(archive)
+	local quoted = UTIL.shellquote(archive)
+	local listfile = "/tmp/oc_restore.list"
+	-- list the archive before touching /etc/openclash: a broken upload used to report
+	-- success because every tar/mv error was discarded, and members with absolute or
+	-- parent-relative paths must not be extracted
+	local tarok = SYS.call("tar tzf " .. quoted .. " >" .. listfile .. " 2>/dev/null") == 0
+	local has_members = SYS.call("grep -q . " .. listfile) == 0
+	local has_config = SYS.call("grep -Fxq './openclash' " .. listfile) == 0
+	local unsafe = SYS.call("grep -qE '(^|/)\\.\\./|^/' " .. listfile) == 0
+	local restored = false
+	if tarok and has_members and has_config and not unsafe then
+		if SYS.call("tar -C '/etc/openclash/' -xzf " .. quoted .. " >/dev/null 2>&1") == 0 then
+			restored = SYS.call("mv -f /etc/openclash/openclash /etc/config/openclash >/dev/null 2>&1") == 0
+		end
+	end
+	SYS.call("rm -f " .. listfile)
+	return restored
 end
 
 function get_age_keys(file)

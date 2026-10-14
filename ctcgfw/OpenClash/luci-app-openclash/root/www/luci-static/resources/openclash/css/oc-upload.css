@@ -34,6 +34,7 @@
 }
 
 .oc .config-upload-btn-large {
+    --upload-btn-icon-size: 20px;
     min-width: 200px !important;
     height: 60px !important;
     font-size: 16px !important;
@@ -59,8 +60,16 @@
 }
 
 .oc .config-upload-btn-large svg {
-    width: 20px !important;
-    height: 20px !important;
+    width: var(--upload-btn-icon-size) !important;
+    height: var(--upload-btn-icon-size) !important;
+    flex: 0 0 auto !important;
+}
+
+.oc .config-upload-btn-large > span {
+    display: inline-flex !important;
+    align-items: center !important;
+    line-height: var(--upload-btn-icon-size) !important;
+    white-space: nowrap !important;
 }
 
 .oc .config-upload-model-overlay {
