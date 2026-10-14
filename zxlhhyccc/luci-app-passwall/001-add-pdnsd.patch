@@ -180,7 +180,7 @@
  endmenu
 --- a/luasrc/model/cbi/passwall/client/global.lua
 +++ b/luasrc/model/cbi/passwall/client/global.lua
-@@ -270,6 +270,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
+@@ -259,6 +259,14 @@ o:value("tcp", translatef("Requery DNS By %s", "TCP"))
  o.default = "tcp"
  o:value("udp", translatef("Requery DNS By %s", "UDP"))
  o:value("tcp", translatef("Requery DNS By %s", "TCP"))
@@ -195,15 +195,15 @@
  if api.is_finded("dns2socks") then
  	o:value("dns2socks", "dns2socks")
  end
-@@ -279,6 +287,7 @@ end
+@@ -268,6 +276,7 @@ end
  if has_xray then
  	o:value("xray", "Xray")
  end
 +--o:value("udp", translatef("Requery DNS By %s", "UDP"))
- o:depends({ dns_shunt = "chinadns-ng", _node_sel_other = "1" })
- o:depends({ dns_shunt = "dnsmasq", _node_sel_other = "1" })
+ o:depends({ dns_shunt = "chinadns-ng", _node_sel_shunt = "" })
+ o:depends({ dns_shunt = "dnsmasq", _node_sel_shunt = "" })
  o.write = function(self, section, value)
-@@ -391,6 +400,8 @@ o.validate = function(self, value, t)
+@@ -380,6 +389,8 @@ o.validate = function(self, value, t)
  	end
  	return value
  end
@@ -212,7 +212,7 @@
  o:depends({dns_mode = "dns2socks"})
  
  ---- DNS Forward
-@@ -405,6 +416,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
+@@ -394,6 +405,8 @@ o:value("9.9.9.9", "9.9.9.9 (Quad9)")
  o:value("149.112.112.112", "149.112.112.112 (Quad9)")
  o:value("208.67.220.220", "208.67.220.220 (OpenDNS)")
  o:value("208.67.222.222", "208.67.222.222 (OpenDNS)")
@@ -221,7 +221,7 @@
  o:depends({dns_mode = "dns2socks"})
  o:depends({dns_mode = "tcp"})
  o:depends({dns_mode = "udp"})
-@@ -475,6 +488,17 @@ o.validate = function(self, value, t)
+@@ -464,6 +477,17 @@ o.validate = function(self, value, t)
  o:depends({dns_mode = "sing-box", dns_shunt = "chinadns-ng"})
  o:depends({smartdns_dns_mode = "sing-box", dns_shunt = "smartdns"})
  
@@ -241,7 +241,7 @@
  o:value("gfw", translate("Remote DNS"))
 --- a/po/zh-cn/passwall.po
 +++ b/po/zh-cn/passwall.po
-@@ -175,6 +175,9 @@ msgstr "远程 DNS DoH"
+@@ -178,6 +178,9 @@ msgstr "远程 DNS DoH"
  msgid "Format: URL[,IP] (optional IP to map the domain in the URL)"
  msgstr "格式：URL[,IP]（IP 可选，用于绑定 URL 中的域名）"
  
@@ -251,7 +251,7 @@
  msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
  msgstr "用于 DNS 查询时通知 DNS 服务器，客户端所在的地理位置（不能是私有 IP 地址）。"
  
-@@ -328,6 +331,12 @@ msgstr "关闭（不使用）"
+@@ -331,6 +334,12 @@ msgstr "关闭（不使用）"
  msgid "Proxy Mode"
  msgstr "代理模式"
  
@@ -334,7 +334,7 @@
  		}
  	;;
  	esac
-@@ -1389,6 +1417,73 @@ start_dns() {
+@@ -1398,6 +1428,73 @@ start_dns() {
  	fi
  }
  
@@ -408,7 +408,7 @@
  start_haproxy() {
  	[ "$(config_n_get @global_haproxy[0] balancing_enable 0)" != "1" ] && return
  	local haproxy_ver=$($(first_type haproxy) -v 2>/dev/null | awk 'NR==1 {print $3}' | cut -d'-' -f1)
-@@ -1843,7 +1940,8 @@ get_config() {
+@@ -1852,7 +1949,8 @@ get_config() {
  	CLIENT_PROXY=$(config_n_get @global[0] client_proxy 1)
  	DNS_SHUNT=$(config_n_get @global[0] dns_shunt dnsmasq)
  	[ -z "$(first_type $DNS_SHUNT)" ] && DNS_SHUNT="dnsmasq"
