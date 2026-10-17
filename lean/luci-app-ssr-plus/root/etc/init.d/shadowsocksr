@@ -3113,7 +3113,7 @@ start_rules() {
 		-m "$(uci_get_by_type access_control Interface)" \
 		-D "$proxyport" \
 		-E "$enable_fake_ip" \
-		"$(get_arg_out)" "$(gfwmode)" "$ARG_UDP" "$ARG_UDP_RULES" "$ARG_A"
+		$(get_arg_out) $(gfwmode) $ARG_UDP $ARG_UDP_RULES $ARG_A
 
 	return $?
 }
