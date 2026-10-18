@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-openclash
-PKG_VERSION:=0.48.004
+PKG_VERSION:=0.48.007
 PKG_MAINTAINER:=vernesong <https://github.com/vernesong/OpenClash>
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -165,6 +165,7 @@ define Package/$(PKG_NAME)/postrm
 	rm -rf ${DNSMASQ_CONF_DIR}/dnsmasq_openclash_chnroute6_pass.conf >/dev/null 2>&1
 	rm -rf /tmp/etc/openclash >/dev/null 2>&1
 	rm -rf /tmp/openclash_announcement >/dev/null 2>&1
+	rm -f /tmp/openclash_clients.json >/dev/null 2>&1
 	rm -rf /www/luci-static/resources/openclash >/dev/null 2>&1
 	rm -rf /tmp/oix* >/dev/null 2>&1
 	sed -i 's/\(HTTP_MAX_CONTENT[[:space:]]*=[[:space:]]*\)[0-9][0-9]*\([[:space:]]*\*[[:space:]]*[0-9][0-9]*\)*/\11024*100/' /usr/lib/lua/luci/http.lua >/dev/null 2>&1

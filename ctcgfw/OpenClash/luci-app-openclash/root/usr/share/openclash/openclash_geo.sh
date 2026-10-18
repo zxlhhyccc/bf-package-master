@@ -27,8 +27,8 @@ update_one() {
    local tmpfile="$3"
    local path="$4"
    local name="$5"
-   local min_size=10240
    local download_url=""
+   local required_rules=""
 
    local custom_url=$(uci_get_config "$custom_key")
 
@@ -104,6 +104,26 @@ update_one() {
          ;;
    esac
 
+   case "$type" in
+      geoip)
+         required_rules='CLOUDFLARE|CLOUDFRONT|FACEBOOK|TELEGRAM|TWITTER|NETFLIX|GOOGLE|PRIVATE'
+         ;;
+      geosite)
+         required_rules='CATEGORY-'
+         ;;
+      geoasn|ipdb)
+         required_rules='MaxMind.com'
+         ;;
+   esac
+
+   # Delete damaged local file, otherwise its update may be skipped by the ETag cache
+   if [ -f "$path" ]; then
+      if head -c 512 "$path" | grep -qiE "<!doctype|<html|<head|<body" || ! grep -qaE "$required_rules" "$path"; then
+         LOG_OUT "【$name】Local Database File Damaged, Delete And Re-Download..."
+         rm -rf "$path"
+      fi
+   fi
+
    LOG_OUT "【$name】Start Downloading Database..."
 
    DOWNLOAD_FILE_CURL "$download_url" "/tmp/$tmpfile" "$path"
@@ -112,8 +132,8 @@ update_one() {
       if head -c 512 "/tmp/$tmpfile" | grep -qiE "<!doctype|<html|<head|<body"; then
          LOG_OUT "【$name】Download Failed: HTML Response Detected, Abort Update..."
          rm -rf "/tmp/$tmpfile"
-      elif [ $(du -b "/tmp/$tmpfile" 2>/dev/null | awk '{print $1}' || echo "$min_size") -lt "$min_size" ]; then
-         LOG_OUT "【$name】Download Failed: File Size Too Small, Abort Update..."
+      elif ! grep -qaE "$required_rules" "/tmp/$tmpfile"; then
+         LOG_OUT "【$name】Download Failed: Database Content Invalid, Abort Update..."
          rm -rf "/tmp/$tmpfile"
       else
          LOG_OUT "【$name】Download Success, Check Updated..."
