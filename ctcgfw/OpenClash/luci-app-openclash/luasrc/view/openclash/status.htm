@@ -384,10 +384,13 @@
                                                 <button type="button" class="ac-key-btn" id="ac-search-btn" title="<%:Search devices%>" aria-label="<%:Search devices%>" aria-expanded="false">
                                                     <svg><use href="#oc-icon-search"/></svg>
                                                 </button>
+                                                <button type="button" class="ac-key-btn" id="ac-max-btn" title="<%:Expand%>" aria-label="<%:Expand%>" aria-haspopup="dialog" aria-expanded="false">
+                                                    <svg><use href="#oc-icon-expand"/></svg>
+                                                </button>
                                                 <button type="button" class="ac-key-btn ac-sort-btn" id="ac-sort-btn" title="<%:Sort%>" aria-haspopup="menu">
                                                     <svg><use href="#oc-icon-arrows-sort"/></svg><span class="ac-key-text"><%:Sort%></span><span class="ac-sort-ind"></span>
                                                 </button>
-                                                <span class="help-link" tabindex="0" title="<%:Auto-discovered devices; rates refresh every 2 s (direct traffic included); click a name to rename; switching closes existing connections%>">
+                                                <span class="help-link" tabindex="0" title="<%:Note: routing switches close existing connections%>">
                                                     <svg width="12" height="12"><use href="#oc-icon-help"/></svg>
                                                 </span>
                                                 <div class="ac-sort-menu oc-hidden" id="ac-sort-menu" role="menu">
@@ -411,7 +414,7 @@
 
                                         <div class="ac-warn oc-hidden" id="ac-warn-fix">
                                             <svg><use href="#oc-icon-alert-circle"/></svg>
-                                            <span><%:Fake-IP requires DNS hijack set to Firewall Forwarding%></span>
+                                            <span><%:Using access control in Fake-IP mode requires DNS hijack set to Firewall Forwarding%></span>
                                             <button type="button" class="ac-warn-btn" id="ac-warn-fix-btn"><%:Switch%></button>
                                         </div>
 
@@ -477,7 +480,7 @@
                         <div class="form-group">
                             <label class="ac-rename-label" for="ac-rename-input"><%:Name%></label>
                             <input type="text" class="ac-rename-input" id="ac-rename-input" maxlength="20" placeholder="<%:Leave empty to use the detected name%>" autocomplete="off">
-                            <div class="ac-rename-hint" id="ac-rename-hint"></div>
+                            <div class="ac-rename-hint"><svg width="12" height="12" aria-hidden="true"><use href="#oc-icon-help"/></svg><span id="ac-rename-hint"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="ac-rename-label"><%:Icon%></label>
@@ -491,6 +494,19 @@
                             <button type="button" class="btn upload-btn" id="ac-rename-save"><%:Save%></button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Access Control maximize Model -->
+            <div class="config-upload-model-overlay" id="ac-max-overlay">
+                <div class="config-upload-model ac-max-model" role="dialog" aria-modal="true" aria-labelledby="ac-max-title">
+                    <div class="config-upload-header">
+                        <div class="config-upload-title" id="ac-max-title"><%:Access Control%></div>
+                        <button type="button" class="icon-btn" id="ac-max-close" aria-label="<%:Close%>">
+                            <svg width="14" height="14"><use href="#oc-icon-close"/></svg>
+                        </button>
+                    </div>
+                    <div class="config-upload-content ac-max-content" id="ac-max-host"></div>
                 </div>
             </div>
 
