@@ -932,9 +932,11 @@ o:value("5", "v5 (UUID / Password)")
 o:value("4", "v4 (Token)")
 o.default = "5"
 o:depends({type = "v2ray", v2ray_protocol = "tuic"})
+
 o = s:option(Value, "xray_tuic_token", "TUIC Token")
 o.password = true
 o:depends({type = "v2ray", v2ray_protocol = "tuic", xray_tuic_version = "4"})
+
 o = s:option(Value, "xray_tuic_ca", translate("Certificate File Path"))
 o:depends({type = "v2ray", v2ray_protocol = "tuic"})
 
@@ -1711,7 +1713,6 @@ o:depends("xtls", true)
 o:depends("reality", true)
 o.rmempty = true
 o:depends({type = "v2ray", v2ray_protocol = "tuic"})
-
 o:depends({type = "v2ray", v2ray_protocol = "naive"})
 
 -- TLS ALPN
