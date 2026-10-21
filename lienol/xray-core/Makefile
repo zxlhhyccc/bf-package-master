@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray-core
 PKG_VERSION:=26.10.17
-PKG_RELEASE:=8
+PKG_RELEASE:=9
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -12,8 +12,8 @@ PKG_SOURCE_VERSION:=92ccc939aaf4f8965f369cf0b142e005aeaa11d5
 PKG_MIRROR_HASH:=8a43b768cd138692159040fc8422b9f70cb1ff3d67d9d1c01f2ddc735dbd40c9
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
-PKG_LICENSE:=MPL-2.0 GPL-3.0-or-later
-PKG_LICENSE_FILES:=LICENSE proxy/anytls/LICENSE.sing-anytls proxy/naive/LICENSE.sing-box proxy/shadowsocksr/LICENSE proxy/tuic/LICENSE.mihomo proxy/snell/LICENSE.mihomo transport/internet/shadowtls/LICENSE.mihomo
+PKG_LICENSE:=MPL-2.0 GPL-3.0-or-later MIT
+PKG_LICENSE_FILES:=LICENSE proxy/anytls/LICENSE.sing-anytls proxy/naive/LICENSE.sing-box proxy/shadowsocksr/LICENSE proxy/tuic/LICENSE.mihomo proxy/snell/LICENSE.mihomo transport/internet/shadowtls/LICENSE.mihomo transport/internet/kcptun/LICENSE.mihomo transport/internet/kcptun/LICENSE.kcptun
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
