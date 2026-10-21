@@ -4050,7 +4050,6 @@ msgstr "对被代理的 UDP/443 流量处理方式"
 #~ msgid "Include Mihomo (Clash Support)"
 #~ msgstr "包含 Mihomo（Clash 支持）"
 
-
 msgid "Idle session check interval (seconds)"
 msgstr "空闲会话检查间隔（秒）"
 
@@ -4074,3 +4073,18 @@ msgstr "国内 IPv6 地址库更新地址"
 
 msgid "China IPv6 Data"
 msgstr "国内 IPv6 地址库"
+
+msgid "Naive HTTP/3 (QUIC)"
+msgstr "Naive HTTP/3（QUIC）"
+
+msgid "Naive UDP over TCP (server support required)"
+msgstr "Naive UDP over TCP（需要服务端支持）"
+
+msgid "Naive trusted CA certificate file"
+msgstr "Naive 信任的 CA 证书文件"
+
+msgid "Naive ECH config list (base64)"
+msgstr "Naive ECH 配置列表（Base64）"
+
+msgid "Naive transport"
+msgstr "Naive 传输协议"

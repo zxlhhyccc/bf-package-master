@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray-core
 PKG_VERSION:=26.10.17
-PKG_RELEASE:=4
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -13,12 +13,13 @@ PKG_MIRROR_HASH:=8a43b768cd138692159040fc8422b9f70cb1ff3d67d9d1c01f2ddc735dbd40c
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0 GPL-3.0-or-later
-PKG_LICENSE_FILES:=LICENSE proxy/anytls/LICENSE.sing-anytls
+PKG_LICENSE_FILES:=LICENSE proxy/anytls/LICENSE.sing-anytls proxy/naive/LICENSE.sing-box
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_XRAY_CORE_PROVIDE_V2RAY_CORE \
 	CONFIG_XRAY_CORE_COMPRESS_GOPROXY \
 	CONFIG_XRAY_CORE_COMPRESS_UPX \
+	CONFIG_XRAY_CORE_NAIVE
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/xray-core-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=golang/host
@@ -35,6 +36,34 @@ GO_PKG_LDFLAGS_X:= \
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
+
+# Cronet's native archives contain LLVM bitcode. Use its matching linker while
+# retaining OpenWrt's target GCC, sysroot, ABI flags and C runtime.
+CRONET_CLANG_VERSION:=llvmorg-24-init-3796-g20e97c4b-27
+CRONET_CLANG_FILE:=clang-$(CRONET_CLANG_VERSION).tar.xz
+CRONET_CLANG_DIR:=$(PKG_BUILD_DIR)/.cronet-clang
+
+ifeq ($(CONFIG_XRAY_CORE_NAIVE),y)
+  GO_PKG_TAGS+=with_naive_outbound
+  ifeq ($(CONFIG_USE_MUSL),y)
+    GO_PKG_TAGS+=with_musl
+  endif
+  GO_PKG_BUILD_VARS+=CGO_LDFLAGS="$(TARGET_LDFLAGS) -B$(CRONET_CLANG_DIR)/bin -fuse-ld=lld $(if $(filter arm i386 mipsel loongarch64,$(ARCH)),-Wl$(comma)-no-pie) $(if $(filter loongarch64,$(ARCH)),-Wl$(comma)--no-relax)"
+
+  define Download/cronet-clang
+    URL:=https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64
+    URL_FILE:=$(CRONET_CLANG_FILE)
+    FILE:=$(CRONET_CLANG_FILE)
+    HASH:=968195fa0b49958e066695df2c7c985d169a20fa06eedb8fcef900a6030edcb0
+  endef
+  $(eval $(call Download,cronet-clang))
+
+  define Build/Prepare
+    $(call Build/Prepare/Default)
+    $(INSTALL_DIR) $(CRONET_CLANG_DIR)
+    $(TAR) -xJf $(DL_DIR)/$(CRONET_CLANG_FILE) -C $(CRONET_CLANG_DIR)
+  endef
+endif
 
 define Package/xray/template
   TITLE:=A proxy platform to bypass network restrictions
@@ -89,6 +118,18 @@ config XRAY_CORE_COMPRESS_UPX
 	depends on !mips64
 	default n
 endmenu
+
+config XRAY_CORE_NAIVE
+	bool "Enable NaiveProxy outbound (Chromium/Cronet)"
+	depends on PACKAGE_xray-core
+	depends on (aarch64 || arm || i386 || x86_64 || mipsel || riscv64 || loongarch64)
+	depends on (USE_MUSL || USE_GLIBC)
+	depends on !arm || (arm_v7 && HAS_FPU)
+	default y
+	help
+	  Link Chromium/Cronet for NaiveProxy HTTP/2 and HTTP/3 outbounds.
+	  Requires an x86_64 Linux build host and adds a native library to Xray.
+	  Naive inbound support remains available when this option is disabled.
 endef
 
 define Package/xray-core/conffiles
