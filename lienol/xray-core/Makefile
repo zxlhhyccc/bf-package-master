@@ -1,15 +1,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xray-core
-PKG_VERSION:=26.10.17
-PKG_RELEASE:=10
+PKG_VERSION:=26.10.21
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core.git
-PKG_SOURCE_DATE:=2026-10-17
-PKG_SOURCE_VERSION:=92ccc939aaf4f8965f369cf0b142e005aeaa11d5
-PKG_MIRROR_HASH:=8a43b768cd138692159040fc8422b9f70cb1ff3d67d9d1c01f2ddc735dbd40c9
+PKG_SOURCE_DATE:=2026-10-21
+PKG_SOURCE_VERSION:=1b1647cd9ddf0abc34b981d4611fc03bcac1ca74
+PKG_MIRROR_HASH:=78a7aee366019ed2d3b6013b86785b814844d78cf56fe7a0aec3f3d42cfa69a8
 
 PKG_MAINTAINER:=Tianling Shen <cnsztl@immortalwrt.org>
 PKG_LICENSE:=MPL-2.0 GPL-3.0-or-later MIT
@@ -133,6 +133,14 @@ config XRAY_CORE_NAIVE
 	  Requires an x86_64 Linux build host and adds a native library to Xray.
 	  Naive inbound support remains available when this option is disabled.
 endef
+
+# Apply only to this package; runtime DT detection restricts use to AN7581.
+ifeq ($(GO_ARCH),arm64)
+  define Build/Compile
+	python3 $(PKG_BUILD_DIR)/tools/eip93/overlay.py --go $(STAGING_DIR_HOSTPKG)/bin/go --out $(PKG_BUILD_DIR)/.eip93-overlay
+	$(call GoPackage/Build/Compile,-overlay=$(PKG_BUILD_DIR)/.eip93-overlay/overlay.json)
+  endef
+endif
 
 define Package/xray-core/conffiles
 /etc/xray/
