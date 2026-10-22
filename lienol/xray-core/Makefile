@@ -134,15 +134,6 @@ config XRAY_CORE_NAIVE
 	  Naive inbound support remains available when this option is disabled.
 endef
 
-# Apply only to this package; runtime DT detection restricts use to AN7581.
-# Resolve Go through the same versioned PATH and environment as the build.
-ifeq ($(GO_ARCH),arm64)
-  define Build/Compile
-	$(GO_PKG_VARS) python3 $(PKG_BUILD_DIR)/tools/eip93/overlay.py --go go --out $(PKG_BUILD_DIR)/.eip93-overlay
-	$(call GoPackage/Build/Compile,-overlay=$(PKG_BUILD_DIR)/.eip93-overlay/overlay.json)
-  endef
-endif
-
 define Package/xray-core/conffiles
 /etc/xray/
 /etc/config/xray
