@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mihomo
 PKG_VERSION:=1.19.32
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/MetaCubeX/mihomo.git
@@ -66,14 +66,26 @@ ifneq ($(CONFIG_MIHOMO_COMPRESS_GOPROXY),)
       export GOPROXY=https://goproxy.baidu.com
 endif
 
+# Generate a private overlay with the exact Go toolchain used for this package.
+# Runtime DT detection restricts hardware use to AN7581 without ARM AES.
+define Build/Compile/UPX
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/mihomo; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/mihomo; \
+	fi
+endef
+
+ifeq ($(GO_ARCH),arm64)
+define Build/Compile
+	$(GO_PKG_VARS) python3 $(PKG_BUILD_DIR)/tools/eip93/overlay.py --go go --out $(PKG_BUILD_DIR)/.eip93-overlay
+	$(call GoPackage/Build/Compile,-overlay=$(PKG_BUILD_DIR)/.eip93-overlay/overlay.json)
+	$(if $(filter y,$(CONFIG_MIHOMO_COMPRESS_UPX)),$(Build/Compile/UPX))
+endef
+else
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-ifeq ($(CONFIG_MIHOMO_COMPRESS_UPX),y)
-	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/mihomo; then \
-		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/mihomo ; \
-	fi
-endif
+	$(if $(filter y,$(CONFIG_MIHOMO_COMPRESS_UPX)),$(Build/Compile/UPX))
 endef
+endif
 
 define Package/mihomo/install
 	$(call GoPackage/Package/Install/Bin,$(1))

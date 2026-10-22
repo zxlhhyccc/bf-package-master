@@ -153,14 +153,26 @@ ifneq ($(CONFIG_XRAY_CORE_COMPRESS_GOPROXY),)
 	export GOPROXY=https://goproxy.io
 endif
 
+# Apply only to this package; runtime DT detection restricts use to AN7581.
+# Resolve Go through the same versioned PATH and environment as the build.
+define Build/Compile/UPX
+	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/main; then \
+		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main; \
+	fi
+endef
+
+ifeq ($(GO_ARCH),arm64)
+define Build/Compile
+	$(GO_PKG_VARS) python3 $(PKG_BUILD_DIR)/tools/eip93/overlay.py --go go --out $(PKG_BUILD_DIR)/.eip93-overlay
+	$(call GoPackage/Build/Compile,-overlay=$(PKG_BUILD_DIR)/.eip93-overlay/overlay.json)
+	$(if $(filter y,$(CONFIG_XRAY_CORE_COMPRESS_UPX)),$(Build/Compile/UPX))
+endef
+else
 define Build/Compile
 	$(call GoPackage/Build/Compile)
-ifneq ($(CONFIG_XRAY_CORE_COMPRESS_UPX),)
-	if ! $(STAGING_DIR_HOST)/bin/upx -t $(GO_PKG_BUILD_BIN_DIR)/main; then \
-		$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/main ; \
-	fi
-endif
+	$(if $(filter y,$(CONFIG_XRAY_CORE_COMPRESS_UPX)),$(Build/Compile/UPX))
 endef
+endif
 
 define Package/xray-core/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))

@@ -6,7 +6,7 @@
 #
 
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/uclibc++.mk
+#include $(INCLUDE_DIR)/uclibc++.mk
 
 PKG_NAME:=mysql
 PKG_VERSION:=5.1.73
@@ -59,9 +59,9 @@ define Package/libmysqlclient-r
   DEPENDS+= +libpthread
 endef
 
-ifneq ($(CONFIG_USE_UCLIBCXX),)
-  TARGET_CXX=g++-uc
-endif
+#ifneq ($(CONFIG_USE_UCLIBCXX),)
+#  TARGET_CXX=g++-uc
+#endif
 
 TARGET_CFLAGS += $(FPIC)
 
