@@ -402,20 +402,18 @@ local function GeoToRule(rule_name, rule_type, out_path)
 		log("[警告] Geoview 组件缺失或版本过低，规则生成流程已被跳过。")
 		return false
 	end
-	local geosite_path = asset_location .. "geosite.dat"
-	local geoip_path = asset_location .. "geoip.dat"
-	local file_path = (rule_type == "domain") and geosite_path or geoip_path
-	local geo_arg
-	if rule_type == "domain" then
-		if rule_name == "gfwlist" then
-			geo_arg = "-type geosite -list gfw"
-		else
-			geo_arg = "-type geosite -list cn"
-		end
-	elseif rule_type == "ip4" then
-		geo_arg = "-type geoip -list cn -ipv6=false"
+	local geo_type = (rule_type == "domain") and "geosite" or "geoip"
+	local geo_tag = (rule_type == "domain" and rule_name == "gfwlist") and "gfw" or "cn"
+	local file_path = asset_location .. geo_type .. ".dat"
+	if sys.call(string.format('"%s" -type %s -input "%s" | grep -q "^%s$"', bin, geo_type, file_path, geo_tag:upper())) ~= 0 then
+		log(string.format("%s 生成失败：%s.dat 中缺少 %s 标签。", rule_name, geo_type, geo_tag))
+		return false
+	end
+	local geo_arg = "-type " .. geo_type .. " -list " .. geo_tag
+	if rule_type == "ip4" then
+		geo_arg = geo_arg .. " -ipv6=false"
 	elseif rule_type == "ip6" then
-		geo_arg = "-type geoip -list cn -ipv4=false"
+		geo_arg = geo_arg .. " -ipv4=false"
 	end
 	local cmd = string.format(bin .. " -input '%s' %s -lowmem=true -output '%s'", file_path, geo_arg, out_path)
 	sys.exec(cmd)
@@ -565,31 +563,25 @@ local function fetch_geofile(geo_name, geo_type, url)
 	local sha_url = url:gsub((down_filename:gsub("(%W)", "%%%1")), down_filename .. ".sha256sum")
 	local sha_path = tmp_path .. ".sha256sum"
 
-	local function verify_sha256(sha_file)
-		return sys.call("sha256sum -c " .. sha_file .. " > /dev/null 2>&1") == 0
-	end
-
+	local digest
 	local sha_verify = select(1, curl(sha_url, sha_path)) == 0
 	if sha_verify then
 		local f = io.open(sha_path, "r")
 		if f then
 			local content = f:read("*l")
 			f:close()
-			if content then
-				content = content:gsub("(%x+)%s+.+", "%1  " .. tmp_path)
-				f = io.open(sha_path, "w")
-				if f then
-					f:write(content)
-					f:close()
-				end
+			local hash = content and content:match("^(%x+)%s")
+			if hash and #hash == 64 then
+				digest = "sha256:" .. hash
 			end
 		end
-		if fs.access(asset_path) then
-			sys.call(string.format("cp -f %s %s", asset_path, tmp_path))
-			if verify_sha256(sha_path) then
-				log(geo_type .. " 版本一致，无需更新。")
-				return 0
-			end
+		if not digest then
+			log(geo_type .. " SHA256 校验信息无效，更新失败。")
+			return 1
+		end
+		if fs.access(asset_path) and api.verify_sha256(asset_path, digest) then
+			log(geo_type .. " 版本一致，无需更新。")
+			return 0
 		end
 	end
 
@@ -605,7 +597,7 @@ local function fetch_geofile(geo_name, geo_type, url)
 	end
 	if sret_tmp == 0 then
 		if sha_verify then
-			if verify_sha256(sha_path) then
+			if api.verify_sha256(tmp_path, digest) then
 				sys.call(string.format("mkdir -p %s && mv -f %s %s", backup_path, asset_path, backup_path))
 				sys.call(string.format("mkdir -p %s && mv -f %s %s", asset_location, tmp_path, asset_path))
 				reboot = 1
