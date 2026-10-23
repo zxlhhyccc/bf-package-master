@@ -1629,6 +1629,15 @@ local function write_padded(data)
 	io.flush()
 end
 
+local function write_raw(data)
+	if L and L.http then
+		L.http:write(data)
+	else
+		HTTP.write(data)
+	end
+	io.flush()
+end
+
 function try_read(fd, maxlen)
 	local pfds = {
 		{ fd = fd, events = nixio.poll_flags("in", "hup", "err") }
@@ -1984,6 +1993,7 @@ function action_refresh_log()
 	end
 
 	local exclude_pattern = "UDP%-Receive%-Buffer%-Size|^Sec%-Fetch%-Mode|^User%-Agent|^Access%-Control|^Accept|^Origin|^Referer|^Connection|^Pragma|^Cache%-"
+	local ts_pattern = "^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]"
 	local core_pattern = "level=|^time="
 	local limit = core_refresh and 2500 or 5000
 	local start_line = (log_len > 0 and total_lines > log_len) and (log_len + 1) or 1
@@ -1996,9 +2006,11 @@ function action_refresh_log()
 
 	local sed_range = string.format("sed -n '%d,%dp' '%s'", start_line, start_line + read_count - 1, logfile)
 
+	-- Only timestamped lines belong to the plugin log; everything else is core output
+	-- (the untimestamped panic dumps included) and goes to the core log tab.
 	local oc_cmd = string.format(
-		"%s | grep -v -E '%s' | grep -v -E '%s' | tail -n %d",
-		sed_range, exclude_pattern, core_pattern, limit + 1
+		"%s | grep -v -E '%s' | grep -E '%s' | tail -n %d",
+		sed_range, exclude_pattern, ts_pattern, limit + 1
 	)
 
 	oc_raw = SYS.exec(oc_cmd)
@@ -2008,9 +2020,6 @@ function action_refresh_log()
 		local oc_count = 0
 		for line in oc_raw:gmatch("[^\n]+") do
 			oc_count = oc_count + 1
-			if not string.match(string.sub(line, 1, 19), "%d%d%d%d%-%d%d%-%d%d %d%d:%d%d:%d%d") then
-				line = os.date("%Y-%m-%d %H:%M:%S") .. ' [Fatal] ' .. line
-			end
 			oc_logs[#oc_logs + 1] = trans_line(line)
 		end
 
@@ -2025,26 +2034,34 @@ function action_refresh_log()
 		oc_log = #oc_logs > 0 and table.concat(oc_logs, "\n") or ""
 	end
 
+	-- With the log websocket running the timestamped core lines already reached the page,
+	-- so only the untimestamped output is appended from the log file.
+	local core_cmd
 	if core_refresh then
-		local core_cmd = string.format(
-			"%s | grep -v -E '%s' | grep -E '%s' | tail -n %d",
-			sed_range, exclude_pattern, core_pattern, limit + 1
+		core_cmd = string.format(
+			"%s | grep -v -E '%s' | grep -v -E '%s' | tail -n %d",
+			sed_range, exclude_pattern, ts_pattern, limit + 1
 		)
-		core_raw = SYS.exec(core_cmd)
+	else
+		core_cmd = string.format(
+			"%s | grep -v -E '%s' | grep -v -E '%s' | grep -v -E '%s' | tail -n %d",
+			sed_range, exclude_pattern, ts_pattern, core_pattern, limit + 1
+		)
+	end
+	core_raw = SYS.exec(core_cmd)
 
-		if core_raw and core_raw ~= "" then
-			local _, core_count = core_raw:gsub("\n", "")
-			if core_raw:sub(-1) ~= "\n" then
-				core_count = core_count + 1
-			end
+	if core_raw and core_raw ~= "" then
+		local _, core_count = core_raw:gsub("\n", "")
+		if core_raw:sub(-1) ~= "\n" then
+			core_count = core_count + 1
+		end
 
-			core_truncated = (core_count > limit)
-			if core_truncated then
-				core_log = core_raw:match("\n(.+)") or ""
-				core_log = core_log:gsub("\n$", "")
-			else
-				core_log = core_raw:gsub("\n$", "")
-			end
+		core_truncated = (core_count > limit)
+		if core_truncated then
+			core_log = core_raw:match("\n(.+)") or ""
+			core_log = core_log:gsub("\n$", "")
+		else
+			core_log = core_raw:gsub("\n$", "")
 		end
 	end
 
@@ -2374,6 +2391,7 @@ function rename_file()
 			end
 
 			fs.config_refs(old_file_name, new_file_name)
+			SYS.call("/etc/init.d/openclash reload cron >/dev/null 2>&1")
 		end
 		HTTP.status(200, "Rename File Successful")
 	else
@@ -4689,6 +4707,21 @@ function action_config_file_list()
 		end
 	end)
 
+	local subscribe_schedules = {}
+	uci:foreach("openclash", "config_subscribe", function(s)
+		if s.name and s.address and s.address ~= "" then
+			local schedule = fs.config_subscribe_schedule(s[".name"])
+			if schedule.auto_update == "1" then
+				subscribe_schedules[s.name:gsub("%.ya?ml$", "")] = {
+					mode = schedule.mode,
+					week = schedule.week,
+					hour = schedule.hour,
+					interval = schedule.interval
+				}
+			end
+		end
+	end)
+
 	local config_dir = "/etc/openclash/config/"
 	local fingerprint_parts = {}
 	local cache_valid = false
@@ -4746,7 +4779,8 @@ function action_config_file_list()
 						path = full_path,
 						size = stat.size,
 						mtime = stat.mtime,
-						age = stat.age or false
+						age = stat.age or false,
+						schedule = name_no_ext and subscribe_schedules[name_no_ext] or nil
 					})
 				end
 			end
@@ -5000,18 +5034,24 @@ function action_config_file_read()
 
 	HTTP.header("X-Oc-Size", stat and tostring(stat.size) or "0")
 	HTTP.header("X-Oc-Mtime", stat and tostring(stat.mtime) or "0")
+	HTTP.header("X-Accel-Buffering", "no")
 	HTTP.prepare_content("text/plain; charset=utf-8")
 
 	if not stat then
 		return
 	end
 
-	local reader = ltn12_popen("exec cat " .. UTIL.shellquote(config_file))
-	if not reader then
+	-- 64 KB chunks keep memory flat and avoid the cat subprocess per read
+	local file = io.open(config_file, "rb")
+	if not file then
 		return
 	end
-	luci.ltn12.pump.all(reader, HTTP.write)
-	reader.kill()
+	while true do
+		local chunk = file:read(65536)
+		if not chunk then break end
+		write_raw(chunk)
+	end
+	file:close()
 end
 
 function action_config_file_save()
@@ -5177,6 +5217,11 @@ function action_add_subscription()
 	local ex_keyword = HTTP.formvalue("ex_keyword") or ""
 	local de_ex_keyword = HTTP.formvalue("de_ex_keyword") or ""
 	local sub_headers = HTTP.formvalue("sub_headers") or ""
+	local auto_update = HTTP.formvalue("auto_update")
+	local update_mode = HTTP.formvalue("config_auto_update_mode")
+	local update_week = HTTP.formvalue("config_update_week_time")
+	local update_hour = HTTP.formvalue("auto_update_time")
+	local update_interval = HTTP.formvalue("config_update_interval")
 	HTTP.prepare_content("application/json")
 
 	if not name then
@@ -5385,7 +5430,24 @@ function action_add_subscription()
 
 		uci:set("openclash", section_id, "de_ex_keyword", de_ex_keyword)
 
+		if auto_update ~= nil then
+			uci:set("openclash", section_id, "auto_update", auto_update == "1" and "1" or "0")
+		end
+		if update_mode ~= nil then
+			uci:set("openclash", section_id, "config_auto_update_mode", update_mode == "1" and "1" or "0")
+		end
+		if update_week ~= nil and (update_week == "*" or update_week:match("^[0-6]$")) then
+			uci:set("openclash", section_id, "config_update_week_time", update_week)
+		end
+		if update_hour ~= nil and update_hour:match("^([01]?%d|2[0-3])$") then
+			uci:set("openclash", section_id, "auto_update_time", tostring(tonumber(update_hour)))
+		end
+		if update_interval ~= nil and tonumber(update_interval) and tonumber(update_interval) >= 1 and tonumber(update_interval) <= 525600 then
+			uci:set("openclash", section_id, "config_update_interval", tostring(tonumber(update_interval)))
+		end
+
 		uci:commit("openclash")
+		SYS.call("/etc/init.d/openclash reload cron >/dev/null 2>&1")
 
 		local action_msg = existing_section_id and "Subscription updated successfully" or "Subscription added successfully"
 		HTTP.write_json({
@@ -6476,6 +6538,18 @@ function action_get_subscribe_data()
 				local raw = uci:get_list("openclash", sid, field)
 				if raw then
 					data[field] = table.concat(raw, "\n")
+				end
+			end
+			local schedule = fs.config_subscribe_schedule(sid)
+			for option, value in pairs({
+				auto_update = schedule.auto_update,
+				config_auto_update_mode = schedule.mode,
+				config_update_week_time = schedule.week,
+				auto_update_time = schedule.hour,
+				config_update_interval = schedule.interval,
+			}) do
+				if data[option] == nil or data[option] == "" then
+					data[option] = value
 				end
 			end
 			return false

@@ -563,6 +563,30 @@ msgstr "每周六"
 msgid "Every Sunday"
 msgstr "每周日"
 
+msgid "Mon"
+msgstr "周一"
+
+msgid "Tue"
+msgstr "周二"
+
+msgid "Wed"
+msgstr "周三"
+
+msgid "Thu"
+msgstr "周四"
+
+msgid "Fri"
+msgstr "周五"
+
+msgid "Sat"
+msgstr "周六"
+
+msgid "Sun"
+msgstr "周日"
+
+msgid "Next Update"
+msgstr "下次更新"
+
 msgid "Netflix"
 msgstr "奈飞（Netflix）"
 
@@ -4430,8 +4454,14 @@ msgstr "同名配置会被替换"
 msgid "Clicking an entry opens it in the editor"
 msgstr "点击条目在编辑器中打开"
 
-msgid "The refresh interval is set in Config Subscribe, not here"
-msgstr "刷新频率在“配置订阅”页设置，不在此处"
+msgid "This subscription keeps its own refresh schedule"
+msgstr "此订阅单独维护刷新计划"
+
+msgid "refreshes on the chosen weekday and hour"
+msgstr "在选定的星期与时间刷新"
+
+msgid "refreshes every N minutes, counted from the end of the previous refresh"
+msgstr "每隔 N 分钟刷新，从上一次刷新完成时开始计时"
 
 msgid "The name shown in the config list; keep it or type another"
 msgstr "配置列表中显示的名称，可保留或修改"
@@ -4535,8 +4565,8 @@ msgstr "代表当前环境下路由器本机到该镜像的连接延迟"
 msgid "a subscription URL from the provider, refreshable later"
 msgstr "服务商提供的订阅链接，之后可自动刷新"
 
-msgid "changes the link, the User-Agent or the conversion options"
-msgstr "修改订阅链接、User-Agent 或转换选项"
+msgid "changes the link, the User-Agent, the schedule or the conversion options"
+msgstr "修改订阅链接、User-Agent、刷新计划或转换选项"
 
 msgid "counted since the core started"
 msgstr "从内核启动算起"
@@ -5719,3 +5749,9 @@ msgstr "路由器"
 
 msgid "Search devices"
 msgstr "搜索设备"
+
+msgid "Minutes"
+msgstr "分钟"
+
+msgid "For a manually created Access Token, bind the current token to a non-primary subscription URL in Access Token Management on the website, then edit the node filter for that URL"
+msgstr "使用手动创建的 Access Token 时，请先到网页「Access Token 管理」将当前 Token 绑定到非主订阅地址，再编辑该地址的节点筛选"
