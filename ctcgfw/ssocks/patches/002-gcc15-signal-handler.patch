@@ -1,0 +1,29 @@
+--- a/src/ssocksd.c
++++ b/src/ssocksd.c
+@@ -260,10 +260,12 @@ void parseArg(int argc, char *argv[]) {
+     verbosity = globalArgsServer.verbosity;
+ }
+ 
+-void capte_usr1() {
++void capte_usr1(int sig) {
++    (void)sig;
+     TRACE(L_DEBUG, "server: catch USR1 signal ...");
+ }
+-void capte_sigpipe() {
++void capte_sigpipe(int sig) {
++    (void)sig;
+     TRACE(L_DEBUG, "server: catch SIGPIPE signal ...");
+ }
+ 
+--- a/src/rcsocks.c
++++ b/src/rcsocks.c
+@@ -102,7 +102,8 @@ void usage(char *name) {
+     printf("Bug report %s\n", PACKAGE_BUGREPORT);
+ }
+ 
+-void capte_usr1() {
++void capte_usr1(int sig) {
++    (void)sig;
+     TRACE(L_DEBUG, "server: catch USR1 signal ...");
+ }
+ 

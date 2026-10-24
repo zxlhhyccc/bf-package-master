@@ -1,0 +1,26 @@
+--- a/src/configd-util.c
++++ b/src/configd-util.c
+@@ -42,6 +42,8 @@
+ #endif
+ 
+ 
++struct globalArgsServer_t globalArgsServer;
++
+ int loadConfigFile(char *filename, struct globalArgsServer_t *c) {
+     int k;
+     char var[255];
+--- a/src/configd-util.h
++++ b/src/configd-util.h
+@@ -49,9 +49,11 @@ struct globalArgsServer_t {
+     unsigned int guest;
+     char **inputFiles;			// input files
+     int numInputFiles;			// # of input files
+-} globalArgsServer;
++};
+ 
+ 
++extern struct globalArgsServer_t globalArgsServer;
++
+ int loadConfigFile(char *filename, struct globalArgsServer_t *c);
+ int writePID(char *filename);
+ int removePID(char *filename);
