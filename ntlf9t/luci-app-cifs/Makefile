@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=luci-app-luci
-LUCI_DEPENDS:=+kmod-fs-cifs +kmod-nls-utf8 +kmod-nls-base +kmod-crypto-hmac +kmod-crypto-md5 +kmod-crypto-misc +cifsmount
+LUCI_DEPENDS:=+kmod-fs-cifs +kmod-nls-utf8 +kmod-nls-base +kmod-crypto-hmac +kmod-crypto-md5 +cifsmount
 LUCI_PKGARCH:=all
 PKG_VERSION:=1.0
 PKG_RELEASE:=5
