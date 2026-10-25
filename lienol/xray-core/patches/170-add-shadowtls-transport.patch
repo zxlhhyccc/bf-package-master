@@ -92,7 +92,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	Address             *Address           `json:"address"`
  	Port                uint16             `json:"port"`
  	Method              *TransportProtocol `json:"method"`
-@@ -129,6 +130,20 @@
+@@ -131,6 +132,20 @@
  		}
  		tm := serial.ToTypedMessage(ts)
  		config.SecuritySettings = append(config.SecuritySettings, tm)

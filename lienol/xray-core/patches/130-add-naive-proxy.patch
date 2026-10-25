@@ -219,7 +219,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  		"dokodemo-door": func() interface{} { return new(DokodemoConfig) },
  		"http":          func() interface{} { return new(HTTPServerConfig) },
  		"shadowsocks":   func() interface{} { return new(ShadowsocksServerConfig) },
-@@ -53,6 +54,7 @@
+@@ -54,6 +55,7 @@
  		"vless":       func() interface{} { return new(VLessOutboundConfig) },
  		"vmess":       func() interface{} { return new(VMessOutboundConfig) },
  		"trojan":      func() interface{} { return new(TrojanClientConfig) },
@@ -239,7 +239,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	_ "github.com/xtls/xray-core/proxy/trojan"
 --- a/proxy/freedom/freedom.go
 +++ b/proxy/freedom/freedom.go
-@@ -164,7 +164,7 @@
+@@ -167,7 +167,7 @@
  	switch inbound.Name {
  	case "vless-reverse":
  		return defaultBlockAllRule

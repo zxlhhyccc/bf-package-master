@@ -18,6 +18,10 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
+ifeq ($(CONFIG_USE_LTO),y)
+  PKG_BUILD_FLAGS += no-lto
+endif
+
 PKG_BUILD_VERSION:=v$(PKG_VERSION)
 PKG_BUILD_TIME:=$(shell date -u -Iseconds)
 

@@ -114,7 +114,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  		"naive":         func() interface{} { return new(NaiveServerConfig) },
  		"dokodemo-door": func() interface{} { return new(DokodemoConfig) },
  		"http":          func() interface{} { return new(HTTPServerConfig) },
-@@ -57,6 +58,7 @@
+@@ -59,6 +60,7 @@
  		"trojan":       func() interface{} { return new(TrojanClientConfig) },
  		"naive":        func() interface{} { return new(NaiveClientConfig) },
  		"tuic":         func() interface{} { return new(TUICClientConfig) },
@@ -134,7 +134,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	_ "github.com/xtls/xray-core/proxy/tuic"
 --- a/proxy/freedom/freedom.go
 +++ b/proxy/freedom/freedom.go
-@@ -164,7 +164,7 @@
+@@ -167,7 +167,7 @@
  	switch inbound.Name {
  	case "vless-reverse":
  		return defaultBlockAllRule

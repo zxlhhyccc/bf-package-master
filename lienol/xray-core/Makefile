@@ -27,6 +27,10 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
+ifeq ($(CONFIG_USE_LTO),y)
+  PKG_BUILD_FLAGS += no-lto
+endif
+
 GO_PKG:=github.com/xtls/xray-core
 GO_PKG_BUILD_PKG:=github.com/xtls/xray-core/main
 GO_PKG_LDFLAGS:=-s -w

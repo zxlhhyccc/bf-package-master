@@ -21,6 +21,10 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
+ifeq ($(CONFIG_USE_LTO),y)
+  PKG_BUILD_FLAGS += no-lto
+endif
+
 FRP_COMPONENTS:=frpc frps
 
 GO_PKG:=github.com/fatedier/frp
