@@ -12,7 +12,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 
 --- a/app/proxyman/outbound/handler.go
 +++ b/app/proxyman/outbound/handler.go
-@@ -329,6 +329,7 @@
+@@ -329,6 +329,7 @@ func (h *Handler) Start() error {
  
  // Close implements common.Closable.
  func (h *Handler) Close() error {
@@ -22,7 +22,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	return nil
 --- a/go.mod
 +++ b/go.mod
-@@ -7,14 +7,17 @@
+@@ -8,14 +8,17 @@ require (
  	github.com/ghodss/yaml v1.0.1-0.20220118164431-d8423dcdf344
  	github.com/gofrs/uuid/v5 v5.4.0
  	github.com/golang/mock v1.7.0-rc.1
@@ -40,7 +40,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	github.com/metacubex/tls v0.1.8
  	github.com/metacubex/utls v1.8.8
  	github.com/miekg/dns v1.1.73
-@@ -71,6 +74,7 @@
+@@ -72,6 +75,7 @@ require (
  	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
  	github.com/juju/ratelimit v1.0.2 // indirect
  	github.com/klauspost/compress v1.20.0 // indirect
@@ -48,17 +48,17 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	github.com/koron/go-ssdp v0.0.4 // indirect
  	github.com/libp2p/go-netroute v0.2.1 // indirect
  	github.com/metacubex/bart v0.29.0 // indirect
-@@ -96,6 +100,7 @@
+@@ -97,6 +101,7 @@ require (
  	gitlab.com/go-extension/aes-ccm v0.0.0-20230221065045-e58665ef23c7 // indirect
  	go.yaml.in/yaml/v3 v3.0.5 // indirect
  	golang.org/x/text v0.43.0 // indirect
 +	golang.org/x/time v0.14.0 // indirect
  	golang.org/x/tools v0.51.0 // indirect
  	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
- 	gopkg.in/yaml.v2 v2.4.0 // indirect
+ 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.6.2 // indirect
 --- a/go.sum
 +++ b/go.sum
-@@ -22,6 +22,8 @@
+@@ -24,6 +24,8 @@ github.com/golang/mock v1.7.0-rc.1/go.mo
  github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
  github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
  github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
@@ -67,7 +67,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  github.com/google/btree v1.1.3 h1:CVpQJjYgC4VbzxeGVHfvZrv1ctoYCAI8vbl07Fcxlyg=
  github.com/google/btree v1.1.3/go.mod h1:qOPhT0dTNdNzV6Z/lhRX0YXUafgPLFUh+gZMl761Gm4=
  github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
-@@ -44,6 +46,8 @@
+@@ -46,6 +48,8 @@ github.com/klauspost/compress v1.20.0 h1
  github.com/klauspost/compress v1.20.0/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
  github.com/klauspost/cpuid/v2 v2.4.1 h1:I9KxadAkvo+QjtcEE2f2tyfEvmIla/T0m+14PrZNl0U=
  github.com/klauspost/cpuid/v2 v2.4.1/go.mod h1:19jmZ9mjzoF//ddRSUsv0zfBTJWh3QJh9FNxZTMrGxU=
@@ -76,7 +76,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  github.com/koron/go-ssdp v0.0.4 h1:1IDwrghSKYM7yLf7XCzbByg2sJ/JcNOZRXS2jczTwz0=
  github.com/koron/go-ssdp v0.0.4/go.mod h1:oDXq+E5IL5q0U8uSBcoAXzTzInwy5lEgC91HoKtbmZk=
  github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
-@@ -68,6 +72,8 @@
+@@ -70,6 +74,8 @@ github.com/metacubex/hpke v0.1.0 h1:gu2j
  github.com/metacubex/hpke v0.1.0/go.mod h1:vfDm6gfgrwlXUxKDkWbcE44hXtmc1uxLDm2BcR11b3U=
  github.com/metacubex/http v0.1.8 h1:d91onDan2ZXYE8W/uAy5oFmXHH2xi1L7LbGPV5EmCM0=
  github.com/metacubex/http v0.1.8/go.mod h1:Nxx0zZAo2AhRfanyL+fmmK6ACMtVsfpwIl1aFAik2Eg=
@@ -85,7 +85,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  github.com/metacubex/mihomo v1.19.32 h1:uD7ZC3P77isWD554NNvtee65L+99+/C5hyc+Lk8rVEk=
  github.com/metacubex/mihomo v1.19.32/go.mod h1:d7xWi5iEktkC9PqXkD/Vo4AEcb0Q92XikfLoySUDWls=
  github.com/metacubex/mlkem v0.1.0 h1:wFClitonSFcmipzzQvax75beLQU+D7JuC+VK1RzSL8I=
-@@ -78,6 +84,8 @@
+@@ -80,6 +86,8 @@ github.com/metacubex/randv2 v0.2.0 h1:uP
  github.com/metacubex/randv2 v0.2.0/go.mod h1:kFi2SzrQ5WuneuoLLCMkABtiBu6VRrMrWFqSPyj2cxY=
  github.com/metacubex/sing v0.5.8 h1:OwJDSPP+pza6Ywt7NMR4kEYq+UNrsIywSk/eAMlqxz8=
  github.com/metacubex/sing v0.5.8/go.mod h1:ypf0mjwlZm0sKdQSY+yQvmsbWa0hNPtkeqyRMGgoN+w=
@@ -94,7 +94,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  github.com/metacubex/tfo-go v0.0.0-20260623020846-376a77860b8c h1:+2C1UshSLzaogLY/IDz1XhOLxjhs3rkhVHB4eCN9Zto=
  github.com/metacubex/tfo-go v0.0.0-20260623020846-376a77860b8c/go.mod h1:l9oLnLoEXyGZ5RVLsh7QCC5XsouTUyKk4F2nLm2DHLw=
  github.com/metacubex/tls v0.1.8 h1:BHF2payjtxC7wdR3tnq8vl3FAgEQB6/pPjP2tJNTsP4=
---- a/infra/conf/kcptun.go
+--- /dev/null
 +++ b/infra/conf/kcptun.go
 @@ -0,0 +1,13 @@
 +package conf
@@ -112,7 +112,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +}
 --- a/infra/conf/transport_internet.go
 +++ b/infra/conf/transport_internet.go
-@@ -21,6 +21,8 @@
+@@ -21,6 +21,8 @@ func (p TransportProtocol) Build() (stri
  		return "tcp", nil
  	case "xhttp", "splithttp":
  		return "splithttp", nil
@@ -121,7 +121,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	case "kcp", "mkcp":
  		return "mkcp", nil
  	case "grpc":
-@@ -52,6 +54,7 @@
+@@ -52,6 +54,7 @@ func (p TransportProtocol) Build() (stri
  }
  
  type StreamConfig struct {
@@ -129,7 +129,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	ShadowTLSSettings   *ShadowTLSConfig   `json:"shadowtlsSettings"`
  	Address             *Address           `json:"address"`
  	Port                uint16             `json:"port"`
-@@ -95,6 +98,9 @@
+@@ -95,6 +98,9 @@ func (c *StreamConfig) Build() (*interne
  		config.ProtocolName = protocol
  	}
  
@@ -139,7 +139,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	var xdriveH3 bool
  	switch strings.ToLower(c.Security) {
  	case "", "none":
-@@ -179,6 +185,17 @@
+@@ -179,6 +185,17 @@ func (c *StreamConfig) Build() (*interne
  			Settings:     serial.ToTypedMessage(hs),
  		})
  	}
@@ -159,7 +159,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  		if err != nil {
 --- a/main/distro/all/all.go
 +++ b/main/distro/all/all.go
-@@ -60,6 +60,7 @@
+@@ -60,6 +60,7 @@ import (
  	_ "github.com/xtls/xray-core/transport/internet/grpc"
  	_ "github.com/xtls/xray-core/transport/internet/httpupgrade"
  	_ "github.com/xtls/xray-core/transport/internet/kcp"
@@ -167,7 +167,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	_ "github.com/xtls/xray-core/transport/internet/masque"
  	_ "github.com/xtls/xray-core/transport/internet/reality"
  	_ "github.com/xtls/xray-core/transport/internet/splithttp"
---- a/transport/internet/kcptun/LICENSE.kcptun
+--- /dev/null
 +++ b/transport/internet/kcptun/LICENSE.kcptun
 @@ -0,0 +1,9 @@
 +The MIT License (MIT)
@@ -180,7 +180,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +
 +THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 \ No newline at end of file
---- a/transport/internet/kcptun/LICENSE.mihomo
+--- /dev/null
 +++ b/transport/internet/kcptun/LICENSE.mihomo
 @@ -0,0 +1,674 @@
 +                    GNU GENERAL PUBLIC LICENSE
@@ -857,7 +857,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +the library.  If this is what you want to do, use the GNU Lesser General
 +Public License instead of this License.  But first, please read
 +<https://www.gnu.org/licenses/why-not-lgpl.html>.
---- a/transport/internet/kcptun/config.go
+--- /dev/null
 +++ b/transport/internet/kcptun/config.go
 @@ -0,0 +1,43 @@
 +package kcptun
@@ -903,7 +903,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +func init() {
 +	common.Must(internet.RegisterProtocolConfigCreator(protocolName, func() interface{} { return new(Config) }))
 +}
---- a/transport/internet/kcptun/config.pb.go
+--- /dev/null
 +++ b/transport/internet/kcptun/config.pb.go
 @@ -0,0 +1,343 @@
 +// Code generated by protoc-gen-go. DO NOT EDIT.
@@ -1249,7 +1249,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	file_transport_internet_kcptun_config_proto_goTypes = nil
 +	file_transport_internet_kcptun_config_proto_depIdxs = nil
 +}
---- a/transport/internet/kcptun/config.proto
+--- /dev/null
 +++ b/transport/internet/kcptun/config.proto
 @@ -0,0 +1,30 @@
 +syntax = "proto3";
@@ -1282,7 +1282,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 + int32 streambuf = 24;
 + int32 keepalive = 25;
 +}
---- a/transport/internet/kcptun/dialer.go
+--- /dev/null
 +++ b/transport/internet/kcptun/dialer.go
 @@ -0,0 +1,60 @@
 +package kcptun
@@ -1345,7 +1345,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	return &streamConn{Conn: stream}, nil
 +}
 +func init() { common.Must(internet.RegisterTransportDialer(protocolName, Dial)) }
---- a/transport/internet/kcptun/hub.go
+--- /dev/null
 +++ b/transport/internet/kcptun/hub.go
 @@ -0,0 +1,38 @@
 +package kcptun
@@ -1386,7 +1386,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	return server, nil
 +}
 +func init() { common.Must(internet.RegisterTransportListener(protocolName, Listen)) }
---- a/transport/internet/kcptun/protocol/client.go
+--- /dev/null
 +++ b/transport/internet/kcptun/protocol/client.go
 @@ -0,0 +1,135 @@
 +// Adapted from MetaCubeX/mihomo v1.19.32; GPL-3.0-or-later.
@@ -1524,7 +1524,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	}
 +	return stream, nil
 +}
---- a/transport/internet/kcptun/protocol/common.go
+--- /dev/null
 +++ b/transport/internet/kcptun/protocol/common.go
 @@ -0,0 +1,147 @@
 +// Adapted from MetaCubeX/mihomo v1.19.32; GPL-3.0-or-later.
@@ -1674,7 +1674,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	}
 +	return
 +}
---- a/transport/internet/kcptun/protocol/comp.go
+--- /dev/null
 +++ b/transport/internet/kcptun/protocol/comp.go
 @@ -0,0 +1,64 @@
 +// Adapted from MetaCubeX/mihomo v1.19.32; GPL-3.0-or-later.
@@ -1741,7 +1741,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	c.r = snappy.NewReader(conn)
 +	return c
 +}
---- a/transport/internet/kcptun/protocol/doc.go
+--- /dev/null
 +++ b/transport/internet/kcptun/protocol/doc.go
 @@ -0,0 +1,6 @@
 +// Adapted from MetaCubeX/mihomo v1.19.32; GPL-3.0-or-later.
@@ -1750,7 +1750,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +// adopt for mihomo
 +// without SM4,QPP,tcpraw support
 +package kcptun
---- a/transport/internet/kcptun/protocol/server.go
+--- /dev/null
 +++ b/transport/internet/kcptun/protocol/server.go
 @@ -0,0 +1,95 @@
 +// Adapted from MetaCubeX/mihomo v1.19.32; GPL-3.0-or-later.
@@ -1848,7 +1848,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +		go handler(stream)
 +	}
 +}
---- a/transport/internet/kcptun/protocol/settings.go
+--- /dev/null
 +++ b/transport/internet/kcptun/protocol/settings.go
 @@ -0,0 +1,69 @@
 +package kcptun
@@ -1920,7 +1920,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	conn.SetACKNoDelay(c.AckNodelay)
 +	conn.SetRateLimit(uint32(c.RateLimit))
 +}
---- a/transport/internet/kcptun/stream.go
+--- /dev/null
 +++ b/transport/internet/kcptun/stream.go
 @@ -0,0 +1,15 @@
 +package kcptun
@@ -1940,7 +1940,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +func (c *streamConn) RemoteAddr() net.Addr { return tcpAddr(c.Conn.RemoteAddr()) }
 --- a/transport/internet/memory_settings.go
 +++ b/transport/internet/memory_settings.go
-@@ -12,6 +12,7 @@
+@@ -12,6 +12,7 @@ import (
  
  // MemoryStreamConfig is a parsed form of StreamConfig. It is used to reduce the number of Protobuf parses.
  type MemoryStreamConfig struct {
@@ -1948,7 +1948,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	Destination      *net.Destination
  	ProtocolName     string
  	ProtocolSettings interface{}
---- a/transport/internet/transport_clients.go
+--- /dev/null
 +++ b/transport/internet/transport_clients.go
 @@ -0,0 +1,57 @@
 +package internet
