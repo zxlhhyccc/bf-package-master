@@ -19,7 +19,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 
 --- a/go.mod
 +++ b/go.mod
-@@ -18,6 +18,23 @@ require (
+@@ -18,6 +18,23 @@
  	github.com/pires/go-proxyproto v0.16.0
  	github.com/refraction-networking/utls v1.8.3-0.20260301010127-aa6edf4b11af
  	github.com/robfig/cron/v3 v3.0.1
@@ -43,7 +43,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	github.com/stretchr/testify v1.12.1
  	github.com/vishvananda/netlink v1.3.1
  	github.com/xtls/reality v0.0.0-20261014101318-83f621788ca8
-@@ -42,6 +59,7 @@ require (
+@@ -42,6 +59,7 @@
  
  require (
  	github.com/andybalholm/brotli v1.2.3 // indirect
@@ -51,7 +51,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	github.com/google/gopacket v1.1.19 // indirect
  	github.com/huin/goupnp v1.2.0 // indirect
  	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
-@@ -53,8 +71,6 @@ require (
+@@ -53,8 +71,6 @@
  	github.com/pion/logging v0.2.4 // indirect
  	github.com/pion/transport/v4 v4.1.0 // indirect
  	github.com/quic-go/qpack v0.6.0 // indirect
@@ -62,7 +62,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	go.yaml.in/yaml/v3 v3.0.5 // indirect
 --- a/go.sum
 +++ b/go.sum
-@@ -7,6 +7,8 @@ github.com/bufbuild/protocompile v0.14.1
+@@ -7,6 +7,8 @@
  github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
  github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
  github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
@@ -71,7 +71,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  github.com/ghodss/yaml v1.0.1-0.20220118164431-d8423dcdf344 h1:Arcl6UOIS/kgO2nW3A65HN+7CMjSDP/gofXL4CZt1V4=
  github.com/ghodss/yaml v1.0.1-0.20220118164431-d8423dcdf344/go.mod h1:GIjDIg/heH5DOkXY3YJ/wNhfHsQHoXGjl8G8amsYQ1I=
  github.com/go-quicktest/qt v1.102.0 h1:HSQxCeh5YZH3EL3W39ixjtyaEhcWSXQHtHnMBzSs474=
-@@ -73,6 +75,36 @@ github.com/robfig/cron/v3 v3.0.1 h1:WdRx
+@@ -73,6 +75,36 @@
  github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
  github.com/rogpeppe/go-internal v1.16.0 h1:O9DK+vNMDVGLr2BeZqmpLeMjiMNkuXfcqntWbZV6S5g=
  github.com/rogpeppe/go-internal v1.16.0/go.mod h1:DrUVZyrJU+txYW5/1kwtXQSMFio52ZOxX7yM1VHvnxs=
@@ -108,7 +108,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  github.com/sagernet/sing v0.8.14 h1:S6Netv4F61uNAuD/sUbHnGuNUEPwtL08Ouk0//CVYgM=
  github.com/sagernet/sing v0.8.14/go.mod h1:olXxWQNqRW/l2Q6JI3b2Qmz8iQnIFlOeeH8bx6JhgUA=
  github.com/sagernet/sing-anytls v0.0.0-20260928104022-580984e4d8cb h1:n4sF2zv0CR1gcb4awh61t11t0FZmcP40x5enB8HARjE=
---- /dev/null
+--- a/infra/conf/naive.go
 +++ b/infra/conf/naive.go
 @@ -0,0 +1,87 @@
 +package conf
@@ -200,7 +200,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +}
 --- a/infra/conf/transport_internet.go
 +++ b/infra/conf/transport_internet.go
-@@ -38,6 +38,8 @@ func (p TransportProtocol) Build() (stri
+@@ -38,6 +38,8 @@
  		return "", errors.PrintRemovedFeatureError("QUIC transport (without web service, etc.)", "XHTTP stream-one H3")
  	case "hysteria":
  		return "hysteria", nil
@@ -211,7 +211,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	case "xdrive":
 --- a/infra/conf/xray.go
 +++ b/infra/conf/xray.go
-@@ -27,6 +27,7 @@ import (
+@@ -27,6 +27,7 @@
  var (
  	inboundConfigLoader = NewJSONConfigLoader(ConfigCreatorCache{
  		"tunnel":        func() interface{} { return new(DokodemoConfig) },
@@ -219,7 +219,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  		"dokodemo-door": func() interface{} { return new(DokodemoConfig) },
  		"http":          func() interface{} { return new(HTTPServerConfig) },
  		"shadowsocks":   func() interface{} { return new(ShadowsocksServerConfig) },
-@@ -54,6 +55,7 @@ var (
+@@ -54,6 +55,7 @@
  		"vless":       func() interface{} { return new(VLessOutboundConfig) },
  		"vmess":       func() interface{} { return new(VMessOutboundConfig) },
  		"trojan":      func() interface{} { return new(TrojanClientConfig) },
@@ -229,7 +229,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  		"masque":      func() interface{} { return new(MasqueClientConfig) },
 --- a/main/distro/all/all.go
 +++ b/main/distro/all/all.go
-@@ -43,6 +43,7 @@ import (
+@@ -43,6 +43,7 @@
  	_ "github.com/xtls/xray-core/proxy/http"
  	_ "github.com/xtls/xray-core/proxy/loopback"
  	_ "github.com/xtls/xray-core/proxy/masque"
@@ -239,7 +239,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	_ "github.com/xtls/xray-core/proxy/trojan"
 --- a/proxy/freedom/freedom.go
 +++ b/proxy/freedom/freedom.go
-@@ -167,7 +167,7 @@ func getDefaultFinalRule(inbound *sessio
+@@ -167,7 +167,7 @@
  	switch inbound.Name {
  	case "vless-reverse":
  		return defaultBlockAllRule
@@ -248,7 +248,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  		return defaultBlockPrivateRule
  	default:
  		if strings.HasPrefix(inbound.Name, "shadowsocks") {
---- /dev/null
+--- a/proxy/naive/LICENSE.sing-box
 +++ b/proxy/naive/LICENSE.sing-box
 @@ -0,0 +1,17 @@
 +Copyright (C) 2022 by nekohasekai <contact-sagernet@sekai.icu>
@@ -268,7 +268,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +
 +In addition, no derivative work may use the name or imply association
 +with this application without prior consent.
---- /dev/null
+--- a/proxy/naive/address.go
 +++ b/proxy/naive/address.go
 @@ -0,0 +1,10 @@
 +package naive
@@ -281,7 +281,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +func socksaddr(d net.Destination) M.Socksaddr {
 +	return M.ParseSocksaddrHostPort(d.Address.String(), uint16(d.Port))
 +}
---- /dev/null
+--- a/proxy/naive/client.go
 +++ b/proxy/naive/client.go
 @@ -0,0 +1,175 @@
 +//go:build with_naive_outbound
@@ -459,7 +459,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +		return NewClient(ctx, c.(*ClientConfig))
 +	}))
 +}
---- /dev/null
+--- a/proxy/naive/client_stub.go
 +++ b/proxy/naive/client_stub.go
 @@ -0,0 +1,15 @@
 +//go:build !with_naive_outbound
@@ -477,7 +477,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +		return nil, fmt.Errorf("Naive outbound requires a Cronet-enabled build (with_naive_outbound)")
 +	}))
 +}
---- /dev/null
+--- a/proxy/naive/config.pb.go
 +++ b/proxy/naive/config.pb.go
 @@ -0,0 +1,372 @@
 +// Code generated by protoc-gen-go. DO NOT EDIT.
@@ -852,7 +852,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	file_proxy_naive_config_proto_goTypes = nil
 +	file_proxy_naive_config_proto_depIdxs = nil
 +}
---- /dev/null
+--- a/proxy/naive/config.proto
 +++ b/proxy/naive/config.proto
 @@ -0,0 +1,23 @@
 +syntax = "proto3";
@@ -878,7 +878,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 + uint64 quic_session_receive_window = 14;
 + bytes ech_config_list = 15;
 +}
---- /dev/null
+--- a/proxy/naive/cronet_linux_386.go
 +++ b/proxy/naive/cronet_linux_386.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && 386 && !with_musl
@@ -886,7 +886,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_386"
---- /dev/null
+--- a/proxy/naive/cronet_linux_386_musl.go
 +++ b/proxy/naive/cronet_linux_386_musl.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && 386 && with_musl
@@ -894,7 +894,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_386_musl"
---- /dev/null
+--- a/proxy/naive/cronet_linux_amd64.go
 +++ b/proxy/naive/cronet_linux_amd64.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && amd64 && !with_musl
@@ -902,7 +902,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_amd64"
---- /dev/null
+--- a/proxy/naive/cronet_linux_amd64_musl.go
 +++ b/proxy/naive/cronet_linux_amd64_musl.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && amd64 && with_musl
@@ -910,7 +910,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_amd64_musl"
---- /dev/null
+--- a/proxy/naive/cronet_linux_arm.go
 +++ b/proxy/naive/cronet_linux_arm.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && arm && !with_musl
@@ -918,7 +918,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_arm"
---- /dev/null
+--- a/proxy/naive/cronet_linux_arm64.go
 +++ b/proxy/naive/cronet_linux_arm64.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && arm64 && !with_musl
@@ -926,7 +926,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_arm64"
---- /dev/null
+--- a/proxy/naive/cronet_linux_arm64_musl.go
 +++ b/proxy/naive/cronet_linux_arm64_musl.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && arm64 && with_musl
@@ -934,7 +934,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_arm64_musl"
---- /dev/null
+--- a/proxy/naive/cronet_linux_arm_musl.go
 +++ b/proxy/naive/cronet_linux_arm_musl.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && arm && with_musl
@@ -942,7 +942,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_arm_musl"
---- /dev/null
+--- a/proxy/naive/cronet_linux_loong64.go
 +++ b/proxy/naive/cronet_linux_loong64.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && loong64 && !with_musl
@@ -950,7 +950,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_loong64"
---- /dev/null
+--- a/proxy/naive/cronet_linux_loong64_musl.go
 +++ b/proxy/naive/cronet_linux_loong64_musl.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && loong64 && with_musl
@@ -958,7 +958,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_loong64_musl"
---- /dev/null
+--- a/proxy/naive/cronet_linux_mipsle.go
 +++ b/proxy/naive/cronet_linux_mipsle.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && mipsle && !with_musl
@@ -966,7 +966,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_mipsle"
---- /dev/null
+--- a/proxy/naive/cronet_linux_mipsle_musl.go
 +++ b/proxy/naive/cronet_linux_mipsle_musl.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && mipsle && with_musl
@@ -974,7 +974,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_mipsle_musl"
---- /dev/null
+--- a/proxy/naive/cronet_linux_riscv64.go
 +++ b/proxy/naive/cronet_linux_riscv64.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && riscv64 && !with_musl
@@ -982,7 +982,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_riscv64"
---- /dev/null
+--- a/proxy/naive/cronet_linux_riscv64_musl.go
 +++ b/proxy/naive/cronet_linux_riscv64_musl.go
 @@ -0,0 +1,5 @@
 +//go:build with_naive_outbound && linux && !android && riscv64 && with_musl
@@ -990,7 +990,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +package naive
 +
 +import _ "github.com/sagernet/cronet-go/lib/linux_riscv64_musl"
---- /dev/null
+--- a/proxy/naive/packet.go
 +++ b/proxy/naive/packet.go
 @@ -0,0 +1,44 @@
 +package naive
@@ -1037,7 +1037,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	}
 +	return nil
 +}
---- /dev/null
+--- a/proxy/naive/padding.go
 +++ b/proxy/naive/padding.go
 @@ -0,0 +1,93 @@
 +// Adapted from sing-box protocol/naive/inbound_conn.go (GPL-3.0-or-later).
@@ -1133,7 +1133,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	}
 +	return
 +}
---- /dev/null
+--- a/proxy/naive/relay.go
 +++ b/proxy/naive/relay.go
 @@ -0,0 +1,62 @@
 +package naive
@@ -1198,7 +1198,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	}
 +	return first
 +}
---- /dev/null
+--- a/proxy/naive/server.go
 +++ b/proxy/naive/server.go
 @@ -0,0 +1,122 @@
 +package naive
@@ -1323,7 +1323,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +		return NewServer(ctx, c.(*ServerConfig))
 +	}))
 +}
---- /dev/null
+--- a/transport/internet/naive/config.pb.go
 +++ b/transport/internet/naive/config.pb.go
 @@ -0,0 +1,113 @@
 +// Code generated by protoc-gen-go. DO NOT EDIT.
@@ -1439,14 +1439,14 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +	file_transport_internet_naive_config_proto_goTypes = nil
 +	file_transport_internet_naive_config_proto_depIdxs = nil
 +}
---- /dev/null
+--- a/transport/internet/naive/config.proto
 +++ b/transport/internet/naive/config.proto
 @@ -0,0 +1,4 @@
 +syntax = "proto3";
 +package xray.transport.internet.naive;
 +option go_package = "github.com/xtls/xray-core/transport/internet/naive";
 +message Config {}
---- /dev/null
+--- a/transport/internet/naive/hub.go
 +++ b/transport/internet/naive/hub.go
 @@ -0,0 +1,197 @@
 +// Naive HTTP CONNECT transport. Protocol authentication belongs to proxy/naive.
