@@ -1,6 +1,6 @@
 --- a/src/gn/rust_project_writer.cc
 +++ b/src/gn/rust_project_writer.cc
-@@ -235,8 +235,13 @@ void AddTarget(const BuildSettings* buil
+@@ -233,8 +233,13 @@ void AddTarget(const BuildSettings* buil
    std::ranges::sort(include_dirs, [](const auto& lhs, const auto& rhs) {
      return lhs.value() < rhs.value();
    });
@@ -16,7 +16,7 @@
                        edition.value_or("2015"));
 --- a/src/gn/ninja_binary_target_writer.cc
 +++ b/src/gn/ninja_binary_target_writer.cc
-@@ -152,8 +152,13 @@ void NinjaBinaryTargetWriter::WritePriva
+@@ -151,8 +151,13 @@ void NinjaBinaryTargetWriter::WritePriva
    std::ranges::sort(deps, [](const Target* lhs, const Target* rhs) {
      return lhs->module_name() < rhs->module_name();
    });

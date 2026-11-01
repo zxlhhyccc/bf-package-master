@@ -1,6 +1,6 @@
 --- a/build/gen.py
 +++ b/build/gen.py
-@@ -258,6 +258,23 @@ def is_gcc(cxx):
+@@ -177,6 +177,23 @@ def is_gcc(cxx):
  
    return ret.returncode == 0 and "#define __GNUC__" in ret.stdout and not "#define __clang__" in ret.stdout
  
@@ -24,7 +24,7 @@
  def GenerateLastCommitPosition(host, header, generate_dummy):
    ROOT_TAG = 'initial-commit'
    if not generate_dummy and os.path.isdir(os.path.join(REPO_ROOT, '.git')):
-@@ -557,6 +574,12 @@ def WriteGNNinja(path, platform, host, o
+@@ -492,6 +509,12 @@ def WriteGNNinja(path, platform, host, o
    libs = []
  
    if not platform.is_msvc():
@@ -37,7 +37,7 @@
      if options.debug:
        cflags.extend(['-O0', '-g'])
        # Enable libc++ or libstdc++ assertions in debug mode.
-@@ -629,9 +652,13 @@ def WriteGNNinja(path, platform, host, o
+@@ -564,9 +587,13 @@ def WriteGNNinja(path, platform, host, o
          '-Wextra-semi',
          '-Wundef',
  
