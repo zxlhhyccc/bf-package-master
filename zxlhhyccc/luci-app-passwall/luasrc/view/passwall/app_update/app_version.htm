@@ -259,6 +259,17 @@ local com = self.com
 		detail.textContent = installingNotice;
 		// Read the tiny result file even if rpcd restart invalidates the session.
 		var pending = false, finished = false;
+		function finishInstall(code) {
+			if (finished) return;
+			finished = true;
+			clearInterval(timer);
+			removePageNotice(appname);
+			if (code) onRequestError(btn, updateFailedText);
+			else {
+				window.onbeforeunload = undefined;
+				window.location.reload();
+			}
+		}
 		var timer = setInterval(function() {
 			if (pending) return;
 			pending = true;
@@ -271,37 +282,62 @@ local com = self.com
 				if (finished) return;
 				var json;
 				try { json = JSON.parse(xhr.responseText); } catch (e) { return; }
-				if (typeof json.code !== 'number') return;
-				finished = true;
-				clearInterval(timer);
-				removePageNotice(appname);
-				if (json.code) onRequestError(btn, updateFailedText);
-				else {
-					window.onbeforeunload = undefined;
-					window.location.reload();
-				}
+				if (!json || typeof json.code !== 'number') return;
+				finishInstall(json.code);
 			};
 			xhr.send();
 		}, 1000);
-		XHR.post(url, {token: tokenStr, task: 'install', id: id,
-			force: appInfoList[appname].has_update ? '0' : '1'}, function(x, json) {
-			if (!finished && json && json.code) {
-				finished = true;
-				clearInterval(timer);
-				removePageNotice(appname);
-				onRequestError(btn, updateFailedText);
+		// Legacy LuCI has no static XHR.post(), and its instance callback has no JSON argument.
+		var request = new XMLHttpRequest();
+		request.open('POST', url, true);
+		request.timeout = 300000;
+		request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		request.onerror = request.ontimeout = function() { finishInstall(1); };
+		request.onload = function() {
+			if (finished) return;
+			var json;
+			try { json = JSON.parse(request.responseText); } catch (e) {}
+			if (request.status < 200 || request.status >= 300 || !json ||
+				typeof json.code !== 'number' || json.code) {
+				finishInstall(1);
 			}
-		}, 300);
+		};
+		request.send('token=' + encodeURIComponent(tokenStr) + '&task=install&id=' + encodeURIComponent(id) +
+			'&force=' + (appInfoList[appname].has_update ? '0' : '1'));
 	}
 
 //]]>
 </script>
 
+<style>
+	#app_version > .cbi-value {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: .25rem;
+		padding-bottom: .25rem;
+	}
+	#app_version > .cbi-value > .cbi-value-title {
+		padding-top: 0;
+		padding-bottom: 0;
+		line-height: 1.2;
+	}
+	#app_version .app-version-sub {
+		display: block;
+		font-size: .85em;
+		font-weight: normal;
+		opacity: .7;
+	}
+</style>
+
 <div class="cbi-value">
-	<label class="cbi-value-title">Passwall <%:Version%></label>
+	<label class="cbi-value-title">Passwall <%:Version%>
+		<span class="app-version-sub"><%=api.get_version()%></span>
+	</label>
 	<div class="cbi-value-field">
 		<!--div class="cbi-value-description"-->
-			<span>【 <%=api.get_version()%> 】</span>
 			<input class="btn cbi-button cbi-button-apply" type="button" id="<%=api.appname%>-check_btn" data-update-app="<%=api.appname%>"
 				onclick="onBtnClick(this, appname);" value="<%:Check update%>" />
 			<input class="btn cbi-button cbi-button-apply" type="button" id="_<%=api.appname%>-force_btn" data-update-app="<%=api.appname%>"
@@ -317,10 +353,10 @@ local com = self.com
 <div class="cbi-value">
 	<label class="cbi-value-title"><%=v.name%>
 		<%:Version%>
+		<span class="app-version-sub"><span class="com_version" key="<%=k%>"><%=translate("Null")%></span></span>
 	</label>
 	<div class="cbi-value-field">
 		<!--div class="cbi-value-description"-->
-			<span>【 <span class="com_version" key="<%=k%>"><%=translate("Null")%></span> 】</span>
 			<input class="btn cbi-button cbi-button-apply" type="button" id="_<%=k%>-check_btn" data-update-app="<%=k%>"
 				onclick="onBtnClick(this,'<%=k%>');" value="<%:Check update%>" />
 			<input class="btn cbi-button cbi-button-apply" type="button" id="_<%=k%>-force_btn" data-update-app="<%=k%>"

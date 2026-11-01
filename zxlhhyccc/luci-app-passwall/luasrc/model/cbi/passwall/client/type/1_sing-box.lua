@@ -33,7 +33,7 @@ local ss_method_old_list = {
 
 local security_list = { "none", "auto", "aes-128-gcm", "chacha20-poly1305", "zero" }
 
-local singbox_tags = luci.sys.exec(singbox_bin .. " version  | grep 'Tags:' | awk '{print $2}'")
+local singbox_tags = api.get_singbox_tags()
 
 local singbox_version = api.get_app_version("sing-box"):match("[^v]+")
 local version_ge_1_14_0 = api.compare_versions(singbox_version, ">=", "1.14.0")
@@ -167,7 +167,7 @@ if load_urltest_options then -- [[ URLTest Start ]]
 	o = s:option(Flag, "urltest_interrupt_exist_connections", translate("Interrupt existing connections"))
 	o:depends({ protocol = "_urltest" })
 	o.default = "0"
-	o.description = translate("Interrupt existing connections when the selected outbound has changed.") 
+	o.description = translate("Interrupt existing connections when the selected outbound has changed.")
 end -- [[ URLTest End ]]
 
 if load_iface_options then -- [[ 自定义接口 Start ]]
