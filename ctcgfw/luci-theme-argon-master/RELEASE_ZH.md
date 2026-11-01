@@ -1,5 +1,70 @@
 # Master 分支的更新日志
 
+## v3.1.1 [ 2026.10.28 ]
+
+### 修复
+
+- 修复手机侧栏菜单可能无法打开的问题，包括 Chrome 浏览器下的点击响应。
+- 改善概览端口收发计数与 Wi-Fi 信号／噪声显示，兼顾窄屏和大字号。
+- 修复无线客户端 Disconnect 菜单按钮文字竖排，优化网络名称、MAC 地址与主机信息布局。
+- CSS 更新时自动变更缓存标识，覆盖使用相同包版本号重新编译的情况。
+- 修正系统日志、进程、软件包管理、计划任务、SSH 管理、公钥、网络诊断及重启页面的卡片布局和间距。
+- 改善 OpenClash 更新／日志、网络唤醒设置／输出及 Tailscale 状态／设备表格，兼容 Services 与 VPN 两种菜单路径。
+
+### 升级说明
+
+v3.1.0 用户可通过**系统 → Argon 配置 → 主题更新**升级。v3.0.0 及更早版本用户需先手动安装一次 v3.1.1。在线安装更新主题主包并保留设置；独立语言包仍按原方式安装。
+
+[完整发布说明](https://github.com/jerrykuku/luci-theme-argon/releases/tag/v3.1.1)
+
+## v3.1.0 [ 2026.10.22 ]
+
+### 新功能
+
+- 新增稳定版检查与在线安装，可通过固件原生 APK 或 OPKG 包管理器升级，并保留 Argon 设置。
+- 新增安装包校验、降级保护、安装进度和日志，刷新页面后可继续跟踪安装状态。
+
+### 改进
+
+- 改善稳定版 OpenWrt 固件上的兼容性。
+
+### 修复
+
+- 修复 Dashboard 操作区间距和概览布局。
+- 修复动态列表控件及自定义 IP/MAC 输入框边框，兼顾窄屏、亮暗色和 RTL 布局。
+
+### 升级说明
+
+v3.0.0 及更早版本用户需先手动安装一次 v3.1.0，之后可使用在线升级。在线安装仅更新主题主包，独立语言包仍按原方式安装。
+
+[完整发布说明](https://github.com/jerrykuku/luci-theme-argon/releases/tag/v3.1.0)
+
+## v3.0.0 [ 2026.10.16 ]
+
+- GitHub Release: https://github.com/jerrykuku/luci-theme-argon/releases/tag/v3.0.0
+- 详细更新内容请以 Release 页面为准。
+
+## v2.4.8 [ 2026.10.08 ]
+
+- GitHub Release: https://github.com/jerrykuku/luci-theme-argon/releases/tag/v2.4.8
+- 详细更新内容请以 Release 页面为准。
+
+## v2.4.7 [ 2026.08.24 ]
+
+- GitHub Release: https://github.com/jerrykuku/luci-theme-argon/releases/tag/v2.4.7
+- 详细更新内容请以 Release 页面为准。
+## v2.4.6 [ 2026.07.31 ]
+
+- GitHub Release: https://github.com/jerrykuku/luci-theme-argon/releases/tag/v2.4.6
+- 详细更新内容请以 Release 页面为准。
+## v2.4.5 [ 2026.07.18 ]
+
+- GitHub Release: https://github.com/jerrykuku/luci-theme-argon/releases/tag/v2.4.5
+- 详细更新内容请以 Release 页面为准。
+## v2.4.4 [ 2026.07.16 ]
+
+- GitHub Release: https://github.com/jerrykuku/luci-theme-argon/releases/tag/v2.4.4
+- 详细更新内容请以 Release 页面为准。
 ## v2.4.3 [ 2025.07.22 ]
 
 - **重构**: 移除了对 jQuery 库的依赖，全面使用原生 JavaScript 替代

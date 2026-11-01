@@ -1,13 +1,3 @@
-<!-- markdownlint-configure-file {
-  "MD013": {
-    "code_blocks": false,
-    "tables": false,
-    "line_length":200
-  },
-  "MD033": false,
-  "MD041": false
-} -->
-
 [license]: /LICENSE
 [license-badge]: https://img.shields.io/github/license/jerrykuku/luci-theme-argon?style=flat-square&a=1
 [prs]: https://github.com/jerrykuku/luci-theme-argon/pulls
@@ -20,19 +10,11 @@
 [download-badge]: https://img.shields.io/github/downloads/jerrykuku/luci-theme-argon/total?style=flat-square
 [contact]: https://t.me/jerryk6
 [contact-badge]: https://img.shields.io/badge/Contact-telegram-blue?style=flat-square
-[en-us-link]: /README.md
-[zh-cn-link]: /README_ZH.md
-[en-us-release-log]: /RELEASE.md
-[zh-cn-release-log]: /RELEASE_ZH.md
-[config-link]: https://github.com/jerrykuku/luci-app-argon-config/releases
-[lede]: https://github.com/coolsnowwolf/lede
-[official]: https://github.com/openwrt/openwrt
-[immortalwrt]: https://github.com/immortalwrt/immortalwrt
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/jerrykuku/staff/master/argon_title4.svg">
 
-# A brand new OpenWrt LuCI theme
+# A brand new OpenWrt LuCI theme · v3
 
 Argon is **a clean and tidy OpenWrt LuCI theme** that allows<br/>
 users to customize their login interface with images or videos.  
@@ -45,102 +27,93 @@ It also supports automatic and manual switching between light and dark modes.
 [![download][download-badge]][download]
 [![contact][contact-badge]][contact]
 
-**English** |
-[简体中文][zh-cn-link]
+**English** · [简体中文](README_ZH.md)
 
-[Key Features](#key-features) •
-[Branch](#branch-introduction) •
-[Version History](#version-history) •
-[Getting started](#getting-started) •
-[Screenshots](#screenshots) •
-[Contributors](#contributors) •
-[Credits](#credits)
+[![Argon 3.0 desktop demo: two login layouts, light and dark modes, and built-in settings](Screenshots/argon-3-demo.gif)](Screenshots/argon-3-demo.mp4)
 
-<img src="https://raw.githubusercontent.com/jerrykuku/staff/master/argon2.gif">
+[Watch the desktop demo · MP4](Screenshots/argon-3-demo.mp4)
+
 </div>
 
-## Key Features
+## What's new in 3.1
 
-- Clean Layout.
-- Adapted to mobile display.
-- Customizable theme colors.
-- Support for using Bing images as login background.
-- Support for custom uploading of images or videos as login background.
-- Automatically switch between light and dark modes with the system, and can also be set to a fixed mode.
-- Settings plugin with extensions [luci-app-argon-config][config-link]
+- **Online theme updates.** Check stable releases and install with the firmware's native APK or OPKG, preserving Argon settings and verifying package SHA256 and size.
+- **Layout fixes.** Improve dashboard actions, overview layouts, dynamic lists and custom IP/MAC inputs across narrow screens, light/dark modes and RTL layouts.
+- **Compatibility improvements.** Improve compatibility with stable OpenWrt firmware.
 
-> **Upcoming Version **
->
-> "The current theme uses Less for CSS construction, and the method for switching between light and dark modes is relatively primitive. Meanwhile, the official theme has already switched to the UT template. I am exploring a way to build the theme template using modern front-end development tools, initially settling on a solution using Vite + UnoCSS. This approach will utilize a proxy server for debugging and also support HMR (Hot Module Replacement), significantly improving development speed. Currently, the basic development framework has been set up, but due to a busy schedule, I still need some time to migrate the existing styles. Stay tuned!"
+Users on v3.0.0 or earlier must install v3.1.1 manually once to get online updates. Users on v3.1.0 can upgrade through Theme updates. See the [release notes](RELEASE.md).
 
-## Branch Introduction
+## 3.0 highlights
 
-There are currently two main branches that are adapted to different versions of the **OpenWrt** source code.  
-The table below will provide a detailed introduction:
+- **Built-in Argon Config.** Manage the theme without a separate plugin.
+- **Broad third-party app support.** Refined layouts, forms and tables for most third-party LuCI apps, with desktop/mobile and light/dark adaptations.
+- **Two login layouts.** Choose the classic sidebar or centered card.
+- **Light and dark.** Switch from the header or follow your system, with customizable accent colors.
+- **Your own look.** Adjust login glass effects, set image or video backgrounds, and upload a browser icon and login logo.
+- **Desktop and mobile.** Responsive layouts across screen sizes.
 
-| Branch | Version | Description                        | Matching source                                           |
-| ------ | ------- | ---------------------------------- | --------------------------------------------------------- |
-| master | v2.x.x  | Support the latest version of LuCI | [Official OpenWrt][official] • [ImmortalWrt][immortalwrt] |
-| 18.06 (deprecated) | v1.x.x  | Support the 18.06 version of LuCI   | [Lean's LEDE][lede]                                         |
+## Install
 
-## Version History
+**In 3.0, the theme and configuration features are one package: `luci-theme-argon`. Fresh installations need only this package.** Download the format matching your firmware's native package manager from [Releases](https://github.com/jerrykuku/luci-theme-argon/releases). If the old standalone configuration plugin is installed, follow the migration steps below first.
 
-The latest version is v2.4.3 [Click here][en-us-release-log] to view the full version history record.
+| Package manager | Package | Install |
+| --- | --- | --- |
+| `opkg` | `.ipk` | `opkg install ./luci-theme-argon_*.ipk` |
+| APK v3 (`apk-tools 3.x`) | `.apk` | `apk add --allow-untrusted ./luci-theme-argon-*.apk` |
 
-## Getting started
+Run `opkg update` or `apk update` first. APK v2 cannot read these APK packages; keep your firmware's native package manager.
 
-### Build for Lean's LEDE project (deprecated)
+For translations, install the matching `luci-i18n-argon-config-<language>` package from the same release and in the same format.
 
-```bash
-cd lede/package/lean
-rm -rf luci-theme-argon
-git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git luci-theme-argon
-make menuconfig #choose LUCI->Theme->Luci-theme-argon
-make -j1 V=s
+Select **Argon** under **System → System → Language and Style → Design**.
+
+<details>
+<summary>Already have the old luci-app-argon-config? Migrate to 3.0</summary>
+
+This applies only when the old standalone configuration plugin is installed. Otherwise, skip this section.
+
+The settings page, colors, backgrounds and branding are all included in the theme. The release's `luci-app-argon-config` is an **empty migration package using the old package name**. It preserves existing settings and hands its files over to the theme.
+
+1. Download both `luci-app-argon-config` and `luci-theme-argon` from the **same release in the theme repository**, in the same format.
+2. Put both files in one directory on the router and open a terminal there. **Do not uninstall the old plugin first.** Choose the command pair for your firmware; run the second command only after the first succeeds.
+
+```sh
+# opkg
+opkg install ./luci-app-argon-config_*.ipk
+opkg install ./luci-theme-argon_*.ipk
+
+# APK v3
+apk add --allow-untrusted ./luci-app-argon-config-*.apk
+apk add --allow-untrusted ./luci-theme-argon-*.apk
 ```
 
-### Build for OpenWrt official SnapShots and ImmortalWrt
+The first command replaces the old plugin with the empty migration package. The second installs the integrated theme and restores your settings. Continue configuring it under **System → Argon Config**.
 
-```bash
-cd openwrt/package
-git clone https://github.com/jerrykuku/luci-theme-argon.git
-make menuconfig #choose LUCI->Theme->Luci-theme-argon
-make -j1 V=s
-```
+</details>
 
-### Install for LuCI 18.06 ( Lean's LEDE )
+## Customize
 
-```bash
-wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v1.8.2/luci-theme-argon_1.8.2-20230609_all.ipk
-opkg install luci-theme-argon*.ipk
-```
+Open **System → Argon Config** for login layouts, colors, glass effects, wallpapers and branding. The header's appearance button switches between **Light mode**, **Dark mode** and **Follow system**; the choice also applies to the login page.
 
-### Install for OpenWrt official SnapShots and ImmortalWrt
+Local image and video backgrounds are supported, along with Bing, Unsplash and Wallhaven wallpapers. Unsplash requires an API access key. Browser icons and login logos accept PNG files, 16–1024 pixels per side, up to 1 MiB; browser icons must be square.
 
-```bash
-opkg install luci-compat
-opkg install luci-lib-ipkg
-wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.3.2/luci-theme-argon_2.3.2-r20250207_all.ipk
-opkg install luci-theme-argon*.ipk
-```
+Under **Theme updates**, check the latest stable release, read its release notes and download the package matching your firmware's package manager.
 
-### Install luci-app-argon-config
+When a newer version is available, choose **Update now** and confirm to install the theme using the firmware’s native APK or OPKG package manager, preserving your Argon configuration. The page shows download, verification and installation status plus installation logs, and resumes monitoring after a page refresh. Reload the page after installation. Automatic installation requires a matching release package and SHA256 digest and does not perform downgrades. It updates the main theme package; separate translation packages remain managed by the system package manager.
 
-```bash
-wget --no-check-certificate -O luci-app-argon-config_0.9_all.ipk https://github.com/jerrykuku/luci-app-argon-config/releases/download/v0.9/luci-app-argon-config_0.9_all.ipk
-opkg install luci-app-argon-config*.ipk
-```
-
-## Notice
-
-- Chrome browser is highly recommended. There are some new css3 features used in this theme, currently only Chrome has the best compatibility.
-- Microsoft has officially retired Internet Explorer, RIP IE🙏<del>Currently, the mainline version of the IE series has bugs that need to be addressed.</del>
-- FireFox does not enable the backdrop-filter by default, [see here](https://developer.mozilla.org/zh-CN/docs/Web/CSS/backdrop-filter) for the opening method.
+When building firmware, stop including the old standalone `luci-app-argon-config` plugin alongside the theme: its files conflict with the integrated settings. See [Build with OpenWrt](docs/DEVELOPMENT.md#build-with-openwrt) for existing build scripts.
 
 ## Screenshots
 
-![desktop](/Screenshots/screenshot_pc.jpg)
-![mobile](/Screenshots/screenshot_phone.jpg)
+Light and dark views of the overview and both login layouts, on desktop and mobile.
+
+![Light mode: desktop overview, classic and centered login](Screenshots/preview-light.png)
+
+![Mobile light mode: classic login, centered login and overview](Screenshots/mobile-light.png)
+
+![Dark mode: desktop overview, classic and centered login](Screenshots/preview-dark.png)
+
+![Mobile dark mode: classic login, centered login and overview](Screenshots/mobile-dark.png)
 
 ## Contributors
 
@@ -150,12 +123,10 @@ opkg install luci-app-argon-config*.ipk
 
 Made with [contrib.rocks](https://contrib.rocks).
 
-## Related Projects
+## Development
 
-- [luci-app-argon-config](https://github.com/jerrykuku/luci-app-argon-config): Argon theme config plugin
-- [openwrt-package](https://github.com/jerrykuku/openwrt-package): My OpenWrt package
-- [CasaOS](https://github.com/IceWhaleTech/CasaOS): A simple, easy-to-use, elegant open-source Personal Cloud system (My current main project)
+See the [development guide](docs/DEVELOPMENT.md) for source builds, LESS, templates, icons and checks.
 
-## Credits
+[Releases](https://github.com/jerrykuku/luci-theme-argon/releases) · [Version history](RELEASE.md) · [Contributors](https://github.com/jerrykuku/luci-theme-argon/graphs/contributors) · [Report an issue](https://github.com/jerrykuku/luci-theme-argon/issues)
 
-[luci-theme-material](https://github.com/LuttyYang/luci-theme-material/)
+Licensed under [Apache-2.0](LICENSE). Thanks to [luci-theme-material](https://github.com/LuttyYang/luci-theme-material/).

@@ -1,13 +1,3 @@
-<!-- markdownlint-configure-file {
-  "MD013": {
-    "code_blocks": false,
-    "tables": false,
-    "line_length":200
-  },
-  "MD033": false,
-  "MD041": false
-} -->
-
 [license]: /LICENSE
 [license-badge]: https://img.shields.io/github/license/jerrykuku/luci-theme-argon?style=flat-square&a=1
 [prs]: https://github.com/jerrykuku/luci-theme-argon/pulls
@@ -20,19 +10,11 @@
 [download-badge]: https://img.shields.io/github/downloads/jerrykuku/luci-theme-argon/total?style=flat-square
 [contact]: https://t.me/jerryk6
 [contact-badge]: https://img.shields.io/badge/Contact-telegram-blue?style=flat-square
-[en-us-link]: /README.md
-[zh-cn-link]: /README_ZH.md
-[en-us-release-log]: /RELEASE.md
-[zh-cn-release-log]: /RELEASE_ZH.md
-[config-link]: https://github.com/jerrykuku/luci-app-argon-config/releases
-[lede]: https://github.com/coolsnowwolf/lede
-[official]: https://github.com/openwrt/openwrt
-[immortalwrt]: https://github.com/immortalwrt/immortalwrt
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/jerrykuku/staff/master/argon_title4.svg">
 
-# 一个全新的 OpenWrt 主题
+# 一个全新的 OpenWrt 主题 · v3
 
 Argon 是**一款干净整洁的 OpenWrt LuCI 主题**，  
 允许用户使用图片或视频自定义其登录界面。  
@@ -45,98 +27,93 @@ Argon 是**一款干净整洁的 OpenWrt LuCI 主题**，
 [![download][download-badge]][download]
 [![contact][contact-badge]][contact]
 
-[English][en-us-link] |
-**简体中文**
+[English](README.md) · **简体中文**
 
-[特色](#特色) •
-[分支介绍](#分支介绍) •
-[版本历史](#版本历史) •
-[快速开始](#快速开始) •
-[屏幕截图](#屏幕截图) •
-[贡献者](#贡献者) •
-[鸣谢](#鸣谢)
+[![Argon 3.0 桌面演示：两套登录界面、亮暗配色与内置设置](Screenshots/argon-3-demo.gif)](Screenshots/argon-3-demo.mp4)
 
-<img src="https://raw.githubusercontent.com/jerrykuku/staff/master/argon2.gif">
+[观看桌面演示 · MP4](Screenshots/argon-3-demo.mp4)
+
 </div>
 
-## 特色
+## 3.1 新特性
 
-- 干净整洁的布局。
-- 适配移动端显示。
-- 可自定义主题颜色。
-- 支持使用 Bing 图片作为登录背景。
-- 支持自定义上传图片或视频作为登录背景。
-- 通过系统自动在明暗模式之间切换，也可设置为固定模式。
-- 带有扩展功能的设置插件 [luci-app-argon-config][config-link]
+- **在线更新主题**：检查稳定版，通过固件原生 APK 或 OPKG 安装，保留 Argon 设置，校验安装包 SHA256 和大小。
+- **布局修复**：优化 Dashboard 操作区、概览布局、动态列表和自定义 IP/MAC 输入框，兼顾窄屏、亮暗色和 RTL 布局。
+- **兼容性改进**：改善稳定版 OpenWrt 固件上的兼容性。
 
-## 分支介绍
+v3.0.0 及更早版本用户需先手动安装一次 v3.1.1，之后即可使用在线更新。v3.1.0 用户可直接通过主题更新升级。详见[更新日志](RELEASE_ZH.md)。
 
-目前有两个主要的分支，适应于不同版本的**OpenWrt**源代码。  
-下表为详细的介绍：
+## 3.0 主要特性
 
-| 分支   | 版本   | 介绍                        | 匹配源码                                              |
-| ------ | ------ | --------------------------- | ----------------------------------------------------- |
-| master | v2.x.x | 支持最新和比较新版本的 LuCI | [官方 OpenWrt][official] • [ImmortalWrt][immortalwrt] |
-| 18.06  | v1.x.x | 支持 18.06 版本的 LuCI      | [Lean's LEDE][lede]                                     |
+- **内置 Argon Config**：主题设置随主题安装，无需独立插件。
+- **广泛适配第三方应用**：针对大多数第三方 LuCI 应用优化布局、表单和表格，兼顾桌面、手机与亮暗模式。
+- **两套登录界面**：经典侧栏与居中卡片，自由选择。
+- **亮暗配色**：顶部快捷切换或跟随系统，支持自定义主色。
+- **个性化外观**：调节毛玻璃效果，设置图片或视频背景，上传网站图标和登录 Logo。
+- **桌面与手机适配**：适应不同屏幕尺寸的响应式布局。
 
-## 版本历史
+## 安装
 
-当前最新的版本为 v2.4.3 [点击这里][zh-cn-release-log]查看完整的版本历史日志.
+**3.0 已将主题和配置功能合并到 `luci-theme-argon`，全新安装只需这一个包。** 前往 [Releases](https://github.com/jerrykuku/luci-theme-argon/releases) 下载与固件原生包管理器匹配的格式。已有旧版独立配置插件的用户，请先按下方迁移步骤操作。
 
-## 快速开始
+| 包管理器 | 包格式 | 安装命令 |
+| --- | --- | --- |
+| `opkg` | `.ipk` | `opkg install ./luci-theme-argon_*.ipk` |
+| APK v3（`apk-tools 3.x`） | `.apk` | `apk add --allow-untrusted ./luci-theme-argon-*.apk` |
 
-### 使用 Lean's LEDE 构建
+安装前执行 `opkg update` 或 `apk update`。APK v2 无法读取本项目的 APK 包，请沿用固件原生包管理器。
 
-```bash
-cd lede/package/lean
-rm -rf luci-theme-argon
-git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git luci-theme-argon
-make menuconfig #choose LUCI->Theme->Luci-theme-argon
-make -j1 V=s
+需要翻译时，安装同次发行、相同格式的 `luci-i18n-argon-config-<语言>` 语言包。
+
+在 **系统 → 系统 → 语言和界面 → 主题** 中选择 **Argon**。
+
+<details>
+<summary>已安装旧版 luci-app-argon-config？如何迁移到 3.0</summary>
+
+仅适用于已安装旧版独立配置插件的用户；没有安装过该插件可跳过。
+
+3.0 的设置页面、配色、背景和 Logo 管理都在主题包内。发行附件中的 `luci-app-argon-config` 是**沿用旧包名的空迁移包**，用于保留旧配置并将文件交给主题，不是另一个配置插件。
+
+1. 从**主题仓库同一次发行**中下载 `luci-app-argon-config` 迁移包和 `luci-theme-argon` 主题包，格式一致。
+2. 将两个文件放到路由器同一目录，在该目录打开终端。**无需先卸载旧插件**，按固件选择下面一组命令；第一条成功后，再执行第二条。
+
+```sh
+# opkg
+opkg install ./luci-app-argon-config_*.ipk
+opkg install ./luci-theme-argon_*.ipk
+
+# APK v3
+apk add --allow-untrusted ./luci-app-argon-config-*.apk
+apk add --allow-untrusted ./luci-theme-argon-*.apk
 ```
 
-### 使用官方 OpenWrt SnapShots 和 ImmortalWrt
+第一步将旧插件升级为空迁移包，第二步安装包含配置功能的新主题，并恢复已有设置。之后继续在 **系统 → Argon 主题设置** 中配置即可。
 
-```bash
-cd openwrt/package
-git clone https://github.com/jerrykuku/luci-theme-argon.git
-make menuconfig #choose LUCI->Theme->Luci-theme-argon
-make -j1 V=s
-```
+</details>
 
-### 在 18.06 的 LuCI 上安装 ( Lean's LEDE )
+## 自定义
 
-```bash
-wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v1.8.2/luci-theme-argon_1.8.2-20230609_all.ipk
-opkg install luci-theme-argon*.ipk
-```
+打开 **系统 → Argon 主题设置**，调整登录布局、配色、毛玻璃、壁纸和图标。页面右上角可切换**亮色模式、暗色模式、跟随系统**，也会应用于登录页。
 
-### 在官方和 ImmortalWrt 上安装
+背景支持本地图片、视频，以及 Bing、Unsplash、Wallhaven 在线壁纸；Unsplash 需填写 API Access Key。网站图标和登录 Logo 支持 PNG，每边 16–1024 像素、最大 1 MiB，网站图标需为正方形。
 
-```bash
-opkg install luci-compat
-opkg install luci-lib-ipkg
-wget --no-check-certificate https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.3.2/luci-theme-argon_2.3.2-r20250207_all.ipk
-opkg install luci-theme-argon*.ipk
-```
+在**主题更新**中手动检查最新稳定版、查看更新日志，并下载与固件包管理器匹配的安装包。
 
-### 安装 luci-app-argon-config
+检测到更高版本后，可点击**立即更新**并确认，通过固件自带的 APK 或 OPKG 安装主题，保留当前 Argon 配置。页面显示下载、校验、安装状态及安装日志，刷新页面后可继续查看进度；安装完成后重新加载页面。自动安装要求正式发布提供对应安装包及 SHA256 校验值，不执行降级。此功能更新主题主包，独立语言包仍由系统包管理器管理。
 
-```bash
-wget --no-check-certificate https://github.com/jerrykuku/luci-app-argon-config/releases/download/v0.9/luci-app-argon-config_0.9_all.ipk
-opkg install luci-app-argon-config*.ipk
-```
+自行编译固件时，不要再同时引入旧版独立 `luci-app-argon-config` 插件；它会与主题内置文件冲突。已有自动编译脚本的调整方式见[源码构建说明](docs/DEVELOPMENT_ZH.md#源码构建)。
 
-## 注意
+## 效果展示
 
-- 强烈建议使用 Chrome 浏览器。这个主题中使用了一些新的 css3 功能，目前只有 Chrome 浏览器有最好的兼容性。
-- 微软已正式退役 Internet Explorer，安息吧 IE🙏<del>目前，IE 系列的主线版本有需要解决的错误。</del>
-- FireFox 默认不启用 backdrop-filter，[见这里](https://developer.mozilla.org/zh-CN/docs/Web/CSS/backdrop-filter)的打开方法。
+亮暗两色，展示桌面与手机端的首页和两套登录界面。
 
-## 屏幕截图
+![浅色：桌面首页、经典侧栏与居中登录](Screenshots/preview-light.png)
 
-![desktop](/Screenshots/screenshot_pc.jpg)
-![mobile](/Screenshots/screenshot_phone.jpg)
+![手机浅色：经典侧栏登录、居中登录和首页](Screenshots/mobile-light.png)
+
+![深色：桌面首页、经典侧栏与居中登录](Screenshots/preview-dark.png)
+
+![手机深色：经典侧栏登录、居中登录和首页](Screenshots/mobile-dark.png)
 
 ## 贡献者
 
@@ -146,12 +123,10 @@ opkg install luci-app-argon-config*.ipk
 
 Made with [contrib.rocks](https://contrib.rocks).
 
-## 相关项目
+## 开发
 
-- [luci-app-argon-config](https://github.com/jerrykuku/luci-app-argon-config): Argon 主题的设置插件
-- [openwrt-package](https://github.com/jerrykuku/openwrt-package): 我的 OpenWrt Package
-- [CasaOS](https://github.com/IceWhaleTech/CasaOS): 一个简单、易用且优雅的开源个人家庭云系统（我目前主要开发的项目）
+源码构建、LESS、模板、图标和检查说明见[开发文档](docs/DEVELOPMENT_ZH.md)。
 
-## 鸣谢
+[下载](https://github.com/jerrykuku/luci-theme-argon/releases) · [版本历史](RELEASE_ZH.md) · [贡献者](https://github.com/jerrykuku/luci-theme-argon/graphs/contributors) · [反馈问题](https://github.com/jerrykuku/luci-theme-argon/issues)
 
-[luci-theme-material](https://github.com/LuttyYang/luci-theme-material/)
+采用 [Apache-2.0](LICENSE) 许可证。感谢 [luci-theme-material](https://github.com/LuttyYang/luci-theme-material/)。
