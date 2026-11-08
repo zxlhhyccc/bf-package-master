@@ -300,9 +300,10 @@ var ocLang = window.ocLang || '';
             ERROR: 3
         },
         reconnectDelay: 5000,
+        maxReconnectAttempts: 5,
         heartbeatInterval: 30000,
         heartbeatTimers: {},
-        wsConnect: false,
+        reconnectAttempts: {},
         allowedCloseCodes: [1000, 1001, 1005, 1006],
 
         isSupported: function() {
@@ -416,7 +417,6 @@ var ocLang = window.ocLang || '';
             for (var i = 0; i < types.length; i++) {
                 this.closeConnection(types[i]);
             }
-            this.wsConnect = false;
         },
 
         handleMessage: function(type, event) {
@@ -443,22 +443,11 @@ var ocLang = window.ocLang || '';
                 connection.state = this.connectionStates.CONNECTED;
                 connection.lastActivity = Date.now();
             }
+            this.reconnectAttempts[type] = 0;
+            if (typeof StatsWSMeta !== 'undefined') StatsWSMeta.retryAfter = 0;
             this.startHeartbeat(type);
-
-            if (!this.wsConnect) {
-                var connectedCount = 0;
-                for (var t in this.connections) {
-                    if (this.connections[t].state === this.connectionStates.CONNECTED) {
-                        connectedCount++;
-                    }
-                }
-                if (connectedCount >= 1) {
-                    this.wsConnect = true;
-                    if (NetworkStatsManager.isEnabled) {
-                        NetworkStatsManager.stop();
-                    }
-                }
-            }
+            // polling is stopped inside syncDataSource, only once every needed socket is up
+            if (typeof syncDataSource === 'function') syncDataSource();
         },
 
         handleError: function(type, error) {
@@ -477,13 +466,11 @@ var ocLang = window.ocLang || '';
                 connection.state = this.connectionStates.DISCONNECTED;
                 this.stopHeartbeat(type);
 
-                if (typeof StatsChart !== 'undefined' && StatsChart.resetToZero) {
-                    StatsChart.resetToZero();
-                }
-
                 if (this.allowedCloseCodes.indexOf(event.code) === -1) {
                     this.scheduleReconnect(type);
                 }
+                // keep the last readings until polling or a reconnect refills them
+                if (typeof syncDataSource === 'function') syncDataSource();
             }
         },
 
@@ -501,6 +488,13 @@ var ocLang = window.ocLang || '';
             var connection = this.connections[type];
 
             if (!connection) {
+                // a sibling socket already tore the batch down; still count the failure
+                var failed = (this.reconnectAttempts[type] || 0) + 1;
+                this.reconnectAttempts[type] = failed;
+                if (failed > this.maxReconnectAttempts) {
+                    this.reconnectAttempts[type] = 0;
+                    if (typeof StatsWSMeta !== 'undefined') StatsWSMeta.retryAfter = Date.now() + 60000;
+                }
                 this.enableFallbackMode();
                 return;
             }
@@ -510,14 +504,23 @@ var ocLang = window.ocLang || '';
             var options = connection.options;
 
             this.pendingReconnect = this.pendingReconnect || {};
+            var attempts = (this.reconnectAttempts[type] || 0) + 1;
+            this.reconnectAttempts[type] = attempts;
+            if (attempts > this.maxReconnectAttempts) {
+                this.reconnectAttempts[type] = 0;
+                if (typeof StatsWSMeta !== 'undefined') StatsWSMeta.retryAfter = Date.now() + 60000;
+                if (typeof syncDataSource === 'function') syncDataSource();
+                return;
+            }
+            // exponential backoff so a dead endpoint stops retrying every few seconds
+            var delay = Math.min(this.reconnectDelay * Math.pow(2, attempts - 1), 60000);
             this.pendingReconnect[type] = setTimeout(function() {
                 delete self.pendingReconnect[type];
                 self.createConnection(type, url, handler, options);
-            }, this.reconnectDelay);
+            }, delay);
         },
 
         enableFallbackMode: function() {
-            this.wsConnect = false;
             var types = Object.keys(this.connections);
             for (var i = 0; i < types.length; i++) {
                 var connection = this.connections[types[i]];
@@ -529,10 +532,10 @@ var ocLang = window.ocLang || '';
                     delete this.connections[types[i]];
                 }
             }
-            NetworkStatsManager.resetStats();
-            if (typeof StatsChart !== 'undefined' && StatsChart.resetToZero) StatsChart.resetToZero();
+            // polling takes over and keeps the current values; no reset to zero here
             if (typeof StatsWSMeta !== 'undefined') StatsWSMeta.protocol = null;
-            if (typeof syncDataSource === 'function') syncDataSource();
+            // the pending backoff timer owns the next attempt, so do not reconnect here
+            if (typeof syncDataSource === 'function') syncDataSource(true);
         },
 
         getConnectionState: function(type) {
@@ -583,12 +586,14 @@ var ocLang = window.ocLang || '';
         loadConfigFileList: function(force) {
             this.updateSelectOptions([{value: '', text: '<%:Collecting data...%>', disabled: true}]);
 
+            // the fingerprint rides in the query string: a long one overflows the request line
+            // and takes the whole list down, so drop it above the cap (cache is an optimization)
             var params = {};
             var cached = localStorage.getItem('oc_config_fp');
             if (cached) {
                 try {
                     var c = JSON.parse(cached);
-                    if (c && c.fp) {
+                    if (c && c.fp && c.fp.length <= 1024) {
                         var ageCache = localStorage.getItem('oc_config_age');
                         if (ageCache) {
                             try {
@@ -609,19 +614,46 @@ var ocLang = window.ocLang || '';
             }, !!force);
         },
 
+        normalizeConfigEntry: function(entry) {
+            if (typeof entry === 'string') {
+                return {name: entry, path: entry};
+            }
+            if (!entry || typeof entry !== 'object') {
+                return null;
+            }
+            var name = entry.name || entry.filename || entry.path || entry.filepath;
+            if (!name) {
+                return null;
+            }
+            name = String(name);
+            return {
+                name: name,
+                path: String(entry.path || entry.filepath || name),
+                size: entry.size,
+                mtime: entry.mtime,
+                age: entry.age,
+                schedule: entry.schedule
+            };
+        },
+
         handleConfigListResponse: function(data, sentFp) {
+            if (!data || typeof data !== 'object') {
+                this.handleConfigListError();
+                return;
+            }
+
+            var configFiles = [];
+            var rawFiles = Array.isArray(data.config_files) ? data.config_files : [];
+            for (var n = 0; n < rawFiles.length; n++) {
+                var normalized = this.normalizeConfigEntry(rawFiles[n]);
+                if (normalized) {
+                    configFiles.push(normalized);
+                }
+            }
+
+            var currentConfigFile = typeof data.current_config === 'string' ? data.current_config : '';
+
             try {
-                var configFiles = [];
-                var currentConfigFile = '';
-
-                if (data.config_files && Array.isArray(data.config_files)) {
-                    configFiles = data.config_files;
-                }
-
-                if (data.current_config) {
-                    currentConfigFile = data.current_config;
-                }
-
                 var fp = data.fingerprint;
                 var ageFromCache = false;
                 if (fp && sentFp && fp === sentFp) {
@@ -653,28 +685,31 @@ var ocLang = window.ocLang || '';
                         localStorage.setItem('oc_config_age', JSON.stringify({fp: fp, ages: ages}));
                     });
                 }
+            } catch (e) {
+                console.warn('ConfigFileManager: config list cache update failed', e);
+            }
 
-                var currentFileInfo = null;
+            var currentFileInfo = null;
 
-                this.rawCurrentConfig = currentConfigFile;
-                this.configList = configFiles;
-                window.configFiles = configFiles;
-                this.currentConfig = currentConfigFile;
-                this.currentConfigIndex = -1;
+            this.rawCurrentConfig = currentConfigFile;
+            this.configList = configFiles;
+            window.configFiles = configFiles;
+            this.currentConfig = currentConfigFile;
+            this.currentConfigIndex = -1;
 
-                this.toggleEmptyState(configFiles.length === 0);
+            this.toggleEmptyState(configFiles.length === 0);
 
-                this.updateConfigSelect(configFiles, currentConfigFile);
+            this.updateConfigSelect(configFiles, currentConfigFile);
 
+            try {
                 if (configFiles.length > 0) {
                     if (currentConfigFile) {
                         for (var i = 0; i < configFiles.length; i++) {
                             var file = configFiles[i];
-                            var filePath = typeof file === 'string' ? file : (file.path || file.filepath || file);
 
-                            if (filePath === currentConfigFile) {
+                            if (file.path === currentConfigFile || file.name === currentConfigFile) {
                                 this.currentConfigIndex = i;
-                                if (typeof file === 'object' && file.mtime && file.size) {
+                                if (file.mtime && file.size) {
                                     currentFileInfo = {
                                         mtime: file.mtime,
                                         size: file.size,
@@ -699,27 +734,31 @@ var ocLang = window.ocLang || '';
                 }
 
                 this.updateNavigationArrows();
-
-                if (this.retryGetConfigList) {
-                    clearInterval(this.retryGetConfigList);
-                    this.retryGetConfigList = null;
-                }
-
-                this.configListLoaded = true;
-                autoOpenGuide();
-
             } catch (e) {
-                this.handleConfigListError();
+                console.warn('ConfigFileManager: config card render failed', e);
             }
+
+            if (this.retryGetConfigList) {
+                clearInterval(this.retryGetConfigList);
+                this.retryGetConfigList = null;
+            }
+
+            this.configListLoaded = true;
+            autoOpenGuide();
         },
 
         handleConfigListError: function() {
-            this.updateSelectOptions([
-                {value: '', text: '<%:Failed to load config files%>', disabled: true}
-            ]);
+            if (this.configList.length > 0) {
+                this.updateConfigSelect(this.configList, this.rawCurrentConfig);
+                this.toggleEmptyState(false);
+            } else {
+                this.updateSelectOptions([
+                    {value: '', text: '<%:Failed to load config files%>', disabled: true}
+                ]);
+                this.toggleEmptyState(true);
+                this.hideSubscriptionDisplay();
+            }
 
-            this.toggleEmptyState(true);
-            this.hideSubscriptionDisplay();
             this.configListLoaded = true;
             autoOpenGuide();
 
@@ -1622,16 +1661,10 @@ var ocLang = window.ocLang || '';
 
         extractFilename: function(path) {
             if (!path) return '';
-            var parts = path.split('/');
+            var parts = String(path).split('/');
             var filename = parts[parts.length - 1];
 
-            if (filename.endsWith('.yaml')) {
-                filename = filename.slice(0, -5);
-            } else if (filename.endsWith('.yml')) {
-                filename = filename.slice(0, -4);
-            }
-
-            return filename;
+            return filename.replace(/\.(yaml|yml)$/i, '');
         },
 
         startAutoUpdate: function() {
@@ -1988,7 +2021,7 @@ var ocLang = window.ocLang || '';
         },
 
         // Clear the log before streaming so the operation API is served first and the stream does not block it
-        startLogDisplay: function(initialMessage, skipClearLog, scriptName) {
+        startLogDisplay: function(initialMessage, skipClearLog, scriptName, probe) {
             if (this.stream) {
                 if (initialMessage) {
                     this.stream.abort();
@@ -2012,6 +2045,7 @@ var ocLang = window.ocLang || '';
             var stream = ocCreateLogStream({
                 url: '<%=url("admin", "services", "openclash", "startlog")%>',
                 script: scriptName,
+                probe: probe,
                 initialMessage: initialMessage,
                 skipLines: this.lastLogLineCount,
                 onSkipLines: function(n) { self.lastLogLineCount = n; },
@@ -2561,7 +2595,6 @@ var ocLang = window.ocLang || '';
         textarea: null,
         statusEl: null,
         initialized: false,
-        bubbleTimer: null,
 
         init: function() {
             if (this.initialized) return;
@@ -2569,23 +2602,11 @@ var ocLang = window.ocLang || '';
             this.textarea = document.getElementById('usage-help-textarea');
             this.statusEl = document.getElementById('usage-help-status');
 
-            var floatBtn = document.getElementById('usage-help-float');
-            if (floatBtn) {
-                floatBtn.addEventListener('click', function() {
-                    UsageHelpManager.show();
-                });
-                floatBtn.addEventListener('mouseenter', function() {
-                    UsageHelpManager.dismissBubble();
-                });
-            }
-
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && UsageHelpManager.overlay && UsageHelpManager.overlay.style.display === 'flex') {
                     UsageHelpManager.hide();
                 }
             });
-
-            this.startBubbleTimer();
 
             this.initialized = true;
         },
@@ -2666,32 +2687,67 @@ var ocLang = window.ocLang || '';
                 if (btn) { btn.innerHTML = origHTML; btn.disabled = false; }
                 self.hide();
             }, 2000);
+        }
+    };
+
+    var FloatHintManager = {
+        bubbles: [],
+        timer: null,
+        started: false,
+
+        init: function() {
+            var stack = document.getElementById('oc-float-stack');
+            if (!stack || this.started) return;
+            this.started = true;
+            // the tour hint is noise for someone who already walked through it
+            var ids = ['usage-help-bubble'];
+            if (localStorage.getItem('oc_guide_done') !== '1') ids.unshift('guide-bubble');
+            for (var i = 0; i < ids.length; i++) {
+                var el = document.getElementById(ids[i]);
+                if (!el) continue;
+                this.bubbles.push(el);
+                this.bindOwner(el);
+            }
+            this.startTimer();
         },
 
-        startBubbleTimer: function() {
-            var bubble = document.getElementById('usage-help-bubble');
-            if (!bubble) return;
-
-            var delay = Math.random() * 60000;
-            if (delay > 20000) return;
-
+        // a bubble sits inside its own button, so only that button hides it
+        bindOwner: function(bubble) {
+            var btn = bubble.parentNode;
+            if (!btn || !btn.addEventListener) return;
             var self = this;
-            this.bubbleTimer = setTimeout(function() {
-                bubble.classList.add('show');
+            var hide = function() { self.dismiss(bubble); };
+            btn.addEventListener('mouseenter', hide);
+            btn.addEventListener('click', hide);
+        },
+
+        startTimer: function() {
+            if (!this.bubbles.length) return;
+            var delay = Math.random() * 60000;
+            // skip most visits so the hint stays an occasional nudge
+            if (delay > 20000) return;
+            var self = this;
+            this.timer = setTimeout(function() {
+                self.timer = null;
+                for (var i = 0; i < self.bubbles.length; i++) {
+                    if (self.bubbles[i].dataset.dismissed !== '1') self.bubbles[i].classList.add('show');
+                }
             }, Math.min(delay, 5000));
         },
 
-        dismissBubble: function() {
-            var bubble = document.getElementById('usage-help-bubble');
-            if (!bubble) return;
-            bubble.classList.remove('show');
-            if (this.bubbleAutoHide) {
-                clearTimeout(this.bubbleAutoHide);
-                this.bubbleAutoHide = null;
+        dismiss: function(bubble) {
+            if (bubble) {
+                bubble.dataset.dismissed = '1';
+                bubble.classList.remove('show');
+                return;
             }
-            if (this.bubbleTimer) {
-                clearTimeout(this.bubbleTimer);
-                this.bubbleTimer = null;
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+            for (var i = 0; i < this.bubbles.length; i++) {
+                this.bubbles[i].dataset.dismissed = '1';
+                this.bubbles[i].classList.remove('show');
             }
         }
     };
@@ -3377,6 +3433,7 @@ var ocLang = window.ocLang || '';
         envFails: 0,
         envRetryTimer: null,
         probeTimer: null,
+        hintTimer: null,
         statsTs: 0,
         lastCost: 0,
         pollSeq: 0,
@@ -3558,10 +3615,14 @@ var ocLang = window.ocLang || '';
         },
 
         stopTimers: function() {
+            var hint;
             if (this.envTimer) { clearInterval(this.envTimer); this.envTimer = null; }
             if (this.statsTimer) { clearInterval(this.statsTimer); this.statsTimer = null; }
             if (this.envRetryTimer) { clearTimeout(this.envRetryTimer); this.envRetryTimer = null; }
             if (this.probeTimer) { clearTimeout(this.probeTimer); this.probeTimer = null; }
+            if (this.hintTimer) { clearTimeout(this.hintTimer); this.hintTimer = null; }
+            hint = document.getElementById('ac-dns-hint');
+            if (hint) hint.classList.add('oc-hidden');
             if (this.statsAbort) { this.statsAbort.abort(); this.statsAbort = null; }
             this.prevFlows = null;
             this.statsTs = 0;
@@ -3946,6 +4007,7 @@ var ocLang = window.ocLang || '';
                 self.busy--;
                 if (x && x.status == 200 && data && data.ok) {
                     d.dir = dir;
+                    self.showDnsHint(dir);
                     ocToast(!data.core_running ? '<%:Saved; applies at the next start%>'
                         : (dir === 'direct' ? '<%:Set as Direct%>' : '<%:Set as Proxy%>'), 'success');
                 } else {
@@ -3975,6 +4037,7 @@ var ocLang = window.ocLang || '';
                         self.env.default_dir = dir;
                         self.env.ac_mode = dir === 'proxy' ? 0 : 1;
                     }
+                    self.showDnsHint(dir);
                     ocToast(!data.core_running ? '<%:Saved; applies at the next start%>'
                         : (dir === 'proxy' ? '<%:All set to Proxy%>' : '<%:All set to Direct%>'), 'success');
                 } else {
@@ -4012,6 +4075,32 @@ var ocLang = window.ocLang || '';
             if (!env) return;
             var fixEl = document.getElementById('ac-warn-fix');
             if (fixEl) fixEl.classList.toggle('oc-hidden', !env.need_fix);
+        },
+
+        // with DNS hijack disabled the client DNS path is the user's own setup;
+        // redir-host keeps real addresses, so only fake-ip needs the direct-side reminder
+        showDnsHint: function(dir) {
+            var env = this.env, self = this, el, txt, show;
+            show = !!env && !env.need_fix && Number(env.redirect_dns) === 0
+                && (dir !== 'direct' || (!!env.en_mode && env.en_mode.indexOf('fake-ip') >= 0));
+            el = document.getElementById('ac-dns-hint');
+            if (!el) return;
+            if (!show) {
+                if (this.hintTimer) { clearTimeout(this.hintTimer); this.hintTimer = null; }
+                el.classList.add('oc-hidden');
+                return;
+            }
+            txt = document.getElementById('ac-dns-hint-text');
+            if (!txt) return;
+            txt.textContent = dir === 'direct'
+                ? '<%:Ensure DNS queries of direct devices bypass the core%>'
+                : '<%:Ensure DNS queries of proxy devices go through the core%>';
+            el.classList.remove('oc-hidden');
+            if (this.hintTimer) clearTimeout(this.hintTimer);
+            this.hintTimer = setTimeout(function() {
+                self.hintTimer = null;
+                el.classList.add('oc-hidden');
+            }, 6000);
         },
 
         syncCounts: function() {
@@ -4287,7 +4376,8 @@ var ocLang = window.ocLang || '';
 
             var name = this.displayName(d);
             var ipLine = [d.ip, d.ip6].filter(Boolean).join(' · ');
-            var tipParts = [name];
+            var tipParts = [];
+            if (d.name || d.hostname) tipParts.push(name);
             if (d.vendor) tipParts.push(d.vendor);
             if (d.ip) tipParts.push(d.ip);
             if (d.ip6) tipParts.push(d.ip6);
@@ -4845,8 +4935,9 @@ var ocLang = window.ocLang || '';
             }
 
             if (status.clash && status.daip) {
+                // keep the start log so a page opened from another tab shows the run already in progress
                 if (!WSManager.hasActiveConnections()) {
-                    LogManager.startLogDisplay(null, false, 'view');
+                    LogManager.startLogDisplay(null, true, 'view', true);
                 }
                 initializeWebSocketConnections(status);
             } else {
@@ -4855,6 +4946,9 @@ var ocLang = window.ocLang || '';
                 if (status.clash) {
                     syncDataSource();
                 } else {
+                    StatsWSMeta.probed = false;
+                    StatsWSMeta.available = null;
+                    StatsWSMeta.retryAfter = 0;
                     NetworkStatsManager.stop();
                     NetworkStatsManager.resetStats();
                 }
@@ -4874,12 +4968,8 @@ var ocLang = window.ocLang || '';
         OverwriteSubscribeManager.init();
         SubscriptionManager.init();
         UsageHelpManager.init();
+        FloatHintManager.init();
         loadAnnouncement();
-        var guideBubble = document.getElementById('guide-bubble');
-        if (guideBubble && localStorage.getItem('oc_guide_done') !== '1') {
-            guideBubble.classList.add('show');
-            setTimeout(function() { guideBubble.classList.remove('show'); }, 6000);
-        }
     }, 300);
 
     setTimeout(function() { check_core(); }, 1000);
@@ -4899,6 +4989,9 @@ var ocLang = window.ocLang || '';
     var StatsWSMeta = {
         protocol: null,
         token: null,
+        available: null,
+        probed: false,
+        retryAfter: 0,
         endpoints: {
             traffic: '/traffic',
             connections: '/connections',
@@ -4911,11 +5004,10 @@ var ocLang = window.ocLang || '';
         }
     };
 
-    function syncDataSource() {
+    function syncDataSource(skipConnect) {
         var status = StateManager.current_status;
         var req = (typeof StatsChart !== 'undefined' && StatsChart.requiredSources) ? StatsChart.requiredSources() : { ws: [], sys: true };
-        var needsNetworkFallback = status && status.clash && status.daip && !StatsWSMeta.protocol &&
-            (StatsChart.view === 'cards' || req.ws.length > 0);
+        var wantsStats = !!(status && status.clash && status.daip && (StatsChart.view === 'cards' || req.ws.length > 0));
 
         if (status && status.clash && req.sys) {
             if (!SystemStatusManager.isEnabled) SystemStatusManager.start();
@@ -4923,13 +5015,24 @@ var ocLang = window.ocLang || '';
             SystemStatusManager.stop();
         }
 
-        if (needsNetworkFallback) {
+        // every required socket must be up, otherwise its card would stop updating
+        var wsActive = req.ws.length > 0;
+        for (var j = 0; j < req.ws.length; j++) {
+            var live = WSManager.connections[req.ws[j]];
+            if (!live || live.state !== WSManager.connectionStates.CONNECTED) {
+                wsActive = false;
+                break;
+            }
+        }
+
+        // polling is the baseline and only yields once a socket is really connected
+        if (wantsStats && !wsActive) {
             if (!NetworkStatsManager.isEnabled) NetworkStatsManager.start();
         } else {
             NetworkStatsManager.stop();
         }
 
-        if (!StatsWSMeta.protocol) return;
+        if (skipConnect || !StatsWSMeta.protocol || StatsWSMeta.available === false || Date.now() < (StatsWSMeta.retryAfter || 0)) return;
 
         var types = ['traffic', 'connections', 'memory'];
         for (var i = 0; i < types.length; i++) {
@@ -4937,8 +5040,10 @@ var ocLang = window.ocLang || '';
             if (req.ws.indexOf(t) >= 0) {
                 var conn = WSManager.connections[t];
                 var active = conn && (conn.state === WSManager.connectionStates.CONNECTED || conn.state === WSManager.connectionStates.CONNECTING);
-                if (!active) {
-                    var url = StatsWSMeta.protocol + StatsWSMeta.endpoints[t] + (StatsWSMeta.token ? '?token=' + StatsWSMeta.token : '');
+                // a pending backoff timer owns the next attempt; do not race it here
+                var pending = !!(WSManager.pendingReconnect && WSManager.pendingReconnect[t]);
+                if (!active && !pending) {
+                    var url = StatsWSMeta.protocol + StatsWSMeta.endpoints[t] + (StatsWSMeta.token ? '?token=' + encodeURIComponent(StatsWSMeta.token) : '');
                     WSManager.createConnection(t, url, StatsWSMeta.handlers[t]);
                 }
             } else {
@@ -4954,10 +5059,67 @@ var ocLang = window.ocLang || '';
             return false;
         }
 
+        if (StatsWSMeta.available === false) {
+            StatsWSMeta.protocol = null;
+            syncDataSource();
+            return false;
+        }
+
         StatsWSMeta.protocol = getDashboardWebSocketOrigin(status);
         StatsWSMeta.token = status.dase;
+        if (!StatsWSMeta.probed) {
+            var apiOrigin = ocGetDashboardApiOrigin(status);
+            // only the same-origin proxy needs the check; a direct core origin works as before
+            if (apiOrigin.indexOf('/oc-api') > 0) ocProbeStatsWs(apiOrigin, StatsWSMeta.token);
+        }
         syncDataSource();
         return true;
+    }
+
+    // The same-origin /oc-api only exists behind the nginx proxy; probe it once instead
+    // of retrying sockets that can only answer 404 (uHTTPd has no reverse proxy).
+    function ocProbeStatsWs(apiOrigin, token) {
+        var settled = false;
+        var finish = function(available) {
+            if (settled) return;
+            settled = true;
+            StatsWSMeta.probed = true;
+            if (available !== null) StatsWSMeta.available = available;
+            if (available === false) {
+                StatsWSMeta.protocol = null;
+                WSManager.closeAll();
+            }
+            if (typeof syncDataSource === 'function') syncDataSource();
+        };
+        if (typeof window.fetch !== 'function') {
+            finish(null);
+            return;
+        }
+        var headers = {};
+        if (token) headers.Authorization = 'Bearer ' + token;
+        var timer = setTimeout(function() { finish(null); }, 4000);
+        window.fetch(apiOrigin + '/version', {
+            method: 'GET',
+            redirect: 'manual',
+            cache: 'no-store',
+            credentials: 'omit',
+            headers: headers
+        }).then(function(res) {
+            clearTimeout(timer);
+            // only a 404 proves the proxy is missing; 502/503 and other codes stay unknown
+            if (res.status === 404) {
+                finish(false);
+                return;
+            }
+            if (res.status === 200 || res.status === 401) {
+                finish(true);
+                return;
+            }
+            finish(null);
+        }).catch(function() {
+            clearTimeout(timer);
+            finish(null);
+        });
     }
 
     function AnnouncementAnimator(config) {

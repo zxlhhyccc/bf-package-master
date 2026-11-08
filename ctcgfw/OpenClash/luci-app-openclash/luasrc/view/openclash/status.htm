@@ -15,7 +15,9 @@
                             <div class="megaphone-container">
                                 <svg id="megaphone" width="15" height="15"><use href="#oc-icon-megaphone"/></svg>
                             </div>
-                            <div id="announcement-content" class="announcement-content"></div>
+                            <div class="announcement-viewport">
+                                <div id="announcement-content" class="announcement-content"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="main-card">
@@ -419,6 +421,11 @@
                                             <svg><use href="#oc-icon-alert-circle"/></svg>
                                             <span><%:Using access control in Fake-IP mode requires DNS hijack set to Firewall Forwarding%></span>
                                             <button type="button" class="ac-warn-btn" id="ac-warn-fix-btn"><%:Switch%></button>
+                                        </div>
+
+                                        <div class="ac-warn oc-hidden" id="ac-dns-hint" role="status">
+                                            <svg><use href="#oc-icon-alert-circle"/></svg>
+                                            <span id="ac-dns-hint-text"></span>
                                         </div>
 
                                         <div class="ac-th">
