@@ -1,0 +1,3 @@
+#!/bin/sh
+[ "$ACTION" = "ifup" ] || exit 0
+[ "$INTERFACE" = "wan" ] && /etc/init.d/mosdns reload
