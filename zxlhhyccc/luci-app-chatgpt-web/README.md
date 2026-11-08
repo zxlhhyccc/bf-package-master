@@ -1,5 +1,20 @@
 ## 访问数：![hello](https://views.whatilearened.today/views/github/sirpdboy/deplives.svg)[![](https://img.shields.io/badge/TG群-点击加入-FFFFFF.svg)](https://t.me/joinchat/AAAAAEpRF88NfOK5vBXGBQ)
-### 访问数：[![](https://visitor-badge.glitch.me/badge?page_id=sirpdboy-visitor-badge)] [![](https://img.shields.io/badge/TG群-点击加入-FFFFFF.svg)](https://t.me/joinchat/AAAAAEpRF88NfOK5vBXGBQ)
+
+
+
+<h1 align="center">
+  <br>luci-app-chatgpt-web<br>
+</h1>
+
+<p align="center">
+<a href="https://openwrt.org"><img alt="OpenWrt" src="https://img.shields.io/badge/OpenWrt-%E2%89%A519.07-ff0000?logo=openwrt&logoColor=white"></a>
+<a href="https://www.google.com/chrome/"><img alt="Chrome" src="https://img.shields.io/badge/Chrome-%E2%89%A5111-4285F3?logo=googlechrome&logoColor=white"></a>
+<a href="https://www.apple.com/safari/"><img alt="Safari" src="https://img.shields.io/badge/Safari-%E2%89%A516.4-000000?logo=safari&logoColor=white"></a>
+<a href="https://www.mozilla.org/firefox/"><img alt="Firefox" src="https://img.shields.io/badge/Firefox-%E2%89%A5128-FF7138?logo=firefoxbrowser&logoColor=white"></a>
+<a target="_blank" href="https://github.com/sirpdboy/luci-app-chatgpt-web/releases"> <img alt="GitHub release" src="https://img.shields.io/github/v/release/sirpdboy/luci-app-chatgpt-web"></a>
+<a href="https://github.com/sirpdboy/luci-app-chatgpt-web/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/sirpdboy/luci-app-chatgpt-web/total"></a>
+</p>
+
 
 ![screenshots](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/说明1.jpg)
 
@@ -120,11 +135,11 @@ luci-app-chatgpt 在OPENWRT上实现ChatGPT项目，基于OpenAI API
 
 ## 界面
 
-![screenshots](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/chatgpd1.png)
+![screenshots](./doc/chatgpt1.png)
 
-![screenshots](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/chatgpd2.png)
+![screenshots](./doc/chatgpt2.png)
 
-![screenshots](https://raw.githubusercontent.com/sirpdboy/openwrt/master/doc/chatgpd3.png)
+![screenshots](./doc/chatgpt3.png)
 
 
 ## 使用与授权相关说明
@@ -133,28 +148,21 @@ luci-app-chatgpt 在OPENWRT上实现ChatGPT项目，基于OpenAI API
 
 # My other project
 
-- 网络速度测试 ：https://github.com/sirpdboy/NetSpeedTest
-
-- 定时设置插件 : https://github.com/sirpdboy/luci-app-autotimeset
-
+- 路由安全看门狗 ：https://github.com/sirpdboy/luci-app-watchdog
+- 网络速度测试 ：https://github.com/sirpdboy/luci-app-netspeedtest
+- 计划任务插件（原定时设置） : https://github.com/sirpdboy/luci-app-taskplan
 - 关机功能插件 : https://github.com/sirpdboy/luci-app-poweroffdevice
-
 - opentopd主题 : https://github.com/sirpdboy/luci-theme-opentopd
-
-- kucat 主题: https://github.com/sirpdboy/luci-theme-kucat
-
+- kucat酷猫主题: https://github.com/sirpdboy/luci-theme-kucat
+- kucat酷猫主题设置工具: https://github.com/sirpdboy/luci-app-kucat-config
+- NFT版上网时间控制插件: https://github.com/sirpdboy/luci-app-timecontrol
 - 家长控制: https://github.com/sirpdboy/luci-theme-parentcontrol
-
+- 定时限速: https://github.com/sirpdboy/luci-app-eqosplus
 - 系统高级设置 : https://github.com/sirpdboy/luci-app-advanced
-
 - ddns-go动态域名: https://github.com/sirpdboy/luci-app-ddns-go
-
 - 进阶设置（系统高级设置+主题设置kucat/agron/opentopd）: https://github.com/sirpdboy/luci-app-advancedplus
-
-- 设置向导: https://github.com/sirpdboy/luci-app-wizard
-
-- 分区扩容: https://github.com/sirpdboy/luci-app-partexp
-
+- 网络设置向导: https://github.com/sirpdboy/luci-app-netwizard
+- 一键分区扩容: https://github.com/sirpdboy/luci-app-partexp
 - lukcy大吉: https://github.com/sirpdboy/luci-app-lukcy
 
 ## 捐助
