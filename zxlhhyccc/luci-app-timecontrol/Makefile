@@ -1,0 +1,47 @@
+#
+# Copyright (C) 2006-2017 OpenWrt.org
+# Copyright (C) 2022-2026 sirpdboy <herboy2008@gmail.com>
+# This is free software, licensed under the GNU General Public License v2.
+# See /LICENSE for more information.
+#
+
+include $(TOPDIR)/rules.mk
+
+THEME_NAME:=timecontrol
+PKG_NAME:=luci-app-$(THEME_NAME)
+
+PKG_LICENSE:=Apache-2.0
+
+LUCI_TITLE:=LuCI support for timecontrol
+LUCI_DESCRIPTION:=LuCI support for Easy timecontrol (iptables/nftables).
+LUCI_DEPENDS:=+bc +bash +conntrack \
+	+PACKAGE_firewall4:nftables \
+	+PACKAGE_firewall:iptables \
+	+PACKAGE_firewall:ip6tables \
+	+PACKAGE_firewall:kmod-ip6tables \
+	+PACKAGE_firewall:iptables-mod-conntrack-extra \
+	+PACKAGE_firewall:iptables-mod-ipset \
+	+PACKAGE_firewall:kmod-ipt-ipset \
+	+PACKAGE_firewall:ipset
+LUCI_PKGARCH:=all
+
+PKG_VERSION:=3.2.4
+PKG_RELEASE:=20260322
+PKG_MAINTAINER:=sirpdboy <herboy2008@gmail.com>
+
+define Build/Compile
+endef
+
+define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+rm -f /tmp/luci-*
+endef
+
+define Package/$(PKG_NAME)/conffiles
+/etc/config/timecontrol
+endef
+
+include $(TOPDIR)/feeds/luci/luci.mk
+
+# call BuildPackage - OpenWrt buildroot signature
+
