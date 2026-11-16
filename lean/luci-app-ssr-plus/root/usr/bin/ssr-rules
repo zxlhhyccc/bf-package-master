@@ -9,6 +9,7 @@
 
 . $IPKG_INSTROOT/etc/init.d/shadowsocksr
 . $IPKG_INSTROOT/usr/share/shadowsocksr/ipv6.sh
+. $IPKG_INSTROOT/lib/functions/network.sh
 
 # Detect firewall version and set appropriate tools
 detect_firewall() {
@@ -35,6 +36,15 @@ detect_firewall() {
 
 # Initialize firewall detection
 detect_firewall
+
+# 【核心修复】：为解决接口绑定在 LAN 区时运行时状态缺失而设计的标准反查与兜底函数
+get_real_ifname() {
+	local name="$1"
+	local real_name=""
+	network_get_device real_name "$name" 2>/dev/null
+	[ -z "$real_name" ] && real_name="$name"
+	echo "$real_name"
+}
 
 TAG="_SS_SPEC_RULE_"                                  # comment tag
 
@@ -89,14 +99,14 @@ usage() {
 		    -m <Interface>          Interface name
 		    -I <ip_list_file>       a file content is bypassed shunt ip list
 		    -e <extra_options>      extra options for iptables
-		    -E <0|1>				enable_fake_ip status
+		    -E <0|1>                enable_fake_ip status
 		    -o                      apply the rules to the OUTPUT chain
 		    -O                      apply the global rules to the OUTPUT chain
 		    -u                      enable udprelay mode, TPROXY is required
 		    -U                      enable udprelay mode, using different IP
-			                        and ports for TCP and UDP
+		                            and ports for TCP and UDP
 		    -y                      disable all auxiliary UDP rules when UDP
-			                        transparent proxy is unavailable
+		                            transparent proxy is unavailable
 		    -f                      flush the rules
 		    -g                      gfwlist mode
 		    -r                      router mode
@@ -771,8 +781,7 @@ ac_rule_nft() {
 			fi
 		else
 			for name in $Interface; do
-				local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-				[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+				local IFNAME=$(get_real_ifname "$name")
 				if [ -n "$IFNAME" ]; then
 					if [ -n "$MATCH_SET" ]; then
 						$NFT add rule inet ss_spec ss_spec_prerouting meta iifname "$IFNAME" ip daddr 198.18.0.0/16 $MATCH_SET meta l4proto tcp redirect to :$local_port comment "\"$TAG\"" 2>/dev/null
@@ -811,8 +820,7 @@ ac_rule_nft() {
 			fi
 		else
 			for name in $Interface; do
-				local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-				[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+				local IFNAME=$(get_real_ifname "$name")
 				if [ -n "$IFNAME" ]; then
 					if [ -n "$MATCH_SET" ]; then
 						$NFT add rule inet ss_spec ss_spec_prerouting meta iifname "$IFNAME" meta l4proto udp $MATCH_SET udp dport 443 reject with icmp type port-unreachable comment "\"$TAG\"" 2>/dev/null
@@ -845,8 +853,7 @@ ac_rule_nft() {
 	else
 		# For each Interface, find its actual ifname and add an iifname-limited prerouting rule
 		for name in $Interface; do
-			local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-			[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+			local IFNAME=$(get_real_ifname "$name")
 			if [ -n "$IFNAME" ]; then
 				if [ -n "$MATCH_SET" ]; then
 					$NFT add rule inet ss_spec ss_spec_prerouting meta iifname "$IFNAME" $TCP_EXT_ARGS $MATCH_SET jump ss_spec_wan_ac comment "\"$TAG\"" 2>/dev/null
@@ -963,8 +970,7 @@ ac_rule_iptables() {
 		fi
 	else
 		for name in $Interface; do
-			local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-			[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+			local IFNAME=$(get_real_ifname "$name")
 			if [ -n "$IFNAME" ]; then
 				if [ -n "$MATCH_SET" ]; then
 					$IPT -I PREROUTING 1 ${IFNAME:+-i $IFNAME} -p tcp $EXT_ARGS $MATCH_SET -m comment --comment "$TAG" -j SS_SPEC_WAN_AC
@@ -987,8 +993,7 @@ ac_rule_iptables() {
 			fi
 		else
 			for name in $Interface; do
-				local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-				[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+				local IFNAME=$(get_real_ifname "$name")
 				if [ -n "$IFNAME" ]; then
 					if [ -n "$MATCH_SET" ]; then
 						$ipt -I PREROUTING 1 ${IFNAME:+-i $IFNAME} -p udp $EXT_ARGS $MATCH_SET --dport 443 -m comment --comment "$TAG" -j REJECT --reject-with icmp-port-unreachable
@@ -1012,8 +1017,7 @@ ac_rule_iptables() {
 			fi
 		else
 			for name in $Interface; do
-				local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-				[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+				local IFNAME=$(get_real_ifname "$name")
 				if [ -n "$IFNAME" ]; then
 					if [ -n "$MATCH_SET" ]; then
 						$IPT -I PREROUTING 1 ${IFNAME:+-i $IFNAME} -p tcp -d 198.18.0.0/16 $MATCH_SET -j REDIRECT --to-ports "$local_port" -m comment --comment "$TAG"
@@ -1667,8 +1671,7 @@ tp_rule_iptables() {
 			fi
 		else
 			for name in $Interface; do
-				local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-				[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+				local IFNAME=$(get_real_ifname "$name")
 				if [ -n "$MATCH_SET" ]; then
 					$ipt -t filter -I FORWARD 1 ${IFNAME:+-i $IFNAME} -p udp $EXT_ARGS $MATCH_SET -m comment --comment "$TAG" -j SS_SPEC_UDP_BLOCK
 				else
@@ -1880,8 +1883,7 @@ tp_rule_iptables() {
 		fi
 	else
 		for name in $Interface; do
-			local IFNAME=$(uci -P /var/state get network."$name".ifname 2>/dev/null)
-			[ -z "$IFNAME" ] && IFNAME=$(uci -P /var/state get network."$name".device 2>/dev/null)
+			local IFNAME=$(get_real_ifname "$name")
 			if [ -n "$IFNAME" ]; then
 				if [ -n "$MATCH_SET" ]; then
 					$ipt -I PREROUTING 1 ${IFNAME:+-i $IFNAME} -p udp $EXT_ARGS $MATCH_SET -m comment --comment "$TAG" -j SS_SPEC_TPROXY
