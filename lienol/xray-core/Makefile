@@ -48,8 +48,9 @@ CRONET_CLANG_FILE:=clang-$(CRONET_CLANG_VERSION).tar.xz
 CRONET_CLANG_DIR:=$(PKG_BUILD_DIR)/.cronet-clang
 
 ifeq ($(CONFIG_XRAY_CORE_NAIVE),y)
-  export CGO_LDFLAGS_ALLOW = -l:libcronet\.a
   GO_PKG_TAGS+=with_naive_outbound
+  # Cronet selects its static archive by filename, which cgo rejects by default.
+  GO_PKG_VARS+=CGO_LDFLAGS_ALLOW='-l:libcronet[.]a'
   ifeq ($(CONFIG_USE_MUSL),y)
     GO_PKG_TAGS+=with_musl
   endif
