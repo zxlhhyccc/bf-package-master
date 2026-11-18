@@ -2,6 +2,10 @@
 
 set -x
 
+if [ -z "$GITHUB_TOKEN" ] && [ -f ".git-credentials" ]; then
+    GITHUB_TOKEN=$(grep -oP 'https://[^:]+:\K[^@]+' ".git-credentials" | head -n1)
+fi
+
 export CURDIR="$(cd "$(dirname $0)"; pwd)"
 
 function update() {
