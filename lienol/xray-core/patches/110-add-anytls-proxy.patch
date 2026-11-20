@@ -24,7 +24,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	go.yaml.in/yaml/v3 v3.0.5 // indirect
 --- a/go.sum
 +++ b/go.sum
-@@ -73,6 +73,10 @@
+@@ -75,6 +75,10 @@
  github.com/robfig/cron/v3 v3.0.1/go.mod h1:eQICP3HwyT7UooqI/z+Ov+PtYAWygg1TEWWzGIFLtro=
  github.com/rogpeppe/go-internal v1.16.0 h1:O9DK+vNMDVGLr2BeZqmpLeMjiMNkuXfcqntWbZV6S5g=
  github.com/rogpeppe/go-internal v1.16.0/go.mod h1:DrUVZyrJU+txYW5/1kwtXQSMFio52ZOxX7yM1VHvnxs=
@@ -174,9 +174,9 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  
  	// Inbound and outbound proxies.
 +	_ "github.com/xtls/xray-core/proxy/anytls"
- 	_ "github.com/xtls/xray-core/proxy/blackhole"
  	_ "github.com/xtls/xray-core/proxy/dns"
  	_ "github.com/xtls/xray-core/proxy/dokodemo"
+ 	_ "github.com/xtls/xray-core/proxy/freedom"
 --- a/proxy/anytls/LICENSE.sing-anytls
 +++ b/proxy/anytls/LICENSE.sing-anytls
 @@ -0,0 +1,14 @@
@@ -1190,7 +1190,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +}
 --- a/proxy/freedom/freedom.go
 +++ b/proxy/freedom/freedom.go
-@@ -166,6 +166,9 @@
+@@ -192,6 +192,9 @@
  	if inbound == nil {
  		return nil
  	}

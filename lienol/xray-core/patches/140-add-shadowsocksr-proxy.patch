@@ -25,7 +25,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	github.com/pion/stun/v3 v3.1.7
 --- a/go.sum
 +++ b/go.sum
-@@ -47,6 +47,8 @@
+@@ -49,6 +49,8 @@
  github.com/libp2p/go-nat v1.0.1-0.20250821073202-01afc089f138/go.mod h1:TXQg5tfSy+bUjnhT5728j5j/MBj7keIYqqZ1+8k/ui8=
  github.com/libp2p/go-netroute v0.2.1 h1:V8kVrpD8GK0Riv15/7VN6RbUQ3URNZVosw7H2v9tksU=
  github.com/libp2p/go-netroute v0.2.1/go.mod h1:hraioZr0fhBjG0ZRXJJ6Zj2IVEVNx6tDTFQfSmcq7mQ=
@@ -155,7 +155,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  
 --- a/main/distro/all/all.go
 +++ b/main/distro/all/all.go
-@@ -45,6 +45,7 @@
+@@ -44,6 +44,7 @@
  	_ "github.com/xtls/xray-core/proxy/masque"
  	_ "github.com/xtls/xray-core/proxy/naive"
  	_ "github.com/xtls/xray-core/proxy/shadowsocks"
@@ -165,7 +165,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	_ "github.com/xtls/xray-core/proxy/vless/inbound"
 --- a/proxy/freedom/freedom.go
 +++ b/proxy/freedom/freedom.go
-@@ -166,7 +166,7 @@
+@@ -192,7 +192,7 @@
  	if inbound == nil {
  		return nil
  	}

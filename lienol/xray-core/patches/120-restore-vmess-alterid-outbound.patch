@@ -658,7 +658,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
 +}
 --- a/proxy/vmess/outbound/outbound.go
 +++ b/proxy/vmess/outbound/outbound.go
-@@ -132,7 +132,7 @@
+@@ -130,7 +130,7 @@
  		newCtx, newCancel = context.WithCancel(context.Background())
  	}
  
