@@ -20,7 +20,7 @@ Signed-off-by: coolsnowwolf <coolsnowwolf@gmail.com>
  	golang.org/x/tools v0.51.0 // indirect
 --- a/go.sum
 +++ b/go.sum
-@@ -179,6 +179,8 @@
+@@ -177,6 +177,8 @@
  github.com/yuin/gopher-lua v0.0.0-20190206043414-8bfc7677f583/go.mod h1:gqRgreBUhTSL0GeU64rtZ3Uq3wtjOa/TB2YfrtkCbVQ=
  github.com/yuin/gopher-lua v1.1.2 h1:yF/FjE3hD65tBbt0VXLE13HWS9h34fdzJmrWRXwobGA=
  github.com/yuin/gopher-lua v1.1.2/go.mod h1:7aRmXIWl37SqRf0koeyylBEzJ+aPt8A+mmkQ4f1ntR8=
