@@ -2832,7 +2832,7 @@ msgid ""
 "helloworld releases and installs the matching IPK or APK package for this "
 "system."
 msgstr ""
-"在线更新会从 fw876/helloworld 发布页下载最新 luci-app-ssr-plus，并根据当前系"
+"在线更新会从 zxlhhyccc/helloworld 发布页下载最新 luci-app-ssr-plus，并根据当前系"
 "统安装匹配的 IPK 或 APK 包。"
 
 #: applications/luci-app-ssr-plus/luasrc/view/shadowsocksr/component.htm:10

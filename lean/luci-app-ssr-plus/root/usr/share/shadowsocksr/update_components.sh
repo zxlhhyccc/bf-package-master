@@ -5,7 +5,7 @@ set -u
 XRAY_RELEASE_PAGE="https://github.com/XTLS/Xray-core/releases/latest"
 MIHOMO_RELEASE_PAGE="https://github.com/MetaCubeX/mihomo/releases/latest"
 NAIVEPROXY_RELEASE_API="https://api.github.com/repos/klzgrad/naiveproxy/releases/latest"
-HELLOWORLD_RELEASE_API="https://api.github.com/repos/fw876/helloworld/releases/latest"
+HELLOWORLD_RELEASE_API="https://api.github.com/repos/zxlhhyccc/helloworld/releases/latest"
 XRAY_BINARY="/usr/bin/xray"
 MIHOMO_BINARY="/usr/bin/mihomo"
 NAIVEPROXY_BINARY="/usr/bin/naive"
@@ -1357,7 +1357,7 @@ get_mainprogram_latest_info() {
 	asset_list="$(printf '%s\n' "$release_json" | sed -n 's/.*"name":[[:space:]]*"\([^"]*\.\(ipk\|apk\)\)".*/\1/p')"
 	asset="$(select_mainprogram_asset "$asset_list" "$pm")" || return 4
 	version="$(mainprogram_asset_version "$asset" 2>/dev/null || trim_version "$tag")"
-	url="$(mirror_wrap_url "https://github.com/fw876/helloworld/releases/download/$tag/$asset")"
+	url="$(mirror_wrap_url "https://github.com/zxlhhyccc/helloworld/releases/download/$tag/$asset")"
 
 	log_kv package_manager "$pm"
 	log_kv arch "$(get_openwrt_arch)"
