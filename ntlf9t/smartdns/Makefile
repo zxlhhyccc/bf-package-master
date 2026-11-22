@@ -6,13 +6,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=smartdns
-PKG_VERSION:=1.2026.48.4
+PKG_VERSION:=1.2026.48.5
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
-PKG_SOURCE_VERSION:=2cfe33407d6effb547759c97b775940f0407ff96
-PKG_MIRROR_HASH:=6123094220d013b055237b06d86e2e89739fc893368e06896ae5123ccde5ef1c
+PKG_SOURCE_VERSION:=b6fcf2f6407fc79f76dc7816f7716078648e7621
+PKG_MIRROR_HASH:=038f8409d34b05f23c439df9e5182567faa4e68a5f566d62bd8c5f44c367e5cb
 
 PKG_MAINTAINER:=Nick Peng <pymumu@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -84,9 +84,9 @@ endef
 define Download/smartdns-webui
   PROTO:=git
   URL:=https://github.com/pymumu/smartdns-webui.git
-  SOURCE_DATE:=2026-07-29
-  SOURCE_VERSION:=1c06fee693434ec7c71f06010d3f87416baba9f0
-  MIRROR_HASH:=1b718d1288f6ddbdd80e3a948dda1693fd7bc8079fdb65be121f64f23ce53849
+  SOURCE_DATE:=2026-11-21
+  SOURCE_VERSION:=6a64c5bbfe89f7d05eec1a5d0b1c7d41972eb86c
+  MIRROR_HASH:=4f93c63419f5bee5c9c8edc8c91291333508541db044d7feebe5c10a98174fb8
   SUBDIR:=smartdns-webui-$$$$(subst -,.,$$$$(SOURCE_DATE))~$$$$(call version_abbrev,$$$$(SOURCE_VERSION))
   FILE:=$$(SUBDIR).tar.zst
 endef
