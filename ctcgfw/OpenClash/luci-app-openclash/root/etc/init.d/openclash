@@ -485,8 +485,11 @@ revert_dnsmasq()
    uci -q commit dhcp
    uci -q commit openclash
 
+   /etc/init.d/dnsmasq restart
+
    masq_port=$(uci -q get dhcp.@dnsmasq[0].port)
-   if [ "$(nslookup www.apple.com 127.0.0.1:${masq_port} >/dev/null 2>&1 || echo $?)" = "1" ]; then
+   [ -z "$masq_port" ] && masq_port="53"
+   if [ "$masq_port" != "0" ] && ! nslookup www.apple.com "127.0.0.1:${masq_port}" >/dev/null 2>&1; then
       resolv_file=$(uci -q get dhcp.@dnsmasq[0].resolvfile)
       [ -z "$resolv_file" ] && resolv_file="/tmp/resolv.conf.d/resolv.conf.auto"
       wan_dns=$(/usr/share/openclash/openclash_get_network.lua "dns")
@@ -513,9 +516,8 @@ nameserver 119.29.29.29
 nameserver 8.8.8.8
 EOF
       fi
+      /etc/init.d/dnsmasq reload
    fi
-
-   /etc/init.d/dnsmasq restart
 
 } >/dev/null 2>&1
 
@@ -3452,27 +3454,37 @@ strip_quotes()
 lookup_uci_name()
 {
    #Map an allowed key to its uci option name, $1 must be an upper case allowed key
+   local table=" $allowed_names_map "
+
    OVERWRITE_UCI_NAME=""
-   case " $allowed_names_map " in
+   case "$table" in
       *" $1:"*)
-         OVERWRITE_UCI_NAME="${allowed_names_map#*" $1:"}"
+         OVERWRITE_UCI_NAME="${table#*" $1:"}"
          OVERWRITE_UCI_NAME="${OVERWRITE_UCI_NAME%% *}"
+         ;;
+   esac
+}
+
+#overwrite_key_type sets OVERWRITE_KEY_TYPE from allowed_keys_types, empty when the key is unknown.
+overwrite_key_type()
+{
+   local table=" $allowed_types_map "
+
+   OVERWRITE_KEY_TYPE=""
+   case "$table" in
+      *" $1:"*)
+         OVERWRITE_KEY_TYPE="${table#*" $1:"}"
+         OVERWRITE_KEY_TYPE="${OVERWRITE_KEY_TYPE%% *}"
          ;;
    esac
 }
 
 check_type()
 {
-   local key="$1"
    local value="$2"
-   local type=""
-   case " $allowed_types_map " in
-      *" ${key}:"*)
-         type="${allowed_types_map#*" ${key}:"}"
-         type="${type%% *}"
-         ;;
-   esac
-   case "$type" in
+
+   overwrite_key_type "$1"
+   case "$OVERWRITE_KEY_TYPE" in
       int)
          case "$value" in
             ""|*[!0-9]*) return 1;;
@@ -3487,7 +3499,7 @@ check_type()
          [ "$value" = "true" ] || [ "$value" = "false" ]
          return $?
          ;;
-      string|*)
+      *)
          return 0
          ;;
    esac
@@ -3515,66 +3527,72 @@ overwrite_config_match_item()
 
 expand_env_vars()
 {
-   #Expand $VAR / ${VAR} and ${VAR:-default}, keep all other characters as-is
-   local rest="$1"
-   local out="" head name val c word op
+   #Expand $VAR / ${VAR} and ${VAR:-default}, \$ keeps a literal $, keep all other characters as-is
+   local _env_rest="$1"
+   local _env_out _env_head _env_name _env_val _env_c _env_word _env_op
 
    while :; do
-      case "$rest" in
+      case "$_env_rest" in
          *'$'*) ;;
-         *) out="$out$rest"; break;;
+         *) _env_out="$_env_out$_env_rest"; break;;
       esac
-      head="${rest%%\$*}"
-      out="$out$head"
-      rest="${rest#*\$}"
-      name=""
-      case "$rest" in
+      _env_head="${_env_rest%%\$*}"
+      _env_rest="${_env_rest#*\$}"
+      case "$_env_head" in
+         *'\')
+            _env_out="$_env_out${_env_head%?}\$"
+            continue
+            ;;
+      esac
+      _env_out="$_env_out$_env_head"
+      _env_name=""
+      case "$_env_rest" in
          '{'*)
-            case "${rest#\{}" in
+            case "${_env_rest#\{}" in
                *'}'*)
-                  name="${rest#\{}"; name="${name%%\}*}"
-                  op=""
-                  word=""
-                  case "$name" in
-                     *:-*) op=":-"; word="${name#*:-}"; name="${name%%:-*}";;
+                  _env_name="${_env_rest#\{}"; _env_name="${_env_name%%\}*}"
+                  _env_op=""
+                  _env_word=""
+                  case "$_env_name" in
+                     *:-*) _env_op=":-"; _env_word="${_env_name#*:-}"; _env_name="${_env_name%%:-*}";;
                   esac
-                  case "$name" in
-                     ""|*[!A-Za-z0-9_]*|[0-9]*) out="$out\${$name$op$word}";;
+                  case "$_env_name" in
+                     ""|*[!A-Za-z0-9_]*|[0-9]*) _env_out="$_env_out\${$_env_name$_env_op$_env_word}";;
                      *)
-                        eval "val=\${$name-}"
-                        if [ -n "$op" ] && [ -z "$val" ]; then
-                           out="$out$(expand_env_vars "$word")"
+                        eval "_env_val=\${$_env_name-}"
+                        if [ -n "$_env_op" ] && [ -z "$_env_val" ]; then
+                           _env_out="$_env_out$(expand_env_vars "$_env_word")"
                         else
-                           out="$out$val"
+                           _env_out="$_env_out$_env_val"
                         fi
                         ;;
                   esac
-                  rest="${rest#*\}}"
+                  _env_rest="${_env_rest#*\}}"
                   ;;
-               *) out="$out\$";;
+               *) _env_out="$_env_out\$";;
             esac
             continue
             ;;
          '$'*)
-            out="$out\$\$"
-            rest="${rest#?}"
+            _env_out="$_env_out\$\$"
+            _env_rest="${_env_rest#?}"
             continue
             ;;
       esac
       while :; do
-         c="${rest%"${rest#?}"}"
-         case "$c" in
-            [A-Za-z0-9_]) name="$name$c"; rest="${rest#?}";;
+         _env_c="${_env_rest%"${_env_rest#?}"}"
+         case "$_env_c" in
+            [A-Za-z0-9_]) _env_name="$_env_name$_env_c"; _env_rest="${_env_rest#?}";;
             *) break;;
          esac
       done
-      case "$name" in
-         ""|[0-9]*) out="$out\$$name";;
-         *) eval "val=\${$name-}"; out="$out$val";;
+      case "$_env_name" in
+         ""|[0-9]*) _env_out="$_env_out\$$_env_name";;
+         *) eval "_env_val=\${$_env_name-}"; _env_out="$_env_out$_env_val";;
       esac
    done
 
-   printf '%s' "$out"
+   printf '%s' "$_env_out"
 }
 
 overwrite_file()
@@ -3594,15 +3612,15 @@ overwrite_file()
       BYPASS_GATEWAY_COMPATIBLE:int_bool \
       CHINA_IP_ROUTE:int \
       CHINA_IP_ROUTE_DOMAIN_SOURCE:string \
-      CHINA_IP_ROUTE_PASS:string \
+      CHINA_IP_ROUTE_PASS:list \
       CHINA_IP6_ROUTE:int \
-      CHINA_IP6_ROUTE_PASS:string \
+      CHINA_IP6_ROUTE_PASS:list \
       CHNR_AUTO_UPDATE:int_bool \
       CHNR_CUSTOM_URL:string \
       CHNR6_CUSTOM_URL:string \
       CHNR_UPDATE_DAY_TIME:string \
       CHNR_UPDATE_WEEK_TIME:string \
-      COMMON_PORTS:string \
+      COMMON_PORTS:list \
       CONFIG_FILE:string \
       CORE_TYPE:string \
       CN_PORT:int \
@@ -3656,16 +3674,16 @@ overwrite_file()
       GLOBAL_UA:string \
       HTTP_PORT:int \
       INTRANET_ALLOWED:int_bool \
-      INTRANET_ALLOWED_WAN_NAME:string \
+      INTRANET_ALLOWED_WAN_NAME:list \
       INTERFACE_NAME:string \
       IPV6_DNS:int_bool \
       IPV6_ENABLE:int_bool \
       IPV6_MODE:int \
-      LAN_AC_BLACK_IPS:string \
-      LAN_AC_BLACK_MACS:string \
+      LAN_AC_BLACK_IPS:list \
+      LAN_AC_BLACK_MACS:list \
       LAN_AC_MODE:int_bool \
-      LAN_AC_WHITE_IPS:string \
-      LAN_AC_WHITE_MACS:string \
+      LAN_AC_WHITE_IPS:list \
+      LAN_AC_WHITE_MACS:list \
       LAN_INTERFACE_NAME:string \
       LGBM_AUTO_UPDATE:int_bool \
       LGBM_CUSTOM_URL:string \
@@ -3692,8 +3710,8 @@ overwrite_file()
       TPROXY_PORT:int \
       URLTEST_ADDRESS_MOD:string \
       URLTEST_INTERVAL_MOD:int \
-      WAN_AC_BLACK_IPS:string \
-      WAN_AC_BLACK_PORTS:string \
+      WAN_AC_BLACK_IPS:list \
+      WAN_AC_BLACK_PORTS:list \
       RESTART:bool \
    "
 
@@ -3960,8 +3978,7 @@ overwrite_file()
                strip_quotes "$val"
                val_key=$(expand_env_vars "$OVERWRITE_STRIPPED")
                [ -z "$val_key" ] && continue
-               system_host="${system_host}${val_key}
-"
+               system_host="${system_host}${val_key}"
             elif [ "$key_u" = "RESTART" ]; then
                strip_quotes "$val"
                val_key=$(expand_env_vars "$OVERWRITE_STRIPPED")
@@ -3975,6 +3992,11 @@ overwrite_file()
                      val_key=$(expand_env_vars "$OVERWRITE_STRIPPED")
                      if check_type "$key_u" "$OVERWRITE_STRIPPED"; then
                         lookup_uci_name "$key_u"
+                        if [ "$OVERWRITE_KEY_TYPE" = "list" ]; then
+                           val_key=$(printf '%s' "$val_key" | tr ',' ' ' | tr -s ' ')
+                           val_key="${val_key# }"
+                           val_key="${val_key% }"
+                        fi
                         uci -q set openclash.@overwrite[0]."$OVERWRITE_UCI_NAME"="$val_key"
                      fi
                      ;;
