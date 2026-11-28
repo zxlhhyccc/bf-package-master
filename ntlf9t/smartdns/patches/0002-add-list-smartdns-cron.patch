@@ -76,15 +76,3 @@
  		disable_auto_update
  		return 1
  	}
-@@ -968,6 +1005,11 @@ load_service()
- 
- 	procd_set_param limits nofile="65535 65535"
- 	[ -e /proc/sys/kernel/core_pattern ] && {
-+		procd_append_param limits core="unlimited"
-+	}
-+
-+	procd_set_param limits nofile="65535 65535"
-+	[ -e /proc/sys/kernel/core_pattern ] && {
- 		procd_append_param limits core="unlimited"
- 	}
- 
