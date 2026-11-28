@@ -1,6 +1,6 @@
 --- a/package/openwrt/files/etc/init.d/smartdns
 +++ b/package/openwrt/files/etc/init.d/smartdns
-@@ -218,7 +218,7 @@
+@@ -218,7 +218,7 @@ load_server()
  	local IS_URI="0"
  
  	config_get_bool enabled "$section" "enabled" "1"

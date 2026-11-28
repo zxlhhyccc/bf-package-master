@@ -36,23 +36,16 @@
  disable_auto_update()
  {
  	local no_restart="$1"
-@@ -308,13 +337,13 @@ disable_auto_update()
+@@ -308,7 +337,7 @@ disable_auto_update()
  
  enable_auto_update()
  {
--	grep "0 $auto_update_day_time * * $auto_update_week_time /etc/init.d/smartdns updatefiles" /etc/crontabs/root 2>/dev/null
-+	grep "$auto_update_min_time $auto_update_day_time * * $auto_update_week_time /etc/init.d/smartdns updatefiles" /etc/crontabs/root 2>/dev/null
+-	local cron_entry="0 $auto_update_day_time * * $auto_update_week_time /etc/init.d/smartdns updatefiles"
++	local cron_entry="$auto_update_min_time $auto_update_day_time * * $auto_update_week_time /etc/init.d/smartdns updatefiles"
+ 	grep -Fqx "$cron_entry" /etc/crontabs/root 2>/dev/null
  	if [ $? -eq 0 ]; then
  		return 
- 	fi
- 
- 	disable_auto_update 1
--	echo "0 $auto_update_day_time * * $auto_update_week_time /etc/init.d/smartdns updatefiles" >> /etc/crontabs/root
-+	echo "$auto_update_min_time $auto_update_day_time * * $auto_update_week_time /etc/init.d/smartdns updatefiles" >> /etc/crontabs/root
- 	restart_crond
- }
- 
-@@ -696,8 +725,12 @@ load_service()
+@@ -697,8 +726,12 @@ load_service()
  	config_get_bool ddr "$section" "ddr" "0"
  	[ "$ddr" = "1" ] && server_flags="$server_flags -ddr"
  
@@ -65,7 +58,7 @@
  
  	config_get speed_check_mode "$section" "speed_check_mode" ""
  	[ ! -z "$speed_check_mode" ] && conf_append "speed-check-mode" "$speed_check_mode"
-@@ -732,6 +765,9 @@ load_service()
+@@ -733,6 +766,9 @@ load_service()
  
  	config_get auto_set_dnsmasq "$section" "auto_set_dnsmasq" "1"
  
@@ -75,7 +68,7 @@
  	config_get ipset_name "$section" "ipset_name" ""
  	[ -z "$ipset_name" ] || conf_append "ipset" "$ipset_name"
  
-@@ -871,6 +907,7 @@ load_service()
+@@ -872,6 +908,7 @@ load_service()
  		[ "$old_enabled" = "0" ] && return 1
  		[ "$old_port" = "53" ] && [ "$old_auto_set_dnsmasq" = "1" ] && stop_main_dns "0"
  		[ "$old_port" != "53" ] && [ "$old_auto_set_dnsmasq" = "1" ] && stop_forward_dnsmasq "$old_port" "0"
@@ -83,3 +76,15 @@
  		disable_auto_update
  		return 1
  	}
+@@ -968,6 +1005,11 @@ load_service()
+ 
+ 	procd_set_param limits nofile="65535 65535"
+ 	[ -e /proc/sys/kernel/core_pattern ] && {
++		procd_append_param limits core="unlimited"
++	}
++
++	procd_set_param limits nofile="65535 65535"
++	[ -e /proc/sys/kernel/core_pattern ] && {
+ 		procd_append_param limits core="unlimited"
+ 	}
+ 
